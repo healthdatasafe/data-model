@@ -122,10 +122,10 @@ describe('[CNVX] Converters build output', () => {
       assert.ok(Math.abs(sum - 1.0) < 0.01, `weights should sum to 1.0, got ${sum}`);
     });
 
-    it('[CNVM5] pack-latest has 2 methods (mira + hds)', () => {
-      assert.strictEqual(pack.methods.length, 2);
+    it('[CNVM5] pack-latest has 3 methods (appleHealth + hds + mira)', () => {
+      assert.strictEqual(pack.methods.length, 3);
       const ids = pack.methods.map(m => m.methodId).sort();
-      assert.deepStrictEqual(ids, ['hds', 'mira']);
+      assert.deepStrictEqual(ids, ['appleHealth', 'hds', 'mira']);
     });
 
     it('[CNVM6] mira mood method has 16 observations', () => {
@@ -138,6 +138,20 @@ describe('[CNVX] Converters build output', () => {
       const hds = pack.methods.find(m => m.methodId === 'hds');
       assert.ok(hds, 'hds method should exist');
       assert.strictEqual(hds.components.length, 5);
+    });
+
+    it('[CNVM8] appleHealth method has 38 observations', () => {
+      const apple = pack.methods.find(m => m.methodId === 'appleHealth');
+      assert.ok(apple, 'appleHealth method should exist');
+      assert.strictEqual(apple.components.length, 1, 'single component');
+      assert.strictEqual(apple.components[0].options.length, 38);
+    });
+
+    it('[CNVM9] appleHealth observations have unique vectors', () => {
+      const apple = pack.methods.find(m => m.methodId === 'appleHealth');
+      const vectors = apple.components[0].options.map(o => JSON.stringify(o.vector));
+      const unique = new Set(vectors);
+      assert.strictEqual(unique.size, vectors.length, 'all vectors should be unique');
     });
   });
 });
