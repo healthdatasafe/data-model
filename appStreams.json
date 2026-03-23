@@ -1,0 +1,28 @@
+{
+  "notes": {
+    "suffix": "notes",
+    "eventType": "note/txt",
+    "label": {
+      "en": "Notes",
+      "fr": "Notes"
+    },
+    "description": {
+      "en": "Free text notes from this application",
+      "fr": "Notes libres de cette application"
+    },
+    "display": "diary"
+  },
+  "chat": {
+    "suffix": "chat",
+    "eventType": "message/hds-chat-v1",
+    "label": {
+      "en": "Chat Messages",
+      "fr": "Messages"
+    },
+    "description": {
+      "en": "Chat messages with this connection",
+      "fr": "Messages de chat avec cette connexion"
+    },
+    "display": "chat"
+  }
+}

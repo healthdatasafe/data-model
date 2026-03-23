@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-03-23T16:14:57.734Z",
+  "publicationDate": "2026-03-23T17:21:40.048Z",
   "streams": [
     {
       "id": "activity",
@@ -6885,11 +6885,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-03-23T16:14:57.732Z"
+      "updatedAt": "2026-03-23T17:21:40.046Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-03-23T16:14:57.733Z"
+      "updatedAt": "2026-03-23T17:21:40.047Z"
     }
   },
   "settings": {
@@ -6938,6 +6938,34 @@
       "eventType": "contact/display-name",
       "default": null,
       "type": "string"
+    }
+  },
+  "appStreams": {
+    "notes": {
+      "suffix": "notes",
+      "eventType": "note/txt",
+      "label": {
+        "en": "Notes",
+        "fr": "Notes"
+      },
+      "description": {
+        "en": "Free text notes from this application",
+        "fr": "Notes libres de cette application"
+      },
+      "display": "diary"
+    },
+    "chat": {
+      "suffix": "chat",
+      "eventType": "message/hds-chat-v1",
+      "label": {
+        "en": "Chat Messages",
+        "fr": "Messages"
+      },
+      "description": {
+        "en": "Chat messages with this connection",
+        "fr": "Messages de chat avec cette connexion"
+      },
+      "display": "chat"
     }
   }
 }

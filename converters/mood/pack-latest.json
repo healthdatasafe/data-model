@@ -17,8 +17,8 @@
         "fr": "Valence"
       },
       "shortLabel": {
-        "en": "Val",
-        "fr": "Val"
+        "en": "Pleasantness",
+        "fr": "Agrément"
       },
       "description": {
         "en": "Pleasure/displeasure: 0 = very unpleasant, 0.5 = neutral, 1 = very pleasant.",
@@ -173,8 +173,8 @@
         "fr": "Focus social"
       },
       "shortLabel": {
-        "en": "Social",
-        "fr": "Social"
+        "en": "Social focus",
+        "fr": "Focus social"
       },
       "description": {
         "en": "Social focus: 0 = self-focused, 0.5 = balanced, 1 = other-focused.",
@@ -211,8 +211,8 @@
         "fr": "Focus temporel"
       },
       "shortLabel": {
-        "en": "Time",
-        "fr": "Temps"
+        "en": "Time focus",
+        "fr": "Focus temporel"
       },
       "description": {
         "en": "Time orientation: 0 = past-dwelling, 0.5 = present, 1 = future-anticipating.",
@@ -802,268 +802,909 @@
       ]
     },
     {
-      "methodId": "hds",
-      "order": 1,
+      "methodId": "daylio",
+      "order": 15,
       "name": {
-        "en": "HDS Native",
-        "fr": "HDS Natif"
+        "en": "Daylio",
+        "fr": "Daylio"
       },
       "description": {
-        "en": "Direct 5D mood input using the HDS composite widget (valence, arousal, dominance, socialOrientation, temporalFocus).",
-        "fr": "Saisie directe de l'humeur en 5D via le widget composite HDS (valence, arousal, dominance, socialOrientation, temporalFocus)."
+        "en": "5-point ordinal mood scale from Daylio, the most popular standalone mood tracking app. Primarily valence-based with neutral arousal.",
+        "fr": "Échelle d'humeur ordinale à 5 niveaux de Daylio, l'application de suivi d'humeur autonome la plus populaire. Principalement basée sur la valence avec une activation neutre."
       },
+      "referenceUrl": "https://daylio.net/",
       "components": [
         {
-          "field": "valence",
+          "field": "observation",
           "label": {
-            "en": "Valence",
-            "fr": "Valence"
+            "en": "Mood level",
+            "fr": "Niveau d'humeur"
           },
           "options": [
             {
-              "value": 0,
+              "value": "rad",
               "label": {
-                "en": "Very unpleasant",
-                "fr": "Très désagréable"
+                "en": "Rad",
+                "fr": "Super"
               },
               "vector": {
-                "valence": 0
+                "valence": 0.95,
+                "arousal": 0.7,
+                "dominance": 0.75,
+                "socialOrientation": 0.5,
+                "temporalFocus": 0.55
               }
             },
             {
-              "value": 0.25,
+              "value": "good",
               "label": {
-                "en": "Unpleasant",
-                "fr": "Désagréable"
+                "en": "Good",
+                "fr": "Bien"
               },
               "vector": {
-                "valence": 0.25
-              }
-            },
-            {
-              "value": 0.5,
-              "label": {
-                "en": "Neutral",
-                "fr": "Neutre"
-              },
-              "vector": {
-                "valence": 0.5
-              }
-            },
-            {
-              "value": 0.75,
-              "label": {
-                "en": "Pleasant",
-                "fr": "Agréable"
-              },
-              "vector": {
-                "valence": 0.75
-              }
-            },
-            {
-              "value": 1,
-              "label": {
-                "en": "Very pleasant",
-                "fr": "Très agréable"
-              },
-              "vector": {
-                "valence": 1
-              }
-            }
-          ]
-        },
-        {
-          "field": "arousal",
-          "label": {
-            "en": "Energy",
-            "fr": "Énergie"
-          },
-          "options": [
-            {
-              "value": 0,
-              "label": {
-                "en": "Very calm",
-                "fr": "Très calme"
-              },
-              "vector": {
-                "arousal": 0
-              }
-            },
-            {
-              "value": 0.25,
-              "label": {
-                "en": "Calm",
-                "fr": "Calme"
-              },
-              "vector": {
-                "arousal": 0.25
-              }
-            },
-            {
-              "value": 0.5,
-              "label": {
-                "en": "Moderate",
-                "fr": "Modéré"
-              },
-              "vector": {
-                "arousal": 0.5
-              }
-            },
-            {
-              "value": 0.75,
-              "label": {
-                "en": "Energized",
-                "fr": "Énergique"
-              },
-              "vector": {
-                "arousal": 0.75
-              }
-            },
-            {
-              "value": 1,
-              "label": {
-                "en": "Very energized",
-                "fr": "Très énergique"
-              },
-              "vector": {
-                "arousal": 1
-              }
-            }
-          ]
-        },
-        {
-          "field": "dominance",
-          "label": {
-            "en": "Sense of control",
-            "fr": "Sentiment de contrôle"
-          },
-          "options": [
-            {
-              "value": 0,
-              "label": {
-                "en": "Powerless",
-                "fr": "Impuissant"
-              },
-              "vector": {
-                "dominance": 0
-              }
-            },
-            {
-              "value": 0.25,
-              "label": {
-                "en": "Overwhelmed",
-                "fr": "Submergé"
-              },
-              "vector": {
-                "dominance": 0.25
-              }
-            },
-            {
-              "value": 0.5,
-              "label": {
-                "en": "Neutral",
-                "fr": "Neutre"
-              },
-              "vector": {
-                "dominance": 0.5
-              }
-            },
-            {
-              "value": 0.75,
-              "label": {
-                "en": "In control",
-                "fr": "En contrôle"
-              },
-              "vector": {
-                "dominance": 0.75
-              }
-            },
-            {
-              "value": 1,
-              "label": {
-                "en": "Very in control",
-                "fr": "Très en contrôle"
-              },
-              "vector": {
-                "dominance": 1
-              }
-            }
-          ]
-        },
-        {
-          "field": "socialOrientation",
-          "label": {
-            "en": "Social focus",
-            "fr": "Focus social"
-          },
-          "options": [
-            {
-              "value": 0,
-              "label": {
-                "en": "Self-focused",
-                "fr": "Centré sur soi"
-              },
-              "vector": {
-                "socialOrientation": 0
-              }
-            },
-            {
-              "value": 0.5,
-              "label": {
-                "en": "Balanced",
-                "fr": "Équilibré"
-              },
-              "vector": {
-                "socialOrientation": 0.5
-              }
-            },
-            {
-              "value": 1,
-              "label": {
-                "en": "Other-focused",
-                "fr": "Centré sur les autres"
-              },
-              "vector": {
-                "socialOrientation": 1
-              }
-            }
-          ]
-        },
-        {
-          "field": "temporalFocus",
-          "label": {
-            "en": "Time focus",
-            "fr": "Focus temporel"
-          },
-          "options": [
-            {
-              "value": 0,
-              "label": {
-                "en": "Past-dwelling",
-                "fr": "Tourné vers le passé"
-              },
-              "vector": {
-                "temporalFocus": 0
-              }
-            },
-            {
-              "value": 0.5,
-              "label": {
-                "en": "Present",
-                "fr": "Présent"
-              },
-              "vector": {
+                "valence": 0.75,
+                "arousal": 0.55,
+                "dominance": 0.6,
+                "socialOrientation": 0.5,
                 "temporalFocus": 0.5
               }
             },
             {
-              "value": 1,
+              "value": "meh",
               "label": {
-                "en": "Future-anticipating",
-                "fr": "Tourné vers le futur"
+                "en": "Meh",
+                "fr": "Bof"
               },
               "vector": {
-                "temporalFocus": 1
+                "valence": 0.5,
+                "arousal": 0.4,
+                "dominance": 0.45,
+                "socialOrientation": 0.45,
+                "temporalFocus": 0.5
+              }
+            },
+            {
+              "value": "bad",
+              "label": {
+                "en": "Bad",
+                "fr": "Mal"
+              },
+              "vector": {
+                "valence": 0.25,
+                "arousal": 0.45,
+                "dominance": 0.3,
+                "socialOrientation": 0.45,
+                "temporalFocus": 0.55
+              }
+            },
+            {
+              "value": "awful",
+              "label": {
+                "en": "Awful",
+                "fr": "Horrible"
+              },
+              "vector": {
+                "valence": 0.05,
+                "arousal": 0.5,
+                "dominance": 0.15,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.55
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "methodId": "howWeFeel",
+      "order": 8,
+      "name": {
+        "en": "How We Feel",
+        "fr": "How We Feel"
+      },
+      "description": {
+        "en": "Curated emotion words from How We Feel (Yale Center for Emotional Intelligence), organized on the Russell circumplex model: pleasantness × energy, 4 quadrants.",
+        "fr": "Mots d'émotions sélectionnés de How We Feel (Yale Center for Emotional Intelligence), organisés sur le modèle circomplexe de Russell : agrément × énergie, 4 quadrants."
+      },
+      "referenceUrl": "https://howwefeel.org/",
+      "components": [
+        {
+          "field": "observation",
+          "label": {
+            "en": "Emotion",
+            "fr": "Émotion"
+          },
+          "options": [
+            {
+              "value": "elated",
+              "label": {
+                "en": "Elated",
+                "fr": "Exalté"
+              },
+              "group": {
+                "en": "High Energy, Pleasant",
+                "fr": "Haute énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.9,
+                "arousal": 0.9,
+                "dominance": 0.7,
+                "socialOrientation": 0.5,
+                "temporalFocus": 0.55
+              }
+            },
+            {
+              "value": "excited",
+              "label": {
+                "en": "Excited",
+                "fr": "Excité"
+              },
+              "group": {
+                "en": "High Energy, Pleasant",
+                "fr": "Haute énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.85,
+                "arousal": 0.9,
+                "dominance": 0.65,
+                "socialOrientation": 0.45,
+                "temporalFocus": 0.7
+              }
+            },
+            {
+              "value": "joyful",
+              "label": {
+                "en": "Joyful",
+                "fr": "Joyeux"
+              },
+              "group": {
+                "en": "High Energy, Pleasant",
+                "fr": "Haute énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.9,
+                "arousal": 0.75,
+                "dominance": 0.65,
+                "socialOrientation": 0.55,
+                "temporalFocus": 0.5
+              }
+            },
+            {
+              "value": "thrilled",
+              "label": {
+                "en": "Thrilled",
+                "fr": "Ravi"
+              },
+              "group": {
+                "en": "High Energy, Pleasant",
+                "fr": "Haute énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.9,
+                "arousal": 0.85,
+                "dominance": 0.6,
+                "socialOrientation": 0.5,
+                "temporalFocus": 0.6
+              }
+            },
+            {
+              "value": "enthusiastic",
+              "label": {
+                "en": "Enthusiastic",
+                "fr": "Enthousiaste"
+              },
+              "group": {
+                "en": "High Energy, Pleasant",
+                "fr": "Haute énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.85,
+                "arousal": 0.85,
+                "dominance": 0.65,
+                "socialOrientation": 0.55,
+                "temporalFocus": 0.65
+              }
+            },
+            {
+              "value": "passionate",
+              "label": {
+                "en": "Passionate",
+                "fr": "Passionné"
+              },
+              "group": {
+                "en": "High Energy, Pleasant",
+                "fr": "Haute énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.85,
+                "arousal": 0.85,
+                "dominance": 0.7,
+                "socialOrientation": 0.5,
+                "temporalFocus": 0.6
+              }
+            },
+            {
+              "value": "energized",
+              "label": {
+                "en": "Energized",
+                "fr": "Énergisé"
+              },
+              "group": {
+                "en": "High Energy, Pleasant",
+                "fr": "Haute énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.8,
+                "arousal": 0.9,
+                "dominance": 0.65,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.55
+              }
+            },
+            {
+              "value": "inspired",
+              "label": {
+                "en": "Inspired",
+                "fr": "Inspiré"
+              },
+              "group": {
+                "en": "High Energy, Pleasant",
+                "fr": "Haute énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.8,
+                "arousal": 0.75,
+                "dominance": 0.55,
+                "socialOrientation": 0.45,
+                "temporalFocus": 0.75
+              }
+            },
+            {
+              "value": "amused",
+              "label": {
+                "en": "Amused",
+                "fr": "Amusé"
+              },
+              "group": {
+                "en": "High Energy, Pleasant",
+                "fr": "Haute énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.8,
+                "arousal": 0.65,
+                "dominance": 0.55,
+                "socialOrientation": 0.6,
+                "temporalFocus": 0.5
+              }
+            },
+            {
+              "value": "confident",
+              "label": {
+                "en": "Confident",
+                "fr": "Confiant"
+              },
+              "group": {
+                "en": "High Energy, Pleasant",
+                "fr": "Haute énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.8,
+                "arousal": 0.65,
+                "dominance": 0.85,
+                "socialOrientation": 0.45,
+                "temporalFocus": 0.55
+              }
+            },
+            {
+              "value": "proud",
+              "label": {
+                "en": "Proud",
+                "fr": "Fier"
+              },
+              "group": {
+                "en": "High Energy, Pleasant",
+                "fr": "Haute énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.85,
+                "arousal": 0.65,
+                "dominance": 0.85,
+                "socialOrientation": 0.55,
+                "temporalFocus": 0.55
+              }
+            },
+            {
+              "value": "hopeful",
+              "label": {
+                "en": "Hopeful",
+                "fr": "Plein d'espoir"
+              },
+              "group": {
+                "en": "High Energy, Pleasant",
+                "fr": "Haute énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.75,
+                "arousal": 0.55,
+                "dominance": 0.45,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.85
+              }
+            },
+            {
+              "value": "content",
+              "label": {
+                "en": "Content",
+                "fr": "Satisfait"
+              },
+              "group": {
+                "en": "Low Energy, Pleasant",
+                "fr": "Basse énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.75,
+                "arousal": 0.25,
+                "dominance": 0.6,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.45
+              }
+            },
+            {
+              "value": "calm",
+              "label": {
+                "en": "Calm",
+                "fr": "Calme"
+              },
+              "group": {
+                "en": "Low Energy, Pleasant",
+                "fr": "Basse énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.7,
+                "arousal": 0.15,
+                "dominance": 0.55,
+                "socialOrientation": 0.35,
+                "temporalFocus": 0.45
+              }
+            },
+            {
+              "value": "peaceful",
+              "label": {
+                "en": "Peaceful",
+                "fr": "Paisible"
+              },
+              "group": {
+                "en": "Low Energy, Pleasant",
+                "fr": "Basse énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.75,
+                "arousal": 0.1,
+                "dominance": 0.55,
+                "socialOrientation": 0.35,
+                "temporalFocus": 0.4
+              }
+            },
+            {
+              "value": "relaxed",
+              "label": {
+                "en": "Relaxed",
+                "fr": "Détendu"
+              },
+              "group": {
+                "en": "Low Energy, Pleasant",
+                "fr": "Basse énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.7,
+                "arousal": 0.15,
+                "dominance": 0.55,
+                "socialOrientation": 0.35,
+                "temporalFocus": 0.45
+              }
+            },
+            {
+              "value": "serene",
+              "label": {
+                "en": "Serene",
+                "fr": "Serein"
+              },
+              "group": {
+                "en": "Low Energy, Pleasant",
+                "fr": "Basse énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.75,
+                "arousal": 0.1,
+                "dominance": 0.6,
+                "socialOrientation": 0.3,
+                "temporalFocus": 0.4
+              }
+            },
+            {
+              "value": "grateful",
+              "label": {
+                "en": "Grateful",
+                "fr": "Reconnaissant"
+              },
+              "group": {
+                "en": "Low Energy, Pleasant",
+                "fr": "Basse énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.85,
+                "arousal": 0.3,
+                "dominance": 0.5,
+                "socialOrientation": 0.8,
+                "temporalFocus": 0.55
+              }
+            },
+            {
+              "value": "relieved",
+              "label": {
+                "en": "Relieved",
+                "fr": "Soulagé"
+              },
+              "group": {
+                "en": "Low Energy, Pleasant",
+                "fr": "Basse énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.75,
+                "arousal": 0.25,
+                "dominance": 0.5,
+                "socialOrientation": 0.35,
+                "temporalFocus": 0.6
+              }
+            },
+            {
+              "value": "satisfied",
+              "label": {
+                "en": "Satisfied",
+                "fr": "Satisfait"
+              },
+              "group": {
+                "en": "Low Energy, Pleasant",
+                "fr": "Basse énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.8,
+                "arousal": 0.3,
+                "dominance": 0.65,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.45
+              }
+            },
+            {
+              "value": "comfortable",
+              "label": {
+                "en": "Comfortable",
+                "fr": "À l'aise"
+              },
+              "group": {
+                "en": "Low Energy, Pleasant",
+                "fr": "Basse énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.7,
+                "arousal": 0.2,
+                "dominance": 0.6,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.45
+              }
+            },
+            {
+              "value": "cozy",
+              "label": {
+                "en": "Cozy",
+                "fr": "Douillet"
+              },
+              "group": {
+                "en": "Low Energy, Pleasant",
+                "fr": "Basse énergie, Agréable"
+              },
+              "vector": {
+                "valence": 0.75,
+                "arousal": 0.1,
+                "dominance": 0.55,
+                "socialOrientation": 0.45,
+                "temporalFocus": 0.4
+              }
+            },
+            {
+              "value": "angry",
+              "label": {
+                "en": "Angry",
+                "fr": "En colère"
+              },
+              "group": {
+                "en": "High Energy, Unpleasant",
+                "fr": "Haute énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.1,
+                "arousal": 0.85,
+                "dominance": 0.75,
+                "socialOrientation": 0.55,
+                "temporalFocus": 0.4
+              }
+            },
+            {
+              "value": "anxious",
+              "label": {
+                "en": "Anxious",
+                "fr": "Anxieux"
+              },
+              "group": {
+                "en": "High Energy, Unpleasant",
+                "fr": "Haute énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.8,
+                "dominance": 0.15,
+                "socialOrientation": 0.35,
+                "temporalFocus": 0.8
+              }
+            },
+            {
+              "value": "stressed",
+              "label": {
+                "en": "Stressed",
+                "fr": "Stressé"
+              },
+              "group": {
+                "en": "High Energy, Unpleasant",
+                "fr": "Haute énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.8,
+                "dominance": 0.2,
+                "socialOrientation": 0.35,
+                "temporalFocus": 0.65
+              }
+            },
+            {
+              "value": "frustrated",
+              "label": {
+                "en": "Frustrated",
+                "fr": "Frustré"
+              },
+              "group": {
+                "en": "High Energy, Unpleasant",
+                "fr": "Haute énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.7,
+                "dominance": 0.3,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.45
+              }
+            },
+            {
+              "value": "scared",
+              "label": {
+                "en": "Scared",
+                "fr": "Effrayé"
+              },
+              "group": {
+                "en": "High Energy, Unpleasant",
+                "fr": "Haute énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.1,
+                "arousal": 0.85,
+                "dominance": 0.1,
+                "socialOrientation": 0.3,
+                "temporalFocus": 0.75
+              }
+            },
+            {
+              "value": "irritated",
+              "label": {
+                "en": "Irritated",
+                "fr": "Irrité"
+              },
+              "group": {
+                "en": "High Energy, Unpleasant",
+                "fr": "Haute énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.2,
+                "arousal": 0.65,
+                "dominance": 0.55,
+                "socialOrientation": 0.5,
+                "temporalFocus": 0.4
+              }
+            },
+            {
+              "value": "overwhelmed",
+              "label": {
+                "en": "Overwhelmed",
+                "fr": "Submergé"
+              },
+              "group": {
+                "en": "High Energy, Unpleasant",
+                "fr": "Haute énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.75,
+                "dominance": 0.05,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.55
+              }
+            },
+            {
+              "value": "worried",
+              "label": {
+                "en": "Worried",
+                "fr": "Inquiet"
+              },
+              "group": {
+                "en": "High Energy, Unpleasant",
+                "fr": "Haute énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.65,
+                "dominance": 0.15,
+                "socialOrientation": 0.45,
+                "temporalFocus": 0.85
+              }
+            },
+            {
+              "value": "panicked",
+              "label": {
+                "en": "Panicked",
+                "fr": "Paniqué"
+              },
+              "group": {
+                "en": "High Energy, Unpleasant",
+                "fr": "Haute énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.05,
+                "arousal": 0.95,
+                "dominance": 0.05,
+                "socialOrientation": 0.3,
+                "temporalFocus": 0.7
+              }
+            },
+            {
+              "value": "disgusted",
+              "label": {
+                "en": "Disgusted",
+                "fr": "Dégoûté"
+              },
+              "group": {
+                "en": "High Energy, Unpleasant",
+                "fr": "Haute énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.1,
+                "arousal": 0.65,
+                "dominance": 0.5,
+                "socialOrientation": 0.55,
+                "temporalFocus": 0.35
+              }
+            },
+            {
+              "value": "jealous",
+              "label": {
+                "en": "Jealous",
+                "fr": "Jaloux"
+              },
+              "group": {
+                "en": "High Energy, Unpleasant",
+                "fr": "Haute énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.65,
+                "dominance": 0.25,
+                "socialOrientation": 0.8,
+                "temporalFocus": 0.5
+              }
+            },
+            {
+              "value": "sad",
+              "label": {
+                "en": "Sad",
+                "fr": "Triste"
+              },
+              "group": {
+                "en": "Low Energy, Unpleasant",
+                "fr": "Basse énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.2,
+                "dominance": 0.25,
+                "socialOrientation": 0.3,
+                "temporalFocus": 0.6
+              }
+            },
+            {
+              "value": "lonely",
+              "label": {
+                "en": "Lonely",
+                "fr": "Seul"
+              },
+              "group": {
+                "en": "Low Energy, Unpleasant",
+                "fr": "Basse énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.2,
+                "dominance": 0.2,
+                "socialOrientation": 0.85,
+                "temporalFocus": 0.5
+              }
+            },
+            {
+              "value": "tired",
+              "label": {
+                "en": "Tired",
+                "fr": "Fatigué"
+              },
+              "group": {
+                "en": "Low Energy, Unpleasant",
+                "fr": "Basse énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.3,
+                "arousal": 0.1,
+                "dominance": 0.3,
+                "socialOrientation": 0.3,
+                "temporalFocus": 0.4
+              }
+            },
+            {
+              "value": "bored",
+              "label": {
+                "en": "Bored",
+                "fr": "Ennuyé"
+              },
+              "group": {
+                "en": "Low Energy, Unpleasant",
+                "fr": "Basse énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.3,
+                "arousal": 0.1,
+                "dominance": 0.4,
+                "socialOrientation": 0.3,
+                "temporalFocus": 0.4
+              }
+            },
+            {
+              "value": "drained",
+              "label": {
+                "en": "Drained",
+                "fr": "Vidé"
+              },
+              "group": {
+                "en": "Low Energy, Unpleasant",
+                "fr": "Basse énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.05,
+                "dominance": 0.1,
+                "socialOrientation": 0.25,
+                "temporalFocus": 0.4
+              }
+            },
+            {
+              "value": "hopeless",
+              "label": {
+                "en": "Hopeless",
+                "fr": "Désespéré"
+              },
+              "group": {
+                "en": "Low Energy, Unpleasant",
+                "fr": "Basse énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.05,
+                "arousal": 0.15,
+                "dominance": 0.1,
+                "socialOrientation": 0.3,
+                "temporalFocus": 0.65
+              }
+            },
+            {
+              "value": "depressed",
+              "label": {
+                "en": "Depressed",
+                "fr": "Déprimé"
+              },
+              "group": {
+                "en": "Low Energy, Unpleasant",
+                "fr": "Basse énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.05,
+                "arousal": 0.1,
+                "dominance": 0.1,
+                "socialOrientation": 0.3,
+                "temporalFocus": 0.55
+              }
+            },
+            {
+              "value": "guilty",
+              "label": {
+                "en": "Guilty",
+                "fr": "Coupable"
+              },
+              "group": {
+                "en": "Low Energy, Unpleasant",
+                "fr": "Basse énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.1,
+                "arousal": 0.35,
+                "dominance": 0.15,
+                "socialOrientation": 0.75,
+                "temporalFocus": 0.75
+              }
+            },
+            {
+              "value": "ashamed",
+              "label": {
+                "en": "Ashamed",
+                "fr": "Honteux"
+              },
+              "group": {
+                "en": "Low Energy, Unpleasant",
+                "fr": "Basse énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.1,
+                "arousal": 0.35,
+                "dominance": 0.1,
+                "socialOrientation": 0.75,
+                "temporalFocus": 0.7
+              }
+            },
+            {
+              "value": "numb",
+              "label": {
+                "en": "Numb",
+                "fr": "Engourdi"
+              },
+              "group": {
+                "en": "Low Energy, Unpleasant",
+                "fr": "Basse énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.2,
+                "arousal": 0.05,
+                "dominance": 0.2,
+                "socialOrientation": 0.2,
+                "temporalFocus": 0.45
+              }
+            },
+            {
+              "value": "empty",
+              "label": {
+                "en": "Empty",
+                "fr": "Vide"
+              },
+              "group": {
+                "en": "Low Energy, Unpleasant",
+                "fr": "Basse énergie, Désagréable"
+              },
+              "vector": {
+                "valence": 0.1,
+                "arousal": 0.05,
+                "dominance": 0.15,
+                "socialOrientation": 0.2,
+                "temporalFocus": 0.45
               }
             }
           ]
