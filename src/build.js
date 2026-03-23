@@ -15,7 +15,8 @@ const sources = [
   require('./datasources').toBePublished,
   require('./conversions').toBePublished,
   require('./converters').toBePublished,
-  require('./settings').toBePublished
+  require('./settings').toBePublished,
+  require('./appStreams').toBePublished
 ];
 
 const pack = {

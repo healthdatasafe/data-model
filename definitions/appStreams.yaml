@@ -1,0 +1,31 @@
+# App Stream Definitions
+#
+# Declares sub-streams that exist under an app's {appStreamId}.
+# Each app/bridge access declares clientData.appStreamId (e.g. "bridge-mira-app").
+# Consuming apps discover these sub-streams by appending the suffix.
+#
+# Example: appStreamId = "bridge-mira-app"
+#   → "bridge-mira-app-notes" (suffix: notes)
+#   → "bridge-mira-app-chat"  (suffix: chat)
+
+notes:
+  suffix: notes
+  eventType: note/txt
+  label:
+    en: Notes
+    fr: Notes
+  description:
+    en: Free text notes from this application
+    fr: Notes libres de cette application
+  display: diary
+
+chat:
+  suffix: chat
+  eventType: message/hds-chat-v1
+  label:
+    en: Chat Messages
+    fr: Messages
+  description:
+    en: Chat messages with this connection
+    fr: Messages de chat avec cette connexion
+  display: chat
