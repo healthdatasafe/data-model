@@ -293,7 +293,7 @@ model.convert({mood: 8, energy: 3}, "bearable", "clue")
 
 #### Relationship to HDS data model
 
-The `model-mood` library is a **conversion tool**, separate from HDS storage. For HDS storage (data-model-draft), the model's vector itself could be stored as the event content, or individual dimensions could map to HDS items. This decision can be made after the model library exists.
+The `model-mood` library is a **conversion tool**, separate from HDS storage. For HDS storage (data-model), the model's vector itself could be stored as the event content, or individual dimensions could map to HDS items. This decision can be made after the model library exists.
 
 ### Coverage assessment: which systems can the 5D model fully capture?
 
@@ -321,7 +321,7 @@ The `model-mood` library is a **conversion tool**, separate from HDS storage. Fo
 
 ## Status: IN PROGRESS (Plan 13, Phase B)
 
-The `wellbeing-mood` item with `mood/5d-vectors` event type is defined in data-model-draft. Bridge-mira converter implementation is next — mapping Mira's 15 labels to 5D vectors inline (no standalone model-mood library yet).
+The `wellbeing-mood` item with `mood/5d-vectors` event type is defined in data-model. Bridge-mira converter implementation is next — mapping Mira's 15 labels to 5D vectors inline (no standalone model-mood library yet).
 
 ### Design decisions (settled 2026-03-17)
 - **Library vs inline**: Start with inline `MOOD_VECTORS` map in bridge-mira converter. Extract to a shared library later when more methods (Apple, How We Feel) need conversion.
