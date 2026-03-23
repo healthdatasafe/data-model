@@ -1,5 +1,5 @@
 medication-intake-basic:
-  version: v2
+  version: v3
   label: Medication Intake Basic
   description: Free-text medication intake with optional dose and route. Content has an 'intake' sub-object following the same structure as medication/coded-v1.
   streamId: medication-intake
@@ -15,12 +15,58 @@ medication-intake-basic:
       canBeNull: true
     doseUnit:
       label: Dose unit
-      type: text
+      type: select
       canBeNull: true
+      options:
+        - value: dose/tablet
+          label: { en: Tablet, fr: Comprimé }
+        - value: dose/drop
+          label: { en: Drop, fr: Goutte }
+        - value: dose/puff
+          label: { en: Puff, fr: Bouffée }
+        - value: dose/application
+          label: { en: Application, fr: Application }
+        - value: dose/suppository
+          label: { en: Suppository, fr: Suppositoire }
+        - value: dose/unit
+          label: { en: Unit (IU), fr: Unité (UI) }
+        - value: mass/mg
+          label: { en: mg, fr: mg }
+        - value: mass/mcg
+          label: { en: μg, fr: μg }
+        - value: volume/ml
+          label: { en: ml, fr: ml }
     route:
       label: Route of administration
-      type: text
+      type: select
       canBeNull: true
+      options:
+        - value: oral
+          label: { en: Oral, fr: Oral }
+        - value: sublingual
+          label: { en: Sublingual, fr: Sublingual }
+        - value: topical
+          label: { en: Topical, fr: Topique }
+        - value: transdermal
+          label: { en: Transdermal, fr: Transdermique }
+        - value: inhalation
+          label: { en: Inhalation, fr: Inhalation }
+        - value: nasal
+          label: { en: Nasal, fr: Nasal }
+        - value: rectal
+          label: { en: Rectal, fr: Rectal }
+        - value: vaginal
+          label: { en: Vaginal, fr: Vaginal }
+        - value: ophthalmic
+          label: { en: Ophthalmic, fr: Ophtalmique }
+        - value: otic
+          label: { en: Otic (ear), fr: Auriculaire }
+        - value: intravenous
+          label: { en: Intravenous (IV), fr: Intraveineux (IV) }
+        - value: intramuscular
+          label: { en: Intramuscular (IM), fr: Intramusculaire (IM) }
+        - value: subcutaneous
+          label: { en: Subcutaneous (SC), fr: Sous-cutané (SC) }
   repeatable: unlimited
 
 medication-intake-coded:
