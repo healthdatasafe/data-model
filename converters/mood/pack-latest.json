@@ -246,6 +246,562 @@
   },
   "methods": [
     {
+      "methodId": "appleHealth",
+      "order": 5,
+      "name": {
+        "en": "Apple Health",
+        "fr": "Apple Health"
+      },
+      "description": {
+        "en": "38 emotion labels from Apple HealthKit State of Mind (iOS 17+). Valence maps linearly from Apple's [-1,+1] to HDS [0,1] via (v+1)/2.",
+        "fr": "38 étiquettes d'émotions d'Apple HealthKit État d'esprit (iOS 17+). La valence est convertie linéairement de [-1,+1] Apple vers [0,1] HDS via (v+1)/2."
+      },
+      "referenceUrl": "https://developer.apple.com/documentation/healthkit/hkstateofmind",
+      "components": [
+        {
+          "field": "observation",
+          "label": {
+            "en": "Emotion",
+            "fr": "Émotion"
+          },
+          "options": [
+            {
+              "value": "amazed",
+              "label": {
+                "en": "Amazed",
+                "fr": "Émerveillé"
+              },
+              "vector": {
+                "valence": 0.85,
+                "arousal": 0.8,
+                "dominance": 0.45,
+                "socialOrientation": 0.5,
+                "temporalFocus": 0.55
+              }
+            },
+            {
+              "value": "amused",
+              "label": {
+                "en": "Amused",
+                "fr": "Amusé"
+              },
+              "vector": {
+                "valence": 0.8,
+                "arousal": 0.65,
+                "dominance": 0.55,
+                "socialOrientation": 0.6,
+                "temporalFocus": 0.5
+              }
+            },
+            {
+              "value": "angry",
+              "label": {
+                "en": "Angry",
+                "fr": "En colère"
+              },
+              "vector": {
+                "valence": 0.1,
+                "arousal": 0.85,
+                "dominance": 0.75,
+                "socialOrientation": 0.55,
+                "temporalFocus": 0.4
+              }
+            },
+            {
+              "value": "annoyed",
+              "label": {
+                "en": "Annoyed",
+                "fr": "Agacé"
+              },
+              "vector": {
+                "valence": 0.25,
+                "arousal": 0.6,
+                "dominance": 0.55,
+                "socialOrientation": 0.5,
+                "temporalFocus": 0.4
+              }
+            },
+            {
+              "value": "anxious",
+              "label": {
+                "en": "Anxious",
+                "fr": "Anxieux"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.8,
+                "dominance": 0.15,
+                "socialOrientation": 0.35,
+                "temporalFocus": 0.8
+              }
+            },
+            {
+              "value": "ashamed",
+              "label": {
+                "en": "Ashamed",
+                "fr": "Honteux"
+              },
+              "vector": {
+                "valence": 0.1,
+                "arousal": 0.4,
+                "dominance": 0.1,
+                "socialOrientation": 0.75,
+                "temporalFocus": 0.7
+              }
+            },
+            {
+              "value": "brave",
+              "label": {
+                "en": "Brave",
+                "fr": "Courageux"
+              },
+              "vector": {
+                "valence": 0.75,
+                "arousal": 0.7,
+                "dominance": 0.85,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.65
+              }
+            },
+            {
+              "value": "calm",
+              "label": {
+                "en": "Calm",
+                "fr": "Calme"
+              },
+              "vector": {
+                "valence": 0.7,
+                "arousal": 0.15,
+                "dominance": 0.55,
+                "socialOrientation": 0.35,
+                "temporalFocus": 0.45
+              }
+            },
+            {
+              "value": "confident",
+              "label": {
+                "en": "Confident",
+                "fr": "Confiant"
+              },
+              "vector": {
+                "valence": 0.8,
+                "arousal": 0.6,
+                "dominance": 0.85,
+                "socialOrientation": 0.45,
+                "temporalFocus": 0.55
+              }
+            },
+            {
+              "value": "content",
+              "label": {
+                "en": "Content",
+                "fr": "Satisfait"
+              },
+              "vector": {
+                "valence": 0.75,
+                "arousal": 0.25,
+                "dominance": 0.6,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.45
+              }
+            },
+            {
+              "value": "disappointed",
+              "label": {
+                "en": "Disappointed",
+                "fr": "Déçu"
+              },
+              "vector": {
+                "valence": 0.2,
+                "arousal": 0.3,
+                "dominance": 0.25,
+                "socialOrientation": 0.5,
+                "temporalFocus": 0.65
+              }
+            },
+            {
+              "value": "discouraged",
+              "label": {
+                "en": "Discouraged",
+                "fr": "Découragé"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.2,
+                "dominance": 0.15,
+                "socialOrientation": 0.35,
+                "temporalFocus": 0.6
+              }
+            },
+            {
+              "value": "disgusted",
+              "label": {
+                "en": "Disgusted",
+                "fr": "Dégoûté"
+              },
+              "vector": {
+                "valence": 0.1,
+                "arousal": 0.65,
+                "dominance": 0.5,
+                "socialOrientation": 0.55,
+                "temporalFocus": 0.35
+              }
+            },
+            {
+              "value": "drained",
+              "label": {
+                "en": "Drained",
+                "fr": "Vidé"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.05,
+                "dominance": 0.1,
+                "socialOrientation": 0.25,
+                "temporalFocus": 0.4
+              }
+            },
+            {
+              "value": "embarrassed",
+              "label": {
+                "en": "Embarrassed",
+                "fr": "Embarrassé"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.55,
+                "dominance": 0.1,
+                "socialOrientation": 0.8,
+                "temporalFocus": 0.6
+              }
+            },
+            {
+              "value": "excited",
+              "label": {
+                "en": "Excited",
+                "fr": "Excité"
+              },
+              "vector": {
+                "valence": 0.85,
+                "arousal": 0.9,
+                "dominance": 0.65,
+                "socialOrientation": 0.45,
+                "temporalFocus": 0.7
+              }
+            },
+            {
+              "value": "frustrated",
+              "label": {
+                "en": "Frustrated",
+                "fr": "Frustré"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.7,
+                "dominance": 0.3,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.45
+              }
+            },
+            {
+              "value": "grateful",
+              "label": {
+                "en": "Grateful",
+                "fr": "Reconnaissant"
+              },
+              "vector": {
+                "valence": 0.85,
+                "arousal": 0.35,
+                "dominance": 0.5,
+                "socialOrientation": 0.8,
+                "temporalFocus": 0.55
+              }
+            },
+            {
+              "value": "guilty",
+              "label": {
+                "en": "Guilty",
+                "fr": "Coupable"
+              },
+              "vector": {
+                "valence": 0.1,
+                "arousal": 0.4,
+                "dominance": 0.15,
+                "socialOrientation": 0.75,
+                "temporalFocus": 0.75
+              }
+            },
+            {
+              "value": "happy",
+              "label": {
+                "en": "Happy",
+                "fr": "Heureux"
+              },
+              "vector": {
+                "valence": 0.8,
+                "arousal": 0.6,
+                "dominance": 0.6,
+                "socialOrientation": 0.5,
+                "temporalFocus": 0.5
+              }
+            },
+            {
+              "value": "hopeful",
+              "label": {
+                "en": "Hopeful",
+                "fr": "Plein d'espoir"
+              },
+              "vector": {
+                "valence": 0.75,
+                "arousal": 0.5,
+                "dominance": 0.45,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.85
+              }
+            },
+            {
+              "value": "hopeless",
+              "label": {
+                "en": "Hopeless",
+                "fr": "Désespéré"
+              },
+              "vector": {
+                "valence": 0.05,
+                "arousal": 0.15,
+                "dominance": 0.1,
+                "socialOrientation": 0.3,
+                "temporalFocus": 0.65
+              }
+            },
+            {
+              "value": "indifferent",
+              "label": {
+                "en": "Indifferent",
+                "fr": "Indifférent"
+              },
+              "vector": {
+                "valence": 0.5,
+                "arousal": 0.2,
+                "dominance": 0.5,
+                "socialOrientation": 0.25,
+                "temporalFocus": 0.45
+              }
+            },
+            {
+              "value": "irritated",
+              "label": {
+                "en": "Irritated",
+                "fr": "Irrité"
+              },
+              "vector": {
+                "valence": 0.2,
+                "arousal": 0.65,
+                "dominance": 0.55,
+                "socialOrientation": 0.5,
+                "temporalFocus": 0.4
+              }
+            },
+            {
+              "value": "jealous",
+              "label": {
+                "en": "Jealous",
+                "fr": "Jaloux"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.65,
+                "dominance": 0.25,
+                "socialOrientation": 0.8,
+                "temporalFocus": 0.5
+              }
+            },
+            {
+              "value": "joyful",
+              "label": {
+                "en": "Joyful",
+                "fr": "Joyeux"
+              },
+              "vector": {
+                "valence": 0.9,
+                "arousal": 0.75,
+                "dominance": 0.65,
+                "socialOrientation": 0.55,
+                "temporalFocus": 0.5
+              }
+            },
+            {
+              "value": "lonely",
+              "label": {
+                "en": "Lonely",
+                "fr": "Seul"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.2,
+                "dominance": 0.2,
+                "socialOrientation": 0.85,
+                "temporalFocus": 0.5
+              }
+            },
+            {
+              "value": "overwhelmed",
+              "label": {
+                "en": "Overwhelmed",
+                "fr": "Submergé"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.75,
+                "dominance": 0.05,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.55
+              }
+            },
+            {
+              "value": "passionate",
+              "label": {
+                "en": "Passionate",
+                "fr": "Passionné"
+              },
+              "vector": {
+                "valence": 0.85,
+                "arousal": 0.85,
+                "dominance": 0.7,
+                "socialOrientation": 0.5,
+                "temporalFocus": 0.6
+              }
+            },
+            {
+              "value": "peaceful",
+              "label": {
+                "en": "Peaceful",
+                "fr": "Paisible"
+              },
+              "vector": {
+                "valence": 0.75,
+                "arousal": 0.1,
+                "dominance": 0.55,
+                "socialOrientation": 0.35,
+                "temporalFocus": 0.4
+              }
+            },
+            {
+              "value": "proud",
+              "label": {
+                "en": "Proud",
+                "fr": "Fier"
+              },
+              "vector": {
+                "valence": 0.85,
+                "arousal": 0.65,
+                "dominance": 0.85,
+                "socialOrientation": 0.55,
+                "temporalFocus": 0.55
+              }
+            },
+            {
+              "value": "relieved",
+              "label": {
+                "en": "Relieved",
+                "fr": "Soulagé"
+              },
+              "vector": {
+                "valence": 0.75,
+                "arousal": 0.25,
+                "dominance": 0.5,
+                "socialOrientation": 0.35,
+                "temporalFocus": 0.6
+              }
+            },
+            {
+              "value": "sad",
+              "label": {
+                "en": "Sad",
+                "fr": "Triste"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.2,
+                "dominance": 0.25,
+                "socialOrientation": 0.3,
+                "temporalFocus": 0.6
+              }
+            },
+            {
+              "value": "satisfied",
+              "label": {
+                "en": "Satisfied",
+                "fr": "Satisfait"
+              },
+              "vector": {
+                "valence": 0.8,
+                "arousal": 0.3,
+                "dominance": 0.65,
+                "socialOrientation": 0.4,
+                "temporalFocus": 0.45
+              }
+            },
+            {
+              "value": "scared",
+              "label": {
+                "en": "Scared",
+                "fr": "Effrayé"
+              },
+              "vector": {
+                "valence": 0.1,
+                "arousal": 0.85,
+                "dominance": 0.1,
+                "socialOrientation": 0.3,
+                "temporalFocus": 0.75
+              }
+            },
+            {
+              "value": "stressed",
+              "label": {
+                "en": "Stressed",
+                "fr": "Stressé"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.8,
+                "dominance": 0.2,
+                "socialOrientation": 0.35,
+                "temporalFocus": 0.65
+              }
+            },
+            {
+              "value": "surprised",
+              "label": {
+                "en": "Surprised",
+                "fr": "Surpris"
+              },
+              "vector": {
+                "valence": 0.55,
+                "arousal": 0.8,
+                "dominance": 0.3,
+                "socialOrientation": 0.45,
+                "temporalFocus": 0.5
+              }
+            },
+            {
+              "value": "worried",
+              "label": {
+                "en": "Worried",
+                "fr": "Inquiet"
+              },
+              "vector": {
+                "valence": 0.15,
+                "arousal": 0.65,
+                "dominance": 0.15,
+                "socialOrientation": 0.45,
+                "temporalFocus": 0.85
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "methodId": "hds",
       "order": 1,
       "name": {
