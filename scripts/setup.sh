@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# This script sets up the data-model-draft build environment
+# This script sets up the data-model build environment
 
 # working dir fix
 scriptsFolder=$(cd $(dirname "$0"); pwd)
@@ -21,7 +21,7 @@ then
 Setting up 'dist' folder for publishing to GitHub pages...
 "
   rm -rf dist
-  git clone -b gh-pages git@github.com:healthdatasafe/data-model-draft.git dist
+  git clone -b gh-pages git@github.com:healthdatasafe/data-model.git dist
 fi
 
 echo "
