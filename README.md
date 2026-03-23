@@ -1,180 +1,79 @@
-# HDS Data Model Drafting space
+# HDS Data Model
 
-Defines the initial version of stream structures and event types for a common model for HDS data points. 
+Defines the stream structures, item definitions, event types, and converter configurations for the HDS health data model.
 
-## Usage 
+Published at [model.datasafe.dev](https://model.datasafe.dev)
 
-- Files are published on https://model.datasafe.dev
+## Contents
 
-## Functional Requirements Specifications
+| Category | Count | Description |
+|----------|-------|-------------|
+| Items | 73 | Health data point definitions (body, fertility, medication, etc.) |
+| Streams | 36 | Hierarchical data categories |
+| Event types (HDS) | 33 | Custom Pryv event type schemas |
+| Event types (legacy) | ~200 | Standard Pryv measurement types |
+| Converters | 2 | Cross-method conversion engines (cervical-fluid, mood) |
 
-| Date             | 29th September 2025 |
-| ---------------- | ------------- |
-| Document Version | 0.4           |
-| Status           | Draft         |
-|                  |               |
-
-### Dev & Roadmap 
-
-Base Logic - metrics, observation, all about patient data 
-
-- [ ] Choose JSON or YAML
-- [ ] Write JsonScheams and validate with [ajv](https://github.com/ajv-validator/ajv)
-- [ ] Experiment **toFhir** & **fromFhir**  logics 
-- [ ] Experiment conversion logic (from one eventType to another wihin an "Item")
-- [ ] Experiment model versioning 
-
-Specific Logic
-
-- [ ] Access ClientData
-  - [ ] Properties for contact informations (type, address, ... ,url)
-  - [ ] Properties for supported interactions
-    - [ ] A `chat stream` when the counter part supports chats
-
-Data usage and display
-
-- [ ] Provide definition to display items in forms see:  https://jsonforms.io/ 
-
-### Function Requirements
-
-#### Description
-
-HDS should provide a comprehensive set of tools to identify and encode medical and life data in a common data model. 
-
-These tools should be used by digital applications and processes to input and output data from HDS.
-
-#### Streams & eventTypes
-
-Based on Pryv software, all observations & information are encoded as `events`  with one `eventType` determining the **type** of data and at least one `streamId`  giving the **context**.
-
-This logic needs to be completed for HDS to facilitate the encoding and representation of information in forms, graphs, tables and for data aggregation and processing.
-
-#### Items
-
-An item definition should give enough information to perform the following:
-
-Note: all textual descriptions and labels should be translatable. market with a (t)
-
-- basics
-  - identify an observation or information, e.g. Body Weight
-  - has a label (t)
-  - has a description (t)
-  - has a unique identifier
-  - has at least one eventType
-  - has at least one streamId
-- Constraints & checks
-  The eventType(s) will already provide some constraints, such as "number" or "object stucture" based on jsonSchema. This may not be sufficient and could be completed on a per eventType basis.
-
-- Encoding in standards and variations
-  - Some data may be taken with different variations and context
-  - [SNOWMED CT](https://bioportal.bioontology.org/ontologies/SNOMEDCT)
-  - [LOINC (BODY WEIGHT)](https://loinc.org/LG34372-9)
-
-- Medications code list
-  - ATC: https://atcddd.fhi.no/atc_ddd_index/
-  - HCPCS: https://www.aapc.com/codes/hcpcs-codes-range/ 
-  - SCTID: https://browser.ihtsdotools.org/?perspective=full&conceptId1=404684003&edition=MAIN/2025-09-01&release=&languages=en
-  - UNII: https://precision.fda.gov/uniisearch
-  - Frequency Fhir: https://build.fhir.org/ig/HL7/CDA-Examples/medicationfrequency.html
-
-  
-- Source of the data
-  The origin of the data will be given by `createdBy` and `modifiedBy` . Still this may not be sufficient 
-- HL7Fhir transformation 
-  HL7Fhir is a standard widely used to exchange medical and observation data. HDS items should support as much as possible conversion from and to HL7Fhir. The transformation information should be stored in these definitions and in the related events and streams.
-  - [HL7 US](https://hl7.org/fhir/us/)
-  - [HL7 CH](https://www.fhir.ch)
-- Displaying the information
-  An Item should provide the necessary information for applications to display it in a unified way.
-  - Forms
-    - Numbers
-    - Text input
-      - Short
-      - Long
-    - Date 
-      - Day only
-      - Year only
-      - ....
-    - Select with Ids and Labels
-  - Graphs & Aggregation
-    - Some data may be displayed as a graph
-    - May provide aggregation information: sum  of steps, average for temperature
-
-- versioning
-  - has a version
-  - provides necessary information to transform the data to the latest version
-
-
-**Example Weight**
-```yaml
-body-weight:
-  label: 
-    en: Body Weight
-  description:
-    en: Body weight of a human being
-  streamId: body-weight # the parents structures of streams is given by the default streams structure
-  variations: # Variations of this measure
-  	eventType: # Reserved key for variation by EventType
-      label: Unit
-      options:
-        - value: mass/kg
-  			  label: Kg
-  			  hl7fhir:
-  				  unit: kg
-        	  code: kg
-  		  - value: mass/lb
-  			  label: Lbs
-  			  hl7fhir:
-            unit: lb
-            code: "[lb_av]"
-    measure-detail: # Free-from key for variation
-      default: # Reserved keywork for default selection when none is provided
-        label: 
-          en: Default
-        description: 
-          en: Measured with an instrument
-        encoding:
-          loinc: 29463-7
-          snowmed: 27113001 # Many other exists
-      self-reported:
-        label: 
-          en: Self reported
-        description: 
-          en: Weight self reported
-        encoding:
-          loinc: 79348-9
-          snowmed: 784399000
-      with-clothes:
-        label:
-          en: Measured with clothes
-        encoding:
-          loinc: 8350-1
-          hl7:
-            extension: # snowmed as no specific code by provide extension
-              - url: http://hl7.org/fhir/us/vitals/StructureDefinition/AssociatedSituationExt
-  constraints:
-    number: 
-        min: 0
-  conversion: # Conversion are handled by eventTypes, they are bi-drectionnal
-    byEventType: true
-  display:
-    input:
-      type: number
-    table:
-      round: -2 # Will perform round(x*10^-round)*10^round  
-    graph:
-      type: lines
-      aggregation: none
-  repeatable: any # 
-  hl7fhir:
-    resourceType: Observation
-    meta:
-      profile:
-        - http://hl7.org/fhir/us/vitals/StructureDefinition/body-weight
-      category-default: vital-sign # category shortcurt
-    valueQuantity:
-      value: "{event.content}"
-      system: http://unitsofmeasure.org
+## Structure
 
 ```
+definitions/
+  items/           YAML item definitions by category
+    activity.yaml     9 physical activity items
+    body.yaml         body-weight, body-height
+    body-skin.yaml    4 skin condition items
+    body-vulva.yaml   bleeding, mucus, cervix, wetness items
+    family.yaml       children count
+    fertility.yaml    cycles, hormones, tests, sexual activity
+    medication.yaml   basic, coded, prescription
+    nutrition.yaml    appetite
+    profile.yaml      display name, DOB, sex, address
+    symptom.yaml      17 symptom items across 7 categories
+    wellbeing.yaml    mood (5D vectors), sex drive
+  streams/         YAML stream hierarchy definitions
+  eventTypes/      JSON event type schemas (HDS + legacy Pryv types)
+  converters/      Cross-method converter configurations
+    cervical-fluid/  9D vector model for mucus observation methods
+    mood/            5D vector model for mood states
+  datasources/     External data source definitions
+```
 
+## Item Definition Format
+
+Each item defines a health data point with enough information for storage, display, and interoperability:
+
+```yaml
+body-weight:
+  label:
+    en: Body Weight
+    fr: Poids corporel
+  description:
+    en: Measured body weight
+  streamId: body-weight
+  eventType: mass/kg
+  type: number
+  repeatable: unlimited
+  variations:
+    eventType:
+      options:
+        - value: mass/kg
+          label: { en: Kg }
+        - value: mass/lb
+          label: { en: Lbs }
+```
+
+## Build
+
+```bash
+npm run setup    # Install dependencies
+npm run build    # Generate dist/pack.json (served at model.datasafe.dev)
+```
+
+## Deploy
+
+Published via GitHub Pages — `npm run deploy` builds and pushes to the `gh-pages` branch.
+
+## Prerequisites
+
+- Node.js >= 24
+- npm
