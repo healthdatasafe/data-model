@@ -1,0 +1,49 @@
+{
+  "methodId": "daylio",
+  "order": 15,
+  "name": {
+    "en": "Daylio",
+    "fr": "Daylio"
+  },
+  "description": {
+    "en": "5-point ordinal mood scale from Daylio, the most popular standalone mood tracking app. Primarily valence-based with neutral arousal.",
+    "fr": "Échelle d'humeur ordinale à 5 niveaux de Daylio, l'application de suivi d'humeur autonome la plus populaire. Principalement basée sur la valence avec une activation neutre."
+  },
+  "referenceUrl": "https://daylio.net/",
+  "components": [
+    {
+      "field": "observation",
+      "label": {
+        "en": "Mood level",
+        "fr": "Niveau d'humeur"
+      },
+      "options": [
+        {
+          "value": "rad",
+          "label": { "en": "Rad", "fr": "Super" },
+          "vector": { "valence": 0.95, "arousal": 0.70, "dominance": 0.75, "socialOrientation": 0.50, "temporalFocus": 0.55 }
+        },
+        {
+          "value": "good",
+          "label": { "en": "Good", "fr": "Bien" },
+          "vector": { "valence": 0.75, "arousal": 0.55, "dominance": 0.60, "socialOrientation": 0.50, "temporalFocus": 0.50 }
+        },
+        {
+          "value": "meh",
+          "label": { "en": "Meh", "fr": "Bof" },
+          "vector": { "valence": 0.50, "arousal": 0.40, "dominance": 0.45, "socialOrientation": 0.45, "temporalFocus": 0.50 }
+        },
+        {
+          "value": "bad",
+          "label": { "en": "Bad", "fr": "Mal" },
+          "vector": { "valence": 0.25, "arousal": 0.45, "dominance": 0.30, "socialOrientation": 0.45, "temporalFocus": 0.55 }
+        },
+        {
+          "value": "awful",
+          "label": { "en": "Awful", "fr": "Horrible" },
+          "vector": { "valence": 0.05, "arousal": 0.50, "dominance": 0.15, "socialOrientation": 0.40, "temporalFocus": 0.55 }
+        }
+      ]
+    }
+  ]
+}

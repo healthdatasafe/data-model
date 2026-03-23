@@ -319,11 +319,21 @@ The `model-mood` library is a **conversion tool**, separate from HDS storage. Fo
 
 ---
 
-## Status: IN PROGRESS (Plan 13, Phase B)
+## Status: DONE (Plan 24, 2026-03-23)
 
-The `wellbeing-mood` item with `mood/5d-vectors` event type is defined in data-model. Bridge-mira converter implementation is next — mapping Mira's 15 labels to 5D vectors inline (no standalone model-mood library yet).
+5D mood converter fully implemented with 5 methods:
+- **appleHealth** — 38 emotion labels from Apple HealthKit State of Mind (iOS 17+)
+- **daylio** — 5 ordinal levels (Rad/Good/Meh/Bad/Awful)
+- **howWeFeel** — 44 curated emotion words from How We Feel (Yale), 4 quadrants
+- **mira** — 16 labels from Mira fertility tracker
+- **_raw (HDS Native)** — auto-generated from dimension stops, direct dimensional input
 
-### Design decisions (settled 2026-03-17)
-- **Library vs inline**: Start with inline `MOOD_VECTORS` map in bridge-mira converter. Extract to a shared library later when more methods (Apple, How We Feel) need conversion.
-- **Anxiety/Stress from symptoms field**: Skipped — only captured through mood vectors. Avoids duplication between symptom presence flags and dimensional mood data.
-- **Mira "Normal"**: Maps to neutral vector (0.50 on all axes) — represents absence of strong emotion, not absence of data.
+Cross-method conversion verified (82-100% confidence). Converter definitions in `data-model/definitions/converters/mood/`.
+
+### Design decisions
+- **5D vector space**: valence (0.30), arousal (0.25), dominance (0.20), socialOrientation (0.15), temporalFocus (0.10)
+- **`hds` method removed**: replaced by auto-generated `_raw` virtual method named "HDS Native" — same functionality, no hand-written JSON needed
+- **Daylio**: only 5 default levels (no custom labels)
+- **How We Feel**: curated 44 words from ~144+ (expandable later)
+- **Anxiety/Stress from symptoms field**: skipped — only captured through mood vectors
+- **Mira "Normal"**: maps to neutral vector (0.50 on all axes)

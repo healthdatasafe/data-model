@@ -17,7 +17,7 @@ dimensionNames:
 dimensions:
   valence:
     label: { en: Valence, fr: Valence }
-    shortLabel: { en: Val, fr: Val }
+    shortLabel: { en: Pleasantness, fr: Agrément }
     description:
       en: "Pleasure/displeasure: 0 = very unpleasant, 0.5 = neutral, 1 = very pleasant."
       fr: "Plaisir/déplaisir : 0 = très désagréable, 0.5 = neutre, 1 = très agréable."
@@ -59,7 +59,7 @@ dimensions:
 
   socialOrientation:
     label: { en: Social focus, fr: Focus social }
-    shortLabel: { en: Social, fr: Social }
+    shortLabel: { en: Social focus, fr: Focus social }
     description:
       en: "Social focus: 0 = self-focused, 0.5 = balanced, 1 = other-focused."
       fr: "Focus social : 0 = centré sur soi, 0.5 = équilibré, 1 = centré sur les autres."
@@ -71,7 +71,7 @@ dimensions:
 
   temporalFocus:
     label: { en: Time focus, fr: Focus temporel }
-    shortLabel: { en: Time, fr: Temps }
+    shortLabel: { en: Time focus, fr: Focus temporel }
     description:
       en: "Time orientation: 0 = past-dwelling, 0.5 = present, 1 = future-anticipating."
       fr: "Orientation temporelle : 0 = tourné vers le passé, 0.5 = présent, 1 = tourné vers le futur."
