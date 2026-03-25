@@ -1,0 +1,25 @@
+{
+  "appId": null,
+  "type": "data-model",
+  "description": "Source of truth — HDS item definitions, stream hierarchy, event types, app stream conventions",
+  "produces": {
+    "items": "*",
+    "eventTypes": [],
+    "note": "Defines all standard item definitions and their event types"
+  },
+  "consumes": {
+    "items": [],
+    "eventTypes": []
+  },
+  "streams": [],
+  "definitions": {
+    "items": "definitions/items/",
+    "streams": "definitions/streams/",
+    "appStreams": "definitions/appStreams.yaml",
+    "settings": "definitions/settings/settings.yaml",
+    "converters": "definitions/converters/"
+  },
+  "access": {
+    "note": "Static data — no Pryv access needed"
+  }
+}
