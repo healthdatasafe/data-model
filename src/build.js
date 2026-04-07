@@ -3,9 +3,8 @@ const path = require('path');
 
 const basePath = path.resolve(__dirname, '../dist');
 
-const { itemsById } = require('./items');
-
-const rootStreams = require('./streams').roots;
+// Browser app that replaced the static index.html / streams.html.
+const BROWSER_URL = 'https://model-browser.datasafe.dev/';
 
 const sources = [
   require('./schemas/items').toBePublished,
@@ -67,57 +66,33 @@ const versionContent = {
 };
 fs.writeFileSync(versionFilePath, JSON.stringify(versionContent, null, 2), 'utf-8');
 
-// -- html table files
-const htmlTableFiles = htmlTableSrc.map(i => `<tr><td>${i.title}</td><td><a href="${i.link}">${i.linkTxt}</a></tr>`).join('\n');
+// -- index.html — small landing page that redirects to the React browser.
+// The previous static items / streams tables have been replaced by
+// `app-data-model-browser` (https://model-browser.datasafe.dev/), which loads
+// pack.json + version.json directly from this same domain. Anything that
+// linked to model.datasafe.dev/index.html now bounces over via meta-refresh.
+const redirectHtml = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HDS Data Model</title>
+    <meta http-equiv="refresh" content="0; url=${BROWSER_URL}" />
+    <link rel="canonical" href="${BROWSER_URL}" />
+    <style>
+      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, system-ui, sans-serif; padding: 4rem 2rem; max-width: 40rem; margin: 0 auto; color: #111928; }
+      a { color: #1C64F2; }
+    </style>
+  </head>
+  <body>
+    <h1>HDS Data Model</h1>
+    <p>The data-model browser has moved to <a href="${BROWSER_URL}">${BROWSER_URL}</a>.</p>
+    <p>If you are not redirected automatically, click the link above.</p>
+  </body>
+</html>
+`;
+fs.writeFileSync(path.resolve(basePath, 'index.html'), redirectHtml, 'utf-8');
 
-const indexHtmlSrc = fs.readFileSync(path.resolve(__dirname, '../docs-src/index.html'), 'utf-8');
-const indexHtmlDest1 = indexHtmlSrc.replace('{TABLE_FILES}', htmlTableFiles);
-
-const itemsByStreamId = {};
-
-// -- html table items
-const rowsItems = [];
-for (const key of Object.keys(itemsById).sort()) {
-  const i = itemsById[key];
-
-  // add to itemsByStreamId
-  if (itemsByStreamId[i.streamId] == null) itemsByStreamId[i.streamId] = [];
-  itemsByStreamId[i.streamId].push(key);
-
-  // continue
-  const variation = (i.variations?.eventType != null) ? `(${i.variations.eventType.label.en}): ` + i.variations.eventType.options.map(v => v.value).join(', ') : '';
-  const type = (typeof i.eventType === 'string') ? i.eventType : variation;
-  const select = (i.options == null) ? '' : '<BR><SELECT style="width: 20em">' + i.options.map((o) => (`<OPTION>${o.value}: ${o.label.en}</OPTION>`)).join('') + '</SELECT>';
-  const infos = (i.devNotes == null) ? '' : `<BR><span style="font-style: italic; font-size: small">${i.devNotes.replaceAll('\n', '<br>')}</span>`;
-  const line = `<tr><td><span style="font-weight: bold;" id="${key}">${key}</span><br><u>Type:</u> ${i.type}<br><u>When:</u> ${i.repeatable}</td><td>${i.label.en}<br>${i.description.en}${select}${infos}</td><td><u>streamId:</u> ${i.streamId}<br><u>eventType(s):</u> ${type}<br><u>version:</u> ${i.version}</td></tr>`;
-  rowsItems.push(line);
-}
-const indexHtmlDest = indexHtmlDest1.replace('{TABLE_ITEMS}', rowsItems.join('\n'));
-
-fs.writeFileSync(path.resolve(basePath, 'index.html'), indexHtmlDest, 'utf-8');
-
-// -- streams page
-const streamsHtmlSrc = fs.readFileSync(path.resolve(__dirname, '../docs-src/streams.html'), 'utf-8');
-
-function addStreams (streams, depth) {
-  if (streams == null) return '';
-  const pad = '                   '.substring(0, depth).replaceAll(' ', '&nbsp&nbsp');
-  let res = '';
-  for (const stream of streams) {
-    const items = [];
-    if (itemsByStreamId[stream.id]) {
-      for (const key of itemsByStreamId[stream.id]) {
-        items.push(`<A HREF="index.html#${key}">${key}</A>`);
-      }
-    }
-    res += `<TR><TD>${pad}-${stream.name}</TD><TD>${stream.id}</TD><TD>${items.join('<BR>')}</TD></TR>`;
-    res += addStreams(stream.children, depth + 1);
-  }
-  return res;
-}
-
-const streamsContent = addStreams(rootStreams, 0);
-
-const streamsHtmlDest = streamsHtmlSrc.replace('{STREAMS}', streamsContent);
-
-fs.writeFileSync(path.resolve(basePath, 'streams.html'), streamsHtmlDest, 'utf-8');
+// streams.html is no longer published — remove any leftover from a prior build.
+const oldStreamsHtml = path.resolve(basePath, 'streams.html');
+if (fs.existsSync(oldStreamsHtml)) fs.unlinkSync(oldStreamsHtml);
