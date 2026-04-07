@@ -405,6 +405,44 @@
     "type": "checkbox",
     "repeatable": "P1D"
   },
+  "body-vulva-menstrual-cup": {
+    "version": "v1",
+    "label": {
+      "en": "Menstrual Cup",
+      "fr": "Coupe menstruelle"
+    },
+    "description": {
+      "en": "Menstrual cup fill level on a 0-1 proportion scale, recorded at emptying.",
+      "fr": "Niveau de remplissage de la coupe menstruelle sur une échelle 0-1, enregistré au moment de vider."
+    },
+    "streamId": "body-vulva-menstrual-cup",
+    "eventType": "ratio/proportion",
+    "type": "select",
+    "options": [
+      {
+        "value": 0.35,
+        "label": {
+          "en": "Light",
+          "fr": "Léger"
+        }
+      },
+      {
+        "value": 0.55,
+        "label": {
+          "en": "Moderate",
+          "fr": "Modéré"
+        }
+      },
+      {
+        "value": 0.75,
+        "label": {
+          "en": "Heavy",
+          "fr": "Abondant"
+        }
+      }
+    ],
+    "repeatable": "unlimited"
+  },
   "body-vulva-cervix-position": {
     "version": "v1",
     "label": {
@@ -553,6 +591,21 @@
       "cooldown": "P1D"
     }
   },
+  "body-temperature-basal": {
+    "version": "v1",
+    "label": {
+      "en": "Basal Body Temperature",
+      "fr": "Température basale"
+    },
+    "description": {
+      "en": "Resting body temperature taken on waking, before any activity. Used for fertility charting.",
+      "fr": "Température au repos prise au réveil, avant toute activité. Utilisée pour le suivi de la fertilité."
+    },
+    "streamId": "body-temperature-basal",
+    "eventType": "temperature/c",
+    "type": "number",
+    "repeatable": "unlimited"
+  },
   "body-height": {
     "version": "temporary",
     "label": {
@@ -611,6 +664,36 @@
     },
     "streamId": "fertility-cycles-charted-estimation",
     "eventType": "count/generic",
+    "type": "number",
+    "repeatable": "once"
+  },
+  "fertility-cycles-average-length": {
+    "version": "v1",
+    "label": {
+      "en": "Average Cycle Length",
+      "fr": "Durée moyenne du cycle"
+    },
+    "description": {
+      "en": "User's average menstrual cycle length, expressed in days. Profile-level metric updated over time.",
+      "fr": "Durée moyenne du cycle menstruel de l'utilisatrice, exprimée en jours. Mesure de profil mise à jour au fil du temps."
+    },
+    "streamId": "fertility-cycles-average-length",
+    "eventType": "time/d",
+    "type": "number",
+    "repeatable": "once"
+  },
+  "fertility-cycles-average-period": {
+    "version": "v1",
+    "label": {
+      "en": "Average Period Length",
+      "fr": "Durée moyenne des règles"
+    },
+    "description": {
+      "en": "User's average period (menstruation) length, expressed in days. Profile-level metric updated over time.",
+      "fr": "Durée moyenne des règles de l'utilisatrice, exprimée en jours. Mesure de profil mise à jour au fil du temps."
+    },
+    "streamId": "fertility-cycles-average-period",
+    "eventType": "time/d",
     "type": "number",
     "repeatable": "once"
   },
@@ -1543,6 +1626,19 @@
     "type": "checkbox",
     "repeatable": "unlimited"
   },
+  "symptom-pain-muscle": {
+    "version": "v1",
+    "label": {
+      "en": "Muscle / Joint Pain"
+    },
+    "description": {
+      "en": "Muscle aches or joint pain (myalgia, arthralgia)."
+    },
+    "streamId": "symptom-pain-muscle",
+    "eventType": "activity/plain",
+    "type": "checkbox",
+    "repeatable": "unlimited"
+  },
   "symptom-neurological-dizziness": {
     "version": "v1",
     "label": {
@@ -1578,6 +1674,19 @@
       "en": "Unusual body or facial hair growth (hirsutism)."
     },
     "streamId": "symptom-dermatological-hair-growth",
+    "eventType": "activity/plain",
+    "type": "checkbox",
+    "repeatable": "unlimited"
+  },
+  "symptom-cognitive-focus-difficulty": {
+    "version": "v1",
+    "label": {
+      "en": "Difficulty Concentrating"
+    },
+    "description": {
+      "en": "Trouble focusing or concentrating on tasks.\nSNOMED CT: 76039006 (Difficulty concentrating)."
+    },
+    "streamId": "symptom-cognitive-focus-difficulty",
     "eventType": "activity/plain",
     "type": "checkbox",
     "repeatable": "unlimited"

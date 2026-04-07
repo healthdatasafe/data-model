@@ -135,6 +135,11 @@
               }
             ],
             "parentId": "body-vulva"
+          },
+          {
+            "id": "body-vulva-menstrual-cup",
+            "name": "Menstrual Cup",
+            "parentId": "body-vulva"
           }
         ],
         "parentId": "body"
@@ -162,6 +167,18 @@
             "id": "body-skin-glowing",
             "name": "Glowing Skin",
             "parentId": "body-skin"
+          }
+        ],
+        "parentId": "body"
+      },
+      {
+        "id": "body-temperature",
+        "name": "Body Temperature",
+        "children": [
+          {
+            "id": "body-temperature-basal",
+            "name": "Basal Body Temperature",
+            "parentId": "body-temperature"
           }
         ],
         "parentId": "body"
@@ -256,6 +273,16 @@
           {
             "id": "fertility-cycles-charted-estimation",
             "name": "Cycles charted estimation",
+            "parentId": "fertility-cycles"
+          },
+          {
+            "id": "fertility-cycles-average-length",
+            "name": "Average Cycle Length",
+            "parentId": "fertility-cycles"
+          },
+          {
+            "id": "fertility-cycles-average-period",
+            "name": "Average Period Length",
             "parentId": "fertility-cycles"
           }
         ],
@@ -441,6 +468,11 @@
             "id": "symptom-pain-backache",
             "name": "Backache",
             "parentId": "symptom-pain"
+          },
+          {
+            "id": "symptom-pain-muscle",
+            "name": "Muscle / Joint Pain",
+            "parentId": "symptom-pain"
           }
         ],
         "parentId": "symptom"
@@ -453,6 +485,18 @@
             "id": "symptom-neurological-dizziness",
             "name": "Dizziness",
             "parentId": "symptom-neurological"
+          }
+        ],
+        "parentId": "symptom"
+      },
+      {
+        "id": "symptom-cognitive",
+        "name": "Cognitive",
+        "children": [
+          {
+            "id": "symptom-cognitive-focus-difficulty",
+            "name": "Difficulty Concentrating",
+            "parentId": "symptom-cognitive"
           }
         ],
         "parentId": "symptom"
