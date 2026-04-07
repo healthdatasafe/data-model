@@ -1,6 +1,69 @@
 {
-  "commit": "4e90dc8d0be6772202a4ae574fed991090e9c8f7",
-  "commitShort": "4e90dc8",
+  "commit": "9dcf2f5270c7c4ddf9dfce25a569069ce9309802",
+  "commitShort": "9dcf2f5",
   "branch": "main",
-  "buildDate": "2026-04-07T15:27:53Z"
+  "buildDate": "2026-04-07T15:55:17Z",
+  "publicationDate": "2026-04-07T15:55:16.997Z",
+  "files": [
+    {
+      "title": "Pack items & streams",
+      "file": "pack.json"
+    },
+    {
+      "title": "Json Schema Item",
+      "file": "json-schemas/item.json"
+    },
+    {
+      "title": "Json Schema Defs",
+      "file": "json-schemas/defs.json"
+    },
+    {
+      "title": "Streams Tree",
+      "file": "streamsTree.json"
+    },
+    {
+      "title": "Items dictionnary",
+      "file": "items.json"
+    },
+    {
+      "title": "EventTypes dictionnary",
+      "file": "eventTypes.json"
+    },
+    {
+      "title": "Datasources dictionnary",
+      "file": "datasources.json"
+    },
+    {
+      "title": "Unit conversions",
+      "file": "conversions.json"
+    },
+    {
+      "title": "Converter: cervical-fluid — versions",
+      "file": "converters/cervical-fluid/index.json"
+    },
+    {
+      "title": "Converter: cervical-fluid — latest pack",
+      "file": "converters/cervical-fluid/pack-latest.json"
+    },
+    {
+      "title": "Converter: mood — versions",
+      "file": "converters/mood/index.json"
+    },
+    {
+      "title": "Converter: mood — latest pack",
+      "file": "converters/mood/pack-latest.json"
+    },
+    {
+      "title": "Converters index",
+      "file": "converters/pack.json"
+    },
+    {
+      "title": "User settings definitions",
+      "file": "settings.json"
+    },
+    {
+      "title": "App stream definitions",
+      "file": "appStreams.json"
+    }
+  ]
 }
