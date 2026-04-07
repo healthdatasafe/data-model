@@ -19,9 +19,21 @@ body-weight:
   repeatable: unlimited
   reminder:
     cooldown: P1D
+body-temperature-basal:
+  version: v1
+  label:
+    en: Basal Body Temperature
+    fr: Température basale
+  description:
+    en: Resting body temperature taken on waking, before any activity. Used for fertility charting.
+    fr: Température au repos prise au réveil, avant toute activité. Utilisée pour le suivi de la fertilité.
+  streamId: body-temperature-basal
+  eventType: temperature/c
+  type: number
+  repeatable: unlimited
 body-height:
   version: temporary
-  label: 
+  label:
     en: Body height
     fr: Taille
   description: 

@@ -36,6 +36,8 @@ children:
             name: Postpartum Bleeding
           - id: body-vulva-bleeding-miscarriage
             name: Miscarriage Bleeding
+      - id: body-vulva-menstrual-cup
+        name: Menstrual Cup
   - id: body-skin
     name: Skin
     children:
@@ -47,6 +49,11 @@ children:
         name: Oily Skin
       - id: body-skin-glowing
         name: Glowing Skin
+  - id: body-temperature
+    name: Body Temperature
+    children:
+      - id: body-temperature-basal
+        name: Basal Body Temperature
   - id: body-urine
     name: Urine
     children:

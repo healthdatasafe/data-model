@@ -110,6 +110,15 @@ symptom-pain-backache:
   type: checkbox
   repeatable: unlimited
 
+symptom-pain-muscle:
+  version: v1
+  label: Muscle / Joint Pain
+  description: Muscle aches or joint pain (myalgia, arthralgia).
+  streamId: symptom-pain-muscle
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
 ## Neurological
 symptom-neurological-dizziness:
   version: v1
@@ -135,6 +144,18 @@ symptom-dermatological-hair-growth:
   label: Excess Hair Growth
   description: Unusual body or facial hair growth (hirsutism).
   streamId: symptom-dermatological-hair-growth
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+## Cognitive
+symptom-cognitive-focus-difficulty:
+  version: v1
+  label: Difficulty Concentrating
+  description: |-
+    Trouble focusing or concentrating on tasks.
+    SNOMED CT: 76039006 (Difficulty concentrating).
+  streamId: symptom-cognitive-focus-difficulty
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited

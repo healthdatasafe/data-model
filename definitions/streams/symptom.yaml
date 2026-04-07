@@ -30,11 +30,18 @@ children:
         name: Sore Breasts
       - id: symptom-pain-backache
         name: Backache
+      - id: symptom-pain-muscle
+        name: Muscle / Joint Pain
   - id: symptom-neurological
     name: Neurological
     children:
       - id: symptom-neurological-dizziness
         name: Dizziness
+  - id: symptom-cognitive
+    name: Cognitive
+    children:
+      - id: symptom-cognitive-focus-difficulty
+        name: Difficulty Concentrating
   - id: symptom-dermatological
     name: Dermatological
     children:

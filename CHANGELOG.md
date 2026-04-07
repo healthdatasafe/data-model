@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Added
+- Body temperature stream (`body-temperature`) and `body-temperature-basal` item (`temperature/c`) — basal body temperature for fertility charting.
+- `body-vulva-menstrual-cup` item under `body-vulva` stream (`ratio/proportion`, light/moderate/heavy fill levels).
+- Cognitive symptom stream (`symptom-cognitive`) and `symptom-cognitive-focus-difficulty` item — difficulty concentrating (SNOMED CT 76039006).
+- `symptom-pain-muscle` item under existing `symptom-pain` stream — muscle / joint pain.
+- `fertility-cycles-average-length` and `fertility-cycles-average-period` items (`time/d`, `repeatable: once`) — profile-level cycle/period length metrics.
+
+All new items added in support of the FEMM bridge (plan 33).
+
 ## [1.2.0] - 2026-03-23
 
 ### Changed

@@ -136,6 +136,34 @@ body-vulva-bleeding-miscarriage:
   type: checkbox
   repeatable: P1D
 
+## Menstrual Cup
+
+body-vulva-menstrual-cup:
+  version: v1
+  label:
+    en: Menstrual Cup
+    fr: Coupe menstruelle
+  description:
+    en: Menstrual cup fill level on a 0-1 proportion scale, recorded at emptying.
+    fr: Niveau de remplissage de la coupe menstruelle sur une échelle 0-1, enregistré au moment de vider.
+  streamId: body-vulva-menstrual-cup
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.35
+      label:
+        en: Light
+        fr: Léger
+    - value: 0.55
+      label:
+        en: Moderate
+        fr: Modéré
+    - value: 0.75
+      label:
+        en: Heavy
+        fr: Abondant
+  repeatable: unlimited
+
 ## Cervical Position
 
 body-vulva-cervix-position:

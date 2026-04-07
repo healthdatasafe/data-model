@@ -17,6 +17,10 @@ children:
         name: Peak Day
       - id: fertility-cycles-charted-estimation
         name: Cycles charted estimation
+      - id: fertility-cycles-average-length
+        name: Average Cycle Length
+      - id: fertility-cycles-average-period
+        name: Average Period Length
   - id: fertility-trainings
     name: Trainings
   - id: fertility-ttc-tta
