@@ -31,15 +31,18 @@ echo "Building..."
 npm run build
 echo "Build OK."
 
-# Generate version.json
-cat > dist/version.json << VEOF
-{
-  "commit": "$COMMIT_FULL",
-  "commitShort": "$COMMIT_SHORT",
-  "branch": "$MAIN_BRANCH",
-  "buildDate": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-}
-VEOF
+# Merge commit info into version.json (build.js already wrote publicationDate + files).
+BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+node -e "
+  const fs = require('fs');
+  const p = 'dist/version.json';
+  const v = fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf-8')) : {};
+  v.commit = '$COMMIT_FULL';
+  v.commitShort = '$COMMIT_SHORT';
+  v.branch = '$MAIN_BRANCH';
+  v.buildDate = '$BUILD_DATE';
+  fs.writeFileSync(p, JSON.stringify(v, null, 2));
+"
 git -C dist add -A
 if git -C dist diff --cached --quiet; then
   echo "No changes in dist/ — nothing to deploy."

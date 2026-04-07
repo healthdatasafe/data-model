@@ -49,6 +49,24 @@ for (const source of sources) {
 const packFilePath = path.resolve(basePath, 'pack.json');
 fs.writeFileSync(packFilePath, JSON.stringify(pack, null, 2), 'utf-8');
 
+// -- version.json (with files index for the data-model browser app)
+// scripts/deploy.sh merges commit/branch/buildDate into this file at deploy time.
+const filesIndex = htmlTableSrc.map(i => ({
+  title: i.title,
+  // strip leading "./" so consumers can join cleanly with the model base URL
+  file: i.link.replace(/^\.\//, '')
+}));
+const versionFilePath = path.resolve(basePath, 'version.json');
+const existingVersion = fs.existsSync(versionFilePath)
+  ? JSON.parse(fs.readFileSync(versionFilePath, 'utf-8'))
+  : {};
+const versionContent = {
+  ...existingVersion,
+  publicationDate: pack.publicationDate,
+  files: filesIndex
+};
+fs.writeFileSync(versionFilePath, JSON.stringify(versionContent, null, 2), 'utf-8');
+
 // -- html table files
 const htmlTableFiles = htmlTableSrc.map(i => `<tr><td>${i.title}</td><td><a href="${i.link}">${i.linkTxt}</a></tr>`).join('\n');
 
