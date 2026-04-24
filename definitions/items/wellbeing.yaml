@@ -290,11 +290,34 @@ wellbeing-self-rated-health:
     en: Self-rated health
     fr: Auto-évaluation de la santé
   description:
-    en: Overall self-rated health. Stored as ratio/proportion (0..1); a continuous VAS form stores at step 0.01 (displayed 0..100), a 5-level categorical form (SF-1 / PROMIS Global01) uses the canonical hooks 0.0 (Poor) / 0.25 (Fair) / 0.5 (Good) / 0.75 (Very good) / 1.0 (Excellent). Used by EQ VAS, SF-36 GH item 1, PROMIS Global01, SF-1, NHIS / MEPS / ESS / SILC SRH questions.
-    fr: Auto-évaluation globale de la santé. Stocké comme ratio/proportion (0..1) ; un formulaire VAS continu utilise un pas de 0.01 (affiché 0..100), un formulaire catégoriel à 5 niveaux (SF-1 / PROMIS Global01) utilise les points canoniques 0.0 (Médiocre) / 0.25 (Passable) / 0.5 (Bonne) / 0.75 (Très bonne) / 1.0 (Excellente). Utilisé par EQ VAS, SF-36 GH item 1, PROMIS Global01, SF-1 et les questions SRH des enquêtes NHIS / MEPS / ESS / SILC.
+    en: Overall self-rated health. Stored as ratio/proportion (0..1); a continuous VAS form stores at step 0.01 (displayed 0..100 via the slider's display.multiplier), a 5-level categorical form (SF-1 / PROMIS Global01) would use the canonical hooks 0.0 (Poor) / 0.25 (Fair) / 0.5 (Good) / 0.75 (Very good) / 1.0 (Excellent) via type "select". Used by EQ VAS, SF-36 GH item 1, PROMIS Global01, SF-1, NHIS / MEPS / ESS / SILC SRH questions.
+    fr: Auto-évaluation globale de la santé. Stocké comme ratio/proportion (0..1) ; un formulaire VAS continu utilise un pas de 0.01 (affiché 0..100 via display.multiplier du curseur), un formulaire catégoriel à 5 niveaux (SF-1 / PROMIS Global01) utiliserait les points canoniques 0.0 (Médiocre) / 0.25 (Passable) / 0.5 (Bonne) / 0.75 (Très bonne) / 1.0 (Excellente) via type "select". Utilisé par EQ VAS, SF-36 GH item 1, PROMIS Global01, SF-1 et les questions SRH des enquêtes NHIS / MEPS / ESS / SILC.
   streamId: wellbeing-self-rated-health
   eventType: ratio/proportion
-  type: number
+  type: slider
+  min: 0
+  max: 1
+  step: 0.01
+  slider:
+    # orientation defaults to "horizontal" — matches typical web form UX
+    display:
+      multiplier: 100   # patient sees 0..100 on the slider; storage is raw 0..1
+      precision: 0
+    labels:
+      0:
+        label:
+          en: Worst health
+          fr: Pire santé
+        description:
+          en: The worst health you can imagine
+          fr: La pire santé que vous puissiez imaginer
+      1:
+        label:
+          en: Best health
+          fr: Meilleure santé
+        description:
+          en: The best health you can imagine
+          fr: La meilleure santé que vous puissiez imaginer
   repeatable: unlimited
   references:
     snomed: ["425058002", "104346004"]

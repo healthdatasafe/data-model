@@ -158,6 +158,13 @@ function checkItemVsEvenType (key, item, eventType) {
     if (eventType.type !== 'number') throw new Error(`as item "${key}" is of type "number" matching eventtype should be a "number" ` + JSON.stringify({ item, eventType }));
     return true;
   }
+  if (item.type === 'slider') {
+    if (eventType.type !== 'number') throw new Error(`as item "${key}" is of type "slider" matching eventtype should be a "number" ` + JSON.stringify({ item, eventType }));
+    if (typeof item.min !== 'number' || typeof item.max !== 'number' || item.min >= item.max) {
+      throw new Error(`item "${key}" of type "slider" must declare min < max; got min=${item.min}, max=${item.max}`);
+    }
+    return true;
+  }
   if (item.type === 'checkbox') {
     if (item.eventType === 'activity/plain') return true;
   }

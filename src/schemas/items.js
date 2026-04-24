@@ -70,7 +70,7 @@ const itemSchema = {
       type: 'string',
       oneOf: [
         { $ref: 'defs.json#/definitions/entryType' },
-        { enum: ['composite', 'datasource-search', 'convertible'] }
+        { enum: ['composite', 'datasource-search', 'convertible', 'slider'] }
       ]
     },
     variations: {
@@ -198,6 +198,55 @@ const itemSchema = {
           }
         },
         required: ['converter-engine']
+      }
+    },
+    { // type is slider — numeric input with min/max/step. Storage is the raw value
+      // in the item's eventType; the optional `slider.display` block controls how
+      // the raw value is presented to the user (multiplier/precision/suffix).
+      if: {
+        properties: {
+          type: { const: 'slider' }
+        }
+      },
+      then: {
+        properties: {
+          min: { type: 'number' },
+          max: { type: 'number' },
+          step: { type: 'number', nullable: true },
+          slider: {
+            type: 'object',
+            nullable: true,
+            properties: {
+              orientation: { enum: ['horizontal', 'vertical'] },
+              labels: {
+                // per-value tick labels, keyed by the raw numeric value (as a string)
+                type: 'object',
+                patternProperties: {
+                  '^-?[0-9]+(\\.[0-9]+)?$': {
+                    type: 'object',
+                    properties: {
+                      label: { $ref: 'defs.json#/definitions/localized' },
+                      description: { $ref: 'defs.json#/definitions/localized' }
+                    },
+                    required: ['label'],
+                    additionalProperties: false
+                  }
+                }
+              },
+              display: {
+                type: 'object',
+                properties: {
+                  multiplier: { type: 'number' },
+                  precision: { type: 'number' },
+                  suffix: { $ref: 'defs.json#/definitions/localized' }
+                },
+                additionalProperties: false
+              }
+            },
+            additionalProperties: false
+          }
+        },
+        required: ['min', 'max']
       }
     }
   ],
