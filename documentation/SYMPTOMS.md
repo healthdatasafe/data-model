@@ -248,14 +248,25 @@ Some concepts tracked as "symptoms" in consumer apps are clinically classified d
 
 ### Severity mapping (if ratio/proportion is used)
 
-| Apple HealthKit | Ratio value | Label |
-|---|---|---|
-| NotPresent (1) | 0.0 | None |
-| Mild (2) | 0.33 | Mild |
-| Moderate (3) | 0.66 | Moderate |
-| Severe (4) | 1.0 | Severe |
+HDS uses a canonical **5-level** severity scale on `ratio/proportion`. See `DESIGN-NOTES.md` → "Scale hook placement" for the governing rule — hooks are placed at semantic anchors, not by even distribution.
 
-Mira's `level` field ("Mild", etc.) maps to the same scale.
+| HDS label | HDS ratio value | Apple HealthKit (4-level) |
+|---|---|---|
+| None | 0.0 | NotPresent |
+| Slight (or Mild) | 0.25 | Mild |
+| Moderate | 0.5 | Moderate |
+| Severe | 0.75 | *(no Apple equivalent)* |
+| Very severe (or Extreme) | 1.0 | Severe (Apple ceiling) |
+
+Apple HealthKit's 4-level `HKCategoryValueSeverity` is a **subset** of the HDS 5-level scale — sharing hooks at 0.0, 0.25, 0.5, and 1.0, with no Apple equivalent at the 0.75 position.
+
+- **Bridge conversion** (Apple → HDS): map by label, not by numeric proximity — `NotPresent → None (0.0)`, `Mild → Slight (0.25)`, `Moderate → Moderate (0.5)`, `Severe → Very severe (1.0)` (Apple's ceiling maps to the HDS ceiling).
+- **Bridge conversion** (HDS → Apple): `None → NotPresent`, `Slight → Mild`, `Moderate → Moderate`, `Severe → ` tie-break to Apple `Severe` (upward, conservative), `Very severe → Severe`.
+- **Closest-value** matching works correctly for all 4 Apple values and 4 of 5 HDS values under this placement; only the HDS `0.75` hook has no Apple equivalent and must tie-break by label rather than by distance.
+
+Sources that use a 3-level or 4-level subset (Mira's `level` field, etc.) land on the same hooks as Apple's equivalent labels above — by label lookup, not by numeric distribution.
+
+> **Revision note (Plan 44, 2026-04-24).** An earlier draft of this table placed Apple's 4 levels at `0.0 / 0.33 / 0.66 / 1.0` (even-distribution). That placement put "Moderate" above the semantic middle of the scale (0.66 vs 0.5) and broke round-trip interop with the HDS 5-level scale: a 5-level `Moderate (0.5)` would have escalated to `Severe (0.75)` after passing through a 4-level store, because 0.66 is numerically closer to 0.75 than to 0.5. The current placement (subset of 5-level) is semantic-anchor-aligned and round-trip-stable. Not a breaking change — the severity extension was never implemented.
 
 ### Naming conventions
 
@@ -273,7 +284,10 @@ Some Mira concepts appear in multiple fields:
 ### Design decisions (settled 2026-03-17)
 
 1. **Acne dual-source**: Mira's `symptoms.Acne` maps to existing `body-skin-acne` (reuse). Single item regardless of source — matches Apple HealthKit's single `acne` identifier.
-2. **Anxiety/Stress**: No symptom items — captured only through mood 5D vectors (`wellbeing-mood`). Mira's Anxiety/Stress in symptoms field are skipped silently.
+2. **Anxiety / Stress / Depression** *(revised 2026-04-24, Plan 44)*: two distinct clinical constructs, mapped to different HDS items depending on what the source captures.
+   - **Transient mood tags** — e.g. an entry in a symptoms-array or a free-form mood label flagging "anxious", "stressed", or "depressed" for the moment, with no validated severity scale. Captured through `wellbeing-mood` 5D vectors (via the `mood` converter). No symptom item. Unchanged rule.
+   - **Validated distress-severity ratings** — e.g. EQ-5D-5L D5, Kessler K6/K10, HADS-A/-D, PHQ-2/PHQ-9, GAD-2/GAD-7, PROMIS Emotional Distress, DASS-21. Captured through the dedicated `wellbeing-mental-distress` (combined), `wellbeing-mental-distress-anxiety` (anxiety subscale), or `wellbeing-mental-distress-depression` (depression subscale) items on the 5-level `ratio/proportion` scale defined above.
+   - **Hybrid sources** that expose a symptom-array entry with an *optional `level`* field (e.g. Mira's `symptoms.Anxiety` with `level: "Mild"`) sit between the two: the presence of a validated level makes this a severity rating, not a transient tag. Map it to `wellbeing-mental-distress-anxiety` / `…-depression` with the hook corresponding to the level — see `_plans/XXX-Backlog/MIRA-FINALIZE.md` for the Mira conversion specifics.
 3. **Increased appetite**: Modeled as `nutrition-appetite` under new top-level `nutrition/` stream with `ratio/proportion` (0.25=decreased, 0.50=normal, 0.75=increased). Matches Apple HealthKit's 3-value `appetiteChanges` enum.
 4. **Weight fluctuations**: Skipped — derived from body-weight measurements, not a symptom.
 5. **Stream hierarchy**: Full clinical sub-categories under `symptom/` (gastrointestinal, pain, neurological, dermatological, sleep, metabolic, general) — ready for future items from HealthKit and other integrations.
