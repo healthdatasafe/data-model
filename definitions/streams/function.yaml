@@ -1,0 +1,10 @@
+id: function
+name: Functional status
+parentId: null
+children:
+  - id: function-mobility
+    name: Mobility
+  - id: function-self-care
+    name: Self-care
+  - id: function-usual-activities
+    name: Usual activities

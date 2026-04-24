@@ -22,6 +22,8 @@ children:
   - id: symptom-pain
     name: Pain
     children:
+      - id: symptom-pain-severity
+        name: Overall pain severity
       - id: symptom-pain-headache
         name: Headache
       - id: symptom-pain-migraine

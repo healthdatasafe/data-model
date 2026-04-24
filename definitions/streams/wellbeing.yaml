@@ -6,3 +6,11 @@ children:
     name: Mood
   - id: wellbeing-sex-drive
     name: Sex Drive
+  - id: wellbeing-mental-distress
+    name: Mental distress (combined)
+  - id: wellbeing-mental-distress-anxiety
+    name: Anxiety severity
+  - id: wellbeing-mental-distress-depression
+    name: Depression severity
+  - id: wellbeing-self-rated-health
+    name: Self-rated health

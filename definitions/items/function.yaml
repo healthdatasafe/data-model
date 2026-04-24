@@ -1,0 +1,118 @@
+# Functional-status items — ICF-aligned "Activities and Participation" domain.
+# 5-level severity on ratio/proportion with canonical hooks 0.0/0.25/0.5/0.75/1.0.
+# See documentation/FUNCTION.md for the construct discussion and cross-system mapping.
+# See documentation/DESIGN-NOTES.md → "Scale hook placement" for the governing rule.
+
+function-mobility:
+  version: v1
+  label:
+    en: Mobility (walking)
+    fr: Mobilité (marche)
+  description:
+    en: Self-reported severity of problems walking. 5-level ICF-aligned severity on a 0..1 proportion scale.
+    fr: Auto-évaluation de la sévérité des problèmes de marche. Échelle de sévérité ICF à 5 niveaux sur une proportion 0..1.
+  streamId: function-mobility
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.0
+      label:
+        en: No problems
+        fr: Aucun problème
+    - value: 0.25
+      label:
+        en: Slight problems
+        fr: Légers problèmes
+    - value: 0.5
+      label:
+        en: Moderate problems
+        fr: Problèmes modérés
+    - value: 0.75
+      label:
+        en: Severe problems
+        fr: Problèmes sévères
+    - value: 1.0
+      label:
+        en: Unable
+        fr: Incapable
+  repeatable: unlimited
+  references:
+    icf: d450
+    snomed: "301438001"
+    loinc: "63800-5"
+
+function-self-care:
+  version: v1
+  label:
+    en: Self-care (washing, dressing)
+    fr: Soins personnels (se laver, s'habiller)
+  description:
+    en: Self-reported severity of problems washing or dressing oneself. 5-level ICF-aligned severity on a 0..1 proportion scale.
+    fr: Auto-évaluation de la sévérité des problèmes pour se laver ou s'habiller. Échelle de sévérité ICF à 5 niveaux sur une proportion 0..1.
+  streamId: function-self-care
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.0
+      label:
+        en: No problems
+        fr: Aucun problème
+    - value: 0.25
+      label:
+        en: Slight problems
+        fr: Légers problèmes
+    - value: 0.5
+      label:
+        en: Moderate problems
+        fr: Problèmes modérés
+    - value: 0.75
+      label:
+        en: Severe problems
+        fr: Problèmes sévères
+    - value: 1.0
+      label:
+        en: Unable
+        fr: Incapable
+  repeatable: unlimited
+  references:
+    icf: ["d510", "d540"]
+    snomed: "284774004"
+    loinc: "63801-3"
+
+function-usual-activities:
+  version: v1
+  label:
+    en: Usual activities
+    fr: Activités courantes
+  description:
+    en: Self-reported severity of problems performing usual activities (work, study, housework, family, leisure). 5-level ICF-aligned severity on a 0..1 proportion scale.
+    fr: Auto-évaluation de la sévérité des problèmes pour accomplir les activités courantes (travail, études, tâches ménagères, famille, loisirs). Échelle de sévérité ICF à 5 niveaux sur une proportion 0..1.
+  streamId: function-usual-activities
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.0
+      label:
+        en: No problems
+        fr: Aucun problème
+    - value: 0.25
+      label:
+        en: Slight problems
+        fr: Légers problèmes
+    - value: 0.5
+      label:
+        en: Moderate problems
+        fr: Problèmes modérés
+    - value: 0.75
+      label:
+        en: Severe problems
+        fr: Problèmes sévères
+    - value: 1.0
+      label:
+        en: Unable
+        fr: Incapable
+  repeatable: unlimited
+  references:
+    icf: ["d630", "d640", "d845", "d859", "d920"]
+    snomed: "413156007"
+    loinc: "63802-1"

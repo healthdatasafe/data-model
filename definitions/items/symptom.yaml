@@ -74,6 +74,44 @@ symptom-gastrointestinal-constipation:
   repeatable: unlimited
 
 ## Pain / Musculoskeletal
+symptom-pain-severity:
+  version: v1
+  label:
+    en: Overall pain severity
+    fr: Sévérité globale de la douleur
+  description:
+    en: Self-reported overall pain / discomfort intensity (non-site-specific). 5-level severity on a 0..1 proportion scale — compatible with VRS-5, PROMIS Pain Intensity SF 1a, and NRS 0–10 buckets.
+    fr: Auto-évaluation de l'intensité globale de la douleur / de l'inconfort (non localisée). Échelle de sévérité à 5 niveaux sur une proportion 0..1 — compatible avec VRS-5, PROMIS Pain Intensity SF 1a et les intervalles NRS 0–10.
+  streamId: symptom-pain-severity
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.0
+      label:
+        en: No pain or discomfort
+        fr: Aucune douleur ni inconfort
+    - value: 0.25
+      label:
+        en: Slight pain or discomfort
+        fr: Légère douleur ou inconfort
+    - value: 0.5
+      label:
+        en: Moderate pain or discomfort
+        fr: Douleur ou inconfort modéré
+    - value: 0.75
+      label:
+        en: Severe pain or discomfort
+        fr: Douleur ou inconfort sévère
+    - value: 1.0
+      label:
+        en: Extreme pain or discomfort
+        fr: Douleur ou inconfort extrême
+  repeatable: unlimited
+  references:
+    snomed: ["22253000", "225908003", "103325001"]
+    loinc: ["72514-3", "77564-4", "38208-5"]
+    icd10: "R52"
+
 symptom-pain-headache:
   version: v1
   label: Headache
