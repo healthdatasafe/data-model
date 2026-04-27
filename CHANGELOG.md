@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-04-27
+
+### Changed
+- `wellbeing-self-rated-health` slider gains `display.suffix: { en: "/100", fr: "/100" }` so the EQ VAS readout, ARIA `aria-valuetext`, and the diary list (via `eventToShortText`) all show `"73 /100"` instead of just `"73"` or the raw `"0.73"`. Storage unchanged (raw 0..1 ratio/proportion).
+
 ## [1.3.1] - 2026-04-27
 
 ### Changed

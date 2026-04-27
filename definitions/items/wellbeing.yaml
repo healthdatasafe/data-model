@@ -303,6 +303,9 @@ wellbeing-self-rated-health:
     display:
       multiplier: 100   # patient sees 0..100 on the slider; storage is raw 0..1
       precision: 0
+      suffix:
+        en: /100
+        fr: /100
     labels:
       0:
         label:
