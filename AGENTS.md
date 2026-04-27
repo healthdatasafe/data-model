@@ -35,7 +35,7 @@ The same eventType is reused by many items. Adding a new eventType is rare and n
 
 `body-*`, `symptom-*`, `wellbeing-*`, `activity-*`, `fertility-*`, `nutrition-*`, `medication-*`, `profile-*`, `family-*`. Mirrors body systems / function domains, close to SNOMED CT and ICF categorisations.
 
-**Do not create questionnaire-branded streams** (e.g. `questionnaire-eq5d5l`). Each data point lands in its clinical-domain stream; the questionnaire's identity lives in the form template (e.g. `doctor-dashboard/app/data/presets.ts`), not in `data-model`.
+**Do not create questionnaire-branded streams** (e.g. `questionnaire-eq5d5l`). Each data point lands in its clinical-domain stream; the questionnaire's identity lives in the *form template* (a `CollectorRequest` constructed via [hds-lib-js](https://github.com/healthdatasafe/hds-lib-js)'s `appTemplates.CollectorRequest` / `CollectorSection`), not in `data-model`.
 
 ### 5. Apps and health data live in different dimensions
 
@@ -49,9 +49,13 @@ When multiple observation methods measure the same underlying construct (e.g. 15
 
 This is not about questionnaires. It is about sources / methods of observation converging on a single normalized representation.
 
-### 7. Wording lives in the item
+### 7. Wording lives in the item — form-level overrides are layered, not stored in data-model
 
-`item.label`, `item.description`, and each `option.label` are rendered directly by `hds-forms-js` and readers. There is currently **no form-level label override** — if a form needs specific wording (e.g. EuroQol's first-person sentences), either use the item's canonical wording (generic and reusable) or extend the form engine with overrides (future work).
+`item.label`, `item.description`, and each `option.label` are the **canonical**, generic, reusable wording. They are rendered directly by readers and by [hds-forms-js](https://github.com/healthdatasafe/hds-forms-js) when no override is provided.
+
+Form-specific wording (e.g. EuroQol's first-person sentences for EQ-5D-5L) lives in the **form template**, not in `data-model`. Templates carry per-itemKey overrides on the `CollectorRequest.sections[].itemCustomizations[itemKey].labels` bag (defined by [`appTemplates.ItemLabels`](https://github.com/healthdatasafe/hds-lib-js/blob/main/ts/appTemplates/itemLabels.ts) in hds-lib). Renderers prefer the override; in their absence they fall back to the item's canonical wording.
+
+This means: do **not** add questionnaire-specific wording to items. Add the generic wording to items here, and have the form template override it for that questionnaire's licensed phrasing.
 
 ---
 
@@ -124,7 +128,7 @@ The EQ-5D-5L questionnaire has 5 dimensions + a VAS. **None of them are EQ-5D-5L
 | Anxiety/Depression | `wellbeing-mental-distress` | Summary distress severity | K6/K10, HADS-Total, PROMIS Emotional Distress |
 | EQ VAS | `wellbeing-self-rated-health` | Self-rated health (SRH) | EQ VAS, SF-36 GH, PROMIS Global01, NHIS/MEPS |
 
-The questionnaire's identity lives in the form template (`doctor-dashboard/app/data/presets.ts`), not in the data model. When PROMIS Short Forms or SF-36 are added later, they reuse the same items via new templates.
+The questionnaire's identity lives in the *form template* (a `CollectorRequest` built with [`appTemplates.CollectorRequest`](https://github.com/healthdatasafe/hds-lib-js) plus per-section `itemCustomizations.labels` for the EuroQol-licensed wording), not in the data model. When PROMIS Short Forms or SF-36 are added later, they reuse the same items via new templates.
 
 ### External-source bridges (general pattern)
 
@@ -160,7 +164,7 @@ Closest-value matching is correct for all 4 Apple values and 4 of 5 HDS values. 
 - **Do not** create "administration record" / "questionnaire envelope" eventTypes for grouping events from a single form filling. The events' shared `time` property is the grouping key. Derived scores (like EQ-5D state code, utility index) are recomputed on the reader side.
 - **Do not** add a new eventType when item-level constraints on an existing type would do the job (see §"When adding a new eventType").
 - **Do not** stream-nest by questionnaire. Data points belong in their clinical-domain streams.
-- **Do not** bake questionnaire-specific wording (e.g. EuroQol's first-person sentences) into items. Items carry generic, reusable labels; form templates may add wording overrides in the future.
+- **Do not** bake questionnaire-specific wording (e.g. EuroQol's first-person sentences) into items. Items carry generic, reusable labels; form templates layer per-form overrides via `itemCustomizations.labels` (see §7).
 - **Do not** create a new top-level stream when a child under an existing parent would serve.
 
 ---
@@ -264,7 +268,7 @@ Commonly-cited scales / terminologies for mapping new items:
 From `documentation/SYMPTOMS.md` (2026-03-17):
 
 1. **Acne dual-source** — when a bridge exposes acne in both a skin field and a generic symptoms field, both map to the existing `body-skin-acne` item (reuse). Single item regardless of source.
-2. **Anxiety/Stress in symptom arrays** — no symptom items; captured only through mood 5D vectors (`wellbeing-mood`). *[Plan 44 proposes nuancing this for summary **distress severity** ratings from validated PROs, which live in `wellbeing-mental-distress` — a different construct from transient mood tags.]*
+2. **Anxiety/Stress in symptom arrays** — `wellbeing-mood` (5D vectors) captures *transient mood tags*. Validated **distress severity** ratings from PROs (K6/K10, HADS, GAD/PHQ, etc.) live in `wellbeing-mental-distress` / `-anxiety` / `-depression` (added in v1.3.0 alongside EQ-5D-5L). The two are different constructs and coexist.
 3. **Increased appetite** — modeled as `nutrition-appetite` (`ratio/proportion`, 3 hooks).
 4. **Weight fluctuations** — not a symptom; derived from body-weight.
 5. **Stream hierarchy** — full clinical sub-categories under `symptom/`.
@@ -287,4 +291,16 @@ From `documentation/MOOD.md` (Plan 24, 2026-03-23):
 
 ---
 
-*Last updated: 2026-04-24 during an EQ-5D-5L PRO integration. If you add significant findings during your session, extend this file.*
+## Cross-repo relationships
+
+This repo is the source of the HDS vocabulary. Other public repos consume `pack.json`:
+
+- **[hds-lib-js](https://github.com/healthdatasafe/hds-lib-js)** — fetches `pack.json` via the platform service-info `assets.hds-model` URL, exposes items / streams / eventTypes / converters as `HDSModel`. See its [`AGENTS.md`](https://github.com/healthdatasafe/hds-lib-js/blob/main/AGENTS.md).
+- **[hds-forms-js](https://github.com/healthdatasafe/hds-forms-js)** — React renderers for `HDSItemDef`. Implements the `slider`, `select`, `composite`, `convertible`, `datasource-search`, etc. field types declared on items here.
+- **[app-data-model-browser](https://github.com/healthdatasafe/app-data-model-browser)** — small public viewer for the deployed `pack.json`.
+
+When a change here breaks a consumer's typechecks (e.g. removing an option, renaming an item key), bump `version` in `package.json`, document under `[Unreleased]` in `CHANGELOG.md`, and notify the consumer repos.
+
+---
+
+*Living document — extend it whenever you uncover a non-obvious convention or an architectural decision worth memorising. The most recent entry in [`CHANGELOG.md`](CHANGELOG.md) is the canonical record of what shipped; this file captures the **why** behind the rules.*
