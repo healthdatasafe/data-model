@@ -412,8 +412,8 @@
       "fr": "Coupe menstruelle"
     },
     "description": {
-      "en": "Menstrual cup fill level on a 0-1 proportion scale, recorded at emptying.",
-      "fr": "Niveau de remplissage de la coupe menstruelle sur une échelle 0-1, enregistré au moment de vider."
+      "en": "Cup fill level when emptied.",
+      "fr": "Niveau de remplissage de la coupe au moment de vider."
     },
     "streamId": "body-vulva-menstrual-cup",
     "eventType": "ratio/proportion",
@@ -450,8 +450,8 @@
       "fr": "Position du col utérin"
     },
     "description": {
-      "en": "Self-assessed cervical position with three dimensions (height, firmness, openness) on a 0–1 fertility scale.",
-      "fr": "Position du col utérin auto-évaluée avec trois dimensions (hauteur, fermeté, ouverture) sur une échelle de fertilité 0–1."
+      "en": "Self-checked cervix — height, firmness, and openness.",
+      "fr": "Col auto-examiné — hauteur, fermeté et ouverture."
     },
     "streamId": "body-vulva-cervix-position",
     "eventType": "cervix-position/3d-vectors",
@@ -674,8 +674,8 @@
       "fr": "Durée moyenne du cycle"
     },
     "description": {
-      "en": "User's average menstrual cycle length, expressed in days. Profile-level metric updated over time.",
-      "fr": "Durée moyenne du cycle menstruel de l'utilisatrice, exprimée en jours. Mesure de profil mise à jour au fil du temps."
+      "en": "Your average menstrual cycle length, in days.",
+      "fr": "Votre durée moyenne de cycle menstruel, en jours."
     },
     "streamId": "fertility-cycles-average-length",
     "eventType": "time/d",
@@ -689,8 +689,8 @@
       "fr": "Durée moyenne des règles"
     },
     "description": {
-      "en": "User's average period (menstruation) length, expressed in days. Profile-level metric updated over time.",
-      "fr": "Durée moyenne des règles de l'utilisatrice, exprimée en jours. Mesure de profil mise à jour au fil du temps."
+      "en": "Your average period length, in days.",
+      "fr": "Votre durée moyenne des règles, en jours."
     },
     "streamId": "fertility-cycles-average-period",
     "eventType": "time/d",
@@ -1092,8 +1092,8 @@
       "fr": "Mobilité (marche)"
     },
     "description": {
-      "en": "Self-reported severity of problems walking. 5-level ICF-aligned severity on a 0..1 proportion scale.",
-      "fr": "Auto-évaluation de la sévérité des problèmes de marche. Échelle de sévérité ICF à 5 niveaux sur une proportion 0..1."
+      "en": "Problems with walking.",
+      "fr": "Difficultés pour marcher."
     },
     "streamId": "function-mobility",
     "eventType": "ratio/proportion",
@@ -1149,8 +1149,8 @@
       "fr": "Soins personnels (se laver, s'habiller)"
     },
     "description": {
-      "en": "Self-reported severity of problems washing or dressing oneself. 5-level ICF-aligned severity on a 0..1 proportion scale.",
-      "fr": "Auto-évaluation de la sévérité des problèmes pour se laver ou s'habiller. Échelle de sévérité ICF à 5 niveaux sur une proportion 0..1."
+      "en": "Problems washing or dressing yourself.",
+      "fr": "Difficultés pour vous laver ou vous habiller."
     },
     "streamId": "function-self-care",
     "eventType": "ratio/proportion",
@@ -1209,8 +1209,8 @@
       "fr": "Activités courantes"
     },
     "description": {
-      "en": "Self-reported severity of problems performing usual activities (work, study, housework, family, leisure). 5-level ICF-aligned severity on a 0..1 proportion scale.",
-      "fr": "Auto-évaluation de la sévérité des problèmes pour accomplir les activités courantes (travail, études, tâches ménagères, famille, loisirs). Échelle de sévérité ICF à 5 niveaux sur une proportion 0..1."
+      "en": "Problems doing your usual activities — work, study, housework, family, leisure.",
+      "fr": "Difficultés pour vos activités habituelles — travail, études, tâches ménagères, famille, loisirs."
     },
     "streamId": "function-usual-activities",
     "eventType": "ratio/proportion",
@@ -1550,7 +1550,8 @@
       "fr": "Avatar"
     },
     "description": {
-      "en": "Profile picture (picture/attached, picture/base64, or picture/url)"
+      "en": "Profile picture.",
+      "fr": "Photo de profil."
     },
     "streamId": "profile-avatar",
     "type": "picture",
@@ -1761,8 +1762,8 @@
       "fr": "Sévérité globale de la douleur"
     },
     "description": {
-      "en": "Self-reported overall pain / discomfort intensity (non-site-specific). 5-level severity on a 0..1 proportion scale — compatible with VRS-5, PROMIS Pain Intensity SF 1a, and NRS 0–10 buckets.",
-      "fr": "Auto-évaluation de l'intensité globale de la douleur / de l'inconfort (non localisée). Échelle de sévérité à 5 niveaux sur une proportion 0..1 — compatible avec VRS-5, PROMIS Pain Intensity SF 1a et les intervalles NRS 0–10."
+      "en": "Overall pain or discomfort.",
+      "fr": "Douleur ou inconfort global."
     },
     "streamId": "symptom-pain-severity",
     "eventType": "ratio/proportion",
@@ -2238,8 +2239,8 @@
       "fr": "Détresse mentale (combinée)"
     },
     "description": {
-      "en": "Self-reported combined severity of anxiety and depression. 5-level severity on a 0..1 proportion scale. Used by EQ-5D-5L D5, Kessler K6/K10, and WHO-5 (inverse). For instruments that split anxiety and depression, use the wellbeing-mental-distress-anxiety and wellbeing-mental-distress-depression items instead.",
-      "fr": "Auto-évaluation combinée de la sévérité de l'anxiété et de la dépression. Échelle de sévérité à 5 niveaux sur une proportion 0..1. Utilisé par EQ-5D-5L D5, Kessler K6/K10 et WHO-5 (inverse). Pour les instruments qui séparent anxiété et dépression, utiliser wellbeing-mental-distress-anxiety et wellbeing-mental-distress-depression."
+      "en": "Anxiety and low mood, combined.",
+      "fr": "Anxiété et humeur basse, combinées."
     },
     "streamId": "wellbeing-mental-distress",
     "eventType": "ratio/proportion",
@@ -2296,8 +2297,8 @@
       "fr": "Sévérité de l'anxiété"
     },
     "description": {
-      "en": "Self-reported anxiety subscale severity. 5-level severity on a 0..1 proportion scale. Used by GAD-2 / GAD-7, HADS-A, DASS-21-A, PROMIS Emotional Distress – Anxiety.",
-      "fr": "Auto-évaluation de la sévérité de l'anxiété (sous-échelle). Échelle de sévérité à 5 niveaux sur une proportion 0..1. Utilisé par GAD-2 / GAD-7, HADS-A, DASS-21-A, PROMIS Emotional Distress – Anxiety."
+      "en": "Anxiety symptoms.",
+      "fr": "Symptômes d'anxiété."
     },
     "streamId": "wellbeing-mental-distress-anxiety",
     "eventType": "ratio/proportion",
@@ -2355,8 +2356,8 @@
       "fr": "Sévérité de la dépression"
     },
     "description": {
-      "en": "Self-reported depression subscale severity. 5-level severity on a 0..1 proportion scale. Used by PHQ-2 / PHQ-9, HADS-D, DASS-21-D, PROMIS Emotional Distress – Depression.",
-      "fr": "Auto-évaluation de la sévérité de la dépression (sous-échelle). Échelle de sévérité à 5 niveaux sur une proportion 0..1. Utilisé par PHQ-2 / PHQ-9, HADS-D, DASS-21-D, PROMIS Emotional Distress – Depression."
+      "en": "Depression symptoms.",
+      "fr": "Symptômes de dépression."
     },
     "streamId": "wellbeing-mental-distress-depression",
     "eventType": "ratio/proportion",
@@ -2411,8 +2412,8 @@
       "fr": "Auto-évaluation de la santé"
     },
     "description": {
-      "en": "Overall self-rated health. Stored as ratio/proportion (0..1); a continuous VAS form stores at step 0.01 (displayed 0..100 via the slider's display.multiplier), a 5-level categorical form (SF-1 / PROMIS Global01) would use the canonical hooks 0.0 (Poor) / 0.25 (Fair) / 0.5 (Good) / 0.75 (Very good) / 1.0 (Excellent) via type \"select\". Used by EQ VAS, SF-36 GH item 1, PROMIS Global01, SF-1, NHIS / MEPS / ESS / SILC SRH questions.",
-      "fr": "Auto-évaluation globale de la santé. Stocké comme ratio/proportion (0..1) ; un formulaire VAS continu utilise un pas de 0.01 (affiché 0..100 via display.multiplier du curseur), un formulaire catégoriel à 5 niveaux (SF-1 / PROMIS Global01) utiliserait les points canoniques 0.0 (Médiocre) / 0.25 (Passable) / 0.5 (Bonne) / 0.75 (Très bonne) / 1.0 (Excellente) via type \"select\". Utilisé par EQ VAS, SF-36 GH item 1, PROMIS Global01, SF-1 et les questions SRH des enquêtes NHIS / MEPS / ESS / SILC."
+      "en": "Your overall health today.",
+      "fr": "Votre état de santé global aujourd'hui."
     },
     "streamId": "wellbeing-self-rated-health",
     "eventType": "ratio/proportion",
