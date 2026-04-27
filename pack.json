@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-04-27T08:29:38.349Z",
+  "publicationDate": "2026-04-27T12:01:59.914Z",
   "streams": [
     {
       "id": "activity",
@@ -3049,7 +3049,11 @@
       "slider": {
         "display": {
           "multiplier": 100,
-          "precision": 0
+          "precision": 0,
+          "suffix": {
+            "en": "/100",
+            "fr": "/100"
+          }
         },
         "labels": {
           "0": {
@@ -7561,11 +7565,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-04-27T08:29:38.346Z"
+      "updatedAt": "2026-04-27T12:01:59.911Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-04-27T08:29:38.348Z"
+      "updatedAt": "2026-04-27T12:01:59.913Z"
     }
   },
   "settings": {

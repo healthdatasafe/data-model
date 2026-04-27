@@ -2424,7 +2424,11 @@
     "slider": {
       "display": {
         "multiplier": 100,
-        "precision": 0
+        "precision": 0,
+        "suffix": {
+          "en": "/100",
+          "fr": "/100"
+        }
       },
       "labels": {
         "0": {
