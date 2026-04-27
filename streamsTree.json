@@ -328,6 +328,28 @@
     ]
   },
   {
+    "id": "function",
+    "name": "Functional status",
+    "parentId": null,
+    "children": [
+      {
+        "id": "function-mobility",
+        "name": "Mobility",
+        "parentId": "function"
+      },
+      {
+        "id": "function-self-care",
+        "name": "Self-care",
+        "parentId": "function"
+      },
+      {
+        "id": "function-usual-activities",
+        "name": "Usual activities",
+        "parentId": "function"
+      }
+    ]
+  },
+  {
     "id": "medication",
     "name": "Medication",
     "parentId": null,
@@ -450,6 +472,11 @@
         "name": "Pain",
         "children": [
           {
+            "id": "symptom-pain-severity",
+            "name": "Overall pain severity",
+            "parentId": "symptom-pain"
+          },
+          {
             "id": "symptom-pain-headache",
             "name": "Headache",
             "parentId": "symptom-pain"
@@ -569,6 +596,26 @@
       {
         "id": "wellbeing-sex-drive",
         "name": "Sex Drive",
+        "parentId": "wellbeing"
+      },
+      {
+        "id": "wellbeing-mental-distress",
+        "name": "Mental distress (combined)",
+        "parentId": "wellbeing"
+      },
+      {
+        "id": "wellbeing-mental-distress-anxiety",
+        "name": "Anxiety severity",
+        "parentId": "wellbeing"
+      },
+      {
+        "id": "wellbeing-mental-distress-depression",
+        "name": "Depression severity",
+        "parentId": "wellbeing"
+      },
+      {
+        "id": "wellbeing-self-rated-health",
+        "name": "Self-rated health",
         "parentId": "wellbeing"
       }
     ]

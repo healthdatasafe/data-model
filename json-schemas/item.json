@@ -89,7 +89,8 @@
           "enum": [
             "composite",
             "datasource-search",
-            "convertible"
+            "convertible",
+            "slider"
           ]
         }
       ]
@@ -280,6 +281,81 @@
         },
         "required": [
           "converter-engine"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "slider"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "min": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          },
+          "step": {
+            "type": "number",
+            "nullable": true
+          },
+          "slider": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "orientation": {
+                "enum": [
+                  "horizontal",
+                  "vertical"
+                ]
+              },
+              "labels": {
+                "type": "object",
+                "patternProperties": {
+                  "^-?[0-9]+(\\.[0-9]+)?$": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "$ref": "defs.json#/definitions/localized"
+                      },
+                      "description": {
+                        "$ref": "defs.json#/definitions/localized"
+                      }
+                    },
+                    "required": [
+                      "label"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "display": {
+                "type": "object",
+                "properties": {
+                  "multiplier": {
+                    "type": "number"
+                  },
+                  "precision": {
+                    "type": "number"
+                  },
+                  "suffix": {
+                    "$ref": "defs.json#/definitions/localized"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "min",
+          "max"
         ]
       }
     }

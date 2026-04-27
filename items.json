@@ -1085,6 +1085,186 @@
     "type": "number",
     "repeatable": "any"
   },
+  "function-mobility": {
+    "version": "v1",
+    "label": {
+      "en": "Mobility (walking)",
+      "fr": "Mobilité (marche)"
+    },
+    "description": {
+      "en": "Self-reported severity of problems walking. 5-level ICF-aligned severity on a 0..1 proportion scale.",
+      "fr": "Auto-évaluation de la sévérité des problèmes de marche. Échelle de sévérité ICF à 5 niveaux sur une proportion 0..1."
+    },
+    "streamId": "function-mobility",
+    "eventType": "ratio/proportion",
+    "type": "select",
+    "options": [
+      {
+        "value": 0,
+        "label": {
+          "en": "No problems",
+          "fr": "Aucun problème"
+        }
+      },
+      {
+        "value": 0.25,
+        "label": {
+          "en": "Slight problems",
+          "fr": "Légers problèmes"
+        }
+      },
+      {
+        "value": 0.5,
+        "label": {
+          "en": "Moderate problems",
+          "fr": "Problèmes modérés"
+        }
+      },
+      {
+        "value": 0.75,
+        "label": {
+          "en": "Severe problems",
+          "fr": "Problèmes sévères"
+        }
+      },
+      {
+        "value": 1,
+        "label": {
+          "en": "Unable",
+          "fr": "Incapable"
+        }
+      }
+    ],
+    "repeatable": "unlimited",
+    "references": {
+      "icf": "d450",
+      "snomed": "301438001",
+      "loinc": "63800-5"
+    }
+  },
+  "function-self-care": {
+    "version": "v1",
+    "label": {
+      "en": "Self-care (washing, dressing)",
+      "fr": "Soins personnels (se laver, s'habiller)"
+    },
+    "description": {
+      "en": "Self-reported severity of problems washing or dressing oneself. 5-level ICF-aligned severity on a 0..1 proportion scale.",
+      "fr": "Auto-évaluation de la sévérité des problèmes pour se laver ou s'habiller. Échelle de sévérité ICF à 5 niveaux sur une proportion 0..1."
+    },
+    "streamId": "function-self-care",
+    "eventType": "ratio/proportion",
+    "type": "select",
+    "options": [
+      {
+        "value": 0,
+        "label": {
+          "en": "No problems",
+          "fr": "Aucun problème"
+        }
+      },
+      {
+        "value": 0.25,
+        "label": {
+          "en": "Slight problems",
+          "fr": "Légers problèmes"
+        }
+      },
+      {
+        "value": 0.5,
+        "label": {
+          "en": "Moderate problems",
+          "fr": "Problèmes modérés"
+        }
+      },
+      {
+        "value": 0.75,
+        "label": {
+          "en": "Severe problems",
+          "fr": "Problèmes sévères"
+        }
+      },
+      {
+        "value": 1,
+        "label": {
+          "en": "Unable",
+          "fr": "Incapable"
+        }
+      }
+    ],
+    "repeatable": "unlimited",
+    "references": {
+      "icf": [
+        "d510",
+        "d540"
+      ],
+      "snomed": "284774004",
+      "loinc": "63801-3"
+    }
+  },
+  "function-usual-activities": {
+    "version": "v1",
+    "label": {
+      "en": "Usual activities",
+      "fr": "Activités courantes"
+    },
+    "description": {
+      "en": "Self-reported severity of problems performing usual activities (work, study, housework, family, leisure). 5-level ICF-aligned severity on a 0..1 proportion scale.",
+      "fr": "Auto-évaluation de la sévérité des problèmes pour accomplir les activités courantes (travail, études, tâches ménagères, famille, loisirs). Échelle de sévérité ICF à 5 niveaux sur une proportion 0..1."
+    },
+    "streamId": "function-usual-activities",
+    "eventType": "ratio/proportion",
+    "type": "select",
+    "options": [
+      {
+        "value": 0,
+        "label": {
+          "en": "No problems",
+          "fr": "Aucun problème"
+        }
+      },
+      {
+        "value": 0.25,
+        "label": {
+          "en": "Slight problems",
+          "fr": "Légers problèmes"
+        }
+      },
+      {
+        "value": 0.5,
+        "label": {
+          "en": "Moderate problems",
+          "fr": "Problèmes modérés"
+        }
+      },
+      {
+        "value": 0.75,
+        "label": {
+          "en": "Severe problems",
+          "fr": "Problèmes sévères"
+        }
+      },
+      {
+        "value": 1,
+        "label": {
+          "en": "Unable",
+          "fr": "Incapable"
+        }
+      }
+    ],
+    "repeatable": "unlimited",
+    "references": {
+      "icf": [
+        "d630",
+        "d640",
+        "d845",
+        "d859",
+        "d920"
+      ],
+      "snomed": "413156007",
+      "loinc": "63802-1"
+    }
+  },
   "medication-intake-basic": {
     "version": "v3",
     "label": {
@@ -1574,6 +1754,71 @@
     "type": "checkbox",
     "repeatable": "unlimited"
   },
+  "symptom-pain-severity": {
+    "version": "v1",
+    "label": {
+      "en": "Overall pain severity",
+      "fr": "Sévérité globale de la douleur"
+    },
+    "description": {
+      "en": "Self-reported overall pain / discomfort intensity (non-site-specific). 5-level severity on a 0..1 proportion scale — compatible with VRS-5, PROMIS Pain Intensity SF 1a, and NRS 0–10 buckets.",
+      "fr": "Auto-évaluation de l'intensité globale de la douleur / de l'inconfort (non localisée). Échelle de sévérité à 5 niveaux sur une proportion 0..1 — compatible avec VRS-5, PROMIS Pain Intensity SF 1a et les intervalles NRS 0–10."
+    },
+    "streamId": "symptom-pain-severity",
+    "eventType": "ratio/proportion",
+    "type": "select",
+    "options": [
+      {
+        "value": 0,
+        "label": {
+          "en": "No pain or discomfort",
+          "fr": "Aucune douleur ni inconfort"
+        }
+      },
+      {
+        "value": 0.25,
+        "label": {
+          "en": "Slight pain or discomfort",
+          "fr": "Légère douleur ou inconfort"
+        }
+      },
+      {
+        "value": 0.5,
+        "label": {
+          "en": "Moderate pain or discomfort",
+          "fr": "Douleur ou inconfort modéré"
+        }
+      },
+      {
+        "value": 0.75,
+        "label": {
+          "en": "Severe pain or discomfort",
+          "fr": "Douleur ou inconfort sévère"
+        }
+      },
+      {
+        "value": 1,
+        "label": {
+          "en": "Extreme pain or discomfort",
+          "fr": "Douleur ou inconfort extrême"
+        }
+      }
+    ],
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "22253000",
+        "225908003",
+        "103325001"
+      ],
+      "loinc": [
+        "72514-3",
+        "77564-4",
+        "38208-5"
+      ],
+      "icd10": "R52"
+    }
+  },
   "symptom-pain-headache": {
     "version": "v1",
     "label": {
@@ -1985,5 +2230,235 @@
       }
     ],
     "repeatable": "P1D"
+  },
+  "wellbeing-mental-distress": {
+    "version": "v1",
+    "label": {
+      "en": "Mental distress (combined)",
+      "fr": "Détresse mentale (combinée)"
+    },
+    "description": {
+      "en": "Self-reported combined severity of anxiety and depression. 5-level severity on a 0..1 proportion scale. Used by EQ-5D-5L D5, Kessler K6/K10, and WHO-5 (inverse). For instruments that split anxiety and depression, use the wellbeing-mental-distress-anxiety and wellbeing-mental-distress-depression items instead.",
+      "fr": "Auto-évaluation combinée de la sévérité de l'anxiété et de la dépression. Échelle de sévérité à 5 niveaux sur une proportion 0..1. Utilisé par EQ-5D-5L D5, Kessler K6/K10 et WHO-5 (inverse). Pour les instruments qui séparent anxiété et dépression, utiliser wellbeing-mental-distress-anxiety et wellbeing-mental-distress-depression."
+    },
+    "streamId": "wellbeing-mental-distress",
+    "eventType": "ratio/proportion",
+    "type": "select",
+    "options": [
+      {
+        "value": 0,
+        "label": {
+          "en": "Not anxious or depressed",
+          "fr": "Ni anxieux ni déprimé"
+        }
+      },
+      {
+        "value": 0.25,
+        "label": {
+          "en": "Slightly anxious or depressed",
+          "fr": "Légèrement anxieux ou déprimé"
+        }
+      },
+      {
+        "value": 0.5,
+        "label": {
+          "en": "Moderately anxious or depressed",
+          "fr": "Modérément anxieux ou déprimé"
+        }
+      },
+      {
+        "value": 0.75,
+        "label": {
+          "en": "Severely anxious or depressed",
+          "fr": "Sévèrement anxieux ou déprimé"
+        }
+      },
+      {
+        "value": 1,
+        "label": {
+          "en": "Extremely anxious or depressed",
+          "fr": "Extrêmement anxieux ou déprimé"
+        }
+      }
+    ],
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "48694002",
+        "366979004"
+      ]
+    }
+  },
+  "wellbeing-mental-distress-anxiety": {
+    "version": "v1",
+    "label": {
+      "en": "Anxiety severity",
+      "fr": "Sévérité de l'anxiété"
+    },
+    "description": {
+      "en": "Self-reported anxiety subscale severity. 5-level severity on a 0..1 proportion scale. Used by GAD-2 / GAD-7, HADS-A, DASS-21-A, PROMIS Emotional Distress – Anxiety.",
+      "fr": "Auto-évaluation de la sévérité de l'anxiété (sous-échelle). Échelle de sévérité à 5 niveaux sur une proportion 0..1. Utilisé par GAD-2 / GAD-7, HADS-A, DASS-21-A, PROMIS Emotional Distress – Anxiety."
+    },
+    "streamId": "wellbeing-mental-distress-anxiety",
+    "eventType": "ratio/proportion",
+    "type": "select",
+    "options": [
+      {
+        "value": 0,
+        "label": {
+          "en": "Not anxious",
+          "fr": "Pas anxieux"
+        }
+      },
+      {
+        "value": 0.25,
+        "label": {
+          "en": "Slightly anxious",
+          "fr": "Légèrement anxieux"
+        }
+      },
+      {
+        "value": 0.5,
+        "label": {
+          "en": "Moderately anxious",
+          "fr": "Modérément anxieux"
+        }
+      },
+      {
+        "value": 0.75,
+        "label": {
+          "en": "Severely anxious",
+          "fr": "Sévèrement anxieux"
+        }
+      },
+      {
+        "value": 1,
+        "label": {
+          "en": "Extremely anxious",
+          "fr": "Extrêmement anxieux"
+        }
+      }
+    ],
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "48694002",
+        "444849004"
+      ],
+      "loinc": "69737-5"
+    }
+  },
+  "wellbeing-mental-distress-depression": {
+    "version": "v1",
+    "label": {
+      "en": "Depression severity",
+      "fr": "Sévérité de la dépression"
+    },
+    "description": {
+      "en": "Self-reported depression subscale severity. 5-level severity on a 0..1 proportion scale. Used by PHQ-2 / PHQ-9, HADS-D, DASS-21-D, PROMIS Emotional Distress – Depression.",
+      "fr": "Auto-évaluation de la sévérité de la dépression (sous-échelle). Échelle de sévérité à 5 niveaux sur une proportion 0..1. Utilisé par PHQ-2 / PHQ-9, HADS-D, DASS-21-D, PROMIS Emotional Distress – Depression."
+    },
+    "streamId": "wellbeing-mental-distress-depression",
+    "eventType": "ratio/proportion",
+    "type": "select",
+    "options": [
+      {
+        "value": 0,
+        "label": {
+          "en": "Not depressed",
+          "fr": "Pas déprimé"
+        }
+      },
+      {
+        "value": 0.25,
+        "label": {
+          "en": "Slightly depressed",
+          "fr": "Légèrement déprimé"
+        }
+      },
+      {
+        "value": 0.5,
+        "label": {
+          "en": "Moderately depressed",
+          "fr": "Modérément déprimé"
+        }
+      },
+      {
+        "value": 0.75,
+        "label": {
+          "en": "Severely depressed",
+          "fr": "Sévèrement déprimé"
+        }
+      },
+      {
+        "value": 1,
+        "label": {
+          "en": "Extremely depressed",
+          "fr": "Extrêmement déprimé"
+        }
+      }
+    ],
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": "366979004",
+      "loinc": "75275-8"
+    }
+  },
+  "wellbeing-self-rated-health": {
+    "version": "v1",
+    "label": {
+      "en": "Self-rated health",
+      "fr": "Auto-évaluation de la santé"
+    },
+    "description": {
+      "en": "Overall self-rated health. Stored as ratio/proportion (0..1); a continuous VAS form stores at step 0.01 (displayed 0..100 via the slider's display.multiplier), a 5-level categorical form (SF-1 / PROMIS Global01) would use the canonical hooks 0.0 (Poor) / 0.25 (Fair) / 0.5 (Good) / 0.75 (Very good) / 1.0 (Excellent) via type \"select\". Used by EQ VAS, SF-36 GH item 1, PROMIS Global01, SF-1, NHIS / MEPS / ESS / SILC SRH questions.",
+      "fr": "Auto-évaluation globale de la santé. Stocké comme ratio/proportion (0..1) ; un formulaire VAS continu utilise un pas de 0.01 (affiché 0..100 via display.multiplier du curseur), un formulaire catégoriel à 5 niveaux (SF-1 / PROMIS Global01) utiliserait les points canoniques 0.0 (Médiocre) / 0.25 (Passable) / 0.5 (Bonne) / 0.75 (Très bonne) / 1.0 (Excellente) via type \"select\". Utilisé par EQ VAS, SF-36 GH item 1, PROMIS Global01, SF-1 et les questions SRH des enquêtes NHIS / MEPS / ESS / SILC."
+    },
+    "streamId": "wellbeing-self-rated-health",
+    "eventType": "ratio/proportion",
+    "type": "slider",
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "slider": {
+      "display": {
+        "multiplier": 100,
+        "precision": 0
+      },
+      "labels": {
+        "0": {
+          "label": {
+            "en": "Worst health",
+            "fr": "Pire santé"
+          },
+          "description": {
+            "en": "The worst health you can imagine",
+            "fr": "La pire santé que vous puissiez imaginer"
+          }
+        },
+        "1": {
+          "label": {
+            "en": "Best health",
+            "fr": "Meilleure santé"
+          },
+          "description": {
+            "en": "The best health you can imagine",
+            "fr": "La meilleure santé que vous puissiez imaginer"
+          }
+        }
+      }
+    },
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "425058002",
+        "104346004"
+      ],
+      "loinc": [
+        "72006-0",
+        "32622-6",
+        "82589-3"
+      ]
+    }
   }
 }
