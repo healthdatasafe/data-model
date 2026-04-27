@@ -14,7 +14,8 @@ profile-avatar:
     en: Avatar
     fr: Avatar
   description:
-    en: Profile picture (picture/attached, picture/base64, or picture/url)
+    en: Profile picture.
+    fr: Photo de profil.
   streamId: profile-avatar
   type: picture
   variations:

@@ -12,8 +12,8 @@ fertility-cycles-average-length:
     en: Average Cycle Length
     fr: Durée moyenne du cycle
   description:
-    en: User's average menstrual cycle length, expressed in days. Profile-level metric updated over time.
-    fr: Durée moyenne du cycle menstruel de l'utilisatrice, exprimée en jours. Mesure de profil mise à jour au fil du temps.
+    en: Your average menstrual cycle length, in days.
+    fr: Votre durée moyenne de cycle menstruel, en jours.
   streamId: fertility-cycles-average-length
   eventType: time/d
   type: number
@@ -24,8 +24,8 @@ fertility-cycles-average-period:
     en: Average Period Length
     fr: Durée moyenne des règles
   description:
-    en: User's average period (menstruation) length, expressed in days. Profile-level metric updated over time.
-    fr: Durée moyenne des règles de l'utilisatrice, exprimée en jours. Mesure de profil mise à jour au fil du temps.
+    en: Your average period length, in days.
+    fr: Votre durée moyenne des règles, en jours.
   streamId: fertility-cycles-average-period
   eventType: time/d
   type: number

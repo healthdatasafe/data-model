@@ -175,8 +175,8 @@ wellbeing-mental-distress:
     en: Mental distress (combined)
     fr: Détresse mentale (combinée)
   description:
-    en: Self-reported combined severity of anxiety and depression. 5-level severity on a 0..1 proportion scale. Used by EQ-5D-5L D5, Kessler K6/K10, and WHO-5 (inverse). For instruments that split anxiety and depression, use the wellbeing-mental-distress-anxiety and wellbeing-mental-distress-depression items instead.
-    fr: Auto-évaluation combinée de la sévérité de l'anxiété et de la dépression. Échelle de sévérité à 5 niveaux sur une proportion 0..1. Utilisé par EQ-5D-5L D5, Kessler K6/K10 et WHO-5 (inverse). Pour les instruments qui séparent anxiété et dépression, utiliser wellbeing-mental-distress-anxiety et wellbeing-mental-distress-depression.
+    en: Anxiety and low mood, combined.
+    fr: Anxiété et humeur basse, combinées.
   streamId: wellbeing-mental-distress
   eventType: ratio/proportion
   type: select
@@ -211,8 +211,8 @@ wellbeing-mental-distress-anxiety:
     en: Anxiety severity
     fr: Sévérité de l'anxiété
   description:
-    en: Self-reported anxiety subscale severity. 5-level severity on a 0..1 proportion scale. Used by GAD-2 / GAD-7, HADS-A, DASS-21-A, PROMIS Emotional Distress – Anxiety.
-    fr: Auto-évaluation de la sévérité de l'anxiété (sous-échelle). Échelle de sévérité à 5 niveaux sur une proportion 0..1. Utilisé par GAD-2 / GAD-7, HADS-A, DASS-21-A, PROMIS Emotional Distress – Anxiety.
+    en: Anxiety symptoms.
+    fr: Symptômes d'anxiété.
   streamId: wellbeing-mental-distress-anxiety
   eventType: ratio/proportion
   type: select
@@ -248,8 +248,8 @@ wellbeing-mental-distress-depression:
     en: Depression severity
     fr: Sévérité de la dépression
   description:
-    en: Self-reported depression subscale severity. 5-level severity on a 0..1 proportion scale. Used by PHQ-2 / PHQ-9, HADS-D, DASS-21-D, PROMIS Emotional Distress – Depression.
-    fr: Auto-évaluation de la sévérité de la dépression (sous-échelle). Échelle de sévérité à 5 niveaux sur une proportion 0..1. Utilisé par PHQ-2 / PHQ-9, HADS-D, DASS-21-D, PROMIS Emotional Distress – Depression.
+    en: Depression symptoms.
+    fr: Symptômes de dépression.
   streamId: wellbeing-mental-distress-depression
   eventType: ratio/proportion
   type: select
@@ -290,8 +290,8 @@ wellbeing-self-rated-health:
     en: Self-rated health
     fr: Auto-évaluation de la santé
   description:
-    en: Overall self-rated health. Stored as ratio/proportion (0..1); a continuous VAS form stores at step 0.01 (displayed 0..100 via the slider's display.multiplier), a 5-level categorical form (SF-1 / PROMIS Global01) would use the canonical hooks 0.0 (Poor) / 0.25 (Fair) / 0.5 (Good) / 0.75 (Very good) / 1.0 (Excellent) via type "select". Used by EQ VAS, SF-36 GH item 1, PROMIS Global01, SF-1, NHIS / MEPS / ESS / SILC SRH questions.
-    fr: Auto-évaluation globale de la santé. Stocké comme ratio/proportion (0..1) ; un formulaire VAS continu utilise un pas de 0.01 (affiché 0..100 via display.multiplier du curseur), un formulaire catégoriel à 5 niveaux (SF-1 / PROMIS Global01) utiliserait les points canoniques 0.0 (Médiocre) / 0.25 (Passable) / 0.5 (Bonne) / 0.75 (Très bonne) / 1.0 (Excellente) via type "select". Utilisé par EQ VAS, SF-36 GH item 1, PROMIS Global01, SF-1 et les questions SRH des enquêtes NHIS / MEPS / ESS / SILC.
+    en: Your overall health today.
+    fr: Votre état de santé global aujourd'hui.
   streamId: wellbeing-self-rated-health
   eventType: ratio/proportion
   type: slider

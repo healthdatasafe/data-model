@@ -144,8 +144,8 @@ body-vulva-menstrual-cup:
     en: Menstrual Cup
     fr: Coupe menstruelle
   description:
-    en: Menstrual cup fill level on a 0-1 proportion scale, recorded at emptying.
-    fr: Niveau de remplissage de la coupe menstruelle sur une échelle 0-1, enregistré au moment de vider.
+    en: Cup fill level when emptied.
+    fr: Niveau de remplissage de la coupe au moment de vider.
   streamId: body-vulva-menstrual-cup
   eventType: ratio/proportion
   type: select
@@ -172,8 +172,8 @@ body-vulva-cervix-position:
     en: Cervical Position
     fr: Position du col utérin
   description:
-    en: Self-assessed cervical position with three dimensions (height, firmness, openness) on a 0–1 fertility scale.
-    fr: Position du col utérin auto-évaluée avec trois dimensions (hauteur, fermeté, ouverture) sur une échelle de fertilité 0–1.
+    en: Self-checked cervix — height, firmness, and openness.
+    fr: Col auto-examiné — hauteur, fermeté et ouverture.
   streamId: body-vulva-cervix-position
   eventType: cervix-position/3d-vectors
   type: composite

@@ -9,8 +9,8 @@ function-mobility:
     en: Mobility (walking)
     fr: Mobilité (marche)
   description:
-    en: Self-reported severity of problems walking. 5-level ICF-aligned severity on a 0..1 proportion scale.
-    fr: Auto-évaluation de la sévérité des problèmes de marche. Échelle de sévérité ICF à 5 niveaux sur une proportion 0..1.
+    en: Problems with walking.
+    fr: Difficultés pour marcher.
   streamId: function-mobility
   eventType: ratio/proportion
   type: select
@@ -47,8 +47,8 @@ function-self-care:
     en: Self-care (washing, dressing)
     fr: Soins personnels (se laver, s'habiller)
   description:
-    en: Self-reported severity of problems washing or dressing oneself. 5-level ICF-aligned severity on a 0..1 proportion scale.
-    fr: Auto-évaluation de la sévérité des problèmes pour se laver ou s'habiller. Échelle de sévérité ICF à 5 niveaux sur une proportion 0..1.
+    en: Problems washing or dressing yourself.
+    fr: Difficultés pour vous laver ou vous habiller.
   streamId: function-self-care
   eventType: ratio/proportion
   type: select
@@ -85,8 +85,8 @@ function-usual-activities:
     en: Usual activities
     fr: Activités courantes
   description:
-    en: Self-reported severity of problems performing usual activities (work, study, housework, family, leisure). 5-level ICF-aligned severity on a 0..1 proportion scale.
-    fr: Auto-évaluation de la sévérité des problèmes pour accomplir les activités courantes (travail, études, tâches ménagères, famille, loisirs). Échelle de sévérité ICF à 5 niveaux sur une proportion 0..1.
+    en: Problems doing your usual activities — work, study, housework, family, leisure.
+    fr: Difficultés pour vos activités habituelles — travail, études, tâches ménagères, famille, loisirs.
   streamId: function-usual-activities
   eventType: ratio/proportion
   type: select

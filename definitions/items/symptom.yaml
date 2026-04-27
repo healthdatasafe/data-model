@@ -80,8 +80,8 @@ symptom-pain-severity:
     en: Overall pain severity
     fr: Sévérité globale de la douleur
   description:
-    en: Self-reported overall pain / discomfort intensity (non-site-specific). 5-level severity on a 0..1 proportion scale — compatible with VRS-5, PROMIS Pain Intensity SF 1a, and NRS 0–10 buckets.
-    fr: Auto-évaluation de l'intensité globale de la douleur / de l'inconfort (non localisée). Échelle de sévérité à 5 niveaux sur une proportion 0..1 — compatible avec VRS-5, PROMIS Pain Intensity SF 1a et les intervalles NRS 0–10.
+    en: Overall pain or discomfort.
+    fr: Douleur ou inconfort global.
   streamId: symptom-pain-severity
   eventType: ratio/proportion
   type: select
