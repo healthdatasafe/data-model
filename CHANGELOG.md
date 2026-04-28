@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-04-28
+
+### Added (plan 45 — custom fields & system stream in appTemplates)
+- Two new event types in `definitions/eventTypes/eventTypes-hds.json` for the system-stream feature:
+  - **`message/system-alert`** — operator → user notification carrying `{ level: 'info'|'warning'|'critical', title, body, ackRequired?, ackId? }`. Used on the account-level `app-system-out` stream.
+  - **`message/system-ack`** — user → operator acknowledgement carrying `{ ackId, ackedAt, userNote? }`, paired with its originating alert by `ackId`. Used on `app-system-in`.
+- Two new app-stream declarations in `definitions/appStreams.yaml`: `system-out` (eventType `message/system-alert`) and `system-in` (eventType `message/system-ack`). These describe the account-level system-stream pair provisioned once by the user's HDS-aware client app.
+- New `documentation/CUSTOM-FIELDS-AND-SYSTEM.md` covering the data-model perspective: which eventTypes are reused for custom fields (none new — `note/txt`, `note/html`, `activity/plain`, `date/iso-8601`, `count/generic`), the two new `message/*` impls for system streams, and pointers to the runtime mechanics in `hds-lib-js`.
+- Tests in `tests/customFieldsAndSystem.test.js` covering the new eventTypes, appStream declarations, and pack.json registration.
+
+### Notes
+- **No new eventTypes for custom fields.** Templates' `customFields[]` declarations carry their typing inline on each stream's `clientData.hdsCustomField[<eventType>]`, reusing the existing storage-shape eventTypes. The runtime parent-chain validator walk lives in `hds-lib-js` (Plan 45 Phase 3).
+- **No `data-model/src/items.js` changes.** That file is a build-time loader for canonical item definitions; runtime validation against `clientData.hds*` declarations is a `hds-lib-js` concern.
+
 ## [1.5.0] - 2026-04-28
 
 ### Added (plan 50 — deprecated itemdef policy)
