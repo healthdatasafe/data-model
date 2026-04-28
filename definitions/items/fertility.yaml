@@ -1,5 +1,6 @@
 fertility-cycles-charted-count:
   version: temporary
+  deprecated: true
   label: Nb of charted cycles
   description: Number of total charted cycles at this date
   streamId: fertility-cycles-charted-estimation

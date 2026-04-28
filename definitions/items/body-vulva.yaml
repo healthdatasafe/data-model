@@ -14,6 +14,7 @@ body-vulva-mucus-inspect:
   repeatable: unlimited
 body-vulva-mucus-stretch:
   version: v1
+  deprecated: true
   label: Cervical Fluid Stretch
   description: Manual strech test of cervical fluid. Short can be streched less than 2 cm, long greater than 2cm. 
   streamId: body-vulva-mucus-stretch
@@ -32,6 +33,7 @@ body-vulva-mucus-stretch:
 
 body-vulva-wetness-feeling:
   version: v1
+  deprecated: true
   label: Vulva Wetness feeling
   description: Vulva wetness feeling 
   streamId: body-vulva-wetness-feeling
