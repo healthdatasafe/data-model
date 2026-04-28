@@ -6,6 +6,9 @@
     "version": {
       "type": "string"
     },
+    "deprecated": {
+      "type": "boolean"
+    },
     "label": {
       "$ref": "defs.json#/definitions/localized"
     },
