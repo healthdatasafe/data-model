@@ -263,6 +263,24 @@ Commonly-cited scales / terminologies for mapping new items:
 
 ---
 
+## `deprecated: true` on items
+
+An item may carry `deprecated: true` (boolean, optional) to signal that it is **kept** in the data-model — so existing events keep validating and rendering — **but is not used to create new data points**. Plan 50 formalizes this contract.
+
+**Rules for authors:**
+- Set `deprecated: true` on the item to mark it. Do **not** delete the item: existing events on disk still need its `streamId` / `eventType` / `type` to be resolvable by readers.
+- Add a `description:` line explaining why deprecated and what to use instead. (Failure mode: silently-deprecated items leave consumers guessing.)
+- Bump the item's `version` if you also adjust other fields, but the `deprecated:` flag itself is independent of version.
+
+**Rules for consumers (`hds-lib`, `hds-forms-js`, `hds-webapp`, `doctor-dashboard`, `app-data-model-browser`):**
+- **Default listings hide deprecated items.** Form-builder item browsers, item pickers, ribbon "+" sheets, and the data-model browser must filter `deprecated:true` out of their UI lists by default (opt-in "show deprecated" toggle is acceptable for inspector tools).
+- **Reading still works.** `getHDSModel().itemsDefs.forKey(key)` and `forEvent(event)` MUST still return deprecated items so existing events render correctly. The filter is at the discovery / picker layer only, never at the resolution layer.
+- **Writing is discouraged but not blocked.** Bridges still actively writing to deprecated streams keep working until they migrate. The validator does not reject `events.create` against deprecated items — that's a migration concern, not a data-integrity one.
+
+**Schema:** the `deprecated` field is recognised in `src/schemas/items.js` and round-trips through `pack.json`.
+
+---
+
 ## Existing design decisions (load these before proposing related changes)
 
 From `documentation/SYMPTOMS.md` (2026-03-17):

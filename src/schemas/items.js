@@ -28,6 +28,7 @@ const itemSchema = {
   nullable: false,
   properties: {
     version: { type: 'string' },
+    deprecated: { type: 'boolean' },
     label: { $ref: 'defs.json#/definitions/localized' },
     description: { $ref: 'defs.json#/definitions/localized' },
     streamId: { type: 'string' },

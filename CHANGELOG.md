@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-04-28
+
+### Added (plan 50 — deprecated itemdef policy)
+- `deprecated: { type: 'boolean' }` (optional) recognised in `src/schemas/items.js`. Round-trips through `pack.json`.
+- Contract documented in `AGENTS.md` § "`deprecated: true` on items": flag means item is kept (existing events keep validating + rendering) but not used for new data points. Consumer apps MUST filter deprecated items out of discovery / picker UIs (form builders, item picker sheets, data-model browser); the resolution layer (`itemsDefs.forKey` / `forEvent`) MUST still return deprecated items so readers can render existing events.
+
 ## [1.4.0] - 2026-04-28
 
 ### Added (plan 48 — cyclefeminin import)
