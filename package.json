@@ -1,6 +1,6 @@
 {
   "name": "@hds/data-model",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "HDS data model",
   "main": "src/index.js",
   "engines": {

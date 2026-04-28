@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-04-28
+
+### Added (plan 48 — cyclefeminin import)
+- `body-vulva-mucus-inspect-count` (`count/generic`, `repeatable: once`) — companion item in the `body-vulva-mucus-inspect` stream that captures the daily count of cervical-fluid self-observations. Creighton FertilityCare protocol mandates this count alongside the most-fertile observation of the day; reusable across any future Creighton/FertilityCare/Billings importer or app.
+- `deprecated: true` flag added to three items (`body-vulva-mucus-stretch`, `body-vulva-wetness-feeling`, `fertility-cycles-charted-count`) — flag-only at this stage; formal contract (schema validation, `pack.json` surfacing, consumer-app handling) tracked under plan 48 phase 6.
+
 ## [1.3.2] - 2026-04-27
 
 ### Changed
