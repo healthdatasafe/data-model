@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-04-27T12:01:59.914Z",
+  "publicationDate": "2026-04-28T08:35:45.024Z",
   "streams": [
     {
       "id": "activity",
@@ -815,8 +815,24 @@
       },
       "repeatable": "unlimited"
     },
+    "body-vulva-mucus-inspect-count": {
+      "version": "v1",
+      "label": {
+        "en": "Cervical Fluid observation count",
+        "fr": "Nombre d'observations de glaire"
+      },
+      "description": {
+        "en": "Number of cervical-fluid self-observations made on this day. Creighton FertilityCare protocol records the most-fertile observation of the day plus the count of times observations were made (typically each bathroom visit).",
+        "fr": "Nombre d'auto-observations de la glaire effectuées dans la journée. Le protocole Creighton FertilityCare enregistre l'observation la plus fertile de la journée et le nombre de contrôles effectués (typiquement à chaque passage aux toilettes)."
+      },
+      "streamId": "body-vulva-mucus-inspect",
+      "eventType": "count/generic",
+      "type": "number",
+      "repeatable": "once"
+    },
     "body-vulva-mucus-stretch": {
       "version": "v1",
+      "deprecated": true,
       "label": {
         "en": "Cervical Fluid Stretch"
       },
@@ -850,6 +866,7 @@
     },
     "body-vulva-wetness-feeling": {
       "version": "v1",
+      "deprecated": true,
       "label": {
         "en": "Vulva Wetness feeling"
       },
@@ -1281,6 +1298,7 @@
     },
     "fertility-cycles-charted-count": {
       "version": "temporary",
+      "deprecated": true,
       "label": {
         "en": "Nb of charted cycles"
       },
@@ -7565,11 +7583,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-04-27T12:01:59.911Z"
+      "updatedAt": "2026-04-28T08:35:45.022Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-04-27T12:01:59.913Z"
+      "updatedAt": "2026-04-28T08:35:45.023Z"
     }
   },
   "settings": {
