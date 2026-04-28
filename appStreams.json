@@ -24,5 +24,31 @@
       "fr": "Messages de chat avec cette connexion"
     },
     "display": "chat"
+  },
+  "system-out": {
+    "suffix": "system-out",
+    "eventType": "message/system-alert",
+    "label": {
+      "en": "System Out (alerts to user)",
+      "fr": "Système sortant (alertes vers l'utilisateur)"
+    },
+    "description": {
+      "en": "Structured alerts written by requesters and read by the user. Account-level fixture (provisioned once by the user's client app).",
+      "fr": "Alertes structurées écrites par les demandeurs et lues par l'utilisateur. Élément de compte (provisionné une fois par l'application cliente de l'utilisateur)."
+    },
+    "display": "system"
+  },
+  "system-in": {
+    "suffix": "system-in",
+    "eventType": "message/system-ack",
+    "label": {
+      "en": "System In (acknowledgements to requester)",
+      "fr": "Système entrant (accusés de réception vers le demandeur)"
+    },
+    "description": {
+      "en": "Acknowledgements written by the user and read by requesters, paired with their alert via ackId. Account-level fixture.",
+      "fr": "Accusés de réception écrits par l'utilisateur et lus par les demandeurs, appariés à leur alerte via ackId. Élément de compte."
+    },
+    "display": "system"
   }
 }
