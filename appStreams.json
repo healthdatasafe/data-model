@@ -50,5 +50,18 @@
       "fr": "Accusés de réception écrits par l'utilisateur et lus par les demandeurs, appariés à leur alerte via ackId. Élément de compte."
     },
     "display": "system"
+  },
+  "webapp-settings": {
+    "suffix": "webapp-settings",
+    "eventType": "settings/hds-react-timeline",
+    "label": {
+      "en": "Webapp Settings",
+      "fr": "Paramètres de l'application"
+    },
+    "description": {
+      "en": "User-scoped settings for HDS client apps. Holds one event per feature (distinguished by eventType, e.g. settings/hds-react-timeline). Single recurring event per type, updated in place.",
+      "fr": "Paramètres propres à l'utilisateur pour les applications client HDS. Contient un événement par fonctionnalité (distingué par eventType, ex. settings/hds-react-timeline). Un seul événement récurrent par type, mis à jour sur place."
+    },
+    "display": "system"
   }
 }

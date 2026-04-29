@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-04-28T11:08:07.399Z",
+  "publicationDate": "2026-04-29T09:26:09.575Z",
   "streams": [
     {
       "id": "activity",
@@ -7649,11 +7649,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-04-28T11:08:07.396Z"
+      "updatedAt": "2026-04-29T09:26:09.572Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-04-28T11:08:07.398Z"
+      "updatedAt": "2026-04-29T09:26:09.574Z"
     }
   },
   "settings": {
@@ -7754,6 +7754,19 @@
       "description": {
         "en": "Acknowledgements written by the user and read by requesters, paired with their alert via ackId. Account-level fixture.",
         "fr": "Accusés de réception écrits par l'utilisateur et lus par les demandeurs, appariés à leur alerte via ackId. Élément de compte."
+      },
+      "display": "system"
+    },
+    "webapp-settings": {
+      "suffix": "webapp-settings",
+      "eventType": "settings/hds-react-timeline",
+      "label": {
+        "en": "Webapp Settings",
+        "fr": "Paramètres de l'application"
+      },
+      "description": {
+        "en": "User-scoped settings for HDS client apps. Holds one event per feature (distinguished by eventType, e.g. settings/hds-react-timeline). Single recurring event per type, updated in place.",
+        "fr": "Paramètres propres à l'utilisateur pour les applications client HDS. Contient un événement par fonctionnalité (distingué par eventType, ex. settings/hds-react-timeline). Un seul événement récurrent par type, mis à jour sur place."
       },
       "display": "system"
     }
