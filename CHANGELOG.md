@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-04-28
+
+### Added (plan 52 — hds-react-timeline integration in hds-webapp)
+- New app-stream declaration `webapp-settings` in `definitions/appStreams.yaml` (`suffix: webapp-settings`, `eventType: settings/hds-react-timeline`). Resolves under any client app's `appStreamId` (e.g. for hds-webapp: `app-client-dr-form-webapp-settings`). Holds one event per feature, distinguished by `eventType` (e.g. `settings/hds-react-timeline`); single recurring event per type, updated in place. Display category `system`.
+
 ## [1.6.0] - 2026-04-28
 
 ### Added (plan 45 — custom fields & system stream in appTemplates)
