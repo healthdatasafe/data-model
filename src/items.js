@@ -14,8 +14,34 @@ const itemsByStreamIdTypeId = {};
 module.exports = {
   itemsById,
   itemsByStreamIdTypeId,
+  findItemForEvent,
   toBePublished
 };
+
+/**
+ * Resolve the itemDef matching a given (eventType, streamId) pair using the
+ * context-via-substream rule (see Plan 46 §2.1):
+ *
+ *   1. Try direct match (itemDef.streamId === streamId && itemDef.eventType === eventType).
+ *   2. If miss, walk up the stream tree from `streamId`. At each ancestor,
+ *      retry the direct match. Closest ancestor wins.
+ *   3. Returns `null` when no itemDef in the ancestor chain matches.
+ *
+ * Multiple matches at the same ancestor are flagged as a definitional
+ * ambiguity in data-model and throw — should never happen given itemDefs
+ * register on a unique (streamId, eventType) pair.
+ */
+function findItemForEvent (eventType, streamId) {
+  if (eventType == null || streamId == null) return null;
+  const chain = streams.streamsById[streamId]
+    ? streams.getAncestorsById(streamId)
+    : [streamId];
+  for (const ancestorId of chain) {
+    const item = itemsByStreamIdTypeId[ancestorId + ':' + eventType];
+    if (item) return item;
+  }
+  return null;
+}
 // Load all YAML files from the streams directory
 
 for (const file of fs.readdirSync(streamsFilePath)) {

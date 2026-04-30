@@ -1,0 +1,6 @@
+id: treatment
+name: Treatment
+parentId: null
+children:
+  - id: treatment-fertility
+    name: Fertility
