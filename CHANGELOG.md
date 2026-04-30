@@ -2,6 +2,35 @@
 
 ## [Unreleased]
 
+## [1.8.1] - 2026-04-30
+
+### Changed (plan 46 — use Pryv-native event.time + event.duration for treatment span)
+- `treatment/basic` and `treatment/coded-v1` eventType payload schemas no longer carry `period: { start, end }`. The treatment span is now expressed via Pryv's native event fields: `event.time` = treatment start, `event.duration` = span in seconds (omitted for ongoing / unbounded). Descriptions updated.
+- `procedure/basic` and `procedure/coded-v1` eventType payload schemas no longer carry `performed: { date }`. Procedure timestamp uses `event.time` natively; procedures are point-in-time (no `event.duration`).
+- `treatment-basic` and `treatment-coded` items declare `duration: { mandatory: false, canBeNull: true, maxSeconds: 315360000 }` (10-year cap) — matching the convention used by `fertility-cycles-start`, `fertility-cycles-fertile-window`, `fertility-pregnancy`. Procedure items intentionally omit the `duration` block since they're point-in-time.
+
+### Notes
+- Non-breaking change: `period` and `performed` were both optional and never required by clients; existing events that contain them still validate (JSON-schema defaults to `additionalProperties: true`). New writers should target the Pryv-native fields instead.
+- Trigger: the `datasource-search` companion-fields renderer in hds-forms-js auto-generated plain-text Start / End inputs from the previous `period.{start,end}` payload schema. User vetoed shipping those text-only inputs; canonical Pryv mapping (`event.time` + `event.duration`) is the right place. Form-engine duration UI is a separate future plan; Plan 46 forms today omit `event.duration` (= point-in-time / Flavour A).
+
+### Added (plan 46 — documentation)
+- `documentation/TREATMENT-PROCEDURE.md` — canonical reference for the new subdomains, the basic+coded item pair, the procedure findings array, and the **context-via-substream resolution mechanic (D3)** with a worked STORMM IVF intake example, the cross-tree context naming convention, and FHIR / SNOMED / LOINC cross-walk.
+- `documentation/TAGS.md` — deferred-design reference for the future `tags/` root: `tags/hds/*` controlled vocabulary + `tags/user/*` custom namespace, never `streamIds[0]`. Captures rationale, use cases, and integration points so a follow-up plan can pick it up without revisiting the design.
+
+## [1.8.0] - 2026-04-30
+
+### Added (plan 46 — treatment & procedure subdomains + context-via-substream)
+- Two new top-level streams in `definitions/streams/`: `treatment.yaml` (`treatment` parent + `treatment-fertility` context child) and `procedure.yaml` (`procedure` parent + `procedure-fertility` context child).
+- Four new itemDefs in `definitions/items/`: `treatment-basic`, `treatment-coded` (both registered at `treatment`); `procedure-basic`, `procedure-coded` (both registered at `procedure`). Mirrors the existing `medication-intake-basic` / `medication-intake-coded` pair pattern; the basic+coded duo is the v1 surface for both subdomains, with no per-domain named-leaf items.
+- Four new eventTypes in `definitions/eventTypes/eventTypes-hds.json`: `treatment/basic`, `treatment/coded-v1`, `procedure/basic`, `procedure/coded-v1`. Treatment payloads carry `name` / `regimen.{label,codes}`, optional `count` (Flavour A), optional `period.{start,end}` (Flavour B). Procedure payloads carry `name` / `procedure.{label,codes}`, optional `performed.date`, optional `count`, an open-vocabulary `findings[]` array, and `notes`.
+- Two new datasource declarations in `definitions/datasources/`: `treatments.yaml` and `procedures.yaml` exposing `datasets://treatment` and `datasets://procedure` for the coded variants. Datasets-service implementations land in Slice 2.
+- Helpers in `src/streams.js`: `getAncestorsById(id)` returns the chain `[id, parent, …, root]`; `isDescendantOf(candidate, ancestor)` validates context membership.
+- `findItemForEvent(eventType, streamId)` in `src/items.js` — implements the **context-via-substream resolution rule (D3)**: direct `(streamId, eventType)` match first; on miss, walk parents until the closest ancestor with a registered itemDef matches.
+
+### Notes
+- Same closest-ancestor walk-up algorithm as `hds-lib-js` Plan 45 (`resolveStream.ts` clientData lookup) and `HDSModelAuthorizations` (parent-covers-child de-dup) — D3 is the third application of the same principle, applied at the data-model itemDef layer.
+- `streamId` schema stays singular. Multi-streamId tagging is reserved for the future `tags/` root (deferred per Plan 46 §2.9, documentation only).
+
 ## [1.7.0] - 2026-04-28
 
 ### Added (plan 52 — hds-react-timeline integration in hds-webapp)

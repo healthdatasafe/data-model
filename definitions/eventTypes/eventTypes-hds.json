@@ -356,6 +356,172 @@
         }
       }
     },
+    "treatment/basic": {
+      "description": "Free-text treatment regimen. Used both for aggregate-intake (Flavour A: count > 0 captures lifetime history) and per-cycle/per-course capture (Flavour B). Treatment span uses Pryv's native event fields: event.time = treatment start, event.duration = span in seconds (omit for ongoing / unbounded). 'context' for the treatment (e.g. fertility, oncology) is carried by the event's streamId — see context-via-substream resolution.",
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "description": "Free-text name of the treatment / regimen (e.g. 'IVF', 'Chemotherapy', 'CBT')",
+          "type": "string"
+        },
+        "count": {
+          "description": "Aggregate intake count over the patient's lifetime. 0 = never. Use for Flavour A intake capture.",
+          "type": "number"
+        },
+        "notes": {
+          "description": "Free text supplementary notes",
+          "type": "string"
+        }
+      }
+    },
+    "treatment/coded-v1": {
+      "description": "Coded treatment regimen. 'regimen' is the coded identity from datasets-service (SNOMED-CT procedure / ICD-10-PCS / CPT). Treatment span uses Pryv's native event fields: event.time = treatment start, event.duration = span in seconds (omit for ongoing). Other payload fields mirror treatment/basic.",
+      "type": "object",
+      "required": ["regimen"],
+      "properties": {
+        "regimen": {
+          "description": "Coded regimen identity, populated from datasets-service selection.",
+          "type": "object",
+          "required": ["label", "codes"],
+          "properties": {
+            "label": {
+              "description": "Localized regimen name for display",
+              "type": "object",
+              "properties": {
+                "en": { "type": "string" }
+              }
+            },
+            "description": {
+              "description": "Localized full description",
+              "type": "object",
+              "properties": {
+                "en": { "type": "string" }
+              }
+            },
+            "codes": {
+              "description": "Coding identifiers across systems (SNOMED-CT, ICD-10-PCS, CPT, …).",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["code", "system", "hdsId"],
+                "properties": {
+                  "code": { "type": "string" },
+                  "system": { "type": "string" },
+                  "source": {
+                    "type": "object",
+                    "properties": {
+                      "key": { "type": "string" }
+                    }
+                  },
+                  "hdsId": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "count": {
+          "description": "Aggregate intake count over the patient's lifetime. 0 = never. Use for Flavour A intake capture.",
+          "type": "number"
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "procedure/basic": {
+      "description": "Free-text clinical procedure (single dated event). When the procedure was performed is event.time (Pryv native); the procedure is treated as point-in-time (no event.duration). 'findings' is an open-vocabulary array describing procedure-bound observations (e.g. endometriosis localisation during a laparoscopy). Clinical-domain context (e.g. fertility) is carried by the event's streamId — see context-via-substream resolution.",
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "description": "Free-text name of the procedure (e.g. 'Laparoscopy', 'HSG', 'Polypectomy')",
+          "type": "string"
+        },
+        "count": {
+          "description": "Aggregate intake count (Flavour A: lifetime occurrences). 0 = never.",
+          "type": "number"
+        },
+        "findings": {
+          "description": "Open-vocabulary array of procedure-bound observations. Form preset declares which finding types are surfaced per procedure label.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "description": "Finding category (e.g. 'endometriosis-localisation', 'adhesions', 'fibroid', 'modality').",
+                "type": "string"
+              },
+              "value": {
+                "description": "Finding value — string, boolean, or nested object as appropriate."
+              },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "procedure/coded-v1": {
+      "description": "Coded clinical procedure. 'procedure' is the coded identity from datasets-service. event.time = when the procedure was performed; point-in-time (no event.duration). Other payload fields mirror procedure/basic.",
+      "type": "object",
+      "required": ["procedure"],
+      "properties": {
+        "procedure": {
+          "description": "Coded procedure identity, populated from datasets-service selection.",
+          "type": "object",
+          "required": ["label", "codes"],
+          "properties": {
+            "label": {
+              "description": "Localized procedure name for display",
+              "type": "object",
+              "properties": {
+                "en": { "type": "string" }
+              }
+            },
+            "description": {
+              "description": "Localized full description",
+              "type": "object",
+              "properties": {
+                "en": { "type": "string" }
+              }
+            },
+            "codes": {
+              "description": "Coding identifiers across systems (SNOMED-CT, ICD-10-PCS, CPT, …).",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["code", "system", "hdsId"],
+                "properties": {
+                  "code": { "type": "string" },
+                  "system": { "type": "string" },
+                  "source": {
+                    "type": "object",
+                    "properties": {
+                      "key": { "type": "string" }
+                    }
+                  },
+                  "hdsId": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "count": { "type": "number" },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": { "type": "string" },
+              "value": {},
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "notes": { "type": "string" }
+      }
+    },
     "mass/mcg": {
       "description": "Micrograms",
       "type": "number"

@@ -1,0 +1,15 @@
+treatment:
+  label: Treatments
+  description: Search clinical treatment regimens (SNOMED-CT, ICD-10-PCS, CPT) from datasets service
+  endpoint: datasets://treatment
+  queryParam: search
+  minQueryLength: 3
+  resultKey: treatments
+  displayFields:
+    label: label
+    description: description
+  valueFields:
+    - label
+    - description
+    - codes
+    - hdsId

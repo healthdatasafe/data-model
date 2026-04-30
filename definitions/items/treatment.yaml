@@ -1,0 +1,38 @@
+treatment-basic:
+  version: v1
+  label: Treatment (free-text)
+  description: Free-text clinical treatment regimen — IVF, chemotherapy, CBT, dialysis, etc. Used for both aggregate intake (Flavour A — count of lifetime occurrences) and per-cycle/per-course capture (Flavour B, where event.time = treatment start, event.duration = span in seconds, omitted for ongoing). Clinical-domain context (fertility, oncology, …) is carried by the event's streamId via context-via-substream resolution.
+  streamId: treatment
+  eventType: treatment/basic
+  duration:
+    mandatory: false
+    canBeNull: true
+    maxSeconds: 315360000 # 10 years — accommodates lifelong HRT, multi-year IVF journey, chemotherapy regimens
+  type: composite
+  composite:
+    name:
+      label: Treatment name
+      type: text
+    count:
+      label: Number of times (lifetime)
+      type: number
+      canBeNull: true
+    notes:
+      label: Notes
+      type: text
+      canBeNull: true
+  repeatable: unlimited
+
+treatment-coded:
+  version: v1
+  label: Treatment (coded)
+  description: Search and select a coded clinical treatment from datasets service (SNOMED-CT procedure / ICD-10-PCS / CPT). event.time = treatment start, event.duration = span in seconds (omitted for ongoing). Clinical-domain context is carried by the event's streamId.
+  streamId: treatment
+  eventType: treatment/coded-v1
+  duration:
+    mandatory: false
+    canBeNull: true
+    maxSeconds: 315360000 # 10 years
+  type: datasource-search
+  datasource: treatment
+  repeatable: unlimited

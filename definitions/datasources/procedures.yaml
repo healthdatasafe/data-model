@@ -1,0 +1,15 @@
+procedure:
+  label: Procedures
+  description: Search clinical procedures (SNOMED-CT, ICD-10-PCS, CPT) from datasets service
+  endpoint: datasets://procedure
+  queryParam: search
+  minQueryLength: 3
+  resultKey: procedures
+  displayFields:
+    label: label
+    description: description
+  valueFields:
+    - label
+    - description
+    - codes
+    - hdsId
