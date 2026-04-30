@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [1.8.1] - 2026-04-30
+
+### Changed (plan 46 — use Pryv-native event.time + event.duration for treatment span)
+- `treatment/basic` and `treatment/coded-v1` eventType payload schemas no longer carry `period: { start, end }`. The treatment span is now expressed via Pryv's native event fields: `event.time` = treatment start, `event.duration` = span in seconds (omitted for ongoing / unbounded). Descriptions updated.
+- `procedure/basic` and `procedure/coded-v1` eventType payload schemas no longer carry `performed: { date }`. Procedure timestamp uses `event.time` natively; procedures are point-in-time (no `event.duration`).
+- `treatment-basic` and `treatment-coded` items declare `duration: { mandatory: false, canBeNull: true, maxSeconds: 315360000 }` (10-year cap) — matching the convention used by `fertility-cycles-start`, `fertility-cycles-fertile-window`, `fertility-pregnancy`. Procedure items intentionally omit the `duration` block since they're point-in-time.
+
+### Notes
+- Non-breaking change: `period` and `performed` were both optional and never required by clients; existing events that contain them still validate (JSON-schema defaults to `additionalProperties: true`). New writers should target the Pryv-native fields instead.
+- Trigger: the `datasource-search` companion-fields renderer in hds-forms-js auto-generated plain-text Start / End inputs from the previous `period.{start,end}` payload schema. User vetoed shipping those text-only inputs; canonical Pryv mapping (`event.time` + `event.duration`) is the right place. Form-engine duration UI is a separate future plan; Plan 46 forms today omit `event.duration` (= point-in-time / Flavour A).
+
 ### Added (plan 46 — documentation)
 - `documentation/TREATMENT-PROCEDURE.md` — canonical reference for the new subdomains, the basic+coded item pair, the procedure findings array, and the **context-via-substream resolution mechanic (D3)** with a worked STORMM IVF intake example, the cross-tree context naming convention, and FHIR / SNOMED / LOINC cross-walk.
 - `documentation/TAGS.md` — deferred-design reference for the future `tags/` root: `tags/hds/*` controlled vocabulary + `tags/user/*` custom namespace, never `streamIds[0]`. Captures rationale, use cases, and integration points so a follow-up plan can pick it up without revisiting the design.
