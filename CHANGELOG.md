@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added (plan 46 — documentation)
+- `documentation/TREATMENT-PROCEDURE.md` — canonical reference for the new subdomains, the basic+coded item pair, the procedure findings array, and the **context-via-substream resolution mechanic (D3)** with a worked STORMM IVF intake example, the cross-tree context naming convention, and FHIR / SNOMED / LOINC cross-walk.
+- `documentation/TAGS.md` — deferred-design reference for the future `tags/` root: `tags/hds/*` controlled vocabulary + `tags/user/*` custom namespace, never `streamIds[0]`. Captures rationale, use cases, and integration points so a follow-up plan can pick it up without revisiting the design.
+
 ## [1.8.0] - 2026-04-30
 
 ### Added (plan 46 — treatment & procedure subdomains + context-via-substream)
