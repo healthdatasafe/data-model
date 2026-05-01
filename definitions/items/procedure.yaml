@@ -1,7 +1,7 @@
 procedure-basic:
   version: v1
   label: Procedure (free-text)
-  description: Free-text clinical procedure (single dated event) — laparoscopy, HSG, polypectomy, etc. 'findings' captures procedure-bound observations (open vocabulary; form preset declares which finding types per procedure label). Clinical-domain context is carried by the event's streamId via context-via-substream resolution.
+  description: Free-text clinical procedure — laparoscopy, HSG, polypectomy, etc.
   streamId: procedure
   eventType: procedure/basic
   type: composite
@@ -22,7 +22,7 @@ procedure-basic:
 procedure-coded:
   version: v1
   label: Procedure (coded)
-  description: Search and select a coded clinical procedure from datasets service (SNOMED-CT procedure / ICD-10-PCS / CPT). Clinical-domain context is carried by the event's streamId.
+  description: Search and select a coded clinical procedure.
   streamId: procedure
   eventType: procedure/coded-v1
   type: datasource-search
