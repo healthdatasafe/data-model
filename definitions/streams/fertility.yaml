@@ -31,8 +31,8 @@ children:
     name: Ovulation Test (OPK)
   - id: fertility-test-pregnancy
     name: Pregnancy Test
-  - id: fertility-preganancies
-    name: Pregancies
+  - id: fertility-pregnancies
+    name: Pregnancies
     children:
       - id: fertility-miscarriages
         name: Miscarriages

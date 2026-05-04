@@ -160,25 +160,35 @@ fertility-sexual-activity:
     - value: 'protected'
       label: 'Protected intercourse (unspecified method)'
 fertility-pregnancy:
-  version: v1
+  version: v2
   label: Pregnancy
   description: Pregnancy
   duration:
     mandatory: true
     canBeNull: true
     maxSeconds: 32400000 # maximum known pregnancy 53 weeks
-  streamId: fertility-preganancies
+  streamId: fertility-pregnancies
   eventType: pregnancy/detailed
   devNotes: |-
-    One per fetus. (can be multiple with same start date)
-    The value of `event.time` should indicate the start of pregnancy.
-    When content value is 'ongoing' `event.duration` must be set to `null`.
-    For any other value `event.duration` should be set to indicate when the pregnancy state terminated.
+    One per fetus (can be multiple events sharing the same `time` for multifetal pregnancies).
+    The value of `event.time` is the patient's LMP (last menstrual period) date for this
+    pregnancy — standard OB/GYN dating convention. Derivations:
+      - estimated conception ≈ time + 14 days
+      - estimated delivery   ≈ time + 280 days (40 weeks)
+      - outcome date          = time + duration
+    When content value is 'ongoing', `event.duration` must be `null`.
+    For any other value, `event.duration` is the elapsed time from LMP to outcome.
+    Use 'very-early-loss' for losses with `duration < 6 weeks` (biochemical / pre-clinical
+    pregnancies, typically detected only by hCG without ultrasound confirmation —
+    clinically distinct from miscarriage per ESHRE 2022 RPL guideline).
+    Use 'miscarriage' for clinically-confirmed losses ≥ 6 weeks.
   type: select
   repeatable: any
   options:
     - value: 'ongoing'
-      label: 'Ongoing pregnangcy'
+      label: 'Ongoing pregnancy'
+    - value: 'very-early-loss'
+      label: 'Very early loss (biochemical pregnancy, <6w)'
     - value: 'miscarriage'
       label: 'Miscarriage'
     - value: 'ectopic'

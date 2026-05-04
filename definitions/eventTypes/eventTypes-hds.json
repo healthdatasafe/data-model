@@ -80,10 +80,11 @@
       "maximum": 1
     },
     "pregnancy/detailed": {
-      "description": "Pregnancy. Use 'ongoing' while pregnancy is in progress; otherwise the value reflects how it terminated.",
+      "description": "Pregnancy. Use 'ongoing' while pregnancy is in progress; otherwise the value reflects how it terminated. 'very-early-loss' covers biochemical / pre-clinical losses with duration <6 weeks LMP (typically hCG-detected only, clinically distinct from miscarriage per ESHRE 2022 RPL guideline).",
       "type": "string",
       "enum": [
         "ongoing",
+        "very-early-loss",
         "miscarriage",
         "ectopic",
         "stillbirth",
