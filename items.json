@@ -1547,6 +1547,55 @@
     ],
     "repeatable": "P1D"
   },
+  "procedure-basic": {
+    "version": "v1",
+    "label": {
+      "en": "Procedure (free-text)"
+    },
+    "description": {
+      "en": "Free-text clinical procedure — laparoscopy, HSG, polypectomy, etc."
+    },
+    "streamId": "procedure",
+    "eventType": "procedure/basic",
+    "type": "composite",
+    "composite": {
+      "name": {
+        "label": {
+          "en": "Procedure name"
+        },
+        "type": "text"
+      },
+      "count": {
+        "label": {
+          "en": "Number of times (lifetime)"
+        },
+        "type": "number",
+        "canBeNull": true
+      },
+      "notes": {
+        "label": {
+          "en": "Notes"
+        },
+        "type": "text",
+        "canBeNull": true
+      }
+    },
+    "repeatable": "unlimited"
+  },
+  "procedure-coded": {
+    "version": "v1",
+    "label": {
+      "en": "Procedure (coded)"
+    },
+    "description": {
+      "en": "Search and select a coded clinical procedure."
+    },
+    "streamId": "procedure",
+    "eventType": "procedure/coded-v1",
+    "type": "datasource-search",
+    "datasource": "procedure",
+    "repeatable": "unlimited"
+  },
   "profile-addresscountry": {
     "version": "temporary",
     "label": {
@@ -1992,6 +2041,65 @@
     "streamId": "symptom-general-fatigue",
     "eventType": "activity/plain",
     "type": "checkbox",
+    "repeatable": "unlimited"
+  },
+  "treatment-basic": {
+    "version": "v1",
+    "label": {
+      "en": "Treatment (free-text)"
+    },
+    "description": {
+      "en": "Free-text clinical treatment — IVF, chemotherapy, CBT, dialysis, etc."
+    },
+    "streamId": "treatment",
+    "eventType": "treatment/basic",
+    "duration": {
+      "mandatory": false,
+      "canBeNull": true,
+      "maxSeconds": 315360000
+    },
+    "type": "composite",
+    "composite": {
+      "name": {
+        "label": {
+          "en": "Treatment name"
+        },
+        "type": "text"
+      },
+      "count": {
+        "label": {
+          "en": "Number of times (lifetime)"
+        },
+        "type": "number",
+        "canBeNull": true
+      },
+      "notes": {
+        "label": {
+          "en": "Notes"
+        },
+        "type": "text",
+        "canBeNull": true
+      }
+    },
+    "repeatable": "unlimited"
+  },
+  "treatment-coded": {
+    "version": "v1",
+    "label": {
+      "en": "Treatment (coded)"
+    },
+    "description": {
+      "en": "Search and select a coded clinical treatment."
+    },
+    "streamId": "treatment",
+    "eventType": "treatment/coded-v1",
+    "duration": {
+      "mandatory": false,
+      "canBeNull": true,
+      "maxSeconds": 315360000
+    },
+    "type": "datasource-search",
+    "datasource": "treatment",
     "repeatable": "unlimited"
   },
   "wellbeing-mood": {

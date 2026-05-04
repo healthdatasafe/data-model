@@ -2001,7 +2001,7 @@
       "maximum": 1
     },
     "pregnancy/detailed": {
-      "description": "Pregnancy. The value of `event.time` should indicate the start of pregnancy. When content value is 'ongoing' `event.duration` must be set to `null`. For any other value `event.duration` should be set to indicate when the pregnancy state terminated.",
+      "description": "Pregnancy. Use 'ongoing' while pregnancy is in progress; otherwise the value reflects how it terminated.",
       "type": "string",
       "enum": [
         "ongoing",
@@ -2190,7 +2190,7 @@
       }
     },
     "medication/prescription-v1": {
-      "description": "Medication prescription. Captures what the doctor prescribed: drug identity, dosage, frequency, and instructions. event.duration reflects the full treatment period.",
+      "description": "Medication prescription. Captures what the doctor prescribed: drug identity, dosage, frequency, and instructions.",
       "type": "object",
       "required": [
         "drug"
@@ -2312,6 +2312,236 @@
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "treatment/basic": {
+      "description": "Free-text treatment regimen.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Free-text name of the treatment / regimen (e.g. 'IVF', 'Chemotherapy', 'CBT')",
+          "type": "string"
+        },
+        "count": {
+          "description": "Aggregate intake count over the patient's lifetime. 0 = never. Use for Flavour A intake capture.",
+          "type": "number"
+        },
+        "notes": {
+          "description": "Free text supplementary notes",
+          "type": "string"
+        }
+      }
+    },
+    "treatment/coded-v1": {
+      "description": "Coded treatment regimen. 'regimen' is the coded identity from datasets-service.",
+      "type": "object",
+      "required": [
+        "regimen"
+      ],
+      "properties": {
+        "regimen": {
+          "description": "Coded regimen identity, populated from datasets-service selection.",
+          "type": "object",
+          "required": [
+            "label",
+            "codes"
+          ],
+          "properties": {
+            "label": {
+              "description": "Localized regimen name for display",
+              "type": "object",
+              "properties": {
+                "en": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": {
+              "description": "Localized full description",
+              "type": "object",
+              "properties": {
+                "en": {
+                  "type": "string"
+                }
+              }
+            },
+            "codes": {
+              "description": "Coding identifiers across systems (SNOMED-CT, ICD-10-PCS, CPT, …).",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "system",
+                  "hdsId"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "system": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "hdsId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "count": {
+          "description": "Aggregate intake count over the patient's lifetime. 0 = never. Use for Flavour A intake capture.",
+          "type": "number"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "procedure/basic": {
+      "description": "Free-text clinical procedure. 'findings' is an open-vocabulary array describing procedure-bound observations (e.g. endometriosis localisation during a laparoscopy).",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Free-text name of the procedure (e.g. 'Laparoscopy', 'HSG', 'Polypectomy')",
+          "type": "string"
+        },
+        "count": {
+          "description": "Aggregate intake count (Flavour A: lifetime occurrences). 0 = never.",
+          "type": "number"
+        },
+        "findings": {
+          "description": "Open-vocabulary array of procedure-bound observations. Form preset declares which finding types are surfaced per procedure label.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "description": "Finding category (e.g. 'endometriosis-localisation', 'adhesions', 'fibroid', 'modality').",
+                "type": "string"
+              },
+              "value": {
+                "description": "Finding value — string, boolean, or nested object as appropriate."
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "procedure/coded-v1": {
+      "description": "Coded clinical procedure. 'procedure' is the coded identity from datasets-service.",
+      "type": "object",
+      "required": [
+        "procedure"
+      ],
+      "properties": {
+        "procedure": {
+          "description": "Coded procedure identity, populated from datasets-service selection.",
+          "type": "object",
+          "required": [
+            "label",
+            "codes"
+          ],
+          "properties": {
+            "label": {
+              "description": "Localized procedure name for display",
+              "type": "object",
+              "properties": {
+                "en": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": {
+              "description": "Localized full description",
+              "type": "object",
+              "properties": {
+                "en": {
+                  "type": "string"
+                }
+              }
+            },
+            "codes": {
+              "description": "Coding identifiers across systems (SNOMED-CT, ICD-10-PCS, CPT, …).",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "system",
+                  "hdsId"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "system": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "hdsId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "number"
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "value": {},
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "notes": {
+          "type": "string"
         }
       }
     },

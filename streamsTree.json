@@ -379,6 +379,18 @@
     ]
   },
   {
+    "id": "procedure",
+    "name": "Procedure",
+    "parentId": null,
+    "children": [
+      {
+        "id": "procedure-fertility",
+        "name": "Fertility",
+        "parentId": "procedure"
+      }
+    ]
+  },
+  {
     "id": "profile",
     "name": "Profile",
     "parentId": null,
@@ -580,6 +592,18 @@
           }
         ],
         "parentId": "symptom"
+      }
+    ]
+  },
+  {
+    "id": "treatment",
+    "name": "Treatment",
+    "parentId": null,
+    "children": [
+      {
+        "id": "treatment-fertility",
+        "name": "Fertility",
+        "parentId": "treatment"
       }
     ]
   },
