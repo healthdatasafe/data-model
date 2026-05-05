@@ -631,6 +631,45 @@
       "description": "User display name",
       "type": "string"
     },
+    "delivery/composite-v1": {
+      "description": "Per-baby delivery / birth event. One event per baby; siblings of multifetal pregnancies share event.time (= delivery date) and typically share 'mode'. Stillbirth status is carried upstream on fertility-pregnancy.outcome=stillbirth, NOT here. Field vocabularies aligned to LOINC: 73762-7 (mode), 8339-4 (birth weight), 76689-9 (sex assigned at birth), 9274-2 (5-min APGAR).",
+      "type": "object",
+      "required": ["mode"],
+      "properties": {
+        "mode": {
+          "description": "Final route and method of delivery (LOINC 73762-7 / US Standard Certificate of Live Birth).",
+          "type": "string",
+          "enum": ["vaginal-spontaneous", "vaginal-forceps", "vaginal-vacuum", "cesarean", "unknown"]
+        },
+        "birthWeight": {
+          "description": "Birth weight in grams (LOINC 8339-4).",
+          "type": "number",
+          "minimum": 0
+        },
+        "sex": {
+          "description": "Sex assigned at birth (LOINC 76689-9). 'indeterminate' covers ambiguous genitalia / disorders of sex development.",
+          "type": "string",
+          "enum": ["male", "female", "indeterminate", "unknown"]
+        },
+        "apgar5min": {
+          "description": "APGAR score at 5 minutes (LOINC 9274-2), integer 0–10.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "nicuLengthOfStayDays": {
+          "description": "Length of NICU admission in days; 0 if not admitted.",
+          "type": "number",
+          "minimum": 0
+        },
+        "neonatalDeathDays": {
+          "description": "Days from delivery to neonatal death (within 28 days post-livebirth). Absent / null = alive at last follow-up.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 28
+        }
+      }
+    },
     "cervix-position/3d-vectors": {
       "description": "Cervical position observation as three 0–1 vectors: height (low→high), firmness (firm→soft), openness (closed→open). Each dimension follows the fertility direction (0 = least fertile, 1 = most fertile).",
       "type": "object",

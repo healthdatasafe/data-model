@@ -38,3 +38,5 @@ children:
     children:
       - id: fertility-miscarriages
         name: Miscarriages
+      - id: fertility-deliveries
+        name: Deliveries

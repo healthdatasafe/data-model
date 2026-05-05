@@ -213,6 +213,76 @@ fertility-pregnancy:
       label: 'Live birth'
     - value: 'abortion'
       label: 'Abortion'
+fertility-delivery:
+  version: v1
+  label:
+    en: Delivery
+    fr: Accouchement
+  description:
+    en: |-
+      Per-baby delivery / birth event. One event per baby in the woman's account. Siblings of multifetal pregnancies share `event.time` (= delivery date) and typically share `mode`; per-baby attributes (birth weight, sex, APGAR, NICU stay, neonatal death) vary. Used together with fertility-pregnancy (`event.time` = LMP). A fertility-delivery event only exists when the corresponding fertility-pregnancy.outcome is 'livebirth' or 'stillbirth'. Field vocabularies aligned to LOINC: 73762-7 (mode), 8339-4 (birth weight), 76689-9 (sex assigned at birth), 9274-2 (5-min APGAR).
+    fr: |-
+      Événement d'accouchement / de naissance par bébé. Un événement par bébé dans le compte de la femme. Les bébés issus d'une grossesse multifœtale partagent `event.time` (= date d'accouchement) et partagent généralement `mode` ; les attributs par bébé (poids de naissance, sexe, APGAR, séjour en USIN, décès néonatal) varient. Utilisé conjointement avec fertility-pregnancy (`event.time` = LMP). Un événement fertility-delivery n'existe que lorsque le fertility-pregnancy.outcome correspondant est 'livebirth' ou 'stillbirth'. Vocabulaires alignés sur LOINC : 73762-7 (mode), 8339-4 (poids de naissance), 76689-9 (sexe à la naissance), 9274-2 (APGAR à 5 minutes).
+  streamId: fertility-deliveries
+  eventType: delivery/composite-v1
+  type: composite
+  repeatable: any
+  composite:
+    mode:
+      label:
+        en: Mode of delivery
+        fr: Mode d'accouchement
+      type: select
+      options:
+        - value: 'vaginal-spontaneous'
+          label: { en: 'Vaginal — spontaneous', fr: 'Vaginal — spontané' }
+        - value: 'vaginal-forceps'
+          label: { en: 'Vaginal — forceps-assisted', fr: 'Vaginal — assisté par forceps' }
+        - value: 'vaginal-vacuum'
+          label: { en: 'Vaginal — vacuum-assisted', fr: 'Vaginal — assisté par ventouse' }
+        - value: 'cesarean'
+          label: { en: 'Cesarean', fr: 'Césarienne' }
+        - value: 'unknown'
+          label: { en: 'Unknown', fr: 'Inconnu' }
+    birthWeight:
+      label:
+        en: Birth weight (g)
+        fr: Poids de naissance (g)
+      type: number
+      canBeNull: true
+    sex:
+      label:
+        en: Sex assigned at birth
+        fr: Sexe à la naissance
+      type: select
+      canBeNull: true
+      options:
+        - value: 'male'
+          label: { en: 'Male', fr: 'Masculin' }
+        - value: 'female'
+          label: { en: 'Female', fr: 'Féminin' }
+        - value: 'indeterminate'
+          label: { en: 'Indeterminate', fr: 'Indéterminé' }
+        - value: 'unknown'
+          label: { en: 'Unknown', fr: 'Inconnu' }
+    apgar5min:
+      label:
+        en: APGAR score at 5 minutes (0–10)
+        fr: Score APGAR à 5 minutes (0–10)
+      type: number
+      canBeNull: true
+    nicuLengthOfStayDays:
+      label:
+        en: NICU length of stay (days)
+        fr: Durée de séjour en USIN (jours)
+      type: number
+      canBeNull: true
+    neonatalDeathDays:
+      label:
+        en: Days from birth to neonatal death (leave empty if alive)
+        fr: Jours entre naissance et décès néonatal (laisser vide si en vie)
+      type: number
+      canBeNull: true
 fertility-hormone-fsh:
   version: v1
   label: FSH
