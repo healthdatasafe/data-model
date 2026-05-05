@@ -68,7 +68,10 @@ function localizeItem (properties, obj) {
         obj[key] = { en: value }; // set to english
       }
     } else {
-      if (typeof value === 'object') {
+      // Recurse into objects and arrays — but skip null (typeof null is
+      // 'object' so the naive check would crash on Object.entries(null);
+      // happens for nullable composite fields like cervix-position options).
+      if (value !== null && typeof value === 'object') {
         localizeItem(properties, value);
       }
     }
