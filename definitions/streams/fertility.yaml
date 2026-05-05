@@ -27,6 +27,8 @@ children:
     name: Trying to conceive / Avoiding pregnancy
   - id: fertility-sexual-activity
     name: Sexual Activity
+  - id: fertility-genital-contact
+    name: Non-intercourse genital contact
   - id: fertility-test-opk
     name: Ovulation Test (OPK)
   - id: fertility-test-pregnancy

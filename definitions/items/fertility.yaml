@@ -159,6 +159,20 @@ fertility-sexual-activity:
       label: 'Usage of a cervical barrier'
     - value: 'protected'
       label: 'Protected intercourse (unspecified method)'
+fertility-genital-contact:
+  version: v1
+  label: Non-intercourse genital contact
+  description: |-
+    Genital contact that did not involve intercourse (e.g. external contact,
+    manual stimulation involving genital exposure). Relevant for fertility-
+    awareness charting because residual sperm exposure can still result in
+    pregnancy. Distinct from fertility-sexual-activity, which records
+    intercourse variants. Both items can co-exist on the same day if both
+    phenomena occurred.
+  streamId: fertility-genital-contact
+  eventType: activity/plain
+  type: checkbox
+  repeatable: P1D
 fertility-pregnancy:
   version: v2
   label: Pregnancy
