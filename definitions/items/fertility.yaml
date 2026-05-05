@@ -92,8 +92,14 @@ fertility-cycles-peak-day:
   repeatable: P1D
 fertility-miscarriages-count:
   version: temporary
+  deprecated: true
   label: Nb of miscarriages
-  description: Number of total miscarriages at this date
+  description: |-
+    DEPRECATED — record each miscarriage as its own `fertility-pregnancy`
+    event with `content = miscarriage`, `time = LMP for that pregnancy`, and
+    `duration = LMP→outcome`. Aggregate counts are derived analyst-side from
+    the count of such events. The legacy aggregate-count item (this one) is
+    retained for backwards compatibility with pre-existing clients only.
   streamId: fertility-miscarriages
   eventType: count/generic
   type: number
