@@ -70,4 +70,23 @@ children:
             name: FSH
           - id: body-urine-hormones-hcg
             name: hCG
+  - id: body-semen
+    name: Semen
+    children:
+      - id: body-semen-concentration
+        name: Sperm concentration
+      - id: body-semen-motility-progressive
+        name: Sperm motility — progressive (PR)
+      - id: body-semen-motility-total
+        name: Sperm motility — total (PR+NP)
+      - id: body-semen-vitality
+        name: Sperm vitality
+      - id: body-semen-volume
+        name: Semen volume
+      - id: body-semen-tmc
+        name: Total motile count
+      - id: body-semen-morphology-normal
+        name: Normal-form sperm morphology
+      - id: body-semen-dna-fragmentation
+        name: Sperm DNA fragmentation
 

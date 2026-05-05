@@ -563,6 +563,16 @@
       "description": "Milligrams per gram (topical)",
       "type": "number"
     },
+    "concentration/count-ml": {
+      "description": "Counts per milliliter (raw count). Stored value is the absolute number of items per mL — e.g. 16000000 for a sperm concentration of 16 × 10⁶/mL.",
+      "type": "number",
+      "minimum": 0
+    },
+    "concentration/megacount-ml": {
+      "description": "Megacounts per milliliter (10⁶ counts/mL). Stored value is in millions — e.g. 16 for 16 × 10⁶/mL. Use the long-form 'mega' prefix to stay within the all-lowercase eventType convention while encoding the SI Mega (10⁶) multiplier.",
+      "type": "number",
+      "minimum": 0
+    },
     "rate/mg-hr": {
       "description": "Milligrams per hour (transdermal, infusion)",
       "type": "number"
@@ -798,6 +808,14 @@
     "concentration/mg-g": {
       "name": { "en": "Milligrams per gram", "fr": "Milligrammes par gramme" },
       "symbol": "mg/g"
+    },
+    "concentration/count-ml": {
+      "name": { "en": "Counts per milliliter", "fr": "Nombre par millilitre" },
+      "symbol": "#/mL"
+    },
+    "concentration/megacount-ml": {
+      "name": { "en": "Megacounts per milliliter", "fr": "Mégacomptes par millilitre" },
+      "symbol": "M#/mL"
     },
     "rate/mg-hr": {
       "name": { "en": "Milligrams per hour", "fr": "Milligrammes par heure" },

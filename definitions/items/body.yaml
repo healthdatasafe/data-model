@@ -50,3 +50,154 @@ body-height:
         - value: length/ft
           label: Feet
   repeatable: unlimited
+
+body-semen-concentration:
+  version: v1
+  label:
+    en: Sperm concentration
+    fr: Concentration spermatique
+  description:
+    en: Sperm concentration in semen (number of spermatozoa per mL of ejaculate). Stored in megacounts per millilitre (10⁶/mL).
+    fr: Concentration de spermatozoïdes dans le sperme (nombre par mL d'éjaculat). Stockée en mégacomptes par millilitre (10⁶/mL).
+  streamId: body-semen-concentration
+  eventType: concentration/megacount-ml
+  type: number
+  repeatable: any
+  # referenceRange parked pending direct verification against the WHO 2021 manual (6th ed., Geneva 2021).
+  # Secondary sources cite 16 M#/mL but the most rigorous SWOT review (Boitrelle 2021) tabulates total
+  # sperm number (39 M#/ejaculate) instead, not concentration. See research.md §2.4. Re-add when verified.
+  # LOINC mapping (commonly cited 32623-1) also pending separate verification.
+  referenceRange: null
+body-semen-motility-progressive:
+  version: v1
+  label:
+    en: Sperm motility — progressive (PR)
+    fr: Mobilité spermatique — progressive (PR)
+  description:
+    en: Fraction of progressively-motile sperm (PR) in semen — sperm moving actively in a straight line or large circle, regardless of speed. Distinct from total motility (PR+NP). Used as the multiplier in Total Motile Count derivation (concentration × volume × this).
+    fr: Fraction de spermatozoïdes à mobilité progressive (PR) dans le sperme — spermatozoïdes se déplaçant activement en ligne droite ou en large cercle, quelle que soit la vitesse. Distinct de la mobilité totale (PR+NP). Utilisé comme multiplicateur dans le calcul du nombre total de spermatozoïdes mobiles (concentration × volume × cette valeur).
+  streamId: body-semen-motility-progressive
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  referenceRange:
+    source: WHO-2021
+    lowerLimit: 0.30
+    upperLimit: null
+    units: ratio
+    population: recently-fertile-men
+body-semen-motility-total:
+  version: v1
+  label:
+    en: Sperm motility — total (PR+NP)
+    fr: Mobilité spermatique — totale (PR+NP)
+  description:
+    en: Fraction of motile sperm (progressive PR + non-progressive NP) in semen. Used clinically to diagnose asthenozoospermia. Distinct from progressive motility (PR only). Both can co-exist on the same lab report.
+    fr: Fraction de spermatozoïdes mobiles (progressifs PR + non-progressifs NP) dans le sperme. Utilisée cliniquement pour le diagnostic d'asthénozoospermie. Distincte de la mobilité progressive (PR uniquement). Les deux peuvent coexister sur le même rapport de laboratoire.
+  streamId: body-semen-motility-total
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  referenceRange:
+    source: WHO-2021
+    lowerLimit: 0.42
+    upperLimit: null
+    units: ratio
+    population: recently-fertile-men
+body-semen-vitality:
+  version: v1
+  label:
+    en: Sperm vitality
+    fr: Vitalité spermatique
+  description:
+    en: Fraction of live sperm in semen, measured by eosin-nigrosin staining or hypo-osmotic swelling test. Distinct from motility — a sperm can be alive but immotile. WHO 2021 lists this as a mandatory test when total motility is below the reference limit; it is the key discriminator between asthenozoospermia (low motility, mostly live) and necrozoospermia (low motility, mostly dead).
+    fr: Fraction de spermatozoïdes vivants dans le sperme, mesurée par coloration éosine-nigrosine ou test de gonflement hypo-osmotique. Distincte de la mobilité — un spermatozoïde peut être vivant mais immobile. WHO 2021 la classe comme test obligatoire lorsque la mobilité totale est inférieure à la limite de référence ; clé pour distinguer asthénozoospermie (faible mobilité, majoritairement vivants) et nécrozoospermie (faible mobilité, majoritairement morts).
+  streamId: body-semen-vitality
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  referenceRange:
+    source: WHO-2021
+    lowerLimit: 0.54
+    upperLimit: null
+    units: ratio
+    population: recently-fertile-men
+body-semen-volume:
+  version: v1
+  label:
+    en: Semen volume
+    fr: Volume de sperme
+  description:
+    en: Volume of semen in a single ejaculate, in millilitres.
+    fr: Volume de sperme dans un éjaculat unique, en millilitres.
+  streamId: body-semen-volume
+  eventType: volume/ml
+  type: number
+  repeatable: any
+  # LOINC mapping (commonly cited 11250-3) pending separate verification.
+  referenceRange:
+    source: WHO-2021
+    lowerLimit: 1.4
+    upperLimit: null
+    units: ml
+    population: recently-fertile-men
+body-semen-tmc:
+  version: v1
+  label:
+    en: Total motile count
+    fr: Nombre total de spermatozoïdes mobiles
+  description:
+    en: Total motile sperm count per ejaculate (concentration × volume × progressive-motility fraction). Stored in megacounts (10⁶ sperm).
+    fr: Nombre total de spermatozoïdes mobiles par éjaculat (concentration × volume × fraction mobile progressive). Stocké en mégacomptes (10⁶ spermatozoïdes).
+  streamId: body-semen-tmc
+  eventType: count/generic
+  type: number
+  repeatable: any
+  # WHO 2021 deliberately does not publish a TMC reference limit. Threshold below is clinical consensus
+  # (Hamilton et al. 2015, Hum Reprod) — IUI viability cutoff. See research.md §2.2.
+  referenceRange:
+    source: Hamilton-2015
+    lowerLimit: 9
+    upperLimit: null
+    units: M#/ejaculate
+    population: clinical-consensus
+body-semen-morphology-normal:
+  version: v1
+  label:
+    en: Normal-form sperm morphology
+    fr: Morphologie normale des spermatozoïdes
+  description:
+    en: Fraction of spermatozoa with normal morphology (Kruger strict criteria). Stored as a 0..1 ratio.
+    fr: Fraction de spermatozoïdes ayant une morphologie normale (critères stricts de Kruger). Stockée comme un ratio 0..1.
+  streamId: body-semen-morphology-normal
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  # LOINC mapping (commonly cited 10210-3) pending separate verification.
+  referenceRange:
+    source: WHO-2021
+    lowerLimit: 0.04
+    upperLimit: null
+    units: ratio
+    population: recently-fertile-men
+body-semen-dna-fragmentation:
+  version: v1
+  label:
+    en: Sperm DNA fragmentation
+    fr: Fragmentation de l'ADN spermatique
+  description:
+    en: DNA Fragmentation Index (DFI) — fraction of spermatozoa with fragmented DNA. Stored as a 0..1 ratio.
+    fr: Indice de fragmentation de l'ADN (DFI) — fraction de spermatozoïdes avec ADN fragmenté. Stockée comme un ratio 0..1.
+  streamId: body-semen-dna-fragmentation
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  # WHO 2021 explicitly defers on DFI (no reference limit). Threshold below is clinical consensus
+  # (Agarwal 2017, Society for Translational Medicine) for elevated DNA-fragmentation risk.
+  # See research.md §2.2. Note this is an UPPER limit (high values = worse), unlike the others.
+  referenceRange:
+    source: Agarwal-2017
+    lowerLimit: null
+    upperLimit: 0.30
+    units: ratio
+    population: clinical-consensus
