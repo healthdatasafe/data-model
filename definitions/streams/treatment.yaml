@@ -4,3 +4,4 @@ parentId: null
 children:
   - id: treatment-fertility
     name: Fertility
+    role: context

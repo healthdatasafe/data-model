@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Added (plan 53 phase A — `role: context` flag on context streams)
+- New optional `role` field on stream definitions. v1 value: `context`. A `role: context` stream exists purely as a descendant-streamId marker for the D3 context-via-substream mechanic (see `documentation/TREATMENT-PROCEDURE.md`); no itemDef is registered there and consumers should treat it as metadata, not as a data-bearing bucket.
+- `treatment-fertility` and `procedure-fertility` tagged `role: context`. Implicit default for all other streams is "data" (no declaration required).
+- Field flows through `dist/streamsTree.json` and `pack.json` unchanged — `src/streams.js` parses YAML and re-emits the stream node verbatim; no schema/validation update needed.
+
+### Notes
+- Non-breaking: existing consumers that don't know about `role` ignore unknown fields.
+- This is the foundation slice. Runtime helpers (`hds-lib-js#isContext()`), forms-engine rendering, and webapp/dashboard visual treatment are tracked separately under Plan 53 Phase B.
+
 ## [1.8.1] - 2026-04-30
 
 ### Changed (plan 46 — use Pryv-native event.time + event.duration for treatment span)
