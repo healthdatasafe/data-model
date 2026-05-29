@@ -29,6 +29,22 @@ procedure/                          ← itemDefs registered here
 
 v1 ships only `*-fertility` context streams (STORMM unblock). Other context placeholders land when their forms drive the demand.
 
+### `role: context` flag
+
+Context streams are tagged in YAML with `role: context`:
+
+```yaml
+- id: treatment-fertility
+  name: Fertility
+  role: context
+```
+
+The flag tells consumers (settings trees, form engines, dashboards) that the stream is a **descendant-streamId marker for D3 resolution** — not a data-bearing bucket. No itemDef is registered there; events are placed there only via `eventTemplate({ context })` against a parent-registered itemDef.
+
+Implicit default for all other streams is "data" (no `role` declaration required). The field flows through `dist/streamsTree.json` and `pack.json` as-is — `src/streams.js` parses YAML and re-emits the stream node verbatim.
+
+Runtime helper: `HDSModelStreams#isContext(streamId)` in `hds-lib-js` returns `true` iff the stream has `role: 'context'`. UI consumers (webapp settings tree, doctor-dashboard patient view, hds-forms-js section renderer) should use the helper to elide / mute / re-render these streams as metadata rather than as separate input buckets. Tracked under Plan 53.
+
 ## Item shape
 
 ```yaml
