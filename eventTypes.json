@@ -2001,10 +2001,11 @@
       "maximum": 1
     },
     "pregnancy/detailed": {
-      "description": "Pregnancy. Use 'ongoing' while pregnancy is in progress; otherwise the value reflects how it terminated.",
+      "description": "Pregnancy. Use 'ongoing' while pregnancy is in progress; otherwise the value reflects how it terminated. 'very-early-loss' covers biochemical / pre-clinical losses with duration <6 weeks LMP (typically hCG-detected only, clinically distinct from miscarriage per ESHRE 2022 RPL guideline).",
       "type": "string",
       "enum": [
         "ongoing",
+        "very-early-loss",
         "miscarriage",
         "ectopic",
         "stillbirth",
@@ -2585,6 +2586,16 @@
       "description": "Milligrams per gram (topical)",
       "type": "number"
     },
+    "concentration/count-ml": {
+      "description": "Counts per milliliter (raw count). Stored value is the absolute number of items per mL — e.g. 16000000 for a sperm concentration of 16 × 10⁶/mL.",
+      "type": "number",
+      "minimum": 0
+    },
+    "concentration/megacount-ml": {
+      "description": "Megacounts per milliliter (10⁶ counts/mL). Stored value is in millions — e.g. 16 for 16 × 10⁶/mL. Use the long-form 'mega' prefix to stay within the all-lowercase eventType convention while encoding the SI Mega (10⁶) multiplier.",
+      "type": "number",
+      "minimum": 0
+    },
     "rate/mg-hr": {
       "description": "Milligrams per hour (transdermal, infusion)",
       "type": "number"
@@ -2665,6 +2676,58 @@
     "contact/display-name": {
       "description": "User display name",
       "type": "string"
+    },
+    "delivery/composite-v1": {
+      "description": "Per-baby delivery / birth event. One event per baby; siblings of multifetal pregnancies share event.time (= delivery date) and typically share 'mode'. Stillbirth status is carried upstream on fertility-pregnancy.outcome=stillbirth, NOT here. Field vocabularies aligned to LOINC: 73762-7 (mode), 8339-4 (birth weight), 76689-9 (sex assigned at birth), 9274-2 (5-min APGAR).",
+      "type": "object",
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "description": "Final route and method of delivery (LOINC 73762-7 / US Standard Certificate of Live Birth).",
+          "type": "string",
+          "enum": [
+            "vaginal-spontaneous",
+            "vaginal-forceps",
+            "vaginal-vacuum",
+            "cesarean",
+            "unknown"
+          ]
+        },
+        "birthWeight": {
+          "description": "Birth weight in grams (LOINC 8339-4).",
+          "type": "number",
+          "minimum": 0
+        },
+        "sex": {
+          "description": "Sex assigned at birth (LOINC 76689-9). 'indeterminate' covers ambiguous genitalia / disorders of sex development.",
+          "type": "string",
+          "enum": [
+            "male",
+            "female",
+            "indeterminate",
+            "unknown"
+          ]
+        },
+        "apgar5min": {
+          "description": "APGAR score at 5 minutes (LOINC 9274-2), integer 0–10.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "nicuLengthOfStayDays": {
+          "description": "Length of NICU admission in days; 0 if not admitted.",
+          "type": "number",
+          "minimum": 0
+        },
+        "neonatalDeathDays": {
+          "description": "Days from delivery to neonatal death (within 28 days post-livebirth). Absent / null = alive at last follow-up.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 28
+        }
+      }
     },
     "cervix-position/3d-vectors": {
       "description": "Cervical position observation as three 0–1 vectors: height (low→high), firmness (firm→soft), openness (closed→open). Each dimension follows the fertility direction (0 = least fertile, 1 = most fertile).",
@@ -4643,6 +4706,20 @@
         "fr": "Milligrammes par gramme"
       },
       "symbol": "mg/g"
+    },
+    "concentration/count-ml": {
+      "name": {
+        "en": "Counts per milliliter",
+        "fr": "Nombre par millilitre"
+      },
+      "symbol": "#/mL"
+    },
+    "concentration/megacount-ml": {
+      "name": {
+        "en": "Megacounts per milliliter",
+        "fr": "Mégacomptes par millilitre"
+      },
+      "symbol": "M#/mL"
     },
     "rate/mg-hr": {
       "name": {

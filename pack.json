@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-05-04T09:51:52.676Z",
+  "publicationDate": "2026-06-02T12:15:39.746Z",
   "streams": [
     {
       "id": "activity",
@@ -223,6 +223,53 @@
             }
           ],
           "parentId": "body"
+        },
+        {
+          "id": "body-semen",
+          "name": "Semen",
+          "children": [
+            {
+              "id": "body-semen-concentration",
+              "name": "Sperm concentration",
+              "parentId": "body-semen"
+            },
+            {
+              "id": "body-semen-motility-progressive",
+              "name": "Sperm motility — progressive (PR)",
+              "parentId": "body-semen"
+            },
+            {
+              "id": "body-semen-motility-total",
+              "name": "Sperm motility — total (PR+NP)",
+              "parentId": "body-semen"
+            },
+            {
+              "id": "body-semen-vitality",
+              "name": "Sperm vitality",
+              "parentId": "body-semen"
+            },
+            {
+              "id": "body-semen-volume",
+              "name": "Semen volume",
+              "parentId": "body-semen"
+            },
+            {
+              "id": "body-semen-tmc",
+              "name": "Total motile count",
+              "parentId": "body-semen"
+            },
+            {
+              "id": "body-semen-morphology-normal",
+              "name": "Normal-form sperm morphology",
+              "parentId": "body-semen"
+            },
+            {
+              "id": "body-semen-dna-fragmentation",
+              "name": "Sperm DNA fragmentation",
+              "parentId": "body-semen"
+            }
+          ],
+          "parentId": "body"
         }
       ]
     },
@@ -306,6 +353,11 @@
           "parentId": "fertility"
         },
         {
+          "id": "fertility-genital-contact",
+          "name": "Non-intercourse genital contact",
+          "parentId": "fertility"
+        },
+        {
           "id": "fertility-test-opk",
           "name": "Ovulation Test (OPK)",
           "parentId": "fertility"
@@ -316,13 +368,18 @@
           "parentId": "fertility"
         },
         {
-          "id": "fertility-preganancies",
-          "name": "Pregancies",
+          "id": "fertility-pregnancies",
+          "name": "Pregnancies",
           "children": [
             {
               "id": "fertility-miscarriages",
               "name": "Miscarriages",
-              "parentId": "fertility-preganancies"
+              "parentId": "fertility-pregnancies"
+            },
+            {
+              "id": "fertility-deliveries",
+              "name": "Deliveries",
+              "parentId": "fertility-pregnancies"
             }
           ],
           "parentId": "fertility"
@@ -388,6 +445,7 @@
         {
           "id": "procedure-fertility",
           "name": "Fertility",
+          "role": "context",
           "parentId": "procedure"
         }
       ]
@@ -605,6 +663,7 @@
         {
           "id": "treatment-fertility",
           "name": "Fertility",
+          "role": "context",
           "parentId": "treatment"
         }
       ]
@@ -1307,6 +1366,176 @@
       },
       "repeatable": "unlimited"
     },
+    "body-semen-concentration": {
+      "version": "v1",
+      "label": {
+        "en": "Sperm concentration",
+        "fr": "Concentration spermatique"
+      },
+      "description": {
+        "en": "Sperm concentration in semen (number of spermatozoa per mL of ejaculate). Stored in megacounts per millilitre (10⁶/mL).",
+        "fr": "Concentration de spermatozoïdes dans le sperme (nombre par mL d'éjaculat). Stockée en mégacomptes par millilitre (10⁶/mL)."
+      },
+      "streamId": "body-semen-concentration",
+      "eventType": "concentration/megacount-ml",
+      "type": "number",
+      "repeatable": "any",
+      "referenceRange": null
+    },
+    "body-semen-motility-progressive": {
+      "version": "v1",
+      "label": {
+        "en": "Sperm motility — progressive (PR)",
+        "fr": "Mobilité spermatique — progressive (PR)"
+      },
+      "description": {
+        "en": "Fraction of progressively-motile sperm (PR) in semen — sperm moving actively in a straight line or large circle, regardless of speed. Distinct from total motility (PR+NP). Used as the multiplier in Total Motile Count derivation (concentration × volume × this).",
+        "fr": "Fraction de spermatozoïdes à mobilité progressive (PR) dans le sperme — spermatozoïdes se déplaçant activement en ligne droite ou en large cercle, quelle que soit la vitesse. Distinct de la mobilité totale (PR+NP). Utilisé comme multiplicateur dans le calcul du nombre total de spermatozoïdes mobiles (concentration × volume × cette valeur)."
+      },
+      "streamId": "body-semen-motility-progressive",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "referenceRange": {
+        "source": "WHO-2021",
+        "lowerLimit": 0.3,
+        "upperLimit": null,
+        "units": "ratio",
+        "population": "recently-fertile-men"
+      }
+    },
+    "body-semen-motility-total": {
+      "version": "v1",
+      "label": {
+        "en": "Sperm motility — total (PR+NP)",
+        "fr": "Mobilité spermatique — totale (PR+NP)"
+      },
+      "description": {
+        "en": "Fraction of motile sperm (progressive PR + non-progressive NP) in semen. Used clinically to diagnose asthenozoospermia. Distinct from progressive motility (PR only). Both can co-exist on the same lab report.",
+        "fr": "Fraction de spermatozoïdes mobiles (progressifs PR + non-progressifs NP) dans le sperme. Utilisée cliniquement pour le diagnostic d'asthénozoospermie. Distincte de la mobilité progressive (PR uniquement). Les deux peuvent coexister sur le même rapport de laboratoire."
+      },
+      "streamId": "body-semen-motility-total",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "referenceRange": {
+        "source": "WHO-2021",
+        "lowerLimit": 0.42,
+        "upperLimit": null,
+        "units": "ratio",
+        "population": "recently-fertile-men"
+      }
+    },
+    "body-semen-vitality": {
+      "version": "v1",
+      "label": {
+        "en": "Sperm vitality",
+        "fr": "Vitalité spermatique"
+      },
+      "description": {
+        "en": "Fraction of live sperm in semen, measured by eosin-nigrosin staining or hypo-osmotic swelling test. Distinct from motility — a sperm can be alive but immotile. WHO 2021 lists this as a mandatory test when total motility is below the reference limit; it is the key discriminator between asthenozoospermia (low motility, mostly live) and necrozoospermia (low motility, mostly dead).",
+        "fr": "Fraction de spermatozoïdes vivants dans le sperme, mesurée par coloration éosine-nigrosine ou test de gonflement hypo-osmotique. Distincte de la mobilité — un spermatozoïde peut être vivant mais immobile. WHO 2021 la classe comme test obligatoire lorsque la mobilité totale est inférieure à la limite de référence ; clé pour distinguer asthénozoospermie (faible mobilité, majoritairement vivants) et nécrozoospermie (faible mobilité, majoritairement morts)."
+      },
+      "streamId": "body-semen-vitality",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "referenceRange": {
+        "source": "WHO-2021",
+        "lowerLimit": 0.54,
+        "upperLimit": null,
+        "units": "ratio",
+        "population": "recently-fertile-men"
+      }
+    },
+    "body-semen-volume": {
+      "version": "v1",
+      "label": {
+        "en": "Semen volume",
+        "fr": "Volume de sperme"
+      },
+      "description": {
+        "en": "Volume of semen in a single ejaculate, in millilitres.",
+        "fr": "Volume de sperme dans un éjaculat unique, en millilitres."
+      },
+      "streamId": "body-semen-volume",
+      "eventType": "volume/ml",
+      "type": "number",
+      "repeatable": "any",
+      "referenceRange": {
+        "source": "WHO-2021",
+        "lowerLimit": 1.4,
+        "upperLimit": null,
+        "units": "ml",
+        "population": "recently-fertile-men"
+      }
+    },
+    "body-semen-tmc": {
+      "version": "v1",
+      "label": {
+        "en": "Total motile count",
+        "fr": "Nombre total de spermatozoïdes mobiles"
+      },
+      "description": {
+        "en": "Total motile sperm count per ejaculate (concentration × volume × progressive-motility fraction). Stored in megacounts (10⁶ sperm).",
+        "fr": "Nombre total de spermatozoïdes mobiles par éjaculat (concentration × volume × fraction mobile progressive). Stocké en mégacomptes (10⁶ spermatozoïdes)."
+      },
+      "streamId": "body-semen-tmc",
+      "eventType": "count/generic",
+      "type": "number",
+      "repeatable": "any",
+      "referenceRange": {
+        "source": "Hamilton-2015",
+        "lowerLimit": 9,
+        "upperLimit": null,
+        "units": "M#/ejaculate",
+        "population": "clinical-consensus"
+      }
+    },
+    "body-semen-morphology-normal": {
+      "version": "v1",
+      "label": {
+        "en": "Normal-form sperm morphology",
+        "fr": "Morphologie normale des spermatozoïdes"
+      },
+      "description": {
+        "en": "Fraction of spermatozoa with normal morphology (Kruger strict criteria). Stored as a 0..1 ratio.",
+        "fr": "Fraction de spermatozoïdes ayant une morphologie normale (critères stricts de Kruger). Stockée comme un ratio 0..1."
+      },
+      "streamId": "body-semen-morphology-normal",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "referenceRange": {
+        "source": "WHO-2021",
+        "lowerLimit": 0.04,
+        "upperLimit": null,
+        "units": "ratio",
+        "population": "recently-fertile-men"
+      }
+    },
+    "body-semen-dna-fragmentation": {
+      "version": "v1",
+      "label": {
+        "en": "Sperm DNA fragmentation",
+        "fr": "Fragmentation de l'ADN spermatique"
+      },
+      "description": {
+        "en": "DNA Fragmentation Index (DFI) — fraction of spermatozoa with fragmented DNA. Stored as a 0..1 ratio.",
+        "fr": "Indice de fragmentation de l'ADN (DFI) — fraction de spermatozoïdes avec ADN fragmenté. Stockée comme un ratio 0..1."
+      },
+      "streamId": "body-semen-dna-fragmentation",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "referenceRange": {
+        "source": "Agarwal-2017",
+        "lowerLimit": null,
+        "upperLimit": 0.3,
+        "units": "ratio",
+        "population": "clinical-consensus"
+      }
+    },
     "family-children-count": {
       "version": "temporary",
       "label": {
@@ -1451,11 +1680,12 @@
     },
     "fertility-miscarriages-count": {
       "version": "temporary",
+      "deprecated": true,
       "label": {
         "en": "Nb of miscarriages"
       },
       "description": {
-        "en": "Number of total miscarriages at this date"
+        "en": "DEPRECATED — record each miscarriage as its own `fertility-pregnancy`\nevent with `content = miscarriage`, `time = LMP for that pregnancy`, and\n`duration = LMP→outcome`. Aggregate counts are derived analyst-side from\nthe count of such events. The legacy aggregate-count item (this one) is\nretained for backwards compatibility with pre-existing clients only."
       },
       "streamId": "fertility-miscarriages",
       "eventType": "count/generic",
@@ -1588,8 +1818,21 @@
         }
       ]
     },
-    "fertility-pregnancy": {
+    "fertility-genital-contact": {
       "version": "v1",
+      "label": {
+        "en": "Non-intercourse genital contact"
+      },
+      "description": {
+        "en": "Genital contact that did not involve intercourse (e.g. external contact,\nmanual stimulation involving genital exposure). Relevant for fertility-\nawareness charting because residual sperm exposure can still result in\npregnancy. Distinct from fertility-sexual-activity, which records\nintercourse variants. Both items can co-exist on the same day if both\nphenomena occurred."
+      },
+      "streamId": "fertility-genital-contact",
+      "eventType": "activity/plain",
+      "type": "checkbox",
+      "repeatable": "P1D"
+    },
+    "fertility-pregnancy": {
+      "version": "v2",
       "label": {
         "en": "Pregnancy"
       },
@@ -1601,16 +1844,22 @@
         "canBeNull": true,
         "maxSeconds": 32400000
       },
-      "streamId": "fertility-preganancies",
+      "streamId": "fertility-pregnancies",
       "eventType": "pregnancy/detailed",
-      "devNotes": "One per fetus. (can be multiple with same start date)\nThe value of `event.time` should indicate the start of pregnancy.\nWhen content value is 'ongoing' `event.duration` must be set to `null`.\nFor any other value `event.duration` should be set to indicate when the pregnancy state terminated.",
+      "devNotes": "One per fetus (can be multiple events sharing the same `time` for multifetal pregnancies).\nThe value of `event.time` is the patient's LMP (last menstrual period) date for this\npregnancy — standard OB/GYN dating convention. Derivations:\n  - estimated conception ≈ time + 14 days\n  - estimated delivery   ≈ time + 280 days (40 weeks)\n  - outcome date          = time + duration\nWhen content value is 'ongoing', `event.duration` must be `null`.\nFor any other value, `event.duration` is the elapsed time from LMP to outcome.\nUse 'very-early-loss' for losses with `duration < 6 weeks` (biochemical / pre-clinical\npregnancies, typically detected only by hCG without ultrasound confirmation —\nclinically distinct from miscarriage per ESHRE 2022 RPL guideline).\nUse 'miscarriage' for clinically-confirmed losses ≥ 6 weeks.",
       "type": "select",
       "repeatable": "any",
       "options": [
         {
           "value": "ongoing",
           "label": {
-            "en": "Ongoing pregnangcy"
+            "en": "Ongoing pregnancy"
+          }
+        },
+        {
+          "value": "very-early-loss",
+          "label": {
+            "en": "Very early loss (biochemical pregnancy, <6w)"
           }
         },
         {
@@ -1644,6 +1893,137 @@
           }
         }
       ]
+    },
+    "fertility-delivery": {
+      "version": "v1",
+      "label": {
+        "en": "Delivery",
+        "fr": "Accouchement"
+      },
+      "description": {
+        "en": "Per-baby delivery / birth event. One event per baby in the woman's account. Siblings of multifetal pregnancies share `event.time` (= delivery date) and typically share `mode`; per-baby attributes (birth weight, sex, APGAR, NICU stay, neonatal death) vary. Used together with fertility-pregnancy (`event.time` = LMP). A fertility-delivery event only exists when the corresponding fertility-pregnancy.outcome is 'livebirth' or 'stillbirth'. Field vocabularies aligned to LOINC: 73762-7 (mode), 8339-4 (birth weight), 76689-9 (sex assigned at birth), 9274-2 (5-min APGAR).",
+        "fr": "Événement d'accouchement / de naissance par bébé. Un événement par bébé dans le compte de la femme. Les bébés issus d'une grossesse multifœtale partagent `event.time` (= date d'accouchement) et partagent généralement `mode` ; les attributs par bébé (poids de naissance, sexe, APGAR, séjour en USIN, décès néonatal) varient. Utilisé conjointement avec fertility-pregnancy (`event.time` = LMP). Un événement fertility-delivery n'existe que lorsque le fertility-pregnancy.outcome correspondant est 'livebirth' ou 'stillbirth'. Vocabulaires alignés sur LOINC : 73762-7 (mode), 8339-4 (poids de naissance), 76689-9 (sexe à la naissance), 9274-2 (APGAR à 5 minutes)."
+      },
+      "streamId": "fertility-deliveries",
+      "eventType": "delivery/composite-v1",
+      "type": "composite",
+      "repeatable": "any",
+      "composite": {
+        "mode": {
+          "label": {
+            "en": "Mode of delivery",
+            "fr": "Mode d'accouchement"
+          },
+          "type": "select",
+          "options": [
+            {
+              "value": "vaginal-spontaneous",
+              "label": {
+                "en": "Vaginal — spontaneous",
+                "fr": "Vaginal — spontané"
+              }
+            },
+            {
+              "value": "vaginal-forceps",
+              "label": {
+                "en": "Vaginal — forceps-assisted",
+                "fr": "Vaginal — assisté par forceps"
+              }
+            },
+            {
+              "value": "vaginal-vacuum",
+              "label": {
+                "en": "Vaginal — vacuum-assisted",
+                "fr": "Vaginal — assisté par ventouse"
+              }
+            },
+            {
+              "value": "cesarean",
+              "label": {
+                "en": "Cesarean",
+                "fr": "Césarienne"
+              }
+            },
+            {
+              "value": "unknown",
+              "label": {
+                "en": "Unknown",
+                "fr": "Inconnu"
+              }
+            }
+          ]
+        },
+        "birthWeight": {
+          "label": {
+            "en": "Birth weight (g)",
+            "fr": "Poids de naissance (g)"
+          },
+          "type": "number",
+          "canBeNull": true
+        },
+        "sex": {
+          "label": {
+            "en": "Sex assigned at birth",
+            "fr": "Sexe à la naissance"
+          },
+          "type": "select",
+          "canBeNull": true,
+          "options": [
+            {
+              "value": "male",
+              "label": {
+                "en": "Male",
+                "fr": "Masculin"
+              }
+            },
+            {
+              "value": "female",
+              "label": {
+                "en": "Female",
+                "fr": "Féminin"
+              }
+            },
+            {
+              "value": "indeterminate",
+              "label": {
+                "en": "Indeterminate",
+                "fr": "Indéterminé"
+              }
+            },
+            {
+              "value": "unknown",
+              "label": {
+                "en": "Unknown",
+                "fr": "Inconnu"
+              }
+            }
+          ]
+        },
+        "apgar5min": {
+          "label": {
+            "en": "APGAR score at 5 minutes (0–10)",
+            "fr": "Score APGAR à 5 minutes (0–10)"
+          },
+          "type": "number",
+          "canBeNull": true
+        },
+        "nicuLengthOfStayDays": {
+          "label": {
+            "en": "NICU length of stay (days)",
+            "fr": "Durée de séjour en USIN (jours)"
+          },
+          "type": "number",
+          "canBeNull": true
+        },
+        "neonatalDeathDays": {
+          "label": {
+            "en": "Days from birth to neonatal death (leave empty if alive)",
+            "fr": "Jours entre naissance et décès néonatal (laisser vide si en vie)"
+          },
+          "type": "number",
+          "canBeNull": true
+        }
+      }
     },
     "fertility-hormone-fsh": {
       "version": "v1",
@@ -5245,10 +5625,11 @@
         "maximum": 1
       },
       "pregnancy/detailed": {
-        "description": "Pregnancy. Use 'ongoing' while pregnancy is in progress; otherwise the value reflects how it terminated.",
+        "description": "Pregnancy. Use 'ongoing' while pregnancy is in progress; otherwise the value reflects how it terminated. 'very-early-loss' covers biochemical / pre-clinical losses with duration <6 weeks LMP (typically hCG-detected only, clinically distinct from miscarriage per ESHRE 2022 RPL guideline).",
         "type": "string",
         "enum": [
           "ongoing",
+          "very-early-loss",
           "miscarriage",
           "ectopic",
           "stillbirth",
@@ -5829,6 +6210,16 @@
         "description": "Milligrams per gram (topical)",
         "type": "number"
       },
+      "concentration/count-ml": {
+        "description": "Counts per milliliter (raw count). Stored value is the absolute number of items per mL — e.g. 16000000 for a sperm concentration of 16 × 10⁶/mL.",
+        "type": "number",
+        "minimum": 0
+      },
+      "concentration/megacount-ml": {
+        "description": "Megacounts per milliliter (10⁶ counts/mL). Stored value is in millions — e.g. 16 for 16 × 10⁶/mL. Use the long-form 'mega' prefix to stay within the all-lowercase eventType convention while encoding the SI Mega (10⁶) multiplier.",
+        "type": "number",
+        "minimum": 0
+      },
       "rate/mg-hr": {
         "description": "Milligrams per hour (transdermal, infusion)",
         "type": "number"
@@ -5909,6 +6300,58 @@
       "contact/display-name": {
         "description": "User display name",
         "type": "string"
+      },
+      "delivery/composite-v1": {
+        "description": "Per-baby delivery / birth event. One event per baby; siblings of multifetal pregnancies share event.time (= delivery date) and typically share 'mode'. Stillbirth status is carried upstream on fertility-pregnancy.outcome=stillbirth, NOT here. Field vocabularies aligned to LOINC: 73762-7 (mode), 8339-4 (birth weight), 76689-9 (sex assigned at birth), 9274-2 (5-min APGAR).",
+        "type": "object",
+        "required": [
+          "mode"
+        ],
+        "properties": {
+          "mode": {
+            "description": "Final route and method of delivery (LOINC 73762-7 / US Standard Certificate of Live Birth).",
+            "type": "string",
+            "enum": [
+              "vaginal-spontaneous",
+              "vaginal-forceps",
+              "vaginal-vacuum",
+              "cesarean",
+              "unknown"
+            ]
+          },
+          "birthWeight": {
+            "description": "Birth weight in grams (LOINC 8339-4).",
+            "type": "number",
+            "minimum": 0
+          },
+          "sex": {
+            "description": "Sex assigned at birth (LOINC 76689-9). 'indeterminate' covers ambiguous genitalia / disorders of sex development.",
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "indeterminate",
+              "unknown"
+            ]
+          },
+          "apgar5min": {
+            "description": "APGAR score at 5 minutes (LOINC 9274-2), integer 0–10.",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "nicuLengthOfStayDays": {
+            "description": "Length of NICU admission in days; 0 if not admitted.",
+            "type": "number",
+            "minimum": 0
+          },
+          "neonatalDeathDays": {
+            "description": "Days from delivery to neonatal death (within 28 days post-livebirth). Absent / null = alive at last follow-up.",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 28
+          }
+        }
       },
       "cervix-position/3d-vectors": {
         "description": "Cervical position observation as three 0–1 vectors: height (low→high), firmness (firm→soft), openness (closed→open). Each dimension follows the fertility direction (0 = least fertile, 1 = most fertile).",
@@ -7888,6 +8331,20 @@
         },
         "symbol": "mg/g"
       },
+      "concentration/count-ml": {
+        "name": {
+          "en": "Counts per milliliter",
+          "fr": "Nombre par millilitre"
+        },
+        "symbol": "#/mL"
+      },
+      "concentration/megacount-ml": {
+        "name": {
+          "en": "Megacounts per milliliter",
+          "fr": "Mégacomptes par millilitre"
+        },
+        "symbol": "M#/mL"
+      },
       "rate/mg-hr": {
         "name": {
           "en": "Milligrams per hour",
@@ -8055,11 +8512,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-05-04T09:51:52.675Z"
+      "updatedAt": "2026-06-02T12:15:39.744Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-05-04T09:51:52.676Z"
+      "updatedAt": "2026-06-02T12:15:39.745Z"
     }
   },
   "settings": {

@@ -221,6 +221,53 @@
           }
         ],
         "parentId": "body"
+      },
+      {
+        "id": "body-semen",
+        "name": "Semen",
+        "children": [
+          {
+            "id": "body-semen-concentration",
+            "name": "Sperm concentration",
+            "parentId": "body-semen"
+          },
+          {
+            "id": "body-semen-motility-progressive",
+            "name": "Sperm motility — progressive (PR)",
+            "parentId": "body-semen"
+          },
+          {
+            "id": "body-semen-motility-total",
+            "name": "Sperm motility — total (PR+NP)",
+            "parentId": "body-semen"
+          },
+          {
+            "id": "body-semen-vitality",
+            "name": "Sperm vitality",
+            "parentId": "body-semen"
+          },
+          {
+            "id": "body-semen-volume",
+            "name": "Semen volume",
+            "parentId": "body-semen"
+          },
+          {
+            "id": "body-semen-tmc",
+            "name": "Total motile count",
+            "parentId": "body-semen"
+          },
+          {
+            "id": "body-semen-morphology-normal",
+            "name": "Normal-form sperm morphology",
+            "parentId": "body-semen"
+          },
+          {
+            "id": "body-semen-dna-fragmentation",
+            "name": "Sperm DNA fragmentation",
+            "parentId": "body-semen"
+          }
+        ],
+        "parentId": "body"
       }
     ]
   },
@@ -304,6 +351,11 @@
         "parentId": "fertility"
       },
       {
+        "id": "fertility-genital-contact",
+        "name": "Non-intercourse genital contact",
+        "parentId": "fertility"
+      },
+      {
         "id": "fertility-test-opk",
         "name": "Ovulation Test (OPK)",
         "parentId": "fertility"
@@ -314,13 +366,18 @@
         "parentId": "fertility"
       },
       {
-        "id": "fertility-preganancies",
-        "name": "Pregancies",
+        "id": "fertility-pregnancies",
+        "name": "Pregnancies",
         "children": [
           {
             "id": "fertility-miscarriages",
             "name": "Miscarriages",
-            "parentId": "fertility-preganancies"
+            "parentId": "fertility-pregnancies"
+          },
+          {
+            "id": "fertility-deliveries",
+            "name": "Deliveries",
+            "parentId": "fertility-pregnancies"
           }
         ],
         "parentId": "fertility"
@@ -386,6 +443,7 @@
       {
         "id": "procedure-fertility",
         "name": "Fertility",
+        "role": "context",
         "parentId": "procedure"
       }
     ]
@@ -603,6 +661,7 @@
       {
         "id": "treatment-fertility",
         "name": "Fertility",
+        "role": "context",
         "parentId": "treatment"
       }
     ]
