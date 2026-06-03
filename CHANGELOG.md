@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Added (plan 70 phase E — `tilt` dimension on cervix-position)
+- `body-vulva-cervix-position` item bumped `version: v1` → `v2`. Adds an optional fourth composite dimension `tilt` (Straight / Medium / Tilted → 0.0 / 0.5 / 1.0). Position-only (not a fertility signal); RYB-originated — no clinical-coding convention. Old events read identically (eventType name unchanged); new events may carry the optional field.
+- `cervix-position/3d-vectors` eventType schema extended with optional `tilt` property (range 0–1). Existing height/firmness/openness unchanged. Description updated to flag tilt as position-only.
+- `documentation/CERVICAL-POSITION.md` — Read Your Body added to the value-vocabulary table as the only system surveyed that tracks tilt; new section on the v1→v2 additive extension; tilt row added to the HDS model summary.
+- Version bumped 1.8.1 → 1.9.0 (minor — additive schema change).
+
 ### Added (plan 53 phase A — `role: context` flag on context streams)
 - New optional `role` field on stream definitions. v1 value: `context`. A `role: context` stream exists purely as a descendant-streamId marker for the D3 context-via-substream mechanic (see `documentation/TREATMENT-PROCEDURE.md`); no itemDef is registered there and consumers should treat it as metadata, not as a data-bearing bucket.
 - `treatment-fertility` and `procedure-fertility` tagged `role: context`. Implicit default for all other streams is "data" (no declaration required).
