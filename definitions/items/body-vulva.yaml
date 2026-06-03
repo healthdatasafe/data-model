@@ -181,13 +181,13 @@ body-vulva-menstrual-cup:
 ## Cervical Position
 
 body-vulva-cervix-position:
-  version: v1
+  version: v2
   label:
     en: Cervical Position
     fr: Position du col utérin
   description:
-    en: Self-checked cervix — height, firmness, and openness.
-    fr: Col auto-examiné — hauteur, fermeté et ouverture.
+    en: Self-checked cervix — height, firmness, openness, and tilt.
+    fr: Col auto-examiné — hauteur, fermeté, ouverture et inclinaison.
   streamId: body-vulva-cervix-position
   eventType: cervix-position/3d-vectors
   type: composite
@@ -249,4 +249,23 @@ body-vulva-cervix-position:
           label:
             en: Open
             fr: Ouvert
+    tilt:
+      label:
+        en: Tilt
+        fr: Inclinaison
+      type: select
+      canBeNull: true
+      options:
+        - value: 0.0
+          label:
+            en: Straight
+            fr: Droit
+        - value: 0.5
+          label:
+            en: Medium
+            fr: Moyen
+        - value: 1.0
+          label:
+            en: Tilted
+            fr: Incliné
   repeatable: P1D
