@@ -2730,7 +2730,7 @@
       }
     },
     "cervix-position/3d-vectors": {
-      "description": "Cervical position observation as three 0–1 vectors: height (low→high), firmness (firm→soft), openness (closed→open). Each dimension follows the fertility direction (0 = least fertile, 1 = most fertile).",
+      "description": "Cervical position observation as up to four 0–1 vectors: height (low→high), firmness (firm→soft), openness (closed→open) follow the SHOW fertility direction (0 = least fertile, 1 = most fertile). Optional tilt (straight→tilted) is a position-only field, not a fertility signal — RYB-originated; no clinical-coding convention exists.",
       "type": "object",
       "properties": {
         "height": {
@@ -2747,6 +2747,12 @@
         },
         "openness": {
           "description": "Cervical os openness: 0 = closed, 0.5 = medium, 1 = open",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "tilt": {
+          "description": "Cervix tilt: 0 = straight, 0.5 = medium, 1 = tilted. Position-only — not a fertility signal. Added in body-vulva-cervix-position v2 (RYB-originated; no clinical-coding convention).",
           "type": "number",
           "minimum": 0,
           "maximum": 1
