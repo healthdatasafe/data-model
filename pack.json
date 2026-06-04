@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-06-03T12:35:27.745Z",
+  "publicationDate": "2026-06-04T14:11:51.508Z",
   "streams": [
     {
       "id": "activity",
@@ -1310,7 +1310,7 @@
       "repeatable": "P1D"
     },
     "body-weight": {
-      "version": "temporary",
+      "version": "v1",
       "label": {
         "en": "Body weight",
         "fr": "Poids corporel"
@@ -1363,7 +1363,7 @@
       "repeatable": "unlimited"
     },
     "body-height": {
-      "version": "temporary",
+      "version": "v1",
       "label": {
         "en": "Body height",
         "fr": "Taille"
@@ -1512,7 +1512,7 @@
         "fr": "Nombre total de spermatozoïdes mobiles par éjaculat (concentration × volume × fraction mobile progressive). Stocké en mégacomptes (10⁶ spermatozoïdes)."
       },
       "streamId": "body-semen-tmc",
-      "eventType": "count/generic",
+      "eventType": "count/mega",
       "type": "number",
       "repeatable": "any",
       "referenceRange": {
@@ -1638,7 +1638,7 @@
       "repeatable": "P1D"
     },
     "fertility-cycles-start": {
-      "version": "temporary",
+      "version": "v1",
       "label": {
         "en": "New Cycle"
       },
@@ -1697,7 +1697,7 @@
       "devNotes": "Use duration property to indicate end of fertile window."
     },
     "fertility-cycles-peak-day": {
-      "version": "temporary",
+      "version": "v1",
       "label": {
         "en": "Peak day of fertility"
       },
@@ -6251,6 +6251,11 @@
         "type": "number",
         "minimum": 0
       },
+      "count/mega": {
+        "description": "Millions of units count.",
+        "type": "number",
+        "minimum": 0
+      },
       "rate/mg-hr": {
         "description": "Milligrams per hour (transdermal, infusion)",
         "type": "number"
@@ -8382,6 +8387,13 @@
         },
         "symbol": "M#/mL"
       },
+      "count/mega": {
+        "name": {
+          "en": "Megacounts",
+          "fr": "Mégacomptes"
+        },
+        "symbol": "M#"
+      },
       "rate/mg-hr": {
         "name": {
           "en": "Milligrams per hour",
@@ -8549,11 +8561,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-06-03T12:35:27.743Z"
+      "updatedAt": "2026-06-04T14:11:51.506Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-06-03T12:35:27.744Z"
+      "updatedAt": "2026-06-04T14:11:51.507Z"
     }
   },
   "settings": {

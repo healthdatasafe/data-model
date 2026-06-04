@@ -602,7 +602,7 @@
     "repeatable": "P1D"
   },
   "body-weight": {
-    "version": "temporary",
+    "version": "v1",
     "label": {
       "en": "Body weight",
       "fr": "Poids corporel"
@@ -655,7 +655,7 @@
     "repeatable": "unlimited"
   },
   "body-height": {
-    "version": "temporary",
+    "version": "v1",
     "label": {
       "en": "Body height",
       "fr": "Taille"
@@ -804,7 +804,7 @@
       "fr": "Nombre total de spermatozoïdes mobiles par éjaculat (concentration × volume × fraction mobile progressive). Stocké en mégacomptes (10⁶ spermatozoïdes)."
     },
     "streamId": "body-semen-tmc",
-    "eventType": "count/generic",
+    "eventType": "count/mega",
     "type": "number",
     "repeatable": "any",
     "referenceRange": {
@@ -930,7 +930,7 @@
     "repeatable": "P1D"
   },
   "fertility-cycles-start": {
-    "version": "temporary",
+    "version": "v1",
     "label": {
       "en": "New Cycle"
     },
@@ -989,7 +989,7 @@
     "devNotes": "Use duration property to indicate end of fertile window."
   },
   "fertility-cycles-peak-day": {
-    "version": "temporary",
+    "version": "v1",
     "label": {
       "en": "Peak day of fertility"
     },
