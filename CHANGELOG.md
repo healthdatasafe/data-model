@@ -2,20 +2,27 @@
 
 ## [Unreleased]
 
-### Added (plan 70 phase E — `tilt` dimension on cervix-position)
-- `body-vulva-cervix-position` item bumped `version: v1` → `v2`. Adds an optional fourth composite dimension `tilt` (Straight / Medium / Tilted → 0.0 / 0.5 / 1.0). Position-only (not a fertility signal); RYB-originated — no clinical-coding convention. Old events read identically (eventType name unchanged); new events may carry the optional field.
-- `cervix-position/3d-vectors` eventType schema extended with optional `tilt` property (range 0–1). Existing height/firmness/openness unchanged. Description updated to flag tilt as position-only.
-- `documentation/CERVICAL-POSITION.md` — Read Your Body added to the value-vocabulary table as the only system surveyed that tracks tilt; new section on the v1→v2 additive extension; tilt row added to the HDS model summary.
-- Version bumped 1.8.1 → 1.9.0 (minor — additive schema change).
+## [1.9.1] - 2026-06-04
 
 ### Added (plan 53 phase A — `role: context` flag on context streams)
 - New optional `role` field on stream definitions. v1 value: `context`. A `role: context` stream exists purely as a descendant-streamId marker for the D3 context-via-substream mechanic (see `documentation/TREATMENT-PROCEDURE.md`); no itemDef is registered there and consumers should treat it as metadata, not as a data-bearing bucket.
 - `treatment-fertility` and `procedure-fertility` tagged `role: context`. Implicit default for all other streams is "data" (no declaration required).
 - Field flows through `dist/streamsTree.json` and `pack.json` unchanged — `src/streams.js` parses YAML and re-emits the stream node verbatim; no schema/validation update needed.
+- Non-breaking: existing consumers that don't know about `role` ignore unknown fields. Runtime helpers (`hds-lib-js#isContext()`), forms-engine rendering, and webapp/dashboard visual treatment are tracked separately under Plan 53 Phase B.
 
-### Notes
-- Non-breaking: existing consumers that don't know about `role` ignore unknown fields.
-- This is the foundation slice. Runtime helpers (`hds-lib-js#isContext()`), forms-engine rendering, and webapp/dashboard visual treatment are tracked separately under Plan 53 Phase B.
+### Added (STORMM coherence — new `count/mega` eventType)
+- `count/mega` eventType registered in `eventTypes-hds.json` — "Millions of units count." Symbol `M#`, label "Megacounts" / "Mégacomptes". Companion to the existing `concentration/megacount-ml`; the stream context defines what is being counted.
+- `body-semen-tmc.eventType` retagged from `count/generic` to `count/mega`. The item description already documented megacount storage convention (10⁶ sperm); the new eventType makes the magnitude explicit at the schema layer so external consumers (HL7/FHIR export, third-party converters) interpret values correctly.
+
+### Changed (STORMM coherence — `version: temporary` → `v1` promotions)
+- `body-weight`, `body-height`, `fertility-cycles-start`, `fertility-cycles-peak-day` promoted to `version: v1`. All four are de-facto stable (used by every HDS app + multiple bridges); the `temporary` flag had not been updated since their introduction. No schema change.
+
+## [1.9.0] - 2026-06-03
+
+### Added (plan 70 phase E — `tilt` dimension on cervix-position)
+- `body-vulva-cervix-position` item bumped `version: v1` → `v2`. Adds an optional fourth composite dimension `tilt` (Straight / Medium / Tilted → 0.0 / 0.5 / 1.0). Position-only (not a fertility signal); RYB-originated — no clinical-coding convention. Old events read identically (eventType name unchanged); new events may carry the optional field.
+- `cervix-position/3d-vectors` eventType schema extended with optional `tilt` property (range 0–1). Existing height/firmness/openness unchanged. Description updated to flag tilt as position-only.
+- `documentation/CERVICAL-POSITION.md` — Read Your Body added to the value-vocabulary table as the only system surveyed that tracks tilt; new section on the v1→v2 additive extension; tilt row added to the HDS model summary.
 
 ## [1.8.1] - 2026-04-30
 

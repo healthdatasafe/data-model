@@ -573,6 +573,11 @@
       "type": "number",
       "minimum": 0
     },
+    "count/mega": {
+      "description": "Millions of units count.",
+      "type": "number",
+      "minimum": 0
+    },
     "rate/mg-hr": {
       "description": "Milligrams per hour (transdermal, infusion)",
       "type": "number"
@@ -861,6 +866,10 @@
     "concentration/megacount-ml": {
       "name": { "en": "Megacounts per milliliter", "fr": "Mégacomptes par millilitre" },
       "symbol": "M#/mL"
+    },
+    "count/mega": {
+      "name": { "en": "Megacounts", "fr": "Mégacomptes" },
+      "symbol": "M#"
     },
     "rate/mg-hr": {
       "name": { "en": "Milligrams per hour", "fr": "Milligrammes par heure" },

@@ -1,5 +1,5 @@
 body-weight:
-  version: temporary
+  version: v1
   label:
     en: Body weight
     fr: Poids corporel
@@ -32,7 +32,7 @@ body-temperature-basal:
   type: number
   repeatable: unlimited
 body-height:
-  version: temporary
+  version: v1
   label:
     en: Body height
     fr: Taille
@@ -150,7 +150,7 @@ body-semen-tmc:
     en: Total motile sperm count per ejaculate (concentration × volume × progressive-motility fraction). Stored in megacounts (10⁶ sperm).
     fr: Nombre total de spermatozoïdes mobiles par éjaculat (concentration × volume × fraction mobile progressive). Stocké en mégacomptes (10⁶ spermatozoïdes).
   streamId: body-semen-tmc
-  eventType: count/generic
+  eventType: count/mega
   type: number
   repeatable: any
   # WHO 2021 deliberately does not publish a TMC reference limit. Threshold below is clinical consensus
