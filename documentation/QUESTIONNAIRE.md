@@ -172,3 +172,31 @@ The negative statuses (`no`/`unknown`/`declined`) have no standalone typed clini
 - **Plan 45** — `message/system-alert` ↔ `message/system-ack` is the request/response event-pair precedent (paired by `ackId`). Plan 71 follows the same shape with `requestEventId`.
 - **Plan 53** — D3 context-via-substream is how per-pregnancy questionnaires stay isolated (request and answer events live on per-pregnancy descendant substreams).
 - **Pryv §7 keyed-object cross-references** — same convention used by PDF-source mapping elsewhere in HDS.
+
+
+---
+
+## Coverage check when embedding a Questionnaire inside a CollectorRequest
+
+When a doctor (or a generator) bundles a Questionnaire inside a CollectorRequest (Option B — `CollectorRequest.addQuestionnaire(q)`), the bundled questionnaire's questions reference HDS items that live on specific streams. For the answer event's `references[]` and `clientData.related.<eventId>: true` mirror to be resolvable on the doctor's side, the request's `permissions[]` must cover those streams.
+
+`hds-lib` ships a small helper to validate this and propose the missing permissions:
+
+```ts
+import { appTemplates } from 'hds-lib';
+const { checkQuestionnaireCoverage } = appTemplates;
+
+// Standalone — works on Questionnaire instances OR raw content for both sides
+const report = checkQuestionnaireCoverage(questionnaire, request);
+// → { ok, perQuestion, unknownItems, proposedPermissions }
+
+// Convenience on CollectorRequest:
+const sameReport = request.checkQuestionnaireCoverage(questionnaire);  // read-only
+const reportAfterFix = request.applyQuestionnaireCoverage(questionnaire);  // adds the missing permissions in place
+```
+
+The `proposedPermissions` set is computed via the same `authorizations.forItemKeys` path that `CollectorRequest.buildPermissions` uses, so the result merges cleanly with existing permissions (no parent/child duplication). Unknown itemRefs (items the loaded HDS model doesn't recognize) are surfaced in `unknownItems` — never thrown on — so the UI can decide whether to block submission or just warn.
+
+Intended UX in a form-builder: when the doctor adds a Questionnaire whose items aren't already in the request's sections, show a banner with the missing-count and an "Add missing permissions" button that calls `applyQuestionnaireCoverage`. The bundled FormBuilder in `hds-forms-js` ships this banner by default.
+
+**Scope is permissions only.** A question's item does NOT need a matching section entry; sections are doctor-curated UX, not correctness constraints.
