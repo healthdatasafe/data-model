@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+> **Pending hard review before commit** — plan 71 Phase B draft, awaiting user sign-off. Do not publish until reviewed.
+
+### Added (plan 71 Phase B — questionnaire request/answer event pair)
+- New eventType `questionnaire/request-v1` in `eventTypes-hds.json`. Doctor → patient: a questionnaire instantiated for this patient with a `questions` map keyed by stable question keys. Each question carries `label`, `itemRef` (existing HDS item key), optional `params` (entity filter — e.g. drug codes), required temporal `scope` (`ever` / `window` with `withinDays` / `latest` with `withinDays`), and optional `subField` (`select-segmented` / `text` / `number`) for qualifier capture. Question keys constrained to Pryv content-query path grammar `[a-zA-Z0-9_-]+` (no colons, dots, brackets) so `content.answers.<key>.status` queries work against the matching answer event.
+- New eventType `questionnaire/answer-v1` in `eventTypes-hds.json`. Patient → doctor: response to a `questionnaire/request-v1`, linked via `requestEventId`. `answers` map keyed by the same question keys; each entry carries a `status` enum (`answered` / `no` / `unknown` / `declined`) with conditional fields per status: `answered` requires non-empty `references[]` (eventIds of typed events that satisfy the question) and allows optional `qualifier` (any shape per the request's subField); `declined` allows optional `reason` (free-text string, coded values deferred to additive extension). Key absence = implicit "not-answered". JSON Schema uses `oneOf` discriminator on `status` with `additionalProperties: false` per branch — invalid status enum values, references on `no`/`unknown`/`declined`, and missing references on `answered` all reject.
+- New documentation file `documentation/QUESTIONNAIRE.md` capturing the two-layer model (template/asking + storage in typed events), the `clientData.related.<eventId>: true` keyed-object cross-reference convention (Pryv §7) that writers MUST mirror into for cohort queryability via the indexed `clientData` parameter, atomicity convention (`events.batch` for answer + new typed events; references immutable post-write), update semantics (new event per edit, latest-by-`event.time` wins for prefill), FHIR mirror table (`Questionnaire` / `QuestionnaireResponse` with `answer.reference` and `data-absent-reason` for the negative statuses), and HDS precedents (Plan 45 `message/system-alert`↔`message/system-ack` request/response pair; Plan 53 D3 context-via-substream for per-context isolation).
+- Tests in `tests/questionnaire.test.js` (32 new cases) covering eventType registration, Pryv key-grammar enforcement on both maps, request schema (scope variants, subField shapes, additionalProperties rejection), and answer schema (per-status discriminator, references presence/absence rules, qualifier shape, reason on declined).
+
+### Notes
+- No new item type added in this release. The questionnaire is a top-level form artifact rendered by hds-forms-js (Plan 71 Phase C), not a field-on-an-item. `src/schemas/items.js` and `src/items.js` are untouched.
+- No new per-domain assertion eventTypes — explicit-no/unknown/declined semantics live entirely on `questionnaire/answer-v1`. Cost: "no" answers have no standalone typed clinical record; FHIR `MedicationStatement.status=not-taken` exports are derived at the consumer from the answer event. Plan 71 Decision D8 (2026-06-15).
+- The composite item↔eventType validation TODO in `src/items.js` is still deferred to a dedicated data-model session (`_plans/BUGS.md` B-2026-06-12-1) — unrelated to this plan and untouched.
+
 ## [1.9.1] - 2026-06-04
 
 ### Added (plan 53 phase A — `role: context` flag on context streams)
