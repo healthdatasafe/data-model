@@ -2895,6 +2895,268 @@
           "maxLength": 1000
         }
       }
+    },
+    "questionnaire/request-v1": {
+      "description": "Doctor (or generator) → patient: a questionnaire instantiated for this patient. Carries a 'questions' map keyed by stable question keys. Each question references an existing HDS item (itemRef) with optional entity filter (params), a temporal scope (ever / window / latest with withinDays), and an optional subField for qualifier capture. The patient's matching questionnaire/answer-v1 event carries the answers map keyed by the same question keys and links back via requestEventId. Question keys must match Pryv content-query path grammar [a-zA-Z0-9_-]+ so content.answers.<key>.status queries work. See documentation/QUESTIONNAIRE.md.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "questions"
+      ],
+      "properties": {
+        "title": {
+          "description": "Optional localized title shown to the patient",
+          "type": "object",
+          "properties": {
+            "en": {
+              "type": "string"
+            }
+          }
+        },
+        "description": {
+          "description": "Optional localized description / instructions shown above the questionnaire",
+          "type": "object",
+          "properties": {
+            "en": {
+              "type": "string"
+            }
+          }
+        },
+        "templateRef": {
+          "description": "Optional reference to a saved hds-lib appTemplates Questionnaire definition that this request was generated from",
+          "type": "string"
+        },
+        "questions": {
+          "description": "Map of questionKey → question definition. Keys must respect the Pryv content-query path grammar [a-zA-Z0-9_-]+ — no colons, dots, or array indices.",
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "itemRef",
+              "scope"
+            ],
+            "properties": {
+              "label": {
+                "description": "Localized question text shown to the patient",
+                "type": "object",
+                "properties": {
+                  "en": {
+                    "type": "string"
+                  }
+                }
+              },
+              "itemRef": {
+                "description": "Key of an existing HDS item (data-model items registry) that defines storage shape + renderer for the answer's referenced events",
+                "type": "string"
+              },
+              "params": {
+                "description": "Optional filter narrowing the question to a specific entity (e.g. { drug: { codes: [...] } } for a medication question). Shape is interpreted by the referenced item's renderer.",
+                "type": "object"
+              },
+              "scope": {
+                "description": "Temporal scope evaluated by the renderer for prefill / matching event lookup",
+                "type": "object",
+                "required": [
+                  "type"
+                ],
+                "oneOf": [
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "const": "ever"
+                      }
+                    }
+                  },
+                  {
+                    "additionalProperties": false,
+                    "required": [
+                      "type",
+                      "withinDays"
+                    ],
+                    "properties": {
+                      "type": {
+                        "const": "window"
+                      },
+                      "withinDays": {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      }
+                    }
+                  },
+                  {
+                    "additionalProperties": false,
+                    "required": [
+                      "type",
+                      "withinDays"
+                    ],
+                    "properties": {
+                      "type": {
+                        "const": "latest"
+                      },
+                      "withinDays": {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      }
+                    }
+                  }
+                ]
+              },
+              "subField": {
+                "description": "Optional qualifier capture rendered alongside the answer when status is 'answered'. Stored as 'qualifier' on the answer entry.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "type"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "select-segmented",
+                      "text",
+                      "number"
+                    ]
+                  },
+                  "label": {
+                    "type": "object",
+                    "properties": {
+                      "en": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "options": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "value",
+                        "label"
+                      ],
+                      "properties": {
+                        "value": {
+                          "type": [
+                            "number",
+                            "string"
+                          ]
+                        },
+                        "label": {
+                          "type": "object",
+                          "properties": {
+                            "en": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "questionnaire/answer-v1": {
+      "description": "Patient → doctor: the response to a questionnaire/request-v1. 'requestEventId' links back to the request event. 'answers' is a map keyed by the same question keys as the request; key absence means 'not-answered' (skipped / unreached). Each answer entry carries a 'status' enum (answered / no / unknown / declined) with conditional fields per status. Referenced event ids in 'answered' entries must ALSO be mirrored into clientData.related.<eventId>: true per the Pryv §7 keyed-object cross-reference convention so cohort queries can use the indexed clientData parameter. See documentation/QUESTIONNAIRE.md.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestEventId",
+        "answers"
+      ],
+      "properties": {
+        "requestEventId": {
+          "description": "eventId of the questionnaire/request-v1 event being answered",
+          "type": "string",
+          "minLength": 1
+        },
+        "answers": {
+          "description": "Map of questionKey → answer entry. Keys present here MUST correspond to questions in the linked request. Key absence = implicit 'not-answered' (skipped or unreached).",
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status",
+                  "references"
+                ],
+                "properties": {
+                  "status": {
+                    "const": "answered"
+                  },
+                  "references": {
+                    "description": "eventIds of the typed events that satisfy this question. Non-empty. Each id MUST also appear as a key in clientData.related (with value true) on the same event.",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "qualifier": {
+                    "description": "Optional sub-field value (trimester, free text, number, etc.). Shape interpreted by the request's subField declaration."
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status"
+                ],
+                "properties": {
+                  "status": {
+                    "const": "no"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status"
+                ],
+                "properties": {
+                  "status": {
+                    "const": "unknown"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status"
+                ],
+                "properties": {
+                  "status": {
+                    "const": "declined"
+                  },
+                  "reason": {
+                    "description": "Optional free-text reason for declining to answer (v1). Future additive extension may accept a coded value (e.g. SNOMED 715169006 'Declined to disclose information').",
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
     }
   },
   "extras": {
