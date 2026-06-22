@@ -18,7 +18,47 @@ const defsSchema = {
       },
       required: ['en']
     },
-    entryType: { enum: ['number', 'text', 'select', 'checkbox', 'date', 'picture'] }
+    entryType: { enum: ['number', 'text', 'select', 'checkbox', 'date', 'picture'] },
+    // A single field inside a `composite` block. Recursive: a field of type
+    // `composite` carries its own nested `composite` block, so the stored event
+    // content can mirror a nested eventType (e.g. medication/basic's `intake`
+    // sub-object). Leaf fields keep the flat shape (label/type/canBeNull/options).
+    compositeField: {
+      type: 'object',
+      nullable: false,
+      properties: {
+        label: { $ref: 'defs.json#/definitions/localized' },
+        type: {
+          type: 'string',
+          oneOf: [
+            { $ref: 'defs.json#/definitions/entryType' },
+            { enum: ['composite'] }
+          ]
+        },
+        canBeNull: { type: 'boolean', nullable: true },
+        options: {
+          type: 'array',
+          items: {
+            type: 'object',
+            nullable: false,
+            properties: {
+              value: { type: ['number', 'string'] },
+              label: { $ref: 'defs.json#/definitions/localized' }
+            },
+            required: ['value', 'label'],
+            additionalProperties: false
+          }
+        },
+        composite: {
+          type: 'object',
+          nullable: false,
+          patternProperties: {
+            '^[a-z][a-zA-Z0-9]*$': { $ref: 'defs.json#/definitions/compositeField' }
+          }
+        }
+      },
+      additionalProperties: false
+    }
   }
 };
 
@@ -138,28 +178,9 @@ const itemSchema = {
             type: 'object',
             nullable: false,
             patternProperties: {
-              '^[a-z][a-zA-Z0-9]*$': { // any key starting with a lowerCase
-                type: 'object',
-                properties: {
-                  label: { $ref: 'defs.json#/definitions/localized' },
-                  type: { $ref: 'defs.json#/definitions/entryType' },
-                  canBeNull: { type: 'boolean', nullable: true },
-                  options: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      nullable: false,
-                      properties: {
-                        value: { type: ['number', 'string'] },
-                        label: { $ref: 'defs.json#/definitions/localized' }
-                      },
-                      required: ['value', 'label'],
-                      additionalProperties: false
-                    }
-                  }
-                },
-                additionalProperties: false
-              }
+              // any key starting with a lowerCase letter; each field follows the
+              // recursive `compositeField` definition (supports nested composites)
+              '^[a-z][a-zA-Z0-9]*$': { $ref: 'defs.json#/definitions/compositeField' }
             }
           }
         },

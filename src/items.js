@@ -15,7 +15,8 @@ module.exports = {
   itemsById,
   itemsByStreamIdTypeId,
   findItemForEvent,
-  toBePublished
+  toBePublished,
+  checkItemVsEvenType
 };
 
 /**
@@ -198,7 +199,7 @@ function checkItemVsEvenType (key, item, eventType) {
     if (item.eventType === 'activity/plain') return true;
   }
   if (item.type === 'composite') {
-    console.error('XX Composite type TODO'); return true;
+    return checkCompositeVsObjectType(key, item.composite, eventType, '');
   }
   if (item.type === 'datasource-search') {
     return true;
@@ -211,4 +212,79 @@ function checkItemVsEvenType (key, item, eventType) {
     return true;
   }
   throw new Error(`There is no check available for the matching of item content end eventType for ${JSON.stringify({ item, eventType }, null, 2)}`);
+}
+
+/**
+ * Validate that a `composite` item's fields map onto the matching eventType's
+ * object schema (B-2026-06-12-1). Recurses into nested composite groups so a
+ * composite field of type `composite` matches an `object` property of the
+ * eventType (e.g. medication/basic's `intake` sub-object).
+ *
+ * The composite may declare a SUBSET of the eventType's properties (an eventType
+ * can carry extra properties no item field maps to — e.g. procedure/basic's
+ * `findings`). But every composite field MUST have a matching eventType property
+ * of a compatible type — this is what catches content that drifts from the model.
+ *
+ * @param {string} key item key (for error messages)
+ * @param {object} composite the item's `composite` block
+ * @param {object} objectType the eventType (or nested property) schema; must be an object
+ * @param {string} pathPrefix dotted path to the current level (for error messages)
+ */
+function checkCompositeVsObjectType (key, composite, objectType, pathPrefix) {
+  if (objectType.type !== 'object' || objectType.properties == null) {
+    throw new Error(`for composite item "${key}", the matching eventType${pathPrefix ? ` path "${pathPrefix}"` : ''} must be an object with properties: ` + JSON.stringify(objectType));
+  }
+  for (const [field, fieldDef] of Object.entries(composite)) {
+    const fieldPath = pathPrefix ? `${pathPrefix}.${field}` : field;
+    const propType = objectType.properties[field];
+    if (propType == null) {
+      throw new Error(`for composite item "${key}", field "${fieldPath}" has no matching property in the eventType: ` + JSON.stringify(objectType.properties));
+    }
+    checkCompositeFieldVsPropType(key, fieldPath, fieldDef, propType);
+  }
+  return true;
+}
+
+/**
+ * Validate a single composite field against its matching eventType property.
+ */
+function checkCompositeFieldVsPropType (key, fieldPath, fieldDef, propType) {
+  switch (fieldDef.type) {
+    case 'text':
+    case 'date':
+      if (propType.type !== 'string') throw new Error(`composite item "${key}" field "${fieldPath}" is "${fieldDef.type}" but the eventType property is "${propType.type}" (expected "string")`);
+      return;
+    case 'number':
+    case 'slider':
+      if (propType.type !== 'number') throw new Error(`composite item "${key}" field "${fieldPath}" is "${fieldDef.type}" but the eventType property is "${propType.type}" (expected "number")`);
+      return;
+    case 'checkbox':
+      if (propType.type !== 'boolean') throw new Error(`composite item "${key}" field "${fieldPath}" is "checkbox" but the eventType property is "${propType.type}" (expected "boolean")`);
+      return;
+    case 'select': {
+      const allString = fieldDef.options.every(o => typeof o.value === 'string');
+      const allNumber = fieldDef.options.every(o => typeof o.value === 'number');
+      if (allString) {
+        if (propType.type !== 'string') throw new Error(`composite item "${key}" field "${fieldPath}" is a string "select" but the eventType property is "${propType.type}" (expected "string")`);
+        if (Array.isArray(propType.enum)) {
+          for (const option of fieldDef.options) {
+            if (!propType.enum.includes(option.value)) throw new Error(`composite item "${key}" field "${fieldPath}" select value "${option.value}" is not in the eventType enum: ` + JSON.stringify(propType.enum));
+          }
+        }
+      } else if (allNumber) {
+        if (propType.type !== 'number') throw new Error(`composite item "${key}" field "${fieldPath}" is a numeric "select" but the eventType property is "${propType.type}" (expected "number")`);
+      } else {
+        throw new Error(`composite item "${key}" field "${fieldPath}" select options must be all-string or all-number`);
+      }
+      return;
+    }
+    case 'composite':
+      checkCompositeVsObjectType(key, fieldDef.composite, propType, fieldPath);
+      return;
+    case 'datasource-search':
+      if (propType.type !== 'object') throw new Error(`composite item "${key}" field "${fieldPath}" is "datasource-search" but the eventType property is "${propType.type}" (expected "object")`);
+      return;
+    default:
+      throw new Error(`composite item "${key}" field "${fieldPath}" has unsupported type "${fieldDef.type}" for composite↔eventType validation`);
+  }
 }
