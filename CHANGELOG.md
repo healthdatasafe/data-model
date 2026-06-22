@@ -2,7 +2,17 @@
 
 ## [Unreleased]
 
-> **Pending hard review before commit** — plan 71 Phase B draft, awaiting user sign-off. Do not publish until reviewed.
+## [1.10.1] - 2026-06-22
+
+### Fixed — composite↔eventType nesting + validation (B-2026-06-12-1)
+
+- `medication-intake-basic` composite now nests `doseValue` / `doseUnit` / `route` under an `intake` sub-object, matching the `medication/basic` eventType (and aligning with `medication/coded-v1` + FHIR `dosage`). Previously the composite renderer emitted these flat, producing stored event content that violated its own declared eventType.
+- `src/schemas/items.js`: item schema extended with a recursive `compositeField` definition so a composite field can itself be `type: composite` (nested groups).
+- `src/items.js`: implemented the previously-stubbed composite↔eventType validation in `checkItemVsEvenType` — recursively checks that every composite field maps to a compatible eventType property (type + enum), catching shape/enum drift at build time. Replaces the `XX Composite type TODO` no-op.
+- Tests: `tests/items.test.js` ITMC1-4 (nested shape present, valid composite passes, flat-shape rejected, out-of-enum select rejected).
+- Backward compatibility: existing flat events are not migrated; consumers read both shapes (see hds-lib `eventToShortText`).
+
+## [1.10.0] - 2026-06-16
 
 ### Added (plan 71 Phase B — questionnaire request/answer event pair)
 - New eventType `questionnaire/request-v1` in `eventTypes-hds.json`. Doctor → patient: a questionnaire instantiated for this patient with a `questions` map keyed by stable question keys. Each question carries `label`, `itemRef` (existing HDS item key), optional `params` (entity filter — e.g. drug codes), required temporal `scope` (`ever` / `window` with `withinDays` / `latest` with `withinDays`), and optional `subField` (`select-segmented` / `text` / `number`) for qualifier capture. Question keys constrained to Pryv content-query path grammar `[a-zA-Z0-9_-]+` (no colons, dots, brackets) so `content.answers.<key>.status` queries work against the matching answer event.
