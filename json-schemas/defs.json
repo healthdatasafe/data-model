@@ -28,6 +28,65 @@
         "date",
         "picture"
       ]
+    },
+    "compositeField": {
+      "type": "object",
+      "nullable": false,
+      "properties": {
+        "label": {
+          "$ref": "defs.json#/definitions/localized"
+        },
+        "type": {
+          "type": "string",
+          "oneOf": [
+            {
+              "$ref": "defs.json#/definitions/entryType"
+            },
+            {
+              "enum": [
+                "composite"
+              ]
+            }
+          ]
+        },
+        "canBeNull": {
+          "type": "boolean",
+          "nullable": true
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "nullable": false,
+            "properties": {
+              "value": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "label": {
+                "$ref": "defs.json#/definitions/localized"
+              }
+            },
+            "required": [
+              "value",
+              "label"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "composite": {
+          "type": "object",
+          "nullable": false,
+          "patternProperties": {
+            "^[a-z][a-zA-Z0-9]*$": {
+              "$ref": "defs.json#/definitions/compositeField"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
     }
   }
 }
