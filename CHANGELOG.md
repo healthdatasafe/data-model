@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.10.2] - 2026-06-23
+
+### Changed — Billings method display label (avoid protected trademark)
+
+- `definitions/converters/cervical-fluid/models/billings/v0.json`: renamed the display name from `Billings (BOM)` / `Billings (MOB)` to `Billings Observation` (en) / `Observation Billings` (fr), dropping the registered marks "Billings Ovulation Method" / BOM / MOB. Method id `billings` unchanged. Mirrors the same rename in `model-cervical-fluid`.
+
 ## [1.10.1] - 2026-06-22
 
 ### Fixed — composite↔eventType nesting + validation (B-2026-06-12-1)
