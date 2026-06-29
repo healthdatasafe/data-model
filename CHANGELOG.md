@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [1.10.3] - 2026-06-29
+
+### Changed — shorten Billings/Creighton method display labels to bare family names
+
+- `definitions/converters/cervical-fluid/models/billings/v0.json`: display name `Billings Observation` / `Observation Billings` → `Billings` (en+fr).
+- `definitions/converters/cervical-fluid/models/creighton/v0.json`: display name `Creighton Model` / `Modèle Creighton` → `Creighton` (en+fr).
+- Method ids `billings` / `creighton` unchanged. Mirrors the `model: trademark naming alignment` rename in `model-cervical-fluid` (b401488), keeping the published model labels consistent with the standalone model package.
+
 ## [1.10.2] - 2026-06-23
 
 ### Changed — Billings method display label (avoid protected trademark)

@@ -2,8 +2,8 @@
   "methodId": "creighton",
   "order": 20,
   "name": {
-    "en": "Creighton Model",
-    "fr": "Modèle Creighton"
+    "en": "Creighton",
+    "fr": "Creighton"
   },
   "description": {
     "en": "Standardized system using numerical codes (0–10) with letter modifiers for color and lubricative quality.",
