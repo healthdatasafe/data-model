@@ -3063,7 +3063,12 @@
         }
       }
     ],
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "248629002"
+      ]
+    }
   },
   "symptom-thermoregulation-chills": {
     "version": "v1",
@@ -3202,12 +3207,7 @@
         }
       }
     ],
-    "repeatable": "unlimited",
-    "references": {
-      "snomed": [
-        "70882005"
-      ]
-    }
+    "repeatable": "unlimited"
   },
   "symptom-thermoregulation-night-sweats": {
     "version": "v1",
@@ -3346,7 +3346,12 @@
         }
       }
     ],
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "52613005"
+      ]
+    }
   },
   "symptom-thermoregulation-cold-extremities": {
     "version": "v1",
@@ -3413,7 +3418,13 @@
         }
       }
     ],
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "271584002",
+        "271585001"
+      ]
+    }
   },
   "symptom-vision-blurred-vision": {
     "version": "v1",
@@ -3624,7 +3635,12 @@
         }
       }
     ],
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "162340000"
+      ]
+    }
   },
   "symptom-hydration-excessive-thirst": {
     "version": "v1",
@@ -3838,7 +3854,7 @@
     "repeatable": "unlimited",
     "references": {
       "snomed": [
-        "12441001"
+        "249366005"
       ]
     }
   },
@@ -3907,7 +3923,12 @@
         }
       }
     ],
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "86276007"
+      ]
+    }
   },
   "symptom-bleeding-easy-bruising": {
     "version": "v1",
@@ -3974,7 +3995,12 @@
         }
       }
     ],
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "424131007"
+      ]
+    }
   },
   "symptom-neurological-paresthesia": {
     "version": "v1",
@@ -4257,7 +4283,12 @@
         }
       }
     ],
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "82470000"
+      ]
+    }
   },
   "symptom-dermatological-rash": {
     "version": "v1",
@@ -4542,7 +4573,7 @@
     "repeatable": "unlimited",
     "references": {
       "snomed": [
-        "73879007"
+        "422587007"
       ]
     }
   },
@@ -4821,7 +4852,7 @@
     "repeatable": "unlimited",
     "references": {
       "snomed": [
-        "248490000"
+        "116289008"
       ]
     }
   },
@@ -5668,7 +5699,7 @@
     "repeatable": "unlimited",
     "references": {
       "snomed": [
-        "76039006"
+        "26329005"
       ]
     }
   },
