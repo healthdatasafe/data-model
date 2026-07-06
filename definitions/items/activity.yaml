@@ -1,87 +1,344 @@
 # Physical activity items — self-reported exercise tracking.
 # See documentation/PHYSICAL-ACTIVITY.md for cross-system compatibility.
 #
-# Event type: activity/plain (presence flag + event duration).
+# Model (Plan 77 / data-model#19):
+#   - <activity>            : deprecated occurrence marker (eventType activity/plain).
+#                            Kept so existing events keep resolving; hidden from pickers.
+#   - <activity>-intensity : go-forward item (eventType ratio/proportion, WHO/ACSM 3-level
+#                            Light/Moderate/Vigorous). Presence-only sources may still write
+#                            the deprecated occurrence item.
+# Both itemDefs share the same streamId (identity is streamId:eventType).
 # Maps to Apple HealthKit HKWorkoutActivityType and SNOMED CT codes.
-# Can evolve to include duration/intensity when richer sources are available.
 
+## Yoga
 activity-yoga:
   version: v1
   label: Yoga
-  description: Yoga session.
+  description: Deprecated — use activity-yoga-intensity to record a yoga session with intensity.
+  deprecated: true
   streamId: activity-yoga
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+activity-yoga-intensity:
+  version: v1
+  label:
+    en: Yoga
+    fr: Yoga
+  description:
+    en: Yoga session, with intensity.
+    fr: Séance de yoga, avec intensité.
+  streamId: activity-yoga
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.25
+      label:
+        en: Light intensity
+        fr: Intensité légère
+    - value: 0.5
+      label:
+        en: Moderate intensity
+        fr: Intensité modérée
+    - value: 1.0
+      label:
+        en: Vigorous intensity
+        fr: Intensité élevée
+  repeatable: unlimited
+
+## Stretching
 activity-stretching:
   version: v1
   label: Stretching
-  description: Stretching or flexibility exercises.
+  description: Deprecated — use activity-stretching-intensity to record stretching with intensity.
+  deprecated: true
   streamId: activity-stretching
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+activity-stretching-intensity:
+  version: v1
+  label:
+    en: Stretching
+    fr: Étirements
+  description:
+    en: Stretching or flexibility exercises, with intensity.
+    fr: Étirements ou exercices d'assouplissement, avec intensité.
+  streamId: activity-stretching
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.25
+      label:
+        en: Light intensity
+        fr: Intensité légère
+    - value: 0.5
+      label:
+        en: Moderate intensity
+        fr: Intensité modérée
+    - value: 1.0
+      label:
+        en: Vigorous intensity
+        fr: Intensité élevée
+  repeatable: unlimited
+
+## Pilates
 activity-pilates:
   version: v1
   label: Pilates
-  description: Pilates session.
+  description: Deprecated — use activity-pilates-intensity to record a pilates session with intensity.
+  deprecated: true
   streamId: activity-pilates
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+activity-pilates-intensity:
+  version: v1
+  label:
+    en: Pilates
+    fr: Pilates
+  description:
+    en: Pilates session, with intensity.
+    fr: Séance de Pilates, avec intensité.
+  streamId: activity-pilates
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.25
+      label:
+        en: Light intensity
+        fr: Intensité légère
+    - value: 0.5
+      label:
+        en: Moderate intensity
+        fr: Intensité modérée
+    - value: 1.0
+      label:
+        en: Vigorous intensity
+        fr: Intensité élevée
+  repeatable: unlimited
+
+## HIIT
 activity-hiit:
   version: v1
   label: HIIT
-  description: High-intensity interval training session.
+  description: Deprecated — use activity-hiit-intensity to record a HIIT session with intensity.
+  deprecated: true
   streamId: activity-hiit
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+activity-hiit-intensity:
+  version: v1
+  label:
+    en: HIIT
+    fr: HIIT
+  description:
+    en: High-intensity interval training session, with intensity.
+    fr: Séance d'entraînement fractionné de haute intensité, avec intensité.
+  streamId: activity-hiit
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.25
+      label:
+        en: Light intensity
+        fr: Intensité légère
+    - value: 0.5
+      label:
+        en: Moderate intensity
+        fr: Intensité modérée
+    - value: 1.0
+      label:
+        en: Vigorous intensity
+        fr: Intensité élevée
+  repeatable: unlimited
+
+## Weights
 activity-weights:
   version: v1
   label: Weights
-  description: Strength or weight training session.
+  description: Deprecated — use activity-weights-intensity to record a strength session with intensity.
+  deprecated: true
   streamId: activity-weights
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+activity-weights-intensity:
+  version: v1
+  label:
+    en: Weights
+    fr: Musculation
+  description:
+    en: Strength or weight training session, with intensity.
+    fr: Séance de musculation, avec intensité.
+  streamId: activity-weights
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.25
+      label:
+        en: Light intensity
+        fr: Intensité légère
+    - value: 0.5
+      label:
+        en: Moderate intensity
+        fr: Intensité modérée
+    - value: 1.0
+      label:
+        en: Vigorous intensity
+        fr: Intensité élevée
+  repeatable: unlimited
+
+## Swimming
 activity-swimming:
   version: v1
   label: Swimming
-  description: Swimming session.
+  description: Deprecated — use activity-swimming-intensity to record a swimming session with intensity.
+  deprecated: true
   streamId: activity-swimming
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+activity-swimming-intensity:
+  version: v1
+  label:
+    en: Swimming
+    fr: Natation
+  description:
+    en: Swimming session, with intensity.
+    fr: Séance de natation, avec intensité.
+  streamId: activity-swimming
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.25
+      label:
+        en: Light intensity
+        fr: Intensité légère
+    - value: 0.5
+      label:
+        en: Moderate intensity
+        fr: Intensité modérée
+    - value: 1.0
+      label:
+        en: Vigorous intensity
+        fr: Intensité élevée
+  repeatable: unlimited
+
+## Cycling
 activity-cycling:
   version: v1
   label: Cycling
-  description: Cycling or biking session.
+  description: Deprecated — use activity-cycling-intensity to record a cycling session with intensity.
+  deprecated: true
   streamId: activity-cycling
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+activity-cycling-intensity:
+  version: v1
+  label:
+    en: Cycling
+    fr: Cyclisme
+  description:
+    en: Cycling or biking session, with intensity.
+    fr: Séance de vélo, avec intensité.
+  streamId: activity-cycling
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.25
+      label:
+        en: Light intensity
+        fr: Intensité légère
+    - value: 0.5
+      label:
+        en: Moderate intensity
+        fr: Intensité modérée
+    - value: 1.0
+      label:
+        en: Vigorous intensity
+        fr: Intensité élevée
+  repeatable: unlimited
+
+## Jogging
 activity-jogging:
   version: v1
   label: Jogging
-  description: Jogging or running session.
+  description: Deprecated — use activity-jogging-intensity to record a jogging session with intensity.
+  deprecated: true
   streamId: activity-jogging
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+activity-jogging-intensity:
+  version: v1
+  label:
+    en: Jogging
+    fr: Jogging
+  description:
+    en: Jogging or running session, with intensity.
+    fr: Séance de jogging ou de course, avec intensité.
+  streamId: activity-jogging
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.25
+      label:
+        en: Light intensity
+        fr: Intensité légère
+    - value: 0.5
+      label:
+        en: Moderate intensity
+        fr: Intensité modérée
+    - value: 1.0
+      label:
+        en: Vigorous intensity
+        fr: Intensité élevée
+  repeatable: unlimited
+
+## Hiking
 activity-hiking:
   version: v1
   label: Hiking
-  description: Hiking or trail walking session.
+  description: Deprecated — use activity-hiking-intensity to record a hiking session with intensity.
+  deprecated: true
   streamId: activity-hiking
   eventType: activity/plain
   type: checkbox
+  repeatable: unlimited
+
+activity-hiking-intensity:
+  version: v1
+  label:
+    en: Hiking
+    fr: Randonnée
+  description:
+    en: Hiking or trail walking session, with intensity.
+    fr: Randonnée ou marche, avec intensité.
+  streamId: activity-hiking
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.25
+      label:
+        en: Light intensity
+        fr: Intensité légère
+    - value: 0.5
+      label:
+        en: Moderate intensity
+        fr: Intensité modérée
+    - value: 1.0
+      label:
+        en: Vigorous intensity
+        fr: Intensité élevée
   repeatable: unlimited

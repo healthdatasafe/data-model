@@ -19,6 +19,38 @@ body-weight:
   repeatable: unlimited
   reminder:
     cooldown: P1D
+body-blood-pressure:
+  version: v1
+  label:
+    en: Blood pressure
+    fr: Tension artérielle
+  description:
+    en: Blood pressure measurement — systolic / diastolic in mmHg, optional pulse in bpm.
+    fr: Mesure de la tension artérielle — systolique / diastolique en mmHg, pouls optionnel en bpm.
+  streamId: body-blood-pressure
+  eventType: blood-pressure/mmhg-bpm
+  type: composite
+  composite:
+    systolic:
+      label:
+        en: Systolic
+        fr: Systolique
+      type: number
+    diastolic:
+      label:
+        en: Diastolic
+        fr: Diastolique
+      type: number
+    rate:
+      label:
+        en: Pulse
+        fr: Pouls
+      type: number
+      canBeNull: true
+  repeatable: unlimited
+  references:
+    snomed: ["75367002", "271649006", "271650006"]
+    loinc: ["85354-9", "8480-6", "8462-4"]
 body-temperature-basal:
   version: v1
   label:

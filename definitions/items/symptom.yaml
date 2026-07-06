@@ -2,76 +2,218 @@
 # See documentation/SYMPTOMS.md for cross-system compatibility research
 # (Apple HealthKit, SNOMED CT, FHIR, Ovia, Mira).
 #
-# Event type: activity/plain (presence flag + event duration).
-# Severity extension path: switch to ratio/proportion with
-# 0/0.33/0.66/1.0 (None/Mild/Moderate/Severe) — see SYMPTOMS.md.
+# Model (Plan 77 / data-model#19):
+#   - symptom-<...>          : deprecated occurrence marker (eventType activity/plain).
+#                             Kept so existing events keep resolving; hidden from pickers.
+#   - symptom-<...>-severity : go-forward item (eventType ratio/proportion, 5-level severity
+#                             None/Slight/Moderate/Severe/Extreme). Presence-only sources may
+#                             still write the deprecated occurrence item.
+# Both itemDefs share the same streamId (identity is streamId:eventType).
+# 5-level hooks 0.0/0.25/0.5/0.75/1.0 — semantic anchors (see DESIGN-NOTES.md); 4-level
+# sources (Apple HKCategoryValueSeverity, Mira level, MSQ 0–3) map as a subset by label.
 #
-# Categories follow clinical body-system groupings (aligned with
-# Apple HealthKit symptom categories and SNOMED CT finding sites).
+# Categories follow clinical body-system groupings.
 
 ## Gastrointestinal
 symptom-gastrointestinal-nausea:
   version: v1
   label: Nausea
-  description: Feeling of nausea or urge to vomit.
+  description: Deprecated — use symptom-gastrointestinal-nausea-severity to record nausea with severity.
+  deprecated: true
   streamId: symptom-gastrointestinal-nausea
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-gastrointestinal-nausea-severity:
+  version: v1
+  label:
+    en: Nausea
+    fr: Nausée
+  description:
+    en: Feeling of nausea or urge to vomit.
+    fr: Sensation de nausée ou envie de vomir.
+  streamId: symptom-gastrointestinal-nausea
+  eventType: ratio/proportion
+  type: select
+  options: &severity5
+    - value: 0.0
+      label:
+        en: None
+        fr: Aucun
+    - value: 0.25
+      label:
+        en: Slight
+        fr: Léger
+    - value: 0.5
+      label:
+        en: Moderate
+        fr: Modéré
+    - value: 0.75
+      label:
+        en: Severe
+        fr: Sévère
+    - value: 1.0
+      label:
+        en: Extreme
+        fr: Extrême
+  repeatable: unlimited
+  references:
+    snomed: ["73879007"]
+
 symptom-gastrointestinal-cramps:
   version: v1
   label: Cramps
-  description: Abdominal or pelvic cramps.
+  description: Deprecated — use symptom-gastrointestinal-cramps-severity to record cramps with severity.
+  deprecated: true
   streamId: symptom-gastrointestinal-cramps
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-gastrointestinal-cramps-severity:
+  version: v1
+  label:
+    en: Cramps
+    fr: Crampes
+  description:
+    en: Abdominal or pelvic cramps.
+    fr: Crampes abdominales ou pelviennes.
+  streamId: symptom-gastrointestinal-cramps
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["21522001"]
+
 symptom-gastrointestinal-gas:
   version: v1
   label: Gas
-  description: Intestinal gas or flatulence.
+  description: Deprecated — use symptom-gastrointestinal-gas-severity to record gas with severity.
+  deprecated: true
   streamId: symptom-gastrointestinal-gas
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-gastrointestinal-gas-severity:
+  version: v1
+  label:
+    en: Gas
+    fr: Gaz
+  description:
+    en: Intestinal gas or flatulence.
+    fr: Gaz intestinaux ou flatulences.
+  streamId: symptom-gastrointestinal-gas
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["271835004"]
+
 symptom-gastrointestinal-cravings:
   version: v1
   label: Cravings
-  description: Food cravings or increased appetite for specific foods.
+  description: Deprecated — use symptom-gastrointestinal-cravings-severity to record cravings with severity.
+  deprecated: true
   streamId: symptom-gastrointestinal-cravings
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-gastrointestinal-cravings-severity:
+  version: v1
+  label:
+    en: Cravings
+    fr: Fringales
+  description:
+    en: Food cravings or increased appetite for specific foods.
+    fr: Fringales ou envie accrue d'aliments spécifiques.
+  streamId: symptom-gastrointestinal-cravings
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+
 symptom-gastrointestinal-bloating:
   version: v1
   label: Bloating
-  description: Abdominal bloating or distension.
+  description: Deprecated — use symptom-gastrointestinal-bloating-severity to record bloating with severity.
+  deprecated: true
   streamId: symptom-gastrointestinal-bloating
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-gastrointestinal-bloating-severity:
+  version: v1
+  label:
+    en: Bloating
+    fr: Ballonnements
+  description:
+    en: Abdominal bloating or distension.
+    fr: Ballonnements ou distension abdominale.
+  streamId: symptom-gastrointestinal-bloating
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["248490000"]
+
 symptom-gastrointestinal-diarrhea:
   version: v1
   label: Diarrhea
-  description: Loose or watery stools.
+  description: Deprecated — use symptom-gastrointestinal-diarrhea-severity to record diarrhea with severity.
+  deprecated: true
   streamId: symptom-gastrointestinal-diarrhea
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-gastrointestinal-diarrhea-severity:
+  version: v1
+  label:
+    en: Diarrhea
+    fr: Diarrhée
+  description:
+    en: Loose or watery stools.
+    fr: Selles molles ou liquides.
+  streamId: symptom-gastrointestinal-diarrhea
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["62315008"]
+
 symptom-gastrointestinal-constipation:
   version: v1
   label: Constipation
-  description: Difficulty with bowel movements or infrequent stools.
+  description: Deprecated — use symptom-gastrointestinal-constipation-severity to record constipation with severity.
+  deprecated: true
   streamId: symptom-gastrointestinal-constipation
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+
+symptom-gastrointestinal-constipation-severity:
+  version: v1
+  label:
+    en: Constipation
+    fr: Constipation
+  description:
+    en: Difficulty with bowel movements or infrequent stools.
+    fr: Difficulté à aller à la selle ou selles peu fréquentes.
+  streamId: symptom-gastrointestinal-constipation
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["14760008"]
 
 ## Pain / Musculoskeletal
 symptom-pain-severity:
@@ -115,115 +257,317 @@ symptom-pain-severity:
 symptom-pain-headache:
   version: v1
   label: Headache
-  description: Head pain, tension-type or unspecified.
+  description: Deprecated — use symptom-pain-headache-severity to record headache with severity.
+  deprecated: true
   streamId: symptom-pain-headache
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-pain-headache-severity:
+  version: v1
+  label:
+    en: Headache
+    fr: Mal de tête
+  description:
+    en: Head pain, tension-type or unspecified.
+    fr: Douleur à la tête, de type tensionnel ou non précisé.
+  streamId: symptom-pain-headache
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["25064002"]
+
 symptom-pain-migraine:
   version: v1
   label: Migraine
-  description: Migraine headache, typically with throbbing pain, may include aura, nausea, or light sensitivity.
+  description: Deprecated — use symptom-pain-migraine-severity to record migraine with severity.
+  deprecated: true
   streamId: symptom-pain-migraine
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-pain-migraine-severity:
+  version: v1
+  label:
+    en: Migraine
+    fr: Migraine
+  description:
+    en: Migraine headache, typically with throbbing pain, may include aura, nausea, or light sensitivity.
+    fr: Migraine, généralement avec douleur pulsatile, pouvant inclure aura, nausée ou photosensibilité.
+  streamId: symptom-pain-migraine
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["37796009"]
+
 symptom-pain-sore-breasts:
   version: v1
   label: Sore Breasts
-  description: Breast pain or tenderness.
+  description: Deprecated — use symptom-pain-sore-breasts-severity to record breast tenderness with severity.
+  deprecated: true
   streamId: symptom-pain-sore-breasts
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-pain-sore-breasts-severity:
+  version: v1
+  label:
+    en: Sore Breasts
+    fr: Seins douloureux
+  description:
+    en: Breast pain or tenderness.
+    fr: Douleur ou sensibilité des seins.
+  streamId: symptom-pain-sore-breasts
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["290077003"]
+
 symptom-pain-backache:
   version: v1
   label: Backache
-  description: Back pain, lower or general.
+  description: Deprecated — use symptom-pain-backache-severity to record backache with severity.
+  deprecated: true
   streamId: symptom-pain-backache
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-pain-backache-severity:
+  version: v1
+  label:
+    en: Backache
+    fr: Mal de dos
+  description:
+    en: Back pain, lower or general.
+    fr: Douleur au dos, lombaire ou générale.
+  streamId: symptom-pain-backache
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["161891005"]
+
 symptom-pain-muscle:
   version: v1
   label: Muscle / Joint Pain
-  description: Muscle aches or joint pain (myalgia, arthralgia).
+  description: Deprecated — use symptom-pain-muscle-severity to record muscle or joint pain with severity.
+  deprecated: true
   streamId: symptom-pain-muscle
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-pain-muscle-severity:
+  version: v1
+  label:
+    en: Muscle / Joint Pain
+    fr: Douleurs musculaires / articulaires
+  description:
+    en: Muscle aches or joint pain (myalgia, arthralgia).
+    fr: Douleurs musculaires ou articulaires (myalgie, arthralgie).
+  streamId: symptom-pain-muscle
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["68962001", "57676002"]
+
 ## Neurological
 symptom-neurological-dizziness:
   version: v1
   label: Dizziness
-  description: Sensation of lightheadedness or unsteadiness.
+  description: Deprecated — use symptom-neurological-dizziness-severity to record dizziness with severity.
+  deprecated: true
   streamId: symptom-neurological-dizziness
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-neurological-dizziness-severity:
+  version: v1
+  label:
+    en: Dizziness
+    fr: Vertiges
+  description:
+    en: Sensation of lightheadedness or unsteadiness.
+    fr: Sensation d'étourdissement ou d'instabilité.
+  streamId: symptom-neurological-dizziness
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["404640003"]
+
 ## Dermatological
 symptom-dermatological-hair-loss:
   version: v1
   label: Hair Loss
-  description: Noticeable hair loss or thinning.
+  description: Deprecated — use symptom-dermatological-hair-loss-severity to record hair loss with severity.
+  deprecated: true
   streamId: symptom-dermatological-hair-loss
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-dermatological-hair-loss-severity:
+  version: v1
+  label:
+    en: Hair Loss
+    fr: Perte de cheveux
+  description:
+    en: Noticeable hair loss or thinning.
+    fr: Perte de cheveux ou éclaircissement notable.
+  streamId: symptom-dermatological-hair-loss
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["278040002"]
+
 symptom-dermatological-hair-growth:
   version: v1
   label: Excess Hair Growth
-  description: Unusual body or facial hair growth (hirsutism).
+  description: Deprecated — use symptom-dermatological-hair-growth-severity to record excess hair growth with severity.
+  deprecated: true
   streamId: symptom-dermatological-hair-growth
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-dermatological-hair-growth-severity:
+  version: v1
+  label:
+    en: Excess Hair Growth
+    fr: Pilosité excessive
+  description:
+    en: Unusual body or facial hair growth (hirsutism).
+    fr: Pilosité corporelle ou faciale inhabituelle (hirsutisme).
+  streamId: symptom-dermatological-hair-growth
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["66520009"]
+
 ## Cognitive
 symptom-cognitive-focus-difficulty:
   version: v1
   label: Difficulty Concentrating
-  description: |-
-    Trouble focusing or concentrating on tasks.
-    SNOMED CT: 76039006 (Difficulty concentrating).
+  description: Deprecated — use symptom-cognitive-focus-difficulty-severity to record difficulty concentrating with severity.
+  deprecated: true
   streamId: symptom-cognitive-focus-difficulty
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-cognitive-focus-difficulty-severity:
+  version: v1
+  label:
+    en: Difficulty Concentrating
+    fr: Difficulté à se concentrer
+  description:
+    en: Trouble focusing or concentrating on tasks.
+    fr: Difficulté à se concentrer ou à rester attentif.
+  streamId: symptom-cognitive-focus-difficulty
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["76039006"]
+
 ## Sleep
 symptom-sleep-insomnia:
   version: v1
   label: Insomnia
-  description: Difficulty falling or staying asleep.
+  description: Deprecated — use symptom-sleep-insomnia-severity to record insomnia with severity.
+  deprecated: true
   streamId: symptom-sleep-insomnia
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-sleep-insomnia-severity:
+  version: v1
+  label:
+    en: Insomnia
+    fr: Insomnie
+  description:
+    en: Difficulty falling or staying asleep.
+    fr: Difficulté à s'endormir ou à rester endormi.
+  streamId: symptom-sleep-insomnia
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["193462001"]
+
 ## Metabolic
 symptom-metabolic-water-retention:
   version: v1
   label: Water Retention
-  description: Fluid retention, swelling, or edema.
+  description: Deprecated — use symptom-metabolic-water-retention-severity to record water retention with severity.
+  deprecated: true
   streamId: symptom-metabolic-water-retention
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
 
+symptom-metabolic-water-retention-severity:
+  version: v1
+  label:
+    en: Water Retention
+    fr: Rétention d'eau
+  description:
+    en: Fluid retention, swelling, or edema.
+    fr: Rétention de liquide, gonflement ou œdème.
+  streamId: symptom-metabolic-water-retention
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["43498006"]
+
 ## General / Constitutional
 symptom-general-fatigue:
   version: v1
   label: Fatigue
-  description: Low energy, tiredness, or exhaustion.
+  description: Deprecated — use symptom-general-fatigue-severity to record fatigue with severity.
+  deprecated: true
   streamId: symptom-general-fatigue
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+
+symptom-general-fatigue-severity:
+  version: v1
+  label:
+    en: Fatigue
+    fr: Fatigue
+  description:
+    en: Low energy, tiredness, or exhaustion.
+    fr: Manque d'énergie, fatigue ou épuisement.
+  streamId: symptom-general-fatigue
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["84229001"]

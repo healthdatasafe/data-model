@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [1.11.0] - 2026-07-06
+
+### Added — intensity/severity items + blood pressure (Plan 77 / #19)
+
+Addresses [data-model#19](https://github.com/healthdatasafe/data-model/issues/19) (MSQ symptom-screening integration), §1 + §4.
+
+- **Activity intensity** (§1): each of the 9 `activity-*` occurrence items is marked `deprecated: true` and paired with a new `activity-*-intensity` item on the same `streamId` — `ratio/proportion`, WHO/ACSM 3-level (`0.25` Light / `0.5` Moderate / `1.0` Vigorous), en+fr.
+- **Symptom severity** (§1): each of the 19 presence `symptom-*` items is marked `deprecated: true` and paired with a new `symptom-*-severity` item on the same `streamId` — `ratio/proportion`, 5-level (`0 / 0.25 / 0.5 / 0.75 / 1.0` = None/Slight/Moderate/Severe/Extreme), en+fr, SNOMED references carried from `documentation/SYMPTOMS.md`. 4-level sources (Apple `HKCategoryValueSeverity`, Mira `level`, MSQ 0–3) map as a subset by label.
+- **Blood pressure** (§4): new `body-blood-pressure` stream (under `body`) + composite item on the existing `blood-pressure/mmhg-bpm` eventType — `systolic` + `diastolic` (mmHg) + optional `rate` (pulse, bpm). SNOMED/LOINC references.
+- **No new eventType** introduced (reuses `ratio/proportion`, `activity/plain`, `blood-pressure/mmhg-bpm`). Existing occurrence events keep resolving via the deprecated twins — item identity is `streamId:eventType`, so two itemDefs coexist on one stream (same pattern as `body-vulva-mucus-inspect`).
+- #19 §3 (generic instrument-item) and §5 (affect converters) are consumer-side — no model change. §2 (8 new symptom domains) planned as a follow-up.
+
 ## [1.10.3] - 2026-06-29
 
 ### Changed — shorten Billings/Creighton method display labels to bare family names

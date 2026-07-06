@@ -6,6 +6,8 @@ children:
     name: Body Height
   - id: body-weight
     name: Body Weight
+  - id: body-blood-pressure
+    name: Blood Pressure
   - id: body-vulva
     name: Vulva
     children:
