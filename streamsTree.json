@@ -587,6 +587,26 @@
             "id": "symptom-neurological-dizziness",
             "name": "Dizziness",
             "parentId": "symptom-neurological"
+          },
+          {
+            "id": "symptom-neurological-paresthesia",
+            "name": "Tingling / Numbness",
+            "parentId": "symptom-neurological"
+          },
+          {
+            "id": "symptom-neurological-tremor",
+            "name": "Tremor",
+            "parentId": "symptom-neurological"
+          },
+          {
+            "id": "symptom-neurological-restless-legs",
+            "name": "Restless Legs",
+            "parentId": "symptom-neurological"
+          },
+          {
+            "id": "symptom-neurological-twitching",
+            "name": "Muscle Twitching",
+            "parentId": "symptom-neurological"
           }
         ],
         "parentId": "symptom"
@@ -615,6 +635,21 @@
           {
             "id": "symptom-dermatological-hair-growth",
             "name": "Excess Hair Growth",
+            "parentId": "symptom-dermatological"
+          },
+          {
+            "id": "symptom-dermatological-rash",
+            "name": "Rash",
+            "parentId": "symptom-dermatological"
+          },
+          {
+            "id": "symptom-dermatological-hives",
+            "name": "Hives",
+            "parentId": "symptom-dermatological"
+          },
+          {
+            "id": "symptom-dermatological-itching",
+            "name": "Itching",
             "parentId": "symptom-dermatological"
           }
         ],
@@ -652,6 +687,153 @@
             "id": "symptom-general-fatigue",
             "name": "Fatigue",
             "parentId": "symptom-general"
+          }
+        ],
+        "parentId": "symptom"
+      },
+      {
+        "id": "symptom-respiratory",
+        "name": "Respiratory",
+        "children": [
+          {
+            "id": "symptom-respiratory-cough",
+            "name": "Cough",
+            "parentId": "symptom-respiratory"
+          },
+          {
+            "id": "symptom-respiratory-dyspnea",
+            "name": "Shortness of Breath",
+            "parentId": "symptom-respiratory"
+          },
+          {
+            "id": "symptom-respiratory-wheezing",
+            "name": "Wheezing",
+            "parentId": "symptom-respiratory"
+          },
+          {
+            "id": "symptom-respiratory-nasal-congestion",
+            "name": "Nasal Congestion",
+            "parentId": "symptom-respiratory"
+          },
+          {
+            "id": "symptom-respiratory-sore-throat",
+            "name": "Sore Throat",
+            "parentId": "symptom-respiratory"
+          },
+          {
+            "id": "symptom-respiratory-rhinorrhea",
+            "name": "Runny Nose",
+            "parentId": "symptom-respiratory"
+          }
+        ],
+        "parentId": "symptom"
+      },
+      {
+        "id": "symptom-cardiac",
+        "name": "Cardiac",
+        "children": [
+          {
+            "id": "symptom-cardiac-palpitations",
+            "name": "Palpitations",
+            "parentId": "symptom-cardiac"
+          },
+          {
+            "id": "symptom-cardiac-skipped-beat",
+            "name": "Skipped Heartbeat",
+            "parentId": "symptom-cardiac"
+          }
+        ],
+        "parentId": "symptom"
+      },
+      {
+        "id": "symptom-thermoregulation",
+        "name": "Thermoregulation",
+        "children": [
+          {
+            "id": "symptom-thermoregulation-chills",
+            "name": "Chills",
+            "parentId": "symptom-thermoregulation"
+          },
+          {
+            "id": "symptom-thermoregulation-hot-flashes",
+            "name": "Hot Flashes",
+            "parentId": "symptom-thermoregulation"
+          },
+          {
+            "id": "symptom-thermoregulation-night-sweats",
+            "name": "Night Sweats",
+            "parentId": "symptom-thermoregulation"
+          },
+          {
+            "id": "symptom-thermoregulation-excessive-sweating",
+            "name": "Excessive Sweating",
+            "parentId": "symptom-thermoregulation"
+          },
+          {
+            "id": "symptom-thermoregulation-cold-extremities",
+            "name": "Cold Extremities",
+            "parentId": "symptom-thermoregulation"
+          }
+        ],
+        "parentId": "symptom"
+      },
+      {
+        "id": "symptom-vision",
+        "name": "Vision & Sensory",
+        "children": [
+          {
+            "id": "symptom-vision-blurred-vision",
+            "name": "Blurred Vision",
+            "parentId": "symptom-vision"
+          },
+          {
+            "id": "symptom-vision-visual-disturbance",
+            "name": "Visual Disturbance",
+            "parentId": "symptom-vision"
+          },
+          {
+            "id": "symptom-vision-hearing-difficulty",
+            "name": "Hearing Difficulty",
+            "parentId": "symptom-vision"
+          }
+        ],
+        "parentId": "symptom"
+      },
+      {
+        "id": "symptom-hydration",
+        "name": "Hydration & Urinary",
+        "children": [
+          {
+            "id": "symptom-hydration-excessive-thirst",
+            "name": "Excessive Thirst",
+            "parentId": "symptom-hydration"
+          },
+          {
+            "id": "symptom-hydration-frequent-urination",
+            "name": "Frequent Urination",
+            "parentId": "symptom-hydration"
+          }
+        ],
+        "parentId": "symptom"
+      },
+      {
+        "id": "symptom-bleeding",
+        "name": "Bleeding",
+        "children": [
+          {
+            "id": "symptom-bleeding-nosebleed",
+            "name": "Nosebleed",
+            "parentId": "symptom-bleeding"
+          },
+          {
+            "id": "symptom-bleeding-bleeding-gums",
+            "name": "Bleeding Gums",
+            "parentId": "symptom-bleeding"
+          },
+          {
+            "id": "symptom-bleeding-easy-bruising",
+            "name": "Easy Bruising",
+            "parentId": "symptom-bleeding"
           }
         ],
         "parentId": "symptom"
