@@ -69,4 +69,44 @@ fi
 git -C dist commit -m "deploy $COMMIT_SHORT ($COMMIT_FULL)"
 git -C dist push
 
-echo "Deployed $COMMIT_SHORT to gh-pages."
+echo "Pushed $COMMIT_SHORT to gh-pages."
+
+# ── Publish verification ─────────────────────────────────────────────────────
+# A push to gh-pages does NOT guarantee GitHub Pages republished. The `legacy`
+# Pages build can error transiently (or queue), leaving model.datasafe.dev
+# serving a stale build even though the push succeeded — the deploy then *looks*
+# done but consumers keep reading old data (hit on 2026-07-06, Plan 77). So:
+# poll the Pages build, retrigger on error, then confirm the live commit matches.
+REPO_SLUG="healthdatasafe/data-model"
+LIVE_URL="https://model.datasafe.dev/version.json"
+
+if command -v gh >/dev/null 2>&1; then
+  echo "Verifying GitHub Pages build..."
+  built=""
+  for attempt in $(seq 1 12); do
+    status="$(gh api "repos/$REPO_SLUG/pages/builds/latest" --jq '.status' 2>/dev/null || echo unknown)"
+    case "$status" in
+      built) built=yes; break ;;
+      errored) echo "  Pages build errored — retriggering..."; gh api -X POST "repos/$REPO_SLUG/pages/builds" >/dev/null 2>&1 || true ;;
+      *) echo "  Pages build status: $status ($attempt/12)" ;;
+    esac
+    sleep 15
+  done
+  [ -n "$built" ] && echo "Pages build: built." \
+    || echo "WARNING: Pages build did not reach 'built' — check https://github.com/$REPO_SLUG/deployments"
+else
+  echo "WARNING: gh CLI not found — cannot verify/retrigger the Pages build. Verify manually."
+fi
+
+# Confirm the live site actually serves this commit (Fastly cache may lag briefly).
+echo "Confirming live commit at $LIVE_URL ..."
+for attempt in $(seq 1 12); do
+  live="$(curl -fsS "$LIVE_URL?_=$attempt$$" 2>/dev/null | grep -o '[0-9a-f]\{40\}' | head -1 || true)"
+  if [ "$live" = "$COMMIT_FULL" ]; then
+    echo "Deployed and LIVE: $COMMIT_SHORT verified at model.datasafe.dev ✓"
+    exit 0
+  fi
+  echo "  live=${live:-none} (want $COMMIT_SHORT) ($attempt/12) — waiting..."
+  sleep 15
+done
+echo "WARNING: live commit did not match $COMMIT_SHORT within timeout — model.datasafe.dev may still be propagating; re-check version.json before relying on it."

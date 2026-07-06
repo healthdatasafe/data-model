@@ -59,7 +59,7 @@ symptom-gastrointestinal-nausea-severity:
         fr: Extrême
   repeatable: unlimited
   references:
-    snomed: ["73879007"]
+    snomed: ["422587007"]
 
 symptom-gastrointestinal-cramps:
   version: v1
@@ -161,7 +161,7 @@ symptom-gastrointestinal-bloating-severity:
   options: *severity5
   repeatable: unlimited
   references:
-    snomed: ["248490000"]
+    snomed: ["116289008"]
 
 symptom-gastrointestinal-diarrhea:
   version: v1
@@ -489,7 +489,7 @@ symptom-cognitive-focus-difficulty-severity:
   options: *severity5
   repeatable: unlimited
   references:
-    snomed: ["76039006"]
+    snomed: ["26329005"]
 
 ## Sleep
 symptom-sleep-insomnia:

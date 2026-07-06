@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+## [1.12.1] - 2026-07-06
+
+### Fixed — SNOMED code corrections + newly-coded concepts (verified via snomed-db)
+
+Audited every symptom/BP SNOMED reference against **SNOMED International RF2 20260201** using the
+`snomed-db` tool. Corrected codes that shipped in 1.11.0/1.12.0 as **inactive or nonexistent** (they
+came from a stale reference table):
+
+- `symptom-gastrointestinal-nausea`: `73879007` (inactive) → **`422587007`** (Nausea).
+- `symptom-gastrointestinal-bloating`: `248490000` (inactive) → **`116289008`** (Abdominal bloating).
+- `symptom-cognitive-focus-difficulty`: `76039006` (nonexistent) → **`26329005`** (Poor concentration).
+- `symptom-bleeding-nosebleed`: `12441001` (inactive disorder) → **`249366005`** (Bleeding from nose).
+- `symptom-thermoregulation-hot-flashes`: `70882005` (nonexistent) → **uncoded** (no active finding-level concept; the "Hot flush/flashes" findings are all inactive).
+
+Added SNOMED references to the 7 §2 concepts that shipped uncoded (all verified active findings):
+`skipped-beat` `248629002`, `excessive-sweating` `52613005`, `cold-extremities` `[271584002, 271585001]`
+(Cold hands + Cold feet — no active single "cold extremities" concept), `hearing-difficulty` `162340000`,
+`bleeding-gums` `86276007`, `easy-bruising` `424131007`, `twitching` `82470000`.
+
 ## [1.12.0] - 2026-07-06
 
 ### Added — new symptom domains (Plan 77 / #19 §2)

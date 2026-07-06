@@ -259,6 +259,8 @@ symptom-cardiac-skipped-beat-severity:
   type: select
   options: *sev5
   repeatable: unlimited
+  references:
+    snomed: ["248629002"]
 
 
 ## Thermoregulation
@@ -317,8 +319,6 @@ symptom-thermoregulation-hot-flashes-severity:
   type: select
   options: *sev5
   repeatable: unlimited
-  references:
-    snomed: ["70882005"]
 
 symptom-thermoregulation-night-sweats:
   version: v1
@@ -375,6 +375,8 @@ symptom-thermoregulation-excessive-sweating-severity:
   type: select
   options: *sev5
   repeatable: unlimited
+  references:
+    snomed: ["52613005"]
 
 symptom-thermoregulation-cold-extremities:
   version: v1
@@ -402,6 +404,8 @@ symptom-thermoregulation-cold-extremities-severity:
   type: select
   options: *sev5
   repeatable: unlimited
+  references:
+    snomed: ["271584002", "271585001"]
 
 
 ## Vision & Sensory
@@ -489,6 +493,8 @@ symptom-vision-hearing-difficulty-severity:
   type: select
   options: *sev5
   repeatable: unlimited
+  references:
+    snomed: ["162340000"]
 
 
 ## Hydration & Urinary
@@ -579,7 +585,7 @@ symptom-bleeding-nosebleed-severity:
   options: *sev5
   repeatable: unlimited
   references:
-    snomed: ["12441001"]
+    snomed: ["249366005"]
 
 symptom-bleeding-bleeding-gums:
   version: v1
@@ -607,6 +613,8 @@ symptom-bleeding-bleeding-gums-severity:
   type: select
   options: *sev5
   repeatable: unlimited
+  references:
+    snomed: ["86276007"]
 
 symptom-bleeding-easy-bruising:
   version: v1
@@ -634,6 +642,8 @@ symptom-bleeding-easy-bruising-severity:
   type: select
   options: *sev5
   repeatable: unlimited
+  references:
+    snomed: ["424131007"]
 
 
 ## Neurological
@@ -750,6 +760,8 @@ symptom-neurological-twitching-severity:
   type: select
   options: *sev5
   repeatable: unlimited
+  references:
+    snomed: ["82470000"]
 
 
 ## Dermatological
