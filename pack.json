@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-06-29T08:18:41.212Z",
+  "publicationDate": "2026-07-06T12:53:54.985Z",
   "streams": [
     {
       "id": "activity",
@@ -66,6 +66,11 @@
         {
           "id": "body-weight",
           "name": "Body Weight",
+          "parentId": "body"
+        },
+        {
+          "id": "body-blood-pressure",
+          "name": "Blood Pressure",
           "parentId": "body"
         },
         {
@@ -713,11 +718,50 @@
         "en": "Yoga"
       },
       "description": {
-        "en": "Yoga session."
+        "en": "Deprecated — use activity-yoga-intensity to record a yoga session with intensity."
       },
+      "deprecated": true,
       "streamId": "activity-yoga",
       "eventType": "activity/plain",
       "type": "checkbox",
+      "repeatable": "unlimited"
+    },
+    "activity-yoga-intensity": {
+      "version": "v1",
+      "label": {
+        "en": "Yoga",
+        "fr": "Yoga"
+      },
+      "description": {
+        "en": "Yoga session, with intensity.",
+        "fr": "Séance de yoga, avec intensité."
+      },
+      "streamId": "activity-yoga",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Light intensity",
+            "fr": "Intensité légère"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate intensity",
+            "fr": "Intensité modérée"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Vigorous intensity",
+            "fr": "Intensité élevée"
+          }
+        }
+      ],
       "repeatable": "unlimited"
     },
     "activity-stretching": {
@@ -726,11 +770,50 @@
         "en": "Stretching"
       },
       "description": {
-        "en": "Stretching or flexibility exercises."
+        "en": "Deprecated — use activity-stretching-intensity to record stretching with intensity."
       },
+      "deprecated": true,
       "streamId": "activity-stretching",
       "eventType": "activity/plain",
       "type": "checkbox",
+      "repeatable": "unlimited"
+    },
+    "activity-stretching-intensity": {
+      "version": "v1",
+      "label": {
+        "en": "Stretching",
+        "fr": "Étirements"
+      },
+      "description": {
+        "en": "Stretching or flexibility exercises, with intensity.",
+        "fr": "Étirements ou exercices d'assouplissement, avec intensité."
+      },
+      "streamId": "activity-stretching",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Light intensity",
+            "fr": "Intensité légère"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate intensity",
+            "fr": "Intensité modérée"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Vigorous intensity",
+            "fr": "Intensité élevée"
+          }
+        }
+      ],
       "repeatable": "unlimited"
     },
     "activity-pilates": {
@@ -739,11 +822,50 @@
         "en": "Pilates"
       },
       "description": {
-        "en": "Pilates session."
+        "en": "Deprecated — use activity-pilates-intensity to record a pilates session with intensity."
       },
+      "deprecated": true,
       "streamId": "activity-pilates",
       "eventType": "activity/plain",
       "type": "checkbox",
+      "repeatable": "unlimited"
+    },
+    "activity-pilates-intensity": {
+      "version": "v1",
+      "label": {
+        "en": "Pilates",
+        "fr": "Pilates"
+      },
+      "description": {
+        "en": "Pilates session, with intensity.",
+        "fr": "Séance de Pilates, avec intensité."
+      },
+      "streamId": "activity-pilates",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Light intensity",
+            "fr": "Intensité légère"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate intensity",
+            "fr": "Intensité modérée"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Vigorous intensity",
+            "fr": "Intensité élevée"
+          }
+        }
+      ],
       "repeatable": "unlimited"
     },
     "activity-hiit": {
@@ -752,11 +874,50 @@
         "en": "HIIT"
       },
       "description": {
-        "en": "High-intensity interval training session."
+        "en": "Deprecated — use activity-hiit-intensity to record a HIIT session with intensity."
       },
+      "deprecated": true,
       "streamId": "activity-hiit",
       "eventType": "activity/plain",
       "type": "checkbox",
+      "repeatable": "unlimited"
+    },
+    "activity-hiit-intensity": {
+      "version": "v1",
+      "label": {
+        "en": "HIIT",
+        "fr": "HIIT"
+      },
+      "description": {
+        "en": "High-intensity interval training session, with intensity.",
+        "fr": "Séance d'entraînement fractionné de haute intensité, avec intensité."
+      },
+      "streamId": "activity-hiit",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Light intensity",
+            "fr": "Intensité légère"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate intensity",
+            "fr": "Intensité modérée"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Vigorous intensity",
+            "fr": "Intensité élevée"
+          }
+        }
+      ],
       "repeatable": "unlimited"
     },
     "activity-weights": {
@@ -765,11 +926,50 @@
         "en": "Weights"
       },
       "description": {
-        "en": "Strength or weight training session."
+        "en": "Deprecated — use activity-weights-intensity to record a strength session with intensity."
       },
+      "deprecated": true,
       "streamId": "activity-weights",
       "eventType": "activity/plain",
       "type": "checkbox",
+      "repeatable": "unlimited"
+    },
+    "activity-weights-intensity": {
+      "version": "v1",
+      "label": {
+        "en": "Weights",
+        "fr": "Musculation"
+      },
+      "description": {
+        "en": "Strength or weight training session, with intensity.",
+        "fr": "Séance de musculation, avec intensité."
+      },
+      "streamId": "activity-weights",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Light intensity",
+            "fr": "Intensité légère"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate intensity",
+            "fr": "Intensité modérée"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Vigorous intensity",
+            "fr": "Intensité élevée"
+          }
+        }
+      ],
       "repeatable": "unlimited"
     },
     "activity-swimming": {
@@ -778,11 +978,50 @@
         "en": "Swimming"
       },
       "description": {
-        "en": "Swimming session."
+        "en": "Deprecated — use activity-swimming-intensity to record a swimming session with intensity."
       },
+      "deprecated": true,
       "streamId": "activity-swimming",
       "eventType": "activity/plain",
       "type": "checkbox",
+      "repeatable": "unlimited"
+    },
+    "activity-swimming-intensity": {
+      "version": "v1",
+      "label": {
+        "en": "Swimming",
+        "fr": "Natation"
+      },
+      "description": {
+        "en": "Swimming session, with intensity.",
+        "fr": "Séance de natation, avec intensité."
+      },
+      "streamId": "activity-swimming",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Light intensity",
+            "fr": "Intensité légère"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate intensity",
+            "fr": "Intensité modérée"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Vigorous intensity",
+            "fr": "Intensité élevée"
+          }
+        }
+      ],
       "repeatable": "unlimited"
     },
     "activity-cycling": {
@@ -791,11 +1030,50 @@
         "en": "Cycling"
       },
       "description": {
-        "en": "Cycling or biking session."
+        "en": "Deprecated — use activity-cycling-intensity to record a cycling session with intensity."
       },
+      "deprecated": true,
       "streamId": "activity-cycling",
       "eventType": "activity/plain",
       "type": "checkbox",
+      "repeatable": "unlimited"
+    },
+    "activity-cycling-intensity": {
+      "version": "v1",
+      "label": {
+        "en": "Cycling",
+        "fr": "Cyclisme"
+      },
+      "description": {
+        "en": "Cycling or biking session, with intensity.",
+        "fr": "Séance de vélo, avec intensité."
+      },
+      "streamId": "activity-cycling",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Light intensity",
+            "fr": "Intensité légère"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate intensity",
+            "fr": "Intensité modérée"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Vigorous intensity",
+            "fr": "Intensité élevée"
+          }
+        }
+      ],
       "repeatable": "unlimited"
     },
     "activity-jogging": {
@@ -804,11 +1082,50 @@
         "en": "Jogging"
       },
       "description": {
-        "en": "Jogging or running session."
+        "en": "Deprecated — use activity-jogging-intensity to record a jogging session with intensity."
       },
+      "deprecated": true,
       "streamId": "activity-jogging",
       "eventType": "activity/plain",
       "type": "checkbox",
+      "repeatable": "unlimited"
+    },
+    "activity-jogging-intensity": {
+      "version": "v1",
+      "label": {
+        "en": "Jogging",
+        "fr": "Jogging"
+      },
+      "description": {
+        "en": "Jogging or running session, with intensity.",
+        "fr": "Séance de jogging ou de course, avec intensité."
+      },
+      "streamId": "activity-jogging",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Light intensity",
+            "fr": "Intensité légère"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate intensity",
+            "fr": "Intensité modérée"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Vigorous intensity",
+            "fr": "Intensité élevée"
+          }
+        }
+      ],
       "repeatable": "unlimited"
     },
     "activity-hiking": {
@@ -817,11 +1134,50 @@
         "en": "Hiking"
       },
       "description": {
-        "en": "Hiking or trail walking session."
+        "en": "Deprecated — use activity-hiking-intensity to record a hiking session with intensity."
       },
+      "deprecated": true,
       "streamId": "activity-hiking",
       "eventType": "activity/plain",
       "type": "checkbox",
+      "repeatable": "unlimited"
+    },
+    "activity-hiking-intensity": {
+      "version": "v1",
+      "label": {
+        "en": "Hiking",
+        "fr": "Randonnée"
+      },
+      "description": {
+        "en": "Hiking or trail walking session, with intensity.",
+        "fr": "Randonnée ou marche, avec intensité."
+      },
+      "streamId": "activity-hiking",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Light intensity",
+            "fr": "Intensité légère"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate intensity",
+            "fr": "Intensité modérée"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Vigorous intensity",
+            "fr": "Intensité élevée"
+          }
+        }
+      ],
       "repeatable": "unlimited"
     },
     "body-skin-acne": {
@@ -1345,6 +1701,57 @@
       "repeatable": "unlimited",
       "reminder": {
         "cooldown": "P1D"
+      }
+    },
+    "body-blood-pressure": {
+      "version": "v1",
+      "label": {
+        "en": "Blood pressure",
+        "fr": "Tension artérielle"
+      },
+      "description": {
+        "en": "Blood pressure measurement — systolic / diastolic in mmHg, optional pulse in bpm.",
+        "fr": "Mesure de la tension artérielle — systolique / diastolique en mmHg, pouls optionnel en bpm."
+      },
+      "streamId": "body-blood-pressure",
+      "eventType": "blood-pressure/mmhg-bpm",
+      "type": "composite",
+      "composite": {
+        "systolic": {
+          "label": {
+            "en": "Systolic",
+            "fr": "Systolique"
+          },
+          "type": "number"
+        },
+        "diastolic": {
+          "label": {
+            "en": "Diastolic",
+            "fr": "Diastolique"
+          },
+          "type": "number"
+        },
+        "rate": {
+          "label": {
+            "en": "Pulse",
+            "fr": "Pouls"
+          },
+          "type": "number",
+          "canBeNull": true
+        }
+      },
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "75367002",
+          "271649006",
+          "271650006"
+        ],
+        "loinc": [
+          "85354-9",
+          "8480-6",
+          "8462-4"
+        ]
       }
     },
     "body-temperature-basal": {
@@ -2806,12 +3213,70 @@
         "en": "Nausea"
       },
       "description": {
-        "en": "Feeling of nausea or urge to vomit."
+        "en": "Deprecated — use symptom-gastrointestinal-nausea-severity to record nausea with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-gastrointestinal-nausea",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-gastrointestinal-nausea-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Nausea",
+        "fr": "Nausée"
+      },
+      "description": {
+        "en": "Feeling of nausea or urge to vomit.",
+        "fr": "Sensation de nausée ou envie de vomir."
+      },
+      "streamId": "symptom-gastrointestinal-nausea",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "73879007"
+        ]
+      }
     },
     "symptom-gastrointestinal-cramps": {
       "version": "v1",
@@ -2819,12 +3284,70 @@
         "en": "Cramps"
       },
       "description": {
-        "en": "Abdominal or pelvic cramps."
+        "en": "Deprecated — use symptom-gastrointestinal-cramps-severity to record cramps with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-gastrointestinal-cramps",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-gastrointestinal-cramps-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Cramps",
+        "fr": "Crampes"
+      },
+      "description": {
+        "en": "Abdominal or pelvic cramps.",
+        "fr": "Crampes abdominales ou pelviennes."
+      },
+      "streamId": "symptom-gastrointestinal-cramps",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "21522001"
+        ]
+      }
     },
     "symptom-gastrointestinal-gas": {
       "version": "v1",
@@ -2832,12 +3355,70 @@
         "en": "Gas"
       },
       "description": {
-        "en": "Intestinal gas or flatulence."
+        "en": "Deprecated — use symptom-gastrointestinal-gas-severity to record gas with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-gastrointestinal-gas",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-gastrointestinal-gas-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Gas",
+        "fr": "Gaz"
+      },
+      "description": {
+        "en": "Intestinal gas or flatulence.",
+        "fr": "Gaz intestinaux ou flatulences."
+      },
+      "streamId": "symptom-gastrointestinal-gas",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "271835004"
+        ]
+      }
     },
     "symptom-gastrointestinal-cravings": {
       "version": "v1",
@@ -2845,11 +3426,64 @@
         "en": "Cravings"
       },
       "description": {
-        "en": "Food cravings or increased appetite for specific foods."
+        "en": "Deprecated — use symptom-gastrointestinal-cravings-severity to record cravings with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-gastrointestinal-cravings",
       "eventType": "activity/plain",
       "type": "checkbox",
+      "repeatable": "unlimited"
+    },
+    "symptom-gastrointestinal-cravings-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Cravings",
+        "fr": "Fringales"
+      },
+      "description": {
+        "en": "Food cravings or increased appetite for specific foods.",
+        "fr": "Fringales ou envie accrue d'aliments spécifiques."
+      },
+      "streamId": "symptom-gastrointestinal-cravings",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
       "repeatable": "unlimited"
     },
     "symptom-gastrointestinal-bloating": {
@@ -2858,12 +3492,70 @@
         "en": "Bloating"
       },
       "description": {
-        "en": "Abdominal bloating or distension."
+        "en": "Deprecated — use symptom-gastrointestinal-bloating-severity to record bloating with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-gastrointestinal-bloating",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-gastrointestinal-bloating-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Bloating",
+        "fr": "Ballonnements"
+      },
+      "description": {
+        "en": "Abdominal bloating or distension.",
+        "fr": "Ballonnements ou distension abdominale."
+      },
+      "streamId": "symptom-gastrointestinal-bloating",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "248490000"
+        ]
+      }
     },
     "symptom-gastrointestinal-diarrhea": {
       "version": "v1",
@@ -2871,12 +3563,70 @@
         "en": "Diarrhea"
       },
       "description": {
-        "en": "Loose or watery stools."
+        "en": "Deprecated — use symptom-gastrointestinal-diarrhea-severity to record diarrhea with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-gastrointestinal-diarrhea",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-gastrointestinal-diarrhea-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Diarrhea",
+        "fr": "Diarrhée"
+      },
+      "description": {
+        "en": "Loose or watery stools.",
+        "fr": "Selles molles ou liquides."
+      },
+      "streamId": "symptom-gastrointestinal-diarrhea",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "62315008"
+        ]
+      }
     },
     "symptom-gastrointestinal-constipation": {
       "version": "v1",
@@ -2884,12 +3634,70 @@
         "en": "Constipation"
       },
       "description": {
-        "en": "Difficulty with bowel movements or infrequent stools."
+        "en": "Deprecated — use symptom-gastrointestinal-constipation-severity to record constipation with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-gastrointestinal-constipation",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-gastrointestinal-constipation-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Constipation",
+        "fr": "Constipation"
+      },
+      "description": {
+        "en": "Difficulty with bowel movements or infrequent stools.",
+        "fr": "Difficulté à aller à la selle ou selles peu fréquentes."
+      },
+      "streamId": "symptom-gastrointestinal-constipation",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "14760008"
+        ]
+      }
     },
     "symptom-pain-severity": {
       "version": "v1",
@@ -2962,12 +3770,70 @@
         "en": "Headache"
       },
       "description": {
-        "en": "Head pain, tension-type or unspecified."
+        "en": "Deprecated — use symptom-pain-headache-severity to record headache with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-pain-headache",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-pain-headache-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Headache",
+        "fr": "Mal de tête"
+      },
+      "description": {
+        "en": "Head pain, tension-type or unspecified.",
+        "fr": "Douleur à la tête, de type tensionnel ou non précisé."
+      },
+      "streamId": "symptom-pain-headache",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "25064002"
+        ]
+      }
     },
     "symptom-pain-migraine": {
       "version": "v1",
@@ -2975,12 +3841,70 @@
         "en": "Migraine"
       },
       "description": {
-        "en": "Migraine headache, typically with throbbing pain, may include aura, nausea, or light sensitivity."
+        "en": "Deprecated — use symptom-pain-migraine-severity to record migraine with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-pain-migraine",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-pain-migraine-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Migraine",
+        "fr": "Migraine"
+      },
+      "description": {
+        "en": "Migraine headache, typically with throbbing pain, may include aura, nausea, or light sensitivity.",
+        "fr": "Migraine, généralement avec douleur pulsatile, pouvant inclure aura, nausée ou photosensibilité."
+      },
+      "streamId": "symptom-pain-migraine",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "37796009"
+        ]
+      }
     },
     "symptom-pain-sore-breasts": {
       "version": "v1",
@@ -2988,12 +3912,70 @@
         "en": "Sore Breasts"
       },
       "description": {
-        "en": "Breast pain or tenderness."
+        "en": "Deprecated — use symptom-pain-sore-breasts-severity to record breast tenderness with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-pain-sore-breasts",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-pain-sore-breasts-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Sore Breasts",
+        "fr": "Seins douloureux"
+      },
+      "description": {
+        "en": "Breast pain or tenderness.",
+        "fr": "Douleur ou sensibilité des seins."
+      },
+      "streamId": "symptom-pain-sore-breasts",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "290077003"
+        ]
+      }
     },
     "symptom-pain-backache": {
       "version": "v1",
@@ -3001,12 +3983,70 @@
         "en": "Backache"
       },
       "description": {
-        "en": "Back pain, lower or general."
+        "en": "Deprecated — use symptom-pain-backache-severity to record backache with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-pain-backache",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-pain-backache-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Backache",
+        "fr": "Mal de dos"
+      },
+      "description": {
+        "en": "Back pain, lower or general.",
+        "fr": "Douleur au dos, lombaire ou générale."
+      },
+      "streamId": "symptom-pain-backache",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "161891005"
+        ]
+      }
     },
     "symptom-pain-muscle": {
       "version": "v1",
@@ -3014,12 +4054,71 @@
         "en": "Muscle / Joint Pain"
       },
       "description": {
-        "en": "Muscle aches or joint pain (myalgia, arthralgia)."
+        "en": "Deprecated — use symptom-pain-muscle-severity to record muscle or joint pain with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-pain-muscle",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-pain-muscle-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Muscle / Joint Pain",
+        "fr": "Douleurs musculaires / articulaires"
+      },
+      "description": {
+        "en": "Muscle aches or joint pain (myalgia, arthralgia).",
+        "fr": "Douleurs musculaires ou articulaires (myalgie, arthralgie)."
+      },
+      "streamId": "symptom-pain-muscle",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "68962001",
+          "57676002"
+        ]
+      }
     },
     "symptom-neurological-dizziness": {
       "version": "v1",
@@ -3027,12 +4126,70 @@
         "en": "Dizziness"
       },
       "description": {
-        "en": "Sensation of lightheadedness or unsteadiness."
+        "en": "Deprecated — use symptom-neurological-dizziness-severity to record dizziness with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-neurological-dizziness",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-neurological-dizziness-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Dizziness",
+        "fr": "Vertiges"
+      },
+      "description": {
+        "en": "Sensation of lightheadedness or unsteadiness.",
+        "fr": "Sensation d'étourdissement ou d'instabilité."
+      },
+      "streamId": "symptom-neurological-dizziness",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "404640003"
+        ]
+      }
     },
     "symptom-dermatological-hair-loss": {
       "version": "v1",
@@ -3040,12 +4197,70 @@
         "en": "Hair Loss"
       },
       "description": {
-        "en": "Noticeable hair loss or thinning."
+        "en": "Deprecated — use symptom-dermatological-hair-loss-severity to record hair loss with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-dermatological-hair-loss",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-dermatological-hair-loss-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Hair Loss",
+        "fr": "Perte de cheveux"
+      },
+      "description": {
+        "en": "Noticeable hair loss or thinning.",
+        "fr": "Perte de cheveux ou éclaircissement notable."
+      },
+      "streamId": "symptom-dermatological-hair-loss",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "278040002"
+        ]
+      }
     },
     "symptom-dermatological-hair-growth": {
       "version": "v1",
@@ -3053,12 +4268,70 @@
         "en": "Excess Hair Growth"
       },
       "description": {
-        "en": "Unusual body or facial hair growth (hirsutism)."
+        "en": "Deprecated — use symptom-dermatological-hair-growth-severity to record excess hair growth with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-dermatological-hair-growth",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-dermatological-hair-growth-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Excess Hair Growth",
+        "fr": "Pilosité excessive"
+      },
+      "description": {
+        "en": "Unusual body or facial hair growth (hirsutism).",
+        "fr": "Pilosité corporelle ou faciale inhabituelle (hirsutisme)."
+      },
+      "streamId": "symptom-dermatological-hair-growth",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "66520009"
+        ]
+      }
     },
     "symptom-cognitive-focus-difficulty": {
       "version": "v1",
@@ -3066,12 +4339,70 @@
         "en": "Difficulty Concentrating"
       },
       "description": {
-        "en": "Trouble focusing or concentrating on tasks.\nSNOMED CT: 76039006 (Difficulty concentrating)."
+        "en": "Deprecated — use symptom-cognitive-focus-difficulty-severity to record difficulty concentrating with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-cognitive-focus-difficulty",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-cognitive-focus-difficulty-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Difficulty Concentrating",
+        "fr": "Difficulté à se concentrer"
+      },
+      "description": {
+        "en": "Trouble focusing or concentrating on tasks.",
+        "fr": "Difficulté à se concentrer ou à rester attentif."
+      },
+      "streamId": "symptom-cognitive-focus-difficulty",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "76039006"
+        ]
+      }
     },
     "symptom-sleep-insomnia": {
       "version": "v1",
@@ -3079,12 +4410,70 @@
         "en": "Insomnia"
       },
       "description": {
-        "en": "Difficulty falling or staying asleep."
+        "en": "Deprecated — use symptom-sleep-insomnia-severity to record insomnia with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-sleep-insomnia",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-sleep-insomnia-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Insomnia",
+        "fr": "Insomnie"
+      },
+      "description": {
+        "en": "Difficulty falling or staying asleep.",
+        "fr": "Difficulté à s'endormir ou à rester endormi."
+      },
+      "streamId": "symptom-sleep-insomnia",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "193462001"
+        ]
+      }
     },
     "symptom-metabolic-water-retention": {
       "version": "v1",
@@ -3092,12 +4481,70 @@
         "en": "Water Retention"
       },
       "description": {
-        "en": "Fluid retention, swelling, or edema."
+        "en": "Deprecated — use symptom-metabolic-water-retention-severity to record water retention with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-metabolic-water-retention",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-metabolic-water-retention-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Water Retention",
+        "fr": "Rétention d'eau"
+      },
+      "description": {
+        "en": "Fluid retention, swelling, or edema.",
+        "fr": "Rétention de liquide, gonflement ou œdème."
+      },
+      "streamId": "symptom-metabolic-water-retention",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "43498006"
+        ]
+      }
     },
     "symptom-general-fatigue": {
       "version": "v1",
@@ -3105,12 +4552,70 @@
         "en": "Fatigue"
       },
       "description": {
-        "en": "Low energy, tiredness, or exhaustion."
+        "en": "Deprecated — use symptom-general-fatigue-severity to record fatigue with severity."
       },
+      "deprecated": true,
       "streamId": "symptom-general-fatigue",
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "unlimited"
+    },
+    "symptom-general-fatigue-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Fatigue",
+        "fr": "Fatigue"
+      },
+      "description": {
+        "en": "Low energy, tiredness, or exhaustion.",
+        "fr": "Manque d'énergie, fatigue ou épuisement."
+      },
+      "streamId": "symptom-general-fatigue",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "84229001"
+        ]
+      }
     },
     "treatment-basic": {
       "version": "v1",
@@ -8832,11 +10337,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-06-29T08:18:41.210Z"
+      "updatedAt": "2026-07-06T12:53:54.983Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-06-29T08:18:41.211Z"
+      "updatedAt": "2026-07-06T12:53:54.984Z"
     }
   },
   "settings": {
