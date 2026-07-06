@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [1.12.0] - 2026-07-06
+
+### Added — new symptom domains (Plan 77 / #19 §2)
+
+28 new symptom concepts across 8 domains, each as a **live** occurrence (`activity/plain`) + severity (`ratio/proportion`, 5-level) twin on one `streamId`, en+fr. Unlike §1's existing items, the occurrence twin is **not** deprecated — greenfield concepts keep presence-only logging valid.
+
+- **New categories:** respiratory (cough, shortness of breath, wheezing, nasal congestion, sore throat, runny nose), cardiac (palpitations, skipped heartbeat), thermoregulation (chills, hot flashes, night sweats, excessive sweating, cold extremities), vision & sensory (blurred vision, visual disturbance, hearing difficulty), hydration & urinary (excessive thirst, frequent urination), bleeding (nosebleed, bleeding gums, easy bruising).
+- **Extended:** neurological (+ tingling/numbness, tremor, restless legs, muscle twitching), dermatological (+ rash, hives, itching).
+- 56 items + 28 streams in `definitions/items/symptom-domains.yaml`. No new eventType.
+- SNOMED references on 21/28 concepts; **7 pending code verification** (`skipped-beat`, `excessive-sweating`, `cold-extremities`, `hearing-difficulty`, `bleeding-gums`, `easy-bruising`, `twitching`).
+
 ## [1.11.0] - 2026-07-06
 
 ### Added — intensity/severity items + blood pressure (Plan 77 / #19)

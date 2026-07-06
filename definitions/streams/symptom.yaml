@@ -39,6 +39,14 @@ children:
     children:
       - id: symptom-neurological-dizziness
         name: Dizziness
+      - id: symptom-neurological-paresthesia
+        name: Tingling / Numbness
+      - id: symptom-neurological-tremor
+        name: Tremor
+      - id: symptom-neurological-restless-legs
+        name: Restless Legs
+      - id: symptom-neurological-twitching
+        name: Muscle Twitching
   - id: symptom-cognitive
     name: Cognitive
     children:
@@ -51,6 +59,12 @@ children:
         name: Hair Loss
       - id: symptom-dermatological-hair-growth
         name: Excess Hair Growth
+      - id: symptom-dermatological-rash
+        name: Rash
+      - id: symptom-dermatological-hives
+        name: Hives
+      - id: symptom-dermatological-itching
+        name: Itching
   - id: symptom-sleep
     name: Sleep
     children:
@@ -66,3 +80,63 @@ children:
     children:
       - id: symptom-general-fatigue
         name: Fatigue
+  - id: symptom-respiratory
+    name: Respiratory
+    children:
+      - id: symptom-respiratory-cough
+        name: Cough
+      - id: symptom-respiratory-dyspnea
+        name: Shortness of Breath
+      - id: symptom-respiratory-wheezing
+        name: Wheezing
+      - id: symptom-respiratory-nasal-congestion
+        name: Nasal Congestion
+      - id: symptom-respiratory-sore-throat
+        name: Sore Throat
+      - id: symptom-respiratory-rhinorrhea
+        name: Runny Nose
+  - id: symptom-cardiac
+    name: Cardiac
+    children:
+      - id: symptom-cardiac-palpitations
+        name: Palpitations
+      - id: symptom-cardiac-skipped-beat
+        name: Skipped Heartbeat
+  - id: symptom-thermoregulation
+    name: Thermoregulation
+    children:
+      - id: symptom-thermoregulation-chills
+        name: Chills
+      - id: symptom-thermoregulation-hot-flashes
+        name: Hot Flashes
+      - id: symptom-thermoregulation-night-sweats
+        name: Night Sweats
+      - id: symptom-thermoregulation-excessive-sweating
+        name: Excessive Sweating
+      - id: symptom-thermoregulation-cold-extremities
+        name: Cold Extremities
+  - id: symptom-vision
+    name: Vision & Sensory
+    children:
+      - id: symptom-vision-blurred-vision
+        name: Blurred Vision
+      - id: symptom-vision-visual-disturbance
+        name: Visual Disturbance
+      - id: symptom-vision-hearing-difficulty
+        name: Hearing Difficulty
+  - id: symptom-hydration
+    name: Hydration & Urinary
+    children:
+      - id: symptom-hydration-excessive-thirst
+        name: Excessive Thirst
+      - id: symptom-hydration-frequent-urination
+        name: Frequent Urination
+  - id: symptom-bleeding
+    name: Bleeding
+    children:
+      - id: symptom-bleeding-nosebleed
+        name: Nosebleed
+      - id: symptom-bleeding-bleeding-gums
+        name: Bleeding Gums
+      - id: symptom-bleeding-easy-bruising
+        name: Easy Bruising

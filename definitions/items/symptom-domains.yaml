@@ -1,0 +1,842 @@
+# Symptom items — additional domains (Plan 77 / data-model#19 §2).
+# See documentation/SYMPTOMS.md for cross-system compatibility research.
+#
+# Model: each concept has BOTH a live occurrence item (eventType activity/plain)
+# and a live severity item (eventType ratio/proportion, 5-level) on the same
+# streamId. Unlike Plan-77 §1 (existing items), the occurrence twin here is NOT
+# deprecated — these are greenfield concepts and presence-only logging stays valid.
+# 5-level hooks 0.0/0.25/0.5/0.75/1.0 (semantic anchors; see DESIGN-NOTES.md).
+
+## Respiratory
+symptom-respiratory-cough:
+  version: v1
+  label:
+    en: Cough
+    fr: Toux
+  description:
+    en: Coughing.
+    fr: Toux.
+  streamId: symptom-respiratory-cough
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-respiratory-cough-severity:
+  version: v1
+  label:
+    en: Cough
+    fr: Toux
+  description:
+    en: Coughing.
+    fr: Toux.
+  streamId: symptom-respiratory-cough
+  eventType: ratio/proportion
+  type: select
+  options: &sev5
+    - value: 0.0
+      label:
+        en: None
+        fr: Aucun
+    - value: 0.25
+      label:
+        en: Slight
+        fr: Léger
+    - value: 0.5
+      label:
+        en: Moderate
+        fr: Modéré
+    - value: 0.75
+      label:
+        en: Severe
+        fr: Sévère
+    - value: 1.0
+      label:
+        en: Extreme
+        fr: Extrême
+  repeatable: unlimited
+  references:
+    snomed: ["49727002"]
+
+symptom-respiratory-dyspnea:
+  version: v1
+  label:
+    en: Shortness of Breath
+    fr: Essoufflement
+  description:
+    en: Difficulty breathing or shortness of breath.
+    fr: Difficulté à respirer ou essoufflement.
+  streamId: symptom-respiratory-dyspnea
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-respiratory-dyspnea-severity:
+  version: v1
+  label:
+    en: Shortness of Breath
+    fr: Essoufflement
+  description:
+    en: Difficulty breathing or shortness of breath.
+    fr: Difficulté à respirer ou essoufflement.
+  streamId: symptom-respiratory-dyspnea
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["267036007"]
+
+symptom-respiratory-wheezing:
+  version: v1
+  label:
+    en: Wheezing
+    fr: Respiration sifflante
+  description:
+    en: Whistling sound while breathing.
+    fr: Sifflement lors de la respiration.
+  streamId: symptom-respiratory-wheezing
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-respiratory-wheezing-severity:
+  version: v1
+  label:
+    en: Wheezing
+    fr: Respiration sifflante
+  description:
+    en: Whistling sound while breathing.
+    fr: Sifflement lors de la respiration.
+  streamId: symptom-respiratory-wheezing
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["56018004"]
+
+symptom-respiratory-nasal-congestion:
+  version: v1
+  label:
+    en: Nasal Congestion
+    fr: Congestion nasale
+  description:
+    en: Blocked or stuffy nose.
+    fr: Nez bouché ou congestionné.
+  streamId: symptom-respiratory-nasal-congestion
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-respiratory-nasal-congestion-severity:
+  version: v1
+  label:
+    en: Nasal Congestion
+    fr: Congestion nasale
+  description:
+    en: Blocked or stuffy nose.
+    fr: Nez bouché ou congestionné.
+  streamId: symptom-respiratory-nasal-congestion
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["68235000"]
+
+symptom-respiratory-sore-throat:
+  version: v1
+  label:
+    en: Sore Throat
+    fr: Mal de gorge
+  description:
+    en: Throat pain or irritation.
+    fr: Douleur ou irritation de la gorge.
+  streamId: symptom-respiratory-sore-throat
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-respiratory-sore-throat-severity:
+  version: v1
+  label:
+    en: Sore Throat
+    fr: Mal de gorge
+  description:
+    en: Throat pain or irritation.
+    fr: Douleur ou irritation de la gorge.
+  streamId: symptom-respiratory-sore-throat
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["162397003"]
+
+symptom-respiratory-rhinorrhea:
+  version: v1
+  label:
+    en: Runny Nose
+    fr: Écoulement nasal
+  description:
+    en: Runny nose or nasal discharge.
+    fr: Nez qui coule ou écoulement nasal.
+  streamId: symptom-respiratory-rhinorrhea
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-respiratory-rhinorrhea-severity:
+  version: v1
+  label:
+    en: Runny Nose
+    fr: Écoulement nasal
+  description:
+    en: Runny nose or nasal discharge.
+    fr: Nez qui coule ou écoulement nasal.
+  streamId: symptom-respiratory-rhinorrhea
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["64531003"]
+
+
+## Cardiac
+symptom-cardiac-palpitations:
+  version: v1
+  label:
+    en: Palpitations
+    fr: Palpitations
+  description:
+    en: Rapid, pounding, or fluttering heartbeat.
+    fr: Battements rapides, forts ou irréguliers du cœur.
+  streamId: symptom-cardiac-palpitations
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-cardiac-palpitations-severity:
+  version: v1
+  label:
+    en: Palpitations
+    fr: Palpitations
+  description:
+    en: Rapid, pounding, or fluttering heartbeat.
+    fr: Battements rapides, forts ou irréguliers du cœur.
+  streamId: symptom-cardiac-palpitations
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["80313002"]
+
+symptom-cardiac-skipped-beat:
+  version: v1
+  label:
+    en: Skipped Heartbeat
+    fr: Battements manqués
+  description:
+    en: Sensation of a skipped or missed heartbeat.
+    fr: Sensation de battement manqué.
+  streamId: symptom-cardiac-skipped-beat
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-cardiac-skipped-beat-severity:
+  version: v1
+  label:
+    en: Skipped Heartbeat
+    fr: Battements manqués
+  description:
+    en: Sensation of a skipped or missed heartbeat.
+    fr: Sensation de battement manqué.
+  streamId: symptom-cardiac-skipped-beat
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+
+
+## Thermoregulation
+symptom-thermoregulation-chills:
+  version: v1
+  label:
+    en: Chills
+    fr: Frissons
+  description:
+    en: Feeling cold with shivering.
+    fr: Sensation de froid avec frissons.
+  streamId: symptom-thermoregulation-chills
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-thermoregulation-chills-severity:
+  version: v1
+  label:
+    en: Chills
+    fr: Frissons
+  description:
+    en: Feeling cold with shivering.
+    fr: Sensation de froid avec frissons.
+  streamId: symptom-thermoregulation-chills
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["43724002"]
+
+symptom-thermoregulation-hot-flashes:
+  version: v1
+  label:
+    en: Hot Flashes
+    fr: Bouffées de chaleur
+  description:
+    en: Sudden feeling of heat.
+    fr: Sensation soudaine de chaleur.
+  streamId: symptom-thermoregulation-hot-flashes
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-thermoregulation-hot-flashes-severity:
+  version: v1
+  label:
+    en: Hot Flashes
+    fr: Bouffées de chaleur
+  description:
+    en: Sudden feeling of heat.
+    fr: Sensation soudaine de chaleur.
+  streamId: symptom-thermoregulation-hot-flashes
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["70882005"]
+
+symptom-thermoregulation-night-sweats:
+  version: v1
+  label:
+    en: Night Sweats
+    fr: Sueurs nocturnes
+  description:
+    en: Excessive sweating during sleep.
+    fr: Transpiration excessive pendant le sommeil.
+  streamId: symptom-thermoregulation-night-sweats
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-thermoregulation-night-sweats-severity:
+  version: v1
+  label:
+    en: Night Sweats
+    fr: Sueurs nocturnes
+  description:
+    en: Excessive sweating during sleep.
+    fr: Transpiration excessive pendant le sommeil.
+  streamId: symptom-thermoregulation-night-sweats
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["42984000"]
+
+symptom-thermoregulation-excessive-sweating:
+  version: v1
+  label:
+    en: Excessive Sweating
+    fr: Transpiration excessive
+  description:
+    en: Excessive sweating (hyperhidrosis).
+    fr: Transpiration excessive (hyperhidrose).
+  streamId: symptom-thermoregulation-excessive-sweating
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-thermoregulation-excessive-sweating-severity:
+  version: v1
+  label:
+    en: Excessive Sweating
+    fr: Transpiration excessive
+  description:
+    en: Excessive sweating (hyperhidrosis).
+    fr: Transpiration excessive (hyperhidrose).
+  streamId: symptom-thermoregulation-excessive-sweating
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+
+symptom-thermoregulation-cold-extremities:
+  version: v1
+  label:
+    en: Cold Extremities
+    fr: Extrémités froides
+  description:
+    en: Cold hands or feet.
+    fr: Mains ou pieds froids.
+  streamId: symptom-thermoregulation-cold-extremities
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-thermoregulation-cold-extremities-severity:
+  version: v1
+  label:
+    en: Cold Extremities
+    fr: Extrémités froides
+  description:
+    en: Cold hands or feet.
+    fr: Mains ou pieds froids.
+  streamId: symptom-thermoregulation-cold-extremities
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+
+
+## Vision & Sensory
+symptom-vision-blurred-vision:
+  version: v1
+  label:
+    en: Blurred Vision
+    fr: Vision floue
+  description:
+    en: Blurred or unclear vision.
+    fr: Vision floue ou trouble.
+  streamId: symptom-vision-blurred-vision
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-vision-blurred-vision-severity:
+  version: v1
+  label:
+    en: Blurred Vision
+    fr: Vision floue
+  description:
+    en: Blurred or unclear vision.
+    fr: Vision floue ou trouble.
+  streamId: symptom-vision-blurred-vision
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["246636008"]
+
+symptom-vision-visual-disturbance:
+  version: v1
+  label:
+    en: Visual Disturbance
+    fr: Troubles visuels
+  description:
+    en: Visual disturbance (spots, flashes, changes).
+    fr: Troubles visuels (taches, éclairs, changements).
+  streamId: symptom-vision-visual-disturbance
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-vision-visual-disturbance-severity:
+  version: v1
+  label:
+    en: Visual Disturbance
+    fr: Troubles visuels
+  description:
+    en: Visual disturbance (spots, flashes, changes).
+    fr: Troubles visuels (taches, éclairs, changements).
+  streamId: symptom-vision-visual-disturbance
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["63102001"]
+
+symptom-vision-hearing-difficulty:
+  version: v1
+  label:
+    en: Hearing Difficulty
+    fr: Difficulté auditive
+  description:
+    en: Difficulty hearing or change in hearing.
+    fr: Difficulté à entendre ou changement d'audition.
+  streamId: symptom-vision-hearing-difficulty
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-vision-hearing-difficulty-severity:
+  version: v1
+  label:
+    en: Hearing Difficulty
+    fr: Difficulté auditive
+  description:
+    en: Difficulty hearing or change in hearing.
+    fr: Difficulté à entendre ou changement d'audition.
+  streamId: symptom-vision-hearing-difficulty
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+
+
+## Hydration & Urinary
+symptom-hydration-excessive-thirst:
+  version: v1
+  label:
+    en: Excessive Thirst
+    fr: Soif excessive
+  description:
+    en: Excessive thirst (polydipsia).
+    fr: Soif excessive (polydipsie).
+  streamId: symptom-hydration-excessive-thirst
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-hydration-excessive-thirst-severity:
+  version: v1
+  label:
+    en: Excessive Thirst
+    fr: Soif excessive
+  description:
+    en: Excessive thirst (polydipsia).
+    fr: Soif excessive (polydipsie).
+  streamId: symptom-hydration-excessive-thirst
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["17173007"]
+
+symptom-hydration-frequent-urination:
+  version: v1
+  label:
+    en: Frequent Urination
+    fr: Mictions fréquentes
+  description:
+    en: Increased frequency of urination.
+    fr: Augmentation de la fréquence des mictions.
+  streamId: symptom-hydration-frequent-urination
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-hydration-frequent-urination-severity:
+  version: v1
+  label:
+    en: Frequent Urination
+    fr: Mictions fréquentes
+  description:
+    en: Increased frequency of urination.
+    fr: Augmentation de la fréquence des mictions.
+  streamId: symptom-hydration-frequent-urination
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["162116003"]
+
+
+## Bleeding
+symptom-bleeding-nosebleed:
+  version: v1
+  label:
+    en: Nosebleed
+    fr: Saignement de nez
+  description:
+    en: Nosebleed (epistaxis).
+    fr: Saignement de nez (épistaxis).
+  streamId: symptom-bleeding-nosebleed
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-bleeding-nosebleed-severity:
+  version: v1
+  label:
+    en: Nosebleed
+    fr: Saignement de nez
+  description:
+    en: Nosebleed (epistaxis).
+    fr: Saignement de nez (épistaxis).
+  streamId: symptom-bleeding-nosebleed
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["12441001"]
+
+symptom-bleeding-bleeding-gums:
+  version: v1
+  label:
+    en: Bleeding Gums
+    fr: Saignement des gencives
+  description:
+    en: Bleeding from the gums.
+    fr: Saignement des gencives.
+  streamId: symptom-bleeding-bleeding-gums
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-bleeding-bleeding-gums-severity:
+  version: v1
+  label:
+    en: Bleeding Gums
+    fr: Saignement des gencives
+  description:
+    en: Bleeding from the gums.
+    fr: Saignement des gencives.
+  streamId: symptom-bleeding-bleeding-gums
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+
+symptom-bleeding-easy-bruising:
+  version: v1
+  label:
+    en: Easy Bruising
+    fr: Ecchymoses faciles
+  description:
+    en: Bruising easily or without clear cause.
+    fr: Ecchymoses faciles ou sans cause évidente.
+  streamId: symptom-bleeding-easy-bruising
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-bleeding-easy-bruising-severity:
+  version: v1
+  label:
+    en: Easy Bruising
+    fr: Ecchymoses faciles
+  description:
+    en: Bruising easily or without clear cause.
+    fr: Ecchymoses faciles ou sans cause évidente.
+  streamId: symptom-bleeding-easy-bruising
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+
+
+## Neurological
+symptom-neurological-paresthesia:
+  version: v1
+  label:
+    en: Tingling / Numbness
+    fr: Fourmillements / engourdissements
+  description:
+    en: Tingling or numbness (paresthesia).
+    fr: Fourmillements ou engourdissements (paresthésie).
+  streamId: symptom-neurological-paresthesia
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-neurological-paresthesia-severity:
+  version: v1
+  label:
+    en: Tingling / Numbness
+    fr: Fourmillements / engourdissements
+  description:
+    en: Tingling or numbness (paresthesia).
+    fr: Fourmillements ou engourdissements (paresthésie).
+  streamId: symptom-neurological-paresthesia
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["62507009"]
+
+symptom-neurological-tremor:
+  version: v1
+  label:
+    en: Tremor
+    fr: Tremblements
+  description:
+    en: Involuntary shaking or tremor.
+    fr: Tremblements involontaires.
+  streamId: symptom-neurological-tremor
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-neurological-tremor-severity:
+  version: v1
+  label:
+    en: Tremor
+    fr: Tremblements
+  description:
+    en: Involuntary shaking or tremor.
+    fr: Tremblements involontaires.
+  streamId: symptom-neurological-tremor
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["26079004"]
+
+symptom-neurological-restless-legs:
+  version: v1
+  label:
+    en: Restless Legs
+    fr: Jambes sans repos
+  description:
+    en: Urge to move the legs, especially at rest.
+    fr: Besoin de bouger les jambes, surtout au repos.
+  streamId: symptom-neurological-restless-legs
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-neurological-restless-legs-severity:
+  version: v1
+  label:
+    en: Restless Legs
+    fr: Jambes sans repos
+  description:
+    en: Urge to move the legs, especially at rest.
+    fr: Besoin de bouger les jambes, surtout au repos.
+  streamId: symptom-neurological-restless-legs
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["32914008"]
+
+symptom-neurological-twitching:
+  version: v1
+  label:
+    en: Muscle Twitching
+    fr: Spasmes musculaires
+  description:
+    en: Muscle twitching or spasms.
+    fr: Contractions ou spasmes musculaires.
+  streamId: symptom-neurological-twitching
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-neurological-twitching-severity:
+  version: v1
+  label:
+    en: Muscle Twitching
+    fr: Spasmes musculaires
+  description:
+    en: Muscle twitching or spasms.
+    fr: Contractions ou spasmes musculaires.
+  streamId: symptom-neurological-twitching
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+
+
+## Dermatological
+symptom-dermatological-rash:
+  version: v1
+  label:
+    en: Rash
+    fr: Éruption cutanée
+  description:
+    en: Skin rash or eruption.
+    fr: Éruption cutanée.
+  streamId: symptom-dermatological-rash
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-dermatological-rash-severity:
+  version: v1
+  label:
+    en: Rash
+    fr: Éruption cutanée
+  description:
+    en: Skin rash or eruption.
+    fr: Éruption cutanée.
+  streamId: symptom-dermatological-rash
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["271807003"]
+
+symptom-dermatological-hives:
+  version: v1
+  label:
+    en: Hives
+    fr: Urticaire
+  description:
+    en: Hives (urticaria).
+    fr: Urticaire.
+  streamId: symptom-dermatological-hives
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-dermatological-hives-severity:
+  version: v1
+  label:
+    en: Hives
+    fr: Urticaire
+  description:
+    en: Hives (urticaria).
+    fr: Urticaire.
+  streamId: symptom-dermatological-hives
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["126485001"]
+
+symptom-dermatological-itching:
+  version: v1
+  label:
+    en: Itching
+    fr: Démangeaisons
+  description:
+    en: Generalized itching (pruritus).
+    fr: Démangeaisons généralisées (prurit).
+  streamId: symptom-dermatological-itching
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-dermatological-itching-severity:
+  version: v1
+  label:
+    en: Itching
+    fr: Démangeaisons
+  description:
+    en: Generalized itching (pruritus).
+    fr: Démangeaisons généralisées (prurit).
+  streamId: symptom-dermatological-itching
+  eventType: ratio/proportion
+  type: select
+  options: *sev5
+  repeatable: unlimited
+  references:
+    snomed: ["418290006"]
+
