@@ -14,10 +14,16 @@ body/
   body-blood-pressure          ← VITAL SIGN. A sibling, not a child (see the wart below)
   body-blood/
     body-blood-serum/          ← serum / plasma analytes (most of the domain)
+    body-blood-cbc/            ← whole blood — complete blood count
+    body-blood-rbc/            ← erythrocyte specimen (RBC magnesium)
     body-blood-hba1c           ← whole blood, not serum — hence the direct placement
   body-urine/
     body-urine-hormones/       ← urine hormone assays
 ```
+
+Three blood specimens, not one. `body-blood-rbc-magnesium` and `body-blood-serum-magnesium` are the
+same analyte in **different specimens** — different observations with different reference ranges, which
+is precisely why specimen is in the key (below).
 
 `body-blood` follows the existing specimen-rooted pattern (`body-urine`, `body-semen`).
 
@@ -111,9 +117,21 @@ and kept, so existing events still resolve and render; new data uses `body-urine
 ## Codes
 
 - **SNOMED** references are verified against the local `snomed-db` (International Edition RF2
-  20260201) — **never** hand-written. Where no concept exists, the item carries **no** `snomed` ref and
-  says why: `body-urine-hormones-e3g` (estrone-3-glucuronide has no concept) and
-  `body-urine-hormones-pdg` (`89113004` is *Pregnanediol measurement* — a different substance).
+  20260201) — **never** hand-written, and **never taken from search order**. Verification is not a
+  formality here: several concepts a plain search returns *first* are **inactive** — `35170002`
+  (Hemoglobin determination), `142831004` (RBC count), `165701004` / `143103004` (RDW), `143134000`
+  (transferrin saturation), `26966005` (total bilirubin), `103205003` (MCH). Shipping any of them would
+  have repeated the stale-reference bug fixed in 1.12.1.
+- Watch for **near-miss names**: `104134009` is *Hemoglobin* distribution width (HDW), not RDW —
+  a different analyte with a very similar label.
+- Where no concept exists, the item carries **no** `snomed` ref and says why:
+  `body-urine-hormones-e3g` (estrone-3-glucuronide has no concept), `body-urine-hormones-pdg`
+  (`89113004` is *Pregnanediol measurement* — a different substance) and `body-blood-rbc-magnesium`
+  (no erythrocyte-magnesium concept).
+- Two references are deliberate compromises, noted on the items: `body-blood-serum-folate` uses
+  `250212002` *Plasma folate* (SNOMED has no serum folate **procedure**, only findings; the two are
+  reported interchangeably), and `body-blood-serum-egfr` uses `80274001`, an **observable entity**
+  rather than a procedure — SNOMED has no estimated-GFR measurement procedure.
 - **LOINC** has no local source to verify against, so codes are **not** asserted. Follows the existing
   precedent (`body-semen-morphology-normal`): note the candidate in a comment marked pending
   verification rather than ship a guess.

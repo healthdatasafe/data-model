@@ -1,6 +1,16 @@
 # Changelog
 
-## [Unreleased]
+## [2.0.0] - 2026-07-15
+
+**Major bump because item keys were renamed** — a breaking change for consumers, per `AGENTS.md`
+("When a change here breaks a consumer's typechecks (e.g. removing an option, renaming an item key),
+bump `version`… and notify the consumer repos"). Stored data is unaffected.
+
+Delivers the serum blood-chemistry domain reported in
+[healthdatasafe/site-agents#2](https://github.com/healthdatasafe/site-agents/issues/2): **all 58
+analytes the report enumerated**, across metabolic, minerals, vitamins, iron studies, CBC, renal &
+electrolytes, protein, liver, methylation, thyroid and reproductive hormones. Design rationale:
+[`documentation/BLOOD-CHEMISTRY.md`](documentation/BLOOD-CHEMISTRY.md).
 
 ### ⚠️ BREAKING — urine hormone item keys renamed (`fertility-hormone-*` → `body-urine-hormones-*`)
 
@@ -40,24 +50,45 @@ It cannot be retyped in place: existing events carry `type: concentration/mg-l`,
 users' own accounts, so there is nothing for HDS to migrate. The item is kept with `deprecated: true` so
 those events still resolve and render; new data uses `body-urine-hormones-lh` (`concentration/iu-l`).
 
-### Added — blood chemistry: `body-blood` tree + first analytes
+### Added — blood chemistry: `body-blood` tree + 58 analytes
 
-New stream tree `body-blood` (`body-blood-serum/`, `body-blood-hba1c`), following the existing
-specimen-rooted pattern (`body-urine`, `body-semen`). See
-[`documentation/BLOOD-CHEMISTRY.md`](documentation/BLOOD-CHEMISTRY.md).
+New stream tree `body-blood`, following the existing specimen-rooted pattern (`body-urine`,
+`body-semen`), with three specimen subtrees:
 
-- **Metabolic:** `body-blood-serum-glucose-fasting` (mg/dL + mmol/L variation),
-  `body-blood-serum-insulin-fasting`, `body-blood-hba1c`, `body-blood-serum-c-peptide`.
-- **Hormones (serum twins):** `body-blood-serum-fsh`, `body-blood-serum-lh`,
-  `body-blood-serum-estradiol`, **`body-blood-serum-amh`**.
+- **`body-blood-serum/`** — serum/plasma analytes (most of the domain)
+- **`body-blood-cbc/`** — whole-blood counts
+- **`body-blood-rbc/`** — erythrocyte specimen (`body-blood-rbc-magnesium`, distinct from
+  `body-blood-serum-magnesium` — a different observation, not a different unit)
+- **`body-blood-hba1c`** — whole blood, hence the direct placement
+
+| Panel | Items |
+|---|---|
+| Metabolic | fasting glucose (mg/dL + mmol/L), fasting insulin, HbA1c, C-peptide |
+| Iron studies | ferritin, iron, TIBC, transferrin saturation |
+| CBC | hemoglobin, hematocrit, RBC, WBC, platelets, MCV, MCH, RDW, and the 5-part differential |
+| Liver | ALT, AST, GGT, ALP, LDH, total bilirubin, bile acids |
+| Renal & electrolytes | BUN, creatinine, eGFR, sodium, potassium, chloride, CO2, calcium |
+| Protein | total protein, albumin, globulin |
+| Minerals | zinc, copper, ceruloplasmin, magnesium (serum + RBC), selenium |
+| Vitamins | A, D (25-OH), D (active), B12, folate, B6, C |
+| Methylation | homocysteine |
+| Thyroid | TSH |
+| Reproductive | FSH, LH, estradiol, **AMH** |
 
 Fasting glucose is its own item rather than a variation — SNOMED codes fasting (`167087006`) and random
 (`167086002`) serum glucose as different procedures, and `variations` supports `eventType` only.
 Precedent: `body-temperature-basal`.
 
-All SNOMED references verified against `snomed-db` (International RF2 20260201). `body-urine-hormones-e3g`
-and `-pdg` carry **no** SNOMED ref — no concept exists for either substance. LOINC is not asserted (no
-local source to verify against).
+**Codes.** All SNOMED references verified active against `snomed-db` (International RF2 20260201) —
+this caught several inactive concepts that a plain search returns first (`35170002` Hemoglobin
+determination, `142831004` RBC count, `165701004` RDW, `143134000` transferrin saturation). Three items
+carry **no** SNOMED ref because no concept exists: `body-urine-hormones-e3g`, `body-urine-hormones-pdg`
+and `body-blood-rbc-magnesium`. LOINC is **not asserted** — there is no local source to verify against,
+so candidates stay in comments (precedent: `body-semen-morphology-normal`).
+
+**Reference ranges are deliberately absent** — they vary by lab, assay and population, and "optimal"
+bands are a practice's interpretation. The model carries the measured value; interpretation stays with
+the interpreter.
 
 **⚠️ `body-blood-pressure` is a vital sign and a sibling of `body-blood`, not a child** — despite the
 shared prefix. Nothing resolves by prefix, so it is safe, but "all `body-blood` data" does not cover it.
