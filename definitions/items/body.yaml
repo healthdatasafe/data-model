@@ -329,6 +329,9 @@ body-blood-serum-c-peptide:
   eventType: concentration/ug-l
   type: number
   repeatable: any
+  number:
+    display:
+      suffix: { en: ng/mL, fr: ng/mL }
   # ng/mL is numerically identical to µg/L, so the legacy concentration/ug-l is used rather
   # than an equivalent twin. Stored and displayed values are the printed ng/mL number.
   references:
@@ -391,6 +394,9 @@ body-blood-serum-amh:
   eventType: concentration/ug-l
   type: number
   repeatable: any
+  number:
+    display:
+      suffix: { en: ng/mL, fr: ng/mL }
   # ng/mL is numerically identical to µg/L, so the legacy concentration/ug-l is used rather
   # than an equivalent twin. Stored and displayed values are the printed ng/mL number.
   references:
@@ -408,6 +414,9 @@ body-blood-serum-ferritin:
   eventType: concentration/ug-l
   type: number
   repeatable: any
+  number:
+    display:
+      suffix: { en: ng/mL, fr: ng/mL }
   # ng/mL ≡ µg/L — the legacy unit is used rather than an equivalent twin.
   references:
     snomed: ["269821003"]
@@ -1006,6 +1015,9 @@ body-blood-serum-vitamin-d-25oh:
   eventType: concentration/ug-l
   type: number
   repeatable: any
+  number:
+    display:
+      suffix: { en: ng/mL, fr: ng/mL }
   # ng/mL ≡ µg/L — the legacy unit is used rather than an equivalent twin.
   references:
     snomed: ["12199005"]
@@ -1046,6 +1058,9 @@ body-blood-serum-folate:
   eventType: concentration/ug-l
   type: number
   repeatable: any
+  number:
+    display:
+      suffix: { en: ng/mL, fr: ng/mL }
   # 250212002 is plasma folate — SNOMED has no serum folate procedure (only findings).
   # Serum and plasma folate are reported interchangeably.
   # ng/mL ≡ µg/L — the legacy unit is used rather than an equivalent twin.
