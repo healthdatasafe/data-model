@@ -120,6 +120,24 @@ Reasons *not* to add one:
 - "We want a different range" (ranges belong on items via option hooks or min/max constraints).
 - "This questionnaire/app has its own concept" (the data still has a shape, and the shape is probably already defined).
 
+#### ⚑ An eventType `description` is the unit — nothing else
+
+**A unit eventType's `description` names the unit and stops** — a bare noun phrase, no trailing period. No usage hints, no example values, no rationale, no cross-references. The eventType describes a *shape*, not who uses it or why (§3) — the moment a description lists consumers it goes stale, and it duplicates knowledge that belongs to the items.
+
+- ✅ `Micrograms per deciliter (μg/dL)`
+- ✅ `Megacounts per milliliter (10⁶ counts/mL)` — the scale belongs to the unit; the example value does not
+- ✅ `Picograms (pg)`
+- ❌ `Milligrams per hour (transdermal, infusion)` — route is the item's business
+- ❌ `Milligrams per gram (topical)` — same
+- ❌ `Micrograms per deciliter (μg/dL). Conventional reporting unit for zinc, copper and TIBC.` — lists consumers; stale the day a fourth analyte lands
+- ❌ `… normalised to standard adult BSA.` / `… 1 U = 1 μmol per minute.` / `… Stored value is in millions — e.g. 16 for 16 × 10⁶/mL.` — definitional trivia and examples, not the unit's name
+
+Conventions, equivalences and rationale live **here in `AGENTS.md`**; per-domain usage lives in `documentation/<DOMAIN>.md`.
+
+#### Unit naming convention
+
+**All-lowercase, long-form SI prefixes.** `megacount-ml` (10⁶/mL), `gigacount-ml` (10⁹/mL) — the long prefix encodes the SI multiplier while staying inside the all-lowercase eventType convention. Micro- is spelled **`mcg`** in HDS-added types (`mass/mcg`, `rate/mcg-hr`, `concentration/mcg-dl`); the legacy Pryv type `concentration/ug-l` keeps its own spelling and stays canonical for μg/L.
+
 #### ⚑ Non-negotiable — a new eventType must never be equivalent to a legacy one
 
 **Before adding any unit eventType, prove it is not numerically equivalent to an existing type — especially a legacy Pryv one.** Two types are *equivalent* when the same physical quantity stores as the **same number** in both. An equivalent twin is a silent data-integrity hazard: identical values land under two type names, so queries, aggregations and converters split the same measurement into two populations, and no validator will ever flag it.

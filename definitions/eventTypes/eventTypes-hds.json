@@ -68,7 +68,7 @@
       ]
     },
     "ratio/proportion": {
-      "description": "A proportion value from 0 to 1. Represents a fraction of a whole: 0 = none, 1 = maximum. Used for subjective scales (e.g. bleeding intensity) where reference points are defined by item options, and for objective measured fractions such as lab percentages — which store the fraction (0.42), not the percentage (42).",
+      "description": "A proportion value from 0 to 1: 0 = none, 1 = maximum.",
       "type": "number",
       "minimum": 0,
       "maximum": 1
@@ -524,7 +524,7 @@
       }
     },
     "mass/mcg": {
-      "description": "Micrograms",
+      "description": "Micrograms (μg)",
       "type": "number"
     },
     "dose/tablet": {
@@ -552,75 +552,75 @@
       "type": "number"
     },
     "concentration/mg-g": {
-      "description": "Milligrams per gram (topical)",
+      "description": "Milligrams per gram (mg/g)",
       "type": "number"
     },
     "concentration/count-ml": {
-      "description": "Counts per milliliter (raw count). Stored value is the absolute number of items per mL — e.g. 16000000 for a sperm concentration of 16 × 10⁶/mL.",
+      "description": "Counts per milliliter (#/mL)",
       "type": "number",
       "minimum": 0
     },
     "concentration/megacount-ml": {
-      "description": "Megacounts per milliliter (10⁶ counts/mL). Stored value is in millions — e.g. 16 for 16 × 10⁶/mL. Use the long-form 'mega' prefix to stay within the all-lowercase eventType convention while encoding the SI Mega (10⁶) multiplier.",
+      "description": "Megacounts per milliliter (10⁶ counts/mL)",
       "type": "number",
       "minimum": 0
     },
     "concentration/gigacount-ml": {
-      "description": "Gigacounts per milliliter (10⁹ counts/mL). Stored value is in billions — e.g. 4.5 for an RBC count of 4.5 × 10¹²/L. Use the long-form 'giga' prefix to stay within the all-lowercase eventType convention while encoding the SI Giga (10⁹) multiplier.",
+      "description": "Gigacounts per milliliter (10⁹ counts/mL)",
       "type": "number",
       "minimum": 0
     },
     "concentration/mcg-dl": {
-      "description": "Micrograms per deciliter (μg/dL). Ten times concentration/ug-l, which stays canonical for μg/L.",
+      "description": "Micrograms per deciliter (μg/dL)",
       "type": "number",
       "minimum": 0
     },
     "concentration/pg-ml": {
-      "description": "Picograms per milliliter (pg/mL).",
+      "description": "Picograms per milliliter (pg/mL)",
       "type": "number",
       "minimum": 0
     },
     "concentration/uiu-ml": {
-      "description": "Micro-international units per milliliter (μIU/mL). Numerically equivalent to mIU/L.",
+      "description": "Micro-international units per milliliter (μIU/mL)",
       "type": "number",
       "minimum": 0
     },
     "concentration/umol-l": {
-      "description": "Micromoles per liter (μmol/L).",
+      "description": "Micromoles per liter (μmol/L)",
       "type": "number",
       "minimum": 0
     },
     "catalytic-activity/u-l": {
-      "description": "Enzyme activity units per liter (U/L). 1 U = 1 μmol of substrate converted per minute.",
+      "description": "Units per liter (U/L)",
       "type": "number",
       "minimum": 0
     },
     "volume/fl": {
-      "description": "Femtoliters (fL, 10⁻¹⁵ L).",
+      "description": "Femtoliters (fL)",
       "type": "number",
       "minimum": 0
     },
     "mass/pg": {
-      "description": "Picograms (pg, 10⁻¹² g).",
+      "description": "Picograms (pg)",
       "type": "number",
       "minimum": 0
     },
     "rate/ml-min-173m2": {
-      "description": "Milliliters per minute per 1.73 m² of body surface area (mL/min/1.73m²), normalised to standard adult BSA.",
+      "description": "Milliliters per minute per 1.73 m² (mL/min/1.73m²)",
       "type": "number",
       "minimum": 0
     },
     "count/mega": {
-      "description": "Millions of units count.",
+      "description": "Megacounts (M#)",
       "type": "number",
       "minimum": 0
     },
     "rate/mg-hr": {
-      "description": "Milligrams per hour (transdermal, infusion)",
+      "description": "Milligrams per hour (mg/h)",
       "type": "number"
     },
     "rate/mcg-hr": {
-      "description": "Micrograms per hour (transdermal)",
+      "description": "Micrograms per hour (μg/h)",
       "type": "number"
     },
     "frequency/times-period": {
