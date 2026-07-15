@@ -2,6 +2,66 @@
 
 ## [Unreleased]
 
+### ⚠️ BREAKING — urine hormone item keys renamed (`fertility-hormone-*` → `body-urine-hormones-*`)
+
+**Stored data is unaffected** — events carry `streamId` + `type`, and `forEvent` resolves on that pair.
+This breaks **consumer code that references the item key**.
+
+| Old key | New key |
+|---|---|
+| `fertility-hormone-fsh` | `body-urine-hormones-fsh` |
+| `fertility-hormone-hcg` | `body-urine-hormones-hcg` |
+| `fertility-hormone-pdg` | `body-urine-hormones-pdg` |
+| `fertility-hormone-e3g` | `body-urine-hormones-e3g` |
+| `fertility-hormone-lh` | `body-urine-hormones-lh` *(old key kept, deprecated — see below)* |
+
+**Why:** the old prefix matched neither the stream (`body-urine-*`) nor the specimen. Serum and urine
+assays of the same hormone are different observations with different reference ranges — SNOMED codes
+them as distinct procedures — so a neutral key that silently meant "urine" was a trap, and serum twins
+had nowhere symmetric to live. Keys now equal their `streamId`, and the specimen is explicit on both
+sides.
+
+Deprecate-and-twin was not available: the loader rejects two items sharing a `streamId:eventType` pair,
+which a renamed twin would.
+
+**Consumers to update** (`hds-react-timeline` done in the matching release):
+- `doctor-dashboard` — `app/data/presets.ts`
+- `bridge-mira` — `src/methods/hds4miraMethods.ts`, `_hds/manifest.json`, and
+  **`src/dataSync/converters/hormone.ts`, which builds the key by concatenation
+  (`'fertility-hormone-' + hormone`) — a typecheck will not catch this; it breaks at runtime.**
+
+### Deprecated — `fertility-hormone-lh` (was typed `concentration/mg-l`)
+
+LH is reported in **IU/L**; this item was the only one in the model using `mg-l`, while its siblings all
+used `iu-l`. **Stored numbers are already correct** — `bridge-mira` writes Mira's value verbatim and
+Mira reports LH in mIU/mL, which is numerically identical to IU/L. Only the type label was wrong.
+
+It cannot be retyped in place: existing events carry `type: concentration/mg-l`, and the data lives in
+users' own accounts, so there is nothing for HDS to migrate. The item is kept with `deprecated: true` so
+those events still resolve and render; new data uses `body-urine-hormones-lh` (`concentration/iu-l`).
+
+### Added — blood chemistry: `body-blood` tree + first analytes
+
+New stream tree `body-blood` (`body-blood-serum/`, `body-blood-hba1c`), following the existing
+specimen-rooted pattern (`body-urine`, `body-semen`). See
+[`documentation/BLOOD-CHEMISTRY.md`](documentation/BLOOD-CHEMISTRY.md).
+
+- **Metabolic:** `body-blood-serum-glucose-fasting` (mg/dL + mmol/L variation),
+  `body-blood-serum-insulin-fasting`, `body-blood-hba1c`, `body-blood-serum-c-peptide`.
+- **Hormones (serum twins):** `body-blood-serum-fsh`, `body-blood-serum-lh`,
+  `body-blood-serum-estradiol`, **`body-blood-serum-amh`**.
+
+Fasting glucose is its own item rather than a variation — SNOMED codes fasting (`167087006`) and random
+(`167086002`) serum glucose as different procedures, and `variations` supports `eventType` only.
+Precedent: `body-temperature-basal`.
+
+All SNOMED references verified against `snomed-db` (International RF2 20260201). `body-urine-hormones-e3g`
+and `-pdg` carry **no** SNOMED ref — no concept exists for either substance. LOINC is not asserted (no
+local source to verify against).
+
+**⚠️ `body-blood-pressure` is a vital sign and a sibling of `body-blood`, not a child** — despite the
+shared prefix. Nothing resolves by prefix, so it is safe, but "all `body-blood` data" does not cover it.
+
 ### Added — units for the serum blood-chemistry domain
 
 Foundation for the serum blood-chemistry domain (~68 analytes). Units land first: an

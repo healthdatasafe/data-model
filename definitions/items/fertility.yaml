@@ -289,10 +289,18 @@ fertility-delivery:
         fr: Jours entre naissance et décès néonatal (laisser vide si en vie)
       type: number
       canBeNull: true
-fertility-hormone-fsh:
-  version: v1
-  label: FSH
-  description: Follicle Stimulating Hormone concentration in urine - IU/L
+# Urine hormones. Renamed from fertility-hormone-* to body-urine-hormones-* (key == streamId)
+# so the specimen is explicit: serum and urine assays of the same hormone are different
+# observations with different reference ranges, and the neutral key used to hide that.
+# Serum twins live in body.yaml under body-blood-serum-*.
+body-urine-hormones-fsh:
+  version: v2
+  label:
+    en: FSH (urine)
+    fr: FSH (urine)
+  description:
+    en: Follicle-stimulating hormone in your urine.
+    fr: Hormone folliculo-stimulante dans vos urines.
   streamId: body-urine-hormones-fsh
   eventType: concentration/iu-l
   type: number
@@ -300,41 +308,89 @@ fertility-hormone-fsh:
   reminder:
     relativeTo: fertility-cycles-start
     relativeDays: [2, 3, 4]
-fertility-hormone-hcg:
-  version: v1
-  label: hCG 
-  description: Human Chorionic Gonadotropin concentration in urine - IU/L
+  references:
+    snomed: ["167382006"]
+body-urine-hormones-hcg:
+  version: v2
+  label:
+    en: hCG (urine)
+    fr: hCG (urine)
+  description:
+    en: Pregnancy hormone in your urine.
+    fr: Hormone de grossesse dans vos urines.
   streamId: body-urine-hormones-hcg
   eventType: concentration/iu-l
   type: number
   repeatable: any
-fertility-hormone-pdg:
-  version: v1
-  label: PdG 
-  description: Pregnanediol-3-glucuronide concentration in urine - IU/L
+  # 67900009 is the unqualified hCG measurement — SNOMED has no quantitative urine-specific
+  # concept (167391005 is a 24-hour assay, a different procedure).
+  references:
+    snomed: ["67900009"]
+body-urine-hormones-pdg:
+  version: v2
+  label:
+    en: PdG (urine)
+    fr: PdG (urine)
+  description:
+    en: A progesterone by-product in your urine, showing ovulation has happened.
+    fr: Un dérivé de la progestérone dans vos urines, indiquant que l'ovulation a eu lieu.
   streamId: body-urine-hormones-pdg
   eventType: concentration/iu-l
   type: number
   repeatable: any
-fertility-hormone-e3g:
-  version: v1
-  label: E3G 
-  description: Estrone-3-glucuronide concentration in urine - µg/L
+  # No SNOMED reference: pregnanediol-3-glucuronide has no concept. 89113004 is
+  # "Pregnanediol measurement" — a different substance, so it is not used here.
+body-urine-hormones-e3g:
+  version: v2
+  label:
+    en: E3G (urine)
+    fr: E3G (urine)
+  description:
+    en: An estrogen by-product in your urine, rising as you approach ovulation.
+    fr: Un dérivé de l'œstrogène dans vos urines, augmentant à l'approche de l'ovulation.
   streamId: body-urine-hormones-e3g
   eventType: concentration/ug-l
   type: number
   repeatable: any
-fertility-hormone-lh:
-  version: v1
-  label: LH
-  description: Luteinizing Hormone concentration in urine - mg/L
+  # No SNOMED reference: estrone-3-glucuronide measurement has no concept.
+body-urine-hormones-lh:
+  version: v2
+  label:
+    en: LH (urine)
+    fr: LH (urine)
+  description:
+    en: Luteinizing hormone in your urine, which surges just before ovulation.
+    fr: Hormone lutéinisante dans vos urines, qui culmine juste avant l'ovulation.
   streamId: body-urine-hormones-lh
-  eventType: concentration/mg-l
+  eventType: concentration/iu-l
   type: number
   repeatable: any
   reminder:
     relativeTo: fertility-cycles-start
     relativeDays: [2, 3, 4]
+  references:
+    snomed: ["167381004"]
+fertility-hormone-lh:
+  version: v1
+  deprecated: true
+  label:
+    en: LH (urine, legacy)
+    fr: LH (urine, ancien)
+  description:
+    en: Deprecated — use body-urine-hormones-lh. This item was typed mg/L in error; LH is reported in IU/L.
+    fr: Obsolète — utilisez body-urine-hormones-lh. Cet item était typé mg/L par erreur ; la LH se mesure en IU/L.
+  streamId: body-urine-hormones-lh
+  eventType: concentration/mg-l
+  type: number
+  repeatable: any
+  # Kept so existing events (stored with type concentration/mg-l) still resolve and render.
+  # The stored numbers are already correct as IU/L — bridge-mira writes Mira's value verbatim
+  # and Mira reports LH in mIU/mL, which is numerically identical to IU/L. Only the type label
+  # was wrong. The item cannot be retyped in place: stored events carry the old type, and the
+  # data lives in users' own accounts, so there is nothing for HDS to migrate.
+  # This is the only urine hormone that could be deprecated rather than renamed — the loader
+  # rejects two items sharing a streamId:eventType pair, and the others keep their eventType.
+  devNotes: "B-2026-07-15-1. Do not use for new data."
 fertility-test-opk:
   version: v1
   label: Ovulation test (OPK)

@@ -8,6 +8,33 @@ children:
     name: Body Weight
   - id: body-blood-pressure
     name: Blood Pressure
+  # NOTE: body-blood-pressure above is a VITAL SIGN and a sibling of body-blood — not a
+  # child of it, despite the shared prefix. Nothing resolves by prefix (D3 walk-up and
+  # authorizations use this tree), so it is safe; but "all body-blood data" does not cover
+  # blood pressure. Renaming it is not available: it is published and holds data.
+  # See documentation/BLOOD-CHEMISTRY.md.
+  - id: body-blood
+    name: Blood
+    children:
+      - id: body-blood-serum
+        name: Serum
+        children:
+          - id: body-blood-serum-glucose-fasting
+            name: Fasting glucose
+          - id: body-blood-serum-insulin-fasting
+            name: Fasting insulin
+          - id: body-blood-serum-c-peptide
+            name: C-peptide
+          - id: body-blood-serum-fsh
+            name: FSH
+          - id: body-blood-serum-lh
+            name: LH
+          - id: body-blood-serum-estradiol
+            name: Estradiol
+          - id: body-blood-serum-amh
+            name: AMH
+      - id: body-blood-hba1c
+        name: HbA1c
   - id: body-vulva
     name: Vulva
     children:

@@ -233,3 +233,165 @@ body-semen-dna-fragmentation:
     upperLimit: 0.30
     units: ratio
     population: clinical-consensus
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Blood chemistry — see documentation/BLOOD-CHEMISTRY.md
+#
+# Specimen is explicit in every key (body-blood-serum-*, body-urine-hormones-*): serum and
+# urine assays of the same hormone are different observations with different reference
+# ranges, and SNOMED codes them as distinct procedures.
+#
+# Reference ranges are deliberately absent. They vary by lab, assay and population, and
+# "optimal" bands are a practice's interpretation, not a fact about the analyte. The model
+# carries the measured value; interpretation stays with the interpreter.
+# ─────────────────────────────────────────────────────────────────────────────
+
+body-blood-serum-glucose-fasting:
+  version: v1
+  label:
+    en: Fasting glucose
+    fr: Glycémie à jeun
+  description:
+    en: Blood sugar, measured after not eating overnight.
+    fr: Taux de sucre dans le sang, mesuré après une nuit sans manger.
+  streamId: body-blood-serum-glucose-fasting
+  type: number
+  repeatable: any
+  # Fasting is its own item rather than a variation: SNOMED codes fasting (167087006) and
+  # random (167086002) serum glucose as different procedures, and the schema's `variations`
+  # block only supports eventType. Precedent: body-temperature-basal vs body-temperature.
+  variations:
+    eventType:
+      label:
+        en: Unit
+        fr: Unité
+      options:
+        - value: concentration/mg-dl
+          label:
+            en: mg/dL
+            fr: mg/dL
+        - value: concentration/mmol-l
+          label:
+            en: mmol/L
+            fr: mmol/L
+  references:
+    snomed: ["167087006"]
+
+body-blood-serum-insulin-fasting:
+  version: v1
+  label:
+    en: Fasting insulin
+    fr: Insuline à jeun
+  description:
+    en: The hormone that moves sugar into your cells, measured after not eating overnight.
+    fr: L'hormone qui fait entrer le sucre dans vos cellules, mesurée après une nuit sans manger.
+  streamId: body-blood-serum-insulin-fasting
+  eventType: concentration/uiu-ml
+  type: number
+  repeatable: any
+  # 16890009 is the unqualified insulin measurement; SNOMED has no fasting-specific concept.
+  references:
+    snomed: ["16890009"]
+
+body-blood-hba1c:
+  version: v1
+  label:
+    en: HbA1c
+    fr: HbA1c
+  description:
+    en: Your average blood sugar over the past two to three months.
+    fr: Votre glycémie moyenne des deux à trois derniers mois.
+  streamId: body-blood-hba1c
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  # HbA1c is the glycated fraction of total hemoglobin — a real fraction, so it stores 0..1
+  # and renders as a percentage. Specimen is whole blood, not serum, hence the direct
+  # placement under body-blood rather than body-blood-serum.
+  number:
+    display:
+      multiplier: 100
+      suffix:
+        en: "%"
+        fr: "%"
+  references:
+    snomed: ["43396009"]
+
+body-blood-serum-c-peptide:
+  version: v1
+  label:
+    en: C-peptide
+    fr: Peptide C
+  description:
+    en: Shows how much insulin your body is making on its own.
+    fr: Indique la quantité d'insuline que votre corps produit lui-même.
+  streamId: body-blood-serum-c-peptide
+  eventType: concentration/ug-l
+  type: number
+  repeatable: any
+  # ng/mL is numerically identical to µg/L, so the legacy concentration/ug-l is used rather
+  # than an equivalent twin. Stored and displayed values are the printed ng/mL number.
+  references:
+    snomed: ["88705004"]
+
+body-blood-serum-fsh:
+  version: v1
+  label:
+    en: FSH (serum)
+    fr: FSH (sérum)
+  description:
+    en: Follicle-stimulating hormone in your blood.
+    fr: Hormone folliculo-stimulante dans votre sang.
+  streamId: body-blood-serum-fsh
+  eventType: concentration/iu-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["273971007"]
+
+body-blood-serum-lh:
+  version: v1
+  label:
+    en: LH (serum)
+    fr: LH (sérum)
+  description:
+    en: Luteinizing hormone in your blood.
+    fr: Hormone lutéinisante dans votre sang.
+  streamId: body-blood-serum-lh
+  eventType: concentration/iu-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["273969007"]
+
+body-blood-serum-estradiol:
+  version: v1
+  label:
+    en: Estradiol
+    fr: Estradiol
+  description:
+    en: The main estrogen in your blood.
+    fr: Le principal œstrogène dans votre sang.
+  streamId: body-blood-serum-estradiol
+  eventType: concentration/pg-ml
+  type: number
+  repeatable: any
+  references:
+    snomed: ["166448005"]
+
+body-blood-serum-amh:
+  version: v1
+  label:
+    en: AMH
+    fr: AMH
+  description:
+    en: A marker of how many eggs your ovaries still hold.
+    fr: Un marqueur du nombre d'ovocytes encore présents dans vos ovaires.
+  streamId: body-blood-serum-amh
+  eventType: concentration/ug-l
+  type: number
+  repeatable: any
+  # ng/mL is numerically identical to µg/L, so the legacy concentration/ug-l is used rather
+  # than an equivalent twin. Stored and displayed values are the printed ng/mL number.
+  references:
+    snomed: ["711358004"]

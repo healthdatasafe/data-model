@@ -4,7 +4,7 @@ This file orients future agents (Claude or others) working on the `data-model` r
 
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
-- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md` — per-domain design decisions and cross-system mappings.
+- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md` — per-domain design decisions and cross-system mappings.
 
 ---
 
