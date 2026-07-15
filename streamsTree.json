@@ -72,6 +72,324 @@
         "parentId": "body"
       },
       {
+        "id": "body-blood",
+        "name": "Blood",
+        "children": [
+          {
+            "id": "body-blood-serum",
+            "name": "Serum",
+            "children": [
+              {
+                "id": "body-blood-serum-glucose-fasting",
+                "name": "Fasting glucose",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-insulin-fasting",
+                "name": "Fasting insulin",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-c-peptide",
+                "name": "C-peptide",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-fsh",
+                "name": "FSH",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-lh",
+                "name": "LH",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-estradiol",
+                "name": "Estradiol",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-amh",
+                "name": "AMH",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-tsh",
+                "name": "TSH",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-ferritin",
+                "name": "Ferritin",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-iron",
+                "name": "Iron",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-tibc",
+                "name": "Total iron-binding capacity",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-transferrin-saturation",
+                "name": "Transferrin saturation",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-alt",
+                "name": "ALT",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-ast",
+                "name": "AST",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-ggt",
+                "name": "GGT",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-alp",
+                "name": "ALP",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-ldh",
+                "name": "LDH",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-bilirubin-total",
+                "name": "Total bilirubin",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-bile-acids",
+                "name": "Bile acids",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-bun",
+                "name": "Blood urea nitrogen",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-creatinine",
+                "name": "Creatinine",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-egfr",
+                "name": "eGFR",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-sodium",
+                "name": "Sodium",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-potassium",
+                "name": "Potassium",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-chloride",
+                "name": "Chloride",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-co2",
+                "name": "CO2",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-calcium",
+                "name": "Calcium",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-protein-total",
+                "name": "Total protein",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-albumin",
+                "name": "Albumin",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-globulin",
+                "name": "Globulin",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-zinc",
+                "name": "Zinc",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-copper",
+                "name": "Copper",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-ceruloplasmin",
+                "name": "Ceruloplasmin",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-magnesium",
+                "name": "Magnesium",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-selenium",
+                "name": "Selenium",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-vitamin-a",
+                "name": "Vitamin A",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-vitamin-d-25oh",
+                "name": "Vitamin D (25-OH)",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-vitamin-d-125oh",
+                "name": "Vitamin D (active)",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-vitamin-b12",
+                "name": "Vitamin B12",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-folate",
+                "name": "Folate",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-vitamin-b6",
+                "name": "Vitamin B6",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-vitamin-c",
+                "name": "Vitamin C",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-homocysteine",
+                "name": "Homocysteine",
+                "parentId": "body-blood-serum"
+              }
+            ],
+            "parentId": "body-blood"
+          },
+          {
+            "id": "body-blood-cbc",
+            "name": "Complete blood count",
+            "children": [
+              {
+                "id": "body-blood-cbc-hemoglobin",
+                "name": "Hemoglobin",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-hematocrit",
+                "name": "Hematocrit",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-rbc",
+                "name": "Red blood cells",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-wbc",
+                "name": "White blood cells",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-platelets",
+                "name": "Platelets",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-mcv",
+                "name": "MCV",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-mch",
+                "name": "MCH",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-rdw",
+                "name": "RDW",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-neutrophils",
+                "name": "Neutrophils",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-lymphocytes",
+                "name": "Lymphocytes",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-monocytes",
+                "name": "Monocytes",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-eosinophils",
+                "name": "Eosinophils",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-basophils",
+                "name": "Basophils",
+                "parentId": "body-blood-cbc"
+              }
+            ],
+            "parentId": "body-blood"
+          },
+          {
+            "id": "body-blood-rbc",
+            "name": "Red blood cell",
+            "children": [
+              {
+                "id": "body-blood-rbc-magnesium",
+                "name": "Magnesium (RBC)",
+                "parentId": "body-blood-rbc"
+              }
+            ],
+            "parentId": "body-blood"
+          },
+          {
+            "id": "body-blood-hba1c",
+            "name": "HbA1c",
+            "parentId": "body-blood"
+          }
+        ],
+        "parentId": "body"
+      },
+      {
         "id": "body-vulva",
         "name": "Vulva",
         "children": [

@@ -255,6 +255,53 @@
       "if": {
         "properties": {
           "type": {
+            "const": "number"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "min": {
+            "type": "number",
+            "nullable": true
+          },
+          "max": {
+            "type": "number",
+            "nullable": true
+          },
+          "step": {
+            "type": "number",
+            "nullable": true
+          },
+          "number": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "display": {
+                "type": "object",
+                "properties": {
+                  "multiplier": {
+                    "type": "number"
+                  },
+                  "precision": {
+                    "type": "number"
+                  },
+                  "suffix": {
+                    "$ref": "defs.json#/definitions/localized"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
             "const": "slider"
           }
         }

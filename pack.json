@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-07-06T16:07:02.252Z",
+  "publicationDate": "2026-07-15T14:39:12.509Z",
   "streams": [
     {
       "id": "activity",
@@ -71,6 +71,324 @@
         {
           "id": "body-blood-pressure",
           "name": "Blood Pressure",
+          "parentId": "body"
+        },
+        {
+          "id": "body-blood",
+          "name": "Blood",
+          "children": [
+            {
+              "id": "body-blood-serum",
+              "name": "Serum",
+              "children": [
+                {
+                  "id": "body-blood-serum-glucose-fasting",
+                  "name": "Fasting glucose",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-insulin-fasting",
+                  "name": "Fasting insulin",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-c-peptide",
+                  "name": "C-peptide",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-fsh",
+                  "name": "FSH",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-lh",
+                  "name": "LH",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-estradiol",
+                  "name": "Estradiol",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-amh",
+                  "name": "AMH",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-tsh",
+                  "name": "TSH",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-ferritin",
+                  "name": "Ferritin",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-iron",
+                  "name": "Iron",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-tibc",
+                  "name": "Total iron-binding capacity",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-transferrin-saturation",
+                  "name": "Transferrin saturation",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-alt",
+                  "name": "ALT",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-ast",
+                  "name": "AST",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-ggt",
+                  "name": "GGT",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-alp",
+                  "name": "ALP",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-ldh",
+                  "name": "LDH",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-bilirubin-total",
+                  "name": "Total bilirubin",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-bile-acids",
+                  "name": "Bile acids",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-bun",
+                  "name": "Blood urea nitrogen",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-creatinine",
+                  "name": "Creatinine",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-egfr",
+                  "name": "eGFR",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-sodium",
+                  "name": "Sodium",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-potassium",
+                  "name": "Potassium",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-chloride",
+                  "name": "Chloride",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-co2",
+                  "name": "CO2",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-calcium",
+                  "name": "Calcium",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-protein-total",
+                  "name": "Total protein",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-albumin",
+                  "name": "Albumin",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-globulin",
+                  "name": "Globulin",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-zinc",
+                  "name": "Zinc",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-copper",
+                  "name": "Copper",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-ceruloplasmin",
+                  "name": "Ceruloplasmin",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-magnesium",
+                  "name": "Magnesium",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-selenium",
+                  "name": "Selenium",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-vitamin-a",
+                  "name": "Vitamin A",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-vitamin-d-25oh",
+                  "name": "Vitamin D (25-OH)",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-vitamin-d-125oh",
+                  "name": "Vitamin D (active)",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-vitamin-b12",
+                  "name": "Vitamin B12",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-folate",
+                  "name": "Folate",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-vitamin-b6",
+                  "name": "Vitamin B6",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-vitamin-c",
+                  "name": "Vitamin C",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-homocysteine",
+                  "name": "Homocysteine",
+                  "parentId": "body-blood-serum"
+                }
+              ],
+              "parentId": "body-blood"
+            },
+            {
+              "id": "body-blood-cbc",
+              "name": "Complete blood count",
+              "children": [
+                {
+                  "id": "body-blood-cbc-hemoglobin",
+                  "name": "Hemoglobin",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-hematocrit",
+                  "name": "Hematocrit",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-rbc",
+                  "name": "Red blood cells",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-wbc",
+                  "name": "White blood cells",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-platelets",
+                  "name": "Platelets",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-mcv",
+                  "name": "MCV",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-mch",
+                  "name": "MCH",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-rdw",
+                  "name": "RDW",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-neutrophils",
+                  "name": "Neutrophils",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-lymphocytes",
+                  "name": "Lymphocytes",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-monocytes",
+                  "name": "Monocytes",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-eosinophils",
+                  "name": "Eosinophils",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-basophils",
+                  "name": "Basophils",
+                  "parentId": "body-blood-cbc"
+                }
+              ],
+              "parentId": "body-blood"
+            },
+            {
+              "id": "body-blood-rbc",
+              "name": "Red blood cell",
+              "children": [
+                {
+                  "id": "body-blood-rbc-magnesium",
+                  "name": "Magnesium (RBC)",
+                  "parentId": "body-blood-rbc"
+                }
+              ],
+              "parentId": "body-blood"
+            },
+            {
+              "id": "body-blood-hba1c",
+              "name": "HbA1c",
+              "parentId": "body-blood"
+            }
+          ],
           "parentId": "body"
         },
         {
@@ -2156,6 +2474,1305 @@
         "population": "clinical-consensus"
       }
     },
+    "body-blood-serum-glucose-fasting": {
+      "version": "v1",
+      "label": {
+        "en": "Fasting glucose",
+        "fr": "Glycémie à jeun"
+      },
+      "description": {
+        "en": "Blood sugar, measured after not eating overnight.",
+        "fr": "Taux de sucre dans le sang, mesuré après une nuit sans manger."
+      },
+      "streamId": "body-blood-serum-glucose-fasting",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              }
+            },
+            {
+              "value": "concentration/mmol-l",
+              "label": {
+                "en": "mmol/L",
+                "fr": "mmol/L"
+              }
+            }
+          ]
+        }
+      },
+      "references": {
+        "snomed": [
+          "167087006"
+        ]
+      }
+    },
+    "body-blood-serum-insulin-fasting": {
+      "version": "v1",
+      "label": {
+        "en": "Fasting insulin",
+        "fr": "Insuline à jeun"
+      },
+      "description": {
+        "en": "The hormone that moves sugar into your cells, measured after not eating overnight.",
+        "fr": "L'hormone qui fait entrer le sucre dans vos cellules, mesurée après une nuit sans manger."
+      },
+      "streamId": "body-blood-serum-insulin-fasting",
+      "eventType": "concentration/uiu-ml",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "16890009"
+        ]
+      }
+    },
+    "body-blood-hba1c": {
+      "version": "v1",
+      "label": {
+        "en": "HbA1c",
+        "fr": "HbA1c"
+      },
+      "description": {
+        "en": "Your average blood sugar over the past two to three months.",
+        "fr": "Votre glycémie moyenne des deux à trois derniers mois."
+      },
+      "streamId": "body-blood-hba1c",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "43396009"
+        ]
+      }
+    },
+    "body-blood-serum-c-peptide": {
+      "version": "v1",
+      "label": {
+        "en": "C-peptide",
+        "fr": "Peptide C"
+      },
+      "description": {
+        "en": "Shows how much insulin your body is making on its own.",
+        "fr": "Indique la quantité d'insuline que votre corps produit lui-même."
+      },
+      "streamId": "body-blood-serum-c-peptide",
+      "eventType": "concentration/ug-l",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "suffix": {
+            "en": "ng/mL",
+            "fr": "ng/mL"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "88705004"
+        ]
+      }
+    },
+    "body-blood-serum-fsh": {
+      "version": "v1",
+      "label": {
+        "en": "FSH (serum)",
+        "fr": "FSH (sérum)"
+      },
+      "description": {
+        "en": "Follicle-stimulating hormone in your blood.",
+        "fr": "Hormone folliculo-stimulante dans votre sang."
+      },
+      "streamId": "body-blood-serum-fsh",
+      "eventType": "concentration/iu-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "273971007"
+        ]
+      }
+    },
+    "body-blood-serum-lh": {
+      "version": "v1",
+      "label": {
+        "en": "LH (serum)",
+        "fr": "LH (sérum)"
+      },
+      "description": {
+        "en": "Luteinizing hormone in your blood.",
+        "fr": "Hormone lutéinisante dans votre sang."
+      },
+      "streamId": "body-blood-serum-lh",
+      "eventType": "concentration/iu-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "273969007"
+        ]
+      }
+    },
+    "body-blood-serum-estradiol": {
+      "version": "v1",
+      "label": {
+        "en": "Estradiol",
+        "fr": "Estradiol"
+      },
+      "description": {
+        "en": "The main estrogen in your blood.",
+        "fr": "Le principal œstrogène dans votre sang."
+      },
+      "streamId": "body-blood-serum-estradiol",
+      "eventType": "concentration/pg-ml",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "166448005"
+        ]
+      }
+    },
+    "body-blood-serum-amh": {
+      "version": "v1",
+      "label": {
+        "en": "AMH",
+        "fr": "AMH"
+      },
+      "description": {
+        "en": "A marker of how many eggs your ovaries still hold.",
+        "fr": "Un marqueur du nombre d'ovocytes encore présents dans vos ovaires."
+      },
+      "streamId": "body-blood-serum-amh",
+      "eventType": "concentration/ug-l",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "suffix": {
+            "en": "ng/mL",
+            "fr": "ng/mL"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "711358004"
+        ]
+      }
+    },
+    "body-blood-serum-ferritin": {
+      "version": "v1",
+      "label": {
+        "en": "Ferritin",
+        "fr": "Ferritine"
+      },
+      "description": {
+        "en": "Iron stored in your body.",
+        "fr": "Le fer stocké dans votre corps."
+      },
+      "streamId": "body-blood-serum-ferritin",
+      "eventType": "concentration/ug-l",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "suffix": {
+            "en": "ng/mL",
+            "fr": "ng/mL"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "269821003"
+        ]
+      }
+    },
+    "body-blood-serum-iron": {
+      "version": "v1",
+      "label": {
+        "en": "Iron",
+        "fr": "Fer"
+      },
+      "description": {
+        "en": "Iron circulating in your blood.",
+        "fr": "Le fer circulant dans votre sang."
+      },
+      "streamId": "body-blood-serum-iron",
+      "eventType": "concentration/mcg-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "250216004"
+        ]
+      }
+    },
+    "body-blood-serum-tibc": {
+      "version": "v1",
+      "label": {
+        "en": "Total iron-binding capacity",
+        "fr": "Capacité totale de fixation du fer"
+      },
+      "description": {
+        "en": "How much iron your blood could carry.",
+        "fr": "La quantité de fer que votre sang pourrait transporter."
+      },
+      "streamId": "body-blood-serum-tibc",
+      "eventType": "concentration/mcg-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "359979000"
+        ]
+      }
+    },
+    "body-blood-serum-transferrin-saturation": {
+      "version": "v1",
+      "label": {
+        "en": "Transferrin saturation",
+        "fr": "Saturation de la transferrine"
+      },
+      "description": {
+        "en": "How much of your blood's iron-carrying capacity is in use.",
+        "fr": "La part de la capacité de transport du fer qui est utilisée."
+      },
+      "streamId": "body-blood-serum-transferrin-saturation",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "165730006"
+        ]
+      }
+    },
+    "body-blood-cbc-hemoglobin": {
+      "version": "v1",
+      "label": {
+        "en": "Hemoglobin",
+        "fr": "Hémoglobine"
+      },
+      "description": {
+        "en": "The protein in red blood cells that carries oxygen.",
+        "fr": "La protéine des globules rouges qui transporte l'oxygène."
+      },
+      "streamId": "body-blood-cbc-hemoglobin",
+      "eventType": "concentration/g-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "441689006"
+        ]
+      }
+    },
+    "body-blood-cbc-hematocrit": {
+      "version": "v1",
+      "label": {
+        "en": "Hematocrit",
+        "fr": "Hématocrite"
+      },
+      "description": {
+        "en": "The share of your blood made up of red blood cells.",
+        "fr": "La part de votre sang constituée de globules rouges."
+      },
+      "streamId": "body-blood-cbc-hematocrit",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "28317006"
+        ]
+      }
+    },
+    "body-blood-cbc-rbc": {
+      "version": "v1",
+      "label": {
+        "en": "Red blood cells",
+        "fr": "Globules rouges"
+      },
+      "description": {
+        "en": "How many red blood cells you have.",
+        "fr": "Le nombre de vos globules rouges."
+      },
+      "streamId": "body-blood-cbc-rbc",
+      "eventType": "concentration/gigacount-ml",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "14089001"
+        ]
+      }
+    },
+    "body-blood-cbc-wbc": {
+      "version": "v1",
+      "label": {
+        "en": "White blood cells",
+        "fr": "Globules blancs"
+      },
+      "description": {
+        "en": "How many white blood cells you have — the cells that fight infection.",
+        "fr": "Le nombre de vos globules blancs, les cellules qui combattent les infections."
+      },
+      "streamId": "body-blood-cbc-wbc",
+      "eventType": "concentration/megacount-ml",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "767002"
+        ]
+      }
+    },
+    "body-blood-cbc-platelets": {
+      "version": "v1",
+      "label": {
+        "en": "Platelets",
+        "fr": "Plaquettes"
+      },
+      "description": {
+        "en": "The cells that help your blood clot.",
+        "fr": "Les cellules qui aident votre sang à coaguler."
+      },
+      "streamId": "body-blood-cbc-platelets",
+      "eventType": "concentration/megacount-ml",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "61928009"
+        ]
+      }
+    },
+    "body-blood-cbc-mcv": {
+      "version": "v1",
+      "label": {
+        "en": "MCV",
+        "fr": "VGM"
+      },
+      "description": {
+        "en": "The average size of your red blood cells.",
+        "fr": "La taille moyenne de vos globules rouges."
+      },
+      "streamId": "body-blood-cbc-mcv",
+      "eventType": "volume/fl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "104133003"
+        ]
+      }
+    },
+    "body-blood-cbc-mch": {
+      "version": "v1",
+      "label": {
+        "en": "MCH",
+        "fr": "TCMH"
+      },
+      "description": {
+        "en": "The average amount of oxygen-carrying protein in each red blood cell.",
+        "fr": "La quantité moyenne de protéine transportant l'oxygène dans chaque globule rouge."
+      },
+      "streamId": "body-blood-cbc-mch",
+      "eventType": "mass/pg",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "54706004"
+        ]
+      }
+    },
+    "body-blood-cbc-rdw": {
+      "version": "v1",
+      "label": {
+        "en": "RDW",
+        "fr": "IDR"
+      },
+      "description": {
+        "en": "How much your red blood cells vary in size.",
+        "fr": "La variation de taille de vos globules rouges."
+      },
+      "streamId": "body-blood-cbc-rdw",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "66842004"
+        ]
+      }
+    },
+    "body-blood-cbc-neutrophils": {
+      "version": "v1",
+      "label": {
+        "en": "Neutrophils",
+        "fr": "Neutrophiles"
+      },
+      "description": {
+        "en": "The share of your white blood cells that are neutrophils.",
+        "fr": "La part de vos globules blancs qui sont des neutrophiles."
+      },
+      "streamId": "body-blood-cbc-neutrophils",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "30630007"
+        ]
+      }
+    },
+    "body-blood-cbc-lymphocytes": {
+      "version": "v1",
+      "label": {
+        "en": "Lymphocytes",
+        "fr": "Lymphocytes"
+      },
+      "description": {
+        "en": "The share of your white blood cells that are lymphocytes.",
+        "fr": "La part de vos globules blancs qui sont des lymphocytes."
+      },
+      "streamId": "body-blood-cbc-lymphocytes",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "74765001"
+        ]
+      }
+    },
+    "body-blood-cbc-monocytes": {
+      "version": "v1",
+      "label": {
+        "en": "Monocytes",
+        "fr": "Monocytes"
+      },
+      "description": {
+        "en": "The share of your white blood cells that are monocytes.",
+        "fr": "La part de vos globules blancs qui sont des monocytes."
+      },
+      "streamId": "body-blood-cbc-monocytes",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "67776007"
+        ]
+      }
+    },
+    "body-blood-cbc-eosinophils": {
+      "version": "v1",
+      "label": {
+        "en": "Eosinophils",
+        "fr": "Éosinophiles"
+      },
+      "description": {
+        "en": "The share of your white blood cells that are eosinophils.",
+        "fr": "La part de vos globules blancs qui sont des éosinophiles."
+      },
+      "streamId": "body-blood-cbc-eosinophils",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "71960002"
+        ]
+      }
+    },
+    "body-blood-cbc-basophils": {
+      "version": "v1",
+      "label": {
+        "en": "Basophils",
+        "fr": "Basophiles"
+      },
+      "description": {
+        "en": "The share of your white blood cells that are basophils.",
+        "fr": "La part de vos globules blancs qui sont des basophiles."
+      },
+      "streamId": "body-blood-cbc-basophils",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "42351005"
+        ]
+      }
+    },
+    "body-blood-serum-alt": {
+      "version": "v1",
+      "label": {
+        "en": "ALT",
+        "fr": "ALAT"
+      },
+      "description": {
+        "en": "A liver enzyme.",
+        "fr": "Une enzyme du foie."
+      },
+      "streamId": "body-blood-serum-alt",
+      "eventType": "catalytic-activity/u-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "34608000"
+        ]
+      }
+    },
+    "body-blood-serum-ast": {
+      "version": "v1",
+      "label": {
+        "en": "AST",
+        "fr": "ASAT"
+      },
+      "description": {
+        "en": "An enzyme found in your liver and muscles.",
+        "fr": "Une enzyme présente dans votre foie et vos muscles."
+      },
+      "streamId": "body-blood-serum-ast",
+      "eventType": "catalytic-activity/u-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "250641004"
+        ]
+      }
+    },
+    "body-blood-serum-ggt": {
+      "version": "v1",
+      "label": {
+        "en": "GGT",
+        "fr": "GGT"
+      },
+      "description": {
+        "en": "A liver enzyme.",
+        "fr": "Une enzyme du foie."
+      },
+      "streamId": "body-blood-serum-ggt",
+      "eventType": "catalytic-activity/u-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "313849004"
+        ]
+      }
+    },
+    "body-blood-serum-alp": {
+      "version": "v1",
+      "label": {
+        "en": "ALP",
+        "fr": "PAL"
+      },
+      "description": {
+        "en": "An enzyme from your liver and bones.",
+        "fr": "Une enzyme provenant de votre foie et de vos os."
+      },
+      "streamId": "body-blood-serum-alp",
+      "eventType": "catalytic-activity/u-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "271234008"
+        ]
+      }
+    },
+    "body-blood-serum-ldh": {
+      "version": "v1",
+      "label": {
+        "en": "LDH",
+        "fr": "LDH"
+      },
+      "description": {
+        "en": "An enzyme found in most of your body's tissues.",
+        "fr": "Une enzyme présente dans la plupart des tissus de votre corps."
+      },
+      "streamId": "body-blood-serum-ldh",
+      "eventType": "catalytic-activity/u-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "313854008"
+        ]
+      }
+    },
+    "body-blood-serum-bilirubin-total": {
+      "version": "v1",
+      "label": {
+        "en": "Total bilirubin",
+        "fr": "Bilirubine totale"
+      },
+      "description": {
+        "en": "A yellow pigment your liver clears from your blood.",
+        "fr": "Un pigment jaune que votre foie élimine de votre sang."
+      },
+      "streamId": "body-blood-serum-bilirubin-total",
+      "eventType": "concentration/mg-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "359986008"
+        ]
+      }
+    },
+    "body-blood-serum-bile-acids": {
+      "version": "v1",
+      "label": {
+        "en": "Bile acids",
+        "fr": "Acides biliaires"
+      },
+      "description": {
+        "en": "Substances your liver makes to help digest fat.",
+        "fr": "Des substances produites par votre foie pour digérer les graisses."
+      },
+      "streamId": "body-blood-serum-bile-acids",
+      "eventType": "concentration/umol-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "313455004"
+        ]
+      }
+    },
+    "body-blood-serum-tsh": {
+      "version": "v1",
+      "label": {
+        "en": "TSH",
+        "fr": "TSH"
+      },
+      "description": {
+        "en": "The hormone that tells your thyroid how much to work.",
+        "fr": "L'hormone qui indique à votre thyroïde combien travailler."
+      },
+      "streamId": "body-blood-serum-tsh",
+      "eventType": "concentration/uiu-ml",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "61167004"
+        ]
+      }
+    },
+    "body-blood-serum-bun": {
+      "version": "v1",
+      "label": {
+        "en": "Blood urea nitrogen",
+        "fr": "Azote uréique sanguin"
+      },
+      "description": {
+        "en": "A waste product your kidneys filter out.",
+        "fr": "Un déchet que vos reins éliminent."
+      },
+      "streamId": "body-blood-serum-bun",
+      "eventType": "concentration/mg-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "105011006"
+        ]
+      }
+    },
+    "body-blood-serum-creatinine": {
+      "version": "v1",
+      "label": {
+        "en": "Creatinine",
+        "fr": "Créatinine"
+      },
+      "description": {
+        "en": "A waste product from your muscles that your kidneys filter out.",
+        "fr": "Un déchet produit par vos muscles que vos reins éliminent."
+      },
+      "streamId": "body-blood-serum-creatinine",
+      "eventType": "concentration/mg-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "113075003"
+        ]
+      }
+    },
+    "body-blood-serum-egfr": {
+      "version": "v1",
+      "label": {
+        "en": "eGFR",
+        "fr": "DFGe"
+      },
+      "description": {
+        "en": "An estimate of how well your kidneys filter your blood.",
+        "fr": "Une estimation de la capacité de filtration de vos reins."
+      },
+      "streamId": "body-blood-serum-egfr",
+      "eventType": "rate/ml-min-173m2",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "80274001"
+        ]
+      }
+    },
+    "body-blood-serum-sodium": {
+      "version": "v1",
+      "label": {
+        "en": "Sodium",
+        "fr": "Sodium"
+      },
+      "description": {
+        "en": "A salt that keeps your body's fluids in balance.",
+        "fr": "Un sel qui maintient l'équilibre des liquides de votre corps."
+      },
+      "streamId": "body-blood-serum-sodium",
+      "eventType": "concentration/mmol-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "104934005"
+        ]
+      }
+    },
+    "body-blood-serum-potassium": {
+      "version": "v1",
+      "label": {
+        "en": "Potassium",
+        "fr": "Potassium"
+      },
+      "description": {
+        "en": "A salt your nerves and heart need to work.",
+        "fr": "Un sel nécessaire au fonctionnement de vos nerfs et de votre cœur."
+      },
+      "streamId": "body-blood-serum-potassium",
+      "eventType": "concentration/mmol-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "271236005"
+        ]
+      }
+    },
+    "body-blood-serum-chloride": {
+      "version": "v1",
+      "label": {
+        "en": "Chloride",
+        "fr": "Chlorure"
+      },
+      "description": {
+        "en": "A salt that helps balance your body's fluids.",
+        "fr": "Un sel qui aide à équilibrer les liquides de votre corps."
+      },
+      "streamId": "body-blood-serum-chloride",
+      "eventType": "concentration/mmol-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "271238006"
+        ]
+      }
+    },
+    "body-blood-serum-co2": {
+      "version": "v1",
+      "label": {
+        "en": "CO2",
+        "fr": "CO2"
+      },
+      "description": {
+        "en": "A measure of the acid-base balance in your blood.",
+        "fr": "Une mesure de l'équilibre acido-basique de votre sang."
+      },
+      "streamId": "body-blood-serum-co2",
+      "eventType": "concentration/mmol-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "271239003"
+        ]
+      }
+    },
+    "body-blood-serum-calcium": {
+      "version": "v1",
+      "label": {
+        "en": "Calcium",
+        "fr": "Calcium"
+      },
+      "description": {
+        "en": "The mineral that builds your bones and helps your muscles work.",
+        "fr": "Le minéral qui construit vos os et fait fonctionner vos muscles."
+      },
+      "streamId": "body-blood-serum-calcium",
+      "eventType": "concentration/mg-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "271240001"
+        ]
+      }
+    },
+    "body-blood-serum-protein-total": {
+      "version": "v1",
+      "label": {
+        "en": "Total protein",
+        "fr": "Protéines totales"
+      },
+      "description": {
+        "en": "All the protein in your blood.",
+        "fr": "L'ensemble des protéines de votre sang."
+      },
+      "streamId": "body-blood-serum-protein-total",
+      "eventType": "concentration/g-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "270992008"
+        ]
+      }
+    },
+    "body-blood-serum-albumin": {
+      "version": "v1",
+      "label": {
+        "en": "Albumin",
+        "fr": "Albumine"
+      },
+      "description": {
+        "en": "The main protein in your blood.",
+        "fr": "La principale protéine de votre sang."
+      },
+      "streamId": "body-blood-serum-albumin",
+      "eventType": "concentration/g-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "104485008"
+        ]
+      }
+    },
+    "body-blood-serum-globulin": {
+      "version": "v1",
+      "label": {
+        "en": "Globulin",
+        "fr": "Globuline"
+      },
+      "description": {
+        "en": "A group of blood proteins, including your antibodies.",
+        "fr": "Un groupe de protéines sanguines, dont vos anticorps."
+      },
+      "streamId": "body-blood-serum-globulin",
+      "eventType": "concentration/g-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "270994009"
+        ]
+      }
+    },
+    "body-blood-serum-zinc": {
+      "version": "v1",
+      "label": {
+        "en": "Zinc",
+        "fr": "Zinc"
+      },
+      "description": {
+        "en": "A mineral your immune system and healing need.",
+        "fr": "Un minéral nécessaire à votre système immunitaire et à la cicatrisation."
+      },
+      "streamId": "body-blood-serum-zinc",
+      "eventType": "concentration/mcg-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "273975003"
+        ]
+      }
+    },
+    "body-blood-serum-copper": {
+      "version": "v1",
+      "label": {
+        "en": "Copper",
+        "fr": "Cuivre"
+      },
+      "description": {
+        "en": "A mineral your body needs in small amounts.",
+        "fr": "Un minéral dont votre corps a besoin en petite quantité."
+      },
+      "streamId": "body-blood-serum-copper",
+      "eventType": "concentration/mcg-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "85554007"
+        ]
+      }
+    },
+    "body-blood-serum-ceruloplasmin": {
+      "version": "v1",
+      "label": {
+        "en": "Ceruloplasmin",
+        "fr": "Céruloplasmine"
+      },
+      "description": {
+        "en": "The protein that carries copper in your blood.",
+        "fr": "La protéine qui transporte le cuivre dans votre sang."
+      },
+      "streamId": "body-blood-serum-ceruloplasmin",
+      "eventType": "concentration/mg-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "270975004"
+        ]
+      }
+    },
+    "body-blood-serum-magnesium": {
+      "version": "v1",
+      "label": {
+        "en": "Magnesium (serum)",
+        "fr": "Magnésium (sérum)"
+      },
+      "description": {
+        "en": "Magnesium circulating in your blood.",
+        "fr": "Le magnésium circulant dans votre sang."
+      },
+      "streamId": "body-blood-serum-magnesium",
+      "eventType": "concentration/mg-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "63571001"
+        ]
+      }
+    },
+    "body-blood-rbc-magnesium": {
+      "version": "v1",
+      "label": {
+        "en": "Magnesium (RBC)",
+        "fr": "Magnésium (globules rouges)"
+      },
+      "description": {
+        "en": "Magnesium inside your red blood cells.",
+        "fr": "Le magnésium à l'intérieur de vos globules rouges."
+      },
+      "streamId": "body-blood-rbc-magnesium",
+      "eventType": "concentration/mg-dl",
+      "type": "number",
+      "repeatable": "any"
+    },
+    "body-blood-serum-selenium": {
+      "version": "v1",
+      "label": {
+        "en": "Selenium",
+        "fr": "Sélénium"
+      },
+      "description": {
+        "en": "A trace mineral your thyroid and cells need.",
+        "fr": "Un oligo-élément nécessaire à votre thyroïde et à vos cellules."
+      },
+      "streamId": "body-blood-serum-selenium",
+      "eventType": "concentration/ug-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "166759002"
+        ]
+      }
+    },
+    "body-blood-serum-vitamin-a": {
+      "version": "v1",
+      "label": {
+        "en": "Vitamin A",
+        "fr": "Vitamine A"
+      },
+      "description": {
+        "en": "Vitamin A in your blood.",
+        "fr": "La vitamine A dans votre sang."
+      },
+      "streamId": "body-blood-serum-vitamin-a",
+      "eventType": "concentration/mcg-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "271243004"
+        ]
+      }
+    },
+    "body-blood-serum-vitamin-d-25oh": {
+      "version": "v1",
+      "label": {
+        "en": "Vitamin D (25-OH)",
+        "fr": "Vitamine D (25-OH)"
+      },
+      "description": {
+        "en": "The usual measure of your vitamin D level.",
+        "fr": "La mesure habituelle de votre taux de vitamine D."
+      },
+      "streamId": "body-blood-serum-vitamin-d-25oh",
+      "eventType": "concentration/ug-l",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "suffix": {
+            "en": "ng/mL",
+            "fr": "ng/mL"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "12199005"
+        ]
+      }
+    },
+    "body-blood-serum-vitamin-d-125oh": {
+      "version": "v1",
+      "label": {
+        "en": "Vitamin D (active)",
+        "fr": "Vitamine D (active)"
+      },
+      "description": {
+        "en": "The active form of vitamin D.",
+        "fr": "La forme active de la vitamine D."
+      },
+      "streamId": "body-blood-serum-vitamin-d-125oh",
+      "eventType": "concentration/pg-ml",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "82457009"
+        ]
+      }
+    },
+    "body-blood-serum-vitamin-b12": {
+      "version": "v1",
+      "label": {
+        "en": "Vitamin B12",
+        "fr": "Vitamine B12"
+      },
+      "description": {
+        "en": "Vitamin B12 in your blood.",
+        "fr": "La vitamine B12 dans votre sang."
+      },
+      "streamId": "body-blood-serum-vitamin-b12",
+      "eventType": "concentration/pg-ml",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "271216009"
+        ]
+      }
+    },
+    "body-blood-serum-folate": {
+      "version": "v1",
+      "label": {
+        "en": "Folate",
+        "fr": "Folates"
+      },
+      "description": {
+        "en": "Folate (vitamin B9) in your blood.",
+        "fr": "Les folates (vitamine B9) dans votre sang."
+      },
+      "streamId": "body-blood-serum-folate",
+      "eventType": "concentration/ug-l",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "suffix": {
+            "en": "ng/mL",
+            "fr": "ng/mL"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "250212002"
+        ]
+      }
+    },
+    "body-blood-serum-vitamin-b6": {
+      "version": "v1",
+      "label": {
+        "en": "Vitamin B6",
+        "fr": "Vitamine B6"
+      },
+      "description": {
+        "en": "Vitamin B6 in your blood.",
+        "fr": "La vitamine B6 dans votre sang."
+      },
+      "streamId": "body-blood-serum-vitamin-b6",
+      "eventType": "concentration/ug-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "11829003"
+        ]
+      }
+    },
+    "body-blood-serum-vitamin-c": {
+      "version": "v1",
+      "label": {
+        "en": "Vitamin C",
+        "fr": "Vitamine C"
+      },
+      "description": {
+        "en": "Vitamin C in your blood.",
+        "fr": "La vitamine C dans votre sang."
+      },
+      "streamId": "body-blood-serum-vitamin-c",
+      "eventType": "concentration/mg-dl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "270988001"
+        ]
+      }
+    },
+    "body-blood-serum-homocysteine": {
+      "version": "v1",
+      "label": {
+        "en": "Homocysteine",
+        "fr": "Homocystéine"
+      },
+      "description": {
+        "en": "An amino acid linked to your B-vitamin levels.",
+        "fr": "Un acide aminé lié à vos taux de vitamines B."
+      },
+      "streamId": "body-blood-serum-homocysteine",
+      "eventType": "concentration/umol-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "104733005"
+        ]
+      }
+    },
     "family-children-count": {
       "version": "temporary",
       "label": {
@@ -2645,13 +4262,15 @@
         }
       }
     },
-    "fertility-hormone-fsh": {
-      "version": "v1",
+    "body-urine-hormones-fsh": {
+      "version": "v2",
       "label": {
-        "en": "FSH"
+        "en": "FSH (urine)",
+        "fr": "FSH (urine)"
       },
       "description": {
-        "en": "Follicle Stimulating Hormone concentration in urine - IU/L"
+        "en": "Follicle-stimulating hormone in your urine.",
+        "fr": "Hormone folliculo-stimulante dans vos urines."
       },
       "streamId": "body-urine-hormones-fsh",
       "eventType": "concentration/iu-l",
@@ -2664,57 +4283,75 @@
           3,
           4
         ]
+      },
+      "references": {
+        "snomed": [
+          "167382006"
+        ]
       }
     },
-    "fertility-hormone-hcg": {
-      "version": "v1",
+    "body-urine-hormones-hcg": {
+      "version": "v2",
       "label": {
-        "en": "hCG"
+        "en": "hCG (urine)",
+        "fr": "hCG (urine)"
       },
       "description": {
-        "en": "Human Chorionic Gonadotropin concentration in urine - IU/L"
+        "en": "Pregnancy hormone in your urine.",
+        "fr": "Hormone de grossesse dans vos urines."
       },
       "streamId": "body-urine-hormones-hcg",
       "eventType": "concentration/iu-l",
       "type": "number",
-      "repeatable": "any"
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "67900009"
+        ]
+      }
     },
-    "fertility-hormone-pdg": {
-      "version": "v1",
+    "body-urine-hormones-pdg": {
+      "version": "v2",
       "label": {
-        "en": "PdG"
+        "en": "PdG (urine)",
+        "fr": "PdG (urine)"
       },
       "description": {
-        "en": "Pregnanediol-3-glucuronide concentration in urine - IU/L"
+        "en": "A progesterone by-product in your urine, showing ovulation has happened.",
+        "fr": "Un dérivé de la progestérone dans vos urines, indiquant que l'ovulation a eu lieu."
       },
       "streamId": "body-urine-hormones-pdg",
       "eventType": "concentration/iu-l",
       "type": "number",
       "repeatable": "any"
     },
-    "fertility-hormone-e3g": {
-      "version": "v1",
+    "body-urine-hormones-e3g": {
+      "version": "v2",
       "label": {
-        "en": "E3G"
+        "en": "E3G (urine)",
+        "fr": "E3G (urine)"
       },
       "description": {
-        "en": "Estrone-3-glucuronide concentration in urine - µg/L"
+        "en": "An estrogen by-product in your urine, rising as you approach ovulation.",
+        "fr": "Un dérivé de l'œstrogène dans vos urines, augmentant à l'approche de l'ovulation."
       },
       "streamId": "body-urine-hormones-e3g",
       "eventType": "concentration/ug-l",
       "type": "number",
       "repeatable": "any"
     },
-    "fertility-hormone-lh": {
-      "version": "v1",
+    "body-urine-hormones-lh": {
+      "version": "v2",
       "label": {
-        "en": "LH"
+        "en": "LH (urine)",
+        "fr": "LH (urine)"
       },
       "description": {
-        "en": "Luteinizing Hormone concentration in urine - mg/L"
+        "en": "Luteinizing hormone in your urine, which surges just before ovulation.",
+        "fr": "Hormone lutéinisante dans vos urines, qui culmine juste avant l'ovulation."
       },
       "streamId": "body-urine-hormones-lh",
-      "eventType": "concentration/mg-l",
+      "eventType": "concentration/iu-l",
       "type": "number",
       "repeatable": "any",
       "reminder": {
@@ -2724,7 +4361,97 @@
           3,
           4
         ]
+      },
+      "references": {
+        "snomed": [
+          "167381004"
+        ]
       }
+    },
+    "fertility-hormone-fsh": {
+      "version": "v1",
+      "deprecated": true,
+      "label": {
+        "en": "FSH (urine, legacy key)",
+        "fr": "FSH (urine, ancienne clé)"
+      },
+      "description": {
+        "en": "Deprecated — use body-urine-hormones-fsh. Same data, renamed so the specimen is explicit.",
+        "fr": "Obsolète — utilisez body-urine-hormones-fsh. Mêmes données, renommé pour expliciter le prélèvement."
+      },
+      "streamId": "body-urine-hormones-fsh",
+      "eventType": "concentration/iu-l",
+      "type": "number",
+      "repeatable": "any",
+      "devNotes": "Rename alias (Plan 83). Identical to body-urine-hormones-fsh."
+    },
+    "fertility-hormone-hcg": {
+      "version": "v1",
+      "deprecated": true,
+      "label": {
+        "en": "hCG (urine, legacy key)",
+        "fr": "hCG (urine, ancienne clé)"
+      },
+      "description": {
+        "en": "Deprecated — use body-urine-hormones-hcg. Same data, renamed so the specimen is explicit.",
+        "fr": "Obsolète — utilisez body-urine-hormones-hcg. Mêmes données, renommé pour expliciter le prélèvement."
+      },
+      "streamId": "body-urine-hormones-hcg",
+      "eventType": "concentration/iu-l",
+      "type": "number",
+      "repeatable": "any",
+      "devNotes": "Rename alias (Plan 83). Identical to body-urine-hormones-hcg."
+    },
+    "fertility-hormone-pdg": {
+      "version": "v1",
+      "deprecated": true,
+      "label": {
+        "en": "PdG (urine, legacy key)",
+        "fr": "PdG (urine, ancienne clé)"
+      },
+      "description": {
+        "en": "Deprecated — use body-urine-hormones-pdg. Same data, renamed so the specimen is explicit.",
+        "fr": "Obsolète — utilisez body-urine-hormones-pdg. Mêmes données, renommé pour expliciter le prélèvement."
+      },
+      "streamId": "body-urine-hormones-pdg",
+      "eventType": "concentration/iu-l",
+      "type": "number",
+      "repeatable": "any",
+      "devNotes": "Rename alias (Plan 83). Identical to body-urine-hormones-pdg."
+    },
+    "fertility-hormone-e3g": {
+      "version": "v1",
+      "deprecated": true,
+      "label": {
+        "en": "E3G (urine, legacy key)",
+        "fr": "E3G (urine, ancienne clé)"
+      },
+      "description": {
+        "en": "Deprecated — use body-urine-hormones-e3g. Same data, renamed so the specimen is explicit.",
+        "fr": "Obsolète — utilisez body-urine-hormones-e3g. Mêmes données, renommé pour expliciter le prélèvement."
+      },
+      "streamId": "body-urine-hormones-e3g",
+      "eventType": "concentration/ug-l",
+      "type": "number",
+      "repeatable": "any",
+      "devNotes": "Rename alias (Plan 83). Identical to body-urine-hormones-e3g."
+    },
+    "fertility-hormone-lh": {
+      "version": "v1",
+      "deprecated": true,
+      "label": {
+        "en": "LH (urine, legacy)",
+        "fr": "LH (urine, ancien)"
+      },
+      "description": {
+        "en": "Deprecated — use body-urine-hormones-lh. This item was typed mg/L in error; LH is reported in IU/L.",
+        "fr": "Obsolète — utilisez body-urine-hormones-lh. Cet item était typé mg/L par erreur ; la LH se mesure en IU/L."
+      },
+      "streamId": "body-urine-hormones-lh",
+      "eventType": "concentration/mg-l",
+      "type": "number",
+      "repeatable": "any",
+      "devNotes": "B-2026-07-15-1. Do not use for new data."
     },
     "fertility-test-opk": {
       "version": "v1",
@@ -9352,7 +11079,7 @@
         ]
       },
       "ratio/proportion": {
-        "description": "A proportion value from 0 to 1. Represents a fraction of a whole: 0 = none, 1 = maximum. Used for subjective scales (e.g. bleeding intensity) where reference points are defined by item options.",
+        "description": "A proportion value from 0 to 1: 0 = none, 1 = maximum.",
         "type": "number",
         "minimum": 0,
         "maximum": 1
@@ -9910,7 +11637,7 @@
         }
       },
       "mass/mcg": {
-        "description": "Micrograms",
+        "description": "Micrograms (μg)",
         "type": "number"
       },
       "dose/tablet": {
@@ -9937,39 +11664,76 @@
         "description": "International Units (IU)",
         "type": "number"
       },
-      "concentration/mg-ml": {
-        "description": "Milligrams per milliliter",
-        "type": "number"
-      },
-      "concentration/mcg-ml": {
-        "description": "Micrograms per milliliter",
-        "type": "number"
-      },
       "concentration/mg-g": {
-        "description": "Milligrams per gram (topical)",
+        "description": "Milligrams per gram (mg/g)",
         "type": "number"
       },
       "concentration/count-ml": {
-        "description": "Counts per milliliter (raw count). Stored value is the absolute number of items per mL — e.g. 16000000 for a sperm concentration of 16 × 10⁶/mL.",
+        "description": "Counts per milliliter (#/mL)",
         "type": "number",
         "minimum": 0
       },
       "concentration/megacount-ml": {
-        "description": "Megacounts per milliliter (10⁶ counts/mL). Stored value is in millions — e.g. 16 for 16 × 10⁶/mL. Use the long-form 'mega' prefix to stay within the all-lowercase eventType convention while encoding the SI Mega (10⁶) multiplier.",
+        "description": "Megacounts per milliliter (10⁶ counts/mL)",
+        "type": "number",
+        "minimum": 0
+      },
+      "concentration/gigacount-ml": {
+        "description": "Gigacounts per milliliter (10⁹ counts/mL)",
+        "type": "number",
+        "minimum": 0
+      },
+      "concentration/mcg-dl": {
+        "description": "Micrograms per deciliter (μg/dL)",
+        "type": "number",
+        "minimum": 0
+      },
+      "concentration/pg-ml": {
+        "description": "Picograms per milliliter (pg/mL)",
+        "type": "number",
+        "minimum": 0
+      },
+      "concentration/uiu-ml": {
+        "description": "Micro-international units per milliliter (μIU/mL)",
+        "type": "number",
+        "minimum": 0
+      },
+      "concentration/umol-l": {
+        "description": "Micromoles per liter (μmol/L)",
+        "type": "number",
+        "minimum": 0
+      },
+      "catalytic-activity/u-l": {
+        "description": "Units per liter (U/L)",
+        "type": "number",
+        "minimum": 0
+      },
+      "volume/fl": {
+        "description": "Femtoliters (fL)",
+        "type": "number",
+        "minimum": 0
+      },
+      "mass/pg": {
+        "description": "Picograms (pg)",
+        "type": "number",
+        "minimum": 0
+      },
+      "rate/ml-min-173m2": {
+        "description": "Milliliters per minute per 1.73 m² (mL/min/1.73m²)",
         "type": "number",
         "minimum": 0
       },
       "count/mega": {
-        "description": "Millions of units count.",
+        "description": "Megacounts (M#)",
         "type": "number",
         "minimum": 0
       },
       "rate/mg-hr": {
-        "description": "Milligrams per hour (transdermal, infusion)",
+        "description": "Milligrams per hour (mg/h)",
         "type": "number"
       },
       "rate/mcg-hr": {
-        "description": "Micrograms per hour (transdermal)",
+        "description": "Micrograms per hour (μg/h)",
         "type": "number"
       },
       "frequency/times-period": {
@@ -12322,20 +14086,6 @@
         },
         "symbol": "IU"
       },
-      "concentration/mg-ml": {
-        "name": {
-          "en": "Milligrams per milliliter",
-          "fr": "Milligrammes par millilitre"
-        },
-        "symbol": "mg/mL"
-      },
-      "concentration/mcg-ml": {
-        "name": {
-          "en": "Micrograms per milliliter",
-          "fr": "Microgrammes par millilitre"
-        },
-        "symbol": "μg/mL"
-      },
       "concentration/mg-g": {
         "name": {
           "en": "Milligrams per gram",
@@ -12356,6 +14106,69 @@
           "fr": "Mégacomptes par millilitre"
         },
         "symbol": "M#/mL"
+      },
+      "concentration/gigacount-ml": {
+        "name": {
+          "en": "Gigacounts per milliliter",
+          "fr": "Gigacomptes par millilitre"
+        },
+        "symbol": "G#/mL"
+      },
+      "concentration/mcg-dl": {
+        "name": {
+          "en": "Micrograms per deciliter",
+          "fr": "Microgrammes par décilitre"
+        },
+        "symbol": "μg/dL"
+      },
+      "concentration/pg-ml": {
+        "name": {
+          "en": "Picograms per milliliter",
+          "fr": "Picogrammes par millilitre"
+        },
+        "symbol": "pg/mL"
+      },
+      "concentration/uiu-ml": {
+        "name": {
+          "en": "Micro-international units per milliliter",
+          "fr": "Micro-unités internationales par millilitre"
+        },
+        "symbol": "μIU/mL"
+      },
+      "concentration/umol-l": {
+        "name": {
+          "en": "Micromoles per liter",
+          "fr": "Micromoles par litre"
+        },
+        "symbol": "μmol/L"
+      },
+      "catalytic-activity/u-l": {
+        "name": {
+          "en": "Units per liter",
+          "fr": "Unités par litre"
+        },
+        "symbol": "U/L"
+      },
+      "volume/fl": {
+        "name": {
+          "en": "Femtoliters",
+          "fr": "Femtolitres"
+        },
+        "symbol": "fL"
+      },
+      "mass/pg": {
+        "name": {
+          "en": "Picograms",
+          "fr": "Picogrammes"
+        },
+        "symbol": "pg"
+      },
+      "rate/ml-min-173m2": {
+        "name": {
+          "en": "Milliliters per minute per 1.73 m²",
+          "fr": "Millilitres par minute par 1,73 m²"
+        },
+        "symbol": "mL/min/1.73m²"
       },
       "count/mega": {
         "name": {
@@ -12531,11 +14344,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-07-06T16:07:02.250Z"
+      "updatedAt": "2026-07-15T14:39:12.507Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-07-06T16:07:02.252Z"
+      "updatedAt": "2026-07-15T14:39:12.508Z"
     }
   },
   "settings": {
