@@ -2,6 +2,57 @@
 
 ## [Unreleased]
 
+### Added — units for the serum blood-chemistry domain
+
+Foundation for the serum blood-chemistry domain (~68 analytes). Units land first: an
+analyte can't be modelled honestly without one, and several conventional reporting units
+had no home.
+
+- **`concentration/gigacount-ml`** (10⁹ counts/mL) — RBC stores 4.3–4.8, as printed.
+  Sibling of `concentration/megacount-ml`, which keeps WBC and platelets (× 10⁹/L ≡
+  × 10⁶/mL); the split mirrors how lab reports print the two.
+- **`concentration/mcg-dl`** (μg/dL) — serum zinc, copper, retinol, iron, TIBC.
+- **`concentration/pg-ml`** (pg/mL) — B12, active vitamin D, estradiol.
+- **`concentration/uiu-ml`** (μIU/mL) — fasting insulin, TSH.
+- **`concentration/umol-l`** (μmol/L) — homocysteine, bile acids.
+- **`catalytic-activity/u-l`** (U/L) — ALT, AST, GGT, ALP, LDH.
+- **`volume/fl`** (fL) — MCV. **`mass/pg`** (pg) — MCH.
+- **`rate/ml-min-173m2`** (mL/min/1.73m²) — eGFR.
+
+Reused rather than added: `concentration/mg-dl`, `g-dl`, `ug-l`, `mmol-l` (legacy) and
+`concentration/megacount-ml`.
+
+### Changed — `ratio/proportion` also covers objective measured fractions
+
+Its description previously scoped it to *subjective* scales with option-defined hooks.
+Lab percentages (HbA1c, hematocrit, RDW, transferrin saturation, the WBC differential)
+are genuine fractions, so they store here as `0..1` — never as `42` — and render via
+`display.multiplier`. The `0..1` bound is enforced, and fractions match Apple HealthKit's
+`HKUnit.percent()`; FHIR/LOINC export applies the × 100 in the mapper.
+
+### Added — `number.display` on number items
+
+`type: number` items accept an optional `number.display` block (`multiplier` /
+`precision` / `suffix`), mirroring `slider.display`. Storage stays raw; the user sees the
+conventional scale (`0.42` → `42%`). Requires hds-forms-js ≥ the matching release.
+
+### Removed — two eventTypes equivalent to legacy Pryv types
+
+`concentration/mg-ml` (≡ legacy `concentration/g-l`) and `concentration/mcg-ml` (≡ legacy
+`concentration/mg-l`) were HDS-added alongside twins that already existed. Equivalent
+types split the same measurement across two names, invisibly to any validator. Both were
+referenced by zero itemDefs and zero consumers, so removal is clean.
+
+**New rule in `AGENTS.md`:** a new eventType must never be numerically equivalent to an
+existing one — do the arithmetic, don't compare the names. Where the twin is a legacy
+type, the legacy type wins.
+
+### Changed — `AGENTS.md`: `description` is short, end-user text
+
+Item `description` is rendered under the field label to patients and clinicians. One
+short sentence; no storage detail (`Stored as a 0..1 ratio`), assay minutiae, or
+rationale — those belong in `devNotes` or `documentation/`.
+
 ## [1.12.1] - 2026-07-06
 
 ### Fixed — SNOMED code corrections + newly-coded concepts (verified via snomed-db)

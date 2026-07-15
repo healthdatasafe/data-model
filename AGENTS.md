@@ -51,7 +51,21 @@ When multiple observation methods measure the same underlying construct (e.g. 15
 
 This is not about questionnaires. It is about sources / methods of observation converging on a single normalized representation.
 
-### 7. Wording lives in the item — form-level overrides are layered, not stored in data-model
+### 6b. ⚑ `description` is short, and written for the end user
+
+**An item's `description` is user-facing UI text, not a spec note.** It is rendered directly under the field label in every consuming app, to a patient or a clinician — not to the person maintaining this repo. Keep it to **one short sentence**.
+
+- ✅ `Your overall health today.` (`wellbeing-self-rated-health`)
+- ✅ `Iron stored in your body.` — plain, one line, tells the user what they're recording
+- ❌ `Fraction of spermatozoa with normal morphology (Kruger strict criteria). Stored as a 0..1 ratio.` (`body-semen-morphology-normal` — long, clinical, and leaks storage detail into the UI)
+
+**Never put in a `description`:**
+
+- **Storage/encoding detail** (`Stored as a 0..1 ratio`, `— IU/L`, eventType names). Units come from the eventType's `extras.symbol` or `display.suffix`; the scale is the eventType's business. A user reading "stored as a 0..1 ratio" learns nothing they can act on.
+- **Assay / method minutiae**, unless the user must act on it (`Kruger strict criteria`).
+- **Rationale, provenance, or cross-system mapping.** Those belong in `devNotes`, the domain doc under `documentation/`, or the encoding refs (`loinc:` / `snomed:`).
+
+If a maintainer needs to know something, it goes in **`devNotes`** (a schema field that exists for exactly this) or the domain doc — never in text shown to a patient.
 
 `item.label`, `item.description`, and each `option.label` are the **canonical**, generic, reusable wording. They are rendered directly by readers and by [hds-forms-js](https://github.com/healthdatasafe/hds-forms-js) when no override is provided.
 
@@ -105,6 +119,24 @@ Reasons *not* to add one:
 - "We want a different label" (labels belong on items/options, not eventTypes).
 - "We want a different range" (ranges belong on items via option hooks or min/max constraints).
 - "This questionnaire/app has its own concept" (the data still has a shape, and the shape is probably already defined).
+
+#### ⚑ Non-negotiable — a new eventType must never be equivalent to a legacy one
+
+**Before adding any unit eventType, prove it is not numerically equivalent to an existing type — especially a legacy Pryv one.** Two types are *equivalent* when the same physical quantity stores as the **same number** in both. An equivalent twin is a silent data-integrity hazard: identical values land under two type names, so queries, aggregations and converters split the same measurement into two populations, and no validator will ever flag it.
+
+**Unit prefixes cancel — always do the arithmetic, never compare the names.** The trap is that equivalent types rarely *look* alike:
+
+| Proposed | Legacy twin | Why |
+|---|---|---|
+| `concentration/ng-ml` | `concentration/ug-l` | 1 ng/mL = 1 μg/L — **rejected on these grounds (2026-07-15)**; ferritin/folate/25-OH-D/C-peptide/AMH use `ug-l` |
+| `concentration/mg-ml` | `concentration/g-l` | 1 mg/mL = 1 g/L |
+| `concentration/mcg-ml` | `concentration/mg-l` | 1 μg/mL = 1 mg/L |
+
+**Procedure.** Reduce the candidate and every same-dimension existing type to a common base (e.g. g/L, mol/L, counts/mL). If any reduces to the same number, **reuse the existing type** — the reporting-unit *label* is a display concern (`extras.symbol`, `display.suffix`), not a reason for a second type. A genuine decade difference (μg/dL is 10× μg/L; μIU/mL is 1/1000 of IU/L) is *not* equivalence and is a legitimate addition.
+
+**When the equivalent twin is a legacy type, the legacy type wins** — it mirrors Pryv's catalog and is what non-HDS consumers already speak. Do not add an HDS-flavoured spelling of a unit Pryv already defines.
+
+**History.** `concentration/mg-ml` (≡ `g-l`) and `concentration/mcg-ml` (≡ `mg-l`) were HDS-added alongside their legacy twins and **removed 2026-07-15** once this rule landed — both were referenced by zero itemDefs and zero consumers, so removal was clean. Had any itemDef used them, the itemDef would have been deprecated onto the legacy type and the eventType removal tracked in `_plans/BUGS.md` instead.
 
 ### When adding a new **stream**
 

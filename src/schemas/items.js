@@ -222,6 +222,44 @@ const itemSchema = {
         required: ['converter-engine']
       }
     },
+    { // type is number — plain numeric input. Storage is always the raw value in the
+      // item's eventType; the optional `number.display` block controls how that raw
+      // value is presented (multiplier/precision/suffix), mirroring `slider.display`.
+      //
+      // The driving case is lab percentages (Plan 83 / D2): HbA1c, hematocrit, RDW,
+      // transferrin saturation and the WBC differential are genuine fractions, so they
+      // store 0..1 on `ratio/proportion` and render as `42%` via multiplier: 100.
+      // Without this, a clinician-facing value would sit at rest in an alien scale.
+      // Precedent: `wellbeing-self-rated-health` does the same for a slider (EQ VAS).
+      if: {
+        properties: {
+          type: { const: 'number' }
+        }
+      },
+      then: {
+        properties: {
+          min: { type: 'number', nullable: true },
+          max: { type: 'number', nullable: true },
+          step: { type: 'number', nullable: true },
+          number: {
+            type: 'object',
+            nullable: true,
+            properties: {
+              display: {
+                type: 'object',
+                properties: {
+                  multiplier: { type: 'number' },
+                  precision: { type: 'number' },
+                  suffix: { $ref: 'defs.json#/definitions/localized' }
+                },
+                additionalProperties: false
+              }
+            },
+            additionalProperties: false
+          }
+        }
+      }
+    },
     { // type is slider — numeric input with min/max/step. Storage is the raw value
       // in the item's eventType; the optional `slider.display` block controls how
       // the raw value is presented to the user (multiplier/precision/suffix).
