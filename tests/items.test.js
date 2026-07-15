@@ -69,3 +69,55 @@ describe('[ITMC] Composite↔eventType validation (B-2026-06-12-1)', () => {
     );
   });
 });
+
+describe('[ITMA] Deprecated rename aliases (Plan 83)', () => {
+  const { itemsById, findItemForEvent } = require('../src/items');
+
+  // Renaming an item key is breaking for consumers that reference it. Keeping the old key as a
+  // deprecated alias — same streamId, same eventType — makes the rename non-breaking: forKey still
+  // resolves it, so consumers migrate on their own schedule, while the active item owns the
+  // storage-identity index so findItemForEvent stays unambiguous.
+  const ALIASES = [
+    ['fertility-hormone-fsh', 'body-urine-hormones-fsh'],
+    ['fertility-hormone-hcg', 'body-urine-hormones-hcg'],
+    ['fertility-hormone-pdg', 'body-urine-hormones-pdg'],
+    ['fertility-hormone-e3g', 'body-urine-hormones-e3g']
+  ];
+
+  it('[ITMA-1] the old key still resolves, and is marked deprecated', () => {
+    for (const [oldKey] of ALIASES) {
+      assert.ok(itemsById[oldKey], `${oldKey} must stay resolvable for consumers pinned to it`);
+      assert.equal(itemsById[oldKey].deprecated, true, `${oldKey} must be deprecated`);
+    }
+  });
+
+  it('[ITMA-2] the alias is faithful — identical storage identity, so it emits identical events', () => {
+    for (const [oldKey, newKey] of ALIASES) {
+      assert.equal(itemsById[oldKey].streamId, itemsById[newKey].streamId, `${oldKey} streamId`);
+      assert.equal(itemsById[oldKey].eventType, itemsById[newKey].eventType, `${oldKey} eventType`);
+    }
+  });
+
+  it('[ITMA-3] the replacement is NOT deprecated', () => {
+    for (const [, newKey] of ALIASES) {
+      assert.ok(!itemsById[newKey].deprecated, `${newKey} must be active`);
+    }
+  });
+
+  it('[ITMA-4] findItemForEvent resolves to the ACTIVE item, never the alias', () => {
+    for (const [oldKey, newKey] of ALIASES) {
+      const item = itemsById[newKey];
+      const found = findItemForEvent(item.eventType, item.streamId);
+      assert.strictEqual(found, itemsById[newKey], `${item.streamId}:${item.eventType} must resolve to ${newKey}, not ${oldKey}`);
+    }
+  });
+
+  it('[ITMA-5] a deprecated item with its OWN pair still resolves (old LH events keep rendering)', () => {
+    // fertility-hormone-lh was mis-typed mg/L; its replacement uses iu-l, so the pair differs and
+    // events written under the old type must still find their item.
+    const lh = findItemForEvent('concentration/mg-l', 'body-urine-hormones-lh');
+    assert.strictEqual(lh, itemsById['fertility-hormone-lh']);
+    const lhNew = findItemForEvent('concentration/iu-l', 'body-urine-hormones-lh');
+    assert.strictEqual(lhNew, itemsById['body-urine-hormones-lh']);
+  });
+});

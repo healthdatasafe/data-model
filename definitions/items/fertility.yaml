@@ -370,6 +370,68 @@ body-urine-hormones-lh:
     relativeDays: [2, 3, 4]
   references:
     snomed: ["167381004"]
+# ── Deprecated aliases for the renamed urine hormone keys ────────────────────
+# These carry the SAME streamId and eventType as their replacements, so they produce
+# identical events — they exist only so consumers still pinned to the old key keep working
+# and can migrate on their own schedule. Hidden from pickers (getAllActive); the active item
+# owns the streamId:eventType index, so forEvent is unambiguous.
+# Remove once bridge-mira and doctor-dashboard are updated.
+fertility-hormone-fsh:
+  version: v1
+  deprecated: true
+  label:
+    en: FSH (urine, legacy key)
+    fr: FSH (urine, ancienne clé)
+  description:
+    en: Deprecated — use body-urine-hormones-fsh. Same data, renamed so the specimen is explicit.
+    fr: Obsolète — utilisez body-urine-hormones-fsh. Mêmes données, renommé pour expliciter le prélèvement.
+  streamId: body-urine-hormones-fsh
+  eventType: concentration/iu-l
+  type: number
+  repeatable: any
+  devNotes: "Rename alias (Plan 83). Identical to body-urine-hormones-fsh."
+fertility-hormone-hcg:
+  version: v1
+  deprecated: true
+  label:
+    en: hCG (urine, legacy key)
+    fr: hCG (urine, ancienne clé)
+  description:
+    en: Deprecated — use body-urine-hormones-hcg. Same data, renamed so the specimen is explicit.
+    fr: Obsolète — utilisez body-urine-hormones-hcg. Mêmes données, renommé pour expliciter le prélèvement.
+  streamId: body-urine-hormones-hcg
+  eventType: concentration/iu-l
+  type: number
+  repeatable: any
+  devNotes: "Rename alias (Plan 83). Identical to body-urine-hormones-hcg."
+fertility-hormone-pdg:
+  version: v1
+  deprecated: true
+  label:
+    en: PdG (urine, legacy key)
+    fr: PdG (urine, ancienne clé)
+  description:
+    en: Deprecated — use body-urine-hormones-pdg. Same data, renamed so the specimen is explicit.
+    fr: Obsolète — utilisez body-urine-hormones-pdg. Mêmes données, renommé pour expliciter le prélèvement.
+  streamId: body-urine-hormones-pdg
+  eventType: concentration/iu-l
+  type: number
+  repeatable: any
+  devNotes: "Rename alias (Plan 83). Identical to body-urine-hormones-pdg."
+fertility-hormone-e3g:
+  version: v1
+  deprecated: true
+  label:
+    en: E3G (urine, legacy key)
+    fr: E3G (urine, ancienne clé)
+  description:
+    en: Deprecated — use body-urine-hormones-e3g. Same data, renamed so the specimen is explicit.
+    fr: Obsolète — utilisez body-urine-hormones-e3g. Mêmes données, renommé pour expliciter le prélèvement.
+  streamId: body-urine-hormones-e3g
+  eventType: concentration/ug-l
+  type: number
+  repeatable: any
+  devNotes: "Rename alias (Plan 83). Identical to body-urine-hormones-e3g."
 fertility-hormone-lh:
   version: v1
   deprecated: true

@@ -2,9 +2,9 @@
 
 ## [2.0.0] - 2026-07-15
 
-**Major bump because item keys were renamed** — a breaking change for consumers, per `AGENTS.md`
-("When a change here breaks a consumer's typechecks (e.g. removing an option, renaming an item key),
-bump `version`… and notify the consumer repos"). Stored data is unaffected.
+**Major bump because item keys were renamed.** Stored data is unaffected, and **the old keys keep
+working** — each is retained as a deprecated alias (below), so no consumer breaks on upgrade. The major
+is for the eventual removal of those aliases and the `concentration/mg-ml` / `mcg-ml` removals.
 
 Delivers the serum blood-chemistry domain reported in
 [healthdatasafe/site-agents#2](https://github.com/healthdatasafe/site-agents/issues/2): **all 58
@@ -12,10 +12,12 @@ analytes the report enumerated**, across metabolic, minerals, vitamins, iron stu
 electrolytes, protein, liver, methylation, thyroid and reproductive hormones. Design rationale:
 [`documentation/BLOOD-CHEMISTRY.md`](documentation/BLOOD-CHEMISTRY.md).
 
-### ⚠️ BREAKING — urine hormone item keys renamed (`fertility-hormone-*` → `body-urine-hormones-*`)
+### Changed — urine hormone item keys renamed (`fertility-hormone-*` → `body-urine-hormones-*`), old keys kept as aliases
 
-**Stored data is unaffected** — events carry `streamId` + `type`, and `forEvent` resolves on that pair.
-This breaks **consumer code that references the item key**.
+**Nothing breaks on upgrade.** Stored data is unaffected (events carry `streamId` + `type`), and each
+old key is retained as a **deprecated alias** with the same `streamId` and `eventType` — so it emits
+identical events, `forKey` still resolves it, and consumers migrate on their own schedule. Aliases are
+hidden from pickers (`getAllActive`).
 
 | Old key | New key |
 |---|---|
@@ -31,14 +33,20 @@ them as distinct procedures — so a neutral key that silently meant "urine" was
 had nowhere symmetric to live. Keys now equal their `streamId`, and the specimen is explicit on both
 sides.
 
-Deprecate-and-twin was not available: the loader rejects two items sharing a `streamId:eventType` pair,
-which a renamed twin would.
+**Loader change enabling the aliases** (`src/items.js`): a deprecated item may now share a
+`streamId:eventType` pair with an active one, and the **active** item owns the resolution index
+regardless of load order — so `findItemForEvent` stays unambiguous. Two *active* items on one pair
+still throw (the storage-identity invariant), as do two *deprecated* with no active (ambiguous).
+Covered by tests `[ITMA-1..5]`; the rename-alias procedure is documented in `AGENTS.md`.
 
-**Consumers to update** (`hds-react-timeline` done in the matching release):
+**Consumers should migrate at leisure** (`hds-react-timeline` already done):
 - `doctor-dashboard` — `app/data/presets.ts`
 - `bridge-mira` — `src/methods/hds4miraMethods.ts`, `_hds/manifest.json`, and
-  **`src/dataSync/converters/hormone.ts`, which builds the key by concatenation
-  (`'fertility-hormone-' + hormone`) — a typecheck will not catch this; it breaks at runtime.**
+  `src/dataSync/converters/hormone.ts`, which builds the key by concatenation
+  (`'fertility-hormone-' + hormone`). Without the aliases this would have thrown at **runtime** on the
+  write path, with no typecheck to catch it.
+
+**Aliases are removed once the consumers are updated.**
 
 ### Deprecated — `fertility-hormone-lh` (was typed `concentration/mg-l`)
 

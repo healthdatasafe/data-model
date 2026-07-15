@@ -331,6 +331,35 @@ An item may carry `deprecated: true` (boolean, optional) to signal that it is **
 
 **Schema:** the `deprecated` field is recognised in `src/schemas/items.js` and round-trips through `pack.json`.
 
+### Renaming an item key — keep the old key as a deprecated alias
+
+**Renaming an item key never touches stored data** (events carry `streamId` + `type`; `forEvent` resolves on that pair). It breaks **consumer code** that references the key — and it does so at *runtime*, not compile time, wherever a key is built by concatenation. `forKey` throws by default.
+
+**So a rename ships with the old key retained as a deprecated alias:**
+
+```yaml
+body-urine-hormones-fsh:        # the replacement — active, owns the pair
+  streamId: body-urine-hormones-fsh
+  eventType: concentration/iu-l
+fertility-hormone-fsh:          # the alias — same streamId, same eventType
+  deprecated: true
+  description: { en: "Deprecated — use body-urine-hormones-fsh. …" }
+  streamId: body-urine-hormones-fsh
+  eventType: concentration/iu-l
+```
+
+The alias is **faithful**: identical `streamId:eventType`, so it emits identical events. Consumers pinned to the old key keep working and migrate on their own schedule; the alias is hidden from pickers (`getAllActive`), so it never pollutes UI.
+
+**The loader allows exactly this and nothing looser** (`src/items.js`, tests `[ITMA-*]`):
+
+| Case | Behaviour |
+|---|---|
+| active + deprecated on one pair | **allowed** — the *active* item owns the `streamId:eventType` index regardless of load order, so `findItemForEvent` is unambiguous |
+| two **active** on one pair | **throws** — that is the storage-identity invariant |
+| two **deprecated**, no active | **throws** — `findItemForEvent` would be ambiguous |
+
+**Remove the alias** once the consumers are updated. When the eventType *also* changes (e.g. a mis-typed unit), the pair already differs, so the old item is simply deprecated — no alias needed, and old events keep resolving to it (see `fertility-hormone-lh`).
+
 ---
 
 ## Existing design decisions (load these before proposing related changes)
