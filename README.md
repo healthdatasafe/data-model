@@ -47,6 +47,7 @@ In-depth notes on specific subdomains live in `documentation/`:
 
 - `MENSTRUAL-CYCLE.md`, `CERVICAL-POSITION.md`, `MOOD.md`, `SKIN.md`, `SYMPTOMS.md`, `PHYSICAL-ACTIVITY.md`, `FUNCTION.md`
 - `TREATMENT-PROCEDURE.md` — D3 mechanic: parent items (`treatment`, `procedure`) reused under descendant streams (e.g. `treatment-fertility`, `procedure-fertility`) via the `forEvent` walk-up. Treatment items carry `event.duration` (Pryv-native); procedures are point-in-time.
+- `BLOOD-CHEMISTRY.md` — blood analytes: the `body-blood` tree, why specimen is explicit in item keys, reported-unit choices (gigacount vs megacount, percentages as fractions), and what is deliberately absent (reference ranges, derived indices).
 - `CUSTOM-FIELDS-AND-SYSTEM.md`, `DESIGN-NOTES.md`, `TAGS.md`
 
 ## Item Definition Format

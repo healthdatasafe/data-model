@@ -8,6 +8,151 @@ children:
     name: Body Weight
   - id: body-blood-pressure
     name: Blood Pressure
+  # NOTE: body-blood-pressure above is a VITAL SIGN and a sibling of body-blood — not a
+  # child of it, despite the shared prefix. Nothing resolves by prefix (D3 walk-up and
+  # authorizations use this tree), so it is safe; but "all body-blood data" does not cover
+  # blood pressure. Renaming it is not available: it is published and holds data.
+  # See documentation/BLOOD-CHEMISTRY.md.
+  - id: body-blood
+    name: Blood
+    children:
+      - id: body-blood-serum
+        name: Serum
+        children:
+          # Metabolic
+          - id: body-blood-serum-glucose-fasting
+            name: Fasting glucose
+          - id: body-blood-serum-insulin-fasting
+            name: Fasting insulin
+          - id: body-blood-serum-c-peptide
+            name: C-peptide
+          # Hormones — reproductive & adrenal
+          - id: body-blood-serum-fsh
+            name: FSH
+          - id: body-blood-serum-lh
+            name: LH
+          - id: body-blood-serum-estradiol
+            name: Estradiol
+          - id: body-blood-serum-amh
+            name: AMH
+          # Thyroid
+          - id: body-blood-serum-tsh
+            name: TSH
+          # Iron studies
+          - id: body-blood-serum-ferritin
+            name: Ferritin
+          - id: body-blood-serum-iron
+            name: Iron
+          - id: body-blood-serum-tibc
+            name: Total iron-binding capacity
+          - id: body-blood-serum-transferrin-saturation
+            name: Transferrin saturation
+          # Liver
+          - id: body-blood-serum-alt
+            name: ALT
+          - id: body-blood-serum-ast
+            name: AST
+          - id: body-blood-serum-ggt
+            name: GGT
+          - id: body-blood-serum-alp
+            name: ALP
+          - id: body-blood-serum-ldh
+            name: LDH
+          - id: body-blood-serum-bilirubin-total
+            name: Total bilirubin
+          - id: body-blood-serum-bile-acids
+            name: Bile acids
+          # Renal & electrolytes
+          - id: body-blood-serum-bun
+            name: Blood urea nitrogen
+          - id: body-blood-serum-creatinine
+            name: Creatinine
+          - id: body-blood-serum-egfr
+            name: eGFR
+          - id: body-blood-serum-sodium
+            name: Sodium
+          - id: body-blood-serum-potassium
+            name: Potassium
+          - id: body-blood-serum-chloride
+            name: Chloride
+          - id: body-blood-serum-co2
+            name: CO2
+          - id: body-blood-serum-calcium
+            name: Calcium
+          # Protein
+          - id: body-blood-serum-protein-total
+            name: Total protein
+          - id: body-blood-serum-albumin
+            name: Albumin
+          - id: body-blood-serum-globulin
+            name: Globulin
+          # Minerals
+          - id: body-blood-serum-zinc
+            name: Zinc
+          - id: body-blood-serum-copper
+            name: Copper
+          - id: body-blood-serum-ceruloplasmin
+            name: Ceruloplasmin
+          - id: body-blood-serum-magnesium
+            name: Magnesium
+          - id: body-blood-serum-selenium
+            name: Selenium
+          # Vitamins
+          - id: body-blood-serum-vitamin-a
+            name: Vitamin A
+          - id: body-blood-serum-vitamin-d-25oh
+            name: Vitamin D (25-OH)
+          - id: body-blood-serum-vitamin-d-125oh
+            name: Vitamin D (active)
+          - id: body-blood-serum-vitamin-b12
+            name: Vitamin B12
+          - id: body-blood-serum-folate
+            name: Folate
+          - id: body-blood-serum-vitamin-b6
+            name: Vitamin B6
+          - id: body-blood-serum-vitamin-c
+            name: Vitamin C
+          # Methylation
+          - id: body-blood-serum-homocysteine
+            name: Homocysteine
+      # Whole blood — complete blood count
+      - id: body-blood-cbc
+        name: Complete blood count
+        children:
+          - id: body-blood-cbc-hemoglobin
+            name: Hemoglobin
+          - id: body-blood-cbc-hematocrit
+            name: Hematocrit
+          - id: body-blood-cbc-rbc
+            name: Red blood cells
+          - id: body-blood-cbc-wbc
+            name: White blood cells
+          - id: body-blood-cbc-platelets
+            name: Platelets
+          - id: body-blood-cbc-mcv
+            name: MCV
+          - id: body-blood-cbc-mch
+            name: MCH
+          - id: body-blood-cbc-rdw
+            name: RDW
+          - id: body-blood-cbc-neutrophils
+            name: Neutrophils
+          - id: body-blood-cbc-lymphocytes
+            name: Lymphocytes
+          - id: body-blood-cbc-monocytes
+            name: Monocytes
+          - id: body-blood-cbc-eosinophils
+            name: Eosinophils
+          - id: body-blood-cbc-basophils
+            name: Basophils
+      # Erythrocyte specimen — distinct from serum for the same analyte
+      - id: body-blood-rbc
+        name: Red blood cell
+        children:
+          - id: body-blood-rbc-magnesium
+            name: Magnesium (RBC)
+      - id: body-blood-hba1c
+        name: HbA1c
   - id: body-vulva
     name: Vulva
     children:

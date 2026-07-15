@@ -1,6 +1,156 @@
 # Changelog
 
-## [Unreleased]
+## [2.0.0] - 2026-07-15
+
+**Major bump because item keys were renamed.** Stored data is unaffected, and **the old keys keep
+working** — each is retained as a deprecated alias (below), so no consumer breaks on upgrade. The major
+is for the eventual removal of those aliases and the `concentration/mg-ml` / `mcg-ml` removals.
+
+Delivers the serum blood-chemistry domain reported in
+[healthdatasafe/site-agents#2](https://github.com/healthdatasafe/site-agents/issues/2): **all 58
+analytes the report enumerated**, across metabolic, minerals, vitamins, iron studies, CBC, renal &
+electrolytes, protein, liver, methylation, thyroid and reproductive hormones. Design rationale:
+[`documentation/BLOOD-CHEMISTRY.md`](documentation/BLOOD-CHEMISTRY.md).
+
+### Changed — urine hormone item keys renamed (`fertility-hormone-*` → `body-urine-hormones-*`), old keys kept as aliases
+
+**Nothing breaks on upgrade.** Stored data is unaffected (events carry `streamId` + `type`), and each
+old key is retained as a **deprecated alias** with the same `streamId` and `eventType` — so it emits
+identical events, `forKey` still resolves it, and consumers migrate on their own schedule. Aliases are
+hidden from pickers (`getAllActive`).
+
+| Old key | New key |
+|---|---|
+| `fertility-hormone-fsh` | `body-urine-hormones-fsh` |
+| `fertility-hormone-hcg` | `body-urine-hormones-hcg` |
+| `fertility-hormone-pdg` | `body-urine-hormones-pdg` |
+| `fertility-hormone-e3g` | `body-urine-hormones-e3g` |
+| `fertility-hormone-lh` | `body-urine-hormones-lh` *(old key kept, deprecated — see below)* |
+
+**Why:** the old prefix matched neither the stream (`body-urine-*`) nor the specimen. Serum and urine
+assays of the same hormone are different observations with different reference ranges — SNOMED codes
+them as distinct procedures — so a neutral key that silently meant "urine" was a trap, and serum twins
+had nowhere symmetric to live. Keys now equal their `streamId`, and the specimen is explicit on both
+sides.
+
+**Loader change enabling the aliases** (`src/items.js`): a deprecated item may now share a
+`streamId:eventType` pair with an active one, and the **active** item owns the resolution index
+regardless of load order — so `findItemForEvent` stays unambiguous. Two *active* items on one pair
+still throw (the storage-identity invariant), as do two *deprecated* with no active (ambiguous).
+Covered by tests `[ITMA-1..5]`; the rename-alias procedure is documented in `AGENTS.md`.
+
+**Consumers should migrate at leisure** (`hds-react-timeline` already done):
+- `doctor-dashboard` — `app/data/presets.ts`
+- `bridge-mira` — `src/methods/hds4miraMethods.ts`, `_hds/manifest.json`, and
+  `src/dataSync/converters/hormone.ts`, which builds the key by concatenation
+  (`'fertility-hormone-' + hormone`). Without the aliases this would have thrown at **runtime** on the
+  write path, with no typecheck to catch it.
+
+**Aliases are removed once the consumers are updated.**
+
+### Deprecated — `fertility-hormone-lh` (was typed `concentration/mg-l`)
+
+LH is reported in **IU/L**; this item was the only one in the model using `mg-l`, while its siblings all
+used `iu-l`. **Stored numbers are already correct** — `bridge-mira` writes Mira's value verbatim and
+Mira reports LH in mIU/mL, which is numerically identical to IU/L. Only the type label was wrong.
+
+It cannot be retyped in place: existing events carry `type: concentration/mg-l`, and the data lives in
+users' own accounts, so there is nothing for HDS to migrate. The item is kept with `deprecated: true` so
+those events still resolve and render; new data uses `body-urine-hormones-lh` (`concentration/iu-l`).
+
+### Added — blood chemistry: `body-blood` tree + 58 analytes
+
+New stream tree `body-blood`, following the existing specimen-rooted pattern (`body-urine`,
+`body-semen`), with three specimen subtrees:
+
+- **`body-blood-serum/`** — serum/plasma analytes (most of the domain)
+- **`body-blood-cbc/`** — whole-blood counts
+- **`body-blood-rbc/`** — erythrocyte specimen (`body-blood-rbc-magnesium`, distinct from
+  `body-blood-serum-magnesium` — a different observation, not a different unit)
+- **`body-blood-hba1c`** — whole blood, hence the direct placement
+
+| Panel | Items |
+|---|---|
+| Metabolic | fasting glucose (mg/dL + mmol/L), fasting insulin, HbA1c, C-peptide |
+| Iron studies | ferritin, iron, TIBC, transferrin saturation |
+| CBC | hemoglobin, hematocrit, RBC, WBC, platelets, MCV, MCH, RDW, and the 5-part differential |
+| Liver | ALT, AST, GGT, ALP, LDH, total bilirubin, bile acids |
+| Renal & electrolytes | BUN, creatinine, eGFR, sodium, potassium, chloride, CO2, calcium |
+| Protein | total protein, albumin, globulin |
+| Minerals | zinc, copper, ceruloplasmin, magnesium (serum + RBC), selenium |
+| Vitamins | A, D (25-OH), D (active), B12, folate, B6, C |
+| Methylation | homocysteine |
+| Thyroid | TSH |
+| Reproductive | FSH, LH, estradiol, **AMH** |
+
+Fasting glucose is its own item rather than a variation — SNOMED codes fasting (`167087006`) and random
+(`167086002`) serum glucose as different procedures, and `variations` supports `eventType` only.
+Precedent: `body-temperature-basal`.
+
+**Codes.** All SNOMED references verified active against `snomed-db` (International RF2 20260201) —
+this caught several inactive concepts that a plain search returns first (`35170002` Hemoglobin
+determination, `142831004` RBC count, `165701004` RDW, `143134000` transferrin saturation). Three items
+carry **no** SNOMED ref because no concept exists: `body-urine-hormones-e3g`, `body-urine-hormones-pdg`
+and `body-blood-rbc-magnesium`. LOINC is **not asserted** — there is no local source to verify against,
+so candidates stay in comments (precedent: `body-semen-morphology-normal`).
+
+**Reference ranges are deliberately absent** — they vary by lab, assay and population, and "optimal"
+bands are a practice's interpretation. The model carries the measured value; interpretation stays with
+the interpreter.
+
+**⚠️ `body-blood-pressure` is a vital sign and a sibling of `body-blood`, not a child** — despite the
+shared prefix. Nothing resolves by prefix, so it is safe, but "all `body-blood` data" does not cover it.
+
+### Added — units for the serum blood-chemistry domain
+
+Foundation for the serum blood-chemistry domain (~68 analytes). Units land first: an
+analyte can't be modelled honestly without one, and several conventional reporting units
+had no home.
+
+- **`concentration/gigacount-ml`** (10⁹ counts/mL) — RBC stores 4.3–4.8, as printed.
+  Sibling of `concentration/megacount-ml`, which keeps WBC and platelets (× 10⁹/L ≡
+  × 10⁶/mL); the split mirrors how lab reports print the two.
+- **`concentration/mcg-dl`** (μg/dL) — serum zinc, copper, retinol, iron, TIBC.
+- **`concentration/pg-ml`** (pg/mL) — B12, active vitamin D, estradiol.
+- **`concentration/uiu-ml`** (μIU/mL) — fasting insulin, TSH.
+- **`concentration/umol-l`** (μmol/L) — homocysteine, bile acids.
+- **`catalytic-activity/u-l`** (U/L) — ALT, AST, GGT, ALP, LDH.
+- **`volume/fl`** (fL) — MCV. **`mass/pg`** (pg) — MCH.
+- **`rate/ml-min-173m2`** (mL/min/1.73m²) — eGFR.
+
+Reused rather than added: `concentration/mg-dl`, `g-dl`, `ug-l`, `mmol-l` (legacy) and
+`concentration/megacount-ml`.
+
+### Changed — `ratio/proportion` also covers objective measured fractions
+
+Its description previously scoped it to *subjective* scales with option-defined hooks.
+Lab percentages (HbA1c, hematocrit, RDW, transferrin saturation, the WBC differential)
+are genuine fractions, so they store here as `0..1` — never as `42` — and render via
+`display.multiplier`. The `0..1` bound is enforced, and fractions match Apple HealthKit's
+`HKUnit.percent()`; FHIR/LOINC export applies the × 100 in the mapper.
+
+### Added — `number.display` on number items
+
+`type: number` items accept an optional `number.display` block (`multiplier` /
+`precision` / `suffix`), mirroring `slider.display`. Storage stays raw; the user sees the
+conventional scale (`0.42` → `42%`). Requires hds-forms-js ≥ the matching release.
+
+### Removed — two eventTypes equivalent to legacy Pryv types
+
+`concentration/mg-ml` (≡ legacy `concentration/g-l`) and `concentration/mcg-ml` (≡ legacy
+`concentration/mg-l`) were HDS-added alongside twins that already existed. Equivalent
+types split the same measurement across two names, invisibly to any validator. Both were
+referenced by zero itemDefs and zero consumers, so removal is clean.
+
+**New rule in `AGENTS.md`:** a new eventType must never be numerically equivalent to an
+existing one — do the arithmetic, don't compare the names. Where the twin is a legacy
+type, the legacy type wins.
+
+### Changed — `AGENTS.md`: `description` is short, end-user text
+
+Item `description` is rendered under the field label to patients and clinicians. One
+short sentence; no storage detail (`Stored as a 0..1 ratio`), assay minutiae, or
+rationale — those belong in `devNotes` or `documentation/`.
 
 ## [1.12.1] - 2026-07-06
 

@@ -4,7 +4,7 @@ This file orients future agents (Claude or others) working on the `data-model` r
 
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
-- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md` — per-domain design decisions and cross-system mappings.
+- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md` — per-domain design decisions and cross-system mappings.
 
 ---
 
@@ -51,7 +51,21 @@ When multiple observation methods measure the same underlying construct (e.g. 15
 
 This is not about questionnaires. It is about sources / methods of observation converging on a single normalized representation.
 
-### 7. Wording lives in the item — form-level overrides are layered, not stored in data-model
+### 6b. ⚑ `description` is short, and written for the end user
+
+**An item's `description` is user-facing UI text, not a spec note.** It is rendered directly under the field label in every consuming app, to a patient or a clinician — not to the person maintaining this repo. Keep it to **one short sentence**.
+
+- ✅ `Your overall health today.` (`wellbeing-self-rated-health`)
+- ✅ `Iron stored in your body.` — plain, one line, tells the user what they're recording
+- ❌ `Fraction of spermatozoa with normal morphology (Kruger strict criteria). Stored as a 0..1 ratio.` (`body-semen-morphology-normal` — long, clinical, and leaks storage detail into the UI)
+
+**Never put in a `description`:**
+
+- **Storage/encoding detail** (`Stored as a 0..1 ratio`, `— IU/L`, eventType names). Units come from the eventType's `extras.symbol` or `display.suffix`; the scale is the eventType's business. A user reading "stored as a 0..1 ratio" learns nothing they can act on.
+- **Assay / method minutiae**, unless the user must act on it (`Kruger strict criteria`).
+- **Rationale, provenance, or cross-system mapping.** Those belong in `devNotes`, the domain doc under `documentation/`, or the encoding refs (`loinc:` / `snomed:`).
+
+If a maintainer needs to know something, it goes in **`devNotes`** (a schema field that exists for exactly this) or the domain doc — never in text shown to a patient.
 
 `item.label`, `item.description`, and each `option.label` are the **canonical**, generic, reusable wording. They are rendered directly by readers and by [hds-forms-js](https://github.com/healthdatasafe/hds-forms-js) when no override is provided.
 
@@ -105,6 +119,42 @@ Reasons *not* to add one:
 - "We want a different label" (labels belong on items/options, not eventTypes).
 - "We want a different range" (ranges belong on items via option hooks or min/max constraints).
 - "This questionnaire/app has its own concept" (the data still has a shape, and the shape is probably already defined).
+
+#### ⚑ An eventType `description` is the unit — nothing else
+
+**A unit eventType's `description` names the unit and stops** — a bare noun phrase, no trailing period. No usage hints, no example values, no rationale, no cross-references. The eventType describes a *shape*, not who uses it or why (§3) — the moment a description lists consumers it goes stale, and it duplicates knowledge that belongs to the items.
+
+- ✅ `Micrograms per deciliter (μg/dL)`
+- ✅ `Megacounts per milliliter (10⁶ counts/mL)` — the scale belongs to the unit; the example value does not
+- ✅ `Picograms (pg)`
+- ❌ `Milligrams per hour (transdermal, infusion)` — route is the item's business
+- ❌ `Milligrams per gram (topical)` — same
+- ❌ `Micrograms per deciliter (μg/dL). Conventional reporting unit for zinc, copper and TIBC.` — lists consumers; stale the day a fourth analyte lands
+- ❌ `… normalised to standard adult BSA.` / `… 1 U = 1 μmol per minute.` / `… Stored value is in millions — e.g. 16 for 16 × 10⁶/mL.` — definitional trivia and examples, not the unit's name
+
+Conventions, equivalences and rationale live **here in `AGENTS.md`**; per-domain usage lives in `documentation/<DOMAIN>.md`.
+
+#### Unit naming convention
+
+**All-lowercase, long-form SI prefixes.** `megacount-ml` (10⁶/mL), `gigacount-ml` (10⁹/mL) — the long prefix encodes the SI multiplier while staying inside the all-lowercase eventType convention. Micro- is spelled **`mcg`** in HDS-added types (`mass/mcg`, `rate/mcg-hr`, `concentration/mcg-dl`); the legacy Pryv type `concentration/ug-l` keeps its own spelling and stays canonical for μg/L.
+
+#### ⚑ Non-negotiable — a new eventType must never be equivalent to a legacy one
+
+**Before adding any unit eventType, prove it is not numerically equivalent to an existing type — especially a legacy Pryv one.** Two types are *equivalent* when the same physical quantity stores as the **same number** in both. An equivalent twin is a silent data-integrity hazard: identical values land under two type names, so queries, aggregations and converters split the same measurement into two populations, and no validator will ever flag it.
+
+**Unit prefixes cancel — always do the arithmetic, never compare the names.** The trap is that equivalent types rarely *look* alike:
+
+| Proposed | Legacy twin | Why |
+|---|---|---|
+| `concentration/ng-ml` | `concentration/ug-l` | 1 ng/mL = 1 μg/L — **rejected on these grounds (2026-07-15)**; ferritin/folate/25-OH-D/C-peptide/AMH use `ug-l` |
+| `concentration/mg-ml` | `concentration/g-l` | 1 mg/mL = 1 g/L |
+| `concentration/mcg-ml` | `concentration/mg-l` | 1 μg/mL = 1 mg/L |
+
+**Procedure.** Reduce the candidate and every same-dimension existing type to a common base (e.g. g/L, mol/L, counts/mL). If any reduces to the same number, **reuse the existing type** — the reporting-unit *label* is a display concern (`extras.symbol`, `display.suffix`), not a reason for a second type. A genuine decade difference (μg/dL is 10× μg/L; μIU/mL is 1/1000 of IU/L) is *not* equivalence and is a legitimate addition.
+
+**When the equivalent twin is a legacy type, the legacy type wins** — it mirrors Pryv's catalog and is what non-HDS consumers already speak. Do not add an HDS-flavoured spelling of a unit Pryv already defines.
+
+**History.** `concentration/mg-ml` (≡ `g-l`) and `concentration/mcg-ml` (≡ `mg-l`) were HDS-added alongside their legacy twins and **removed 2026-07-15** once this rule landed — both were referenced by zero itemDefs and zero consumers, so removal was clean. Had any itemDef used them, the itemDef would have been deprecated onto the legacy type and the eventType removal tracked in `_plans/BUGS.md` instead.
 
 ### When adding a new **stream**
 
@@ -280,6 +330,35 @@ An item may carry `deprecated: true` (boolean, optional) to signal that it is **
 - **Writing is discouraged but not blocked.** Bridges still actively writing to deprecated streams keep working until they migrate. The validator does not reject `events.create` against deprecated items — that's a migration concern, not a data-integrity one.
 
 **Schema:** the `deprecated` field is recognised in `src/schemas/items.js` and round-trips through `pack.json`.
+
+### Renaming an item key — keep the old key as a deprecated alias
+
+**Renaming an item key never touches stored data** (events carry `streamId` + `type`; `forEvent` resolves on that pair). It breaks **consumer code** that references the key — and it does so at *runtime*, not compile time, wherever a key is built by concatenation. `forKey` throws by default.
+
+**So a rename ships with the old key retained as a deprecated alias:**
+
+```yaml
+body-urine-hormones-fsh:        # the replacement — active, owns the pair
+  streamId: body-urine-hormones-fsh
+  eventType: concentration/iu-l
+fertility-hormone-fsh:          # the alias — same streamId, same eventType
+  deprecated: true
+  description: { en: "Deprecated — use body-urine-hormones-fsh. …" }
+  streamId: body-urine-hormones-fsh
+  eventType: concentration/iu-l
+```
+
+The alias is **faithful**: identical `streamId:eventType`, so it emits identical events. Consumers pinned to the old key keep working and migrate on their own schedule; the alias is hidden from pickers (`getAllActive`), so it never pollutes UI.
+
+**The loader allows exactly this and nothing looser** (`src/items.js`, tests `[ITMA-*]`):
+
+| Case | Behaviour |
+|---|---|
+| active + deprecated on one pair | **allowed** — the *active* item owns the `streamId:eventType` index regardless of load order, so `findItemForEvent` is unambiguous |
+| two **active** on one pair | **throws** — that is the storage-identity invariant |
+| two **deprecated**, no active | **throws** — `findItemForEvent` would be ambiguous |
+
+**Remove the alias** once the consumers are updated. When the eventType *also* changes (e.g. a mis-typed unit), the pair already differs, so the old item is simply deprecated — no alias needed, and old events keep resolving to it (see `fertility-hormone-lh`).
 
 ---
 

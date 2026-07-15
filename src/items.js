@@ -131,8 +131,24 @@ function addItem (key, itemSrc) {
     }
     checkItemVsEvenType(key, item, eventType);
     const streamIdTypeId = item.streamId + ':' + itemEventType;
-    if (itemsByStreamIdTypeId[streamIdTypeId]) {
-      throw new Error(`Item with streamIdTypeId ${streamIdTypeId} already exists, cannot add item: ${JSON.stringify(item)}`);
+    const existing = itemsByStreamIdTypeId[streamIdTypeId];
+    if (existing) {
+      // `streamId:eventType` is the storage identity, and this index is what findItemForEvent
+      // resolves through — so two *active* items may never share a pair.
+      //
+      // A deprecated item may, and that is what makes an item-key rename non-breaking: the old
+      // key stays as a deprecated alias resolvable via forKey (so consumers pinned to it keep
+      // working and migrate on their own schedule), while the active item owns the pair here, so
+      // forEvent stays unambiguous. The alias is faithful — same streamId, same eventType, so it
+      // produces identical events.
+      if (!existing.deprecated && !item.deprecated) {
+        throw new Error(`Item with streamIdTypeId ${streamIdTypeId} already exists, cannot add item: ${JSON.stringify(item)}`);
+      }
+      if (existing.deprecated && item.deprecated) {
+        throw new Error(`Two deprecated items share streamIdTypeId ${streamIdTypeId} — findItemForEvent would be ambiguous. Keep at most one deprecated alias per pair: ${JSON.stringify(item)}`);
+      }
+      // Exactly one is active — it owns the index regardless of load order.
+      if (item.deprecated) continue;
     }
     itemsByStreamIdTypeId[streamIdTypeId] = item;
   }

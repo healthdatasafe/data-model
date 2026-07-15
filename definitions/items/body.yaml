@@ -233,3 +233,877 @@ body-semen-dna-fragmentation:
     upperLimit: 0.30
     units: ratio
     population: clinical-consensus
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Blood chemistry — see documentation/BLOOD-CHEMISTRY.md
+#
+# Specimen is explicit in every key (body-blood-serum-*, body-urine-hormones-*): serum and
+# urine assays of the same hormone are different observations with different reference
+# ranges, and SNOMED codes them as distinct procedures.
+#
+# Reference ranges are deliberately absent. They vary by lab, assay and population, and
+# "optimal" bands are a practice's interpretation, not a fact about the analyte. The model
+# carries the measured value; interpretation stays with the interpreter.
+# ─────────────────────────────────────────────────────────────────────────────
+
+body-blood-serum-glucose-fasting:
+  version: v1
+  label:
+    en: Fasting glucose
+    fr: Glycémie à jeun
+  description:
+    en: Blood sugar, measured after not eating overnight.
+    fr: Taux de sucre dans le sang, mesuré après une nuit sans manger.
+  streamId: body-blood-serum-glucose-fasting
+  type: number
+  repeatable: any
+  # Fasting is its own item rather than a variation: SNOMED codes fasting (167087006) and
+  # random (167086002) serum glucose as different procedures, and the schema's `variations`
+  # block only supports eventType. Precedent: body-temperature-basal vs body-temperature.
+  variations:
+    eventType:
+      label:
+        en: Unit
+        fr: Unité
+      options:
+        - value: concentration/mg-dl
+          label:
+            en: mg/dL
+            fr: mg/dL
+        - value: concentration/mmol-l
+          label:
+            en: mmol/L
+            fr: mmol/L
+  references:
+    snomed: ["167087006"]
+
+body-blood-serum-insulin-fasting:
+  version: v1
+  label:
+    en: Fasting insulin
+    fr: Insuline à jeun
+  description:
+    en: The hormone that moves sugar into your cells, measured after not eating overnight.
+    fr: L'hormone qui fait entrer le sucre dans vos cellules, mesurée après une nuit sans manger.
+  streamId: body-blood-serum-insulin-fasting
+  eventType: concentration/uiu-ml
+  type: number
+  repeatable: any
+  # 16890009 is the unqualified insulin measurement; SNOMED has no fasting-specific concept.
+  references:
+    snomed: ["16890009"]
+
+body-blood-hba1c:
+  version: v1
+  label:
+    en: HbA1c
+    fr: HbA1c
+  description:
+    en: Your average blood sugar over the past two to three months.
+    fr: Votre glycémie moyenne des deux à trois derniers mois.
+  streamId: body-blood-hba1c
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  # HbA1c is the glycated fraction of total hemoglobin — a real fraction, so it stores 0..1
+  # and renders as a percentage. Specimen is whole blood, not serum, hence the direct
+  # placement under body-blood rather than body-blood-serum.
+  number:
+    display:
+      multiplier: 100
+      suffix:
+        en: "%"
+        fr: "%"
+  references:
+    snomed: ["43396009"]
+
+body-blood-serum-c-peptide:
+  version: v1
+  label:
+    en: C-peptide
+    fr: Peptide C
+  description:
+    en: Shows how much insulin your body is making on its own.
+    fr: Indique la quantité d'insuline que votre corps produit lui-même.
+  streamId: body-blood-serum-c-peptide
+  eventType: concentration/ug-l
+  type: number
+  repeatable: any
+  number:
+    display:
+      suffix: { en: ng/mL, fr: ng/mL }
+  # ng/mL is numerically identical to µg/L, so the legacy concentration/ug-l is used rather
+  # than an equivalent twin. Stored and displayed values are the printed ng/mL number.
+  references:
+    snomed: ["88705004"]
+
+body-blood-serum-fsh:
+  version: v1
+  label:
+    en: FSH (serum)
+    fr: FSH (sérum)
+  description:
+    en: Follicle-stimulating hormone in your blood.
+    fr: Hormone folliculo-stimulante dans votre sang.
+  streamId: body-blood-serum-fsh
+  eventType: concentration/iu-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["273971007"]
+
+body-blood-serum-lh:
+  version: v1
+  label:
+    en: LH (serum)
+    fr: LH (sérum)
+  description:
+    en: Luteinizing hormone in your blood.
+    fr: Hormone lutéinisante dans votre sang.
+  streamId: body-blood-serum-lh
+  eventType: concentration/iu-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["273969007"]
+
+body-blood-serum-estradiol:
+  version: v1
+  label:
+    en: Estradiol
+    fr: Estradiol
+  description:
+    en: The main estrogen in your blood.
+    fr: Le principal œstrogène dans votre sang.
+  streamId: body-blood-serum-estradiol
+  eventType: concentration/pg-ml
+  type: number
+  repeatable: any
+  references:
+    snomed: ["166448005"]
+
+body-blood-serum-amh:
+  version: v1
+  label:
+    en: AMH
+    fr: AMH
+  description:
+    en: A marker of how many eggs your ovaries still hold.
+    fr: Un marqueur du nombre d'ovocytes encore présents dans vos ovaires.
+  streamId: body-blood-serum-amh
+  eventType: concentration/ug-l
+  type: number
+  repeatable: any
+  number:
+    display:
+      suffix: { en: ng/mL, fr: ng/mL }
+  # ng/mL is numerically identical to µg/L, so the legacy concentration/ug-l is used rather
+  # than an equivalent twin. Stored and displayed values are the printed ng/mL number.
+  references:
+    snomed: ["711358004"]
+
+# ── Iron studies ─────────────────────────────────────────────────────────────
+
+body-blood-serum-ferritin:
+  version: v1
+  label: { en: Ferritin, fr: Ferritine }
+  description:
+    en: Iron stored in your body.
+    fr: Le fer stocké dans votre corps.
+  streamId: body-blood-serum-ferritin
+  eventType: concentration/ug-l
+  type: number
+  repeatable: any
+  number:
+    display:
+      suffix: { en: ng/mL, fr: ng/mL }
+  # ng/mL ≡ µg/L — the legacy unit is used rather than an equivalent twin.
+  references:
+    snomed: ["269821003"]
+
+body-blood-serum-iron:
+  version: v1
+  label: { en: Iron, fr: Fer }
+  description:
+    en: Iron circulating in your blood.
+    fr: Le fer circulant dans votre sang.
+  streamId: body-blood-serum-iron
+  eventType: concentration/mcg-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["250216004"]
+
+body-blood-serum-tibc:
+  version: v1
+  label: { en: Total iron-binding capacity, fr: Capacité totale de fixation du fer }
+  description:
+    en: How much iron your blood could carry.
+    fr: La quantité de fer que votre sang pourrait transporter.
+  streamId: body-blood-serum-tibc
+  eventType: concentration/mcg-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["359979000"]
+
+body-blood-serum-transferrin-saturation:
+  version: v1
+  label: { en: Transferrin saturation, fr: Saturation de la transferrine }
+  description:
+    en: How much of your blood's iron-carrying capacity is in use.
+    fr: La part de la capacité de transport du fer qui est utilisée.
+  streamId: body-blood-serum-transferrin-saturation
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  number:
+    display: { multiplier: 100, suffix: { en: "%", fr: "%" } }
+  references:
+    snomed: ["165730006"]
+
+# ── Complete blood count (whole blood) ───────────────────────────────────────
+
+body-blood-cbc-hemoglobin:
+  version: v1
+  label: { en: Hemoglobin, fr: Hémoglobine }
+  description:
+    en: The protein in red blood cells that carries oxygen.
+    fr: La protéine des globules rouges qui transporte l'oxygène.
+  streamId: body-blood-cbc-hemoglobin
+  eventType: concentration/g-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["441689006"]
+
+body-blood-cbc-hematocrit:
+  version: v1
+  label: { en: Hematocrit, fr: Hématocrite }
+  description:
+    en: The share of your blood made up of red blood cells.
+    fr: La part de votre sang constituée de globules rouges.
+  streamId: body-blood-cbc-hematocrit
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  number:
+    display: { multiplier: 100, suffix: { en: "%", fr: "%" } }
+  references:
+    snomed: ["28317006"]
+
+body-blood-cbc-rbc:
+  version: v1
+  label: { en: Red blood cells, fr: Globules rouges }
+  description:
+    en: How many red blood cells you have.
+    fr: Le nombre de vos globules rouges.
+  streamId: body-blood-cbc-rbc
+  eventType: concentration/gigacount-ml
+  type: number
+  repeatable: any
+  # × 10¹²/L ≡ × 10⁹/mL — stores 4.3–4.8, as the report prints it. WBC and platelets are
+  # × 10⁹/L ≡ × 10⁶/mL and sit on megacount-ml; the split mirrors the printed panel.
+  references:
+    snomed: ["14089001"]
+
+body-blood-cbc-wbc:
+  version: v1
+  label: { en: White blood cells, fr: Globules blancs }
+  description:
+    en: How many white blood cells you have — the cells that fight infection.
+    fr: Le nombre de vos globules blancs, les cellules qui combattent les infections.
+  streamId: body-blood-cbc-wbc
+  eventType: concentration/megacount-ml
+  type: number
+  repeatable: any
+  references:
+    snomed: ["767002"]
+
+body-blood-cbc-platelets:
+  version: v1
+  label: { en: Platelets, fr: Plaquettes }
+  description:
+    en: The cells that help your blood clot.
+    fr: Les cellules qui aident votre sang à coaguler.
+  streamId: body-blood-cbc-platelets
+  eventType: concentration/megacount-ml
+  type: number
+  repeatable: any
+  references:
+    snomed: ["61928009"]
+
+body-blood-cbc-mcv:
+  version: v1
+  label: { en: MCV, fr: VGM }
+  description:
+    en: The average size of your red blood cells.
+    fr: La taille moyenne de vos globules rouges.
+  streamId: body-blood-cbc-mcv
+  eventType: volume/fl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["104133003"]
+
+body-blood-cbc-mch:
+  version: v1
+  label: { en: MCH, fr: TCMH }
+  description:
+    en: The average amount of oxygen-carrying protein in each red blood cell.
+    fr: La quantité moyenne de protéine transportant l'oxygène dans chaque globule rouge.
+  streamId: body-blood-cbc-mch
+  eventType: mass/pg
+  type: number
+  repeatable: any
+  references:
+    snomed: ["54706004"]
+
+body-blood-cbc-rdw:
+  version: v1
+  label: { en: RDW, fr: IDR }
+  description:
+    en: How much your red blood cells vary in size.
+    fr: La variation de taille de vos globules rouges.
+  streamId: body-blood-cbc-rdw
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  number:
+    display: { multiplier: 100, suffix: { en: "%", fr: "%" } }
+  references:
+    snomed: ["66842004"]
+
+body-blood-cbc-neutrophils:
+  version: v1
+  label: { en: Neutrophils, fr: Neutrophiles }
+  description:
+    en: The share of your white blood cells that are neutrophils.
+    fr: La part de vos globules blancs qui sont des neutrophiles.
+  streamId: body-blood-cbc-neutrophils
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  number:
+    display: { multiplier: 100, suffix: { en: "%", fr: "%" } }
+  references:
+    snomed: ["30630007"]
+
+body-blood-cbc-lymphocytes:
+  version: v1
+  label: { en: Lymphocytes, fr: Lymphocytes }
+  description:
+    en: The share of your white blood cells that are lymphocytes.
+    fr: La part de vos globules blancs qui sont des lymphocytes.
+  streamId: body-blood-cbc-lymphocytes
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  number:
+    display: { multiplier: 100, suffix: { en: "%", fr: "%" } }
+  references:
+    snomed: ["74765001"]
+
+body-blood-cbc-monocytes:
+  version: v1
+  label: { en: Monocytes, fr: Monocytes }
+  description:
+    en: The share of your white blood cells that are monocytes.
+    fr: La part de vos globules blancs qui sont des monocytes.
+  streamId: body-blood-cbc-monocytes
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  number:
+    display: { multiplier: 100, suffix: { en: "%", fr: "%" } }
+  references:
+    snomed: ["67776007"]
+
+body-blood-cbc-eosinophils:
+  version: v1
+  label: { en: Eosinophils, fr: Éosinophiles }
+  description:
+    en: The share of your white blood cells that are eosinophils.
+    fr: La part de vos globules blancs qui sont des éosinophiles.
+  streamId: body-blood-cbc-eosinophils
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  number:
+    display: { multiplier: 100, suffix: { en: "%", fr: "%" } }
+  references:
+    snomed: ["71960002"]
+
+body-blood-cbc-basophils:
+  version: v1
+  label: { en: Basophils, fr: Basophiles }
+  description:
+    en: The share of your white blood cells that are basophils.
+    fr: La part de vos globules blancs qui sont des basophiles.
+  streamId: body-blood-cbc-basophils
+  eventType: ratio/proportion
+  type: number
+  repeatable: any
+  number:
+    display: { multiplier: 100, suffix: { en: "%", fr: "%" } }
+  references:
+    snomed: ["42351005"]
+
+# ── Liver ────────────────────────────────────────────────────────────────────
+
+body-blood-serum-alt:
+  version: v1
+  label: { en: ALT, fr: ALAT }
+  description:
+    en: A liver enzyme.
+    fr: Une enzyme du foie.
+  streamId: body-blood-serum-alt
+  eventType: catalytic-activity/u-l
+  type: number
+  repeatable: any
+  # 34608000 is the unqualified ALT measurement — SNOMED has no serum-specific concept
+  # (250637003 is "blood", a different specimen claim).
+  references:
+    snomed: ["34608000"]
+
+body-blood-serum-ast:
+  version: v1
+  label: { en: AST, fr: ASAT }
+  description:
+    en: An enzyme found in your liver and muscles.
+    fr: Une enzyme présente dans votre foie et vos muscles.
+  streamId: body-blood-serum-ast
+  eventType: catalytic-activity/u-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["250641004"]
+
+body-blood-serum-ggt:
+  version: v1
+  label: { en: GGT, fr: GGT }
+  description:
+    en: A liver enzyme.
+    fr: Une enzyme du foie.
+  streamId: body-blood-serum-ggt
+  eventType: catalytic-activity/u-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["313849004"]
+
+body-blood-serum-alp:
+  version: v1
+  label: { en: ALP, fr: PAL }
+  description:
+    en: An enzyme from your liver and bones.
+    fr: Une enzyme provenant de votre foie et de vos os.
+  streamId: body-blood-serum-alp
+  eventType: catalytic-activity/u-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["271234008"]
+
+body-blood-serum-ldh:
+  version: v1
+  label: { en: LDH, fr: LDH }
+  description:
+    en: An enzyme found in most of your body's tissues.
+    fr: Une enzyme présente dans la plupart des tissus de votre corps.
+  streamId: body-blood-serum-ldh
+  eventType: catalytic-activity/u-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["313854008"]
+
+body-blood-serum-bilirubin-total:
+  version: v1
+  label: { en: Total bilirubin, fr: Bilirubine totale }
+  description:
+    en: A yellow pigment your liver clears from your blood.
+    fr: Un pigment jaune que votre foie élimine de votre sang.
+  streamId: body-blood-serum-bilirubin-total
+  eventType: concentration/mg-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["359986008"]
+
+body-blood-serum-bile-acids:
+  version: v1
+  label: { en: Bile acids, fr: Acides biliaires }
+  description:
+    en: Substances your liver makes to help digest fat.
+    fr: Des substances produites par votre foie pour digérer les graisses.
+  streamId: body-blood-serum-bile-acids
+  eventType: concentration/umol-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["313455004"]
+
+# ── Thyroid ──────────────────────────────────────────────────────────────────
+
+body-blood-serum-tsh:
+  version: v1
+  label: { en: TSH, fr: TSH }
+  description:
+    en: The hormone that tells your thyroid how much to work.
+    fr: L'hormone qui indique à votre thyroïde combien travailler.
+  streamId: body-blood-serum-tsh
+  eventType: concentration/uiu-ml
+  type: number
+  repeatable: any
+  references:
+    snomed: ["61167004"]
+
+# ── Renal & electrolytes ─────────────────────────────────────────────────────
+
+body-blood-serum-bun:
+  version: v1
+  label: { en: Blood urea nitrogen, fr: Azote uréique sanguin }
+  description:
+    en: A waste product your kidneys filter out.
+    fr: Un déchet que vos reins éliminent.
+  streamId: body-blood-serum-bun
+  eventType: concentration/mg-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["105011006"]
+
+body-blood-serum-creatinine:
+  version: v1
+  label: { en: Creatinine, fr: Créatinine }
+  description:
+    en: A waste product from your muscles that your kidneys filter out.
+    fr: Un déchet produit par vos muscles que vos reins éliminent.
+  streamId: body-blood-serum-creatinine
+  eventType: concentration/mg-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["113075003"]
+
+body-blood-serum-egfr:
+  version: v1
+  label: { en: eGFR, fr: DFGe }
+  description:
+    en: An estimate of how well your kidneys filter your blood.
+    fr: Une estimation de la capacité de filtration de vos reins.
+  streamId: body-blood-serum-egfr
+  eventType: rate/ml-min-173m2
+  type: number
+  repeatable: any
+  # 80274001 is an observable entity, not a procedure: SNOMED has no estimated-GFR
+  # measurement procedure. The value is derived from creatinine via a named equation
+  # (CKD-EPI, MDRD, …) chosen by the reporting lab — the equation is not modelled.
+  references:
+    snomed: ["80274001"]
+
+body-blood-serum-sodium:
+  version: v1
+  label: { en: Sodium, fr: Sodium }
+  description:
+    en: A salt that keeps your body's fluids in balance.
+    fr: Un sel qui maintient l'équilibre des liquides de votre corps.
+  streamId: body-blood-serum-sodium
+  eventType: concentration/mmol-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["104934005"]
+
+body-blood-serum-potassium:
+  version: v1
+  label: { en: Potassium, fr: Potassium }
+  description:
+    en: A salt your nerves and heart need to work.
+    fr: Un sel nécessaire au fonctionnement de vos nerfs et de votre cœur.
+  streamId: body-blood-serum-potassium
+  eventType: concentration/mmol-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["271236005"]
+
+body-blood-serum-chloride:
+  version: v1
+  label: { en: Chloride, fr: Chlorure }
+  description:
+    en: A salt that helps balance your body's fluids.
+    fr: Un sel qui aide à équilibrer les liquides de votre corps.
+  streamId: body-blood-serum-chloride
+  eventType: concentration/mmol-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["271238006"]
+
+body-blood-serum-co2:
+  version: v1
+  label: { en: CO2, fr: CO2 }
+  description:
+    en: A measure of the acid-base balance in your blood.
+    fr: Une mesure de l'équilibre acido-basique de votre sang.
+  streamId: body-blood-serum-co2
+  eventType: concentration/mmol-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["271239003"]
+
+body-blood-serum-calcium:
+  version: v1
+  label: { en: Calcium, fr: Calcium }
+  description:
+    en: The mineral that builds your bones and helps your muscles work.
+    fr: Le minéral qui construit vos os et fait fonctionner vos muscles.
+  streamId: body-blood-serum-calcium
+  eventType: concentration/mg-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["271240001"]
+
+# ── Protein ──────────────────────────────────────────────────────────────────
+
+body-blood-serum-protein-total:
+  version: v1
+  label: { en: Total protein, fr: Protéines totales }
+  description:
+    en: All the protein in your blood.
+    fr: L'ensemble des protéines de votre sang.
+  streamId: body-blood-serum-protein-total
+  eventType: concentration/g-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["270992008"]
+
+body-blood-serum-albumin:
+  version: v1
+  label: { en: Albumin, fr: Albumine }
+  description:
+    en: The main protein in your blood.
+    fr: La principale protéine de votre sang.
+  streamId: body-blood-serum-albumin
+  eventType: concentration/g-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["104485008"]
+
+body-blood-serum-globulin:
+  version: v1
+  label: { en: Globulin, fr: Globuline }
+  description:
+    en: A group of blood proteins, including your antibodies.
+    fr: Un groupe de protéines sanguines, dont vos anticorps.
+  streamId: body-blood-serum-globulin
+  eventType: concentration/g-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["270994009"]
+
+# ── Minerals ─────────────────────────────────────────────────────────────────
+
+body-blood-serum-zinc:
+  version: v1
+  label: { en: Zinc, fr: Zinc }
+  description:
+    en: A mineral your immune system and healing need.
+    fr: Un minéral nécessaire à votre système immunitaire et à la cicatrisation.
+  streamId: body-blood-serum-zinc
+  eventType: concentration/mcg-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["273975003"]
+
+body-blood-serum-copper:
+  version: v1
+  label: { en: Copper, fr: Cuivre }
+  description:
+    en: A mineral your body needs in small amounts.
+    fr: Un minéral dont votre corps a besoin en petite quantité.
+  streamId: body-blood-serum-copper
+  eventType: concentration/mcg-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["85554007"]
+
+body-blood-serum-ceruloplasmin:
+  version: v1
+  label: { en: Ceruloplasmin, fr: Céruloplasmine }
+  description:
+    en: The protein that carries copper in your blood.
+    fr: La protéine qui transporte le cuivre dans votre sang.
+  streamId: body-blood-serum-ceruloplasmin
+  eventType: concentration/mg-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["270975004"]
+
+body-blood-serum-magnesium:
+  version: v1
+  label: { en: Magnesium (serum), fr: Magnésium (sérum) }
+  description:
+    en: Magnesium circulating in your blood.
+    fr: Le magnésium circulant dans votre sang.
+  streamId: body-blood-serum-magnesium
+  eventType: concentration/mg-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["63571001"]
+
+body-blood-rbc-magnesium:
+  version: v1
+  label: { en: Magnesium (RBC), fr: Magnésium (globules rouges) }
+  description:
+    en: Magnesium inside your red blood cells.
+    fr: Le magnésium à l'intérieur de vos globules rouges.
+  streamId: body-blood-rbc-magnesium
+  eventType: concentration/mg-dl
+  type: number
+  repeatable: any
+  # A different specimen from body-blood-serum-magnesium, not a different unit — the two
+  # are distinct observations and must not be merged.
+  # No SNOMED reference: no concept exists for erythrocyte magnesium measurement.
+
+body-blood-serum-selenium:
+  version: v1
+  label: { en: Selenium, fr: Sélénium }
+  description:
+    en: A trace mineral your thyroid and cells need.
+    fr: Un oligo-élément nécessaire à votre thyroïde et à vos cellules.
+  streamId: body-blood-serum-selenium
+  eventType: concentration/ug-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["166759002"]
+
+# ── Vitamins ─────────────────────────────────────────────────────────────────
+
+body-blood-serum-vitamin-a:
+  version: v1
+  label: { en: Vitamin A, fr: Vitamine A }
+  description:
+    en: Vitamin A in your blood.
+    fr: La vitamine A dans votre sang.
+  streamId: body-blood-serum-vitamin-a
+  eventType: concentration/mcg-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["271243004"]
+
+body-blood-serum-vitamin-d-25oh:
+  version: v1
+  label: { en: Vitamin D (25-OH), fr: Vitamine D (25-OH) }
+  description:
+    en: The usual measure of your vitamin D level.
+    fr: La mesure habituelle de votre taux de vitamine D.
+  streamId: body-blood-serum-vitamin-d-25oh
+  eventType: concentration/ug-l
+  type: number
+  repeatable: any
+  number:
+    display:
+      suffix: { en: ng/mL, fr: ng/mL }
+  # ng/mL ≡ µg/L — the legacy unit is used rather than an equivalent twin.
+  references:
+    snomed: ["12199005"]
+
+body-blood-serum-vitamin-d-125oh:
+  version: v1
+  label: { en: Vitamin D (active), fr: Vitamine D (active) }
+  description:
+    en: The active form of vitamin D.
+    fr: La forme active de la vitamine D.
+  streamId: body-blood-serum-vitamin-d-125oh
+  eventType: concentration/pg-ml
+  type: number
+  repeatable: any
+  references:
+    snomed: ["82457009"]
+
+body-blood-serum-vitamin-b12:
+  version: v1
+  label: { en: Vitamin B12, fr: Vitamine B12 }
+  description:
+    en: Vitamin B12 in your blood.
+    fr: La vitamine B12 dans votre sang.
+  streamId: body-blood-serum-vitamin-b12
+  eventType: concentration/pg-ml
+  type: number
+  repeatable: any
+  references:
+    snomed: ["271216009"]
+
+body-blood-serum-folate:
+  version: v1
+  label: { en: Folate, fr: Folates }
+  description:
+    en: Folate (vitamin B9) in your blood.
+    fr: Les folates (vitamine B9) dans votre sang.
+  streamId: body-blood-serum-folate
+  eventType: concentration/ug-l
+  type: number
+  repeatable: any
+  number:
+    display:
+      suffix: { en: ng/mL, fr: ng/mL }
+  # 250212002 is plasma folate — SNOMED has no serum folate procedure (only findings).
+  # Serum and plasma folate are reported interchangeably.
+  # ng/mL ≡ µg/L — the legacy unit is used rather than an equivalent twin.
+  references:
+    snomed: ["250212002"]
+
+body-blood-serum-vitamin-b6:
+  version: v1
+  label: { en: Vitamin B6, fr: Vitamine B6 }
+  description:
+    en: Vitamin B6 in your blood.
+    fr: La vitamine B6 dans votre sang.
+  streamId: body-blood-serum-vitamin-b6
+  eventType: concentration/ug-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["11829003"]
+
+body-blood-serum-vitamin-c:
+  version: v1
+  label: { en: Vitamin C, fr: Vitamine C }
+  description:
+    en: Vitamin C in your blood.
+    fr: La vitamine C dans votre sang.
+  streamId: body-blood-serum-vitamin-c
+  eventType: concentration/mg-dl
+  type: number
+  repeatable: any
+  references:
+    snomed: ["270988001"]
+
+# ── Methylation ──────────────────────────────────────────────────────────────
+
+body-blood-serum-homocysteine:
+  version: v1
+  label: { en: Homocysteine, fr: Homocystéine }
+  description:
+    en: An amino acid linked to your B-vitamin levels.
+    fr: Un acide aminé lié à vos taux de vitamines B.
+  streamId: body-blood-serum-homocysteine
+  eventType: concentration/umol-l
+  type: number
+  repeatable: any
+  references:
+    snomed: ["104733005"]
