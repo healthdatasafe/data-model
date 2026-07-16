@@ -1,0 +1,9 @@
+finding-coded:
+  version: v1
+  label: Finding (coded)
+  description: Search and select a coded clinical or imaging finding.
+  streamId: finding
+  eventType: finding/coded-v1
+  type: datasource-search
+  datasource: finding
+  repeatable: unlimited

@@ -31,6 +31,30 @@ fertility-cycles-average-period:
   eventType: time/d
   type: number
   repeatable: once
+fertility-cycles-average-peak-day:
+  version: v1
+  label:
+    en: Average Peak Day
+    fr: Jour sommet moyen
+  description:
+    en: Your typical cycle day of peak fertility (recalled average).
+    fr: Le jour type de votre pic de fertilité dans le cycle (moyenne rappelée).
+  streamId: fertility-cycles-average-peak-day
+  eventType: time/d
+  type: number
+  repeatable: once
+fertility-cycles-average-luteal-phase:
+  version: v1
+  label:
+    en: Average Luteal Phase Length
+    fr: Durée moyenne de la phase lutéale
+  description:
+    en: Your typical luteal-phase length, in days (recalled average).
+    fr: La durée type de votre phase lutéale, en jours (moyenne rappelée).
+  streamId: fertility-cycles-average-luteal-phase
+  eventType: time/d
+  type: number
+  repeatable: once
 fertility-cycles-ovulation:
   version: temporary
   label: Ovulation Day
@@ -179,6 +203,45 @@ fertility-genital-contact:
   eventType: activity/plain
   type: checkbox
   repeatable: P1D
+fertility-tracking-method:
+  version: v1
+  label:
+    en: Fertility-tracking method
+    fr: Méthode de suivi de fertilité
+  description:
+    en: The charting method or device you use — it determines how your cycle observations should be read.
+    fr: La méthode ou l'appareil de suivi que vous utilisez — cela détermine comment lire vos observations de cycle.
+  streamId: fertility-tracking-method
+  eventType: fertility/tracking-method-v1
+  type: select
+  options:
+    - value: billings
+      label: { en: Billings Ovulation Method, fr: Méthode Billings }
+    - value: creighton
+      label: { en: Creighton Model, fr: Modèle Creighton }
+    - value: sympto-thermal
+      label: { en: Sympto-Thermal Method, fr: Méthode sympto-thermique }
+    - value: marquette
+      label: { en: Marquette Method, fr: Méthode Marquette }
+    - value: femm
+      label: { en: FEMM, fr: FEMM }
+    - value: justisse
+      label: { en: Justisse Method, fr: Méthode Justisse }
+    - value: peak-day
+      label: { en: Peak Day tracking, fr: Suivi du jour sommet }
+    - value: clearblue
+      label: { en: Clearblue monitor, fr: Moniteur Clearblue }
+    - value: mira
+      label: { en: Mira, fr: Mira }
+    - value: inito
+      label: { en: Inito, fr: Inito }
+    - value: oura
+      label: { en: Oura Ring, fr: Bague Oura }
+    - value: kegg
+      label: { en: Kegg, fr: Kegg }
+    - value: other
+      label: { en: Other, fr: Autre }
+  repeatable: once
 fertility-pregnancy:
   version: v2
   label: Pregnancy

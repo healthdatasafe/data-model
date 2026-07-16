@@ -4,6 +4,10 @@ parentId: null
 children:
   - id: profile-address
     name: Address
+  - id: profile-birthcountry
+    name: Country of birth
+  - id: profile-ethnicity
+    name: Ethnicity
   - id: profile-date-of-birth
     name: Date of Birth
   - id: profile-avatar

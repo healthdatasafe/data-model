@@ -1,5 +1,34 @@
 # Changelog
 
+## [2.2.0] - 2026-07-16
+
+**Additive — the trying-to-conceive intake-questionnaire concepts** from
+[healthdatasafe/site-agents#4](https://github.com/healthdatasafe/site-agents/issues/4). No renames or
+removals. Loaded through hds-lib 1.3.1 via the consumer-check (286 items, no collision).
+
+### Added — coded diagnosis & findings concepts (the #4 blocker)
+
+- **`condition-coded`** — the diagnosis concept the model was missing. `datasource-search` against a new
+  `condition` datasource (`datasets://condition`), eventType `condition/coded-v1`, stream `condition`.
+  Records what a patient **has** (an established diagnosis), distinct from symptoms/procedures/treatments.
+- **`finding-coded`** — coded clinical / imaging finding (`finding` datasource, `finding/coded-v1`, stream
+  `finding`). What was **found** at surgery or on imaging — neither a procedure nor a diagnosis.
+- Both are backed by **datasets-service 1.2.0** (`/condition` = 27 diagnoses, `/finding` = 11 findings,
+  curated SNOMED-CT). The items ship here; the searchable corpus lives in datasets-service.
+
+### Added — questionnaire items (all reuse existing event types)
+
+- **Recalled averages** (§Q4): `fertility-cycles-average-peak-day`, `fertility-cycles-average-luteal-phase`
+  — twins of the existing `-average-length` / `-average-period` (`time/d`, recalled summaries).
+- **`symptom-pain-pelvic-severity`** — the severity-twin the form needs; `symptom-gastrointestinal-cramps`
+  is GI, not pelvic. SNOMED `274671002` (Pelvic and perineal pain).
+- **`profile-birthcountry`** — country of birth (`contact/country`), distinct from the address country.
+- **`profile-ethnicity`** — self-identified ethnicity as a clinical/epidemiological variable
+  (new `attributes/ethnicity` enum, OMB-aligned categories).
+- **`fertility-tracking-method`** — the charting method/device in use (new `fertility/tracking-method-v1`
+  enum: Billings, Creighton, Sympto-Thermal, Marquette, FEMM, Justisse, Peak-Day, Clearblue, Mira, Inito,
+  Oura, Kegg). Determines how the person's cycle observations should be read.
+
 ## [2.1.0] - 2026-07-16
 
 **Additive — 28 analytes + 5 reporting units.** No renames, no removals; every existing key and event

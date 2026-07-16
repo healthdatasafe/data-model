@@ -1,0 +1,9 @@
+condition-coded:
+  version: v1
+  label: Condition (coded)
+  description: Search and select a coded clinical diagnosis or condition.
+  streamId: condition
+  eventType: condition/coded-v1
+  type: datasource-search
+  datasource: condition
+  repeatable: unlimited

@@ -32,6 +32,8 @@ children:
         name: Sore Breasts
       - id: symptom-pain-backache
         name: Backache
+      - id: symptom-pain-pelvic
+        name: Pelvic pain
       - id: symptom-pain-muscle
         name: Muscle / Joint Pain
   - id: symptom-neurological

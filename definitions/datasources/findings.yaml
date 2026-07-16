@@ -1,0 +1,15 @@
+finding:
+  label: Findings
+  description: Search clinical / imaging / surgical findings (SNOMED-CT) from datasets service
+  endpoint: datasets://finding
+  queryParam: search
+  minQueryLength: 3
+  resultKey: findings
+  displayFields:
+    label: label
+    description: description
+  valueFields:
+    - label
+    - description
+    - codes
+    - hdsId

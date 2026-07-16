@@ -8,6 +8,51 @@ profile-addresscountry:
   eventType: contact/country
   type: text
   repeatable: once
+profile-birthcountry:
+  version: v1
+  label:
+    en: Country of birth
+    fr: Pays de naissance
+  description:
+    en: The country where you were born (distinct from where you live).
+    fr: Le pays où vous êtes né(e) (distinct de votre lieu de résidence).
+  streamId: profile-birthcountry
+  eventType: contact/country
+  type: text
+  repeatable: once
+profile-ethnicity:
+  version: v1
+  label:
+    en: Ethnicity
+    fr: Origine ethnique
+  description:
+    en: Your self-identified ethnicity, recorded as a clinical and epidemiological variable.
+    fr: Votre origine ethnique auto-déclarée, enregistrée comme variable clinique et épidémiologique.
+  streamId: profile-ethnicity
+  eventType: attributes/ethnicity
+  type: select
+  options:
+    - value: american-indian-alaska-native
+      label: { en: American Indian or Alaska Native, fr: Amérindien(ne) ou Autochtone d'Alaska }
+    - value: asian
+      label: { en: Asian, fr: Asiatique }
+    - value: black-african-american
+      label: { en: Black or African American, fr: Noir(e) ou Afro-Américain(e) }
+    - value: hispanic-latino
+      label: { en: Hispanic or Latino, fr: Hispanique ou Latino }
+    - value: middle-eastern-north-african
+      label: { en: Middle Eastern or North African, fr: Moyen-Oriental(e) ou Nord-Africain(e) }
+    - value: native-hawaiian-pacific-islander
+      label: { en: Native Hawaiian or Pacific Islander, fr: Hawaïen(ne) ou insulaire du Pacifique }
+    - value: white
+      label: { en: White, fr: Blanc(he) }
+    - value: multiple
+      label: { en: Multiple / mixed, fr: Multiple / métis(se) }
+    - value: other
+      label: { en: Other, fr: Autre }
+    - value: prefer-not-to-say
+      label: { en: Prefer not to say, fr: Préfère ne pas répondre }
+  repeatable: once
 profile-avatar:
   version: v1
   label:

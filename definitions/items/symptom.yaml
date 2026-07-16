@@ -358,6 +358,22 @@ symptom-pain-backache-severity:
   references:
     snomed: ["161891005"]
 
+symptom-pain-pelvic-severity:
+  version: v1
+  label:
+    en: Pelvic pain
+    fr: Douleur pelvienne
+  description:
+    en: Pain in the pelvic area. (symptom-gastrointestinal-cramps is GI, not pelvic.)
+    fr: Douleur dans la région pelvienne.
+  streamId: symptom-pain-pelvic
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["274671002"]
+
 symptom-pain-muscle:
   version: v1
   label: Muscle / Joint Pain

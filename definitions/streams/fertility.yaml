@@ -21,6 +21,10 @@ children:
         name: Average Cycle Length
       - id: fertility-cycles-average-period
         name: Average Period Length
+      - id: fertility-cycles-average-peak-day
+        name: Average Peak Day
+      - id: fertility-cycles-average-luteal-phase
+        name: Average Luteal Phase Length
   - id: fertility-trainings
     name: Trainings
   - id: fertility-ttc-tta
@@ -29,6 +33,8 @@ children:
     name: Sexual Activity
   - id: fertility-genital-contact
     name: Non-intercourse genital contact
+  - id: fertility-tracking-method
+    name: Fertility-tracking method
   - id: fertility-test-opk
     name: Ovulation Test (OPK)
   - id: fertility-test-pregnancy

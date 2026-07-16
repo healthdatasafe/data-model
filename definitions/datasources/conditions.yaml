@@ -1,0 +1,15 @@
+condition:
+  label: Conditions
+  description: Search clinical diagnoses / conditions (SNOMED-CT) from datasets service
+  endpoint: datasets://condition
+  queryParam: search
+  minQueryLength: 3
+  resultKey: conditions
+  displayFields:
+    label: label
+    description: description
+  valueFields:
+    - label
+    - description
+    - codes
+    - hdsId
