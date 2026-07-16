@@ -735,6 +735,11 @@
     ]
   },
   {
+    "id": "condition",
+    "name": "Condition",
+    "parentId": null
+  },
+  {
     "id": "family",
     "name": "Family",
     "parentId": null,
@@ -794,6 +799,16 @@
             "id": "fertility-cycles-average-period",
             "name": "Average Period Length",
             "parentId": "fertility-cycles"
+          },
+          {
+            "id": "fertility-cycles-average-peak-day",
+            "name": "Average Peak Day",
+            "parentId": "fertility-cycles"
+          },
+          {
+            "id": "fertility-cycles-average-luteal-phase",
+            "name": "Average Luteal Phase Length",
+            "parentId": "fertility-cycles"
           }
         ],
         "parentId": "fertility"
@@ -816,6 +831,11 @@
       {
         "id": "fertility-genital-contact",
         "name": "Non-intercourse genital contact",
+        "parentId": "fertility"
+      },
+      {
+        "id": "fertility-tracking-method",
+        "name": "Fertility-tracking method",
         "parentId": "fertility"
       },
       {
@@ -846,6 +866,11 @@
         "parentId": "fertility"
       }
     ]
+  },
+  {
+    "id": "finding",
+    "name": "Finding",
+    "parentId": null
   },
   {
     "id": "function",
@@ -919,6 +944,16 @@
       {
         "id": "profile-address",
         "name": "Address",
+        "parentId": "profile"
+      },
+      {
+        "id": "profile-birthcountry",
+        "name": "Country of birth",
+        "parentId": "profile"
+      },
+      {
+        "id": "profile-ethnicity",
+        "name": "Ethnicity",
         "parentId": "profile"
       },
       {
@@ -1027,6 +1062,11 @@
           {
             "id": "symptom-pain-backache",
             "name": "Backache",
+            "parentId": "symptom-pain"
+          },
+          {
+            "id": "symptom-pain-pelvic",
+            "name": "Pelvic pain",
             "parentId": "symptom-pain"
           },
           {

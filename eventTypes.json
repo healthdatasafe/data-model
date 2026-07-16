@@ -1968,6 +1968,41 @@
       "description": "Country",
       "type": "string"
     },
+    "attributes/ethnicity": {
+      "description": "Self-identified ethnicity / race category. US-style category set (OMB-aligned), recorded as a clinical / epidemiological variable.",
+      "type": "string",
+      "enum": [
+        "american-indian-alaska-native",
+        "asian",
+        "black-african-american",
+        "hispanic-latino",
+        "middle-eastern-north-african",
+        "native-hawaiian-pacific-islander",
+        "white",
+        "multiple",
+        "other",
+        "prefer-not-to-say"
+      ]
+    },
+    "fertility/tracking-method-v1": {
+      "description": "Fertility-awareness charting method or device the person uses. Determines how their cycle observations should be interpreted.",
+      "type": "string",
+      "enum": [
+        "billings",
+        "creighton",
+        "sympto-thermal",
+        "marquette",
+        "femm",
+        "justisse",
+        "peak-day",
+        "clearblue",
+        "mira",
+        "inito",
+        "oura",
+        "kegg",
+        "other"
+      ]
+    },
     "contact/name": {
       "description": "Name",
       "type": "string"
@@ -2538,6 +2573,148 @@
               "value": {},
               "notes": {
                 "type": "string"
+              }
+            }
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "condition/coded-v1": {
+      "description": "Coded clinical diagnosis / condition. 'condition' is the coded identity from datasets-service. Records what the patient HAS (an established diagnosis), distinct from symptoms, procedures and treatments.",
+      "type": "object",
+      "required": [
+        "condition"
+      ],
+      "properties": {
+        "condition": {
+          "description": "Coded condition identity, populated from datasets-service selection.",
+          "type": "object",
+          "required": [
+            "label",
+            "codes"
+          ],
+          "properties": {
+            "label": {
+              "description": "Localized condition name for display",
+              "type": "object",
+              "properties": {
+                "en": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": {
+              "description": "Localized full description",
+              "type": "object",
+              "properties": {
+                "en": {
+                  "type": "string"
+                }
+              }
+            },
+            "codes": {
+              "description": "Coding identifiers across systems (SNOMED-CT, ICD-10, …).",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "system",
+                  "hdsId"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "system": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "hdsId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "finding/coded-v1": {
+      "description": "Coded clinical finding. 'finding' is the coded identity from datasets-service. Records what was FOUND at surgery or on imaging (e.g. hydrosalpinx, ovarian endometrioma) — neither a procedure, a symptom, nor quite a diagnosis.",
+      "type": "object",
+      "required": [
+        "finding"
+      ],
+      "properties": {
+        "finding": {
+          "description": "Coded finding identity, populated from datasets-service selection.",
+          "type": "object",
+          "required": [
+            "label",
+            "codes"
+          ],
+          "properties": {
+            "label": {
+              "description": "Localized finding name for display",
+              "type": "object",
+              "properties": {
+                "en": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": {
+              "description": "Localized full description",
+              "type": "object",
+              "properties": {
+                "en": {
+                  "type": "string"
+                }
+              }
+            },
+            "codes": {
+              "description": "Coding identifiers across systems (SNOMED-CT, …).",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "system",
+                  "hdsId"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "system": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "hdsId": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }

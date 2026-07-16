@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-07-16T08:45:47.384Z",
+  "publicationDate": "2026-07-16T09:49:42.358Z",
   "streams": [
     {
       "id": "activity",
@@ -737,6 +737,11 @@
       ]
     },
     {
+      "id": "condition",
+      "name": "Condition",
+      "parentId": null
+    },
+    {
       "id": "family",
       "name": "Family",
       "parentId": null,
@@ -796,6 +801,16 @@
               "id": "fertility-cycles-average-period",
               "name": "Average Period Length",
               "parentId": "fertility-cycles"
+            },
+            {
+              "id": "fertility-cycles-average-peak-day",
+              "name": "Average Peak Day",
+              "parentId": "fertility-cycles"
+            },
+            {
+              "id": "fertility-cycles-average-luteal-phase",
+              "name": "Average Luteal Phase Length",
+              "parentId": "fertility-cycles"
             }
           ],
           "parentId": "fertility"
@@ -818,6 +833,11 @@
         {
           "id": "fertility-genital-contact",
           "name": "Non-intercourse genital contact",
+          "parentId": "fertility"
+        },
+        {
+          "id": "fertility-tracking-method",
+          "name": "Fertility-tracking method",
           "parentId": "fertility"
         },
         {
@@ -848,6 +868,11 @@
           "parentId": "fertility"
         }
       ]
+    },
+    {
+      "id": "finding",
+      "name": "Finding",
+      "parentId": null
     },
     {
       "id": "function",
@@ -921,6 +946,16 @@
         {
           "id": "profile-address",
           "name": "Address",
+          "parentId": "profile"
+        },
+        {
+          "id": "profile-birthcountry",
+          "name": "Country of birth",
+          "parentId": "profile"
+        },
+        {
+          "id": "profile-ethnicity",
+          "name": "Ethnicity",
           "parentId": "profile"
         },
         {
@@ -1029,6 +1064,11 @@
             {
               "id": "symptom-pain-backache",
               "name": "Backache",
+              "parentId": "symptom-pain"
+            },
+            {
+              "id": "symptom-pain-pelvic",
+              "name": "Pelvic pain",
               "parentId": "symptom-pain"
             },
             {
@@ -4497,6 +4537,20 @@
         ]
       }
     },
+    "condition-coded": {
+      "version": "v1",
+      "label": {
+        "en": "Condition (coded)"
+      },
+      "description": {
+        "en": "Search and select a coded clinical diagnosis or condition."
+      },
+      "streamId": "condition",
+      "eventType": "condition/coded-v1",
+      "type": "datasource-search",
+      "datasource": "condition",
+      "repeatable": "unlimited"
+    },
     "family-children-count": {
       "version": "temporary",
       "label": {
@@ -4550,6 +4604,36 @@
         "fr": "Votre durée moyenne des règles, en jours."
       },
       "streamId": "fertility-cycles-average-period",
+      "eventType": "time/d",
+      "type": "number",
+      "repeatable": "once"
+    },
+    "fertility-cycles-average-peak-day": {
+      "version": "v1",
+      "label": {
+        "en": "Average Peak Day",
+        "fr": "Jour sommet moyen"
+      },
+      "description": {
+        "en": "Your typical cycle day of peak fertility (recalled average).",
+        "fr": "Le jour type de votre pic de fertilité dans le cycle (moyenne rappelée)."
+      },
+      "streamId": "fertility-cycles-average-peak-day",
+      "eventType": "time/d",
+      "type": "number",
+      "repeatable": "once"
+    },
+    "fertility-cycles-average-luteal-phase": {
+      "version": "v1",
+      "label": {
+        "en": "Average Luteal Phase Length",
+        "fr": "Durée moyenne de la phase lutéale"
+      },
+      "description": {
+        "en": "Your typical luteal-phase length, in days (recalled average).",
+        "fr": "La durée type de votre phase lutéale, en jours (moyenne rappelée)."
+      },
+      "streamId": "fertility-cycles-average-luteal-phase",
       "eventType": "time/d",
       "type": "number",
       "repeatable": "once"
@@ -4791,6 +4875,114 @@
       "eventType": "activity/plain",
       "type": "checkbox",
       "repeatable": "P1D"
+    },
+    "fertility-tracking-method": {
+      "version": "v1",
+      "label": {
+        "en": "Fertility-tracking method",
+        "fr": "Méthode de suivi de fertilité"
+      },
+      "description": {
+        "en": "The charting method or device you use — it determines how your cycle observations should be read.",
+        "fr": "La méthode ou l'appareil de suivi que vous utilisez — cela détermine comment lire vos observations de cycle."
+      },
+      "streamId": "fertility-tracking-method",
+      "eventType": "fertility/tracking-method-v1",
+      "type": "select",
+      "options": [
+        {
+          "value": "billings",
+          "label": {
+            "en": "Billings Ovulation Method",
+            "fr": "Méthode Billings"
+          }
+        },
+        {
+          "value": "creighton",
+          "label": {
+            "en": "Creighton Model",
+            "fr": "Modèle Creighton"
+          }
+        },
+        {
+          "value": "sympto-thermal",
+          "label": {
+            "en": "Sympto-Thermal Method",
+            "fr": "Méthode sympto-thermique"
+          }
+        },
+        {
+          "value": "marquette",
+          "label": {
+            "en": "Marquette Method",
+            "fr": "Méthode Marquette"
+          }
+        },
+        {
+          "value": "femm",
+          "label": {
+            "en": "FEMM",
+            "fr": "FEMM"
+          }
+        },
+        {
+          "value": "justisse",
+          "label": {
+            "en": "Justisse Method",
+            "fr": "Méthode Justisse"
+          }
+        },
+        {
+          "value": "peak-day",
+          "label": {
+            "en": "Peak Day tracking",
+            "fr": "Suivi du jour sommet"
+          }
+        },
+        {
+          "value": "clearblue",
+          "label": {
+            "en": "Clearblue monitor",
+            "fr": "Moniteur Clearblue"
+          }
+        },
+        {
+          "value": "mira",
+          "label": {
+            "en": "Mira",
+            "fr": "Mira"
+          }
+        },
+        {
+          "value": "inito",
+          "label": {
+            "en": "Inito",
+            "fr": "Inito"
+          }
+        },
+        {
+          "value": "oura",
+          "label": {
+            "en": "Oura Ring",
+            "fr": "Bague Oura"
+          }
+        },
+        {
+          "value": "kegg",
+          "label": {
+            "en": "Kegg",
+            "fr": "Kegg"
+          }
+        },
+        {
+          "value": "other",
+          "label": {
+            "en": "Other",
+            "fr": "Autre"
+          }
+        }
+      ],
+      "repeatable": "once"
     },
     "fertility-pregnancy": {
       "version": "v2",
@@ -5208,6 +5400,20 @@
       "eventType": "test-result/scale",
       "type": "number",
       "repeatable": "any"
+    },
+    "finding-coded": {
+      "version": "v1",
+      "label": {
+        "en": "Finding (coded)"
+      },
+      "description": {
+        "en": "Search and select a coded clinical or imaging finding."
+      },
+      "streamId": "finding",
+      "eventType": "finding/coded-v1",
+      "type": "datasource-search",
+      "datasource": "finding",
+      "repeatable": "unlimited"
     },
     "function-mobility": {
       "version": "v1",
@@ -5723,6 +5929,108 @@
       "streamId": "profile-address",
       "eventType": "contact/country",
       "type": "text",
+      "repeatable": "once"
+    },
+    "profile-birthcountry": {
+      "version": "v1",
+      "label": {
+        "en": "Country of birth",
+        "fr": "Pays de naissance"
+      },
+      "description": {
+        "en": "The country where you were born (distinct from where you live).",
+        "fr": "Le pays où vous êtes né(e) (distinct de votre lieu de résidence)."
+      },
+      "streamId": "profile-birthcountry",
+      "eventType": "contact/country",
+      "type": "text",
+      "repeatable": "once"
+    },
+    "profile-ethnicity": {
+      "version": "v1",
+      "label": {
+        "en": "Ethnicity",
+        "fr": "Origine ethnique"
+      },
+      "description": {
+        "en": "Your self-identified ethnicity, recorded as a clinical and epidemiological variable.",
+        "fr": "Votre origine ethnique auto-déclarée, enregistrée comme variable clinique et épidémiologique."
+      },
+      "streamId": "profile-ethnicity",
+      "eventType": "attributes/ethnicity",
+      "type": "select",
+      "options": [
+        {
+          "value": "american-indian-alaska-native",
+          "label": {
+            "en": "American Indian or Alaska Native",
+            "fr": "Amérindien(ne) ou Autochtone d'Alaska"
+          }
+        },
+        {
+          "value": "asian",
+          "label": {
+            "en": "Asian",
+            "fr": "Asiatique"
+          }
+        },
+        {
+          "value": "black-african-american",
+          "label": {
+            "en": "Black or African American",
+            "fr": "Noir(e) ou Afro-Américain(e)"
+          }
+        },
+        {
+          "value": "hispanic-latino",
+          "label": {
+            "en": "Hispanic or Latino",
+            "fr": "Hispanique ou Latino"
+          }
+        },
+        {
+          "value": "middle-eastern-north-african",
+          "label": {
+            "en": "Middle Eastern or North African",
+            "fr": "Moyen-Oriental(e) ou Nord-Africain(e)"
+          }
+        },
+        {
+          "value": "native-hawaiian-pacific-islander",
+          "label": {
+            "en": "Native Hawaiian or Pacific Islander",
+            "fr": "Hawaïen(ne) ou insulaire du Pacifique"
+          }
+        },
+        {
+          "value": "white",
+          "label": {
+            "en": "White",
+            "fr": "Blanc(he)"
+          }
+        },
+        {
+          "value": "multiple",
+          "label": {
+            "en": "Multiple / mixed",
+            "fr": "Multiple / métis(se)"
+          }
+        },
+        {
+          "value": "other",
+          "label": {
+            "en": "Other",
+            "fr": "Autre"
+          }
+        },
+        {
+          "value": "prefer-not-to-say",
+          "label": {
+            "en": "Prefer not to say",
+            "fr": "Préfère ne pas répondre"
+          }
+        }
+      ],
       "repeatable": "once"
     },
     "profile-avatar": {
@@ -8696,6 +9004,63 @@
       "references": {
         "snomed": [
           "161891005"
+        ]
+      }
+    },
+    "symptom-pain-pelvic-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Pelvic pain",
+        "fr": "Douleur pelvienne"
+      },
+      "description": {
+        "en": "Pain in the pelvic area. (symptom-gastrointestinal-cramps is GI, not pelvic.)",
+        "fr": "Douleur dans la région pelvienne."
+      },
+      "streamId": "symptom-pain-pelvic",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "274671002"
         ]
       }
     },
@@ -11788,6 +12153,41 @@
         "description": "Country",
         "type": "string"
       },
+      "attributes/ethnicity": {
+        "description": "Self-identified ethnicity / race category. US-style category set (OMB-aligned), recorded as a clinical / epidemiological variable.",
+        "type": "string",
+        "enum": [
+          "american-indian-alaska-native",
+          "asian",
+          "black-african-american",
+          "hispanic-latino",
+          "middle-eastern-north-african",
+          "native-hawaiian-pacific-islander",
+          "white",
+          "multiple",
+          "other",
+          "prefer-not-to-say"
+        ]
+      },
+      "fertility/tracking-method-v1": {
+        "description": "Fertility-awareness charting method or device the person uses. Determines how their cycle observations should be interpreted.",
+        "type": "string",
+        "enum": [
+          "billings",
+          "creighton",
+          "sympto-thermal",
+          "marquette",
+          "femm",
+          "justisse",
+          "peak-day",
+          "clearblue",
+          "mira",
+          "inito",
+          "oura",
+          "kegg",
+          "other"
+        ]
+      },
       "contact/name": {
         "description": "Name",
         "type": "string"
@@ -12358,6 +12758,148 @@
                 "value": {},
                 "notes": {
                   "type": "string"
+                }
+              }
+            }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "condition/coded-v1": {
+        "description": "Coded clinical diagnosis / condition. 'condition' is the coded identity from datasets-service. Records what the patient HAS (an established diagnosis), distinct from symptoms, procedures and treatments.",
+        "type": "object",
+        "required": [
+          "condition"
+        ],
+        "properties": {
+          "condition": {
+            "description": "Coded condition identity, populated from datasets-service selection.",
+            "type": "object",
+            "required": [
+              "label",
+              "codes"
+            ],
+            "properties": {
+              "label": {
+                "description": "Localized condition name for display",
+                "type": "object",
+                "properties": {
+                  "en": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": {
+                "description": "Localized full description",
+                "type": "object",
+                "properties": {
+                  "en": {
+                    "type": "string"
+                  }
+                }
+              },
+              "codes": {
+                "description": "Coding identifiers across systems (SNOMED-CT, ICD-10, …).",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "code",
+                    "system",
+                    "hdsId"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "system": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "hdsId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "finding/coded-v1": {
+        "description": "Coded clinical finding. 'finding' is the coded identity from datasets-service. Records what was FOUND at surgery or on imaging (e.g. hydrosalpinx, ovarian endometrioma) — neither a procedure, a symptom, nor quite a diagnosis.",
+        "type": "object",
+        "required": [
+          "finding"
+        ],
+        "properties": {
+          "finding": {
+            "description": "Coded finding identity, populated from datasets-service selection.",
+            "type": "object",
+            "required": [
+              "label",
+              "codes"
+            ],
+            "properties": {
+              "label": {
+                "description": "Localized finding name for display",
+                "type": "object",
+                "properties": {
+                  "en": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": {
+                "description": "Localized full description",
+                "type": "object",
+                "properties": {
+                  "en": {
+                    "type": "string"
+                  }
+                }
+              },
+              "codes": {
+                "description": "Coding identifiers across systems (SNOMED-CT, …).",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "code",
+                    "system",
+                    "hdsId"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "system": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "hdsId": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
@@ -15028,6 +15570,50 @@
     }
   },
   "datasources": {
+    "condition": {
+      "label": {
+        "en": "Conditions"
+      },
+      "description": {
+        "en": "Search clinical diagnoses / conditions (SNOMED-CT) from datasets service"
+      },
+      "endpoint": "datasets://condition",
+      "queryParam": "search",
+      "minQueryLength": 3,
+      "resultKey": "conditions",
+      "displayFields": {
+        "label": "label",
+        "description": "description"
+      },
+      "valueFields": [
+        "label",
+        "description",
+        "codes",
+        "hdsId"
+      ]
+    },
+    "finding": {
+      "label": {
+        "en": "Findings"
+      },
+      "description": {
+        "en": "Search clinical / imaging / surgical findings (SNOMED-CT) from datasets service"
+      },
+      "endpoint": "datasets://finding",
+      "queryParam": "search",
+      "minQueryLength": 3,
+      "resultKey": "findings",
+      "displayFields": {
+        "label": "label",
+        "description": "description"
+      },
+      "valueFields": [
+        "label",
+        "description",
+        "codes",
+        "hdsId"
+      ]
+    },
     "medication": {
       "label": {
         "en": "Medications"
@@ -15135,11 +15721,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-07-16T08:45:47.382Z"
+      "updatedAt": "2026-07-16T09:49:42.356Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-07-16T08:45:47.383Z"
+      "updatedAt": "2026-07-16T09:49:42.357Z"
     }
   },
   "settings": {

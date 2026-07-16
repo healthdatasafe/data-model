@@ -1,4 +1,48 @@
 {
+  "condition": {
+    "label": {
+      "en": "Conditions"
+    },
+    "description": {
+      "en": "Search clinical diagnoses / conditions (SNOMED-CT) from datasets service"
+    },
+    "endpoint": "datasets://condition",
+    "queryParam": "search",
+    "minQueryLength": 3,
+    "resultKey": "conditions",
+    "displayFields": {
+      "label": "label",
+      "description": "description"
+    },
+    "valueFields": [
+      "label",
+      "description",
+      "codes",
+      "hdsId"
+    ]
+  },
+  "finding": {
+    "label": {
+      "en": "Findings"
+    },
+    "description": {
+      "en": "Search clinical / imaging / surgical findings (SNOMED-CT) from datasets service"
+    },
+    "endpoint": "datasets://finding",
+    "queryParam": "search",
+    "minQueryLength": 3,
+    "resultKey": "findings",
+    "displayFields": {
+      "label": "label",
+      "description": "description"
+    },
+    "valueFields": [
+      "label",
+      "description",
+      "codes",
+      "hdsId"
+    ]
+  },
   "medication": {
     "label": {
       "en": "Medications"
