@@ -293,6 +293,141 @@
                 "id": "body-blood-serum-homocysteine",
                 "name": "Homocysteine",
                 "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-cholesterol-total",
+                "name": "Total cholesterol",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-cholesterol-hdl",
+                "name": "HDL cholesterol",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-cholesterol-ldl",
+                "name": "LDL cholesterol",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-triglycerides",
+                "name": "Triglycerides",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-crp-hs",
+                "name": "hs-CRP",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-free-t4",
+                "name": "Free T4",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-free-t3",
+                "name": "Free T3",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-total-t3",
+                "name": "Total T3",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-reverse-t3",
+                "name": "Reverse T3",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-tpo-antibodies",
+                "name": "TPO antibodies",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-thyroglobulin-antibodies",
+                "name": "Thyroglobulin antibodies",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-thyroglobulin",
+                "name": "Thyroglobulin",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-tsi",
+                "name": "TSI",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-trab",
+                "name": "TRAb",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-progesterone",
+                "name": "Progesterone",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-testosterone-total",
+                "name": "Total testosterone",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-testosterone-free",
+                "name": "Free testosterone",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-shbg",
+                "name": "SHBG",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-dhea-s",
+                "name": "DHEA-S",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-androstenedione",
+                "name": "Androstenedione",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-17-oh-progesterone",
+                "name": "17-OH progesterone",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-prolactin",
+                "name": "Prolactin",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-cortisol",
+                "name": "Cortisol",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-ca-125",
+                "name": "CA-125",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-pth",
+                "name": "PTH",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-acth",
+                "name": "ACTH",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-aldosterone",
+                "name": "Aldosterone",
+                "parentId": "body-blood-serum"
               }
             ],
             "parentId": "body-blood"
@@ -384,6 +519,11 @@
           {
             "id": "body-blood-hba1c",
             "name": "HbA1c",
+            "parentId": "body-blood"
+          },
+          {
+            "id": "body-blood-esr",
+            "name": "ESR",
             "parentId": "body-blood"
           }
         ],
