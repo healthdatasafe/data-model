@@ -1,5 +1,54 @@
 # Changelog
 
+## [2.1.0] - 2026-07-16
+
+**Additive — 28 analytes + 5 reporting units.** No renames, no removals; every existing key and event
+type is untouched, so nothing breaks on upgrade.
+
+Delivers the analytes enumerated in
+[healthdatasafe/site-agents#5](https://github.com/healthdatasafe/site-agents/issues/5) (follow-up to the
+#2 domain): the fertility/reproductive-endocrine workup the first delivery had deferred.
+
+### Added — 28 serum/blood analytes
+
+- **Lipids (4):** total cholesterol, HDL, LDL, triglycerides (`concentration/mg-dl`).
+- **Inflammation (2):** hs-CRP (`concentration/mg-l`); ESR (`rate/mm-h`, whole blood — placed under
+  `body-blood` beside HbA1c, not in the serum subtree).
+- **Thyroid (9):** free T4, total T3, reverse T3 (`concentration/ng-dl`); free T3 (`concentration/pg-ml`);
+  TPO antibodies, thyroglobulin antibodies (`concentration/iu-ml`); thyroglobulin (`concentration/ug-l`,
+  displayed ng/mL); TSI, TRAb (`concentration/iu-l`).
+- **Reproductive & adrenal (13):** progesterone, prolactin (`concentration/ug-l`, displayed ng/mL);
+  total testosterone, androstenedione, 17-OH progesterone, aldosterone (`concentration/ng-dl`); free
+  testosterone (`concentration/pg-ml`); SHBG (`concentration/nmol-l`); DHEA-S, cortisol
+  (`concentration/mcg-dl`); CA-125 (`concentration/u-ml`); PTH, ACTH (`concentration/pg-ml`).
+
+All 28 SNOMED references are measurement-procedure concepts, verified ACTIVE against the local
+`snomed-db` — the batch rejected 5 inactive top-of-search hits (total cholesterol, DHEA-S, CA-125 ×2,
+TPO). TPO uses `27115008` *Microsomal thyroid antibody measurement* (the historical name for the same
+assay; the dedicated TPO-Ab concepts are all inactive) — noted on the item.
+
+### Added — 5 reporting-unit event types
+
+`concentration/ng-dl`, `concentration/nmol-l`, `concentration/iu-ml`, `concentration/u-ml`, `rate/mm-h`.
+Each proven non-equivalent to every existing same-dimension type per the `AGENTS.md` no-equivalent-twins
+rule (all are genuine decade/scale differences, not silent duplicates of `iu-l` / `u-l` / `umol-l`).
+
+### Added — `molar` pregnancy outcome
+
+`pregnancy/detailed` (and the `fertility-pregnancy` item) gain a `molar` (hydatidiform mole) enum value,
+inserted after `ectopic` — a distinct entity with its own hCG-surveillance follow-up. Requested in
+[healthdatasafe/site-agents#4 §3.5](https://github.com/healthdatasafe/site-agents/issues/4). Purely
+additive; existing pregnancy events are unaffected.
+
+### Judgment calls (open to correction by the reporter)
+
+- **CA-125 → `concentration/u-ml`**, not `catalytic-activity/u-ml`: the existing `catalytic-activity/u-l`
+  is reserved for the liver *enzymes* (ALT/AST/GGT/ALP/LDH); CA-125's "U" is an arbitrary immunoassay
+  unit, not catalytic activity.
+- **TSI → `concentration/iu-l`** (assumed): the request left the unit blank. Modern immunoassays report
+  IU/L; older bioassays report a % stimulation index — if needed, add it as a `variations.eventType`
+  rather than retyping.
+
 ## [2.0.0] - 2026-07-15
 
 **Major bump because item keys were renamed.** Stored data is unaffected, and **the old keys keep

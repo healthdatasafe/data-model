@@ -115,6 +115,64 @@ children:
           # Methylation
           - id: body-blood-serum-homocysteine
             name: Homocysteine
+          # Lipids
+          - id: body-blood-serum-cholesterol-total
+            name: Total cholesterol
+          - id: body-blood-serum-cholesterol-hdl
+            name: HDL cholesterol
+          - id: body-blood-serum-cholesterol-ldl
+            name: LDL cholesterol
+          - id: body-blood-serum-triglycerides
+            name: Triglycerides
+          # Inflammation
+          - id: body-blood-serum-crp-hs
+            name: hs-CRP
+          # Thyroid — function & antibodies
+          - id: body-blood-serum-free-t4
+            name: Free T4
+          - id: body-blood-serum-free-t3
+            name: Free T3
+          - id: body-blood-serum-total-t3
+            name: Total T3
+          - id: body-blood-serum-reverse-t3
+            name: Reverse T3
+          - id: body-blood-serum-tpo-antibodies
+            name: TPO antibodies
+          - id: body-blood-serum-thyroglobulin-antibodies
+            name: Thyroglobulin antibodies
+          - id: body-blood-serum-thyroglobulin
+            name: Thyroglobulin
+          - id: body-blood-serum-tsi
+            name: TSI
+          - id: body-blood-serum-trab
+            name: TRAb
+          # Hormones — reproductive & adrenal (extended)
+          - id: body-blood-serum-progesterone
+            name: Progesterone
+          - id: body-blood-serum-testosterone-total
+            name: Total testosterone
+          - id: body-blood-serum-testosterone-free
+            name: Free testosterone
+          - id: body-blood-serum-shbg
+            name: SHBG
+          - id: body-blood-serum-dhea-s
+            name: DHEA-S
+          - id: body-blood-serum-androstenedione
+            name: Androstenedione
+          - id: body-blood-serum-17-oh-progesterone
+            name: 17-OH progesterone
+          - id: body-blood-serum-prolactin
+            name: Prolactin
+          - id: body-blood-serum-cortisol
+            name: Cortisol
+          - id: body-blood-serum-ca-125
+            name: CA-125
+          - id: body-blood-serum-pth
+            name: PTH
+          - id: body-blood-serum-acth
+            name: ACTH
+          - id: body-blood-serum-aldosterone
+            name: Aldosterone
       # Whole blood — complete blood count
       - id: body-blood-cbc
         name: Complete blood count
@@ -153,6 +211,9 @@ children:
             name: Magnesium (RBC)
       - id: body-blood-hba1c
         name: HbA1c
+      # Whole blood — erythrocyte sedimentation rate (not a serum assay)
+      - id: body-blood-esr
+        name: ESR
   - id: body-vulva
     name: Vulva
     children:

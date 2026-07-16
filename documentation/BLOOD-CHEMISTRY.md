@@ -70,7 +70,8 @@ no value. Every analyte stores the number as the lab prints it.
 |---|---|
 | **Cell counts** | `concentration/megacount-ml` (10⁶/mL) carries WBC and platelets — × 10⁹/L is × 10⁶/mL, so 3.4–10.8 and 150–400 store as printed. RBC is × 10¹²/L ≡ × 10⁹/mL, which would be 4300–4800 on that unit, so **`concentration/gigacount-ml`** exists for it: 4.3–4.8. The mixed-unit panel *mirrors the report*, which genuinely prints RBC in × 10¹²/L and WBC in × 10⁹/L. |
 | **Percentages** | Lab percentages are genuine fractions (HbA1c is the glycated fraction of total hemoglobin; hematocrit the packed-cell fraction), so they store `0..1` on `ratio/proportion` and render via `number.display.multiplier: 100`. The `0..1` bound is enforced, and fractions match Apple HealthKit's `HKUnit.percent()`. FHIR/LOINC export applies the × 100 in the mapper. |
-| **ng/mL** | Not a unit here: **1 ng/mL = 1 μg/L**, so ferritin, folate, 25-OH-D, C-peptide and AMH use the legacy `concentration/ug-l` with the identical stored number. Adding `ng-ml` would have split one measurement across two type names. See the no-equivalent-types rule in `AGENTS.md`. |
+| **ng/mL** | Not a unit here: **1 ng/mL = 1 μg/L**, so ferritin, folate, 25-OH-D, C-peptide, AMH, thyroglobulin, progesterone and prolactin use the legacy `concentration/ug-l` with the identical stored number. Adding `ng-ml` would have split one measurement across two type names. See the no-equivalent-types rule in `AGENTS.md`. |
+| **Endocrine reporting units (2.1.0)** | The reproductive/adrenal & thyroid extension added `concentration/ng-dl` (T3/T4, testosterone, androstenedione, 17-OHP, aldosterone), `concentration/nmol-l` (SHBG), `concentration/iu-ml` (TPO & thyroglobulin antibodies), `concentration/u-ml` (CA-125) and `rate/mm-h` (ESR). Each is a genuine scale difference from its nearest existing type (`ng-dl` ≠ `mcg-dl`/`pg-ml`/`ug-l`; `iu-ml` = 1000× `iu-l`; `u-ml` = 1000× `catalytic-activity/u-l`; `nmol-l` ≠ `umol-l`), not an equivalent twin. CA-125 is `concentration/u-ml`, **not** `catalytic-activity/u-ml`: the "U" is an arbitrary immunoassay unit, and `catalytic-activity/*` is reserved for the liver enzymes. |
 
 ## Sample context
 
@@ -128,10 +129,16 @@ and kept, so existing events still resolve and render; new data uses `body-urine
   `body-urine-hormones-e3g` (estrone-3-glucuronide has no concept), `body-urine-hormones-pdg`
   (`89113004` is *Pregnanediol measurement* — a different substance) and `body-blood-rbc-magnesium`
   (no erythrocyte-magnesium concept).
-- Two references are deliberate compromises, noted on the items: `body-blood-serum-folate` uses
+- Three references are deliberate compromises, noted on the items: `body-blood-serum-folate` uses
   `250212002` *Plasma folate* (SNOMED has no serum folate **procedure**, only findings; the two are
-  reported interchangeably), and `body-blood-serum-egfr` uses `80274001`, an **observable entity**
-  rather than a procedure — SNOMED has no estimated-GFR measurement procedure.
+  reported interchangeably), `body-blood-serum-egfr` uses `80274001`, an **observable entity**
+  rather than a procedure — SNOMED has no estimated-GFR measurement procedure — and
+  `body-blood-serum-tpo-antibodies` uses `27115008` *Microsomal thyroid antibody measurement*, the
+  historical name for the TPO-antibody assay (thyroid peroxidase **is** the microsomal antigen); the
+  dedicated TPO-Ab measurement concepts are all inactive.
+- The 2.1.0 batch again earned its verification: five obvious top-of-search hits were **inactive**
+  (`270996006` serum cholesterol, `28437009` DHEA-S measurement, `408253004` + `144297009` CA-125,
+  and the TPO-Ab concepts above) and were rejected for their active equivalents.
 - **LOINC** has no local source to verify against, so codes are **not** asserted. Follows the existing
   precedent (`body-semen-morphology-normal`): note the candidate in a comment marked pending
   verification rather than ship a guess.

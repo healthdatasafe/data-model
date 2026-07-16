@@ -80,13 +80,14 @@
       "maximum": 1
     },
     "pregnancy/detailed": {
-      "description": "Pregnancy. Use 'ongoing' while pregnancy is in progress; otherwise the value reflects how it terminated. 'very-early-loss' covers biochemical / pre-clinical losses with duration <6 weeks LMP (typically hCG-detected only, clinically distinct from miscarriage per ESHRE 2022 RPL guideline).",
+      "description": "Pregnancy. Use 'ongoing' while pregnancy is in progress; otherwise the value reflects how it terminated. 'very-early-loss' covers biochemical / pre-clinical losses with duration <6 weeks LMP (typically hCG-detected only, clinically distinct from miscarriage per ESHRE 2022 RPL guideline). 'molar' (hydatidiform mole) is a distinct entity from ectopic — abnormal trophoblastic tissue requiring hCG surveillance.",
       "type": "string",
       "enum": [
         "ongoing",
         "very-early-loss",
         "miscarriage",
         "ectopic",
+        "molar",
         "stillbirth",
         "livebirth",
         "abortion"
@@ -590,6 +591,26 @@
       "type": "number",
       "minimum": 0
     },
+    "concentration/nmol-l": {
+      "description": "Nanomoles per liter (nmol/L)",
+      "type": "number",
+      "minimum": 0
+    },
+    "concentration/ng-dl": {
+      "description": "Nanograms per deciliter (ng/dL)",
+      "type": "number",
+      "minimum": 0
+    },
+    "concentration/iu-ml": {
+      "description": "International units per milliliter (IU/mL)",
+      "type": "number",
+      "minimum": 0
+    },
+    "concentration/u-ml": {
+      "description": "Units per milliliter (U/mL)",
+      "type": "number",
+      "minimum": 0
+    },
     "catalytic-activity/u-l": {
       "description": "Units per liter (U/L)",
       "type": "number",
@@ -622,6 +643,11 @@
     "rate/mcg-hr": {
       "description": "Micrograms per hour (μg/h)",
       "type": "number"
+    },
+    "rate/mm-h": {
+      "description": "Millimeters per hour (mm/h)",
+      "type": "number",
+      "minimum": 0
     },
     "frequency/times-period": {
       "description": "Number of times per period. E.g. 2 times per day, 1 time per week.",
@@ -1105,6 +1131,22 @@
       "name": { "en": "Micromoles per liter", "fr": "Micromoles par litre" },
       "symbol": "μmol/L"
     },
+    "concentration/nmol-l": {
+      "name": { "en": "Nanomoles per liter", "fr": "Nanomoles par litre" },
+      "symbol": "nmol/L"
+    },
+    "concentration/ng-dl": {
+      "name": { "en": "Nanograms per deciliter", "fr": "Nanogrammes par décilitre" },
+      "symbol": "ng/dL"
+    },
+    "concentration/iu-ml": {
+      "name": { "en": "International units per milliliter", "fr": "Unités internationales par millilitre" },
+      "symbol": "IU/mL"
+    },
+    "concentration/u-ml": {
+      "name": { "en": "Units per milliliter", "fr": "Unités par millilitre" },
+      "symbol": "U/mL"
+    },
     "catalytic-activity/u-l": {
       "name": { "en": "Units per liter", "fr": "Unités par litre" },
       "symbol": "U/L"
@@ -1132,6 +1174,10 @@
     "rate/mcg-hr": {
       "name": { "en": "Micrograms per hour", "fr": "Microgrammes par heure" },
       "symbol": "μg/h"
+    },
+    "rate/mm-h": {
+      "name": { "en": "Millimeters per hour", "fr": "Millimètres par heure" },
+      "symbol": "mm/h"
     },
     "frequency/times-period": {
       "name": { "en": "Frequency", "fr": "Fréquence" },

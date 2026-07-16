@@ -213,6 +213,8 @@ fertility-pregnancy:
       label: 'Miscarriage'
     - value: 'ectopic'
       label: 'Ectopic'
+    - value: 'molar'
+      label: 'Molar (hydatidiform mole)'
     - value: 'stillbirth'
       label: 'Stillbirth'
     - value: 'livebirth'
