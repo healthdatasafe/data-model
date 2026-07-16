@@ -46,6 +46,30 @@ if [ ! -s dist/index.html ]; then
   exit 1
 fi
 
+# ── Consumer contract check ──────────────────────────────────────────────────
+# data-model and hds-lib each carry their OWN `streamId:eventType` index. They
+# drifted once: data-model published deprecated rename-aliases its own loader
+# accepted but hds-lib's rejected, and every consumer threw on first `itemsDefs`
+# access (site-agents#3). data-model's own suite can't see this — it tests its
+# loader against its definitions, never the PUBLISHED pack against a DIFFERENT
+# loader. So load the freshly-built pack through REAL hds-lib before publishing.
+#
+# An ephemeral install (not a devDependency) keeps the dependency direction one-way
+# and always tests against current hds-lib. HDS_LIB_REF overrides the version tested.
+HDS_LIB_REF="${HDS_LIB_REF:-github:healthdatasafe/hds-lib-js}"
+echo "Consumer contract check (loading the pack through hds-lib: $HDS_LIB_REF)..."
+CHECK_DIR="$(mktemp -d)"
+trap 'rm -rf "$CHECK_DIR"' EXIT
+if ! ( cd "$CHECK_DIR" && npm init -y >/dev/null 2>&1 && npm install --no-audit --no-fund --silent "$HDS_LIB_REF" >/dev/null 2>&1 ); then
+  echo "ERROR: could not install hds-lib ($HDS_LIB_REF) for the consumer check — refusing to deploy."
+  exit 1
+fi
+if ! node scripts/consumer-check.mjs "$PWD/dist/pack.json" "$CHECK_DIR/node_modules/hds-lib"; then
+  echo "ERROR: the built pack does not load in hds-lib — refusing to deploy (see the failure above)."
+  echo "       This is the site-agents#3 class of bug: a pack a consumer's loader rejects."
+  exit 1
+fi
+
 # Bypass Jekyll on GitHub Pages so dotfiles + JSON are served verbatim.
 touch dist/.nojekyll
 
