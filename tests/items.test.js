@@ -70,53 +70,48 @@ describe('[ITMC] Composite↔eventType validation (B-2026-06-12-1)', () => {
   });
 });
 
-describe('[ITMA] Deprecated rename aliases (Plan 83)', () => {
+describe('[ITMA] Urine hormone key rename (Plan 83)', () => {
   const { itemsById, findItemForEvent } = require('../src/items');
 
-  // Renaming an item key is breaking for consumers that reference it. Keeping the old key as a
-  // deprecated alias — same streamId, same eventType — makes the rename non-breaking: forKey still
-  // resolves it, so consumers migrate on their own schedule, while the active item owns the
-  // storage-identity index so findItemForEvent stays unambiguous.
-  const ALIASES = [
-    ['fertility-hormone-fsh', 'body-urine-hormones-fsh'],
-    ['fertility-hormone-hcg', 'body-urine-hormones-hcg'],
-    ['fertility-hormone-pdg', 'body-urine-hormones-pdg'],
-    ['fertility-hormone-e3g', 'body-urine-hormones-e3g']
+  // The FSH/hCG/PdG/E3G items were renamed to body-urine-hormones-*. The old keys were kept as
+  // deprecated aliases through the migration window (Phase 5) and removed in Phase 6 once every
+  // consumer moved. The rename never changed streamId+eventType, so no stored event referenced the
+  // item key — removing the aliases orphans nothing.
+  const RENAMED = [
+    ['fertility-hormone-fsh', 'body-urine-hormones-fsh', 'concentration/iu-l'],
+    ['fertility-hormone-hcg', 'body-urine-hormones-hcg', 'concentration/iu-l'],
+    ['fertility-hormone-pdg', 'body-urine-hormones-pdg', 'concentration/iu-l'],
+    ['fertility-hormone-e3g', 'body-urine-hormones-e3g', 'concentration/ug-l']
   ];
 
-  it('[ITMA-1] the old key still resolves, and is marked deprecated', () => {
-    for (const [oldKey] of ALIASES) {
-      assert.ok(itemsById[oldKey], `${oldKey} must stay resolvable for consumers pinned to it`);
-      assert.equal(itemsById[oldKey].deprecated, true, `${oldKey} must be deprecated`);
+  it('[ITMA-1] the old alias keys are gone', () => {
+    for (const [oldKey] of RENAMED) {
+      assert.ok(!itemsById[oldKey], `${oldKey} should have been removed in Phase 6`);
     }
   });
 
-  it('[ITMA-2] the alias is faithful — identical storage identity, so it emits identical events', () => {
-    for (const [oldKey, newKey] of ALIASES) {
-      assert.equal(itemsById[oldKey].streamId, itemsById[newKey].streamId, `${oldKey} streamId`);
-      assert.equal(itemsById[oldKey].eventType, itemsById[newKey].eventType, `${oldKey} eventType`);
-    }
-  });
-
-  it('[ITMA-3] the replacement is NOT deprecated', () => {
-    for (const [, newKey] of ALIASES) {
+  it('[ITMA-2] the active replacement resolves and is not deprecated', () => {
+    for (const [, newKey, eventType] of RENAMED) {
+      assert.ok(itemsById[newKey], `${newKey} must exist`);
       assert.ok(!itemsById[newKey].deprecated, `${newKey} must be active`);
+      assert.equal(itemsById[newKey].eventType, eventType, `${newKey} eventType`);
     }
   });
 
-  it('[ITMA-4] findItemForEvent resolves to the ACTIVE item, never the alias', () => {
-    for (const [oldKey, newKey] of ALIASES) {
+  it('[ITMA-3] findItemForEvent resolves each pair to its active item', () => {
+    for (const [, newKey] of RENAMED) {
       const item = itemsById[newKey];
       const found = findItemForEvent(item.eventType, item.streamId);
-      assert.strictEqual(found, itemsById[newKey], `${item.streamId}:${item.eventType} must resolve to ${newKey}, not ${oldKey}`);
+      assert.strictEqual(found, itemsById[newKey], `${item.streamId}:${item.eventType} must resolve to ${newKey}`);
     }
   });
 
-  it('[ITMA-5] a deprecated item with its OWN pair still resolves (old LH events keep rendering)', () => {
-    // fertility-hormone-lh was mis-typed mg/L; its replacement uses iu-l, so the pair differs and
-    // events written under the old type must still find their item.
+  it('[ITMA-4] fertility-hormone-lh is KEPT — old mg/L LH events still resolve to it', () => {
+    // Not an alias: LH was mis-typed concentration/mg-l; the active body-urine-hormones-lh uses
+    // iu-l, so the pair differs. Historical mg-l events must still find the deprecated item.
     const lh = findItemForEvent('concentration/mg-l', 'body-urine-hormones-lh');
     assert.strictEqual(lh, itemsById['fertility-hormone-lh']);
+    assert.equal(itemsById['fertility-hormone-lh'].deprecated, true);
     const lhNew = findItemForEvent('concentration/iu-l', 'body-urine-hormones-lh');
     assert.strictEqual(lhNew, itemsById['body-urine-hormones-lh']);
   });

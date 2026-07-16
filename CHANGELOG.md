@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.3.0] - 2026-07-16
+
+**Removed the FSH/hCG/PdG/E3G urine-hormone rename aliases** (`fertility-hormone-{fsh,hcg,pdg,e3g}`),
+the deprecated keys kept through the Plan 83 migration window. Their consumers (`bridge-mira`,
+`doctor-dashboard`) now write and read the `body-urine-hormones-*` keys, so the aliases are unused. The
+rename never changed `streamId`+`eventType`, so no stored event referenced the item key — removing them
+orphans nothing, and it removes the colliding `streamId:eventType` pairs entirely (a pack even a pre-1.3.1
+`hds-lib` loads cleanly). **`fertility-hormone-lh` is kept** — not an alias: its rename also changed the
+unit (`mg-l` → `iu-l`), so historical `mg-l` LH events still resolve to it.
+
 ## [2.2.0] - 2026-07-16
 
 **Additive — the trying-to-conceive intake-questionnaire concepts** from
