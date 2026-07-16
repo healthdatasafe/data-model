@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.4.0] - 2026-07-16
+
+**Additive — reproductive-stage / menopausal status** from
+[healthdatasafe/site-agents#7](https://github.com/healthdatasafe/site-agents/issues/7). No renames or
+removals. Loaded through hds-lib 1.3.3 via the consumer-check (283 items, no collision).
+
+### Added — `profile-reproductive-stage`
+
+- A durable-but-time-varying patient attribute for reproductive-aging / menopausal stage, aligned to the
+  **STRAW+10** staging system. It is the standing fact that **selects the reference band** for
+  stage-dependent hormones (estradiol, FSH, prolactin) shipped in
+  [site-agents#5](https://github.com/healthdatasafe/site-agents/issues/5) — a value without the stage
+  can't be interpreted.
+- Follows the model's durable-attribute convention (`profile-sex`/`attributes/biological-sex`,
+  `profile-ethnicity`/`attributes/ethnicity`): a `select` item `profile-reproductive-stage` on stream
+  `profile-reproductive-stage`, new eventType **`attributes/reproductive-stage`** (string enum).
+- **`repeatable: any`** (not `once`) — stage is time-varying (premenopausal → perimenopausal →
+  postmenopausal), so it is a dated observation with `event.time` = when the stage applied, not a
+  set-once profile field.
+- Enum (STRAW+10): `premenopausal · perimenopausal · postmenopausal · surgical-menopause ·
+  primary-ovarian-insufficiency · pregnant · postpartum · lactating`.
+- **Stage only.** Hormone therapy stays a separate `medication-intake-coded` record (per the
+  [site-agents#4](https://github.com/healthdatasafe/site-agents/issues/4) Q4 ruling); "on-HRT vs
+  no-HRT" is derived by joining the two, keeping the vocabulary clean.
+
 ## [2.3.0] - 2026-07-16
 
 **Removed the FSH/hCG/PdG/E3G urine-hormone rename aliases** (`fertility-hormone-{fsh,hcg,pdg,e3g}`),

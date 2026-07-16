@@ -125,3 +125,32 @@ profile-sex:
     - value: female
       label: Female
   repeatable: once
+profile-reproductive-stage:
+  version: v1
+  label:
+    en: Reproductive stage
+    fr: Stade reproductif
+  description:
+    en: Your reproductive-aging / menopausal stage (STRAW+10). A durable but changing life-stage fact — record a new dated entry whenever it changes. It selects the correct reference range for stage-dependent hormones such as estradiol, FSH and prolactin. Hormone therapy is recorded separately as a medication.
+    fr: Votre stade de vieillissement reproductif / ménopausique (STRAW+10). Un fait de vie durable mais évolutif — enregistrez une nouvelle entrée datée à chaque changement. Il détermine l'intervalle de référence approprié pour les hormones dépendant du stade telles que l'œstradiol, la FSH et la prolactine. Le traitement hormonal est enregistré séparément comme médicament.
+  streamId: profile-reproductive-stage
+  eventType: attributes/reproductive-stage
+  type: select
+  options:
+    - value: premenopausal
+      label: { en: Premenopausal, fr: Préménopause }
+    - value: perimenopausal
+      label: { en: Perimenopausal, fr: Périménopause }
+    - value: postmenopausal
+      label: { en: Postmenopausal, fr: Postménopause }
+    - value: surgical-menopause
+      label: { en: Surgical menopause, fr: Ménopause chirurgicale }
+    - value: primary-ovarian-insufficiency
+      label: { en: Primary ovarian insufficiency, fr: Insuffisance ovarienne primaire }
+    - value: pregnant
+      label: { en: Pregnant, fr: Enceinte }
+    - value: postpartum
+      label: { en: Postpartum, fr: Post-partum }
+    - value: lactating
+      label: { en: Lactating, fr: Allaitement }
+  repeatable: any

@@ -20,3 +20,5 @@ children:
     name: Name
   - id: profile-sex
     name: Sex
+  - id: profile-reproductive-stage
+    name: Reproductive stage

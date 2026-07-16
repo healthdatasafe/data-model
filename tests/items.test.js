@@ -116,3 +116,41 @@ describe('[ITMA] Urine hormone key rename (Plan 83)', () => {
     assert.strictEqual(lhNew, itemsById['body-urine-hormones-lh']);
   });
 });
+
+describe('[ITMR] Reproductive stage (site-agents#7)', () => {
+  const { itemsById, findItemForEvent } = require('../src/items');
+  const { eventTypesById } = require('../src/eventTypes');
+
+  const STAGES = [
+    'premenopausal', 'perimenopausal', 'postmenopausal', 'surgical-menopause',
+    'primary-ovarian-insufficiency', 'pregnant', 'postpartum', 'lactating'
+  ];
+
+  it('[ITMR-1] profile-reproductive-stage exists on attributes/reproductive-stage', () => {
+    const item = itemsById['profile-reproductive-stage'];
+    assert.ok(item, 'profile-reproductive-stage must exist');
+    assert.equal(item.streamId, 'profile-reproductive-stage');
+    assert.equal(item.eventType, 'attributes/reproductive-stage');
+    assert.equal(item.type, 'select');
+    assert.ok(!item.deprecated, 'must be active');
+  });
+
+  it('[ITMR-2] it is a dated, repeatable attribute — not set-once', () => {
+    // Reproductive stage is time-varying (STRAW+10 progression), so it must NOT be repeatable:once.
+    assert.notEqual(itemsById['profile-reproductive-stage'].repeatable, 'once');
+  });
+
+  it('[ITMR-3] every option value is a valid STRAW+10 stage in the eventType enum', () => {
+    const item = itemsById['profile-reproductive-stage'];
+    const eventType = eventTypesById('attributes/reproductive-stage');
+    assert.ok(eventType && Array.isArray(eventType.enum), 'eventType enum must exist');
+    const values = item.options.map(o => o.value);
+    assert.deepEqual(values, STAGES);
+    for (const v of values) assert.ok(eventType.enum.includes(v), `${v} must be in the eventType enum`);
+  });
+
+  it('[ITMR-4] findItemForEvent resolves the pair to this item', () => {
+    const found = findItemForEvent('attributes/reproductive-stage', 'profile-reproductive-stage');
+    assert.strictEqual(found, itemsById['profile-reproductive-stage']);
+  });
+});
