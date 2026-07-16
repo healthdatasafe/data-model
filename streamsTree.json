@@ -985,6 +985,11 @@
         "id": "profile-sex",
         "name": "Sex",
         "parentId": "profile"
+      },
+      {
+        "id": "profile-reproductive-stage",
+        "name": "Reproductive stage",
+        "parentId": "profile"
       }
     ]
   },

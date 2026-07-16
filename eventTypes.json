@@ -1984,6 +1984,20 @@
         "prefer-not-to-say"
       ]
     },
+    "attributes/reproductive-stage": {
+      "description": "Reproductive-aging / menopausal stage — a durable but time-varying patient attribute, aligned to the STRAW+10 staging system. Selects the reference band for stage-dependent hormones (estradiol, FSH, prolactin). Stage only; hormone therapy is recorded separately as a medication, not encoded here.",
+      "type": "string",
+      "enum": [
+        "premenopausal",
+        "perimenopausal",
+        "postmenopausal",
+        "surgical-menopause",
+        "primary-ovarian-insufficiency",
+        "pregnant",
+        "postpartum",
+        "lactating"
+      ]
+    },
     "fertility/tracking-method-v1": {
       "description": "Fertility-awareness charting method or device the person uses. Determines how their cycle observations should be interpreted.",
       "type": "string",
