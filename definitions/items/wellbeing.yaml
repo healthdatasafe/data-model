@@ -239,7 +239,7 @@ wellbeing-mental-distress-anxiety:
         fr: Extrêmement anxieux
   repeatable: unlimited
   references:
-    snomed: ["48694002", "444849004"]
+    snomed: ["48694002"]
     loinc: "69737-5"
 
 wellbeing-mental-distress-depression:
@@ -362,5 +362,8 @@ wellbeing-self-rated-health:
           fr: La meilleure santé que vous puissiez imaginer
   repeatable: unlimited
   references:
-    snomed: ["425058002", "104346004"]
+    # No clean SNOMED concept for the self-rated-health / EQ-VAS *scale* itself
+    # (the prior "425058002"/"104346004" were not valid SCTIDs). LOINC is the
+    # appropriate terminology for this PRO/VAS measure. Add a SNOMED ref only if a
+    # correct observable is identified (verify via snomed-db before adding).
     loinc: ["72006-0", "32622-6", "82589-3"]

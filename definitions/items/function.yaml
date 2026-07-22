@@ -76,7 +76,7 @@ function-self-care:
   repeatable: unlimited
   references:
     icf: ["d510", "d540"]
-    snomed: "284774004"
+    snomed: "228151002" # Personal care disability (finding) — was invalid "284774004"
     loinc: "63801-3"
 
 function-usual-activities:

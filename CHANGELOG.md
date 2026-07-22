@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.5.1] - 2026-07-22
+
+**Fix — invalid SNOMED references.** A full audit of all SNOMED codes across the itemDefs (via
+snomed-db `verifyConcept`) found 4 SCTIDs absent from the current edition. Corrected:
+- `wellbeing-mental-distress-anxiety`: dropped invalid `444849004`; kept valid `48694002` (Anxiety).
+- `function-self-care`: `284774004` → `228151002` (Personal care disability, finding — verified active).
+- `wellbeing-self-rated-health`: removed invalid `425058002` + `104346004` (no clean SNOMED exists for the
+  self-rated-health / EQ-VAS *scale*; the item keeps its 3 LOINC codes, the correct terminology for a PRO).
+- All remaining **149** referenced codes verified active. Metadata-only; no item behaviour/values changed.
+
 ## [2.5.0] - 2026-07-22
 
 **Additive — `wellbeing-mental-distress-stress`.** Completes the mental-distress domain: the third
