@@ -1387,6 +1387,11 @@
         "parentId": "wellbeing"
       },
       {
+        "id": "wellbeing-mental-distress-stress",
+        "name": "Stress severity",
+        "parentId": "wellbeing"
+      },
+      {
         "id": "wellbeing-self-rated-health",
         "name": "Self-rated health",
         "parentId": "wellbeing"
