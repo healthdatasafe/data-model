@@ -279,6 +279,45 @@ wellbeing-mental-distress-depression:
     snomed: "366979004"
     loinc: "75275-8"
 
+# Stress — the third dimension of the validated DASS-21 (Depression/Anxiety/Stress)
+# triad, completing the mental-distress domain alongside -anxiety and -depression.
+# A distinct construct from the -combined item (which is anxiety + low mood).
+wellbeing-mental-distress-stress:
+  version: v1
+  label:
+    en: Stress severity
+    fr: Sévérité du stress
+  description:
+    en: Stress symptoms.
+    fr: Symptômes de stress.
+  streamId: wellbeing-mental-distress-stress
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.0
+      label:
+        en: Not stressed
+        fr: Pas stressé
+    - value: 0.25
+      label:
+        en: Slightly stressed
+        fr: Légèrement stressé
+    - value: 0.5
+      label:
+        en: Moderately stressed
+        fr: Modérément stressé
+    - value: 0.75
+      label:
+        en: Severely stressed
+        fr: Sévèrement stressé
+    - value: 1.0
+      label:
+        en: Extremely stressed
+        fr: Extrêmement stressé
+  repeatable: unlimited
+  references:
+    snomed: ["73595000", "224974006"]
+
 # Self-rated health ("SRH") — the most validated single-item PRO in epidemiology.
 # One item covers both common capture formats: continuous 0..100 VAS (stored 0..1 at
 # step 0.01) and 5-level categorical (SF-1 / PROMIS Global01 / NHIS SRH question,

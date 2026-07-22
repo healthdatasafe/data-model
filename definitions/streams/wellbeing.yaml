@@ -12,5 +12,7 @@ children:
     name: Anxiety severity
   - id: wellbeing-mental-distress-depression
     name: Depression severity
+  - id: wellbeing-mental-distress-stress
+    name: Stress severity
   - id: wellbeing-self-rated-health
     name: Self-rated health

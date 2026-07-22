@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.5.0] - 2026-07-22
+
+**Additive — `wellbeing-mental-distress-stress`.** Completes the mental-distress domain: the third
+dimension of the validated **DASS-21 (Depression / Anxiety / Stress)** triad, alongside the existing
+`-anxiety` and `-depression` severity items (and distinct from the `-combined` item, which is
+anxiety + low mood). No renames or removals.
+
+### Added — `wellbeing-mental-distress-stress`
+- `ratio/proportion`, 5-level `select` on the canonical severity hooks `0.0 / 0.25 / 0.5 / 0.75 / 1.0`
+  (Not / Slightly / Moderately / Severely / Extremely stressed), en+fr, mirroring the sibling
+  `-anxiety` / `-depression` items. New stream `wellbeing-mental-distress-stress` ("Stress severity").
+- SNOMED refs verified active via snomed-db: `73595000` (Stress, finding) + `224974006`
+  (Feeling stressed, finding). No LOINC (none verified in-workspace; the `-combined` item likewise omits it).
+- Driver: gives the Mira bridge's `symptoms.Stress` a correct home (was `SYMPTOM_SKIP`) instead of the
+  semantically-wrong `-combined` aggregate.
+
 ## [2.4.0] - 2026-07-16
 
 **Additive — reproductive-stage / menopausal status** from

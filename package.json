@@ -1,6 +1,6 @@
 {
   "name": "@hds/data-model",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "HDS data model",
   "main": "src/index.js",
   "engines": {
@@ -22,8 +22,8 @@
     "yaml": "^2.8.0"
   },
   "devDependencies": {
-    "mocha": "^10.7.3",
     "eslint": "^9.0.0",
+    "mocha": "^10.7.3",
     "neostandard": "^0.12.0"
   }
 }
