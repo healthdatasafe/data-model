@@ -4492,8 +4492,8 @@
       "fr": "Origine ethnique"
     },
     "description": {
-      "en": "Your self-identified ethnicity, recorded as a clinical and epidemiological variable. Select every category that applies.",
-      "fr": "Votre origine ethnique auto-déclarée, enregistrée comme variable clinique et épidémiologique. Sélectionnez toutes les catégories qui s'appliquent."
+      "en": "Your self-identified ethnicity, recorded for health-equity monitoring. Select every category that applies.",
+      "fr": "Votre origine ethnique auto-déclarée, enregistrée à des fins de suivi de l'équité en santé. Sélectionnez toutes les catégories qui s'appliquent."
     },
     "streamId": "profile-ethnicity",
     "eventType": "attributes/ethnicity",
@@ -4525,6 +4525,13 @@
         "label": {
           "en": "Hispanic or Latino",
           "fr": "Hispanique ou Latino"
+        }
+      },
+      {
+        "value": "not-hispanic-latino",
+        "label": {
+          "en": "Not Hispanic or Latino",
+          "fr": "Ni hispanique ni latino"
         }
       },
       {

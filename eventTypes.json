@@ -1969,7 +1969,7 @@
       "type": "string"
     },
     "attributes/ethnicity": {
-      "description": "Self-identified ethnicity / race categories. US-style category set (OMB-aligned), recorded as a clinical / epidemiological variable. Array: several categories may apply at once. The former 'multiple' sentinel is gone — record the actual categories instead.",
+      "description": "Self-identified ethnicity / race categories, recorded as an epidemiological variable (health-equity monitoring), NOT as a clinical or biological one. One combined self-identified field, deliberately not split into separate race and ethnicity items — see the note below. Array: several categories may apply at once. Maps losslessly onto FHIR US Core at the boundary: 'hispanic-latino' / 'not-hispanic-latino' populate us-core-ethnicity.ombCategory, every other value populates us-core-race.ombCategory. NOTE: 'hispanic-latino' and 'not-hispanic-latino' are the two answers to one question and are mutually exclusive — the array shape cannot enforce that, so writers must not emit both. 'middle-eastern-north-african' is a 2024 SPD-15 category with no OMB-1997 ombCategory code; map it via us-core-race detailed + text.",
       "type": "array",
       "uniqueItems": true,
       "items": {
@@ -1979,6 +1979,7 @@
           "asian",
           "black-african-american",
           "hispanic-latino",
+          "not-hispanic-latino",
           "middle-eastern-north-african",
           "native-hawaiian-pacific-islander",
           "white",
