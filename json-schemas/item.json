@@ -22,7 +22,22 @@
       "type": "string"
     },
     "repeatable": {
-      "type": "string"
+      "type": "string",
+      "anyOf": [
+        {
+          "enum": [
+            "once",
+            "any",
+            "unlimited"
+          ]
+        },
+        {
+          "pattern": "^P(\\d+[YMWD])+(T(\\d+[HMS])+)?$"
+        },
+        {
+          "pattern": "^PT(\\d+[HMS])+$"
+        }
+      ]
     },
     "duration": {
       "type": "object",
