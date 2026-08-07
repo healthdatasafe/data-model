@@ -108,7 +108,8 @@
             "composite",
             "datasource-search",
             "convertible",
-            "slider"
+            "slider",
+            "multi-select"
           ]
         }
       ]

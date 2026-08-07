@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-08-07T12:09:19.362Z",
+  "publicationDate": "2026-08-07T14:43:15.141Z",
   "streams": [
     {
       "id": "activity",
@@ -4889,16 +4889,16 @@
     "fertility-tracking-method": {
       "version": "v1",
       "label": {
-        "en": "Fertility-tracking method",
-        "fr": "Méthode de suivi de fertilité"
+        "en": "Fertility-tracking methods",
+        "fr": "Méthodes de suivi de fertilité"
       },
       "description": {
-        "en": "The charting method or device you use — it determines how your cycle observations should be read.",
-        "fr": "La méthode ou l'appareil de suivi que vous utilisez — cela détermine comment lire vos observations de cycle."
+        "en": "The charting methods or devices you use — they determine how your cycle observations should be read. Select every one you currently use, and record a new dated entry whenever that changes.",
+        "fr": "Les méthodes ou appareils de suivi que vous utilisez — ils déterminent comment lire vos observations de cycle. Sélectionnez tous ceux que vous utilisez actuellement, et enregistrez une nouvelle entrée datée à chaque changement."
       },
       "streamId": "fertility-tracking-method",
       "eventType": "fertility/tracking-method-v1",
-      "type": "select",
+      "type": "multi-select",
       "options": [
         {
           "value": "billings",
@@ -4992,7 +4992,7 @@
           }
         }
       ],
-      "repeatable": "once"
+      "repeatable": "any"
     },
     "fertility-pregnancy": {
       "version": "v2",
@@ -5895,12 +5895,12 @@
         "fr": "Origine ethnique"
       },
       "description": {
-        "en": "Your self-identified ethnicity, recorded as a clinical and epidemiological variable.",
-        "fr": "Votre origine ethnique auto-déclarée, enregistrée comme variable clinique et épidémiologique."
+        "en": "Your self-identified ethnicity, recorded as a clinical and epidemiological variable. Select every category that applies.",
+        "fr": "Votre origine ethnique auto-déclarée, enregistrée comme variable clinique et épidémiologique. Sélectionnez toutes les catégories qui s'appliquent."
       },
       "streamId": "profile-ethnicity",
       "eventType": "attributes/ethnicity",
-      "type": "select",
+      "type": "multi-select",
       "options": [
         {
           "value": "american-indian-alaska-native",
@@ -5949,13 +5949,6 @@
           "label": {
             "en": "White",
             "fr": "Blanc(he)"
-          }
-        },
-        {
-          "value": "multiple",
-          "label": {
-            "en": "Multiple / mixed",
-            "fr": "Multiple / métis(se)"
           }
         },
         {
@@ -12222,20 +12215,23 @@
         "type": "string"
       },
       "attributes/ethnicity": {
-        "description": "Self-identified ethnicity / race category. US-style category set (OMB-aligned), recorded as a clinical / epidemiological variable.",
-        "type": "string",
-        "enum": [
-          "american-indian-alaska-native",
-          "asian",
-          "black-african-american",
-          "hispanic-latino",
-          "middle-eastern-north-african",
-          "native-hawaiian-pacific-islander",
-          "white",
-          "multiple",
-          "other",
-          "prefer-not-to-say"
-        ]
+        "description": "Self-identified ethnicity / race categories. US-style category set (OMB-aligned), recorded as a clinical / epidemiological variable. Array: several categories may apply at once. The former 'multiple' sentinel is gone — record the actual categories instead.",
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "enum": [
+            "american-indian-alaska-native",
+            "asian",
+            "black-african-american",
+            "hispanic-latino",
+            "middle-eastern-north-african",
+            "native-hawaiian-pacific-islander",
+            "white",
+            "other",
+            "prefer-not-to-say"
+          ]
+        }
       },
       "attributes/reproductive-stage": {
         "description": "Reproductive-aging / menopausal stage — a durable but time-varying patient attribute, aligned to the STRAW+10 staging system. Selects the reference band for stage-dependent hormones (estradiol, FSH, prolactin). Stage only; hormone therapy is recorded separately as a medication, not encoded here.",
@@ -12252,23 +12248,27 @@
         ]
       },
       "fertility/tracking-method-v1": {
-        "description": "Fertility-awareness charting method or device the person uses. Determines how their cycle observations should be interpreted.",
-        "type": "string",
-        "enum": [
-          "billings",
-          "creighton",
-          "sympto-thermal",
-          "marquette",
-          "femm",
-          "justisse",
-          "peak-day",
-          "clearblue",
-          "mira",
-          "inito",
-          "oura",
-          "kegg",
-          "other"
-        ]
+        "description": "Fertility-awareness charting methods or devices in use. Determines how the person's cycle observations should be interpreted. Array: several methods run concurrently (a method plus a monitor plus BBT). Each event is a complete dated snapshot of the methods active at that time — a method that stops simply does not appear in the next snapshot.",
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "enum": [
+            "billings",
+            "creighton",
+            "sympto-thermal",
+            "marquette",
+            "femm",
+            "justisse",
+            "peak-day",
+            "clearblue",
+            "mira",
+            "inito",
+            "oura",
+            "kegg",
+            "other"
+          ]
+        }
       },
       "contact/name": {
         "description": "Name",
@@ -15803,11 +15803,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-08-07T12:09:19.361Z"
+      "updatedAt": "2026-08-07T14:43:15.141Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-08-07T12:09:19.362Z"
+      "updatedAt": "2026-08-07T14:43:15.141Z"
     }
   },
   "settings": {
