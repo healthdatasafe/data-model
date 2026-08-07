@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-08-07T11:47:49.622Z",
+  "publicationDate": "2026-08-07T12:06:53.843Z",
   "streams": [
     {
       "id": "activity",
@@ -15803,11 +15803,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-08-07T11:47:49.621Z"
+      "updatedAt": "2026-08-07T12:06:53.843Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-08-07T11:47:49.622Z"
+      "updatedAt": "2026-08-07T12:06:53.843Z"
     }
   },
   "settings": {
