@@ -166,6 +166,27 @@ function toBePublished () {
 }
 
 function checkItemVsEvenType (key, item, eventType) {
+  // `multi-select` stores an array of chosen option values, so the matching eventType
+  // must be an array whose `items.enum` covers every option (the `select` check below,
+  // one level down). Checked before the scalar branches: an array eventType would
+  // otherwise fall through to the catch-all throw.
+  if (item.type === 'multi-select') {
+    if (eventType.type !== 'array') {
+      throw new Error(`as item "${key}" is of type "multi-select" the matching eventType must be an "array": ` + JSON.stringify({ item, eventType }));
+    }
+    if (!Array.isArray(eventType.items?.enum)) {
+      throw new Error(`for item "${key}", as a "multi-select", the matching eventType must declare "items.enum": ` + JSON.stringify(eventType));
+    }
+    for (const option of item.options) {
+      if (typeof option.value !== 'string') {
+        throw new Error(`as item "${key}" is of type "multi-select" all option values must be strings, check the following option: ` + JSON.stringify(option));
+      }
+      if (!eventType.items.enum.includes(option.value)) {
+        throw new Error(`for item "${key}" the value "${option.value}" cannot be found in the eventType "items.enum": ` + JSON.stringify(eventType));
+      }
+    }
+    return true;
+  }
   if (eventType.type === 'string') {
     if (item.type === 'select') { // check that all options value are string
       if (eventType.enum === null) throw new Error(`for item "${key}", as a "select" of type "string", matching eventType must have an "enum" property`, JSON.stringify({ item, eventType }));

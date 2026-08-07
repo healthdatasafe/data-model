@@ -26,11 +26,11 @@ profile-ethnicity:
     en: Ethnicity
     fr: Origine ethnique
   description:
-    en: Your self-identified ethnicity, recorded as a clinical and epidemiological variable.
-    fr: Votre origine ethnique auto-déclarée, enregistrée comme variable clinique et épidémiologique.
+    en: Your self-identified ethnicity, recorded as a clinical and epidemiological variable. Select every category that applies.
+    fr: Votre origine ethnique auto-déclarée, enregistrée comme variable clinique et épidémiologique. Sélectionnez toutes les catégories qui s'appliquent.
   streamId: profile-ethnicity
   eventType: attributes/ethnicity
-  type: select
+  type: multi-select
   options:
     - value: american-indian-alaska-native
       label: { en: American Indian or Alaska Native, fr: Amérindien(ne) ou Autochtone d'Alaska }
@@ -46,8 +46,6 @@ profile-ethnicity:
       label: { en: Native Hawaiian or Pacific Islander, fr: Hawaïen(ne) ou insulaire du Pacifique }
     - value: white
       label: { en: White, fr: Blanc(he) }
-    - value: multiple
-      label: { en: Multiple / mixed, fr: Multiple / métis(se) }
     - value: other
       label: { en: Other, fr: Autre }
     - value: prefer-not-to-say

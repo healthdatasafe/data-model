@@ -118,11 +118,15 @@ const itemSchema = {
         importance: { enum: ['may', 'should', 'must'] }
       }
     },
+    // `multi-select` is `select`'s multi-valued twin: same `options` list, but the
+    // event content is an ARRAY of the chosen values rather than one of them. Use it
+    // when several options are simultaneously true (site-agents#9/#10). Orthogonal to
+    // `repeatable`, which governs how often the item is recorded over time.
     type: {
       type: 'string',
       oneOf: [
         { $ref: 'defs.json#/definitions/entryType' },
-        { enum: ['composite', 'datasource-search', 'convertible', 'slider'] }
+        { enum: ['composite', 'datasource-search', 'convertible', 'slider', 'multi-select'] }
       ]
     },
     variations: {

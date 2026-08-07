@@ -206,14 +206,14 @@ fertility-genital-contact:
 fertility-tracking-method:
   version: v1
   label:
-    en: Fertility-tracking method
-    fr: Méthode de suivi de fertilité
+    en: Fertility-tracking methods
+    fr: Méthodes de suivi de fertilité
   description:
-    en: The charting method or device you use — it determines how your cycle observations should be read.
-    fr: La méthode ou l'appareil de suivi que vous utilisez — cela détermine comment lire vos observations de cycle.
+    en: The charting methods or devices you use — they determine how your cycle observations should be read. Select every one you currently use, and record a new dated entry whenever that changes.
+    fr: Les méthodes ou appareils de suivi que vous utilisez — ils déterminent comment lire vos observations de cycle. Sélectionnez tous ceux que vous utilisez actuellement, et enregistrez une nouvelle entrée datée à chaque changement.
   streamId: fertility-tracking-method
   eventType: fertility/tracking-method-v1
-  type: select
+  type: multi-select
   options:
     - value: billings
       label: { en: Billings Ovulation Method, fr: Méthode Billings }
@@ -241,7 +241,11 @@ fertility-tracking-method:
       label: { en: Kegg, fr: Kegg }
     - value: other
       label: { en: Other, fr: Autre }
-  repeatable: once
+  # NOT `once`: the method set changes over time AND it is the interpretive key for
+  # dated cycle observations — under `once` a chart recorded under one method would be
+  # re-read under whatever is current today. Same reasoning as
+  # profile-reproductive-stage. Each event is a complete dated snapshot of the set.
+  repeatable: any
 fertility-pregnancy:
   version: v2
   label: Pregnancy

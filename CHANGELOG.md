@@ -1,5 +1,38 @@
 # Changelog
 
+## [3.0.0] - 2026-08-07
+
+**BREAKING — multi-value item cardinality (`multi-select`).** Rules
+[site-agents#9](https://github.com/healthdatasafe/site-agents/issues/9) and
+[#10](https://github.com/healthdatasafe/site-agents/issues/10): two items held one value where several
+are simultaneously true, so every selection past the first degraded to app-level free text.
+
+### Added
+- **Item type `multi-select`** — `select`'s multi-valued twin: same `options` list, but the event content
+  is an **array** of chosen values. `checkItemVsEvenType` enforces that the matching eventType is an
+  `array` whose `items.enum` covers every option.
+
+### Changed — BREAKING
+- **`attributes/ethnicity`** — `string` + `enum` → `array` of the same values, `uniqueItems: true`.
+  **The `multiple` sentinel is removed**: it recorded *that* several applied while losing *which*.
+  `profile-ethnicity` becomes `multi-select` and keeps `repeatable: once` (ethnicity is not time-varying,
+  so latest event wins).
+- **`fertility/tracking-method-v1`** — `string` + `enum` → `array`, `uniqueItems: true`.
+  `fertility-tracking-method` becomes `multi-select` **and `repeatable: once` → `any`**. Cardinality and
+  recurrence are orthogonal, and this item exercises both: methods run concurrently *and* change over
+  time. Because the eventType is the interpretive key for cycle observations ("Determines how their cycle
+  observations should be interpreted"), keeping only the current set would silently re-read a chart
+  recorded under one method as though it used today's method. Same reasoning as
+  `profile-reproductive-stage`. Each event is now a complete **dated snapshot** of the active set — a
+  method that stops simply does not appear in the next snapshot.
+
+### Migration
+Both items had **no runtime consumers** in the workspace (swept 2026-08-07), so the change is in place —
+no v2 eventType, no deprecation alias. **Pre-existing events written with scalar content do not match the
+new shape** and need a backfill: write one array-valued event per known set, and for
+`fertility-tracking-method` write **one dated event per historical set** rather than a single current-set
+event, so existing history survives instead of collapsing to today's answer.
+
 ## [Unreleased]
 
 **Fix — `repeatable` is now validated.** The item schema typed `repeatable` as a mandatory but

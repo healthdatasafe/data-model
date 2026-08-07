@@ -42,6 +42,69 @@ describe('[ITMP] repeatable value validation', () => {
   });
 });
 
+describe('[ITMM] multi-select cardinality (site-agents#9 / #10)', () => {
+  const { itemsById, checkItemVsEvenType } = require('../src/items');
+  const { eventTypesById } = require('../src/eventTypes');
+
+  const CASES = [
+    ['profile-ethnicity', 'attributes/ethnicity', 'once'],
+    ['fertility-tracking-method', 'fertility/tracking-method-v1', 'any']
+  ];
+
+  for (const [key, typeId, repeatable] of CASES) {
+    it(`[ITMM-1:${key}] is a multi-select over an array eventType`, () => {
+      const item = itemsById[key];
+      assert.ok(item, `${key} must exist`);
+      assert.equal(item.type, 'multi-select');
+      const eventType = eventTypesById(typeId);
+      assert.equal(eventType.type, 'array');
+      assert.equal(eventType.uniqueItems, true);
+      assert.ok(Array.isArray(eventType.items.enum), 'items.enum must exist');
+    });
+
+    it(`[ITMM-2:${key}] every option value is in the eventType items.enum`, () => {
+      const item = itemsById[key];
+      const eventType = eventTypesById(typeId);
+      for (const o of item.options) {
+        assert.ok(eventType.items.enum.includes(o.value), `${o.value} must be in items.enum`);
+      }
+      assert.equal(checkItemVsEvenType(key, item, eventType), true);
+    });
+
+    it(`[ITMM-3:${key}] repeatable is "${repeatable}"`, () => {
+      // Cardinality and recurrence are orthogonal. Ethnicity is not time-varying, so
+      // `once` (latest wins). Tracking-method IS time-varying and is the interpretive
+      // key for dated cycle observations, so it must NOT be `once` — otherwise past
+      // charts get re-read under whatever method is current.
+      assert.equal(itemsById[key].repeatable, repeatable);
+    });
+  }
+
+  it('[ITMM-4] the "multiple" sentinel is gone from ethnicity', () => {
+    // It recorded THAT several applied while losing WHICH — the degradation the
+    // array shape exists to fix.
+    const values = itemsById['profile-ethnicity'].options.map(o => o.value);
+    assert.ok(!values.includes('multiple'), '"multiple" must be removed');
+    assert.ok(!eventTypesById('attributes/ethnicity').items.enum.includes('multiple'));
+  });
+
+  it('[ITMM-5] a multi-select against a scalar eventType is rejected', () => {
+    const item = { type: 'multi-select', options: [{ value: 'white' }] };
+    assert.throws(
+      () => checkItemVsEvenType('bad', item, { type: 'string', enum: ['white'] }),
+      /must be an "array"/
+    );
+  });
+
+  it('[ITMM-6] an option outside items.enum is rejected', () => {
+    const item = { type: 'multi-select', options: [{ value: 'nope' }] };
+    assert.throws(
+      () => checkItemVsEvenType('bad', item, { type: 'array', items: { enum: ['white'] } }),
+      /cannot be found in the eventType "items.enum"/
+    );
+  });
+});
+
 describe('[ITMC] Composite↔eventType validation (B-2026-06-12-1)', () => {
   const { itemsById, checkItemVsEvenType } = require('../src/items');
   const { eventTypesById } = require('../src/eventTypes');
