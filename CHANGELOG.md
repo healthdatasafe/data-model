@@ -1,5 +1,43 @@
 # Changelog
 
+## [3.1.0] - 2026-08-07
+
+**Additive — `not-hispanic-latino`.** Resolves the real gap behind
+[site-agents#11](https://github.com/healthdatasafe/site-agents/issues/11) **without** splitting race
+from ethnicity.
+
+### Added
+- `attributes/ethnicity` / `profile-ethnicity` gain **`not-hispanic-latino`** (en "Not Hispanic or
+  Latino", fr "Ni hispanique ni latino"). Previously the *absence* of `hispanic-latino` was ambiguous
+  between "not Hispanic" and "didn't answer" — a data-quality problem, and the only concrete defect #11
+  identified. Purely additive: existing content stays valid.
+
+### Decided — we are NOT splitting into `profile-race` + `profile-ethnicity`
+#11 proposed mirroring FHIR US Core (`us-core-race` 0..5, `us-core-ethnicity` 0..1). We declined, for
+reasons recorded here so this is not silently revisited:
+
+- **It is a US administrative construct** (OMB SPD-15), not a clinical one. Race is not a biological
+  variable, and clinical medicine has been *removing* it from algorithms (eGFR race coefficient, 2021;
+  spirometry correction). A European health model should not adopt it as a first-class concept.
+- **GDPR.** "Racial / ethnic origin" is Article 9 special-category data. Splitting adds a second
+  special-category field to the core profile of every deployment by default.
+- **The terminologies do not back the split.** Verified against snomed-db (International Edition
+  2026-02-01): the hierarchy roots `372148003` *Ethnic group* and `415229000` *Racial group* are active,
+  but the *ethnic group* value concepts sampled are **inactive** (`185984009` White, `315240009` Black,
+  `315280000` Asian) while the *racial group* values are active. Decisively, SNOMED codes
+  **`414408004` Hispanic as a *racial group*** — the opposite of OMB/US Core, which makes Hispanic the
+  *ethnicity* axis. The two standards disagree on the very boundary the split is drawn along.
+  Base HL7 FHIR has neither concept on `Patient`; they exist only as US-realm US Core extensions whose
+  values come from the CDC/OMB code set — not LOINC, not SNOMED.
+- **The split is not needed for interop.** The combined value set **partitions cleanly**, so a boundary
+  mapper produces US Core losslessly: `hispanic-latino` / `not-hispanic-latino` →
+  `us-core-ethnicity.ombCategory`, everything else → `us-core-race.ombCategory`. US conformance is a
+  US-profile mapping concern, not a core-model one. Test `[ITMM-8]` pins that partition.
+
+**Known cost of not splitting:** `hispanic-latino` and `not-hispanic-latino` answer one question and are
+mutually exclusive, which the array shape cannot enforce. Writers must not emit both. Documented on the
+eventType.
+
 ## [3.0.0] - 2026-08-07
 
 **BREAKING — multi-value item cardinality (`multi-select`).** Rules

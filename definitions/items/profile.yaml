@@ -26,8 +26,8 @@ profile-ethnicity:
     en: Ethnicity
     fr: Origine ethnique
   description:
-    en: Your self-identified ethnicity, recorded as a clinical and epidemiological variable. Select every category that applies.
-    fr: Votre origine ethnique auto-déclarée, enregistrée comme variable clinique et épidémiologique. Sélectionnez toutes les catégories qui s'appliquent.
+    en: Your self-identified ethnicity, recorded for health-equity monitoring. Select every category that applies.
+    fr: Votre origine ethnique auto-déclarée, enregistrée à des fins de suivi de l'équité en santé. Sélectionnez toutes les catégories qui s'appliquent.
   streamId: profile-ethnicity
   eventType: attributes/ethnicity
   type: multi-select
@@ -40,6 +40,12 @@ profile-ethnicity:
       label: { en: Black or African American, fr: Noir(e) ou Afro-Américain(e) }
     - value: hispanic-latino
       label: { en: Hispanic or Latino, fr: Hispanique ou Latino }
+    # The Hispanic-or-Latino question is answerable both ways. Without this value,
+    # the ABSENCE of `hispanic-latino` is ambiguous between "not Hispanic" and
+    # "didn't answer". Mutually exclusive with the value above — writers must not
+    # emit both (the array shape cannot enforce it).
+    - value: not-hispanic-latino
+      label: { en: Not Hispanic or Latino, fr: Ni hispanique ni latino }
     - value: middle-eastern-north-african
       label: { en: Middle Eastern or North African, fr: Moyen-Oriental(e) ou Nord-Africain(e) }
     - value: native-hawaiian-pacific-islander

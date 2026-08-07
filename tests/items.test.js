@@ -80,6 +80,36 @@ describe('[ITMM] multi-select cardinality (site-agents#9 / #10)', () => {
     });
   }
 
+  it('[ITMM-7] the Hispanic question is answerable both ways (site-agents#11)', () => {
+    // Without `not-hispanic-latino`, the ABSENCE of `hispanic-latino` is ambiguous
+    // between "not Hispanic" and "didn't answer". This is the gap #11 actually had;
+    // it is fixed additively rather than by splitting race from ethnicity.
+    const values = itemsById['profile-ethnicity'].options.map(o => o.value);
+    assert.ok(values.includes('hispanic-latino'));
+    assert.ok(values.includes('not-hispanic-latino'));
+  });
+
+  it('[ITMM-8] the value set partitions cleanly for FHIR US Core (site-agents#11)', () => {
+    // This is what makes the combined item mappable without splitting it: exactly
+    // two values belong to the us-core-ethnicity axis, everything else is race.
+    // If a future edit adds an ethnicity-axis value it must be added here too,
+    // otherwise the boundary mapper would silently route it to race.
+    const ETHNICITY_AXIS = ['hispanic-latino', 'not-hispanic-latino'];
+    const values = eventTypesById('attributes/ethnicity').items.enum;
+    const raceAxis = values.filter(v => !ETHNICITY_AXIS.includes(v));
+    for (const v of ETHNICITY_AXIS) assert.ok(values.includes(v), `${v} must exist`);
+    assert.deepEqual(raceAxis, [
+      'american-indian-alaska-native',
+      'asian',
+      'black-african-american',
+      'middle-eastern-north-african',
+      'native-hawaiian-pacific-islander',
+      'white',
+      'other',
+      'prefer-not-to-say'
+    ]);
+  });
+
   it('[ITMM-4] the "multiple" sentinel is gone from ethnicity', () => {
     // It recorded THAT several applied while losing WHICH — the degradation the
     // array shape exists to fix.
