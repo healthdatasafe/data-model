@@ -6,6 +6,42 @@ describe('[ITMX] Items', () => {
   });
 });
 
+describe('[ITMP] repeatable value validation', () => {
+  const { checkItem } = require('../src/schemas/items');
+
+  function itemWith (repeatable) {
+    return {
+      version: 'v1',
+      label: { en: 'Test' },
+      description: { en: 'Test' },
+      streamId: 'test-stream',
+      eventType: 'note/txt',
+      type: 'text',
+      repeatable
+    };
+  }
+
+  it('[ITMP-1] accepts the named values', () => {
+    for (const v of ['once', 'any', 'unlimited']) checkItem(itemWith(v));
+  });
+
+  it('[ITMP-2] accepts ISO-8601 durations', () => {
+    for (const v of ['P1D', 'P1W', 'P1M', 'P1Y', 'PT12H']) checkItem(itemWith(v));
+  });
+
+  it('[ITMP-3] rejects an invented value', () => {
+    // `many` was proposed in site-agents#9; it is not a legal value. Before this
+    // schema constraint it passed validation and then matched no consumer branch.
+    assert.throws(() => checkItem(itemWith('many')));
+  });
+
+  it('[ITMP-4] rejects the pre-ISO legacy spellings', () => {
+    for (const v of ['daily', 'once-per-day', 'none']) {
+      assert.throws(() => checkItem(itemWith(v)), /./, `${v} must be rejected`);
+    }
+  });
+});
+
 describe('[ITMC] Composite↔eventType validation (B-2026-06-12-1)', () => {
   const { itemsById, checkItemVsEvenType } = require('../src/items');
   const { eventTypesById } = require('../src/eventTypes');

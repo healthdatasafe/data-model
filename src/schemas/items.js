@@ -73,7 +73,18 @@ const itemSchema = {
     description: { $ref: 'defs.json#/definitions/localized' },
     streamId: { type: 'string' },
     eventType: { type: 'string' },
-    repeatable: { type: 'string' },
+    // `once` (latest entry wins — profile data), `any`/`unlimited` (no interval
+    // constraint), or an ISO-8601 duration (`P1D`, `P1W`, `P1M`) giving the minimum
+    // interval between two entries. Was an unvalidated free string, so a typo or an
+    // invented value passed silently and then failed to match any consumer branch.
+    repeatable: {
+      type: 'string',
+      anyOf: [
+        { enum: ['once', 'any', 'unlimited'] },
+        { pattern: '^P(\\d+[YMWD])+(T(\\d+[HMS])+)?$' },
+        { pattern: '^PT(\\d+[HMS])+$' }
+      ]
+    },
     duration: {
       type: 'object',
       nullable: true,

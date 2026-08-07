@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+**Fix — `repeatable` is now validated.** The item schema typed `repeatable` as a mandatory but
+otherwise free string, so a typo or an invented value passed validation and then silently matched no
+consumer branch (consumers key on the exact strings — e.g. the timeline routes `once` to the Profile
+panel, and hds-forms-js classifies builder sections on `!== 'once'`). It now accepts `once`, `any`,
+`unlimited`, or an ISO-8601 duration (`P1D`, `P1W`, `P1M`, `PT12H`). All 284 existing definitions
+already conform, so nothing in the model changes — but pre-ISO spellings (`daily`, `once-per-day`) and
+invented values (`many`, `none`) are rejected from here on.
+
 ## [2.5.1] - 2026-07-22
 
 **Fix — invalid SNOMED references.** A full audit of all SNOMED codes across the itemDefs (via
