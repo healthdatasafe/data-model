@@ -93,6 +93,15 @@ const redirectHtml = `<!DOCTYPE html>
 `;
 fs.writeFileSync(path.resolve(basePath, 'index.html'), redirectHtml, 'utf-8');
 
+// -- robots.txt — this host serves machine-readable artifacts (pack.json,
+// version.json, JSON schemas), not pages meant for search results. Keep it out
+// of the index so it doesn't compete with model-browser.datasafe.dev, which is
+// the human-facing view of exactly this data.
+const robotsTxt = `User-agent: *
+Disallow: /
+`;
+fs.writeFileSync(path.resolve(basePath, 'robots.txt'), robotsTxt, 'utf-8');
+
 // streams.html is no longer published — remove any leftover from a prior build.
 const oldStreamsHtml = path.resolve(basePath, 'streams.html');
 if (fs.existsSync(oldStreamsHtml)) fs.unlinkSync(oldStreamsHtml);
