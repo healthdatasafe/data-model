@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Documentation
+
+- `documentation/CUSTOM-FIELDS-AND-SYSTEM.md`: CMC system messages carrying an HDS payload — the
+  data-export request convention (`notification/alert-cmc` with `content.hds`, ack as fulfilment).
+  No definition or pack change.
+
 ## [3.1.0] - 2026-08-07
 
 **Additive — `not-hispanic-latino`.** Resolves the real gap behind
