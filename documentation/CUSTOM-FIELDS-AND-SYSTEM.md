@@ -193,6 +193,52 @@ The operator's dashboard reads `app-system-in`, joins the ack to the alert by `a
 
 ---
 
+## CMC system messages carrying an HDS payload: data-export requests
+
+The CMC plugin (open-pryv.io `components/cmc`) forwards only its own event types between a
+patient and a doctor; a type HDS would define here would never be delivered. HDS therefore rides
+the plugin's **system channel** for structured exchanges and namespaces its payload under
+`content.hds`. The plugin validates the envelope (`level`, localizable `title` and `body`,
+`ackRequired`, `ackId`) and delivers every other content key verbatim, stamping `content.from` on
+the receiving side.
+
+### `notification/alert-cmc` with `hds.kind = data-export-request` *(patient → doctor)*
+
+GDPR / HIPAA portability: the patient asks the doctor for an export of the data the doctor holds
+about them. Written by the patient on its own `<scope>:collectors:<doctorSlug>` stream; the plugin
+delivers it to the doctor's `<scope>:collectors:<patientSlug>` stream.
+
+```json
+{
+  "level": "info",
+  "title": { "en": "Data export request" },
+  "body": { "en": "Please provide an export of the data you hold about me.\nRequested by: 2026-10-01" },
+  "ackRequired": true,
+  "ackId": "hds-data-export:<uuid>",
+  "hds": { "kind": "data-export-request", "requestedAt": 1789000000, "dueAt": 1791000000, "note": "PDF please" }
+}
+```
+
+| `hds` field | Type | Meaning |
+|---|---|---|
+| `kind` | `"data-export-request"` | Discriminator; the `ackId` prefix `hds-data-export:` is a secondary marker |
+| `requestedAt` | unix seconds | When the patient asked |
+| `dueAt` | unix seconds, optional | Deadline the patient proposes |
+| `note` | string, optional | Free text for the doctor |
+
+### `notification/ack-cmc` *(doctor → patient)*: fulfilment
+
+The doctor marks the request fulfilled with the plugin's standard ack, `{ alertEventId, ackId }`,
+written on its own collectors stream and delivered back. A request is **pending** until an ack
+with the same `ackId` (or `alertEventId`) exists on the same stream, then **fulfilled** at the ack's
+time. The export itself is delivered out of band (the doctor's app), exactly as before; what this
+adds is a structured, timestamped record on both accounts.
+
+Implementation: `hds-lib` `cmcDataExport` (`requestDataExport`, `fulfillDataExportRequest`,
+`listDataExportRequests`); doctor-dashboard shows the queue per patient, hds-webapp lets the
+patient send a request and see its status. Other `hds.kind` values may follow the same pattern;
+none is defined today.
+
 ## Cross-references
 
 - **Plan 45** — design doc, open-question log, full rationale: `_plans/45-custom-fields-appTemplates-atwork/PLAN.md`.
