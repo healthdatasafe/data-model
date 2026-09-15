@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-09-15T11:34:44.517Z",
+  "publicationDate": "2026-09-15T12:41:21.356Z",
   "streams": [
     {
       "id": "activity",
@@ -1929,7 +1929,8 @@
     "body-vulva-mucus-inspect": {
       "version": "v2",
       "label": {
-        "en": "Cervical Fluid Inspect"
+        "en": "Cervical Fluid Inspect",
+        "fr": "Observation de la glaire cervicale"
       },
       "description": {
         "en": "Cervical fluid observation as a 9-dimensional vector, convertible across charting methods (Apple Health, Creighton, Billings, Mira, etc.)"
@@ -2030,7 +2031,8 @@
     "body-vulva-wetness-wiping": {
       "version": "v1",
       "label": {
-        "en": "Vulva Wetness when wiping"
+        "en": "Vulva Wetness when wiping",
+        "fr": "Sensation d'humidité vulvaire à l'essuyage"
       },
       "description": {
         "en": "Vulva wetness when wiping"
@@ -2063,7 +2065,8 @@
     "body-vulva-bleeding": {
       "version": "v2",
       "label": {
-        "en": "Bleeding intensity"
+        "en": "Bleeding intensity",
+        "fr": "Intensité du saignement"
       },
       "description": {
         "en": "Subjective bleeding intensity on a 0-1 proportion scale."
@@ -2127,7 +2130,8 @@
     "body-vulva-bleeding-browndark": {
       "version": "v1",
       "label": {
-        "en": "Brown/dark coloration"
+        "en": "Brown/dark coloration",
+        "fr": "Coloration brune ou foncée"
       },
       "description": {
         "en": "Presence of brown or dark coloration in bleeding. Qualifier for a co-occurring body-vulva-bleeding event."
@@ -2140,7 +2144,8 @@
     "body-vulva-bleeding-clots": {
       "version": "v1",
       "label": {
-        "en": "Blood clots"
+        "en": "Blood clots",
+        "fr": "Caillots sanguins"
       },
       "description": {
         "en": "Presence of blood clots during bleeding. Qualifier for a co-occurring bleeding event."
@@ -2153,7 +2158,8 @@
     "body-vulva-bleeding-postpartum": {
       "version": "v1",
       "label": {
-        "en": "Postpartum Bleeding"
+        "en": "Postpartum Bleeding",
+        "fr": "Saignement du post-partum"
       },
       "description": {
         "en": "Vaginal bleeding following childbirth (lochia)."
@@ -2166,7 +2172,8 @@
     "body-vulva-bleeding-miscarriage": {
       "version": "v1",
       "label": {
-        "en": "Miscarriage Bleeding"
+        "en": "Miscarriage Bleeding",
+        "fr": "Saignement de fausse couche"
       },
       "description": {
         "en": "Vaginal bleeding associated with pregnancy loss."
@@ -4550,7 +4557,8 @@
     "condition-coded": {
       "version": "v1",
       "label": {
-        "en": "Condition (coded)"
+        "en": "Condition (coded)",
+        "fr": "Affection (codée)"
       },
       "description": {
         "en": "Search and select a coded clinical diagnosis or condition."
@@ -4564,7 +4572,8 @@
     "family-children-count": {
       "version": "temporary",
       "label": {
-        "en": "Nb of children"
+        "en": "Nb of children",
+        "fr": "Nombre d'enfants"
       },
       "description": {
         "en": "Number of children at this date"
@@ -4651,7 +4660,8 @@
     "fertility-cycles-ovulation": {
       "version": "temporary",
       "label": {
-        "en": "Ovulation Day"
+        "en": "Ovulation Day",
+        "fr": "Jour d'ovulation"
       },
       "description": {
         "en": "Flag this day as an ovulation day"
@@ -4664,7 +4674,8 @@
     "fertility-cycles-start": {
       "version": "v1",
       "label": {
-        "en": "New Cycle"
+        "en": "New Cycle",
+        "fr": "Nouveau cycle"
       },
       "duration": {
         "mandatory": false,
@@ -4690,7 +4701,8 @@
     "fertility-cycles-period-end": {
       "version": "temporary",
       "label": {
-        "en": "End of period."
+        "en": "End of period.",
+        "fr": "Fin des règles"
       },
       "description": {
         "en": "Last day of periods. First day of period is given by a new cycle indication."
@@ -4704,7 +4716,8 @@
     "fertility-cycles-fertile-window": {
       "version": "temporary",
       "label": {
-        "en": "Fertile Window"
+        "en": "Fertile Window",
+        "fr": "Fenêtre fertile"
       },
       "description": {
         "en": "When a women is considered a fertile"
@@ -4723,7 +4736,8 @@
     "fertility-cycles-peak-day": {
       "version": "v1",
       "label": {
-        "en": "Peak day of fertility"
+        "en": "Peak day of fertility",
+        "fr": "Jour sommet de fertilité"
       },
       "description": {
         "en": "When fertility is at its highest point"
@@ -4750,7 +4764,8 @@
     "fertility-ttc-tta": {
       "version": "v1",
       "label": {
-        "en": "Trying to conceive / Avoiding pregnancy"
+        "en": "Trying to conceive / Avoiding pregnancy",
+        "fr": "Essai de conception / Évitement de grossesse"
       },
       "description": {
         "en": "Current fertility intention"
@@ -4825,7 +4840,8 @@
     "fertility-sexual-activity": {
       "version": "v1",
       "label": {
-        "en": "Sexual activity"
+        "en": "Sexual activity",
+        "fr": "Activité sexuelle"
       },
       "description": {
         "en": "Potentially reproductive sexual activity"
@@ -4876,7 +4892,8 @@
     "fertility-genital-contact": {
       "version": "v1",
       "label": {
-        "en": "Non-intercourse genital contact"
+        "en": "Non-intercourse genital contact",
+        "fr": "Contact génital sans rapport sexuel"
       },
       "description": {
         "en": "Genital contact that did not involve intercourse (e.g. external contact,\nmanual stimulation involving genital exposure). Relevant for fertility-\nawareness charting because residual sperm exposure can still result in\npregnancy. Distinct from fertility-sexual-activity, which records\nintercourse variants. Both items can co-exist on the same day if both\nphenomena occurred."
@@ -4997,7 +5014,8 @@
     "fertility-pregnancy": {
       "version": "v2",
       "label": {
-        "en": "Pregnancy"
+        "en": "Pregnancy",
+        "fr": "Grossesse"
       },
       "description": {
         "en": "Pregnancy"
@@ -5320,7 +5338,8 @@
     "fertility-test-opk": {
       "version": "v1",
       "label": {
-        "en": "Ovulation test (OPK)"
+        "en": "Ovulation test (OPK)",
+        "fr": "Test d'ovulation (OPK)"
       },
       "description": {
         "en": "Ovulation Predictor Kit result. Uses test-result/scale (-1 negative, 0 indeterminate, 1 positive). Intermediate values for semi-quantitative results (e.g. 0.5 weak positive)."
@@ -5333,7 +5352,8 @@
     "fertility-test-pregnancy": {
       "version": "v1",
       "label": {
-        "en": "Pregnancy test"
+        "en": "Pregnancy test",
+        "fr": "Test de grossesse"
       },
       "description": {
         "en": "Home pregnancy test result. Uses test-result/scale (-1 negative, 0 indeterminate, 1 positive)."
@@ -5346,7 +5366,8 @@
     "finding-coded": {
       "version": "v1",
       "label": {
-        "en": "Finding (coded)"
+        "en": "Finding (coded)",
+        "fr": "Constatation clinique (codée)"
       },
       "description": {
         "en": "Search and select a coded clinical or imaging finding."
@@ -5540,7 +5561,8 @@
     "medication-intake-basic": {
       "version": "v3",
       "label": {
-        "en": "Medication Intake Basic"
+        "en": "Medication Intake Basic",
+        "fr": "Prise de médicament (simple)"
       },
       "description": {
         "en": "Free-text medication intake with optional dose and route. Content has an 'intake' sub-object following the same structure as medication/coded-v1."
@@ -5749,7 +5771,8 @@
     "medication-intake-coded": {
       "version": "v1",
       "label": {
-        "en": "Medication Intake (coded)"
+        "en": "Medication Intake (coded)",
+        "fr": "Prise de médicament (codée)"
       },
       "description": {
         "en": "Search and select a coded medication from datasets service"
@@ -5763,7 +5786,8 @@
     "medication-prescription-coded": {
       "version": "v1",
       "label": {
-        "en": "Medication Prescription (coded)"
+        "en": "Medication Prescription (coded)",
+        "fr": "Prescription de médicament (codée)"
       },
       "description": {
         "en": "Doctor-prescribed medication with dosage and frequency"
@@ -5777,7 +5801,8 @@
     "nutrition-appetite": {
       "version": "v1",
       "label": {
-        "en": "Appetite"
+        "en": "Appetite",
+        "fr": "Appétit"
       },
       "description": {
         "en": "Self-reported appetite level."
@@ -5813,7 +5838,8 @@
     "procedure-basic": {
       "version": "v1",
       "label": {
-        "en": "Procedure (free-text)"
+        "en": "Procedure (free-text)",
+        "fr": "Acte médical (texte libre)"
       },
       "description": {
         "en": "Free-text clinical procedure — laparoscopy, HSG, polypectomy, etc."
@@ -5848,7 +5874,8 @@
     "procedure-coded": {
       "version": "v1",
       "label": {
-        "en": "Procedure (coded)"
+        "en": "Procedure (coded)",
+        "fr": "Acte médical (codé)"
       },
       "description": {
         "en": "Search and select a coded clinical procedure."
@@ -6032,7 +6059,8 @@
     },
     "profile-date-of-birth": {
       "label": {
-        "en": "Date of Birth"
+        "en": "Date of Birth",
+        "fr": "Date de naissance"
       },
       "description": {
         "en": "Date of birth"
@@ -6046,7 +6074,8 @@
     "profile-name": {
       "version": "temporary",
       "label": {
-        "en": "Name"
+        "en": "Name",
+        "fr": "Prénom"
       },
       "description": {
         "en": "Name"
@@ -6059,7 +6088,8 @@
     "profile-surname": {
       "version": "temporary",
       "label": {
-        "en": "Surname"
+        "en": "Surname",
+        "fr": "Nom de famille"
       },
       "description": {
         "en": "Surname"
@@ -6072,7 +6102,8 @@
     "profile-sex": {
       "version": "v1",
       "label": {
-        "en": "Sex"
+        "en": "Sex",
+        "fr": "Sexe"
       },
       "description": {
         "en": "Biological Sex"
@@ -9700,7 +9731,8 @@
     "treatment-basic": {
       "version": "v1",
       "label": {
-        "en": "Treatment (free-text)"
+        "en": "Treatment (free-text)",
+        "fr": "Traitement (texte libre)"
       },
       "description": {
         "en": "Free-text clinical treatment — IVF, chemotherapy, CBT, dialysis, etc."
@@ -9740,7 +9772,8 @@
     "treatment-coded": {
       "version": "v1",
       "label": {
-        "en": "Treatment (coded)"
+        "en": "Treatment (coded)",
+        "fr": "Traitement (codé)"
       },
       "description": {
         "en": "Search and select a coded clinical treatment."
@@ -15860,11 +15893,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-09-15T11:34:44.515Z"
+      "updatedAt": "2026-09-15T12:41:21.354Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-09-15T11:34:44.517Z"
+      "updatedAt": "2026-09-15T12:41:21.356Z"
     }
   },
   "settings": {
