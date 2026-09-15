@@ -1,6 +1,8 @@
 treatment-basic:
   version: v1
-  label: Treatment (free-text)
+  label:
+    en: Treatment (free-text)
+    fr: Traitement (texte libre)
   description: Free-text clinical treatment — IVF, chemotherapy, CBT, dialysis, etc.
   streamId: treatment
   eventType: treatment/basic
@@ -25,7 +27,9 @@ treatment-basic:
 
 treatment-coded:
   version: v1
-  label: Treatment (coded)
+  label:
+    en: Treatment (coded)
+    fr: Traitement (codé)
   description: Search and select a coded clinical treatment.
   streamId: treatment
   eventType: treatment/coded-v1

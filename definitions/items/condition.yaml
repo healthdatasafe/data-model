@@ -1,6 +1,8 @@
 condition-coded:
   version: v1
-  label: Condition (coded)
+  label:
+    en: Condition (coded)
+    fr: Affection (codée)
   description: Search and select a coded clinical diagnosis or condition.
   streamId: condition
   eventType: condition/coded-v1

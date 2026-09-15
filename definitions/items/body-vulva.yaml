@@ -2,7 +2,9 @@
 
 body-vulva-mucus-inspect:
   version: v2
-  label: Cervical Fluid Inspect
+  label:
+    en: Cervical Fluid Inspect
+    fr: Observation de la glaire cervicale
   description: Cervical fluid observation as a 9-dimensional vector, convertible across charting methods (Apple Health, Creighton, Billings, Mira, etc.)
   streamId: body-vulva-mucus-inspect
   eventType: vulva-mucus-inspect/9d-vector
@@ -61,7 +63,9 @@ body-vulva-wetness-feeling:
   repeatable: unlimited
 body-vulva-wetness-wiping:
   version: v1
-  label: Vulva Wetness when wiping
+  label:
+    en: Vulva Wetness when wiping
+    fr: Sensation d'humidité vulvaire à l'essuyage
   description: Vulva wetness when wiping 
   streamId: body-vulva-wetness-wiping
   eventType: ratio/generic
@@ -78,7 +82,9 @@ body-vulva-wetness-wiping:
 ## Bleeding
 body-vulva-bleeding:
   version: v2
-  label: Bleeding intensity
+  label:
+    en: Bleeding intensity
+    fr: Intensité du saignement
   description: Subjective bleeding intensity on a 0-1 proportion scale.
   streamId: body-vulva-bleeding
   eventType: ratio/proportion
@@ -116,7 +122,9 @@ body-vulva-bleeding:
 
 body-vulva-bleeding-browndark:
   version: v1
-  label: Brown/dark coloration
+  label:
+    en: Brown/dark coloration
+    fr: Coloration brune ou foncée
   description: Presence of brown or dark coloration in bleeding. Qualifier for a co-occurring body-vulva-bleeding event.
   streamId: body-vulva-bleeding-browndark
   eventType: activity/plain
@@ -125,7 +133,9 @@ body-vulva-bleeding-browndark:
 
 body-vulva-bleeding-clots:
   version: v1
-  label: Blood clots
+  label:
+    en: Blood clots
+    fr: Caillots sanguins
   description: Presence of blood clots during bleeding. Qualifier for a co-occurring bleeding event.
   streamId: body-vulva-bleeding-clots
   eventType: activity/plain
@@ -134,7 +144,9 @@ body-vulva-bleeding-clots:
 
 body-vulva-bleeding-postpartum:
   version: v1
-  label: Postpartum Bleeding
+  label:
+    en: Postpartum Bleeding
+    fr: Saignement du post-partum
   description: Vaginal bleeding following childbirth (lochia).
   streamId: body-vulva-bleeding-postpartum
   eventType: activity/plain
@@ -143,7 +155,9 @@ body-vulva-bleeding-postpartum:
 
 body-vulva-bleeding-miscarriage:
   version: v1
-  label: Miscarriage Bleeding
+  label:
+    en: Miscarriage Bleeding
+    fr: Saignement de fausse couche
   description: Vaginal bleeding associated with pregnancy loss.
   streamId: body-vulva-bleeding-miscarriage
   eventType: activity/plain

@@ -1,5 +1,38 @@
 # Changelog
 
+## [3.3.0] - 2026-09-15
+
+### Added — French labels for the last 33 active items, so a French consent screen reads in French (site-agents#16)
+
+The consent screen in `app-web-user-account` mixed languages: the verbs were localised (`gérer`,
+`contribuer à`) while the thing being granted stayed English (`Basal Body Temperature`) even at
+`lang=fr`. Half of that was ours — **33 of 223 active items carried no `fr` label**, so
+`localizeText` fell through to English. All 33 now have one, and every active item in the published
+pack carries both `en` and `fr`.
+
+The 33 are concentrated exactly where a fertility bridge asks for permission, which is why the gap
+was so visible on that screen: the seven `body-vulva-*` bleeding and mucus items, eleven
+`fertility-*` cycle / test / intention items, the coded clinical entries (`condition-coded`,
+`finding-coded`, `medication-*`, `procedure-*`, `treatment-*`), and the `profile-*` identity fields.
+
+Each was stored as a bare string (`label: Ovulation Day`) rather than the `{en, fr}` map every
+localised item uses; they are now maps, with the English text unchanged. No key, `streamId`,
+`eventType`, `description` or behaviour is touched — this is additive localisation only, so no
+consumer needs to change and nothing needs migrating.
+
+**What this does NOT fix, and cannot.** Stream *names* stay English. `stream.name` is a plain
+`string` across all 263 streams — the schema has no localisation slot for it at all — so a consumer
+rendering stream names still shows English. That is why the consent screen was changed to resolve a
+`streamId` to its active item and render the *item's* label instead. Making `stream.name`
+localisable was considered and rejected: it is a breaking change rippling through every consumer
+that reads a stream name, and it would still leave the requester-supplied `defaultName`
+single-language.
+
+**Note for consumers resolving a stream to an item:** streams and items are not 1:1. Deprecated and
+active twins share a `streamId`, and five streams carry more than one *active* item
+(`body-vulva-mucus-inspect`, `medication-intake`, `procedure`, `profile-name`, `treatment`), so no
+single item speaks for those. 213 of the 222 item-bearing streams resolve unambiguously.
+
 ## [3.2.0] - 2026-09-15
 
 ### Changed — the `deprecated` flag on presence twins now says what it actually means (site-agents#13)

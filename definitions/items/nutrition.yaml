@@ -2,7 +2,9 @@
 
 nutrition-appetite:
   version: v1
-  label: Appetite
+  label:
+    en: Appetite
+    fr: Appétit
   description: Self-reported appetite level.
   streamId: nutrition-appetite
   eventType: ratio/proportion
