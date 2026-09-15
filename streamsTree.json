@@ -641,6 +641,13 @@
           {
             "id": "body-temperature-basal",
             "name": "Basal Body Temperature",
+            "children": [
+              {
+                "id": "body-temperature-basal-disturbance",
+                "name": "Basal Temperature Disturbance",
+                "parentId": "body-temperature-basal"
+              }
+            ],
             "parentId": "body-temperature"
           }
         ],

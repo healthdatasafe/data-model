@@ -3419,6 +3419,39 @@
           }
         }
       }
+    },
+    "sync-status/bridge": {
+      "description": "Sync watermark written by a data source (a bridge, or an app syncing into the user's own account) recording how far it has synced, so its next run can read it back. Content is deliberately open: writers already carry different payloads (`syncedUntil`, `action`, `changeLogs`, a plugin/bridge version). `syncedUntil` is the one agreed field — set it when the source has a meaningful high-water mark, so a viewer can generically show 'last synced from <app>'. Written to a bridge's per-user stream, or to the app-stream `sync` suffix when the writer is an app on the user's own account.",
+      "type": "object",
+      "properties": {
+        "syncedUntil": {
+          "description": "High-water mark the source has synced up to. Unix time in seconds, or an ISO-8601 timestamp.",
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "action": {
+          "description": "What produced this status (e.g. 'newDays', 'migrate'). Writer-defined.",
+          "type": "string"
+        },
+        "error": {
+          "description": "Error recorded by the source for this sync run, when one occurred."
+        }
+      }
+    },
+    "temperature/disturbance-v1": {
+      "description": "Reason a basal body temperature reading is unreliable ('parasitic temperature'). Qualifier for a co-occurring body-temperature-basal event: sympto-thermal rules EXCLUDE disturbed readings from the coverline and temperature-shift computation, so a consumer charting BBT must be able to see the flag. Absence of this event means the reading was not flagged, not that it was confirmed reliable.",
+      "type": "string",
+      "enum": [
+        "rough-night",
+        "illness-fever",
+        "alcohol",
+        "late-or-short-sleep",
+        "different-time",
+        "travel-timezone",
+        "other"
+      ]
     }
   },
   "extras": {

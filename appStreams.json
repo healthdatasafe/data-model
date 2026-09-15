@@ -63,5 +63,18 @@
       "fr": "Paramètres propres à l'utilisateur pour les applications client HDS. Contient un événement par fonctionnalité (distingué par eventType, ex. settings/hds-react-timeline). Un seul événement récurrent par type, mis à jour sur place."
     },
     "display": "system"
+  },
+  "sync": {
+    "suffix": "sync",
+    "eventType": "sync-status/bridge",
+    "label": {
+      "en": "Sync Status",
+      "fr": "État de synchronisation"
+    },
+    "description": {
+      "en": "How far this application has synced, so it can resume from there and a viewer can show when it last ran. Single recurring event, updated in place.",
+      "fr": "Jusqu'où cette application a synchronisé, afin qu'elle puisse reprendre à partir de là et qu'un visualiseur puisse indiquer sa dernière exécution. Événement unique récurrent, mis à jour sur place."
+    },
+    "display": "system"
   }
 }

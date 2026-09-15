@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-09-15T12:41:21.356Z",
+  "publicationDate": "2026-09-15T13:08:46.279Z",
   "streams": [
     {
       "id": "activity",
@@ -643,6 +643,13 @@
             {
               "id": "body-temperature-basal",
               "name": "Basal Body Temperature",
+              "children": [
+                {
+                  "id": "body-temperature-basal-disturbance",
+                  "name": "Basal Temperature Disturbance",
+                  "parentId": "body-temperature-basal"
+                }
+              ],
               "parentId": "body-temperature"
             }
           ],
@@ -2464,6 +2471,72 @@
       "streamId": "body-temperature-basal",
       "eventType": "temperature/c",
       "type": "number",
+      "repeatable": "unlimited"
+    },
+    "body-temperature-basal-disturbance": {
+      "version": "v1",
+      "label": {
+        "en": "Basal temperature disturbance",
+        "fr": "Perturbation de la température basale"
+      },
+      "description": {
+        "en": "Reason this basal temperature reading is unreliable (\"parasitic temperature\"). Qualifier for a co-occurring body-temperature-basal event; exclude the reading from coverline and shift computation. Absence means the reading was not flagged, not that it was confirmed reliable.",
+        "fr": "Raison pour laquelle cette mesure de température basale n'est pas fiable (« température parasite »). Qualificatif pour un événement body-temperature-basal concomitant ; exclure la mesure du calcul de la ligne de base et du décalage thermique. L'absence signifie que la mesure n'a pas été signalée, non qu'elle a été confirmée fiable."
+      },
+      "streamId": "body-temperature-basal-disturbance",
+      "eventType": "temperature/disturbance-v1",
+      "type": "select",
+      "options": [
+        {
+          "value": "rough-night",
+          "label": {
+            "en": "Rough night",
+            "fr": "Nuit agitée"
+          }
+        },
+        {
+          "value": "illness-fever",
+          "label": {
+            "en": "Illness or fever",
+            "fr": "Maladie ou fièvre"
+          }
+        },
+        {
+          "value": "alcohol",
+          "label": {
+            "en": "Alcohol",
+            "fr": "Alcool"
+          }
+        },
+        {
+          "value": "late-or-short-sleep",
+          "label": {
+            "en": "Late or short sleep",
+            "fr": "Sommeil tardif ou trop court"
+          }
+        },
+        {
+          "value": "different-time",
+          "label": {
+            "en": "Measured at a different time",
+            "fr": "Mesure prise à une heure inhabituelle"
+          }
+        },
+        {
+          "value": "travel-timezone",
+          "label": {
+            "en": "Travel or time-zone change",
+            "fr": "Voyage ou changement de fuseau horaire"
+          }
+        },
+        {
+          "value": "other",
+          "label": {
+            "en": "Other",
+            "fr": "Autre"
+          }
+        }
+      ],
       "repeatable": "unlimited"
     },
     "body-height": {
@@ -10275,6 +10348,49 @@
         ]
       }
     },
+    "wellbeing-mental-distress-anxiety-presence": {
+      "version": "v1",
+      "label": {
+        "en": "Anxiety",
+        "fr": "Anxiété"
+      },
+      "description": {
+        "en": "Anxiety symptoms. Presence marker for sources that record occurrence only (no grade); use wellbeing-mental-distress-anxiety when a severity is known.",
+        "fr": "Symptômes d'anxiété. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser wellbeing-mental-distress-anxiety lorsqu'une sévérité est connue."
+      },
+      "deprecated": true,
+      "streamId": "wellbeing-mental-distress-anxiety",
+      "eventType": "activity/plain",
+      "type": "checkbox",
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "48694002"
+        ]
+      }
+    },
+    "wellbeing-mental-distress-stress-presence": {
+      "version": "v1",
+      "label": {
+        "en": "Stress",
+        "fr": "Stress"
+      },
+      "description": {
+        "en": "Stress symptoms. Presence marker for sources that record occurrence only (no grade); use wellbeing-mental-distress-stress when a severity is known.",
+        "fr": "Symptômes de stress. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser wellbeing-mental-distress-stress lorsqu'une sévérité est connue."
+      },
+      "deprecated": true,
+      "streamId": "wellbeing-mental-distress-stress",
+      "eventType": "activity/plain",
+      "type": "checkbox",
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "73595000",
+          "224974006"
+        ]
+      }
+    },
     "wellbeing-self-rated-health": {
       "version": "v1",
       "label": {
@@ -13754,6 +13870,39 @@
             }
           }
         }
+      },
+      "sync-status/bridge": {
+        "description": "Sync watermark written by a data source (a bridge, or an app syncing into the user's own account) recording how far it has synced, so its next run can read it back. Content is deliberately open: writers already carry different payloads (`syncedUntil`, `action`, `changeLogs`, a plugin/bridge version). `syncedUntil` is the one agreed field — set it when the source has a meaningful high-water mark, so a viewer can generically show 'last synced from <app>'. Written to a bridge's per-user stream, or to the app-stream `sync` suffix when the writer is an app on the user's own account.",
+        "type": "object",
+        "properties": {
+          "syncedUntil": {
+            "description": "High-water mark the source has synced up to. Unix time in seconds, or an ISO-8601 timestamp.",
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "action": {
+            "description": "What produced this status (e.g. 'newDays', 'migrate'). Writer-defined.",
+            "type": "string"
+          },
+          "error": {
+            "description": "Error recorded by the source for this sync run, when one occurred."
+          }
+        }
+      },
+      "temperature/disturbance-v1": {
+        "description": "Reason a basal body temperature reading is unreliable ('parasitic temperature'). Qualifier for a co-occurring body-temperature-basal event: sympto-thermal rules EXCLUDE disturbed readings from the coverline and temperature-shift computation, so a consumer charting BBT must be able to see the flag. Absence of this event means the reading was not flagged, not that it was confirmed reliable.",
+        "type": "string",
+        "enum": [
+          "rough-night",
+          "illness-fever",
+          "alcohol",
+          "late-or-short-sleep",
+          "different-time",
+          "travel-timezone",
+          "other"
+        ]
       }
     },
     "extras": {
@@ -15893,11 +16042,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-09-15T12:41:21.354Z"
+      "updatedAt": "2026-09-15T13:08:46.278Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-09-15T12:41:21.356Z"
+      "updatedAt": "2026-09-15T13:08:46.279Z"
     }
   },
   "settings": {
@@ -16011,6 +16160,19 @@
       "description": {
         "en": "User-scoped settings for HDS client apps. Holds one event per feature (distinguished by eventType, e.g. settings/hds-react-timeline). Single recurring event per type, updated in place.",
         "fr": "Paramètres propres à l'utilisateur pour les applications client HDS. Contient un événement par fonctionnalité (distingué par eventType, ex. settings/hds-react-timeline). Un seul événement récurrent par type, mis à jour sur place."
+      },
+      "display": "system"
+    },
+    "sync": {
+      "suffix": "sync",
+      "eventType": "sync-status/bridge",
+      "label": {
+        "en": "Sync Status",
+        "fr": "État de synchronisation"
+      },
+      "description": {
+        "en": "How far this application has synced, so it can resume from there and a viewer can show when it last ran. Single recurring event, updated in place.",
+        "fr": "Jusqu'où cette application a synchronisé, afin qu'elle puisse reprendre à partir de là et qu'un visualiseur puisse indiquer sa dernière exécution. Événement unique récurrent, mis à jour sur place."
       },
       "display": "system"
     }

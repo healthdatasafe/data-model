@@ -1063,6 +1063,72 @@
     "type": "number",
     "repeatable": "unlimited"
   },
+  "body-temperature-basal-disturbance": {
+    "version": "v1",
+    "label": {
+      "en": "Basal temperature disturbance",
+      "fr": "Perturbation de la température basale"
+    },
+    "description": {
+      "en": "Reason this basal temperature reading is unreliable (\"parasitic temperature\"). Qualifier for a co-occurring body-temperature-basal event; exclude the reading from coverline and shift computation. Absence means the reading was not flagged, not that it was confirmed reliable.",
+      "fr": "Raison pour laquelle cette mesure de température basale n'est pas fiable (« température parasite »). Qualificatif pour un événement body-temperature-basal concomitant ; exclure la mesure du calcul de la ligne de base et du décalage thermique. L'absence signifie que la mesure n'a pas été signalée, non qu'elle a été confirmée fiable."
+    },
+    "streamId": "body-temperature-basal-disturbance",
+    "eventType": "temperature/disturbance-v1",
+    "type": "select",
+    "options": [
+      {
+        "value": "rough-night",
+        "label": {
+          "en": "Rough night",
+          "fr": "Nuit agitée"
+        }
+      },
+      {
+        "value": "illness-fever",
+        "label": {
+          "en": "Illness or fever",
+          "fr": "Maladie ou fièvre"
+        }
+      },
+      {
+        "value": "alcohol",
+        "label": {
+          "en": "Alcohol",
+          "fr": "Alcool"
+        }
+      },
+      {
+        "value": "late-or-short-sleep",
+        "label": {
+          "en": "Late or short sleep",
+          "fr": "Sommeil tardif ou trop court"
+        }
+      },
+      {
+        "value": "different-time",
+        "label": {
+          "en": "Measured at a different time",
+          "fr": "Mesure prise à une heure inhabituelle"
+        }
+      },
+      {
+        "value": "travel-timezone",
+        "label": {
+          "en": "Travel or time-zone change",
+          "fr": "Voyage ou changement de fuseau horaire"
+        }
+      },
+      {
+        "value": "other",
+        "label": {
+          "en": "Other",
+          "fr": "Autre"
+        }
+      }
+    ],
+    "repeatable": "unlimited"
+  },
   "body-height": {
     "version": "v1",
     "label": {
@@ -8864,6 +8930,49 @@
         }
       }
     ],
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "73595000",
+        "224974006"
+      ]
+    }
+  },
+  "wellbeing-mental-distress-anxiety-presence": {
+    "version": "v1",
+    "label": {
+      "en": "Anxiety",
+      "fr": "Anxiété"
+    },
+    "description": {
+      "en": "Anxiety symptoms. Presence marker for sources that record occurrence only (no grade); use wellbeing-mental-distress-anxiety when a severity is known.",
+      "fr": "Symptômes d'anxiété. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser wellbeing-mental-distress-anxiety lorsqu'une sévérité est connue."
+    },
+    "deprecated": true,
+    "streamId": "wellbeing-mental-distress-anxiety",
+    "eventType": "activity/plain",
+    "type": "checkbox",
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "48694002"
+      ]
+    }
+  },
+  "wellbeing-mental-distress-stress-presence": {
+    "version": "v1",
+    "label": {
+      "en": "Stress",
+      "fr": "Stress"
+    },
+    "description": {
+      "en": "Stress symptoms. Presence marker for sources that record occurrence only (no grade); use wellbeing-mental-distress-stress when a severity is known.",
+      "fr": "Symptômes de stress. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser wellbeing-mental-distress-stress lorsqu'une sévérité est connue."
+    },
+    "deprecated": true,
+    "streamId": "wellbeing-mental-distress-stress",
+    "eventType": "activity/plain",
+    "type": "checkbox",
     "repeatable": "unlimited",
     "references": {
       "snomed": [
