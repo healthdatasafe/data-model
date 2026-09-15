@@ -68,3 +68,22 @@ webapp-settings:
     en: User-scoped settings for HDS client apps. Holds one event per feature (distinguished by eventType, e.g. settings/hds-react-timeline). Single recurring event per type, updated in place.
     fr: Paramètres propres à l'utilisateur pour les applications client HDS. Contient un événement par fonctionnalité (distingué par eventType, ex. settings/hds-react-timeline). Un seul événement récurrent par type, mis à jour sur place.
   display: system
+
+# An app syncing into the user's OWN account needs somewhere to record how far it
+# has synced and read it back next run. Bridges never hit this: a bridge owns one
+# HDS account with a stream per partner user, so its `streamUserId` is a natural
+# home for the marker (lib-bridge-js writes it there via logSyncStatus). An app
+# talking to the user's account directly has no equivalent, so every integration
+# was inventing a private convention — the Cycle Féminin PHP integration chose
+# `app-cyclefeminin-sync`. Standardising later would have forced all of them to
+# migrate. (site-agents#17)
+sync:
+  suffix: sync
+  eventType: sync-status/bridge
+  label:
+    en: Sync Status
+    fr: État de synchronisation
+  description:
+    en: How far this application has synced, so it can resume from there and a viewer can show when it last ran. Single recurring event, updated in place.
+    fr: Jusqu'où cette application a synchronisé, afin qu'elle puisse reprendre à partir de là et qu'un visualiseur puisse indiquer sa dernière exécution. Événement unique récurrent, mis à jour sur place.
+  display: system

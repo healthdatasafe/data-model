@@ -318,6 +318,55 @@ wellbeing-mental-distress-stress:
   references:
     snomed: ["73595000", "224974006"]
 
+# ── Presence twins for the anxiety / stress pair (B-2026-09-15-7) ────────────
+# Both streams were `ratio/proportion` ONLY, so a source that reports "anxious"
+# with no grade had nowhere correct to write: 0 contradicts the report, any
+# positive value fabricates a grade the subject never gave, and skipping loses
+# the report. bridge-mira wrote 0.25 — which on the graded item is literally the
+# option "Slightly anxious", so an ungraded report was stored indistinguishably
+# from a real one.
+#
+# Keyed `<streamId>-presence`, NOT at the base key as the other 57 twin pairs
+# are. That pattern is an artefact of order: in 3.2.0 the presence items already
+# existed and the graded twins were added with a suffix. Here the graded item
+# came first and keeps its key, so the same rule — the pre-existing item keeps
+# its key, the new twin takes the suffix — produces the mirror-image naming.
+# Renaming the graded item instead would have silently changed the eventType
+# behind a published key, which the deprecated-alias mechanism cannot cover
+# (an alias must keep the same streamId AND eventType).
+
+wellbeing-mental-distress-anxiety-presence:
+  version: v1
+  label:
+    en: Anxiety
+    fr: Anxiété
+  description:
+    en: "Anxiety symptoms. Presence marker for sources that record occurrence only (no grade); use wellbeing-mental-distress-anxiety when a severity is known."
+    fr: "Symptômes d'anxiété. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser wellbeing-mental-distress-anxiety lorsqu'une sévérité est connue."
+  deprecated: true
+  streamId: wellbeing-mental-distress-anxiety
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+  references:
+    snomed: ["48694002"]
+
+wellbeing-mental-distress-stress-presence:
+  version: v1
+  label:
+    en: Stress
+    fr: Stress
+  description:
+    en: "Stress symptoms. Presence marker for sources that record occurrence only (no grade); use wellbeing-mental-distress-stress when a severity is known."
+    fr: "Symptômes de stress. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser wellbeing-mental-distress-stress lorsqu'une sévérité est connue."
+  deprecated: true
+  streamId: wellbeing-mental-distress-stress
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+  references:
+    snomed: ["73595000", "224974006"]
+
 # Self-rated health ("SRH") — the most validated single-item PRO in epidemiology.
 # One item covers both common capture formats: continuous 0..100 VAS (stored 0..1 at
 # step 0.01) and 5-level categorical (SF-1 / PROMIS Global01 / NHIS SRH question,

@@ -63,6 +63,49 @@ body-temperature-basal:
   eventType: temperature/c
   type: number
   repeatable: unlimited
+# Sympto-thermal rules EXCLUDE a disturbed reading from the coverline and the
+# temperature-shift computation, so a consumer charting BBT cannot read the curve
+# correctly without the flag. Cycle Féminin exports it
+# (`codifiedEvents: ["Parasitic temperature"]` + `codifiedTemperatureParasitic`);
+# both the HDS importer and the PHP samples dropped it and wrote the temperature
+# as if reliable — silently wrong for anyone computing a shift. (site-agents#14)
+#
+# Modelled as a companion item on its own stream, the same shape as
+# body-vulva-bleeding-browndark / -clots ("Qualifier for a co-occurring ... event"),
+# rather than as an event-level qualifier on the temperature itself: Plan 85 (D4,
+# 2026-07-16) decided HDS does not encode observation qualifiers in the root model,
+# and no such mechanism exists.
+#
+# Generic on purpose — FEMM, Billings, Creighton and Mira all have a comparable
+# disturbance notion, so one item serves several bridges instead of each inventing
+# its own.
+body-temperature-basal-disturbance:
+  version: v1
+  label:
+    en: Basal temperature disturbance
+    fr: Perturbation de la température basale
+  description:
+    en: Reason this basal temperature reading is unreliable ("parasitic temperature"). Qualifier for a co-occurring body-temperature-basal event; exclude the reading from coverline and shift computation. Absence means the reading was not flagged, not that it was confirmed reliable.
+    fr: Raison pour laquelle cette mesure de température basale n'est pas fiable (« température parasite »). Qualificatif pour un événement body-temperature-basal concomitant ; exclure la mesure du calcul de la ligne de base et du décalage thermique. L'absence signifie que la mesure n'a pas été signalée, non qu'elle a été confirmée fiable.
+  streamId: body-temperature-basal-disturbance
+  eventType: temperature/disturbance-v1
+  type: select
+  options:
+    - value: rough-night
+      label: { en: Rough night, fr: Nuit agitée }
+    - value: illness-fever
+      label: { en: Illness or fever, fr: Maladie ou fièvre }
+    - value: alcohol
+      label: { en: Alcohol, fr: Alcool }
+    - value: late-or-short-sleep
+      label: { en: Late or short sleep, fr: Sommeil tardif ou trop court }
+    - value: different-time
+      label: { en: Measured at a different time, fr: Mesure prise à une heure inhabituelle }
+    - value: travel-timezone
+      label: { en: Travel or time-zone change, fr: Voyage ou changement de fuseau horaire }
+    - value: other
+      label: { en: Other, fr: Autre }
+  repeatable: unlimited
 body-height:
   version: v1
   label:
