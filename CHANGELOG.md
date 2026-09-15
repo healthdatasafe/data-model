@@ -1,5 +1,76 @@
 # Changelog
 
+## [3.4.0] - 2026-09-15
+
+Three additions, batched into one publish because all three were blocked on it. Nothing existing
+changes: no key, `streamId`, `eventType` or behaviour is altered, and nothing needs migrating.
+
+### Added — presence twins for anxiety and stress, so an ungraded report stops being given a grade (B-2026-09-15-7)
+
+`wellbeing-mental-distress-anxiety` and `-stress` were `ratio/proportion` **only**. A source that
+reports "anxious" with no grade therefore had nowhere correct to write: `0` contradicts the report,
+any positive value invents a grade, and skipping loses it. `bridge-mira` wrote **0.25** — which on
+the graded item is literally the option **"Slightly anxious"** — so an ungraded report was stored
+indistinguishably from a real answer by the subject.
+
+Adds `wellbeing-mental-distress-anxiety-presence` and `-stress-presence` (`activity/plain`,
+`deprecated: true`, same `streamId`, the standard presence caveat in the description), completing
+the 3.2.0 presence-twin contract for this pair.
+
+**Keyed `<streamId>-presence`, deliberately unlike the other 57 twin pairs**, where the presence
+item holds the base key and the graded twin carries `-severity`/`-intensity`. That pattern is an
+artefact of order: in 3.2.0 the presence items already existed and the graded twins were added with
+a suffix. Here the graded item came first and keeps its key, so the same underlying rule — the
+pre-existing item keeps its key, the new twin takes the suffix — produces the mirror-image naming.
+Renaming the graded item instead would have silently changed the `eventType` behind a published
+key, which the deprecated-alias mechanism explicitly cannot cover (an alias must keep the same
+`streamId` **and** `eventType`).
+
+**Note on already-stored data:** events carrying the fabricated `0.25` are indistinguishable from a
+genuine "Slightly anxious" — nothing marks them — so they are not migratable after the fact.
+
+### Added — a standard `sync` app-stream suffix and the `sync-status/bridge` eventType (site-agents#17)
+
+An app syncing into a user's **own** account needs somewhere to record how far it has synced and
+read it back next run. Bridges never hit this — a bridge owns one HDS account with a stream per
+partner user, so `streamUserId` is a natural home, and `lib-bridge-js` has written
+`sync-status/bridge` there all along. An app talking to the user's account directly had no
+equivalent, so every integration invented a private convention (the Cycle Féminin PHP integration
+chose `app-cyclefeminin-sync`). Standardising later would have forced all of them to migrate.
+
+`appStreams` gains a `sync` entry alongside `notes` / `chat` / `system-out` / `system-in` /
+`webapp-settings`, and `sync-status/bridge` becomes a **published** eventType — the string `sync`
+did not previously occur in `pack.json` at all, so neither the suffix nor the type was discoverable.
+
+The content schema is deliberately permissive: existing writers already carry different payloads
+(`syncedUntil`, `action`, `changeLogs`, a plugin/bridge version), and tightening it would break
+them. `syncedUntil` is documented as the one agreed field, so a viewer can generically show "last
+synced from &lt;app&gt;" — which is what `clientData.appStreamId` exists to enable.
+
+### Added — a basal-temperature disturbance flag ("parasitic temperature") (site-agents#14)
+
+Sympto-thermal rules **exclude** a disturbed reading from the coverline and temperature-shift
+computation, so a consumer charting BBT cannot read the curve correctly without the flag. Cycle
+Féminin exports it (`codifiedEvents: ["Parasitic temperature"]` plus a reason in
+`codifiedTemperatureParasitic`); both the HDS importer and the PHP samples dropped it and wrote the
+temperature to `body-temperature-basal` as if reliable — silently wrong for anyone computing a
+shift.
+
+Adds `body-temperature-basal-disturbance` (new stream nested under `body-temperature-basal`,
+eventType `temperature/disturbance-v1`, a 7-value select: rough-night, illness-fever, alcohol,
+late-or-short-sleep, different-time, travel-timezone, other).
+
+Modelled as a **companion item on its own stream** — the same shape as
+`body-vulva-bleeding-browndark` / `-clots`, described in-model as *"Qualifier for a co-occurring …
+event"* — rather than as an event-level qualifier on the temperature itself. Plan 85 (D4,
+2026-07-16) decided HDS does not encode observation qualifiers in the root model, and no such
+mechanism exists.
+
+Generic on purpose: FEMM, Billings, Creighton and Mira all have a comparable disturbance notion, so
+one item serves several bridges instead of each inventing its own. **Absence of the event means the
+reading was not flagged, not that it was confirmed reliable** — stated in the description so no
+consumer infers reliability from silence.
+
 ## [3.3.0] - 2026-09-15
 
 ### Added — French labels for the last 33 active items, so a French consent screen reads in French (site-agents#16)
