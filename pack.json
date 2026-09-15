@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-09-15T13:08:46.279Z",
+  "publicationDate": "2026-09-15T14:05:45.839Z",
   "streams": [
     {
       "id": "activity",
@@ -12936,6 +12936,10 @@
             "description": "Aggregate intake count (Flavour A: lifetime occurrences). 0 = never.",
             "type": "number"
           },
+          "robotAssisted": {
+            "description": "Procedure was robot-assisted. Absent means not recorded, not false.",
+            "type": "boolean"
+          },
           "findings": {
             "description": "Open-vocabulary array of procedure-bound observations. Form preset declares which finding types are surfaced per procedure label.",
             "type": "array",
@@ -13031,6 +13035,10 @@
           },
           "count": {
             "type": "number"
+          },
+          "robotAssisted": {
+            "description": "Procedure was robot-assisted. Absent means not recorded, not false.",
+            "type": "boolean"
           },
           "findings": {
             "type": "array",
@@ -16042,11 +16050,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-09-15T13:08:46.278Z"
+      "updatedAt": "2026-09-15T14:05:45.837Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-09-15T13:08:46.279Z"
+      "updatedAt": "2026-09-15T14:05:45.838Z"
     }
   },
   "settings": {
