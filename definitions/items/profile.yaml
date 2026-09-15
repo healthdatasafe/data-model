@@ -93,7 +93,9 @@ profile-display-name:
   type: text
   repeatable: once
 profile-date-of-birth:
-  label: Date of Birth
+  label:
+    en: Date of Birth
+    fr: Date de naissance
   description: Date of birth
   version: v1
   streamId: profile-date-of-birth
@@ -102,7 +104,9 @@ profile-date-of-birth:
   repeatable: once
 profile-name:
   version: temporary
-  label: Name
+  label:
+    en: Name
+    fr: Prénom
   description: Name
   streamId: profile-name
   eventType: contact/name
@@ -110,7 +114,9 @@ profile-name:
   repeatable: once
 profile-surname:
   version: temporary
-  label: Surname
+  label:
+    en: Surname
+    fr: Nom de famille
   description: Surname
   streamId: profile-name
   eventType: contact/surname
@@ -118,7 +124,9 @@ profile-surname:
   repeatable: once
 profile-sex:
   version: v1
-  label: Sex
+  label:
+    en: Sex
+    fr: Sexe
   description: Biological Sex
   streamId: profile-sex
   eventType: attributes/biological-sex

@@ -57,7 +57,9 @@ fertility-cycles-average-luteal-phase:
   repeatable: once
 fertility-cycles-ovulation:
   version: temporary
-  label: Ovulation Day
+  label:
+    en: Ovulation Day
+    fr: Jour d'ovulation
   description: Flag this day as an ovulation day
   streamId: fertility-cycles-ovulation
   eventType: activity/plain
@@ -65,7 +67,9 @@ fertility-cycles-ovulation:
   repeatable: P1D
 fertility-cycles-start:
   version: v1
-  label: New Cycle
+  label:
+    en: New Cycle
+    fr: Nouveau cycle
   duration:
     mandatory: false
     canBeNull: true
@@ -84,7 +88,9 @@ fertility-cycles-start:
     Cycle duration is determined by next fertility cycle date unless duration property is given.
 fertility-cycles-period-end:
   version: temporary
-  label: End of period.
+  label:
+    en: End of period.
+    fr: Fin des règles
   description: Last day of periods. First day of period is given by a new cycle indication.
   streamId: fertility-cycles-period
   eventType: activity/plain
@@ -94,7 +100,9 @@ fertility-cycles-period-end:
     To track start / end of period, use fertility-cycles-start & fertility-cycles-period-end.
 fertility-cycles-fertile-window:
   version: temporary
-  label: Fertile Window
+  label:
+    en: Fertile Window
+    fr: Fenêtre fertile
   description: When a women is considered a fertile
   streamId: fertility-cycles-fertile-window
   eventType: activity/plain
@@ -108,7 +116,9 @@ fertility-cycles-fertile-window:
     Use duration property to indicate end of fertile window.
 fertility-cycles-peak-day:
   version: v1
-  label: Peak day of fertility
+  label:
+    en: Peak day of fertility
+    fr: Jour sommet de fertilité
   description: When fertility is at its highest point
   streamId: fertility-cycles-peak-day
   eventType: activity/plain
@@ -130,7 +140,9 @@ fertility-miscarriages-count:
   repeatable: once
 fertility-ttc-tta:
   version: v1
-  label: Trying to conceive / Avoiding pregnancy
+  label:
+    en: Trying to conceive / Avoiding pregnancy
+    fr: Essai de conception / Évitement de grossesse
   description: Current fertility intention
   streamId: fertility-ttc-tta
   eventType: ratio/generic
@@ -170,7 +182,9 @@ fertility-ttc-tta:
   repeatable: P1D
 fertility-sexual-activity:
   version: v1
-  label: Sexual activity
+  label:
+    en: Sexual activity
+    fr: Activité sexuelle
   description: Potentially reproductive sexual activity
   streamId: fertility-sexual-activity
   eventType: reproductive-sexuality/detailed
@@ -191,7 +205,9 @@ fertility-sexual-activity:
       label: 'Protected intercourse (unspecified method)'
 fertility-genital-contact:
   version: v1
-  label: Non-intercourse genital contact
+  label:
+    en: Non-intercourse genital contact
+    fr: Contact génital sans rapport sexuel
   description: |-
     Genital contact that did not involve intercourse (e.g. external contact,
     manual stimulation involving genital exposure). Relevant for fertility-
@@ -248,7 +264,9 @@ fertility-tracking-method:
   repeatable: any
 fertility-pregnancy:
   version: v2
-  label: Pregnancy
+  label:
+    en: Pregnancy
+    fr: Grossesse
   description: Pregnancy
   duration:
     mandatory: true
@@ -468,7 +486,9 @@ fertility-hormone-lh:
   devNotes: "B-2026-07-15-1. Do not use for new data."
 fertility-test-opk:
   version: v1
-  label: Ovulation test (OPK)
+  label:
+    en: Ovulation test (OPK)
+    fr: Test d'ovulation (OPK)
   description: Ovulation Predictor Kit result. Uses test-result/scale (-1 negative, 0 indeterminate, 1 positive). Intermediate values for semi-quantitative results (e.g. 0.5 weak positive).
   streamId: fertility-test-opk
   eventType: test-result/scale
@@ -476,7 +496,9 @@ fertility-test-opk:
   repeatable: any
 fertility-test-pregnancy:
   version: v1
-  label: Pregnancy test
+  label:
+    en: Pregnancy test
+    fr: Test de grossesse
   description: Home pregnancy test result. Uses test-result/scale (-1 negative, 0 indeterminate, 1 positive).
   streamId: fertility-test-pregnancy
   eventType: test-result/scale

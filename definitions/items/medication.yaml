@@ -1,6 +1,8 @@
 medication-intake-basic:
   version: v3
-  label: Medication Intake Basic
+  label:
+    en: Medication Intake Basic
+    fr: Prise de médicament (simple)
   description: Free-text medication intake with optional dose and route. Content has an 'intake' sub-object following the same structure as medication/coded-v1.
   streamId: medication-intake
   eventType: medication/basic
@@ -76,7 +78,9 @@ medication-intake-basic:
 
 medication-intake-coded:
   version: v1
-  label: Medication Intake (coded)
+  label:
+    en: Medication Intake (coded)
+    fr: Prise de médicament (codée)
   description: Search and select a coded medication from datasets service
   streamId: medication-intake
   eventType: medication/coded-v1
@@ -86,7 +90,9 @@ medication-intake-coded:
 
 medication-prescription-coded:
   version: v1
-  label: Medication Prescription (coded)
+  label:
+    en: Medication Prescription (coded)
+    fr: Prescription de médicament (codée)
   description: Doctor-prescribed medication with dosage and frequency
   streamId: medication-prescription
   eventType: medication/prescription-v1

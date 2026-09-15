@@ -1,6 +1,8 @@
 procedure-basic:
   version: v1
-  label: Procedure (free-text)
+  label:
+    en: Procedure (free-text)
+    fr: Acte médical (texte libre)
   description: Free-text clinical procedure — laparoscopy, HSG, polypectomy, etc.
   streamId: procedure
   eventType: procedure/basic
@@ -21,7 +23,9 @@ procedure-basic:
 
 procedure-coded:
   version: v1
-  label: Procedure (coded)
+  label:
+    en: Procedure (coded)
+    fr: Acte médical (codé)
   description: Search and select a coded clinical procedure.
   streamId: procedure
   eventType: procedure/coded-v1

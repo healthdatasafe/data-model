@@ -1,6 +1,8 @@
 family-children-count:
   version: temporary
-  label: Nb of children
+  label:
+    en: Nb of children
+    fr: Nombre d'enfants
   description: Number of children at this date
   streamId: family-children
   eventType: count/generic

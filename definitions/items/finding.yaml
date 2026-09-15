@@ -1,6 +1,8 @@
 finding-coded:
   version: v1
-  label: Finding (coded)
+  label:
+    en: Finding (coded)
+    fr: Constatation clinique (codée)
   description: Search and select a coded clinical or imaging finding.
   streamId: finding
   eventType: finding/coded-v1
