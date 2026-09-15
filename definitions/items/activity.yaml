@@ -2,11 +2,13 @@
 # See documentation/PHYSICAL-ACTIVITY.md for cross-system compatibility.
 #
 # Model (Plan 77 / data-model#19):
-#   - <activity>            : deprecated occurrence marker (eventType activity/plain).
-#                            Kept so existing events keep resolving; hidden from pickers.
+#   - <activity>            : presence marker (eventType activity/plain). `deprecated: true`
+#                            here means "hidden from pickers", NOT "do not write": presence-only
+#                            sources are expected to keep writing it. The published `description`
+#                            says so too (site-agents#13, 2026-09-15).
 #   - <activity>-intensity : go-forward item (eventType ratio/proportion, WHO/ACSM 3-level
-#                            Light/Moderate/Vigorous). Presence-only sources may still write
-#                            the deprecated occurrence item.
+#                            Light/Moderate/Vigorous). Write it only when an intensity is known;
+#                            note these options are 0.25/0.5/1.0 — there is no 0.
 # Both itemDefs share the same streamId (identity is streamId:eventType).
 # Maps to Apple HealthKit HKWorkoutActivityType and SNOMED CT codes.
 
@@ -14,7 +16,7 @@
 activity-yoga:
   version: v1
   label: Yoga
-  description: Deprecated — use activity-yoga-intensity to record a yoga session with intensity.
+  description: Presence marker for sources that record occurrence only (no grade); use activity-yoga-intensity when an intensity is known.
   deprecated: true
   streamId: activity-yoga
   eventType: activity/plain
@@ -51,7 +53,7 @@ activity-yoga-intensity:
 activity-stretching:
   version: v1
   label: Stretching
-  description: Deprecated — use activity-stretching-intensity to record stretching with intensity.
+  description: Presence marker for sources that record occurrence only (no grade); use activity-stretching-intensity when an intensity is known.
   deprecated: true
   streamId: activity-stretching
   eventType: activity/plain
@@ -88,7 +90,7 @@ activity-stretching-intensity:
 activity-pilates:
   version: v1
   label: Pilates
-  description: Deprecated — use activity-pilates-intensity to record a pilates session with intensity.
+  description: Presence marker for sources that record occurrence only (no grade); use activity-pilates-intensity when an intensity is known.
   deprecated: true
   streamId: activity-pilates
   eventType: activity/plain
@@ -125,7 +127,7 @@ activity-pilates-intensity:
 activity-hiit:
   version: v1
   label: HIIT
-  description: Deprecated — use activity-hiit-intensity to record a HIIT session with intensity.
+  description: Presence marker for sources that record occurrence only (no grade); use activity-hiit-intensity when an intensity is known.
   deprecated: true
   streamId: activity-hiit
   eventType: activity/plain
@@ -162,7 +164,7 @@ activity-hiit-intensity:
 activity-weights:
   version: v1
   label: Weights
-  description: Deprecated — use activity-weights-intensity to record a strength session with intensity.
+  description: Presence marker for sources that record occurrence only (no grade); use activity-weights-intensity when an intensity is known.
   deprecated: true
   streamId: activity-weights
   eventType: activity/plain
@@ -199,7 +201,7 @@ activity-weights-intensity:
 activity-swimming:
   version: v1
   label: Swimming
-  description: Deprecated — use activity-swimming-intensity to record a swimming session with intensity.
+  description: Presence marker for sources that record occurrence only (no grade); use activity-swimming-intensity when an intensity is known.
   deprecated: true
   streamId: activity-swimming
   eventType: activity/plain
@@ -236,7 +238,7 @@ activity-swimming-intensity:
 activity-cycling:
   version: v1
   label: Cycling
-  description: Deprecated — use activity-cycling-intensity to record a cycling session with intensity.
+  description: Presence marker for sources that record occurrence only (no grade); use activity-cycling-intensity when an intensity is known.
   deprecated: true
   streamId: activity-cycling
   eventType: activity/plain
@@ -273,7 +275,7 @@ activity-cycling-intensity:
 activity-jogging:
   version: v1
   label: Jogging
-  description: Deprecated — use activity-jogging-intensity to record a jogging session with intensity.
+  description: Presence marker for sources that record occurrence only (no grade); use activity-jogging-intensity when an intensity is known.
   deprecated: true
   streamId: activity-jogging
   eventType: activity/plain
@@ -310,7 +312,7 @@ activity-jogging-intensity:
 activity-hiking:
   version: v1
   label: Hiking
-  description: Deprecated — use activity-hiking-intensity to record a hiking session with intensity.
+  description: Presence marker for sources that record occurrence only (no grade); use activity-hiking-intensity when an intensity is known.
   deprecated: true
   streamId: activity-hiking
   eventType: activity/plain

@@ -3,11 +3,16 @@
 # (Apple HealthKit, SNOMED CT, FHIR, Ovia, Mira).
 #
 # Model (Plan 77 / data-model#19):
-#   - symptom-<...>          : deprecated occurrence marker (eventType activity/plain).
-#                             Kept so existing events keep resolving; hidden from pickers.
+#   - symptom-<...>          : presence marker (eventType activity/plain). `deprecated: true`
+#                             here means "hidden from pickers", NOT "do not write": presence-only
+#                             sources (bridges relaying a flag with no grade) are expected to keep
+#                             writing it, and existing events keep resolving. The published
+#                             `description` says so too — keep it that way, because consumers read
+#                             pack.json and cannot see this comment (site-agents#13, 2026-09-15).
 #   - symptom-<...>-severity : go-forward item (eventType ratio/proportion, 5-level severity
-#                             None/Slight/Moderate/Severe/Extreme). Presence-only sources may
-#                             still write the deprecated occurrence item.
+#                             None/Slight/Moderate/Severe/Extreme). Write it only when a grade is
+#                             actually known; there is no honest value for "reported, ungraded"
+#                             (0 means None).
 # Both itemDefs share the same streamId (identity is streamId:eventType).
 # 5-level hooks 0.0/0.25/0.5/0.75/1.0 — semantic anchors (see DESIGN-NOTES.md); 4-level
 # sources (Apple HKCategoryValueSeverity, Mira level, MSQ 0–3) map as a subset by label.
@@ -18,7 +23,7 @@
 symptom-gastrointestinal-nausea:
   version: v1
   label: Nausea
-  description: Deprecated — use symptom-gastrointestinal-nausea-severity to record nausea with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-nausea-severity when a severity is known.
   deprecated: true
   streamId: symptom-gastrointestinal-nausea
   eventType: activity/plain
@@ -64,7 +69,7 @@ symptom-gastrointestinal-nausea-severity:
 symptom-gastrointestinal-cramps:
   version: v1
   label: Cramps
-  description: Deprecated — use symptom-gastrointestinal-cramps-severity to record cramps with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-cramps-severity when a severity is known.
   deprecated: true
   streamId: symptom-gastrointestinal-cramps
   eventType: activity/plain
@@ -90,7 +95,7 @@ symptom-gastrointestinal-cramps-severity:
 symptom-gastrointestinal-gas:
   version: v1
   label: Gas
-  description: Deprecated — use symptom-gastrointestinal-gas-severity to record gas with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-gas-severity when a severity is known.
   deprecated: true
   streamId: symptom-gastrointestinal-gas
   eventType: activity/plain
@@ -116,7 +121,7 @@ symptom-gastrointestinal-gas-severity:
 symptom-gastrointestinal-cravings:
   version: v1
   label: Cravings
-  description: Deprecated — use symptom-gastrointestinal-cravings-severity to record cravings with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-cravings-severity when a severity is known.
   deprecated: true
   streamId: symptom-gastrointestinal-cravings
   eventType: activity/plain
@@ -140,7 +145,7 @@ symptom-gastrointestinal-cravings-severity:
 symptom-gastrointestinal-bloating:
   version: v1
   label: Bloating
-  description: Deprecated — use symptom-gastrointestinal-bloating-severity to record bloating with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-bloating-severity when a severity is known.
   deprecated: true
   streamId: symptom-gastrointestinal-bloating
   eventType: activity/plain
@@ -166,7 +171,7 @@ symptom-gastrointestinal-bloating-severity:
 symptom-gastrointestinal-diarrhea:
   version: v1
   label: Diarrhea
-  description: Deprecated — use symptom-gastrointestinal-diarrhea-severity to record diarrhea with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-diarrhea-severity when a severity is known.
   deprecated: true
   streamId: symptom-gastrointestinal-diarrhea
   eventType: activity/plain
@@ -192,7 +197,7 @@ symptom-gastrointestinal-diarrhea-severity:
 symptom-gastrointestinal-constipation:
   version: v1
   label: Constipation
-  description: Deprecated — use symptom-gastrointestinal-constipation-severity to record constipation with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-constipation-severity when a severity is known.
   deprecated: true
   streamId: symptom-gastrointestinal-constipation
   eventType: activity/plain
@@ -257,7 +262,7 @@ symptom-pain-severity:
 symptom-pain-headache:
   version: v1
   label: Headache
-  description: Deprecated — use symptom-pain-headache-severity to record headache with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-pain-headache-severity when a severity is known.
   deprecated: true
   streamId: symptom-pain-headache
   eventType: activity/plain
@@ -283,7 +288,7 @@ symptom-pain-headache-severity:
 symptom-pain-migraine:
   version: v1
   label: Migraine
-  description: Deprecated — use symptom-pain-migraine-severity to record migraine with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-pain-migraine-severity when a severity is known.
   deprecated: true
   streamId: symptom-pain-migraine
   eventType: activity/plain
@@ -309,7 +314,7 @@ symptom-pain-migraine-severity:
 symptom-pain-sore-breasts:
   version: v1
   label: Sore Breasts
-  description: Deprecated — use symptom-pain-sore-breasts-severity to record breast tenderness with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-pain-sore-breasts-severity when a severity is known.
   deprecated: true
   streamId: symptom-pain-sore-breasts
   eventType: activity/plain
@@ -335,7 +340,7 @@ symptom-pain-sore-breasts-severity:
 symptom-pain-backache:
   version: v1
   label: Backache
-  description: Deprecated — use symptom-pain-backache-severity to record backache with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-pain-backache-severity when a severity is known.
   deprecated: true
   streamId: symptom-pain-backache
   eventType: activity/plain
@@ -358,6 +363,22 @@ symptom-pain-backache-severity:
   references:
     snomed: ["161891005"]
 
+symptom-pain-pelvic:
+  version: v1
+  label:
+    en: Pelvic pain
+    fr: Douleur pelvienne
+  description:
+    en: "Pain in the pelvic area. Presence marker for sources that record occurrence only (no grade); use symptom-pain-pelvic-severity when a severity is known."
+    fr: "Douleur dans la région pelvienne. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-pain-pelvic-severity lorsqu'une sévérité est connue."
+  deprecated: true
+  streamId: symptom-pain-pelvic
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+  references:
+    snomed: ["274671002"]
+
 symptom-pain-pelvic-severity:
   version: v1
   label:
@@ -377,7 +398,7 @@ symptom-pain-pelvic-severity:
 symptom-pain-muscle:
   version: v1
   label: Muscle / Joint Pain
-  description: Deprecated — use symptom-pain-muscle-severity to record muscle or joint pain with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-pain-muscle-severity when a severity is known.
   deprecated: true
   streamId: symptom-pain-muscle
   eventType: activity/plain
@@ -404,7 +425,7 @@ symptom-pain-muscle-severity:
 symptom-neurological-dizziness:
   version: v1
   label: Dizziness
-  description: Deprecated — use symptom-neurological-dizziness-severity to record dizziness with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-neurological-dizziness-severity when a severity is known.
   deprecated: true
   streamId: symptom-neurological-dizziness
   eventType: activity/plain
@@ -431,7 +452,7 @@ symptom-neurological-dizziness-severity:
 symptom-dermatological-hair-loss:
   version: v1
   label: Hair Loss
-  description: Deprecated — use symptom-dermatological-hair-loss-severity to record hair loss with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-dermatological-hair-loss-severity when a severity is known.
   deprecated: true
   streamId: symptom-dermatological-hair-loss
   eventType: activity/plain
@@ -457,7 +478,7 @@ symptom-dermatological-hair-loss-severity:
 symptom-dermatological-hair-growth:
   version: v1
   label: Excess Hair Growth
-  description: Deprecated — use symptom-dermatological-hair-growth-severity to record excess hair growth with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-dermatological-hair-growth-severity when a severity is known.
   deprecated: true
   streamId: symptom-dermatological-hair-growth
   eventType: activity/plain
@@ -484,7 +505,7 @@ symptom-dermatological-hair-growth-severity:
 symptom-cognitive-focus-difficulty:
   version: v1
   label: Difficulty Concentrating
-  description: Deprecated — use symptom-cognitive-focus-difficulty-severity to record difficulty concentrating with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-cognitive-focus-difficulty-severity when a severity is known.
   deprecated: true
   streamId: symptom-cognitive-focus-difficulty
   eventType: activity/plain
@@ -511,7 +532,7 @@ symptom-cognitive-focus-difficulty-severity:
 symptom-sleep-insomnia:
   version: v1
   label: Insomnia
-  description: Deprecated — use symptom-sleep-insomnia-severity to record insomnia with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-sleep-insomnia-severity when a severity is known.
   deprecated: true
   streamId: symptom-sleep-insomnia
   eventType: activity/plain
@@ -538,7 +559,7 @@ symptom-sleep-insomnia-severity:
 symptom-metabolic-water-retention:
   version: v1
   label: Water Retention
-  description: Deprecated — use symptom-metabolic-water-retention-severity to record water retention with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-metabolic-water-retention-severity when a severity is known.
   deprecated: true
   streamId: symptom-metabolic-water-retention
   eventType: activity/plain
@@ -565,7 +586,7 @@ symptom-metabolic-water-retention-severity:
 symptom-general-fatigue:
   version: v1
   label: Fatigue
-  description: Deprecated — use symptom-general-fatigue-severity to record fatigue with severity.
+  description: Presence marker for sources that record occurrence only (no grade); use symptom-general-fatigue-severity when a severity is known.
   deprecated: true
   streamId: symptom-general-fatigue
   eventType: activity/plain

@@ -1,5 +1,60 @@
 # Changelog
 
+## [3.2.0] - 2026-09-15
+
+### Changed — the `deprecated` flag on presence twins now says what it actually means (site-agents#13)
+
+Plan 77 decided, on 2026-07-06, to keep each `activity/plain` occurrence item alongside its new
+graded twin and mark it `deprecated: true`, so pickers hide it while **presence-only sources keep
+writing it**: *"Graded events are written only when intensity is known."* That second half lived
+only in a YAML comment. The published `description` said `"Deprecated — use <key>-severity"` and
+nothing else, so every consumer reading `pack.json` — including an agent surveying a bridge's
+mappings — concluded that correct, sanctioned writes were defects. That is exactly what happened in
+`healthdatasafe/site-agents#13`.
+
+Nothing about the model's behaviour changes here. What changes is that the contract is now
+published rather than implied.
+
+- **All 56 presence items** (19 symptom + 9 activity from §1, 28 symptom-domains) now carry a
+  description of the form *"Presence marker for sources that record occurrence only (no grade); use
+  `<key>-severity` when a severity is known."* The pointer to the graded twin is preserved.
+- **The 28 symptom-domains presence twins are now `deprecated: true` as well.** They shipped
+  un-deprecated in 1.12.0 ("greenfield concepts keep presence-only logging valid") while §1's
+  structurally identical twins were deprecated, so the model asserted two different things about one
+  pattern, and a consumer could not tell which rule applied. They now carry the same flag and the
+  same caveat. **Nothing referenced these 28 keys** — no writer, no reader, no form-spec preset, no
+  timeline colour key — so the flag costs no consumer anything today; it only hides them from
+  pickers, alongside the severity twin that was always the one to offer.
+- Deprecated items: 33 → 62. Presence twins sharing a `streamId` with a `ratio/proportion` item:
+  **0 active / 57 deprecated**, where it was 28 / 28.
+- File headers in `symptom.yaml`, `activity.yaml` and `symptom-domains.yaml` now state plainly that
+  `deprecated: true` on these items means *hidden from pickers*, not *do not write*, and warn that
+  the published description must keep saying so because consumers cannot see the comment.
+
+### Added — `symptom-pain-pelvic`, the missing presence twin (site-agents#13)
+
+`symptom-pain-pelvic-severity` shipped without an `activity/plain` twin, so a source recording
+pelvic pain as an ungraded flag had nowhere correct to write. Cycle Féminin is exactly that source,
+and `bridge-cycles-files` was therefore mapping its `Pelvic pain` onto
+`symptom-gastrointestinal-cramps` — a different clinical concept, as that severity item's own
+description points out ("symptom-gastrointestinal-cramps is GI, not pelvic"). The presence twin now
+exists on the existing `symptom-pain-pelvic` stream, carrying the same SNOMED reference
+(`274671002`) and the same presence caveat as its 56 siblings. 284 → 285 items.
+
+`bridge-cycles-files` remaps to it in the same change. Note that this moves which stream that
+adapter writes to and requests permission on, so events imported before the remap remain on
+`symptom-gastrointestinal-cramps`; both items resolve, so nothing is orphaned.
+
+**No migration.** Identity is `streamId:eventType`, so stored `activity/plain` events keep resolving
+through the presence items exactly as before, and no event data, eventType or permission changes.
+Writers relaying an ungraded flag (`bridge-mira` without `symptoms[].level`, `bridge-cycles-files`
+femm/cyclefem, and any direct integration) require no change and were never wrong.
+
+**Deliberately not done:** no sentinel severity for "reported, ungraded". There is no honest value
+on the 5-level scale — `0` means *None*, and `0.25` is the documented Slight/Mild anchor that
+interop-maps to HealthKit `Mild` — and Plan 85 §4 bars carrying the caveat in `clientData`, which is
+for non-authoritative data. Note the 3-level intensity scale has no `0` at all.
+
 ## [Unreleased]
 
 ### Documentation
