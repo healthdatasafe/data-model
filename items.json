@@ -5,7 +5,7 @@
       "en": "Yoga"
     },
     "description": {
-      "en": "Deprecated — use activity-yoga-intensity to record a yoga session with intensity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use activity-yoga-intensity when an intensity is known."
     },
     "deprecated": true,
     "streamId": "activity-yoga",
@@ -57,7 +57,7 @@
       "en": "Stretching"
     },
     "description": {
-      "en": "Deprecated — use activity-stretching-intensity to record stretching with intensity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use activity-stretching-intensity when an intensity is known."
     },
     "deprecated": true,
     "streamId": "activity-stretching",
@@ -109,7 +109,7 @@
       "en": "Pilates"
     },
     "description": {
-      "en": "Deprecated — use activity-pilates-intensity to record a pilates session with intensity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use activity-pilates-intensity when an intensity is known."
     },
     "deprecated": true,
     "streamId": "activity-pilates",
@@ -161,7 +161,7 @@
       "en": "HIIT"
     },
     "description": {
-      "en": "Deprecated — use activity-hiit-intensity to record a HIIT session with intensity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use activity-hiit-intensity when an intensity is known."
     },
     "deprecated": true,
     "streamId": "activity-hiit",
@@ -213,7 +213,7 @@
       "en": "Weights"
     },
     "description": {
-      "en": "Deprecated — use activity-weights-intensity to record a strength session with intensity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use activity-weights-intensity when an intensity is known."
     },
     "deprecated": true,
     "streamId": "activity-weights",
@@ -265,7 +265,7 @@
       "en": "Swimming"
     },
     "description": {
-      "en": "Deprecated — use activity-swimming-intensity to record a swimming session with intensity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use activity-swimming-intensity when an intensity is known."
     },
     "deprecated": true,
     "streamId": "activity-swimming",
@@ -317,7 +317,7 @@
       "en": "Cycling"
     },
     "description": {
-      "en": "Deprecated — use activity-cycling-intensity to record a cycling session with intensity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use activity-cycling-intensity when an intensity is known."
     },
     "deprecated": true,
     "streamId": "activity-cycling",
@@ -369,7 +369,7 @@
       "en": "Jogging"
     },
     "description": {
-      "en": "Deprecated — use activity-jogging-intensity to record a jogging session with intensity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use activity-jogging-intensity when an intensity is known."
     },
     "deprecated": true,
     "streamId": "activity-jogging",
@@ -421,7 +421,7 @@
       "en": "Hiking"
     },
     "description": {
-      "en": "Deprecated — use activity-hiking-intensity to record a hiking session with intensity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use activity-hiking-intensity when an intensity is known."
     },
     "deprecated": true,
     "streamId": "activity-hiking",
@@ -4773,9 +4773,10 @@
       "fr": "Toux"
     },
     "description": {
-      "en": "Coughing.",
-      "fr": "Toux."
+      "en": "Coughing. Presence marker for sources that record occurrence only (no grade); use symptom-respiratory-cough-severity when a severity is known.",
+      "fr": "Toux. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-respiratory-cough-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-respiratory-cough",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -4845,9 +4846,10 @@
       "fr": "Essoufflement"
     },
     "description": {
-      "en": "Difficulty breathing or shortness of breath.",
-      "fr": "Difficulté à respirer ou essoufflement."
+      "en": "Difficulty breathing or shortness of breath. Presence marker for sources that record occurrence only (no grade); use symptom-respiratory-dyspnea-severity when a severity is known.",
+      "fr": "Difficulté à respirer ou essoufflement. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-respiratory-dyspnea-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-respiratory-dyspnea",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -4917,9 +4919,10 @@
       "fr": "Respiration sifflante"
     },
     "description": {
-      "en": "Whistling sound while breathing.",
-      "fr": "Sifflement lors de la respiration."
+      "en": "Whistling sound while breathing. Presence marker for sources that record occurrence only (no grade); use symptom-respiratory-wheezing-severity when a severity is known.",
+      "fr": "Sifflement lors de la respiration. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-respiratory-wheezing-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-respiratory-wheezing",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -4989,9 +4992,10 @@
       "fr": "Congestion nasale"
     },
     "description": {
-      "en": "Blocked or stuffy nose.",
-      "fr": "Nez bouché ou congestionné."
+      "en": "Blocked or stuffy nose. Presence marker for sources that record occurrence only (no grade); use symptom-respiratory-nasal-congestion-severity when a severity is known.",
+      "fr": "Nez bouché ou congestionné. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-respiratory-nasal-congestion-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-respiratory-nasal-congestion",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5061,9 +5065,10 @@
       "fr": "Mal de gorge"
     },
     "description": {
-      "en": "Throat pain or irritation.",
-      "fr": "Douleur ou irritation de la gorge."
+      "en": "Throat pain or irritation. Presence marker for sources that record occurrence only (no grade); use symptom-respiratory-sore-throat-severity when a severity is known.",
+      "fr": "Douleur ou irritation de la gorge. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-respiratory-sore-throat-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-respiratory-sore-throat",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5133,9 +5138,10 @@
       "fr": "Écoulement nasal"
     },
     "description": {
-      "en": "Runny nose or nasal discharge.",
-      "fr": "Nez qui coule ou écoulement nasal."
+      "en": "Runny nose or nasal discharge. Presence marker for sources that record occurrence only (no grade); use symptom-respiratory-rhinorrhea-severity when a severity is known.",
+      "fr": "Nez qui coule ou écoulement nasal. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-respiratory-rhinorrhea-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-respiratory-rhinorrhea",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5205,9 +5211,10 @@
       "fr": "Palpitations"
     },
     "description": {
-      "en": "Rapid, pounding, or fluttering heartbeat.",
-      "fr": "Battements rapides, forts ou irréguliers du cœur."
+      "en": "Rapid, pounding, or fluttering heartbeat. Presence marker for sources that record occurrence only (no grade); use symptom-cardiac-palpitations-severity when a severity is known.",
+      "fr": "Battements rapides, forts ou irréguliers du cœur. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-cardiac-palpitations-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-cardiac-palpitations",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5277,9 +5284,10 @@
       "fr": "Battements manqués"
     },
     "description": {
-      "en": "Sensation of a skipped or missed heartbeat.",
-      "fr": "Sensation de battement manqué."
+      "en": "Sensation of a skipped or missed heartbeat. Presence marker for sources that record occurrence only (no grade); use symptom-cardiac-skipped-beat-severity when a severity is known.",
+      "fr": "Sensation de battement manqué. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-cardiac-skipped-beat-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-cardiac-skipped-beat",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5349,9 +5357,10 @@
       "fr": "Frissons"
     },
     "description": {
-      "en": "Feeling cold with shivering.",
-      "fr": "Sensation de froid avec frissons."
+      "en": "Feeling cold with shivering. Presence marker for sources that record occurrence only (no grade); use symptom-thermoregulation-chills-severity when a severity is known.",
+      "fr": "Sensation de froid avec frissons. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-thermoregulation-chills-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-thermoregulation-chills",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5421,9 +5430,10 @@
       "fr": "Bouffées de chaleur"
     },
     "description": {
-      "en": "Sudden feeling of heat.",
-      "fr": "Sensation soudaine de chaleur."
+      "en": "Sudden feeling of heat. Presence marker for sources that record occurrence only (no grade); use symptom-thermoregulation-hot-flashes-severity when a severity is known.",
+      "fr": "Sensation soudaine de chaleur. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-thermoregulation-hot-flashes-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-thermoregulation-hot-flashes",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5488,9 +5498,10 @@
       "fr": "Sueurs nocturnes"
     },
     "description": {
-      "en": "Excessive sweating during sleep.",
-      "fr": "Transpiration excessive pendant le sommeil."
+      "en": "Excessive sweating during sleep. Presence marker for sources that record occurrence only (no grade); use symptom-thermoregulation-night-sweats-severity when a severity is known.",
+      "fr": "Transpiration excessive pendant le sommeil. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-thermoregulation-night-sweats-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-thermoregulation-night-sweats",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5560,9 +5571,10 @@
       "fr": "Transpiration excessive"
     },
     "description": {
-      "en": "Excessive sweating (hyperhidrosis).",
-      "fr": "Transpiration excessive (hyperhidrose)."
+      "en": "Excessive sweating (hyperhidrosis). Presence marker for sources that record occurrence only (no grade); use symptom-thermoregulation-excessive-sweating-severity when a severity is known.",
+      "fr": "Transpiration excessive (hyperhidrose). Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-thermoregulation-excessive-sweating-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-thermoregulation-excessive-sweating",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5632,9 +5644,10 @@
       "fr": "Extrémités froides"
     },
     "description": {
-      "en": "Cold hands or feet.",
-      "fr": "Mains ou pieds froids."
+      "en": "Cold hands or feet. Presence marker for sources that record occurrence only (no grade); use symptom-thermoregulation-cold-extremities-severity when a severity is known.",
+      "fr": "Mains ou pieds froids. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-thermoregulation-cold-extremities-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-thermoregulation-cold-extremities",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5705,9 +5718,10 @@
       "fr": "Vision floue"
     },
     "description": {
-      "en": "Blurred or unclear vision.",
-      "fr": "Vision floue ou trouble."
+      "en": "Blurred or unclear vision. Presence marker for sources that record occurrence only (no grade); use symptom-vision-blurred-vision-severity when a severity is known.",
+      "fr": "Vision floue ou trouble. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-vision-blurred-vision-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-vision-blurred-vision",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5777,9 +5791,10 @@
       "fr": "Troubles visuels"
     },
     "description": {
-      "en": "Visual disturbance (spots, flashes, changes).",
-      "fr": "Troubles visuels (taches, éclairs, changements)."
+      "en": "Visual disturbance (spots, flashes, changes). Presence marker for sources that record occurrence only (no grade); use symptom-vision-visual-disturbance-severity when a severity is known.",
+      "fr": "Troubles visuels (taches, éclairs, changements). Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-vision-visual-disturbance-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-vision-visual-disturbance",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5849,9 +5864,10 @@
       "fr": "Difficulté auditive"
     },
     "description": {
-      "en": "Difficulty hearing or change in hearing.",
-      "fr": "Difficulté à entendre ou changement d'audition."
+      "en": "Difficulty hearing or change in hearing. Presence marker for sources that record occurrence only (no grade); use symptom-vision-hearing-difficulty-severity when a severity is known.",
+      "fr": "Difficulté à entendre ou changement d'audition. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-vision-hearing-difficulty-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-vision-hearing-difficulty",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5921,9 +5937,10 @@
       "fr": "Soif excessive"
     },
     "description": {
-      "en": "Excessive thirst (polydipsia).",
-      "fr": "Soif excessive (polydipsie)."
+      "en": "Excessive thirst (polydipsia). Presence marker for sources that record occurrence only (no grade); use symptom-hydration-excessive-thirst-severity when a severity is known.",
+      "fr": "Soif excessive (polydipsie). Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-hydration-excessive-thirst-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-hydration-excessive-thirst",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -5993,9 +6010,10 @@
       "fr": "Mictions fréquentes"
     },
     "description": {
-      "en": "Increased frequency of urination.",
-      "fr": "Augmentation de la fréquence des mictions."
+      "en": "Increased frequency of urination. Presence marker for sources that record occurrence only (no grade); use symptom-hydration-frequent-urination-severity when a severity is known.",
+      "fr": "Augmentation de la fréquence des mictions. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-hydration-frequent-urination-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-hydration-frequent-urination",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -6065,9 +6083,10 @@
       "fr": "Saignement de nez"
     },
     "description": {
-      "en": "Nosebleed (epistaxis).",
-      "fr": "Saignement de nez (épistaxis)."
+      "en": "Nosebleed (epistaxis). Presence marker for sources that record occurrence only (no grade); use symptom-bleeding-nosebleed-severity when a severity is known.",
+      "fr": "Saignement de nez (épistaxis). Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-bleeding-nosebleed-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-bleeding-nosebleed",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -6137,9 +6156,10 @@
       "fr": "Saignement des gencives"
     },
     "description": {
-      "en": "Bleeding from the gums.",
-      "fr": "Saignement des gencives."
+      "en": "Bleeding from the gums. Presence marker for sources that record occurrence only (no grade); use symptom-bleeding-bleeding-gums-severity when a severity is known.",
+      "fr": "Saignement des gencives. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-bleeding-bleeding-gums-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-bleeding-bleeding-gums",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -6209,9 +6229,10 @@
       "fr": "Ecchymoses faciles"
     },
     "description": {
-      "en": "Bruising easily or without clear cause.",
-      "fr": "Ecchymoses faciles ou sans cause évidente."
+      "en": "Bruising easily or without clear cause. Presence marker for sources that record occurrence only (no grade); use symptom-bleeding-easy-bruising-severity when a severity is known.",
+      "fr": "Ecchymoses faciles ou sans cause évidente. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-bleeding-easy-bruising-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-bleeding-easy-bruising",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -6281,9 +6302,10 @@
       "fr": "Fourmillements / engourdissements"
     },
     "description": {
-      "en": "Tingling or numbness (paresthesia).",
-      "fr": "Fourmillements ou engourdissements (paresthésie)."
+      "en": "Tingling or numbness (paresthesia). Presence marker for sources that record occurrence only (no grade); use symptom-neurological-paresthesia-severity when a severity is known.",
+      "fr": "Fourmillements ou engourdissements (paresthésie). Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-neurological-paresthesia-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-neurological-paresthesia",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -6353,9 +6375,10 @@
       "fr": "Tremblements"
     },
     "description": {
-      "en": "Involuntary shaking or tremor.",
-      "fr": "Tremblements involontaires."
+      "en": "Involuntary shaking or tremor. Presence marker for sources that record occurrence only (no grade); use symptom-neurological-tremor-severity when a severity is known.",
+      "fr": "Tremblements involontaires. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-neurological-tremor-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-neurological-tremor",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -6425,9 +6448,10 @@
       "fr": "Jambes sans repos"
     },
     "description": {
-      "en": "Urge to move the legs, especially at rest.",
-      "fr": "Besoin de bouger les jambes, surtout au repos."
+      "en": "Urge to move the legs, especially at rest. Presence marker for sources that record occurrence only (no grade); use symptom-neurological-restless-legs-severity when a severity is known.",
+      "fr": "Besoin de bouger les jambes, surtout au repos. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-neurological-restless-legs-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-neurological-restless-legs",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -6497,9 +6521,10 @@
       "fr": "Spasmes musculaires"
     },
     "description": {
-      "en": "Muscle twitching or spasms.",
-      "fr": "Contractions ou spasmes musculaires."
+      "en": "Muscle twitching or spasms. Presence marker for sources that record occurrence only (no grade); use symptom-neurological-twitching-severity when a severity is known.",
+      "fr": "Contractions ou spasmes musculaires. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-neurological-twitching-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-neurological-twitching",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -6569,9 +6594,10 @@
       "fr": "Éruption cutanée"
     },
     "description": {
-      "en": "Skin rash or eruption.",
-      "fr": "Éruption cutanée."
+      "en": "Skin rash or eruption. Presence marker for sources that record occurrence only (no grade); use symptom-dermatological-rash-severity when a severity is known.",
+      "fr": "Éruption cutanée. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-dermatological-rash-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-dermatological-rash",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -6641,9 +6667,10 @@
       "fr": "Urticaire"
     },
     "description": {
-      "en": "Hives (urticaria).",
-      "fr": "Urticaire."
+      "en": "Hives (urticaria). Presence marker for sources that record occurrence only (no grade); use symptom-dermatological-hives-severity when a severity is known.",
+      "fr": "Urticaire. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-dermatological-hives-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-dermatological-hives",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -6713,9 +6740,10 @@
       "fr": "Démangeaisons"
     },
     "description": {
-      "en": "Generalized itching (pruritus).",
-      "fr": "Démangeaisons généralisées (prurit)."
+      "en": "Generalized itching (pruritus). Presence marker for sources that record occurrence only (no grade); use symptom-dermatological-itching-severity when a severity is known.",
+      "fr": "Démangeaisons généralisées (prurit). Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-dermatological-itching-severity lorsqu'une sévérité est connue."
     },
+    "deprecated": true,
     "streamId": "symptom-dermatological-itching",
     "eventType": "activity/plain",
     "type": "checkbox",
@@ -6784,7 +6812,7 @@
       "en": "Nausea"
     },
     "description": {
-      "en": "Deprecated — use symptom-gastrointestinal-nausea-severity to record nausea with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-nausea-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-gastrointestinal-nausea",
@@ -6855,7 +6883,7 @@
       "en": "Cramps"
     },
     "description": {
-      "en": "Deprecated — use symptom-gastrointestinal-cramps-severity to record cramps with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-cramps-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-gastrointestinal-cramps",
@@ -6926,7 +6954,7 @@
       "en": "Gas"
     },
     "description": {
-      "en": "Deprecated — use symptom-gastrointestinal-gas-severity to record gas with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-gas-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-gastrointestinal-gas",
@@ -6997,7 +7025,7 @@
       "en": "Cravings"
     },
     "description": {
-      "en": "Deprecated — use symptom-gastrointestinal-cravings-severity to record cravings with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-cravings-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-gastrointestinal-cravings",
@@ -7063,7 +7091,7 @@
       "en": "Bloating"
     },
     "description": {
-      "en": "Deprecated — use symptom-gastrointestinal-bloating-severity to record bloating with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-bloating-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-gastrointestinal-bloating",
@@ -7134,7 +7162,7 @@
       "en": "Diarrhea"
     },
     "description": {
-      "en": "Deprecated — use symptom-gastrointestinal-diarrhea-severity to record diarrhea with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-diarrhea-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-gastrointestinal-diarrhea",
@@ -7205,7 +7233,7 @@
       "en": "Constipation"
     },
     "description": {
-      "en": "Deprecated — use symptom-gastrointestinal-constipation-severity to record constipation with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-gastrointestinal-constipation-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-gastrointestinal-constipation",
@@ -7341,7 +7369,7 @@
       "en": "Headache"
     },
     "description": {
-      "en": "Deprecated — use symptom-pain-headache-severity to record headache with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-pain-headache-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-pain-headache",
@@ -7412,7 +7440,7 @@
       "en": "Migraine"
     },
     "description": {
-      "en": "Deprecated — use symptom-pain-migraine-severity to record migraine with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-pain-migraine-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-pain-migraine",
@@ -7483,7 +7511,7 @@
       "en": "Sore Breasts"
     },
     "description": {
-      "en": "Deprecated — use symptom-pain-sore-breasts-severity to record breast tenderness with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-pain-sore-breasts-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-pain-sore-breasts",
@@ -7554,7 +7582,7 @@
       "en": "Backache"
     },
     "description": {
-      "en": "Deprecated — use symptom-pain-backache-severity to record backache with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-pain-backache-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-pain-backache",
@@ -7616,6 +7644,27 @@
     "references": {
       "snomed": [
         "161891005"
+      ]
+    }
+  },
+  "symptom-pain-pelvic": {
+    "version": "v1",
+    "label": {
+      "en": "Pelvic pain",
+      "fr": "Douleur pelvienne"
+    },
+    "description": {
+      "en": "Pain in the pelvic area. Presence marker for sources that record occurrence only (no grade); use symptom-pain-pelvic-severity when a severity is known.",
+      "fr": "Douleur dans la région pelvienne. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-pain-pelvic-severity lorsqu'une sévérité est connue."
+    },
+    "deprecated": true,
+    "streamId": "symptom-pain-pelvic",
+    "eventType": "activity/plain",
+    "type": "checkbox",
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "274671002"
       ]
     }
   },
@@ -7682,7 +7731,7 @@
       "en": "Muscle / Joint Pain"
     },
     "description": {
-      "en": "Deprecated — use symptom-pain-muscle-severity to record muscle or joint pain with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-pain-muscle-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-pain-muscle",
@@ -7754,7 +7803,7 @@
       "en": "Dizziness"
     },
     "description": {
-      "en": "Deprecated — use symptom-neurological-dizziness-severity to record dizziness with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-neurological-dizziness-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-neurological-dizziness",
@@ -7825,7 +7874,7 @@
       "en": "Hair Loss"
     },
     "description": {
-      "en": "Deprecated — use symptom-dermatological-hair-loss-severity to record hair loss with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-dermatological-hair-loss-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-dermatological-hair-loss",
@@ -7896,7 +7945,7 @@
       "en": "Excess Hair Growth"
     },
     "description": {
-      "en": "Deprecated — use symptom-dermatological-hair-growth-severity to record excess hair growth with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-dermatological-hair-growth-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-dermatological-hair-growth",
@@ -7967,7 +8016,7 @@
       "en": "Difficulty Concentrating"
     },
     "description": {
-      "en": "Deprecated — use symptom-cognitive-focus-difficulty-severity to record difficulty concentrating with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-cognitive-focus-difficulty-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-cognitive-focus-difficulty",
@@ -8038,7 +8087,7 @@
       "en": "Insomnia"
     },
     "description": {
-      "en": "Deprecated — use symptom-sleep-insomnia-severity to record insomnia with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-sleep-insomnia-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-sleep-insomnia",
@@ -8109,7 +8158,7 @@
       "en": "Water Retention"
     },
     "description": {
-      "en": "Deprecated — use symptom-metabolic-water-retention-severity to record water retention with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-metabolic-water-retention-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-metabolic-water-retention",
@@ -8180,7 +8229,7 @@
       "en": "Fatigue"
     },
     "description": {
-      "en": "Deprecated — use symptom-general-fatigue-severity to record fatigue with severity."
+      "en": "Presence marker for sources that record occurrence only (no grade); use symptom-general-fatigue-severity when a severity is known."
     },
     "deprecated": true,
     "streamId": "symptom-general-fatigue",
