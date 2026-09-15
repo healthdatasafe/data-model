@@ -54,40 +54,46 @@ treatment-basic:
   payload:
     name:    text                    # "IVF", "Chemotherapy regimen", "CBT"
     count:   number (optional)       # Flavour A: lifetime aggregate count
-    period:  { start, end } (opt.)   # Flavour B: treatment span
     notes:   text (optional)
+  # Flavour B span: event.time = start, event.duration = seconds (native, not payload)
 
 treatment-coded:
   streamId: treatment
   eventType: treatment/coded-v1
   payload:
     regimen: { label, codes: [...] } # codes from datasets-service
-    count, period, notes             # same as basic
+    count, notes                     # same as basic
 
 procedure-basic:
   streamId: procedure
   eventType: procedure/basic
   payload:
-    name:      text                   # "Laparoscopy", "HSG", "Polypectomy"
-    performed: { date }               # Flavour B: per-event date
-    count:     number (optional)      # Flavour A: lifetime occurrences
-    findings:  array (optional)       # see below
-    notes:     text (optional)
+    name:          text               # "Laparoscopy", "HSG", "Polypectomy"
+    count:         number (optional)  # Flavour A: lifetime occurrences
+    robotAssisted: bool (optional)    # robot-assisted; absent = not recorded
+    findings:      array (optional)   # see below
+    notes:         text (optional)
+  # Flavour B date: event.time (native). Procedures are point-in-time — no event.duration.
 
 procedure-coded:
   streamId: procedure
   eventType: procedure/coded-v1
   payload:
     procedure: { label, codes: [...] }
-    performed, count, findings, notes
+    count, robotAssisted, findings, notes
 ```
+
+> **Timing is carried by Pryv-native event fields, not by the payload.** `period.{start,end}` and
+> `performed.date` were removed in 1.8.1 — a treatment span is `event.time` + `event.duration`
+> (duration omitted for ongoing), and a procedure is `event.time` alone. Existing events that still
+> carry the old keys validate (`additionalProperties` is open), but new writers must not emit them.
 
 ### Flavours via eventType variation, same item key
 
 - **Flavour A — aggregate intake** (intake forms; "have you ever had X?"): `count: N`, `count > 0` means yes. One event captures lifetime history.
-- **Flavour B — per-event / per-cycle** (longitudinal capture): `performed.date` (or per-cycle date), no `count`. Each occurrence is a distinct event.
+- **Flavour B — per-event / per-cycle** (longitudinal capture): `event.time` carries the occurrence (plus `event.duration` for a treatment span), no `count`. Each occurrence is a distinct event.
 
-The shape distinction is in the payload (`count` vs `performed`), not in distinct itemDefs. Forms decide which fields to surface.
+The shape distinction is `count` in the payload versus the native `event.time` / `event.duration` fields, not distinct itemDefs. Forms decide which fields to surface.
 
 ### Procedure findings
 
@@ -133,7 +139,7 @@ itemCustomizations:
     context: treatment-fertility    # per-item D3 context
 ```
 
-User searches `/treatment?search=ivf` (datasets-service) and selects **In vitro fertilization** (SCTID `63487001`). Submits with `count: 2`.
+User searches `/treatment?search=ivf` (datasets-service) and selects **In vitro fertilization** (SCTID `52637005`). Submits with `count: 2`.
 
 The form engine:
 
@@ -144,7 +150,7 @@ The form engine:
      "streamIds": ["treatment-fertility"],
      "type": "treatment/coded-v1",
      "content": {
-       "regimen": { "label": { "en": "In vitro fertilization" }, "codes": [{ "code": "63487001", "system": "SNOMED-CT", … }] },
+       "regimen": { "label": { "en": "In vitro fertilization" }, "codes": [{ "code": "52637005", "system": "SNOMED-CT", … }] },
        "count": 2
      }
    }
@@ -152,6 +158,38 @@ The form engine:
 3. POSTs to Pryv. The event lives under `treatment-fertility` — not at `treatment` itself.
 
 When the form prefills next time, `forEvent({ type: 'treatment/coded-v1', streamIds: ['treatment-fertility'] })` walks `treatment-fertility → treatment`, finds `treatment-coded` registered at `treatment`, returns it. The same itemDef serves all `treatment-*` contexts (fertility today, oncology / mental-health / cardiology when those streams land) without itemDef proliferation.
+
+### ART cycle counts have no items of their own — they are this shape
+
+**There is no `fertility-art-*` item, and there should not be one.** "How many IVF cycles have you
+had", "how many stimulated cycles" and the rest of an ART history are Flavour A intake counts, so
+they are already expressed by the worked example above: `treatment-coded` at context
+`treatment-fertility`, regimen from the datasets-service `treatment` dataset, `count: N`.
+
+The seeded ART regimens are In vitro fertilization (`52637005`), Artificial insemination
+(`58533008`), Intrauterine insemination (`265064001`), Ovulation induction (`61285001`),
+Controlled ovarian stimulation (`732970000`), ICSI and egg donation.
+
+**Why this is worth stating explicitly.** An aggregate count looks like it wants a
+`<domain>-<concept>-count` item. The model carries four `-count` items, but the only two that are
+*recalled lifetime histories*, `fertility-miscarriages-count` and `fertility-cycles-charted-count`,
+are both **deprecated** precisely because the fact belongs on a per-occurrence record instead.
+(`family-children-count` and `body-vulva-mucus-inspect-count` are active and are not that shape.) Adding ART counts as new items would fork a concept that is already
+published, seeded and consumed (STORMM's `prior_ivf` / `prior_iui` / `prior_ovulation_induction` all
+derive from `treatment-coded` at `treatment-fertility`), and a cohort query would then have to union
+a coded treatment record with a bare number. Reviewed and rejected on these grounds 2026-09-15
+(site-agents#4 item 12).
+
+**The regimen code, not a retrieval rule, decides the bucket.** That is deliberate: a boundary drawn
+at oocyte retrieval would put a *cancelled* IVF cycle in the non-IVF bucket and leave natural-cycle
+IVF with nowhere to go. ICMART/WHO counts initiated, aspiration and transfer cycles as separate
+figures: the regimen separates IVF from ovulation induction from IUI, while the aspiration and
+transfer counts come from `procedure-coded` (oocyte recovery `177037000`, embryo transfer
+`75456002`). Between them the figures stay separable without the model having to adjudicate.
+
+**Known ergonomic gap.** An intake form wants a fixed numeric field ("IVF cycles: __"), not a search
+box. That needs hds-forms-js to pin the datasource value from `itemCustomizations` and surface only
+`count`. It is a forms-lib feature, not a reason to add items here.
 
 ### Cross-tree context naming convention
 
@@ -177,7 +215,7 @@ Tools (and the future `tags/` root) can then ask "give me all fertility-context 
 
 Both "part of an IVF treatment" and "a single procedure event." Resolution under D3:
 
-- The retrieval is a **`procedure-basic`** event with `name: "IVF egg retrieval"`, `context: procedure-fertility`. SNOMED-CT concept: `84977000 |Oocyte retrieval|`.
+- The retrieval is a **`procedure-basic`** event with `name: "IVF egg retrieval"`, `context: procedure-fertility`. SNOMED-CT concept: `177037000 |Oocyte recovery|`.
 - The treatment-level identity ("patient is doing IVF") is captured by a separate **`treatment-basic`** / **`treatment-coded`** event.
 - Aggregation across the two layers is reconstructed at query time. No hierarchical link is modelled in v1.
 

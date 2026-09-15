@@ -613,6 +613,10 @@
           "description": "Aggregate intake count (Flavour A: lifetime occurrences). 0 = never.",
           "type": "number"
         },
+        "robotAssisted": {
+          "description": "Procedure was robot-assisted. Absent means not recorded, not false.",
+          "type": "boolean"
+        },
         "findings": {
           "description": "Open-vocabulary array of procedure-bound observations. Form preset declares which finding types are surfaced per procedure label.",
           "type": "array",
@@ -708,6 +712,10 @@
         },
         "count": {
           "type": "number"
+        },
+        "robotAssisted": {
+          "description": "Procedure was robot-assisted. Absent means not recorded, not false.",
+          "type": "boolean"
         },
         "findings": {
           "type": "array",

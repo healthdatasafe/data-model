@@ -1,5 +1,47 @@
 # Changelog
 
+## [3.5.0] - 2026-09-15
+
+One schema addition and a documentation correction, both from site-agents#4. Nothing existing
+changes: no key, `streamId` or `eventType` is altered, the new property is optional, and nothing
+needs migrating.
+
+### Added — `robotAssisted` on both procedure eventTypes (site-agents#4 item 16)
+
+`procedure/basic` and `procedure/coded-v1` gain an optional `robotAssisted` boolean, alongside the
+`count` / `findings` / `notes` trio they already share. **Absent means not recorded, not `false`.**
+
+**Deliberately a boolean, not a surgical-approach enum.** A six-value `approach`
+(open / laparoscopic / robotic / hysteroscopic / vaginal / percutaneous) was drafted and rejected in
+review: `robotic` is a *narrowing* of `laparoscopic`, not a sibling, so a single-select would make
+`approach === 'laparoscopic'` silently drop every robot-assisted case, and a robot-assisted
+hysteroscopic or transvaginal procedure could not be expressed at all. Every standard keeps the two
+axes apart — ICD-10-PCS has an Approach character and codes robotic assistance as a separate
+qualifier, SNOMED pre-coordinates it into the procedure concept (no standalone qualifier value
+exists), and FHIR `Procedure` would carry it under `usedCode`. Splitting a shipped enum later would
+mean rewriting stored `content`, which the deprecated-alias mechanism cannot do.
+
+**Residual a consumer should know about:** SNOMED pre-coordination means a user can select
+`708877008` ("laparoscopic total hysterectomy using robotic assistance") *and* leave `robotAssisted`
+unset, or set it to `false`. The schema cannot catch the disagreement; read the code's FSN when the
+distinction matters.
+
+### Changed — documentation only
+
+- `TREATMENT-PROCEDURE.md` now states that **ART cycle counts have no items of their own**: "how many
+  IVF cycles" is `treatment-coded` at context `treatment-fertility` with `count: N`, the shape the
+  STORMM Q16 worked example already describes. Two `fertility-art-*` count items were drafted for
+  site-agents#4 item 12 and **rejected in review** — they would have forked a concept that is already
+  published, seeded and consumed, leaving IVF history writable two incompatible ways. Records why,
+  and why the regimen code rather than a retrieval rule decides the bucket (a retrieval boundary
+  strands cancelled and natural-cycle IVF).
+- `TREATMENT-PROCEDURE.md` payload tables corrected: they still listed `period: { start, end }` and
+  `performed: { date }`, both removed from the schemas in 1.8.1 in favour of the Pryv-native
+  `event.time` + `event.duration`. The Flavour B description is corrected to match.
+- The worked example cited SCTID `63487001` for In vitro fertilization. That concept is *Assisted
+  fertilization*; IVF is `52637005`, which is what the datasets-service seed itself uses. Corrected
+  here and in the seed's README.
+
 ## [3.4.0] - 2026-09-15
 
 Three additions, batched into one publish because all three were blocked on it. Nothing existing
