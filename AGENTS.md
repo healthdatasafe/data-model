@@ -224,7 +224,7 @@ Closest-value matching is correct for all 4 Apple values and 4 of 5 HDS values. 
 ## File / folder orientation
 
 ```
-data-model/data-model/
+data-model/
 ├── README.md                              # What this repo is
 ├── AGENTS.md                              # (this file) primer for agents
 ├── CHANGELOG.md

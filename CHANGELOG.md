@@ -1,5 +1,65 @@
 # Changelog
 
+## [3.6.0] - 2026-09-17
+
+One schema addition and two documentation corrections. **Additive, no migration.** No key,
+`streamId` or `eventType` is altered; the new block is optional, and every existing event stays
+valid without it.
+
+### Added — `duration` on both `medication-intake-*` items
+
+`medication-intake-basic` and `medication-intake-coded` gain an optional `duration` block
+(`mandatory: false`, `canBeNull: true`, `maxSeconds: 315360000`), matching the block
+`treatment-basic` / `treatment-coded` have carried since 1.8.1.
+
+**Why:** `medication/coded-v1` describes itself as mapping to FHIR `MedicationStatement`, a
+span-bearing resource, yet no span was expressible through the item. "On drug X from 2010 to 2016"
+had nowhere to go.
+
+**Both items, deliberately.** They sit on the same `medication-intake` stream and `medication/basic`
+is documented as following the same `intake` structure as `medication/coded-v1`, so they are one
+concept at two fidelities. Giving a span to one and not its twin would show a duration picker for
+one item only, with no clinical reason. It also matters practically: every bridge that writes
+medication events today (mira, femm, cycles-files) writes the *basic* item, so a coded-only change
+would have given the span to the item nobody writes.
+
+**Two things a consumer should know:**
+- **`duration: null` is the encoding for ongoing use**, not a very long span. A current, indefinite
+  course (thyroid replacement, a statin) is `null`, which `canBeNull: true` permits.
+- **`maxSeconds` is a UI hint, not a validated constraint.** Nothing in hds-lib, the pack schema, or
+  the server rejects a stored event whose duration exceeds it; only a form component uses it to show
+  an inline error. The 10-year figure is carried over from `treatment-*` for consistency. It only
+  bites on a *closed* historical span longer than 10 years, and raising it later touches no key, no
+  eventType and no stored event.
+
+**`medication-prescription-coded` is deliberately excluded.** Not an oversight. `duration` on a
+prescription is ambiguous between three different facts: validity period
+(`MedicationRequest.dispenseRequest.validityPeriod`), expected supply duration, and course length
+(`dosageInstruction.timing.repeat.boundsDuration`). `medication/prescription-v1.posology` carries
+`frequency` / `asNeeded` / `note` and no span field, so nothing there is currently contradicted.
+Picking one meaning silently is a modelling decision, not a bug fix; it is left to
+`_plans/XX-finding-root-scope-later/`. Adding the block later will be exactly as additive as this
+change, so deferring costs nothing.
+
+### Fixed — `TREATMENT-PROCEDURE.md` drew a context shape the model cannot resolve
+
+The cross-tree context naming section drew `medication/medication-fertility/` as the medication-side
+shape "when medication subtree adopts the pattern". **No such context can work.** D3 resolves an
+event by walking up its streamId's ancestors to the first registered itemDef, and nothing registers
+at the bare `medication` root: the two intake items register at `medication-intake` and the
+prescription item at `medication-prescription`. A context hung under `medication` has no itemDef in
+its ancestor chain, so `findItemForEvent` returns `null` and `eventTemplate({ context })` throws.
+
+The section now prescribes `medication-intake/medication-intake-fertility/`, marks it (and the
+`note/note-fertility/` line) as not currently defined, notes the `tags/hds/fertility` alternative
+from `TAGS.md`, and warns against "fixing" it by registering a coded item at bare `medication`,
+which would make the same intake writable two incompatible ways.
+
+### Fixed — stale path in `AGENTS.md`
+
+The file-orientation header read `data-model/data-model/`, the double-nesting layout retired
+2026-07-11.
+
 ## [3.5.0] - 2026-09-15
 
 One schema addition and a documentation correction, both from site-agents#4. Nothing existing
@@ -201,8 +261,6 @@ on the 5-level scale — `0` means *None*, and `0.25` is the documented Slight/M
 interop-maps to HealthKit `Mild` — and Plan 85 §4 bars carrying the caveat in `clientData`, which is
 for non-authoritative data. Note the 3-level intensity scale has no `0` at all.
 
-## [Unreleased]
-
 ### Documentation
 
 - `documentation/CUSTOM-FIELDS-AND-SYSTEM.md`: CMC system messages carrying an HDS payload — the
@@ -279,8 +337,6 @@ no v2 eventType, no deprecation alias. **Pre-existing events written with scalar
 new shape** and need a backfill: write one array-valued event per known set, and for
 `fertility-tracking-method` write **one dated event per historical set** rather than a single current-set
 event, so existing history survives instead of collapsing to today's answer.
-
-## [Unreleased]
 
 **Fix — `repeatable` is now validated.** The item schema typed `repeatable` as a mandatory but
 otherwise free string, so a typo or an invented value passed validation and then silently matched no

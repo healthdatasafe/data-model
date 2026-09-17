@@ -6,6 +6,10 @@ medication-intake-basic:
   description: Free-text medication intake with optional dose and route. Content has an 'intake' sub-object following the same structure as medication/coded-v1.
   streamId: medication-intake
   eventType: medication/basic
+  duration:
+    mandatory: false
+    canBeNull: true
+    maxSeconds: 315360000 # 10 years, matching treatment-*. UI hint only, not validated. Ongoing use is duration null, not a long span.
   type: composite
   composite:
     name:
@@ -84,6 +88,10 @@ medication-intake-coded:
   description: Search and select a coded medication from datasets service
   streamId: medication-intake
   eventType: medication/coded-v1
+  duration:
+    mandatory: false
+    canBeNull: true
+    maxSeconds: 315360000 # 10 years, matching treatment-*. UI hint only, not validated. Ongoing use is duration null, not a long span.
   type: datasource-search
   datasource: medication
   repeatable: unlimited

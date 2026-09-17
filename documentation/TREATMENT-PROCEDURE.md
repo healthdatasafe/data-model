@@ -198,13 +198,36 @@ When multiple roots accept the same clinical-domain context, mirror the suffix:
 ```
 treatment/treatment-fertility/
 procedure/procedure-fertility/
-medication/medication-fertility/   ← when medication subtree adopts the pattern
-note/note-fertility/               ← logic-check example: a note-txt itemDef
-                                     at `note` resolves events placed at any
-                                     `note-*` descendant context
+medication-intake/medication-intake-fertility/   ← not defined; if ever needed it hangs
+                                     HERE, never under `medication/` (see below)
+note/note-fertility/               ← hypothetical: no `note` root exists. Illustrates the
+                                     walk-up only: a note-txt itemDef at `note` would
+                                     resolve events placed at any `note-*` descendant
 ```
 
 Tools (and the future `tags/` root) can then ask "give me all fertility-context events" by querying `*-fertility` across roots. This is a documented convention, not a code-enforced invariant — keep new context streamIds aligned with existing clinical-domain suffixes.
+
+**Corrected 2026-09-17.** This block used to draw `medication/medication-fertility/` "when the
+medication subtree adopts the pattern". **The model cannot deliver that shape.** D3 resolves an
+event by walking *up* the ancestors of its streamId until it finds a registered itemDef, and in the
+medication subtree nothing is registered at the bare `medication` root: `medication-intake-basic`
+and `medication-intake-coded` register at `medication-intake`, `medication-prescription-coded` at
+`medication-prescription`. A context hung under `medication` therefore has no itemDef anywhere in
+its ancestor chain, so `findItemForEvent` returns `null` and `eventTemplate({ context })` throws
+because the context is not a descendant of the itemDef's own `streamId`.
+
+So a medication-side context must hang under **the subtree that actually hosts the itemDef**:
+`medication-intake-fertility` under `medication-intake` (and, if ever needed,
+`medication-prescription-fertility` under `medication-prescription`). The `*-fertility` suffix is
+preserved, so the cross-root query above still works. Neither stream exists today, and no current
+requirement calls for one. See also `TAGS.md`, which offers `tags/hds/fertility` as the other route
+to "this medication was for fertility"; settle which applies before creating a context here.
+
+**Do not "fix" this by registering a new coded item at bare `medication`.** That would make the same
+coded intake writable two incompatible ways, once at `medication-intake` and once at the new root
+item, which is the equivalent-twin failure mode that got the ART-cycle-count draft rejected in
+review. Moving a published item's `streamId` is not an option either: the deprecated-alias mechanism
+does not cover it.
 
 ## Boundary with `medication-*`
 
