@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-09-15T14:05:45.839Z",
+  "publicationDate": "2026-09-17T10:00:46.799Z",
   "streams": [
     {
       "id": "activity",
@@ -5642,6 +5642,11 @@
       },
       "streamId": "medication-intake",
       "eventType": "medication/basic",
+      "duration": {
+        "mandatory": false,
+        "canBeNull": true,
+        "maxSeconds": 315360000
+      },
       "type": "composite",
       "composite": {
         "name": {
@@ -5852,6 +5857,11 @@
       },
       "streamId": "medication-intake",
       "eventType": "medication/coded-v1",
+      "duration": {
+        "mandatory": false,
+        "canBeNull": true,
+        "maxSeconds": 315360000
+      },
       "type": "datasource-search",
       "datasource": "medication",
       "repeatable": "unlimited"
@@ -16050,11 +16060,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-09-15T14:05:45.837Z"
+      "updatedAt": "2026-09-17T10:00:46.797Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-09-15T14:05:45.838Z"
+      "updatedAt": "2026-09-17T10:00:46.798Z"
     }
   },
   "settings": {
