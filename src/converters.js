@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const yaml = require('js-yaml');
+const YAML = require('yaml');
 
 const defsDir = path.resolve(__dirname, '../definitions/converters');
 
@@ -64,7 +64,7 @@ for (const itemKey of itemKeys) {
     for (const file of fs.readdirSync(converterDir).filter(f => f.endsWith('.yaml'))) {
       const version = path.basename(file, '.yaml');
       const fullPath = path.join(converterDir, file);
-      converterVersions[version] = yaml.load(fs.readFileSync(fullPath, 'utf-8'));
+      converterVersions[version] = YAML.parse(fs.readFileSync(fullPath, 'utf-8'));
       converterVersionPaths[version] = fullPath;
       sourcePaths.push(fullPath);
     }

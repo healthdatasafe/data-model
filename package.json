@@ -1,6 +1,6 @@
 {
   "name": "@hds/data-model",
-  "version": "3.7.0",
+  "version": "3.7.1",
   "description": "HDS data model",
   "main": "src/index.js",
   "engines": {
@@ -19,7 +19,6 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "ajv": "^8.17.1",
-    "js-yaml": "^4.3.2",
     "yaml": "^2.8.0"
   },
   "devDependencies": {

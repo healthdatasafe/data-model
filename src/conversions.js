@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const yaml = require('js-yaml');
+const YAML = require('yaml');
 
 const defsDir = path.resolve(__dirname, '../definitions/conversions');
 
@@ -16,7 +16,7 @@ const data = {};
 
 for (const file of fs.readdirSync(defsDir).filter(f => f.endsWith('.yaml'))) {
   const category = path.basename(file, '.yaml');
-  const content = yaml.load(fs.readFileSync(path.join(defsDir, file), 'utf-8'));
+  const content = YAML.parse(fs.readFileSync(path.join(defsDir, file), 'utf-8'));
   data[category] = {
     metric: content.metric,
     imperial: content.imperial,

@@ -1,5 +1,52 @@
 # Changelog
 
+## [3.7.1] - 2026-09-17
+
+Housekeeping. One YAML parser instead of two. **No definition, schema or pack content change:**
+the rebuilt `dist/pack.json` is byte-identical to 3.7.0's apart from `publicationDate`.
+
+### Changed: `js-yaml` removed, everything now parses through `yaml`
+
+The repo depended on two YAML parsers and used each in different files: `js-yaml` in
+`src/conversions.js`, `src/appStreams.js`, `src/converters.js` and `src/settings.js`, and the
+declared `yaml` in `src/streams.js`, `src/items.js` and `src/datasources.js`. The four `js-yaml`
+call sites (plus one in `tests/customFieldsAndSystem.test.js`) now use `yaml`, and `js-yaml` is gone
+from `dependencies`.
+
+**Why it mattered.** Two parsers means two sets of parsing semantics over the same `definitions/`
+tree, in a repo whose entire purpose is to be one source of truth. Two of those differences change
+what a definition file *means*, rather than merely how an error reads:
+
+- **Unquoted ISO dates.** `js-yaml` coerces `d: 2026-09-17` to a `Date` (which serialises into the
+  pack as `2026-09-17T00:00:00.000Z`); `yaml` keeps the string `2026-09-17`. The `yaml` behaviour is
+  the one a JSON pack wants.
+- **Merge keys.** `js-yaml` expands `<<: *base` into the parent mapping; `yaml` follows YAML 1.2 and
+  keeps a literal `"<<"` key. **So merge keys must not be used in definition files.** Plain anchors
+  and aliases behave identically in both and remain fine.
+
+Duplicate keys and multi-document files throw under *both* parsers, so neither was ever at risk, and
+`on` / `off` / `yes` / `no` are plain strings in both (that coercion was `js-yaml` 3 behaviour, not 4).
+
+### Fixed: an empty `appStreams.yaml` would have published `null` silently
+
+Not a pre-existing bug; a regression this migration would have introduced, caught in review and
+closed in the same change. `src/appStreams.js` passes its parsed content straight to the pack writer
+rather than indexing into it, so it is the one loader that does not fail on its own. For a zero-byte
+file `js-yaml` returned `undefined`, which `JSON.stringify` refused and the build died loudly, while
+`yaml` returns `null`, which would have been written out as `"appStreams": null`. That matters
+because `scripts/deploy.sh` runs the build and the consumer check but **not** the test suite, so the
+`[CFS-AS]` assertion that would have caught it is not in the deploy path. The loader now throws
+unless the parsed content is a mapping.
+
+**How it was verified.** Reasoning about the two schemas is not proof, so before changing anything
+every definition file the build reads (43 of the 45 on disk; `inputs.yaml` and
+`hl7-defaults/category.yaml` are read by nothing in `src/`) was parsed with **both** parsers and the
+results deep-compared: 0 differences. The divergences listed above are real but appear in none of
+today's files, which is exactly why they are written down here rather than left to be rediscovered. After the migration, the built pack was byte-compared against the pre-change build, and
+`npm ci --omit=dev` plus a build was run in a clean checkout to confirm the production dependency set
+is now sufficient. That last check is the one that would have failed before 3.7.0, when `js-yaml` was
+undeclared and arrived only through `eslint` / `mocha`.
+
 ## [3.7.0] - 2026-09-17
 
 Mirrors Pryv's published event-type dictionary (1.1.0 → 1.1.2) and repairs three HDS-side

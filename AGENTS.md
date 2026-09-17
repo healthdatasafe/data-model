@@ -274,6 +274,20 @@ data-model/
 
 ---
 
+## YAML in `definitions/`: one parser, and one thing it will not do
+
+Every definition file is parsed with the **`yaml`** package (YAML 1.2). `js-yaml` was removed in
+3.7.1 so the tree has a single set of parsing semantics.
+
+- **Do not use merge keys (`<<: *base`).** YAML 1.2 has no merge-key type, so `yaml` keeps a literal
+  `"<<"` key instead of merging, and it would ship that way in the pack. Plain anchors and aliases
+  (`&name` / `*name`) are fine and are used already in `items/symptom-domains.yaml`.
+- **Quote a bare date** if you ever need one as a string; `yaml` keeps `2026-09-17` as a string
+  anyway, which is what the pack wants, so this is only a caution against assuming otherwise.
+- Duplicate keys and multi-document files are errors, and the build fails on them. That is intended.
+
+---
+
 ## `eventTypes-legacy.json` is a mirror — never hand-edit it
 
 The file is a **byte-faithful copy of Pryv's published dictionary** (`pryv/data-types`,

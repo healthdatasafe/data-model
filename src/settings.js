@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-const yaml = require('js-yaml');
+const YAML = require('yaml');
 
 const defsFile = path.resolve(__dirname, '../definitions/settings/settings.yaml');
-const content = yaml.load(fs.readFileSync(defsFile, 'utf-8'));
+const content = YAML.parse(fs.readFileSync(defsFile, 'utf-8'));
 
 // Build the settings map: { key: { eventType, default, type, options? } }
 const data = {};

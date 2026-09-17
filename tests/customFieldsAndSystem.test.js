@@ -48,8 +48,8 @@ describe('[CFSX] Custom fields & system stream (Plan 45)', () => {
     let appStreams;
 
     before(() => {
-      const yaml = require('js-yaml');
-      appStreams = yaml.load(
+      const YAML = require('yaml');
+      appStreams = YAML.parse(
         fs.readFileSync(path.join(__dirname, '../definitions/appStreams.yaml'), 'utf-8')
       );
     });
