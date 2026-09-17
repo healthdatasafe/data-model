@@ -154,7 +154,7 @@ Conventions, equivalences and rationale live **here in `AGENTS.md`**; per-domain
 
 **When the equivalent twin is a legacy type, the legacy type wins** — it mirrors Pryv's catalog and is what non-HDS consumers already speak. Do not add an HDS-flavoured spelling of a unit Pryv already defines.
 
-**History.** `concentration/mg-ml` (≡ `g-l`) and `concentration/mcg-ml` (≡ `mg-l`) were HDS-added alongside their legacy twins and **removed 2026-07-15** once this rule landed — both were referenced by zero itemDefs and zero consumers, so removal was clean. Had any itemDef used them, the itemDef would have been deprecated onto the legacy type and the eventType removal tracked in `_plans/BUGS.md` instead.
+**History.** `concentration/mg-ml` (≡ `g-l`) and `concentration/mcg-ml` (≡ `mg-l`) were HDS-added alongside their legacy twins and **removed 2026-07-15** once this rule landed — both were referenced by zero itemDefs and zero consumers, so removal was clean. Had any itemDef used them, the itemDef would have been deprecated onto the legacy type and the eventType removal tracked as a separate issue instead.
 
 ### When adding a new **stream**
 
@@ -234,8 +234,8 @@ data-model/
 │   ├── items/*.yaml                       # Health data point definitions (~73 items across ~11 YAML files)
 │   ├── streams/*.yaml                     # Clinical-domain tree (~36 streams)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (~33)
-│   │   └── eventTypes-legacy.json         # Standard Pryv measurement types (~200)
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (~66)
+│   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (354) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)
 │   │   └── mood/                          # 5D vector converter (5 methods)
@@ -271,6 +271,50 @@ data-model/
 ├── tests/                                 # Vitest test suite
 └── dist/                                  # Generated pack.json + gh-pages clone (git-managed)
 ```
+
+---
+
+## `eventTypes-legacy.json` is a mirror — never hand-edit it
+
+The file is a **byte-faithful copy of Pryv's published dictionary** (`pryv/data-types`,
+`dist/flat.json`, served at `https://pryv.github.io/event-types/flat.json`). It has never been
+hand-edited and must not be. HDS additions go in `eventTypes-hds.json`, always.
+
+**Refreshing it: fetch, deep-compare, record the SHA.**
+
+1. Fetch `dist/flat.json` and confirm both published URLs agree
+   (`pryv.github.io/event-types/flat.json` and `api.pryv.com/event-types/flat.json`).
+2. Deep-compare against the current file: list added / removed / changed keys, and check `extras`
+   separately. Removals and changes are what need judgement; additions are usually free.
+3. **Record the upstream commit SHA and fetch date in the CHANGELOG entry.** Do not rely on the
+   `version` field: 1.1.2 was untagged upstream and two different byte-contents shipped under that
+   same label on a single day (2026-09-17). The SHA is the only honest identifier.
+4. Run `npm test`. `tests/eventTypesLegacyMirror.test.js` is the tripwire suite for this file.
+5. Re-fetch and re-compare immediately before committing; upstream can move mid-review.
+
+**Two rules that bite:**
+
+- **Never add a `*-cmc` key to `eventTypes-hds.json`.** Those types are owned by `pryv/data-types`
+  and hardcoded as `ET_*` constants in `@pryv/cmc`. `src/eventTypes.js` throws on a duplicate key
+  across the two files, so a copy breaks the entire build. HDS owns only the `content.hds`
+  sub-envelope convention.
+- **Never use `$ref` in any event type schema.** Schemas are compiled one at a time with no
+  dictionary root, so a `#/types/...` pointer cannot resolve and the compile throws. Inline the
+  shape instead, even when it duplicates a standalone type, and add a test pinning the copy to its
+  original. Upstream's 354 types contain no `$ref` at all. See the `medication/prescription-v1`
+  entry in CHANGELOG 3.7.0.
+
+**What the cores actually enforce.** A core validates content only for types in *Pryv's* dictionary;
+unknown types are accepted with no checks at all (`validateEventContentAndCoerce` returns early for
+any type its registry does not know). None of the HDS custom types are in that dictionary, so
+`eventTypes-hds.json` schemas are **advisory**: they define the contract for clients, and nothing
+server-side enforces them. That is why the schemas must be kept valid by this repo's own tests
+rather than by writing to an API and seeing what comes back.
+
+This is also why a schema can be wrong for a long time without anyone noticing, and why the
+tripwires exist. Should `service.eventTypes` ever be pointed at a dictionary that includes the HDS
+types, every one of these schemas becomes enforced at once, under the core's validator flavour
+(`ajv-draft-04` plus `ajv-formats`) rather than whatever a client happens to use.
 
 ---
 

@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.1.2",
   "types": {
     "absorbed-dose/gy": {
       "description": "Gray",
@@ -146,25 +146,25 @@
             "required": [
               "frequency"
             ]
-          },
-          "start": {
-            "description": "The start date for the sample. Unit: date in ISO 8601 format",
-            "type": "string"
-          },
-          "end": {
-            "description": "The end date for the sample. Unit: date in ISO 8601 format",
-            "type": "string"
-          },
-          "metadata": {
-            "type": "object"
           }
         },
-        "required": [
-          "sensitivityPoints",
-          "start",
-          "end"
-        ]
-      }
+        "start": {
+          "description": "The start date for the sample. Unit: date in ISO 8601 format",
+          "type": "string"
+        },
+        "end": {
+          "description": "The end date for the sample. Unit: date in ISO 8601 format",
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "sensitivityPoints",
+        "start",
+        "end"
+      ]
     },
     "audit-log/pryv-api": {
       "type": "object",
@@ -270,6 +270,55 @@
       "description": "An attribute type for true or false",
       "type": "boolean"
     },
+    "calendar/ical-event": {
+      "description": "A single iCalendar VEVENT mapped to a Pryv event. The well-known fields are kept here for queryability; the verbatim VEVENT block is preserved in the event's `clientData._raw` for lossless round-trips. The event's own `time` / `duration` carry the canonical instant; `dtstart` / `dtend` mirror it as ISO 8601 strings.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "VEVENT UID — stable identity used to de-duplicate on re-ingest."
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "rrule": {
+          "type": "string",
+          "description": "Raw RRULE value, e.g. FREQ=DAILY;COUNT=10."
+        },
+        "organizer": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "description": "VEVENT STATUS, e.g. CONFIRMED / TENTATIVE / CANCELLED."
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dtstart": {
+          "type": "string",
+          "description": "Start as an ISO 8601 date-time (UTC)."
+        },
+        "dtend": {
+          "type": "string",
+          "description": "End as an ISO 8601 date-time (UTC), when present."
+        },
+        "dateOnly": {
+          "type": "boolean",
+          "description": "True for all-day (VALUE=DATE) entries."
+        }
+      },
+      "required": [
+        "dtstart"
+      ]
+    },
     "call/name": {
       "description": "The contact's name (or a free-form identifier)",
       "type": "string"
@@ -338,12 +387,12 @@
             "identifier",
             "resourceType"
           ]
-        },
-        "required": [
-          "displayName",
-          "clinicalType"
-        ]
-      }
+        }
+      },
+      "required": [
+        "displayName",
+        "clinicalType"
+      ]
     },
     "concentration/mmol-l": {
       "description": "Millimoles per liter",
@@ -373,10 +422,534 @@
       "description": "Milligrams per deciliter",
       "type": "number"
     },
+    "consent/request-cmc": {
+      "description": "Cross-account consent request issued by a requester (`cmc/request-v1` lineage). The plugin mints a single-use capability access from this trigger, embeds the URL in `content.capabilityUrl`, and delivers the request to the recipient.",
+      "type": "object",
+      "properties": {
+        "to": {
+          "description": "Recipient identity, or `null` for an open invite to be claimed via the capability URL."
+        },
+        "capabilityRequested": {
+          "description": "When true, the plugin mints a single-use capability URL the recipient can open out-of-band.",
+          "type": "boolean"
+        },
+        "request": {
+          "description": "The consent assertion: localised title/description/consent text + the requested permissions + optional features and expiry.",
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "object",
+              "description": "Localized text: language-code (2-3 lowercase letters) → string."
+            },
+            "description": {
+              "type": "object",
+              "description": "Localized text."
+            },
+            "consent": {
+              "type": "object",
+              "description": "Localized consent text."
+            },
+            "permissions": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "streamId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "level": {
+                        "type": "string",
+                        "enum": [
+                          "manage",
+                          "contribute",
+                          "read",
+                          "create-only",
+                          "none"
+                        ]
+                      },
+                      "defaultName": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "mandatory": {
+                        "type": "boolean",
+                        "description": "Consent-layer flag: this entry is required for the requesting app to function - an accept must include it (the consent UI locks it; the user's alternative is denying the whole request)."
+                      }
+                    },
+                    "required": [
+                      "streamId",
+                      "level"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "feature": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "setting": {
+                        "type": "string",
+                        "enum": [
+                          "forbidden"
+                        ]
+                      },
+                      "mandatory": {
+                        "type": "boolean",
+                        "description": "Consent-layer flag: this entry is required for the requesting app to function - an accept must include it (the consent UI locks it; the user's alternative is denying the whole request)."
+                      }
+                    },
+                    "required": [
+                      "feature",
+                      "setting"
+                    ]
+                  }
+                ]
+              }
+            },
+            "features": {
+              "type": "object",
+              "properties": {
+                "chat": {
+                  "type": "boolean"
+                },
+                "systemMessaging": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "expiresAt": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Absolute expiry of the capability access, Unix timestamp (seconds). Omit for the platform default (7 days). `null` requests a capability without expiry; the core accepts it for `capability.mode: 'open-link'` only and refuses it on single-use invites."
+            },
+            "allowUserChoice": {
+              "type": "boolean",
+              "description": "Default false: the consent is ALL OR NOTHING (the user may only accept the whole permission set or deny). Set true to let the user cherry-pick entries on the consent screen (entries flagged `mandatory` stay locked)."
+            },
+            "accessType": {
+              "type": "string",
+              "enum": [
+                "shared",
+                "app"
+              ],
+              "description": "Pryv access type the accepted data-grant is minted as. Default `shared` (a non-delegable grant that cannot call `accesses.*`). Set `app` to make the grant delegable: the approved requester can `accesses.create` scoped, individually-named sub-accesses (permissions ⊆ the grant) for least-privilege re-delegation with per-actor audit attribution."
+            }
+          },
+          "required": [
+            "title",
+            "description",
+            "consent",
+            "permissions"
+          ]
+        },
+        "requesterMeta": {
+          "type": "object",
+          "properties": {
+            "displayName": {
+              "type": "string"
+            },
+            "appId": {
+              "type": "string"
+            },
+            "appUrl": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "to",
+        "request"
+      ]
+    },
+    "consent/accept-cmc": {
+      "description": "Cross-account consent accept (`cmc/accept-v1` lineage). Has two shapes: LOCAL TRIGGER (carries `capabilityUrl`, written by the accepter's app to start the accept flow) OR PEER-DELIVERED (carries `grantedAccess.apiEndpoint` + server-stamped `from`, written by the accepter's plugin to the requester's responses stream / inbox).",
+      "type": "object",
+      "properties": {
+        "capabilityUrl": {
+          "type": "string",
+          "description": "Local-trigger shape: capability URL from the request."
+        },
+        "accessName": {
+          "type": "string",
+          "description": "Optional name for the data-grant access the accepter mints."
+        },
+        "grantedPermissions": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Optional consent downgrade: grant only this subset of the request's permissions (exact-entry identity; validated against the offer by the accepter's plugin).",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "streamId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "level": {
+                    "type": "string",
+                    "enum": [
+                      "manage",
+                      "contribute",
+                      "read",
+                      "create-only",
+                      "none"
+                    ]
+                  },
+                  "defaultName": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "streamId",
+                  "level"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "feature": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "setting": {
+                    "type": "string",
+                    "enum": [
+                      "forbidden"
+                    ]
+                  }
+                },
+                "required": [
+                  "feature",
+                  "setting"
+                ]
+              }
+            ]
+          }
+        },
+        "extra": {
+          "type": "object",
+          "properties": {
+            "chat": {
+              "type": "boolean"
+            },
+            "systemMessaging": {
+              "type": "boolean"
+            }
+          }
+        },
+        "grantedAccess": {
+          "type": "object",
+          "description": "Peer-delivered shape: data-grant URL the accepter minted on their account.",
+          "properties": {
+            "apiEndpoint": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "apiEndpoint"
+          ]
+        },
+        "from": {
+          "type": "object",
+          "description": "Server-stamped at inbox-write time from the back-channel access's stored counterparty identity.",
+          "properties": {
+            "username": {
+              "type": "string"
+            },
+            "host": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "username",
+            "host"
+          ]
+        }
+      }
+    },
+    "consent/refuse-cmc": {
+      "description": "Cross-account consent refuse (`cmc/refuse-v1` lineage). Carries the capability URL of the request being refused + an optional localised reason.",
+      "type": "object",
+      "properties": {
+        "capabilityUrl": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "object",
+          "description": "Localized reason text."
+        }
+      },
+      "required": [
+        "capabilityUrl"
+      ]
+    },
+    "consent/revoke-cmc": {
+      "description": "Cross-account consent revoke (`cmc/revoke-v1` lineage). Either party tears down an established access pair by writing this with the local data-grant access id + an optional localised reason.",
+      "type": "object",
+      "properties": {
+        "accessId": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "object",
+          "description": "Localized reason text."
+        }
+      },
+      "required": [
+        "accessId"
+      ]
+    },
+    "consent/back-channel-cmc": {
+      "description": "Post-acceptance handshake step (`cmc/back-channel-v1` lineage). Delivered from the requester to the accepter's `:_cmc:inbox` via the data-grant URL, carrying the requester's back-channel apiEndpoint + remote stream-ids so the accepter can later POST chat / system messages back to the requester.",
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "object",
+          "properties": {
+            "username": {
+              "type": "string"
+            },
+            "host": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "username",
+            "host"
+          ]
+        },
+        "apiEndpoint": {
+          "type": "string"
+        },
+        "remoteChatStreamId": {
+          "type": "string"
+        },
+        "remoteCollectorStreamId": {
+          "type": "string"
+        },
+        "appCode": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "from",
+        "apiEndpoint"
+      ]
+    },
+    "consent/scope-request-cmc": {
+      "description": "Collector-proposed scope change on an established consent (`cmc/system-scope-request-v1` lineage). The collector writes a proposal carrying the desired new permissions; the user-side app accepts or refuses by writing a corresponding `consent/scope-update-cmc` event.",
+      "type": "object",
+      "properties": {
+        "newPermissions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "streamId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "level": {
+                    "type": "string",
+                    "enum": [
+                      "manage",
+                      "contribute",
+                      "read",
+                      "create-only",
+                      "none"
+                    ]
+                  },
+                  "defaultName": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "mandatory": {
+                    "type": "boolean",
+                    "description": "Consent-layer flag: this entry is required for the requesting app to function - an accept must include it (the consent UI locks it; the user's alternative is denying the whole request)."
+                  }
+                },
+                "required": [
+                  "streamId",
+                  "level"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "feature": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "setting": {
+                    "type": "string",
+                    "enum": [
+                      "forbidden"
+                    ]
+                  },
+                  "mandatory": {
+                    "type": "boolean",
+                    "description": "Consent-layer flag: this entry is required for the requesting app to function - an accept must include it (the consent UI locks it; the user's alternative is denying the whole request)."
+                  }
+                },
+                "required": [
+                  "feature",
+                  "setting"
+                ]
+              }
+            ]
+          }
+        },
+        "expires": {
+          "type": "number",
+          "description": "Unix timestamp (seconds)."
+        },
+        "message": {
+          "type": "object",
+          "description": "Localized message accompanying the proposal."
+        }
+      },
+      "required": [
+        "newPermissions"
+      ]
+    },
+    "consent/scope-update-cmc": {
+      "description": "User-side scope change apply / notify (`cmc/system-scope-update-v1` lineage). Has two shapes: response-to-request (carries `scopeRequestEventId` + `accept`) OR self-initiated (carries `newPermissions`). The plugin updates the local data-grant access permissions and notifies the peer.",
+      "type": "object",
+      "properties": {
+        "scopeRequestEventId": {
+          "type": "string"
+        },
+        "accept": {
+          "type": "boolean"
+        },
+        "newPermissions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "streamId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "level": {
+                    "type": "string",
+                    "enum": [
+                      "manage",
+                      "contribute",
+                      "read",
+                      "create-only",
+                      "none"
+                    ]
+                  },
+                  "defaultName": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "mandatory": {
+                    "type": "boolean",
+                    "description": "Consent-layer flag: this entry is required for the requesting app to function - an accept must include it (the consent UI locks it; the user's alternative is denying the whole request)."
+                  }
+                },
+                "required": [
+                  "streamId",
+                  "level"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "feature": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "setting": {
+                    "type": "string",
+                    "enum": [
+                      "forbidden"
+                    ]
+                  },
+                  "mandatory": {
+                    "type": "boolean",
+                    "description": "Consent-layer flag: this entry is required for the requesting app to function - an accept must include it (the consent UI locks it; the user's alternative is denying the whole request)."
+                  }
+                },
+                "required": [
+                  "feature",
+                  "setting"
+                ]
+              }
+            ]
+          }
+        },
+        "accessId": {
+          "type": "string",
+          "description": "Local data-grant access id (when self-initiated)."
+        },
+        "previousPermissions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "streamId": {
+                "type": "string"
+              },
+              "level": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "consent/invalidate-link-cmc": {
+      "description": "Requester-side invalidation of an open-link consent capability (`cmc/invalidate-link-v1` lineage). The plugin flips the capability access state to `'invalidated'` so further accepts are rejected. Already-established data-grant + back-channel relationships are UNTOUCHED — use `consent/revoke-cmc` for per-relationship teardown. Single-use capabilities are auto-consumed on first accept; calling invalidate on a single-use capability is a no-op.",
+      "type": "object",
+      "properties": {
+        "capabilityId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "object",
+          "description": "Localized reason text."
+        }
+      },
+      "required": [
+        "capabilityId"
+      ]
+    },
     "contact/facebook": {
       "type": "object",
       "description": "A Facebook user as specified in the Graph API: https://developers.facebook.com/docs/reference/api/user/",
-      "additionalProperties": "true",
+      "additionalProperties": true,
       "properties": {
         "id": {
           "type": "string"
@@ -479,8 +1052,48 @@
       "description": "Volt",
       "type": "number"
     },
+    "encrypted/aes-256-gcm": {
+      "description": "AES-256-GCM encrypted payload. <code>payload</code> is <code>Base64( iv || ciphertext || tag )</code> where <code>iv</code> is a random 96-bit (12-byte) nonce generated per encryption, <code>ciphertext</code> is the AES-256-GCM encryption of the UTF-8 JSON plaintext, and <code>tag</code> is the 128-bit (16-byte) GCM authentication tag. The key is 256 bits (32 bytes). Standard (non-URL-safe) Base64.",
+      "type": "object",
+      "properties": {
+        "payload": {
+          "description": "The encrypted data: <code>Base64( iv[12] || ciphertext || tag[16] )</code>.",
+          "type": "string"
+        },
+        "keyRef": {
+          "description": "A reference (e.g. id, name in a keyring) to the key to use for decryption.",
+          "type": "string"
+        },
+        "hint": {
+          "description": "Alternative or complement to <code>keyRef</code>. A hint about which key to use for decryption."
+        }
+      },
+      "required": [
+        "payload"
+      ]
+    },
+    "encrypted/ecies-aes-256-gcm": {
+      "description": "Asymmetric (ECIES-style) encrypted payload for a NIST P-256 (secp256r1) recipient key pair. Encryption: generate an ephemeral P-256 key pair; compute the ECDH shared secret with the recipient's public key (the 32-byte X coordinate); derive the content key with HKDF-SHA-256 (salt: empty, info: the ASCII string <code>encrypted/ecies-aes-256-gcm</code>, output: 32 bytes) and use it as an AES-256-GCM key with a random 96-bit IV. <code>payload</code> is <code>Base64( ephemeralPublicKey || iv || ciphertext || tag )</code> where <code>ephemeralPublicKey</code> is the 65-byte uncompressed SEC1 point (<code>0x04 || X || Y</code>), <code>iv</code> is 12 bytes and <code>tag</code> is the 16-byte GCM authentication tag. Decryption requires the recipient's private key. Standard (non-URL-safe) Base64.",
+      "type": "object",
+      "properties": {
+        "payload": {
+          "description": "The encrypted data: <code>Base64( ephemeralPublicKey[65] || iv[12] || ciphertext || tag[16] )</code>.",
+          "type": "string"
+        },
+        "keyRef": {
+          "description": "A reference (e.g. id, name in a keyring) to the recipient key pair whose private key decrypts the payload.",
+          "type": "string"
+        },
+        "hint": {
+          "description": "Alternative or complement to <code>keyRef</code>. A hint about which key to use for decryption."
+        }
+      },
+      "required": [
+        "payload"
+      ]
+    },
     "encrypted/aes-text-base64": {
-      "description": "AES encrypted payload, with a <em>text</em> key and a <em>Base64</em> payload.",
+      "description": "DEPRECATED — prefer <code>encrypted/aes-256-gcm</code>. AES encrypted payload, with a <em>text</em> key and a <em>Base64</em> payload; the exact cipher parameters (mode, key derivation, IV handling) were never fully specified, so implementations may not interoperate.",
       "type": "object",
       "properties": {
         "payload": {
@@ -887,6 +1500,20 @@
         "id",
         "screen-name",
         "text"
+      ]
+    },
+    "message/chat-cmc": {
+      "description": "Chat message exchanged on a CMC consent's per-counterparty chat stream (`cmc/chat-v1` lineage). Plain string up to 10 KB; the plugin handles delivery to the peer's matching chat stream.",
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10240
+        }
+      },
+      "required": [
+        "content"
       ]
     },
     "mol/mol": {
@@ -1473,16 +2100,75 @@
         "url"
       ]
     },
-    "numset/*": {
-      "description": "The format key is freely defined.\n\nFor example, a heart measurement with type `numset/heart` and content:\n```\n{ \n  \"systolic\": { \"pressure/mmhg\": 105 },\n  \"diastolic\": { \"pressure/mmhg\": 64 },\n  \"rate\": { \"frequency/bpm\": 88 }\n}\n```\n\n ",
+    "notification/alert-cmc": {
+      "description": "CMC system alert (`cmc/system-alert-v1` lineage). Sent on the per-counterparty collectors stream of an established CMC consent. Carries an alert level, localised title + body, and an optional ack request (`ackRequired` / `ackId`).",
       "type": "object",
-      "patternProperties": {
-        "^(/[^/]+)+$": {
-          "type": "number"
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": [
+            "info",
+            "warning",
+            "critical"
+          ]
+        },
+        "title": {
+          "type": "object",
+          "description": "Localized text: language-code (2-3 lowercase letters) → string."
+        },
+        "body": {
+          "type": "object",
+          "description": "Localized body text."
+        },
+        "code": {
+          "type": "string",
+          "description": "Optional app-defined code identifying the alert kind (used for grouping / dedup)."
+        },
+        "ackRequired": {
+          "type": "boolean",
+          "description": "When true, the recipient is expected to send a `notification/ack-cmc` event back."
+        },
+        "ackId": {
+          "type": "string",
+          "description": "Optional explicit ack-id. When absent, the alert event-id is used as the ack reference."
         }
       },
-      "additionalProperties": "false",
-      "required": []
+      "required": [
+        "level",
+        "title",
+        "body"
+      ]
+    },
+    "notification/ack-cmc": {
+      "description": "CMC system alert acknowledgement (`cmc/system-ack-v1` lineage). The recipient of a `notification/alert-cmc` writes one of these back referencing the original alert via `alertEventId` + `ackId`.",
+      "type": "object",
+      "properties": {
+        "alertEventId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ackId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "alertEventId",
+        "ackId"
+      ]
+    },
+    "numset/*": {
+      "description": "The format key is freely defined.\n\nFor example, a heart measurement with type `numset/heart` and content:\n```\n{\n  \"systolic\": { \"pressure/mmhg\": 105 },\n  \"diastolic\": { \"pressure/mmhg\": 64 },\n  \"rate\": { \"frequency/bpm\": 88 }\n}\n```",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "patternProperties": {
+          "^[a-z0-9-]+/[a-z0-9-]+$": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
     },
     "picture/base64": {
       "description": "The picture is caried in base64 (utf-8) encoded in string",
@@ -1679,6 +2365,109 @@
         "indeterminate",
         "estrogenSurge"
       ]
+    },
+    "shared-secret/item": {
+      "description": "One shared secret. Lives under the reserved `:_shared-secrets:<accessId>` stream of the access that created it. The event's own `time` + `duration` carry the lifetime — expiry is exactly `now > time + duration` — and `trashed` marks an item that has left the `pending` state.",
+      "type": "object",
+      "required": [
+        "keyHash",
+        "title",
+        "status",
+        "statusHistory",
+        "onConsumed"
+      ],
+      "properties": {
+        "keyHash": {
+          "description": "SHA-256 (hex) of the key's random half. The key itself is returned once, at creation, and is never stored — so it cannot be recovered from a database dump or a backup.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "title": {
+          "description": "Human-readable label for the account owner, describing what is being shared and with whom.",
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "description": "`pending` is the only state from which the secret can be retrieved; the other two are terminal.",
+          "type": "string",
+          "enum": [
+            "pending",
+            "consumed",
+            "discarded"
+          ]
+        },
+        "statusHistory": {
+          "description": "Append-only trail of state transitions, oldest first.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "status",
+              "time"
+            ],
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "consumed",
+                  "discarded"
+                ]
+              },
+              "time": {
+                "description": "Pryv timestamp of the transition.",
+                "type": "number"
+              },
+              "info": {
+                "description": "Why the item was discarded — e.g. `expired`, `deleted`, or a signature mismatch.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "onConsumed": {
+          "description": "Shown to whoever presents the key once the secret is no longer available.",
+          "type": "object",
+          "required": [
+            "message"
+          ],
+          "properties": {
+            "message": {
+              "type": "string",
+              "minLength": 1
+            },
+            "returnUrl": {
+              "description": "Where to send the visitor afterwards. Restricted to http(s) — it is followed by an unauthenticated third party.",
+              "type": "string",
+              "pattern": "^https?://"
+            }
+          }
+        },
+        "signature": {
+          "description": "Optional proof required to redeem. `secret` compares a passphrase supplied out-of-band; `hmac-sha256` verifies HMAC(verifier-secret, key material) computed by the client, so the verifier secret itself never reaches the server. A wrong proof discards the secret. `value` is present only while the item is `pending`: it is scrubbed alongside the secret once the item is consumed or discarded (for a `secret`-type signature it is a passphrase in clear), leaving only the `type` on the record.",
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "secret",
+                "hmac-sha256"
+              ]
+            },
+            "value": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "secret": {
+          "description": "The payload handed over on redemption — any JSON value. Present only while `status` is `pending`: it is removed as soon as the item is consumed or discarded, so a spent secret stops living in backups and exports."
+        }
+      }
     },
     "sleep/analysis": {
       "type": "object",
@@ -3631,7 +4420,7 @@
       }
     },
     "absorbed-dose-equivalent": {
-      "description": "The radiation absorbed by a fixed mass of biological tissue.",
+      "description": "The radiation absorbed by a fixed mass of biological tissue.",
       "extras": {
         "name": {
           "en": "Dose equivalent",
@@ -3661,7 +4450,7 @@
       }
     },
     "angular-acceleration": {
-      "description": "The rate of change of angular velocity.",
+      "description": "The rate of change of angular velocity.",
       "extras": {
         "name": {
           "en": "Angular acceleration",
@@ -3699,11 +4488,19 @@
     "boolean": {
       "description": "To record whether an attribute is true, e.g. if the user has a wheelchair."
     },
+    "calendar": {
+      "description": "Calendar entries bridged from the iCalendar standard (RFC 5545). Produced by the calendar adapter when ingesting an external calendar feed into a Pryv account.",
+      "extras": {
+        "name": {
+          "en": "Calendar"
+        }
+      }
+    },
     "call": {
       "description": "To record references to phone calls (landline, mobile, Skype, etc.)."
     },
     "capacitance": {
-      "description": "The ability of a body to store an electrical charge.",
+      "description": "The ability of a body to store an electrical charge.",
       "extras": {
         "name": {
           "en": "Capacitance",
@@ -3712,7 +4509,7 @@
       }
     },
     "catalytic-activity": {
-      "description": "The  increase in rate of a chemical reaction due to the participation of a substance called a catalyst.",
+      "description": "The increase in rate of a chemical reaction due to the participation of a substance called a catalyst.",
       "extras": {
         "name": {
           "en": "Catalytic activity",
@@ -3732,6 +4529,15 @@
         }
       }
     },
+    "consent": {
+      "description": "A consent assertion exchanged between two Pryv accounts as part of a cross-account access lifecycle (request → accept | refuse → revoke). Each format represents one state-transition in the consent state machine, plus the post-acceptance handshake step and scope-change continuations. The class is shared by the CMC plugin (open-pryv.io `components/cmc`) and may be reused by other consent-style protocols.",
+      "extras": {
+        "name": {
+          "en": "Consent",
+          "fr": "Consentement"
+        }
+      }
+    },
     "contact": {
       "description": "To record events related to people (meeting someone special, business encounters, etc.)."
     },
@@ -3748,7 +4554,7 @@
       "description": "To record credentials, such as secret keys, passwords or access rights."
     },
     "data-quantity": {
-      "description": "Unit of information in computing and digital communications.",
+      "description": "Unit of information in computing and digital communications.",
       "extras": {
         "name": {
           "en": "Data quantity",
@@ -3760,7 +4566,7 @@
       "description": "To record a date and time."
     },
     "density": {
-      "description": "The density of a material (volumetric mass density).",
+      "description": "The density of a material (volumetric mass density).",
       "extras": {
         "name": {
           "en": "Density",
@@ -3787,7 +4593,7 @@
       }
     },
     "electric-charge-line-density": {
-      "description": "The electric charge per unit volume of space, in one, two or three dimensions.",
+      "description": "The electric charge per unit volume of space, in one, two or three dimensions.",
       "extras": {
         "name": {
           "en": "Electric charge line density",
@@ -3796,7 +4602,7 @@
       }
     },
     "electric-current": {
-      "description": "A flow of electric charge.",
+      "description": "A flow of electric charge.",
       "extras": {
         "name": {
           "en": "Electric current",
@@ -3823,7 +4629,7 @@
       }
     },
     "encrypted": {
-      "description": "For client-side-encrypted events. The decrypted <code>payload</code> is expected to be a JSON object with the regular <code>type</code> and <code>content</code> properties (e.g. <code>{ \"type\": \"..\", \"content\": \"..\" }</code>). If the event has attached files, they are expected to be similarly encrypted."
+      "description": "For client-side-encrypted events. The decrypted plaintext is expected to be the UTF-8 JSON serialization of an object with the regular <code>type</code> and <code>content</code> properties (e.g. <code>{ \"type\": \"..\", \"content\": \"..\" }</code>); extra properties are allowed and carried along on decryption. All other event fields (id, streamIds, time, …) stay in plaintext. If the event has attached files, each is encrypted with the same method and key as the event's content, as raw binary in the method's payload byte layout — i.e. exactly the bytes that Base64-decoding a <code>payload</code> would yield (e.g. <code>iv || ciphertext || tag</code> for <code>aes-256-gcm</code>), without Base64 encoding."
     },
     "energy": {
       "description": "The capacity of a physical system to perform work.",
@@ -3838,7 +4644,7 @@
       "description": "To record a file, or a group of files. A fallback type for data with no specific handling in Pryv."
     },
     "force": {
-      "description": "A push or pull upon an object resulting from the object's interaction with another object.",
+      "description": "A push or pull upon an object resulting from the object's interaction with another object.",
       "extras": {
         "name": {
           "en": "Force",
@@ -3856,7 +4662,7 @@
       }
     },
     "gas-consumption": {
-      "description": "The quantity of gas consumed."
+      "description": "The quantity of gas consumed."
     },
     "length": {
       "description": "Length measurements. Format = unit.",
@@ -3868,10 +4674,10 @@
       }
     },
     "linear-acceleration": {
-      "description": "The rate of change of linear velocity."
+      "description": "The rate of change of linear velocity."
     },
     "luminous-intensity": {
-      "description": "The wavelength-weighted power emitted by a light source.",
+      "description": "The wavelength-weighted power emitted by a light source.",
       "extras": {
         "name": {
           "en": "Luminous intensity",
@@ -3892,7 +4698,7 @@
       "description": "To record messages, such as e-mails or posts on social networks."
     },
     "mol": {
-      "description": "The size of an ensemble of elementary entities, such as atoms, molecules, electrons, and other particles.",
+      "description": "The size of an ensemble of elementary entities, such as atoms, molecules, electrons, and other particles.",
       "extras": {
         "name": {
           "en": "Amount of substance",
@@ -3918,6 +4724,15 @@
     "note": {
       "description": "To record different kinds of text-based notes, from simple text to more complex formatted content like social network posts."
     },
+    "notification": {
+      "description": "Asynchronous notifications delivered to a recipient — either alert-style messages (level + title + body) or acknowledgements of previously-received alerts. Designed for plugin-driven channels where the data-owner is notified out-of-band of state requiring attention.",
+      "extras": {
+        "name": {
+          "en": "Notification",
+          "fr": "Notification"
+        }
+      }
+    },
     "numset": {
       "description": "A set of numerical values."
     },
@@ -3928,7 +4743,7 @@
       "description": "To record a geographical position."
     },
     "power": {
-      "description": "The rate at which energy is transferred, used, or transformed.",
+      "description": "The rate at which energy is transferred, used, or transformed.",
       "extras": {
         "name": {
           "en": "Power",
@@ -3957,11 +4772,14 @@
     "reproductive-health": {
       "description": "To record reproductive health data, such as menstrual flow or ovulation test results."
     },
+    "shared-secret": {
+      "description": "A secret held on an account for one-time hand-off to a third party, addressed by a random key rather than embedded in a URL. Written and consumed exclusively by the server through the shared-secrets endpoints (open-pryv.io `components/shared-secrets`); the events API refuses to create, modify or move events of this class, so a client never authors one directly. Retained after use as a record of the hand-off, with the payload removed."
+    },
     "sleep": {
       "description": "To record sleep information."
     },
     "speed": {
-      "description": "The magnitude of the velocity of an object.",
+      "description": "The magnitude of the velocity of an object.",
       "extras": {
         "name": {
           "en": "Speed",
@@ -3997,7 +4815,7 @@
       "description": "To record video (home snippets, Vimeo or YouTube links, etc.)."
     },
     "volume": {
-      "description": "The quantity of three-dimensional space enclosed by some closed boundary.",
+      "description": "The quantity of three-dimensional space enclosed by some closed boundary.",
       "extras": {
         "name": {
           "en": "Volume",

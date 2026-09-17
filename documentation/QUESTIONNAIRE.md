@@ -1,6 +1,6 @@
 # Questionnaire — data-model side
 
-This document describes what `data-model` ships for the **questionnaire request/answer event pair** introduced by Plan 71 (`_plans/71-history-checklist-field-type-atwork/` in the `_macro2` workspace). It is the **data-model perspective** — what eventTypes exist, what storage shape they declare, what the cross-reference convention looks like.
+This document describes what `data-model` ships for the **questionnaire request/answer event pair** introduced by Plan 71. It is the **data-model perspective** — what eventTypes exist, what storage shape they declare, what the cross-reference convention looks like.
 
 The runtime mechanics — questionnaire renderer, scope-aware prefill via Pryv content queries, batched submit, appTemplates `Questionnaire` declaration — live in **`hds-lib`** and **`hds-forms-js`** (Plan 71 Phases C–E).
 
@@ -123,7 +123,7 @@ clientData:
 
 To make cohort queries direct ("find all answer events that reference event X"), the answer-event writer **must** duplicate every reference from `content.answers[*].references[*]` (and the `requestEventId`) into `clientData.related` as a keyed object: `clientData.related[<eventId>] = true`.
 
-This follows Pryv's §7 cross-reference convention documented in `_plans/71-history-checklist-field-type-atwork/archives/API-FACING-CHANGES.md`. Both the `content` and `clientData` query parameters share the same path grammar `^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*$` (no arrays, no wildcards) — eventIds (cuid/UUID) match the grammar, so `clientData.related.<eventId>` is queryable.
+This follows Pryv's §7 cross-reference convention. Both the `content` and `clientData` query parameters share the same path grammar `^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*$` (no arrays, no wildcards) — eventIds (cuid/UUID) match the grammar, so `clientData.related.<eventId>` is queryable.
 
 **Why both content + clientData?** `content.answers[k].references` is the semantic record (which events this question's answer points at). `clientData.related` is the indexable mirror — Pryv supports query-by-path on both parameters, but `clientData` is the dedicated cross-reference channel and has the documented §7 convention used elsewhere in HDS (e.g. PDF source mapping). Carrying refs in both places costs ~50 bytes per reference and removes the indirection cost on every cohort query.
 
@@ -163,7 +163,7 @@ Patient edits to a previous answer **create a new `questionnaire/answer-v1` even
 | `status: declined` | `data-absent-reason: asked-declined` |
 | Key absent | `data-absent-reason: not-asked` |
 
-The negative statuses (`no`/`unknown`/`declined`) have no standalone typed clinical record in HDS — consumers exporting to FHIR derive `MedicationStatement.status=not-taken`, `Condition.verificationStatus=refuted`, etc. from the answer event content. This is a documented Plan 71 D8 trade-off (`_plans/71-history-checklist-field-type-atwork/PLAN.md`).
+The negative statuses (`no`/`unknown`/`declined`) have no standalone typed clinical record in HDS — consumers exporting to FHIR derive `MedicationStatement.status=not-taken`, `Condition.verificationStatus=refuted`, etc. from the answer event content. This is a documented Plan 71 D8 trade-off.
 
 ---
 

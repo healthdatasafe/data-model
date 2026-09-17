@@ -5,6 +5,36 @@ const yaml = require('js-yaml');
 const defsDir = path.resolve(__dirname, '../definitions/converters');
 
 /**
+ * Last modification time of a definition file, as an ISO string.
+ *
+ * These timestamps used to be `new Date()` taken at build time, which meant every single build
+ * rewrote dist/pack.json even when no definition had changed — real changes were then hard to see
+ * in a diff, and no two builds of the same source agreed. Deriving them from the source files
+ * makes a rebuild of unchanged definitions byte-identical.
+ *
+ * Caveat: mtime is checkout time on a fresh clone, so it is stable *within* a working tree rather
+ * than globally reproducible. That is enough for the purpose here (a quiet diff); making it
+ * clone-independent would mean reading git commit dates during the build.
+ */
+function fileUpdatedAt (filePath) {
+  return fs.statSync(filePath).mtime.toISOString();
+}
+
+/**
+ * Newest mtime across several files, as an ISO string.
+ *
+ * Falls back to `fallbackPath` when the list is empty: `Math.max()` of nothing is -Infinity, and
+ * `new Date(-Infinity).toISOString()` throws RangeError. An item directory carrying neither a
+ * converter yaml nor a model json is degenerate, but it used to produce a record rather than
+ * crash the build, and a definition mistake should not look like a broken build script.
+ */
+function newestUpdatedAt (filePaths, fallbackPath) {
+  if (filePaths.length === 0) return fileUpdatedAt(fallbackPath);
+  const times = filePaths.map(p => fs.statSync(p).mtime.getTime());
+  return new Date(Math.max(...times)).toISOString();
+}
+
+/**
  * Loads all converter definitions from definitions/converters/{itemKey}/
  * Each item-key directory contains:
  *   converter/{version}.yaml — dimensions, weights, helpers
@@ -28,10 +58,15 @@ for (const itemKey of itemKeys) {
   // Load converter configs (versioned)
   const converterDir = path.join(itemDir, 'converter');
   const converterVersions = {};
+  const converterVersionPaths = {};
+  const sourcePaths = [];
   if (fs.existsSync(converterDir)) {
     for (const file of fs.readdirSync(converterDir).filter(f => f.endsWith('.yaml'))) {
       const version = path.basename(file, '.yaml');
-      converterVersions[version] = yaml.load(fs.readFileSync(path.join(converterDir, file), 'utf-8'));
+      const fullPath = path.join(converterDir, file);
+      converterVersions[version] = yaml.load(fs.readFileSync(fullPath, 'utf-8'));
+      converterVersionPaths[version] = fullPath;
+      sourcePaths.push(fullPath);
     }
   }
 
@@ -44,7 +79,9 @@ for (const itemKey of itemKeys) {
       const sourceDir = path.join(modelsDir, sourceKey);
       for (const file of fs.readdirSync(sourceDir).filter(f => f.endsWith('.json'))) {
         const version = path.basename(file, '.json');
-        models[sourceKey][version] = JSON.parse(fs.readFileSync(path.join(sourceDir, file), 'utf-8'));
+        const fullPath = path.join(sourceDir, file);
+        models[sourceKey][version] = JSON.parse(fs.readFileSync(fullPath, 'utf-8'));
+        sourcePaths.push(fullPath);
       }
     }
   }
@@ -54,7 +91,7 @@ for (const itemKey of itemKeys) {
   for (const version of Object.keys(converterVersions)) {
     versions[version] = {
       status: 'active',
-      updatedAt: new Date().toISOString()
+      updatedAt: fileUpdatedAt(converterVersionPaths[version])
     };
   }
 
@@ -85,7 +122,7 @@ for (const itemKey of itemKeys) {
 
   converterIndex[itemKey] = {
     latestVersion,
-    updatedAt: new Date().toISOString()
+    updatedAt: newestUpdatedAt(sourcePaths, itemDir)
   };
 
   // Store for publishing

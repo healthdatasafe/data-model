@@ -1,6 +1,6 @@
 # Custom fields & system stream — data-model side
 
-This document describes what `data-model` ships for **template-scoped custom fields** and the **account-level system stream** introduced by Plan 45 (`_plans/45-custom-fields-appTemplates-atwork/` in the `_macro` workspace). It is the **data-model perspective** — what types exist, what `appStreams` declarations exist, how the storage shapes are constrained.
+This document describes what `data-model` ships for **template-scoped custom fields** and the **account-level system stream** introduced by Plan 45. It is the **data-model perspective** — what types exist, what `appStreams` declarations exist, how the storage shapes are constrained.
 
 The runtime mechanics — `clientData`-driven validator with parent-chain inheritance, helper APIs, stream provisioning — live in **`hds-lib-js`** (see `hds-lib-js/ts/appTemplates/CUSTOM-FIELDS-AND-SYSTEM.md`, Plan 45 Phase 3.5).
 
@@ -241,8 +241,8 @@ none is defined today.
 
 ## Cross-references
 
-- **Plan 45** — design doc, open-question log, full rationale: `_plans/45-custom-fields-appTemplates-atwork/PLAN.md`.
-- **Plan 45 spec** — locked TS types, JSON schemas, validator pseudocode, helper API: `_plans/45-custom-fields-appTemplates-atwork/spec.md`.
+- **Plan 45** — design doc, open-question log, full rationale (internal planning docs).
+- **Plan 45 spec** — locked TS types, JSON schemas, validator pseudocode, helper API (internal planning docs).
 - **`hds-lib-js/ts/appTemplates/CUSTOM-FIELDS-AND-SYSTEM.md`** *(Plan 45 Phase 3.5)* — the runtime side: parent-chain walk, helper APIs (`resolveStreamCustomField`, `streamCustomFieldToVirtualItem`, …), `CollectorRequest`/`CollectorClient` extensions, sandbox-prefix enforcement.
-- **Plan 25** *(closed)* — `{app-id}-app/` convention precedent: `_plans/25-generic-app-stream-done/Plan.md`.
+- **Plan 25** *(closed)* — `{app-id}-app/` convention precedent (internal planning docs).
 - **`AGENTS.md`** §1 (this repo) — "Items are domain-named, source-agnostic" — the principle that custom fields preserve by living *outside* the canonical item registry.

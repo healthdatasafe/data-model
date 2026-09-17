@@ -1,5 +1,141 @@
 # Changelog
 
+## [3.7.0] - 2026-09-17
+
+Mirrors Pryv's published event-type dictionary (1.1.0 → 1.1.2) and repairs three HDS-side
+definition defects the new tests surfaced. **Additive, no migration.** No key, `streamId` or
+`eventType` is removed or renamed, and no stored event becomes invalid.
+
+### Changed: `eventTypes-legacy.json` is now a faithful 1.1.2 mirror
+
+Source: `pryv/data-types` `dist/flat.json` at commit **`02a0873`**, fetched **2026-09-17**,
+byte-verified against both `https://pryv.github.io/event-types/flat.json` and
+`https://api.pryv.com/event-types/flat.json`.
+
+**Pin the SHA, not the version string.** 1.1.2 is *untagged* upstream (tags stop at 1.1.1) and
+`dist/flat.json` moved four times on 2026-09-17, with two different byte-contents both carrying the
+label "1.1.2". The version field alone does not identify what was mirrored.
+
+**15 types added**, 0 removed, `extras` byte-identical (260 keys):
+
+- CMC consent lineage: `consent/request-cmc`, `consent/accept-cmc`, `consent/refuse-cmc`,
+  `consent/revoke-cmc`, `consent/back-channel-cmc`, `consent/scope-request-cmc`,
+  `consent/scope-update-cmc`, `consent/invalidate-link-cmc`
+- CMC messaging: `message/chat-cmc`, `notification/alert-cmc`, `notification/ack-cmc`
+- Crypto: `encrypted/aes-256-gcm`, `encrypted/ecies-aes-256-gcm`, `shared-secret/item`
+- Calendar: `calendar/ical-event`
+
+Four of these (`consent/request-cmc`, `consent/accept-cmc`, `message/chat-cmc`,
+`notification/alert-cmc`) were **already written by HDS code** (hds-lib-js, doctor-dashboard,
+hds-webapp, bridge-mira, bridge-redcap) while the pack did not declare them. This closes that gap.
+
+**5 types changed, all upstream repairs, none used anywhere in HDS:**
+
+| Type | What changed |
+|------|--------------|
+| `audiogram/data` | `start`, `end`, `metadata` and `required` were misnested inside `properties.sensitivityPoints.items`; moved to the type's top level |
+| `clinical/fhir` | `required` was misnested inside a sub-property; moved to the top level |
+| `numset/*` | `additionalProperties` was the **string** `"false"` (truthy, so it enforced nothing); restructured so the pattern matches `{ key: { "type/unit": number } }` |
+| `contact/facebook` | `additionalProperties` was the **string** `"true"`; now boolean `true` |
+| `encrypted/aes-text-base64` | Description only: marked deprecated in favour of `encrypted/aes-256-gcm`. Schema unchanged |
+
+The first four did not compile under ajv at all, so any consumer compiling them threw. They are now
+valid. `numset/*` remains inert on the cores regardless: `isKnown()` is a plain lookup with no
+wildcard resolution, so no real event ever matches the literal key `numset/*`.
+
+### Ownership boundary: `*-cmc` types are upstream's
+
+`@pryv/cmc` hardcodes all ten `ET_*` constants and pryv's dictionary owns every `*-cmc` key.
+**Never copy one into `eventTypes-hds.json`**: `src/eventTypes.js` throws on a duplicate key across
+the two files, so a copy breaks the whole build. HDS owns only the `content.hds` sub-envelope
+convention. Test [ETLM-CMC-2] enforces this.
+
+### Fixed: `medication/prescription-v1` used a `$ref` that cannot resolve
+
+`posology.frequency` was `{"$ref": "#/types/frequency~1times-period"}`, the only `$ref` in either
+dictionary. Event-type schemas are compiled one at a time with no dictionary root to resolve
+against, so `#` is the type schema itself and the pointer is unresolvable: the compile throws.
+Upstream's 354 types contain no `$ref` at all. The referenced schema is now inlined, structurally
+identical to the standalone `frequency/times-period` type, and [ETLM-INLINE-1] keeps the two copies
+from drifting.
+
+**No stored data is affected and nothing was rejected in production.** HDS custom types are absent
+from pryv's dictionary, so cores treat them as unknown and skip content validation entirely; nothing
+on the HDS side compiled these schemas either. This was a latent defect, caught by the new tests.
+
+### Fixed: two `appStreams.yaml` eventTypes were declared nowhere
+
+`appStreams.yaml` named `message/hds-chat-v1` (the `chat` stream) and `settings/hds-react-timeline`
+(the `webapp-settings` stream), neither of which existed in either dictionary, and
+`src/appStreams.js` never checked. Both are now declared:
+
+- **`message/hds-chat-v1`** is typed as a plain `string`, matching how hds-webapp reads it
+  (`DiaryItem.ts`). It is marked **deprecated, read path only**: nothing writes it any more, it is
+  superseded by upstream's `message/chat-cmc` (whose content is an object), and it stays declared so
+  existing conversations remain resolvable.
+- **`settings/hds-react-timeline`** documents the known keys of the component's `TimelineSettings`
+  interface (`items`, `groupings`, `rowOrder`, `mergedRows`, `rowHeights`, `scale`,
+  `scaleMultiplier`) but deliberately sets **no `required`** and permits additional properties. The
+  shape is owned by `hds-react-timeline`, not by this model; enforcing it here would make every new
+  setting the component adds unwritable until the model was republished.
+
+### Fixed: `questionnaire/request-v1` was not compilable by the platform's own validator
+
+`scope.withinDays` used `"exclusiveMinimum": 0`, the draft-06+ numeric spelling. open-pryv.io
+validates with **`ajv-draft-04`**, where `exclusiveMinimum` is a boolean modifier on `minimum`, so
+the whole schema failed to compile there while compiling cleanly under every draft-07 validator we
+had been checking with. It is now `"minimum": 1`, which is spelled identically in both drafts.
+
+**Not a narrowing in practice.** The only producer, hds-forms-js's `QuestionnaireBuilder`, already
+clamps the field with `min={1}` and `Math.max(1, …)`, and the documented semantics are "within the
+past N days". The new bound excludes only the open interval (0, 1), which nothing can emit.
+Fractional day counts above 1 stay valid, so `type` remains `number` rather than `integer`.
+
+Tests [ETLM-AJV-3] and [ETLM-AJV-4] now compile **every** schema under `ajv-draft-04` as well as
+draft-07, so the portable subset is enforced rather than assumed.
+
+### Fixed: `js-yaml` was an undeclared dependency
+
+`src/conversions.js`, `src/appStreams.js`, `src/converters.js` and `src/settings.js` all
+`require('js-yaml')`, but it was never declared: it arrived transitively through `eslint` and
+`mocha`, so `npm ci --omit=dev` produced an install where the build throws. Now declared in
+`dependencies`.
+
+The repo still uses two YAML parsers (`js-yaml` in those four files, the declared `yaml` in
+`src/streams.js`, `src/items.js` and `src/datasources.js`). Consolidating onto one is left as a
+separate change, since the two have different APIs and this release is not the place to retest that.
+
+### Fixed: public repo no longer points into private workspace paths
+
+This repository is public. `AGENTS.md`, `CHANGELOG.md` and three files under `documentation/`
+carried `_plans/…` and `_macro` workspace paths, which leak internal structure and resolve to
+nothing for an outside reader. The references are reworded; no content was lost.
+
+### Fixed: builds are now reproducible
+
+`converters[].updatedAt` and each converter version's `updatedAt` were `new Date()` taken at build
+time, so **every** `npm run build` rewrote `dist/pack.json` even with no definition changed, burying
+real changes in timestamp noise. They now derive from the source files' modification times. Two
+consecutive builds of unchanged definitions are byte-identical apart from the top-level
+`publicationDate`, which is genuinely a publication timestamp and stays as it is.
+
+Caveat: mtime is checkout time on a fresh clone, so this is stable *within* a working tree rather
+than globally reproducible.
+
+### Added: mirror and definition tripwires (`tests/eventTypesLegacyMirror.test.js`)
+
+Ten tests, so the next dictionary refresh fails loudly instead of silently:
+
+- **[ETLM-AJV]** every legacy and HDS schema compiles under ajv. This is what would have caught
+  1.1.0's four broken schemas.
+- **[ETLM-REF]** no schema in either file uses `$ref`.
+- **[ETLM-CMC]** all ten CMC types are present, none is duplicated into the HDS file, and
+  `notification/alert-cmc` does **not** set `additionalProperties: false` (plan 90's data-export
+  envelope rides extra fields on it; if upstream ever tightens this, the CMC plugin would reject
+  every HDS data-export request and nothing would notice until runtime).
+- **[ETLM-APPS]** every eventType named in `appStreams.yaml` is declared.
+- **[ETLM-KEYS]** the legacy and HDS `types` and `extras` key sets stay disjoint.
+
 ## [3.6.0] - 2026-09-17
 
 One schema addition and two documentation corrections. **Additive, no migration.** No key,
@@ -37,9 +173,9 @@ prescription is ambiguous between three different facts: validity period
 (`MedicationRequest.dispenseRequest.validityPeriod`), expected supply duration, and course length
 (`dosageInstruction.timing.repeat.boundsDuration`). `medication/prescription-v1.posology` carries
 `frequency` / `asNeeded` / `note` and no span field, so nothing there is currently contradicted.
-Picking one meaning silently is a modelling decision, not a bug fix; it is left to
-`_plans/XX-finding-root-scope-later/`. Adding the block later will be exactly as additive as this
-change, so deferring costs nothing.
+Picking one meaning silently is a modelling decision, not a bug fix; it is left to a dedicated
+design pass. Adding the block later will be exactly as additive as this change, so deferring costs
+nothing.
 
 ### Fixed — `TREATMENT-PROCEDURE.md` drew a context shape the model cannot resolve
 
@@ -714,7 +850,7 @@ Addresses [data-model#19](https://github.com/healthdatasafe/data-model/issues/19
 ### Notes
 - No new item type added in this release. The questionnaire is a top-level form artifact rendered by hds-forms-js (Plan 71 Phase C), not a field-on-an-item. `src/schemas/items.js` and `src/items.js` are untouched.
 - No new per-domain assertion eventTypes — explicit-no/unknown/declined semantics live entirely on `questionnaire/answer-v1`. Cost: "no" answers have no standalone typed clinical record; FHIR `MedicationStatement.status=not-taken` exports are derived at the consumer from the answer event. Plan 71 Decision D8 (2026-06-15).
-- The composite item↔eventType validation TODO in `src/items.js` is still deferred to a dedicated data-model session (`_plans/BUGS.md` B-2026-06-12-1) — unrelated to this plan and untouched.
+- The composite item↔eventType validation TODO in `src/items.js` is still deferred to a dedicated data-model session — unrelated to this plan and untouched.
 
 ## [1.9.1] - 2026-06-04
 

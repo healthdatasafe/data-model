@@ -487,8 +487,36 @@
               ]
             },
             "frequency": {
-              "description": "Prescribed frequency (e.g. 2 times per day)",
-              "$ref": "#/types/frequency~1times-period"
+              "description": "Prescribed frequency (e.g. 2 times per day). Kept structurally identical to the standalone frequency/times-period type; inlined rather than $ref'd because cores compile each event type schema on its own, with no dictionary root to resolve against.",
+              "type": "object",
+              "required": [
+                "times",
+                "period",
+                "periodUnit"
+              ],
+              "properties": {
+                "times": {
+                  "description": "Number of intakes per period (e.g. 2 for 'twice a day')",
+                  "type": "number",
+                  "minimum": 1
+                },
+                "period": {
+                  "description": "Length of the period (e.g. 1 for 'per day', 8 for 'every 8 hours')",
+                  "type": "number",
+                  "minimum": 1
+                },
+                "periodUnit": {
+                  "description": "Unit of the period",
+                  "type": "string",
+                  "enum": [
+                    "h",
+                    "d",
+                    "wk",
+                    "mo",
+                    "y"
+                  ]
+                }
+              }
             },
             "asNeeded": {
               "description": "True if taken as needed (PRN) rather than on schedule",
@@ -1076,6 +1104,46 @@
         "imperial"
       ]
     },
+    "settings/hds-react-timeline": {
+      "description": "Per-user timeline view settings for the hds-react-timeline component, held as a single recurring event on the webapp-settings app stream and updated in place. The shape is owned by hds-react-timeline (its TimelineSettings interface), not by this model, so the known keys below are documented rather than enforced: no 'required', and additional properties are permitted on purpose. Tightening this would make every new setting the component adds unwritable until the model is republished.",
+      "type": "object",
+      "properties": {
+        "items": {
+          "description": "Per-row display settings, keyed by row key (visibility, graph type, colour, ordering, Y-axis scaling).",
+          "type": "object"
+        },
+        "groupings": {
+          "description": "Row keys grouped together, as an array of key arrays.",
+          "type": "array"
+        },
+        "rowOrder": {
+          "description": "Custom order of row keys, including merged row ids.",
+          "type": "array"
+        },
+        "mergedRows": {
+          "description": "Merged row configuration, keyed by merged row id.",
+          "type": "object"
+        },
+        "rowHeights": {
+          "description": "Custom row heights, keyed by row key.",
+          "type": "object"
+        },
+        "scale": {
+          "description": "Current time scale.",
+          "type": "string",
+          "enum": [
+            "day",
+            "week",
+            "month",
+            "year"
+          ]
+        },
+        "scaleMultiplier": {
+          "description": "Multiplier applied to the scale (e.g. 3 for '3 months').",
+          "type": "number"
+        }
+      }
+    },
     "contact/display-name": {
       "description": "User display name",
       "type": "string"
@@ -1227,6 +1295,10 @@
       "required": [
         "vectors"
       ]
+    },
+    "message/hds-chat-v1": {
+      "description": "DEPRECATED, read path only: pre-CMC chat message on an app chat stream, content is the plain message string. Superseded by the upstream 'message/chat-cmc' type, which the CMC plugin delivers to the peer and whose content is an object. Nothing writes this type any more; hds-webapp still reads it so existing conversations stay visible (see DiaryItem.ts). Declared here because appStreams.yaml's 'chat' entry references it and the model must resolve every eventType it names.",
+      "type": "string"
     },
     "message/system-alert": {
       "description": "Operator → user notification on app-system-out. Content: { level, title, body, ackRequired?, ackId? }. Plan 45.",
@@ -1384,7 +1456,7 @@
                       },
                       "withinDays": {
                         "type": "number",
-                        "exclusiveMinimum": 0
+                        "minimum": 1
                       }
                     }
                   },
@@ -1400,7 +1472,7 @@
                       },
                       "withinDays": {
                         "type": "number",
-                        "exclusiveMinimum": 0
+                        "minimum": 1
                       }
                     }
                   }
