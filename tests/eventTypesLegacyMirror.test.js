@@ -157,14 +157,46 @@ describe('[ETLM] eventTypes-legacy.json upstream mirror', () => {
     // cannot resolve and the compile throws. medication/prescription-v1 shipped that way in
     // be77036; it went unnoticed because nothing compiles the HDS schemas yet (see [ETLM-AJV-2]).
     // Upstream's 354 types contain no $ref at all. Inline the shape instead.
+    // Walks the schema looking for an actual `$ref` KEY, rather than matching the serialised text.
+    // A substring search over JSON.stringify cannot tell a key from a value, so it also fires on a
+    // string that merely equals `$ref`: a data field named `$ref` listed in `required`, or such a
+    // value in an `enum`. Prose is safe either way, because JSON.stringify escapes quotes inside
+    // string values, so a description mentioning "$ref" never produces the unescaped token. That is
+    // a subtle property to depend on, and it is not what the check is trying to express.
+    //
+    // Known limitation, shared with the string form: a schema declaring a data property literally
+    // named `$ref` is flagged too. No such property exists in either dictionary, and the failure is
+    // loud rather than silent, so it is left unhandled rather than guessed at.
+    function typesWithRefKey (types) {
+      function hasRefKey (node) {
+        if (node === null || typeof node !== 'object') return false;
+        if (Array.isArray(node)) return node.some(hasRefKey);
+        if (Object.prototype.hasOwnProperty.call(node, '$ref')) return true;
+        return Object.values(node).some(hasRefKey);
+      }
+      return Object.keys(types).filter((k) => hasRefKey(types[k]));
+    }
+
     it('[ETLM-REF-1] no legacy schema contains a $ref', () => {
-      const offenders = Object.keys(legacy.types).filter((k) => JSON.stringify(legacy.types[k]).includes('"$ref"'));
+      const offenders = typesWithRefKey(legacy.types);
       assert.deepStrictEqual(offenders, [], 'legacy schemas using $ref: ' + offenders.join(', '));
     });
 
     it('[ETLM-REF-2] no HDS schema contains a $ref', () => {
-      const offenders = Object.keys(hds.types).filter((k) => JSON.stringify(hds.types[k]).includes('"$ref"'));
+      const offenders = typesWithRefKey(hds.types);
       assert.deepStrictEqual(offenders, [], 'HDS schemas using $ref (inline them instead): ' + offenders.join(', '));
+    });
+
+    it('[ETLM-REF-3] the detector finds a $ref wherever it is nested', () => {
+      // Guards the guard: a detector that silently matches nothing would make REF-1/2 pass forever.
+      assert.deepStrictEqual(typesWithRefKey({ a: { type: 'object' } }), []);
+      assert.deepStrictEqual(typesWithRefKey({ a: { $ref: '#/types/x' } }), ['a']);
+      assert.deepStrictEqual(typesWithRefKey({ a: { properties: { b: { $ref: '#/types/x' } } } }), ['a']);
+      assert.deepStrictEqual(typesWithRefKey({ a: { oneOf: [{ type: 'null' }, { $ref: '#/types/x' }] } }), ['a']);
+      // The case that separates this detector from the substring form it replaced: a string value
+      // equal to "$ref" is a data field name, not a reference. The old check fired on it.
+      assert.deepStrictEqual(typesWithRefKey({ a: { type: 'object', required: ['$ref'] } }), []);
+      assert.deepStrictEqual(typesWithRefKey({ a: { type: 'string', enum: ['$ref', 'other'] } }), []);
     });
   });
 
