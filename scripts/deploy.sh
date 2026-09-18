@@ -71,6 +71,42 @@ if (linked.length || drift.length) process.exit(1);
 ')
 
 
+# ── Lint + test gate ─────────────────────────────────────────────────────────
+# CI runs the suite on the push, NOT as a gate on the deploy, so a deploy that
+# races CI (or runs before it finishes) publishes whatever builds regardless of
+# what the tests say. The tripwire tests added in 3.7.0
+# (tests/eventTypesLegacyMirror.test.js) exist precisely to catch definition
+# defects nothing else validates server-side, so consult them here, not only in CI.
+#
+# Lint is gated for the same reason: CI is the only thing that runs it today,
+# so a deploy racing CI can publish lint-red code.
+#
+# Ordering: the suite runs before `npm run build`, which is safe because it
+# builds dist/ itself. tests/converters.test.js does `require('../src/build')`
+# at module load, and mocha loads every spec file before running any hook, so
+# the build has already happened by the time tests/customFieldsAndSystem.test.js
+# [CFS-PACK] reads dist/pack.json in a `before()` (it skips silently when the
+# file is absent). The guarantee is that load/run split, not the order of the
+# spec files: the suite always asserts against output built from source, never
+# against the previously-published pack restored by the dist/ reset above.
+# It runs after the node_modules drift check so a stale install reports as
+# drift rather than as a confusing test failure. The suite writes only
+# pack.json and version.json, both overwritten by the build below, so nothing
+# it leaves behind reaches gh-pages.
+echo "Running lint..."
+if ! npm run lint; then
+  echo "ERROR: lint is red. Refusing to deploy."
+  exit 1
+fi
+echo "Lint OK."
+
+echo "Running the test suite..."
+if ! npm test; then
+  echo "ERROR: the test suite is red. Refusing to deploy."
+  exit 1
+fi
+echo "Tests OK."
+
 echo "Building..."
 npm run build
 echo "Build OK."

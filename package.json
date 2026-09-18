@@ -1,8 +1,7 @@
 {
   "name": "@hds/data-model",
-  "version": "3.7.1",
+  "version": "3.7.2",
   "description": "HDS data model",
-  "main": "src/index.js",
   "engines": {
     "node": ">=24"
   },
@@ -13,7 +12,7 @@
     "deploy": "bash scripts/deploy.sh",
     "lint:fix": "eslint . --fix",
     "lint:change": "eslint $(git diff --name-only HEAD | grep -E '\\.(js|jsx)$' | xargs)",
-    "test": "mocha tests --test-reporter=spec"
+    "test": "mocha tests"
   },
   "author": "",
   "license": "BSD-3-Clause",

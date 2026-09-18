@@ -4,6 +4,15 @@ Defines the stream structures, item definitions, event types, and converter conf
 
 Published at [model.datasafe.dev](https://model.datasafe.dev)
 
+## How this repo is consumed
+
+**This repo publishes a pack, it is not an importable library.** Consumers read the built pack over
+HTTP from `https://model.datasafe.dev/pack.json` (`version.json` alongside it carries the commit the
+live pack was built from). The modules under `src/` are the build's own loaders and are not a public
+API, so `package.json` deliberately declares no `main` entry point and `require()`-ing this package
+is not expected to resolve, under either its package name or the dependency key a git install gives
+it.
+
 ## Contents
 
 | Category | Count | Description |
@@ -84,6 +93,11 @@ npm run build    # Generate dist/pack.json (served at model.datasafe.dev)
 ## Deploy
 
 Published via GitHub Pages — `npm run deploy` builds and pushes to the `gh-pages` branch.
+
+`deploy.sh` fails closed before it publishes anything: it requires `main`, a clean working tree, a
+`node_modules` matching `package-lock.json`, **a green `npm test`**, a non-empty build, and a pack
+that loads through real `hds-lib`. CI runs the suite on the push rather than as a gate on the
+deploy, so the deploy runs it itself.
 
 ## Prerequisites
 

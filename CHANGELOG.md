@@ -1,5 +1,49 @@
 # Changelog
 
+## [3.7.2] - 2026-09-18
+
+Packaging and deploy-gate housekeeping. **No definition, schema or pack content change.** Nothing
+published at `model.datasafe.dev` differs, and `version.json` carries the git commit rather than this
+version, so no consumer observes the bump.
+
+### Fixed: `package.json` declared a `main` that does not exist
+
+`"main": "src/index.js"` was declared and there is no `src/index.js`. Nothing broke, because
+consumers read the built pack over HTTP rather than importing the package, but the declaration
+advertised an import path that could only ever fail. `reference/sample-datasets` does carry
+`data-model` as a git dependency in its `package.json` (unused by its source today), so the first
+`require()` was a plausible next step rather than a hypothetical one.
+
+The field is removed rather than backfilled with a re-export barrel: the modules under `src/` are the
+build's own loaders, not a public API, and the repo publishes a pack. README now says so explicitly
+under "How this repo is consumed".
+
+### Fixed: `scripts/deploy.sh` now fails closed on a red test suite
+
+`deploy.sh` built, ran the consumer contract check and pushed `dist/` to `gh-pages` without ever
+running `npm test`. CI runs the suite on the push, not as a gate on the deploy, so a deploy that
+raced CI published whatever built regardless of what the tests said. The tripwire tests added in
+3.7.0 (`tests/eventTypesLegacyMirror.test.js`) exist precisely to catch definition defects nothing
+validates server-side, and the deploy did not consult them.
+
+`npm test` now runs before the build and aborts the deploy on failure. It is safe there because the
+suite builds `dist/` itself (`tests/converters.test.js` requires `src/build` at load time), so the
+pack assertions read output built from source rather than the previously-published pack restored by
+the `dist/` reset.
+
+`npm run lint` is gated alongside it, for the same reason: CI was the only thing running it, so a
+deploy racing CI could publish lint-red code.
+
+### Changed: dead `--test-reporter=spec` flag dropped from the test script
+
+`"test": "mocha tests --test-reporter=spec"` passed Node's test-runner flag to mocha, which ignores
+it and uses its own default reporter (also `spec`). Inert, but it read as configuration. Now plain
+`mocha tests`, with identical output.
+
+The other half of the original report, refusing to deploy from a dirty working tree, was already
+implemented and needed no change: `deploy.sh` has required `main` and a clean tree since before this
+entry was filed.
+
 ## [3.7.1] - 2026-09-17
 
 Housekeeping. One YAML parser instead of two. **No definition, schema or pack content change:**
