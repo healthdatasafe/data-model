@@ -627,12 +627,14 @@
   },
   "body-vulva-wetness-wiping": {
     "version": "v1",
+    "deprecated": true,
     "label": {
       "en": "Vulva Wetness when wiping",
       "fr": "Sensation d'humidité vulvaire à l'essuyage"
     },
     "description": {
-      "en": "Vulva wetness when wiping"
+      "en": "Deprecated. Record cervical-fluid observations with Cervical fluid observation instead.",
+      "fr": "Obsolète. Utilisez plutôt l'observation de la glaire cervicale."
     },
     "streamId": "body-vulva-wetness-wiping",
     "eventType": "ratio/generic",
