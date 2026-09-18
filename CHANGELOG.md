@@ -1,5 +1,39 @@
 # Changelog
 
+## [3.8.0] - 2026-09-18
+
+### Deprecated: `body-vulva-wetness-wiping`
+
+Superseded by `body-vulva-mucus-inspect`. Existing events stay readable and keep validating; the item
+is simply no longer offered for creating new ones.
+
+**Why.** Plan 48 deprecated the two items that duplicate a dimension of the 9D cervical-fluid
+converter, `body-vulva-mucus-stretch` (`stretchability`) and `body-vulva-wetness-feeling`
+(`sensation`), and removed `bridge-chartneo`'s standalone `TestID` write at the same time. It left
+`body-vulva-wetness-wiping` active with no recorded reason, and left the bridge writing both wetness
+items. Plan 16 had deliberately kept those per-field converters, so plan 48 half-unwound an earlier
+decision rather than simply overlooking this one. Found by the plan 100 coherence review, finding F10,
+after a question about whether the wetness items should defer to the mucus item.
+
+**Nothing is lost, and the mechanism matters.** In the chartneo converter method both `walking` and
+`wiping` write the same three dimensions (`sensation`, `wetness`, `lubricative`) with
+`vectorMerge: max`, so the vector holds `max(walking, wiping)` rather than isolating wiping. What
+makes the deprecation lossless is that the raw per-field observation is preserved separately on the
+event's `content.source.sourceData`.
+
+**Writers at deprecation time.** `bridge-chartneo` stopped on 2026-09-18 (it was already folding
+`WipingID` into the vector, so it had been storing the observation twice per day).
+`reference/sample-datasets` `src/datasets/full-model.ts` still writes it, alongside other
+already-deprecated items; that generator is unaffected, since writing to a deprecated item remains
+permitted.
+
+**No schema, eventType or stream change.** The item keeps its `streamId` and `ratio/generic`
+eventType, so no `streamId:eventType` pair moves and `findItemForEvent` is unaffected.
+
+Reviewed by a Fable subagent per the data-model directive: approved, with three corrections applied
+before commit (the rationale moved into a consumer-visible `description` per `AGENTS.md:382`; a false
+claim that chartneo was the only writer; and an oversimplified account of how the dimensions merge).
+
 ## [3.7.2] - 2026-09-18
 
 Packaging and deploy-gate housekeeping. **No definition, schema or pack content change.** Nothing

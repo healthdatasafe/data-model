@@ -63,10 +63,34 @@ body-vulva-wetness-feeling:
   repeatable: unlimited
 body-vulva-wetness-wiping:
   version: v1
+  deprecated: true
+  # Deprecated 2026-09-18 (plan 100, finding F10). Superseded by
+  # `body-vulva-mucus-inspect`, whose 9D cervical-fluid vector covers this observation.
+  #
+  # Plan 48 deprecated two siblings that duplicate a converter dimension,
+  # `body-vulva-mucus-stretch` (-> stretchability) and `body-vulva-wetness-feeling`
+  # (-> sensation), and left this one active with no recorded reason. Plan 16 had
+  # deliberately kept the per-field converters, so plan 48 half-unwound an earlier
+  # decision rather than simply overlooking this item. Its *option* labels are
+  # identical to `body-vulva-wetness-feeling`'s (Dry / Wet / Very wet) and it shares the
+  # same `ratio/generic` eventType.
+  #
+  # How the observation survives: in the chartneo converter method both `walking` and
+  # `wiping` write the same three dimensions (`sensation`, `wetness`, `lubricative`)
+  # with `vectorMerge: max`, so the vector holds max(walking, wiping) rather than
+  # isolating wiping. The raw per-field value is preserved separately on the event's
+  # `content.source.sourceData`, which is what makes this lossless.
+  #
+  # Existing events stay readable; the item is simply no longer offered for new ones.
+  # Writers at deprecation time: `bridge-chartneo` (stopped 2026-09-18, it was already
+  # folding `WipingID` into the vector) and `reference/sample-datasets`
+  # (`src/datasets/full-model.ts`), which already writes other deprecated items.
   label:
     en: Vulva Wetness when wiping
     fr: Sensation d'humidité vulvaire à l'essuyage
-  description: Vulva wetness when wiping 
+  description:
+    en: Deprecated. Record cervical-fluid observations with Cervical fluid observation instead.
+    fr: Obsolète. Utilisez plutôt l'observation de la glaire cervicale.
   streamId: body-vulva-wetness-wiping
   eventType: ratio/generic
   type: select
