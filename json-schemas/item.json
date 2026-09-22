@@ -9,6 +9,10 @@
     "deprecated": {
       "type": "boolean"
     },
+    "ratioRelativeTo": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
     "label": {
       "$ref": "defs.json#/definitions/localized"
     },

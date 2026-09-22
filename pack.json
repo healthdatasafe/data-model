@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-09-18T13:27:06.844Z",
+  "publicationDate": "2026-09-22T15:31:56.183Z",
   "streams": [
     {
       "id": "activity",
@@ -1999,7 +1999,8 @@
           }
         }
       ],
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "ratioRelativeTo": 2
     },
     "body-vulva-wetness-feeling": {
       "version": "v1",
@@ -2033,7 +2034,8 @@
           }
         }
       ],
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "ratioRelativeTo": 2
     },
     "body-vulva-wetness-wiping": {
       "version": "v1",
@@ -2069,7 +2071,8 @@
           }
         }
       ],
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "ratioRelativeTo": 2
     },
     "body-vulva-bleeding": {
       "version": "v2",
@@ -4910,7 +4913,8 @@
           }
         }
       ],
-      "repeatable": "P1D"
+      "repeatable": "P1D",
+      "ratioRelativeTo": 10
     },
     "fertility-sexual-activity": {
       "version": "v1",

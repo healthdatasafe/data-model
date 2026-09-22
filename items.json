@@ -589,7 +589,8 @@
         }
       }
     ],
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "ratioRelativeTo": 2
   },
   "body-vulva-wetness-feeling": {
     "version": "v1",
@@ -623,7 +624,8 @@
         }
       }
     ],
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "ratioRelativeTo": 2
   },
   "body-vulva-wetness-wiping": {
     "version": "v1",
@@ -659,7 +661,8 @@
         }
       }
     ],
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "ratioRelativeTo": 2
   },
   "body-vulva-bleeding": {
     "version": "v2",
@@ -3500,7 +3503,8 @@
         }
       }
     ],
-    "repeatable": "P1D"
+    "repeatable": "P1D",
+    "ratioRelativeTo": 10
   },
   "fertility-sexual-activity": {
     "version": "v1",
