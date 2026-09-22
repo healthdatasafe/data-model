@@ -95,6 +95,57 @@ See `documentation/DESIGN-NOTES.md` → "Scale hook placement" for the full rule
 
 ---
 
+## ⚑ `ratio/generic` stores an OBJECT, and the model owns the denominator
+
+**`ratio/proportion` and `ratio/generic` are not interchangeable.** `ratio/proportion` stores a bare
+number in `[0, 1]`. **`ratio/generic` is a legacy Pryv type whose schema is an object with two required
+properties:**
+
+```json
+{ "type": "object",
+  "properties": { "value": { "type": "number" }, "relativeTo": { "type": "number" } },
+  "required": ["value", "relativeTo"] }
+```
+
+So when a `select` item declares `ratio/generic`, its `options[].value` entries are **numerators**, not
+the stored content. What a consumer must store is:
+
+```js
+content = { value: <the chosen option value>, relativeTo: <the item's denominator> }
+```
+
+**The denominator is `max(option values)`, and since 3.9.0 the model derives, validates and publishes
+it as `ratioRelativeTo` on the item.** Read that field; never re-derive it and never hardcode it.
+
+```js
+const itemDef = model.itemsDefs.forKey('fertility-ttc-tta');
+content = { value: chosen, relativeTo: itemDef.data.ratioRelativeTo };   // 10
+```
+
+**Why this is a rule and not a convenience** (plan 100, finding F1). The rule previously existed only
+in `hds-forms-js` (`src/schema/eventData.ts`), which derives it generically. Consumers that did not
+read that source hardcoded the constant instead: `bridge-chartneo` carried `relativeTo: 2`,
+`bridge-cycles-files` carries `relativeTo: 10`. Both were correct, because both equalled the max. The
+hazard is what happens when someone adds an option: the deriving renderer starts writing the new
+maximum while the hardcoding bridge keeps writing the old one, so the **same item carries two different
+denominators** and `value / relativeTo` stops being comparable across writers. Nothing errors. The
+model owns the option list, so the model must own the denominator derived from it.
+
+**Loader guarantees** (`src/items.js`, tests `[RGEN]`): a `ratio/generic` select must declare at least
+one option, all option values must be numbers, none may be negative, and the largest must be `> 0` (a
+zero denominator makes every stored ratio undefined). `ratioRelativeTo` is **derived, never authored**,
+so the option list stays the single source of truth and the two cannot disagree.
+
+**One limit the max rule implies:** the scale's top anchor must itself be a selectable option. A
+0..10 scale that offered only `0, 2, 4, 6, 8` would derive a denominator of `8`, and every stored ratio
+would be wrong relative to intent. Such a scale is simply not expressible as a `ratio/generic` select.
+
+**Prefer `ratio/proportion` for anything new.** It stores a plain number, it carries the hook-placement
+rule above, and it avoids this whole contract. `ratio/generic` is reached for only when an item genuinely
+needs to publish its own scale denominator alongside the value.
+
+---
+
 ## Items, eventTypes, streams — when to add what
 
 ### When adding a new **item**

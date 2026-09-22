@@ -1,5 +1,57 @@
 # Changelog
 
+## [3.9.0] - 2026-09-22
+
+### Added: the model now owns the `ratio/generic` denominator
+
+`ratio/generic` is a legacy Pryv type whose schema is an object with two required properties,
+`{ value, relativeTo }`. An item that declares it with `type: select` lists scalar `options[].value`
+entries, so those are **numerators**: what a consumer stores is
+`{ value: <chosen option>, relativeTo: <denominator> }`.
+
+The denominator is `max(option values)`. Until now that rule lived **only in `hds-forms-js`**
+(`src/schema/eventData.ts`), which derives it generically. data-model owns the option list the rule is
+derived from, but neither stated nor validated it, so every other consumer either re-derived it or
+hardcoded a constant.
+
+**Items now publish `ratioRelativeTo`.** Read it; do not re-derive it and do not hardcode it.
+
+```js
+const itemDef = model.itemsDefs.forKey('fertility-ttc-tta');
+content = { value: chosen, relativeTo: itemDef.data.ratioRelativeTo };   // 10
+```
+
+**Why it needed fixing even though nothing was broken.** Every hardcoded constant in the wild matched
+the derived value (`2` for the three deprecated `body-vulva-*` items, `10` for `fertility-ttc-tta`), so
+the convention was being followed. The hazard is divergence on the next edit: add one option and a
+consumer that derives starts writing the new maximum while one that hardcodes keeps writing the old, so
+**the same item carries two different denominators** and `value / relativeTo` stops being comparable
+across writers, with nothing erroring. Plan 100, finding F1.
+
+**Derived, never authored.** `addItem` throws if an item declares `ratioRelativeTo`, so the option list
+stays the single source of truth and the two cannot disagree. The field is computed after the item has
+been validated against its eventType, so it only ever exists on a scale already known to be non-empty,
+numeric, non-negative and topped by a positive value. It is declared in the published
+`json-schemas/item.json`, which describes the items in `pack.json`.
+
+### Changed: stricter validation for `ratio/generic` select items
+
+A `ratio/generic` select must now declare at least one option, and no option value may be negative, and
+the largest must be finite and `> 0`. A zero or absent maximum would make every stored ratio undefined.
+The existing corpus passes unchanged.
+
+### Documentation
+
+`AGENTS.md` gains a section on the object contract, the denominator rule, and the one limit the rule
+implies: the scale's top anchor must itself be a selectable option, so a 0..10 scale offering only
+`0, 2, 4, 6, 8` is not expressible as a `ratio/generic` select. It also states the default: prefer
+`ratio/proportion` for anything new, since it stores a plain number and carries the hook-placement rule.
+
+Reviewed by a Fable subagent per the data-model directive: approved, with its two required changes
+applied before commit (refuse an authored `ratioRelativeTo` rather than silently overwriting it, and
+declare the field in the published item schema), plus its optional tidiness (derive after validation
+rather than before, and guard against a non-finite maximum).
+
 ## [3.8.0] - 2026-09-18
 
 ### Deprecated: `body-vulva-wetness-wiping`

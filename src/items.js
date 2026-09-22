@@ -110,6 +110,13 @@ function addItem (key, itemSrc) {
     }
   }
 
+  // `ratioRelativeTo` is DERIVED, never authored. Refuse an authored one rather than
+  // silently overwriting it: an author who believes they set the denominator would
+  // otherwise get no error and no effect. (Plan 100, finding F1.)
+  if (itemSrc.ratioRelativeTo !== undefined) {
+    throw new Error(`item "${key}" declares "ratioRelativeTo"; it is derived from the option list (max of option values) and must not be authored`);
+  }
+
   itemsById[key] = item;
 
   // an item may have variation of eventTypes (e.g. body-weight)
@@ -151,6 +158,20 @@ function addItem (key, itemSrc) {
       if (item.deprecated) continue;
     }
     itemsByStreamIdTypeId[streamIdTypeId] = item;
+  }
+
+  // Derived, published field: the denominator for a `ratio/generic` select item.
+  // That legacy Pryv type stores an object `{ value, relativeTo }`, so an item's
+  // `options[].value` entries are numerators and the stored content is
+  // `{ value: <chosen option>, relativeTo: item.ratioRelativeTo }`.
+  //
+  // Derived rather than authored so the option list stays the single source of truth.
+  // Computed here, AFTER checkItemVsEvenType has validated the option list, so the
+  // field only ever exists on an item whose scale is known good (non-empty, numeric,
+  // non-negative, max > 0). See AGENTS.md "ratio/generic stores an OBJECT" and the
+  // [RGEN] tests. (Plan 100, finding F1.)
+  if (item.eventType === 'ratio/generic' && item.type === 'select') {
+    item.ratioRelativeTo = Math.max(...item.options.map((o) => o.value));
   }
 }
 
@@ -204,9 +225,26 @@ function checkItemVsEvenType (key, item, eventType) {
   }
   if (item.eventType === 'ratio/generic') {
     if (item.type === 'select') {
-      // values of options must be numbers
+      // `ratio/generic` is a LEGACY Pryv type and its schema is an object:
+      //   { value: number, relativeTo: number }   (both required)
+      // A `select` item declares scalar option values, so the stored content is NOT
+      // the option value itself, but that value over a denominator. The convention
+      // is `relativeTo = max(option values)`, and until 2026-09-22 it lived only in
+      // hds-forms-js (src/schema/eventData.ts), not here. Consumers therefore either
+      // re-derived it or hardcoded it, and a bridge that hardcoded would silently
+      // diverge from a renderer that derived the moment an option was added.
+      // (Plan 100, finding F1.) The model now states and validates it, and publishes
+      // it as `ratioRelativeTo` so nobody has to guess.
+      if (!Array.isArray(item.options) || item.options.length === 0) {
+        throw new Error(`item "${key}" is a "select" on "ratio/generic" and must declare at least one option`);
+      }
       for (const option of item.options) {
         if (typeof option.value !== 'number') throw new Error(`as item "${key}" is of type "select" and matching event type is "ratio/generic" all options value must be numbers check the following option: ` + JSON.stringify(option));
+        if (option.value < 0) throw new Error(`item "${key}" uses "ratio/generic"; option values are numerators over max(option values) and cannot be negative: ` + JSON.stringify(option));
+      }
+      const denominator = Math.max(...item.options.map((o) => o.value));
+      if (!Number.isFinite(denominator) || !(denominator > 0)) {
+        throw new Error(`item "${key}" uses "ratio/generic" but its largest option value is ${denominator}; the denominator would make every stored ratio undefined`);
       }
       return true;
     }
