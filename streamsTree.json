@@ -902,6 +902,74 @@
     ]
   },
   {
+    "id": "lifestyle",
+    "name": "Lifestyle",
+    "parentId": null,
+    "children": [
+      {
+        "id": "lifestyle-tobacco",
+        "name": "Tobacco and nicotine",
+        "children": [
+          {
+            "id": "lifestyle-tobacco-smoking",
+            "name": "Smoking",
+            "parentId": "lifestyle-tobacco"
+          },
+          {
+            "id": "lifestyle-tobacco-ecigarette",
+            "name": "E-cigarettes",
+            "parentId": "lifestyle-tobacco"
+          },
+          {
+            "id": "lifestyle-tobacco-smokeless",
+            "name": "Smokeless tobacco",
+            "parentId": "lifestyle-tobacco"
+          }
+        ],
+        "parentId": "lifestyle"
+      },
+      {
+        "id": "lifestyle-alcohol",
+        "name": "Alcohol",
+        "children": [
+          {
+            "id": "lifestyle-alcohol-frequency",
+            "name": "Drinking frequency",
+            "parentId": "lifestyle-alcohol"
+          },
+          {
+            "id": "lifestyle-alcohol-typical-quantity",
+            "name": "Typical quantity",
+            "parentId": "lifestyle-alcohol"
+          },
+          {
+            "id": "lifestyle-alcohol-binge-frequency",
+            "name": "Heavy drinking episodes",
+            "parentId": "lifestyle-alcohol"
+          }
+        ],
+        "parentId": "lifestyle"
+      },
+      {
+        "id": "lifestyle-diet",
+        "name": "Diet",
+        "children": [
+          {
+            "id": "lifestyle-diet-pattern",
+            "name": "Dietary pattern",
+            "parentId": "lifestyle-diet"
+          },
+          {
+            "id": "lifestyle-diet-restriction",
+            "name": "Dietary restrictions",
+            "parentId": "lifestyle-diet"
+          }
+        ],
+        "parentId": "lifestyle"
+      }
+    ]
+  },
+  {
     "id": "medication",
     "name": "Medication",
     "parentId": null,
