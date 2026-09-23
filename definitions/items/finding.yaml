@@ -3,7 +3,9 @@ finding-coded:
   label:
     en: Finding (coded)
     fr: Constatation clinique (codée)
-  description: Search and select a coded clinical or imaging finding.
+  description:
+    en: Search and select a coded clinical or imaging finding.
+    fr: Recherchez et sélectionnez une constatation clinique ou d'imagerie codée.
   streamId: finding
   eventType: finding/coded-v1
   type: datasource-search

@@ -4,21 +4,29 @@ body-weight:
     en: Body weight
     fr: Poids corporel
   description:
-    en: Measured body weight
-    fr: Poids corporel mesuré
+    en: Your measured body weight.
+    fr: Votre poids corporel mesuré.
   streamId: body-weight
   type: number
   variations:
     eventType:
-      label: Unit
+      label:
+        en: Unit
+        fr: Unité
       options:
         - value: mass/kg
-          label: Kg
+          label:
+            en: Kg
+            fr: Kg
         - value: mass/lb
-          label: Lbs
+          label:
+            en: Lbs
+            fr: Livres
   repeatable: unlimited
   reminder:
     cooldown: P1D
+  references:
+    snomed: "27113001"
 body-blood-pressure:
   version: v1
   label:
@@ -57,12 +65,17 @@ body-temperature-basal:
     en: Basal Body Temperature
     fr: Température basale
   description:
-    en: Resting body temperature taken on waking, before any activity. Used for fertility charting.
-    fr: Température au repos prise au réveil, avant toute activité. Utilisée pour le suivi de la fertilité.
+    en: Your resting temperature, taken on waking before any activity.
+    fr: Votre température au repos, prise au réveil avant toute activité.
   streamId: body-temperature-basal
   eventType: temperature/c
   type: number
   repeatable: unlimited
+  references:
+    snomed: "300076005"
+  devNotes: >-
+    Used for fertility charting (coverline and thermal shift). See
+    `body-temperature-basal-disturbance` for flagging a reading as unreliable.
 # Sympto-thermal rules EXCLUDE a disturbed reading from the coverline and the
 # temperature-shift computation, so a consumer charting BBT cannot read the curve
 # correctly without the flag. Cycle Féminin exports it
@@ -85,8 +98,8 @@ body-temperature-basal-disturbance:
     en: Basal temperature disturbance
     fr: Perturbation de la température basale
   description:
-    en: Reason this basal temperature reading is unreliable ("parasitic temperature"). Qualifier for a co-occurring body-temperature-basal event; exclude the reading from coverline and shift computation. Absence means the reading was not flagged, not that it was confirmed reliable.
-    fr: Raison pour laquelle cette mesure de température basale n'est pas fiable (« température parasite »). Qualificatif pour un événement body-temperature-basal concomitant ; exclure la mesure du calcul de la ligne de base et du décalage thermique. L'absence signifie que la mesure n'a pas été signalée, non qu'elle a été confirmée fiable.
+    en: Why this basal temperature reading may be unreliable.
+    fr: Pourquoi cette mesure de température basale peut être peu fiable.
   streamId: body-temperature-basal-disturbance
   eventType: temperature/disturbance-v1
   type: select
@@ -106,25 +119,37 @@ body-temperature-basal-disturbance:
     - value: other
       label: { en: Other, fr: Autre }
   repeatable: unlimited
+  devNotes: >-
+    A "parasitic temperature" qualifier for a co-occurring `body-temperature-basal` event: a
+    reader should exclude the flagged reading from coverline and thermal-shift computation.
+    Absence means the reading was not flagged, NOT that it was confirmed reliable.
 body-height:
   version: v1
   label:
     en: Body height
     fr: Taille
-  description: 
-    en: Measured body height
-    fr: Taille mesuré
+  description:
+    en: Your measured height.
+    fr: Votre taille mesurée.
   streamId: body-height
   type: number
   variations:
     eventType:
-      label: Unit
+      label:
+        en: Unit
+        fr: Unité
       options:
         - value: length/m
-          label: m
+          label:
+            en: m
+            fr: m
         - value: length/ft
-          label: Feet
+          label:
+            en: Feet
+            fr: Pieds
   repeatable: unlimited
+  references:
+    snomed: "1153637007"
 
 body-semen-concentration:
   version: v1
@@ -132,8 +157,8 @@ body-semen-concentration:
     en: Sperm concentration
     fr: Concentration spermatique
   description:
-    en: Sperm concentration in semen (number of spermatozoa per mL of ejaculate). Stored in megacounts per millilitre (10⁶/mL).
-    fr: Concentration de spermatozoïdes dans le sperme (nombre par mL d'éjaculat). Stockée en mégacomptes par millilitre (10⁶/mL).
+    en: Number of spermatozoa per millilitre of ejaculate.
+    fr: Nombre de spermatozoïdes par millilitre d'éjaculat.
   streamId: body-semen-concentration
   eventType: concentration/megacount-ml
   type: number
@@ -143,14 +168,18 @@ body-semen-concentration:
   # sperm number (39 M#/ejaculate) instead, not concentration. See research.md §2.4. Re-add when verified.
   # LOINC mapping (commonly cited 32623-1) also pending separate verification.
   referenceRange: null
+  references:
+    snomed: "713521005"
+  devNotes: >-
+    Stored on `concentration/megacount-ml` (10⁶/mL).
 body-semen-motility-progressive:
   version: v1
   label:
     en: Sperm motility — progressive (PR)
     fr: Mobilité spermatique — progressive (PR)
   description:
-    en: Fraction of progressively-motile sperm (PR) in semen — sperm moving actively in a straight line or large circle, regardless of speed. Distinct from total motility (PR+NP). Used as the multiplier in Total Motile Count derivation (concentration × volume × this).
-    fr: Fraction de spermatozoïdes à mobilité progressive (PR) dans le sperme — spermatozoïdes se déplaçant activement en ligne droite ou en large cercle, quelle que soit la vitesse. Distinct de la mobilité totale (PR+NP). Utilisé comme multiplicateur dans le calcul du nombre total de spermatozoïdes mobiles (concentration × volume × cette valeur).
+    en: Fraction of spermatozoa moving actively forward.
+    fr: Fraction de spermatozoïdes se déplaçant activement vers l'avant.
   streamId: body-semen-motility-progressive
   eventType: ratio/proportion
   type: number
@@ -161,32 +190,42 @@ body-semen-motility-progressive:
     upperLimit: null
     units: ratio
     population: recently-fertile-men
+  devNotes: >-
+    Progressive motility (PR): moving in a straight line or a large circle, regardless of speed.
+    Distinct from total motility (PR+NP). It is the multiplier in the Total Motile Count
+    derivation (concentration × volume × this). Reference: WHO 2021, lower limit 0.30.
 body-semen-motility-total:
   version: v1
   label:
     en: Sperm motility — total (PR+NP)
     fr: Mobilité spermatique — totale (PR+NP)
   description:
-    en: Fraction of motile sperm (progressive PR + non-progressive NP) in semen. Used clinically to diagnose asthenozoospermia. Distinct from progressive motility (PR only). Both can co-exist on the same lab report.
-    fr: Fraction de spermatozoïdes mobiles (progressifs PR + non-progressifs NP) dans le sperme. Utilisée cliniquement pour le diagnostic d'asthénozoospermie. Distincte de la mobilité progressive (PR uniquement). Les deux peuvent coexister sur le même rapport de laboratoire.
+    en: Fraction of moving spermatozoa in semen.
+    fr: Fraction de spermatozoïdes mobiles dans le sperme.
   streamId: body-semen-motility-total
   eventType: ratio/proportion
   type: number
   repeatable: any
+  references:
+    snomed: "252048002"
   referenceRange:
     source: WHO-2021
     lowerLimit: 0.42
     upperLimit: null
     units: ratio
     population: recently-fertile-men
+  devNotes: >-
+    Progressive (PR) plus non-progressive (NP). Used to diagnose asthenozoospermia. Distinct
+    from `body-semen-motility-progressive` (PR only); both can appear on the same lab report.
+    Reference: WHO 2021, lower limit 0.42.
 body-semen-vitality:
   version: v1
   label:
     en: Sperm vitality
     fr: Vitalité spermatique
   description:
-    en: Fraction of live sperm in semen, measured by eosin-nigrosin staining or hypo-osmotic swelling test. Distinct from motility — a sperm can be alive but immotile. WHO 2021 lists this as a mandatory test when total motility is below the reference limit; it is the key discriminator between asthenozoospermia (low motility, mostly live) and necrozoospermia (low motility, mostly dead).
-    fr: Fraction de spermatozoïdes vivants dans le sperme, mesurée par coloration éosine-nigrosine ou test de gonflement hypo-osmotique. Distincte de la mobilité — un spermatozoïde peut être vivant mais immobile. WHO 2021 la classe comme test obligatoire lorsque la mobilité totale est inférieure à la limite de référence ; clé pour distinguer asthénozoospermie (faible mobilité, majoritairement vivants) et nécrozoospermie (faible mobilité, majoritairement morts).
+    en: Fraction of live spermatozoa in semen.
+    fr: Fraction de spermatozoïdes vivants dans le sperme.
   streamId: body-semen-vitality
   eventType: ratio/proportion
   type: number
@@ -197,6 +236,12 @@ body-semen-vitality:
     upperLimit: null
     units: ratio
     population: recently-fertile-men
+  devNotes: >-
+    Measured by eosin-nigrosin staining or the hypo-osmotic swelling test. Distinct from
+    motility: a spermatozoon can be alive but immotile. WHO 2021 makes this a mandatory test
+    when total motility is below the reference limit, because it discriminates asthenozoospermia
+    (low motility, mostly live) from necrozoospermia (low motility, mostly dead). Reference: WHO
+    2021, lower limit 0.54.
 body-semen-volume:
   version: v1
   label:
@@ -222,8 +267,8 @@ body-semen-tmc:
     en: Total motile count
     fr: Nombre total de spermatozoïdes mobiles
   description:
-    en: Total motile sperm count per ejaculate (concentration × volume × progressive-motility fraction). Stored in megacounts (10⁶ sperm).
-    fr: Nombre total de spermatozoïdes mobiles par éjaculat (concentration × volume × fraction mobile progressive). Stocké en mégacomptes (10⁶ spermatozoïdes).
+    en: Total number of moving spermatozoa in one ejaculate.
+    fr: Nombre total de spermatozoïdes mobiles dans un éjaculat.
   streamId: body-semen-tmc
   eventType: count/mega
   type: number
@@ -236,14 +281,20 @@ body-semen-tmc:
     upperLimit: null
     units: M#/ejaculate
     population: clinical-consensus
+  references:
+    snomed: "167806003"
+  devNotes: >-
+    Clinically derived as concentration × volume × progressive-motility fraction, but stored as
+    a measured value on `count/mega` (10⁶ sperm) because labs report it directly. Reference:
+    Hamilton 2015, lower limit 9.
 body-semen-morphology-normal:
   version: v1
   label:
     en: Normal-form sperm morphology
     fr: Morphologie normale des spermatozoïdes
   description:
-    en: Fraction of spermatozoa with normal morphology (Kruger strict criteria). Stored as a 0..1 ratio.
-    fr: Fraction de spermatozoïdes ayant une morphologie normale (critères stricts de Kruger). Stockée comme un ratio 0..1.
+    en: Fraction of spermatozoa with a normal shape.
+    fr: Fraction de spermatozoïdes de forme normale.
   streamId: body-semen-morphology-normal
   eventType: ratio/proportion
   type: number
@@ -255,14 +306,19 @@ body-semen-morphology-normal:
     upperLimit: null
     units: ratio
     population: recently-fertile-men
+  references:
+    snomed: "250500000"
+  devNotes: >-
+    Kruger strict criteria. Stored on `ratio/proportion` as 0..1. Reference: WHO 2021, lower
+    limit 0.04.
 body-semen-dna-fragmentation:
   version: v1
   label:
     en: Sperm DNA fragmentation
     fr: Fragmentation de l'ADN spermatique
   description:
-    en: DNA Fragmentation Index (DFI) — fraction of spermatozoa with fragmented DNA. Stored as a 0..1 ratio.
-    fr: Indice de fragmentation de l'ADN (DFI) — fraction de spermatozoïdes avec ADN fragmenté. Stockée comme un ratio 0..1.
+    en: Fraction of spermatozoa with fragmented DNA.
+    fr: Fraction de spermatozoïdes dont l'ADN est fragmenté.
   streamId: body-semen-dna-fragmentation
   eventType: ratio/proportion
   type: number
@@ -276,6 +332,9 @@ body-semen-dna-fragmentation:
     upperLimit: 0.30
     units: ratio
     population: clinical-consensus
+  devNotes: >-
+    DNA Fragmentation Index (DFI). Stored on `ratio/proportion` as 0..1. Reference: Agarwal
+    2017, upper limit 0.30.
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Blood chemistry — see documentation/BLOOD-CHEMISTRY.md

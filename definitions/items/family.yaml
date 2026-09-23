@@ -3,7 +3,9 @@ family-children-count:
   label:
     en: Nb of children
     fr: Nombre d'enfants
-  description: Number of children at this date
+  description:
+    en: Number of children at this date.
+    fr: Nombre d'enfants à cette date.
   streamId: family-children
   eventType: count/generic
   type: number

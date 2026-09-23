@@ -3,7 +3,9 @@ procedure-basic:
   label:
     en: Procedure (free-text)
     fr: Acte médical (texte libre)
-  description: Free-text clinical procedure — laparoscopy, HSG, polypectomy, etc.
+  description:
+    en: A clinical procedure, entered as free text.
+    fr: Un acte médical, saisi en texte libre.
   streamId: procedure
   eventType: procedure/basic
   type: composite
@@ -20,13 +22,17 @@ procedure-basic:
       type: text
       canBeNull: true
   repeatable: unlimited
+  devNotes: >-
+    Examples: laparoscopy, HSG, polypectomy.
 
 procedure-coded:
   version: v1
   label:
     en: Procedure (coded)
     fr: Acte médical (codé)
-  description: Search and select a coded clinical procedure.
+  description:
+    en: Search and select a coded clinical procedure.
+    fr: Recherchez et sélectionnez un acte clinique codé.
   streamId: procedure
   eventType: procedure/coded-v1
   type: datasource-search

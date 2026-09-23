@@ -142,7 +142,9 @@ wellbeing-sex-drive:
   label:
     en: Sex Drive
     fr: Libido
-  description: Self-reported sex drive level.
+  description:
+    en: Your level of sexual desire.
+    fr: Votre niveau de désir sexuel.
   streamId: wellbeing-sex-drive
   eventType: ratio/proportion
   type: select

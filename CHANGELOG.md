@@ -1,5 +1,68 @@
 # Changelog
 
+## [3.11.0] - 2026-09-23
+
+### Coherence pass — descriptions, localisation, domain docs and stale counts
+
+No stream, item key or eventType changed. This release is entirely about the **published text** of the
+model and the documentation around it, closing six findings from the plan 100 coherence review (F2, F5,
+F6, F7, F8, F9).
+
+**F5 — `description` is one short user-facing sentence again (22 items).** `AGENTS.md` §6b has always
+said so, and 22 active descriptions broke it, the worst at 75 words and six sentences. Every one is
+rewritten, and the maintainer knowledge that was living in them moved to `devNotes`, the field that
+exists for it — **`devNotes` goes from 13 items to 39**. Several descriptions leaked storage detail
+outright, including `body-semen-morphology-normal`, whose old text is the verbatim ❌ example
+`AGENTS.md` uses to teach the rule and which had shipped live regardless.
+
+Where a detail is something the **user must act on**, it stayed in the description rather than moving:
+`fertility-cycles-start` still says "full bleeding (not just spotting)", because that is the judgement
+the person makes on day one.
+
+**F6 — localisation is complete.** French descriptions were missing on 39 active items, four option sets
+were plain English scalar labels rather than `{ en, fr }` objects, and the `variations.eventType` unit
+pickers on `body-weight`, `body-height` and `profile-avatar` were English-only. Active-item coverage is
+now **100% on labels, descriptions, options and unit variations**. Several English strings were fragments
+or ungrammatical ("Number of children at this date", "When a women is considered a fertile", two
+malformed `fertility-ttc-tta` options) and were repaired while being localised.
+
+**F9 — every active domain now has a `documentation/<DOMAIN>.md`.** Five were missing:
+
+- `PROFILE.md` — durable identity facts; why `profile-name` and `profile-surname` legitimately share a
+  stream, and why `profile-avatar` has no item-level `eventType`.
+- `CONDITION.md` — the four-way split between `condition` / `finding` / `procedure` / `treatment`, and
+  the open question of a status field.
+- `FINDING.md` — records that **the `finding` root's scope is undecided** rather than inventing one, with
+  the concepts that sit uncomfortably and a rule not to add items on the strength of the word alone.
+- `NUTRITION.md` — the `nutrition` (state) vs `lifestyle-diet` (choice) boundary, and why
+  `nutrition-appetite`'s 0.25 / 0.50 / 0.75 placement does not transfer to quantity or frequency scales.
+- `FAMILY.md` — why a children count is not derivable from `fertility-delivery` in either direction.
+
+**F8 — the documentation counts were wrong by ~3x and are now measured.** `README.md` claimed 92 items
+and 12 streams against 296 and 276; `AGENTS.md` claimed ~73 items, ~36 streams and ~66 HDS eventTypes.
+Both now carry the real numbers, split active / total, with the per-file item table rebuilt — it was
+missing four files entirely (`condition`, `finding`, `lifestyle`, `symptom-domains`).
+
+**F7 — encoding-reference coverage 66% → 70%**, adding SNOMED CT to 11 items where an active,
+semantically correct concept exists. Not further: the obvious concepts for sperm vitality, progressive
+motility and most exercise types are either **inactive** in the current International release or have no
+concept at all. Notable trap found and avoided: both `16386004` "Dry skin" and `416247002` "C/O: dry
+skin" are inactive, so `body-skin-dry` references `52475004` Xeroderma.
+
+**F2 — `relativeTo` is documented as overloaded.** It is a *number* (the ratio denominator) in
+`ratio/generic` content and a *string* (an anchor item key) in `reminder.relativeTo`. Renaming either is
+breaking, so `AGENTS.md` now carries the disambiguation table and tells you to grep for
+`ratioRelativeTo` instead.
+
+### Corrections caught in review, worth knowing
+
+- `fertility-cycles-fertile-window` carries a **mandatory duration** capped at six days: the event *is*
+  the window, not a day within it. Its description said the latter and now says the former.
+- `fertility-sexual-activity`'s `fertile` option contrasts with `condom` / `withdrawal` / `protected`, so
+  it means *complete unprotected intercourse*, not *intercourse during the fertile window*. Both labels
+  now say so, and the item description no longer implies that protected intercourse should not be
+  recorded.
+
 ## [3.10.0] - 2026-09-23
 
 ### Added: the `lifestyle` domain — tobacco, alcohol and diet

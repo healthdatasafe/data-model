@@ -11,41 +11,57 @@ body-skin-acne:
   label:
     en: Acne
     fr: Acné
-  description: Acne or skin breakouts.
+  description:
+    en: Acne or skin breakouts.
+    fr: Acné ou boutons.
   streamId: body-skin-acne
   eventType: activity/plain
   type: checkbox
   repeatable: P1D
+  references:
+    snomed: "11381005"
 
 body-skin-dry:
   version: v1
   label:
     en: Dry Skin
     fr: Peau sèche
-  description: Dry skin.
+  description:
+    en: Dry skin.
+    fr: Peau sèche.
   streamId: body-skin-dry
   eventType: activity/plain
   type: checkbox
   repeatable: P1D
+  references:
+    snomed: "52475004"
 
 body-skin-oily:
   version: v1
   label:
     en: Oily Skin
     fr: Peau grasse
-  description: Oily or greasy skin.
+  description:
+    en: Oily or greasy skin.
+    fr: Peau grasse.
   streamId: body-skin-oily
   eventType: activity/plain
   type: checkbox
   repeatable: P1D
+  references:
+    snomed: "42273000"
 
 body-skin-glowing:
   version: v1
   label:
     en: Glowing Skin
     fr: Peau éclatante
-  description: Good or glowing skin quality.
+  description:
+    en: Good or glowing skin quality.
+    fr: Peau saine et éclatante.
   streamId: body-skin-glowing
   eventType: activity/plain
   type: checkbox
   repeatable: P1D
+  references:
+    snomed: "225544001"

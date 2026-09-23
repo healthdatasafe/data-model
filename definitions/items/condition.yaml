@@ -3,7 +3,9 @@ condition-coded:
   label:
     en: Condition (coded)
     fr: Affection (codée)
-  description: Search and select a coded clinical diagnosis or condition.
+  description:
+    en: Search and select a coded clinical diagnosis.
+    fr: Recherchez et sélectionnez un diagnostic clinique codé.
   streamId: condition
   eventType: condition/coded-v1
   type: datasource-search

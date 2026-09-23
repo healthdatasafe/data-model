@@ -3,7 +3,9 @@ profile-addresscountry:
   label: 
     en: Country
     fr: Pays
-  description: Country of living
+  description:
+    en: The country you live in.
+    fr: Le pays où vous vivez.
   streamId: profile-address
   eventType: contact/country
   type: text
@@ -26,8 +28,8 @@ profile-ethnicity:
     en: Ethnicity
     fr: Origine ethnique
   description:
-    en: Your self-identified ethnicity, recorded for health-equity monitoring. Select every category that applies.
-    fr: Votre origine ethnique auto-déclarée, enregistrée à des fins de suivi de l'équité en santé. Sélectionnez toutes les catégories qui s'appliquent.
+    en: Your self-identified ethnicity.
+    fr: Votre origine ethnique auto-déclarée.
   streamId: profile-ethnicity
   eventType: attributes/ethnicity
   type: multi-select
@@ -57,6 +59,8 @@ profile-ethnicity:
     - value: prefer-not-to-say
       label: { en: Prefer not to say, fr: Préfère ne pas répondre }
   repeatable: once
+  devNotes: >-
+    Recorded for health-equity monitoring.
 profile-avatar:
   version: v1
   label:
@@ -71,23 +75,29 @@ profile-avatar:
     eventType:
       label:
         en: Format
+        fr: Format
       options:
         - value: picture/attached
           label:
             en: Attached file
+            fr: Fichier joint
         - value: picture/base64
           label:
             en: Base64 encoded
+            fr: Encodé en Base64
         - value: picture/url
           label:
             en: URL reference
+            fr: Référence URL
   repeatable: once
 profile-display-name:
   version: v1
   label:
     en: Display Name
     fr: Nom d'affichage
-  description: Preferred display name
+  description:
+    en: The name you prefer to be shown as.
+    fr: Le nom sous lequel vous préférez apparaître.
   streamId: profile-display-name
   eventType: contact/display-name
   type: text
@@ -96,7 +106,9 @@ profile-date-of-birth:
   label:
     en: Date of Birth
     fr: Date de naissance
-  description: Date of birth
+  description:
+    en: Your date of birth.
+    fr: Votre date de naissance.
   version: v1
   streamId: profile-date-of-birth
   eventType: date/iso-8601
@@ -107,7 +119,9 @@ profile-name:
   label:
     en: Name
     fr: Prénom
-  description: Name
+  description:
+    en: Your first name.
+    fr: Votre prénom.
   streamId: profile-name
   eventType: contact/name
   type: text
@@ -117,7 +131,9 @@ profile-surname:
   label:
     en: Surname
     fr: Nom de famille
-  description: Surname
+  description:
+    en: Your family name.
+    fr: Votre nom de famille.
   streamId: profile-name
   eventType: contact/surname
   type: text
@@ -127,15 +143,21 @@ profile-sex:
   label:
     en: Sex
     fr: Sexe
-  description: Biological Sex
+  description:
+    en: Your biological sex.
+    fr: Votre sexe biologique.
   streamId: profile-sex
   eventType: attributes/biological-sex
   type: select
   options:
     - value: male
-      label: Male
+      label:
+        en: "Male"
+        fr: "Masculin"
     - value: female
-      label: Female
+      label:
+        en: "Female"
+        fr: "Féminin"
   repeatable: once
 profile-reproductive-stage:
   version: v1
@@ -143,8 +165,8 @@ profile-reproductive-stage:
     en: Reproductive stage
     fr: Stade reproductif
   description:
-    en: Your reproductive-aging / menopausal stage (STRAW+10). A durable but changing life-stage fact — record a new dated entry whenever it changes. It selects the correct reference range for stage-dependent hormones such as estradiol, FSH and prolactin. Hormone therapy is recorded separately as a medication.
-    fr: Votre stade de vieillissement reproductif / ménopausique (STRAW+10). Un fait de vie durable mais évolutif — enregistrez une nouvelle entrée datée à chaque changement. Il détermine l'intervalle de référence approprié pour les hormones dépendant du stade telles que l'œstradiol, la FSH et la prolactine. Le traitement hormonal est enregistré séparément comme médicament.
+    en: Your reproductive-aging or menopausal stage.
+    fr: Votre stade de vieillissement reproductif ou ménopausique.
   streamId: profile-reproductive-stage
   eventType: attributes/reproductive-stage
   type: select
@@ -166,3 +188,7 @@ profile-reproductive-stage:
     - value: lactating
       label: { en: Lactating, fr: Allaitement }
   repeatable: any
+  devNotes: >-
+    STRAW+10 staging. A durable but changing life-stage fact: record a new dated entry whenever
+    it changes. It selects the reference range for stage-dependent hormones such as estradiol,
+    FSH and prolactin. Hormone therapy is recorded separately as a medication, not encoded here.

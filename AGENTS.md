@@ -4,7 +4,7 @@ This file orients future agents (Claude or others) working on the `data-model` r
 
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
-- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md` — per-domain design decisions and cross-system mappings.
+- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
 
 ---
 
@@ -130,6 +130,24 @@ hazard is what happens when someone adds an option: the deriving renderer starts
 maximum while the hardcoding bridge keeps writing the old one, so the **same item carries two different
 denominators** and `value / relativeTo` stops being comparable across writers. Nothing errors. The
 model owns the option list, so the model must own the denominator derived from it.
+
+### ⚠ `relativeTo` means two unrelated things — check which one you are reading
+
+The name is overloaded, and both meanings appear on items (plan 100, finding F2):
+
+| where | type | meaning |
+|---|---|---|
+| **`ratio/generic` event content** | **number** | the ratio **denominator**, as described above |
+| **an item's `reminder.relativeTo`** | **string** | the **item key** a reminder is anchored to, e.g. `relativeTo: fertility-cycles-start` (`src/schemas/items.js`; used in `definitions/items/fertility.yaml`) |
+
+They share no semantics whatsoever. This is not a defect on its own — the two live at different levels
+and no code confuses them — but it makes the denominator convention hard to grep for, which is part of
+why finding F1 went unnoticed for so long. **When searching, search for `ratioRelativeTo`** (the derived,
+published item field), which is unambiguous; a bare `relativeTo` will return both.
+
+Renaming either one is a breaking change: the reminder field is authored across item YAML, and the
+content key is fixed by the legacy Pryv `ratio/generic` schema, which HDS does not own. So the name
+stays, and this table is the mitigation.
 
 **Loader guarantees** (`src/items.js`, tests `[RGEN]`): a `ratio/generic` select must declare at least
 one option, all option values must be numbers, none may be negative, and the largest must be `> 0` (a
@@ -282,10 +300,10 @@ data-model/
 ├── package.json, eslint.config.mjs, etc.
 │
 ├── definitions/                           # THE SOURCE OF TRUTH
-│   ├── items/*.yaml                       # Health data point definitions (~73 items across ~11 YAML files)
-│   ├── streams/*.yaml                     # Clinical-domain tree (~36 streams)
+│   ├── items/*.yaml                       # Health data point definitions (296 items, 231 active, 18 YAML files)
+│   ├── streams/*.yaml                     # Clinical-domain tree (15 top-level roots, 276 streams in all)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (~66)
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (70)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (354) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)
@@ -317,7 +335,12 @@ data-model/
 │   ├── MENSTRUAL-CYCLE.md                 # Cycle modeling
 │   ├── PHYSICAL-ACTIVITY.md               # Activity items
 │   ├── SKIN.md                            # Skin observations
-│   └── LIFESTYLE.md                       # Tobacco, alcohol, diet; AUDIT-C
+│   ├── LIFESTYLE.md                       # Tobacco, alcohol, diet; AUDIT-C
+│   ├── PROFILE.md                         # Durable identity/demographic facts
+│   ├── CONDITION.md                       # Coded diagnoses; the 4-way coded split
+│   ├── FINDING.md                         # Coded findings — ROOT SCOPE UNDECIDED
+│   ├── NUTRITION.md                       # Nutritional state vs lifestyle-diet
+│   └── FAMILY.md                          # Household / family-structure facts
 │
 ├── scripts/                               # setup / deploy shell scripts
 ├── tests/                                 # Vitest test suite

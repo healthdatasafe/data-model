@@ -5,7 +5,9 @@ nutrition-appetite:
   label:
     en: Appetite
     fr: Appétit
-  description: Self-reported appetite level.
+  description:
+    en: Your appetite level.
+    fr: Votre niveau d'appétit.
   streamId: nutrition-appetite
   eventType: ratio/proportion
   type: select

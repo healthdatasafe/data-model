@@ -60,7 +60,9 @@ fertility-cycles-ovulation:
   label:
     en: Ovulation Day
     fr: Jour d'ovulation
-  description: Flag this day as an ovulation day
+  description:
+    en: The day you ovulated.
+    fr: Le jour de votre ovulation.
   streamId: fertility-cycles-ovulation
   eventType: activity/plain
   type: checkbox
@@ -74,7 +76,9 @@ fertility-cycles-start:
     mandatory: false
     canBeNull: true
     maxSeconds: 7776000 # thershold for amenorrhea  90 days
-  description: Flag this day as a new cycle start. First day of full menstrual bleeding (Period)
+  description:
+    en: The first day of full bleeding (not just spotting), which starts a new cycle.
+    fr: Le premier jour de vraies règles (pas de simples pertes), qui marque le début d'un nouveau cycle.
   streamId: fertility-cycles-start
   eventType: activity/plain
   type: checkbox
@@ -86,24 +90,32 @@ fertility-cycles-start:
     cooldown: P10D
   devNotes: |-
     Cycle duration is determined by next fertility cycle date unless duration property is given.
+    This item is what opens a new cycle;
+    `fertility-cycles-period-end` records the last day of the bleeding.
 fertility-cycles-period-end:
   version: temporary
   label:
     en: End of period.
     fr: Fin des règles
-  description: Last day of periods. First day of period is given by a new cycle indication.
+  description:
+    en: Last day of your period.
+    fr: Dernier jour de vos règles.
   streamId: fertility-cycles-period
   eventType: activity/plain
   type: checkbox
   repeatable: P1D
   devNotes: |-
     To track start / end of period, use fertility-cycles-start & fertility-cycles-period-end.
+    The FIRST day of a period is not recorded here: it is given by a new cycle indication
+    (`fertility-cycles-start`).
 fertility-cycles-fertile-window:
   version: temporary
   label:
     en: Fertile Window
     fr: Fenêtre fertile
-  description: When a women is considered a fertile
+  description:
+    en: Your fertile window for this cycle.
+    fr: Votre fenêtre fertile pour ce cycle.
   streamId: fertility-cycles-fertile-window
   eventType: activity/plain
   duration:
@@ -119,7 +131,9 @@ fertility-cycles-peak-day:
   label:
     en: Peak day of fertility
     fr: Jour sommet de fertilité
-  description: When fertility is at its highest point
+  description:
+    en: The day your fertility is at its highest.
+    fr: Le jour où votre fertilité est à son maximum.
   streamId: fertility-cycles-peak-day
   eventType: activity/plain
   type: checkbox
@@ -143,90 +157,116 @@ fertility-ttc-tta:
   label:
     en: Trying to conceive / Avoiding pregnancy
     fr: Essai de conception / Évitement de grossesse
-  description: Current fertility intention
+  description:
+    en: Your current intention about becoming pregnant.
+    fr: Votre intention actuelle concernant une grossesse.
   streamId: fertility-ttc-tta
   eventType: ratio/generic
   type: select
   options:
     - value: 0
-      label: TTA - Not taking risks.  Would take all available measures to end a
-        pregnancy.
+      label:
+        en: "TTA - Not taking risks. Would take all available measures to end a pregnancy."
+        fr: "TTA — Aucun risque pris. Prendrait toutes les mesures disponibles pour interrompre une grossesse."
     - value: 1
-      label: TTA - Not taking risks.  Would strongly consider placing baby for
-        adoption.
+      label:
+        en: "TTA - Not taking risks. Would strongly consider placing baby for adoption."
+        fr: "TTA — Aucun risque pris. Envisagerait fortement de confier le bébé à l'adoption."
     - value: 2
-      label: TTA - Not taking risks.  Would need some time, maybe counseling.
-        Ultimately keeping the pregnancy.
+      label:
+        en: "TTA - Not taking risks. Would need some time, maybe counseling. Ultimately keeping the pregnancy."
+        fr: "TTA — Aucun risque pris. Aurait besoin de temps, peut-être d'un accompagnement, mais mènerait finalement la grossesse à terme."
     - value: 4
-      label: TTA - Not taking risks.  Currently content with family size but a
-        surprise pregnancy would be welcome.
+      label:
+        en: "TTA - Not taking risks. Currently content with family size but a surprise pregnancy would be welcome."
+        fr: "TTA — Aucun risque pris. Satisfait(e) de la taille actuelle de la famille, mais une grossesse surprise serait bienvenue."
     - value: 5
-      label: TTW/TTA - "Loosely TTA" known risks are taken in the fertile window.
-        "OOPS" pregnancy would be welcome.
+      label:
+        en: "TTW/TTA - \"Loosely TTA\" known risks are taken in the fertile window. \"OOPS\" pregnancy would be welcome."
+        fr: "TTW/TTA — « TTA souple » : des risques connus sont pris pendant la fenêtre fertile. Une grossesse imprévue serait bienvenue."
     - value: 6
-      label: TTW - Charting only for health/curiosity. Unprotected intercourse happens
-        whenever. Pregnancy very welcome.
+      label:
+        en: "TTW - Charting only for health/curiosity. Unprotected intercourse happens whenever. Pregnancy very welcome."
+        fr: "TTW — Suivi uniquement par intérêt pour la santé ou par curiosité. Rapports non protégés à tout moment. Grossesse très bienvenue."
     - value: 7
-      label: TTW/TTC - Pregnancy very welcome (moving up the scale in very near
-        future).
+      label:
+        en: "TTW/TTC - Pregnancy very welcome (moving up the scale in very near future)."
+        fr: "TTW/TTC — Grossesse très bienvenue (progression sur l'échelle dans un avenir très proche)."
     - value: 8
-      label: TTC - "Excited to start/grow a family TTC" Intentional intercourse every
-        cycle. Excited to start/grow a family. But would not use any fertility
-        treatments if needed.
+      label:
+        en: "TTC - \"Excited to start or grow a family.\" Intentional intercourse every cycle, but would not use any fertility treatments if needed."
+        fr: "TTC — « Impatient(e) de fonder ou d'agrandir la famille ». Rapports intentionnels à chaque cycle, mais sans recourir à un traitement de fertilité."
     - value: 9
-      label: TTC - "Highly hopeful TTC" Intentional intercourse every cycle. Would
-        consider some but not all fertility treatments if needed.
+      label:
+        en: "TTC - \"Highly hopeful TTC\" Intentional intercourse every cycle. Would consider some but not all fertility treatments if needed."
+        fr: "TTC — « Très motivé(e) ». Rapports intentionnels à chaque cycle. Envisagerait certains traitements de fertilité, mais pas tous."
     - value: 10
-      label: TTC - " Seriously TTC" Intentional intercourse every cycle. Would pursue
-        any/ALL fertility treatments or procedures if needed.
+      label:
+        en: "TTC - \"Seriously trying.\" Intentional intercourse every cycle. Would pursue any and all fertility treatments or procedures if needed."
+        fr: "TTC — « Sérieusement en essai ». Rapports intentionnels à chaque cycle. Envisagerait tous les traitements ou interventions de fertilité."
   repeatable: P1D
 fertility-sexual-activity:
   version: v1
   label:
     en: Sexual activity
     fr: Activité sexuelle
-  description: Potentially reproductive sexual activity
+  description:
+    en: Sexual intercourse, and any protection used.
+    fr: Rapport sexuel et protection utilisée, le cas échéant.
   streamId: fertility-sexual-activity
   eventType: reproductive-sexuality/detailed
   type: select
   repeatable: any
   options:
     - value: 'fertile'
-      label: 'Fertile intercourse'
+      label:
+        en: "Unprotected intercourse"
+        fr: "Rapport complet non protégé"
     - value: 'incomplete'
-      label: 'No ejaculation (incomplete)'
+      label:
+        en: "No ejaculation (incomplete)"
+        fr: "Sans éjaculation (incomplet)"
     - value: 'withdrawal'
-      label: 'Withdrawal before ejaculation'
+      label:
+        en: "Withdrawal before ejaculation"
+        fr: "Retrait avant éjaculation"
     - value: 'condom'
-      label: 'Usage of a condom'
+      label:
+        en: "Usage of a condom"
+        fr: "Utilisation d'un préservatif"
     - value: 'cervical-barrier'
-      label: 'Usage of a cervical barrier'
+      label:
+        en: "Usage of a cervical barrier"
+        fr: "Utilisation d'une barrière cervicale"
     - value: 'protected'
-      label: 'Protected intercourse (unspecified method)'
+      label:
+        en: "Protected intercourse (unspecified method)"
+        fr: "Rapport protégé (méthode non précisée)"
 fertility-genital-contact:
   version: v1
   label:
     en: Non-intercourse genital contact
     fr: Contact génital sans rapport sexuel
-  description: |-
-    Genital contact that did not involve intercourse (e.g. external contact,
-    manual stimulation involving genital exposure). Relevant for fertility-
-    awareness charting because residual sperm exposure can still result in
-    pregnancy. Distinct from fertility-sexual-activity, which records
-    intercourse variants. Both items can co-exist on the same day if both
-    phenomena occurred.
+  description:
+    en: Genital contact without intercourse.
+    fr: Contact génital sans rapport sexuel.
   streamId: fertility-genital-contact
   eventType: activity/plain
   type: checkbox
   repeatable: P1D
+  devNotes: >-
+    External contact or manual stimulation involving genital exposure. Relevant to fertility-
+    awareness charting because residual sperm exposure can still result in pregnancy. Distinct
+    from `fertility-sexual-activity`, which records intercourse variants; both can co-exist on
+    the same day.
 fertility-tracking-method:
   version: v1
   label:
     en: Fertility-tracking methods
     fr: Méthodes de suivi de fertilité
   description:
-    en: The charting methods or devices you use — they determine how your cycle observations should be read. Select every one you currently use, and record a new dated entry whenever that changes.
-    fr: Les méthodes ou appareils de suivi que vous utilisez — ils déterminent comment lire vos observations de cycle. Sélectionnez tous ceux que vous utilisez actuellement, et enregistrez une nouvelle entrée datée à chaque changement.
+    en: The charting methods or devices you use.
+    fr: Les méthodes ou appareils de suivi que vous utilisez.
   streamId: fertility-tracking-method
   eventType: fertility/tracking-method-v1
   type: multi-select
@@ -262,12 +302,18 @@ fertility-tracking-method:
   # re-read under whatever is current today. Same reasoning as
   # profile-reproductive-stage. Each event is a complete dated snapshot of the set.
   repeatable: any
+  devNotes: >-
+    They determine how the person's cycle observations should be read. Each event is a complete
+    dated snapshot of the methods active at that time, so a method that stops simply does not
+    appear in the next snapshot.
 fertility-pregnancy:
   version: v2
   label:
     en: Pregnancy
     fr: Grossesse
-  description: Pregnancy
+  description:
+    en: A pregnancy and its outcome.
+    fr: Une grossesse et son issue.
   duration:
     mandatory: true
     canBeNull: true
@@ -287,35 +333,51 @@ fertility-pregnancy:
     pregnancies, typically detected only by hCG without ultrasound confirmation —
     clinically distinct from miscarriage per ESHRE 2022 RPL guideline).
     Use 'miscarriage' for clinically-confirmed losses ≥ 6 weeks.
+    When the outcome is 'livebirth' or 'stillbirth', one
+    `fertility-delivery` event exists per baby, timed at the delivery date.
   type: select
   repeatable: any
   options:
     - value: 'ongoing'
-      label: 'Ongoing pregnancy'
+      label:
+        en: "Ongoing pregnancy"
+        fr: "Grossesse en cours"
     - value: 'very-early-loss'
-      label: 'Very early loss (biochemical pregnancy, <6w)'
+      label:
+        en: "Very early loss (biochemical pregnancy, <6w)"
+        fr: "Perte très précoce (grossesse biochimique, < 6 sem.)"
     - value: 'miscarriage'
-      label: 'Miscarriage'
+      label:
+        en: "Miscarriage"
+        fr: "Fausse couche"
     - value: 'ectopic'
-      label: 'Ectopic'
+      label:
+        en: "Ectopic"
+        fr: "Grossesse extra-utérine"
     - value: 'molar'
-      label: 'Molar (hydatidiform mole)'
+      label:
+        en: "Molar (hydatidiform mole)"
+        fr: "Grossesse molaire (môle hydatiforme)"
     - value: 'stillbirth'
-      label: 'Stillbirth'
+      label:
+        en: "Stillbirth"
+        fr: "Mortinaissance"
     - value: 'livebirth'
-      label: 'Live birth'
+      label:
+        en: "Live birth"
+        fr: "Naissance vivante"
     - value: 'abortion'
-      label: 'Abortion'
+      label:
+        en: "Abortion"
+        fr: "Interruption de grossesse"
 fertility-delivery:
   version: v1
   label:
     en: Delivery
     fr: Accouchement
   description:
-    en: |-
-      Per-baby delivery / birth event. One event per baby in the woman's account. Siblings of multifetal pregnancies share `event.time` (= delivery date) and typically share `mode`; per-baby attributes (birth weight, sex, APGAR, NICU stay, neonatal death) vary. Used together with fertility-pregnancy (`event.time` = LMP). A fertility-delivery event only exists when the corresponding fertility-pregnancy.outcome is 'livebirth' or 'stillbirth'. Field vocabularies aligned to LOINC: 73762-7 (mode), 8339-4 (birth weight), 76689-9 (sex assigned at birth), 9274-2 (5-min APGAR).
-    fr: |-
-      Événement d'accouchement / de naissance par bébé. Un événement par bébé dans le compte de la femme. Les bébés issus d'une grossesse multifœtale partagent `event.time` (= date d'accouchement) et partagent généralement `mode` ; les attributs par bébé (poids de naissance, sexe, APGAR, séjour en USIN, décès néonatal) varient. Utilisé conjointement avec fertility-pregnancy (`event.time` = LMP). Un événement fertility-delivery n'existe que lorsque le fertility-pregnancy.outcome correspondant est 'livebirth' ou 'stillbirth'. Vocabulaires alignés sur LOINC : 73762-7 (mode), 8339-4 (poids de naissance), 76689-9 (sexe à la naissance), 9274-2 (APGAR à 5 minutes).
+    en: A baby's birth, recorded once per baby.
+    fr: La naissance d'un bébé, enregistrée une fois par bébé.
   streamId: fertility-deliveries
   eventType: delivery/composite-v1
   type: composite
@@ -376,6 +438,14 @@ fertility-delivery:
         fr: Jours entre naissance et décès néonatal (laisser vide si en vie)
       type: number
       canBeNull: true
+  devNotes: >-
+    One event per baby, in the woman's account. Siblings of a multifetal pregnancy share
+    `event.time` (the delivery date) and usually share `mode`, while per-baby attributes vary:
+    birth weight, sex, APGAR, NICU stay, neonatal death. Used together with
+    `fertility-pregnancy`, whose `event.time` is the LMP. A delivery event exists only when the
+    corresponding `fertility-pregnancy.outcome` is 'livebirth' or 'stillbirth'. Field
+    vocabularies align to LOINC 73762-7 (mode), 8339-4 (birth weight), 76689-9 (sex assigned at
+    birth) and 9274-2 (5-minute APGAR).
 # Urine hormones. Renamed from fertility-hormone-* to body-urine-hormones-* (key == streamId)
 # so the specimen is explicit: serum and urine assays of the same hormone are different
 # observations with different reference ranges, and the neutral key used to hide that.
@@ -489,19 +559,28 @@ fertility-test-opk:
   label:
     en: Ovulation test (OPK)
     fr: Test d'ovulation (OPK)
-  description: Ovulation Predictor Kit result. Uses test-result/scale (-1 negative, 0 indeterminate, 1 positive). Intermediate values for semi-quantitative results (e.g. 0.5 weak positive).
+  description:
+    en: Ovulation predictor kit result.
+    fr: Résultat d'un test d'ovulation.
   streamId: fertility-test-opk
   eventType: test-result/scale
   type: number
   repeatable: any
+  devNotes: >-
+    Stored on `test-result/scale`: -1 negative, 0 indeterminate, 1 positive. Intermediate values
+    carry semi-quantitative results, e.g. 0.5 for a weak positive.
 fertility-test-pregnancy:
   version: v1
   label:
     en: Pregnancy test
     fr: Test de grossesse
-  description: Home pregnancy test result. Uses test-result/scale (-1 negative, 0 indeterminate, 1 positive).
+  description:
+    en: Home pregnancy test result.
+    fr: Résultat d'un test de grossesse à domicile.
   streamId: fertility-test-pregnancy
   eventType: test-result/scale
   type: number
   repeatable: any
+  devNotes: >-
+    Stored on `test-result/scale`: -1 negative, 0 indeterminate, 1 positive.
 

@@ -5,7 +5,9 @@ body-vulva-mucus-inspect:
   label:
     en: Cervical Fluid Inspect
     fr: Observation de la glaire cervicale
-  description: Cervical fluid observation as a 9-dimensional vector, convertible across charting methods (Apple Health, Creighton, Billings, Mira, etc.)
+  description:
+    en: Your cervical fluid observation for today.
+    fr: Votre observation de glaire cervicale pour aujourd'hui.
   streamId: body-vulva-mucus-inspect
   eventType: vulva-mucus-inspect/9d-vector
   type: convertible
@@ -14,18 +16,24 @@ body-vulva-mucus-inspect:
     version: v0
     models: cervical-fluid
   repeatable: unlimited
+  devNotes: >-
+    Stored as a 9-dimensional vector and convertible across charting methods (Apple Health,
+    Creighton, Billings, Mira, …) through the cervical-fluid converter.
 body-vulva-mucus-inspect-count:
   version: v1
   label:
     en: Cervical Fluid observation count
     fr: Nombre d'observations de glaire
   description:
-    en: Number of cervical-fluid self-observations made on this day. Creighton FertilityCare protocol records the most-fertile observation of the day plus the count of times observations were made (typically each bathroom visit).
-    fr: Nombre d'auto-observations de la glaire effectuées dans la journée. Le protocole Creighton FertilityCare enregistre l'observation la plus fertile de la journée et le nombre de contrôles effectués (typiquement à chaque passage aux toilettes).
+    en: How many times you checked your cervical fluid today.
+    fr: Combien de fois vous avez observé votre glaire aujourd'hui.
   streamId: body-vulva-mucus-inspect
   eventType: count/generic
   type: number
   repeatable: once
+  devNotes: >-
+    The Creighton FertilityCare protocol records the most-fertile observation of the day plus
+    the number of times observations were made, typically at each bathroom visit.
 body-vulva-mucus-stretch:
   version: v1
   deprecated: true
@@ -109,7 +117,9 @@ body-vulva-bleeding:
   label:
     en: Bleeding intensity
     fr: Intensité du saignement
-  description: Subjective bleeding intensity on a 0-1 proportion scale.
+  description:
+    en: How heavy your bleeding is.
+    fr: L'intensité de votre saignement.
   streamId: body-vulva-bleeding
   eventType: ratio/proportion
   type: select
@@ -143,46 +153,62 @@ body-vulva-bleeding:
         en: Very heavy
         fr: Très abondant
   repeatable: unlimited
+  devNotes: >-
+    Subjective intensity, stored on `ratio/proportion` as 0..1.
 
 body-vulva-bleeding-browndark:
   version: v1
   label:
     en: Brown/dark coloration
     fr: Coloration brune ou foncée
-  description: Presence of brown or dark coloration in bleeding. Qualifier for a co-occurring body-vulva-bleeding event.
+  description:
+    en: Brown or dark coloration in the bleeding.
+    fr: Coloration brune ou foncée du saignement.
   streamId: body-vulva-bleeding-browndark
   eventType: activity/plain
   type: checkbox
   repeatable: P1D
+  devNotes: >-
+    Qualifier for a co-occurring `body-vulva-bleeding` event.
 
 body-vulva-bleeding-clots:
   version: v1
   label:
     en: Blood clots
     fr: Caillots sanguins
-  description: Presence of blood clots during bleeding. Qualifier for a co-occurring bleeding event.
+  description:
+    en: Blood clots during bleeding.
+    fr: Caillots de sang pendant le saignement.
   streamId: body-vulva-bleeding-clots
   eventType: activity/plain
   type: checkbox
   repeatable: P1D
+  devNotes: >-
+    Qualifier for a co-occurring `body-vulva-bleeding` event.
 
 body-vulva-bleeding-postpartum:
   version: v1
   label:
     en: Postpartum Bleeding
     fr: Saignement du post-partum
-  description: Vaginal bleeding following childbirth (lochia).
+  description:
+    en: Vaginal bleeding after childbirth.
+    fr: Saignement vaginal après l'accouchement.
   streamId: body-vulva-bleeding-postpartum
   eventType: activity/plain
   type: checkbox
   repeatable: P1D
+  devNotes: >-
+    Lochia.
 
 body-vulva-bleeding-miscarriage:
   version: v1
   label:
     en: Miscarriage Bleeding
     fr: Saignement de fausse couche
-  description: Vaginal bleeding associated with pregnancy loss.
+  description:
+    en: Vaginal bleeding associated with pregnancy loss.
+    fr: Saignement vaginal lié à une perte de grossesse.
   streamId: body-vulva-bleeding-miscarriage
   eventType: activity/plain
   type: checkbox

@@ -3,7 +3,9 @@ medication-intake-basic:
   label:
     en: Medication Intake Basic
     fr: Prise de médicament (simple)
-  description: Free-text medication intake with optional dose and route. Content has an 'intake' sub-object following the same structure as medication/coded-v1.
+  description:
+    en: A medication you took, entered as free text.
+    fr: Un médicament que vous avez pris, saisi en texte libre.
   streamId: medication-intake
   eventType: medication/basic
   duration:
@@ -79,13 +81,18 @@ medication-intake-basic:
             - value: subcutaneous
               label: { en: Subcutaneous (SC), fr: Sous-cutané (SC) }
   repeatable: unlimited
+  devNotes: >-
+    Content carries an `intake` sub-object with the same structure as `medication/coded-v1`,
+    including the optional dose and route.
 
 medication-intake-coded:
   version: v1
   label:
     en: Medication Intake (coded)
     fr: Prise de médicament (codée)
-  description: Search and select a coded medication from datasets service
+  description:
+    en: Search and select a coded medication.
+    fr: Recherchez et sélectionnez un médicament codé.
   streamId: medication-intake
   eventType: medication/coded-v1
   duration:
@@ -95,13 +102,17 @@ medication-intake-coded:
   type: datasource-search
   datasource: medication
   repeatable: unlimited
+  devNotes: >-
+    Populated from datasets-service.
 
 medication-prescription-coded:
   version: v1
   label:
     en: Medication Prescription (coded)
     fr: Prescription de médicament (codée)
-  description: Doctor-prescribed medication with dosage and frequency
+  description:
+    en: A medication your doctor prescribed, with dose and frequency.
+    fr: Un médicament prescrit par votre médecin, avec la dose et la fréquence.
   streamId: medication-prescription
   eventType: medication/prescription-v1
   type: datasource-search

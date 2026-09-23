@@ -17,31 +17,40 @@ it.
 
 | Category | Count | Description |
 |----------|-------|-------------|
-| Items | 92 | Health data point definitions (body, fertility, treatment, procedure, …) |
-| Streams | 12 | Hierarchical data categories |
-| Event types (HDS) | 39 | Custom Pryv event type schemas |
-| Event types (legacy) | ~340 | Standard Pryv measurement types |
+| Items | **296** (231 active, 65 deprecated) | Health data point definitions (body, fertility, lifestyle, treatment, procedure, …) |
+| Streams | **15** top-level, **276** at all levels | Hierarchical data categories |
+| Event types (HDS) | **70** | Custom Pryv event type schemas |
+| Event types (legacy) | **354** | Standard Pryv measurement types |
 | Converters | 2 | Cross-method conversion engines (cervical-fluid, mood) |
+
+> Counts are as of `3.11.0` (2026-09-23). A **deprecated** item stays in the pack as a resolvable alias
+> so consumers pinned to the old key keep working — see `AGENTS.md` on item-key renames — so "active" is
+> the number that matters when reading the vocabulary, and the total is what a consumer can still
+> resolve.
 
 ## Structure
 
 ```
 definitions/
-  items/           YAML item definitions by category
-    activity.yaml     9 physical activity items
-    body.yaml         body-weight, body-height
-    body-skin.yaml    4 skin condition items
-    body-vulva.yaml   bleeding, mucus, cervix, wetness items
-    family.yaml       children count
-    fertility.yaml    cycles, hormones, tests, sexual activity
-    function.yaml     mobility, self-care, usual activities (ICF/EQ-5D)
-    medication.yaml   basic, coded, prescription
-    nutrition.yaml    appetite
-    procedure.yaml    basic (free-text), coded (SNOMED-CT search)
-    profile.yaml      display name, DOB, sex, address
-    symptom.yaml      17 symptom items across 7 categories
-    treatment.yaml    basic (free-text), coded (SNOMED-CT search) — duration-bearing
-    wellbeing.yaml    mood (5D vectors), sex drive, mental distress, self-rated health
+  items/           YAML item definitions by category (active / total)
+    activity.yaml          9 / 18   physical activity items
+    body.yaml             99 / 99   weight, height, vitals, blood chemistry, semen
+    body-skin.yaml         4 / 4    skin condition items
+    body-vulva.yaml        9 / 12   bleeding, mucus, cervix, wetness items
+    condition.yaml         1 / 1    coded diagnosis
+    family.yaml            1 / 1    children count
+    fertility.yaml        22 / 25   cycles, hormones, tests, sexual activity
+    finding.yaml           1 / 1    coded clinical finding
+    function.yaml          3 / 3    mobility, self-care, usual activities (ICF/EQ-5D)
+    lifestyle.yaml         8 / 8    tobacco, alcohol, diet
+    medication.yaml        3 / 3    basic, coded, prescription
+    nutrition.yaml         1 / 1    appetite
+    procedure.yaml         2 / 2    basic (free-text), coded (SNOMED-CT search)
+    profile.yaml          10 / 10   display name, DOB, sex, address, reproductive stage
+    symptom.yaml          21 / 41   symptom items
+    symptom-domains.yaml  28 / 56   symptom items by body-system domain
+    treatment.yaml         2 / 2    basic (free-text), coded (SNOMED-CT search) — duration-bearing
+    wellbeing.yaml         7 / 9    mood (5D vectors), sex drive, mental distress, self-rated health
   streams/         YAML stream hierarchy definitions
   eventTypes/      JSON event type schemas (HDS + legacy Pryv types)
   converters/      Cross-method converter configurations
@@ -58,6 +67,7 @@ In-depth notes on specific subdomains live in `documentation/`:
 - `LIFESTYLE.md` — tobacco, alcohol and diet: why `lifestyle` is a top-level domain, the AUDIT-C mapping, why alcohol quantity is stored in grams of ethanol, and the per-option SNOMED tables.
 - `TREATMENT-PROCEDURE.md` — D3 mechanic: parent items (`treatment`, `procedure`) reused under descendant streams (e.g. `treatment-fertility`, `procedure-fertility`) via the `forEvent` walk-up. Treatment items carry `event.duration` (Pryv-native); procedures are point-in-time.
 - `BLOOD-CHEMISTRY.md` — blood analytes: the `body-blood` tree, why specimen is explicit in item keys, reported-unit choices (gigacount vs megacount, percentages as fractions), and what is deliberately absent (reference ranges, derived indices).
+- `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md` — the five smaller domains. `FINDING.md` records an **open question**: the `finding` root's scope is undecided, and the doc says so rather than inventing one.
 - `CUSTOM-FIELDS-AND-SYSTEM.md`, `DESIGN-NOTES.md`, `TAGS.md`
 
 ## Item Definition Format
