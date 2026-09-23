@@ -4118,9 +4118,32 @@
     },
     "streamId": "fertility-test-opk",
     "eventType": "test-result/scale",
-    "type": "number",
+    "type": "select",
+    "options": [
+      {
+        "value": -1,
+        "label": {
+          "en": "Negative",
+          "fr": "Négatif"
+        }
+      },
+      {
+        "value": 0,
+        "label": {
+          "en": "Indeterminate",
+          "fr": "Indéterminé"
+        }
+      },
+      {
+        "value": 1,
+        "label": {
+          "en": "Positive",
+          "fr": "Positif"
+        }
+      }
+    ],
     "repeatable": "any",
-    "devNotes": "Stored on `test-result/scale`: -1 negative, 0 indeterminate, 1 positive. Intermediate values carry semi-quantitative results, e.g. 0.5 for a weak positive."
+    "devNotes": "Stored on `test-result/scale`: -1 negative, 0 indeterminate, 1 positive. The three options are the human-entry surface; the eventType still admits the intermediate values in between, so a device bridge may write e.g. 0.5 for a weak positive and a reader must expect it. Was a bare `type: number` until 3.12.0, which left nothing user-facing saying what to enter once the scale was moved out of the description. (B-2026-09-23-3.)"
   },
   "fertility-test-pregnancy": {
     "version": "v1",
@@ -4134,9 +4157,32 @@
     },
     "streamId": "fertility-test-pregnancy",
     "eventType": "test-result/scale",
-    "type": "number",
+    "type": "select",
+    "options": [
+      {
+        "value": -1,
+        "label": {
+          "en": "Negative",
+          "fr": "Négatif"
+        }
+      },
+      {
+        "value": 0,
+        "label": {
+          "en": "Indeterminate",
+          "fr": "Indéterminé"
+        }
+      },
+      {
+        "value": 1,
+        "label": {
+          "en": "Positive",
+          "fr": "Positif"
+        }
+      }
+    ],
     "repeatable": "any",
-    "devNotes": "Stored on `test-result/scale`: -1 negative, 0 indeterminate, 1 positive."
+    "devNotes": "Stored on `test-result/scale`: -1 negative, 0 indeterminate, 1 positive. A home pregnancy test is read qualitatively, so unlike the OPK there is no meaningful intermediate value to offer. Was a bare `type: number` until 3.12.0. (B-2026-09-23-3.)"
   },
   "finding-coded": {
     "version": "v1",
