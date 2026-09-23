@@ -259,6 +259,33 @@ function checkItemVsEvenType (key, item, eventType) {
     }
     if (item.type === 'number') return true;
   }
+  if (item.type === 'select') {
+    // A `select` over a plain numeric eventType. The two ratio/* types above are special
+    // cases of this (their bounds are implicit in the type); everything else validates its
+    // options against the eventType's own `minimum` / `maximum`.
+    //
+    // Until 3.12.0 there was no such branch, so a numeric select fell through to the
+    // catch-all throw below and the only way to offer named numeric answers was a bare
+    // `type: number` input. That left `fertility-test-opk` and `fertility-test-pregnancy`
+    // as free number boxes on a -1/0/1 scale whose eventType publishes no labels, so
+    // nothing user-facing said what to enter. (B-2026-09-23-3.)
+    if (eventType.type !== 'number') throw new Error(`as item "${key}" is of type "select" the matching eventType must be a "number" or a "string": ` + JSON.stringify({ item, eventType }));
+    if (!Array.isArray(item.options) || item.options.length === 0) {
+      throw new Error(`item "${key}" is a "select" and must declare at least one option`);
+    }
+    for (const option of item.options) {
+      if (typeof option.value !== 'number') {
+        throw new Error(`as item "${key}" is of type "select" on a numeric eventType all option values must be numbers, check the following option: ` + JSON.stringify(option));
+      }
+      if (typeof eventType.minimum === 'number' && option.value < eventType.minimum) {
+        throw new Error(`item "${key}" option value ${option.value} is below the eventType minimum ${eventType.minimum}: ` + JSON.stringify(option));
+      }
+      if (typeof eventType.maximum === 'number' && option.value > eventType.maximum) {
+        throw new Error(`item "${key}" option value ${option.value} is above the eventType maximum ${eventType.maximum}: ` + JSON.stringify(option));
+      }
+    }
+    return true;
+  }
   if (item.type === 'number') {
     if (eventType.type !== 'number') throw new Error(`as item "${key}" is of type "number" matching eventtype should be a "number" ` + JSON.stringify({ item, eventType }));
     return true;

@@ -1,5 +1,41 @@
 # Changelog
 
+## [3.12.0] - 2026-09-23
+
+### Added: `select` works over any numeric eventType, not just the `ratio/*` pair
+
+The loader had branches for a `select` on a **string** eventType, on `ratio/generic` and on
+`ratio/proportion` — and nothing else. Any other numeric eventType fell through to the catch-all
+throw, so the only way to offer named numeric answers was a bare `type: number` box.
+
+`checkItemVsEvenType` now carries a generic branch: option values must be numbers, and each is checked
+against the eventType's own `minimum` / `maximum`. The two `ratio/*` branches are unchanged and still
+take precedence — they carry rules this one does not (the derived denominator, the non-negative
+numerator). `[NSEL-9]` and the existing `[RGEN-REJ]` tests guard against them being shadowed:
+`[NSEL-9]` covers `ratio/proportion`, while `ratio/generic` is covered by `[RGEN-REJ]`, since the
+generic branch would reject its object-typed eventType outright.
+
+### Fixed: the two home-test items are no longer bare number boxes
+
+`fertility-test-opk` and `fertility-test-pregnancy` are `test-result/scale` items on a -1 / 0 / 1
+scale. That eventType publishes **no labels**, and 3.11.0 correctly moved the scale description out of
+the item `description` under §6b — which left nothing user-facing saying what to type. Both are now
+`type: select` with Negative / Indeterminate / Positive. `BUGS.md` `B-2026-09-23-3`.
+
+**This is not a storage-identity change.** Both keep the same `streamId:eventType` pair, so every
+stored event still resolves to the same item and nothing needs migrating.
+
+**One thing to know before rendering:** `test-result/scale` admits the whole -1..1 continuum, and the
+three options are the *human-entry* surface. A device bridge does write intermediate values — the
+hds-webapp HealthKit bridge maps an "estrogen surge" to `0.5` on `fertility-test-opk` — and such a
+value matches no option.
+
+A controlled `<select>` whose value matches nothing renders **blank**, and under native form validation
+a `required` field then forces the user to overwrite the reading to submit. **`hds-forms-js` 0.19.0
+handles this**, showing an unmatched stored value as an extra read-back option; it ships alongside this
+release and consumers should take both together. A renderer that does not do this will lose those
+readings on the next edit.
+
 ## [3.11.0] - 2026-09-23
 
 ### Coherence pass — descriptions, localisation, domain docs and stale counts
