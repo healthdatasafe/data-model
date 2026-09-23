@@ -1,5 +1,55 @@
 # Changelog
 
+## [3.10.0] - 2026-09-23
+
+### Added: the `lifestyle` domain — tobacco, alcohol and diet
+
+The model had no coverage of tobacco, alcohol or diet; the only lifestyle-adjacent item was
+`nutrition-appetite`. (Other health-related behaviours were already covered — `activity-*` for physical
+activity, `fertility-sexual-activity` — this fills the three that were missing.) This adds a top-level `lifestyle` stream with 8 items across three subdomains,
+documented in [`documentation/LIFESTYLE.md`](documentation/LIFESTYLE.md).
+
+**Streams** — `lifestyle` → `lifestyle-tobacco` (Tobacco and nicotine) / `lifestyle-alcohol` /
+`lifestyle-diet`, each with one leaf stream per item. Leaf streams are what D3 walk-up and
+authorizations grant on, so a study can request drinking frequency without heavy-episode frequency.
+
+**Items**
+
+| item | eventType |
+|---|---|
+| `lifestyle-tobacco-smoking` | `lifestyle/use-status-v1` |
+| `lifestyle-tobacco-ecigarette` | `lifestyle/use-status-v1` |
+| `lifestyle-tobacco-smokeless` | `lifestyle/use-status-v1` |
+| `lifestyle-alcohol-frequency` | `lifestyle/frequency-band-v1` |
+| `lifestyle-alcohol-typical-quantity` | `mass/g` (legacy) |
+| `lifestyle-alcohol-binge-frequency` | `lifestyle/frequency-band-v1` |
+| `lifestyle-diet-pattern` | `lifestyle/diet-pattern-v1` |
+| `lifestyle-diet-restriction` | `lifestyle/diet-restriction-v1` |
+
+**Four new eventTypes**, not one per item:
+
+- `lifestyle/use-status-v1` — `never` / `former` / `current`, shared by all three tobacco items. A coded
+  status, which is the shape SNOMED and FHIR use for smoking status, not a severity ratio.
+- `lifestyle/frequency-band-v1` — the union of nine coded frequency bands. AUDIT-C Q1 and Q3 each select
+  their own five; the loader validates that item options are *in* the enum without requiring them to
+  cover it, so the subset is an item-level constraint rather than a second type. Future habitual-frequency
+  items land here too.
+- `lifestyle/diet-pattern-v1`, `lifestyle/diet-restriction-v1` — the latter an array, a complete dated
+  snapshot per event, same convention as `fertility/tracking-method-v1`.
+
+**Alcohol quantity is stored in grams of ethanol on the legacy `mass/g`.** A standard drink is 8 g in the
+UK, 10 g in Australia and France, 14 g in the US, so a stored drink count is not comparable across
+cohorts. A new lifestyle-scoped grams type would be numerically identical to `mass/g`, which is the
+equivalent-twin hazard `AGENTS.md` forbids. `mass/g` declares no minimum of its own, so the item declares
+`min: 0`; note that `hds-forms-js` does not yet enforce a published `min`.
+
+**Not in v1, deliberately:** tobacco quantity (does not generalise across the three tobacco items;
+pack-years is derived), dietary intake frequency (that is a food-frequency questionnaire, which belongs in
+a form template), and unknown / declined answers (those live on `questionnaire/answer-v1`).
+
+All SNOMED codes were verified active against a SNOMED CT International release via `reference/snomed-db`;
+several obvious candidates turned out inactive and are listed in the domain doc so they are not retried.
+
 ## [3.9.0] - 2026-09-22
 
 ### Added: the model now owns the `ratio/generic` denominator

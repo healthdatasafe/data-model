@@ -1660,6 +1660,58 @@
         "travel-timezone",
         "other"
       ]
+    },
+    "lifestyle/use-status-v1": {
+      "description": "Lifetime use status for a substance or habit: never used, used in the past, uses now. A coded status, not a severity or a quantity.",
+      "type": "string",
+      "enum": [
+        "never",
+        "former",
+        "current"
+      ]
+    },
+    "lifestyle/diet-pattern-v1": {
+      "description": "Overall dietary pattern, as a single mutually exclusive choice.",
+      "type": "string",
+      "enum": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan",
+        "other"
+      ]
+    },
+    "lifestyle/diet-restriction-v1": {
+      "description": "Foods avoided, by choice, belief or medical need. Array: several restrictions hold at once. Each event is a complete dated snapshot of the restrictions in force — one that ends simply does not appear in the next snapshot. An empty array means no restriction.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "gluten-free",
+          "lactose-free",
+          "nut-free",
+          "low-sodium",
+          "halal",
+          "kosher",
+          "other"
+        ]
+      }
+    },
+    "lifestyle/frequency-band-v1": {
+      "description": "Coded frequency band for a habitual behaviour. Bands are ranges, so no scalar encoding exists that does not invent a value the respondent never gave, and unlike ratio/proportion a frequency has no \"maximum\" anchor to normalise against. An item selects the subset of bands its instrument defines; any per-instrument score is positional over the item options and is derived on the reader side.",
+      "type": "string",
+      "enum": [
+        "never",
+        "less-than-monthly",
+        "monthly-or-less",
+        "monthly",
+        "2-4-per-month",
+        "weekly",
+        "2-3-per-week",
+        "4-plus-per-week",
+        "daily-or-almost-daily"
+      ]
     }
   },
   "extras": {

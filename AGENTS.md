@@ -4,7 +4,7 @@ This file orients future agents (Claude or others) working on the `data-model` r
 
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
-- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md` — per-domain design decisions and cross-system mappings.
+- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md` — per-domain design decisions and cross-system mappings.
 
 ---
 
@@ -33,7 +33,7 @@ The same eventType is reused by many items. Adding a new eventType is rare and n
 
 ### 4. Streams are a clinical-domain tree
 
-`body-*`, `symptom-*`, `wellbeing-*`, `activity-*`, `fertility-*`, `nutrition-*`, `medication-*`, `profile-*`, `family-*`. Mirrors body systems / function domains, close to SNOMED CT and ICF categorisations.
+`body-*`, `symptom-*`, `wellbeing-*`, `activity-*`, `fertility-*`, `nutrition-*`, `lifestyle-*`, `medication-*`, `profile-*`, `family-*`. Mirrors body systems / function domains, close to SNOMED CT and ICF categorisations.
 
 **Do not create questionnaire-branded streams** (e.g. `questionnaire-eq5d5l`). Each data point lands in its clinical-domain stream; the questionnaire's identity lives in the *form template* (a `CollectorRequest` constructed via [hds-lib-js](https://github.com/healthdatasafe/hds-lib-js)'s `appTemplates.CollectorRequest` / `CollectorSection`), not in `data-model`.
 
@@ -316,7 +316,8 @@ data-model/
 │   ├── CERVICAL-POSITION.md               # 3D vector design
 │   ├── MENSTRUAL-CYCLE.md                 # Cycle modeling
 │   ├── PHYSICAL-ACTIVITY.md               # Activity items
-│   └── SKIN.md                            # Skin observations
+│   ├── SKIN.md                            # Skin observations
+│   └── LIFESTYLE.md                       # Tobacco, alcohol, diet; AUDIT-C
 │
 ├── scripts/                               # setup / deploy shell scripts
 ├── tests/                                 # Vitest test suite

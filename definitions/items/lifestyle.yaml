@@ -1,0 +1,266 @@
+# Lifestyle items — tobacco, alcohol and diet.
+#
+# Scope, coded-option tables and the AUDIT-C scoring rule live in
+# documentation/LIFESTYLE.md. Per-option SNOMED codes are documented there
+# because `references` is item-level in this model; options carry no codes.
+
+lifestyle-tobacco-smoking:
+  version: v1
+  label:
+    en: Smoking status
+    fr: Statut tabagique
+  description:
+    en: Whether you smoke tobacco now, smoked in the past, or never have.
+    fr: Si vous fumez actuellement, si vous avez fumé par le passé, ou si vous n'avez jamais fumé.
+  streamId: lifestyle-tobacco-smoking
+  eventType: lifestyle/use-status-v1
+  type: select
+  options:
+    - value: never
+      label: { en: Never smoked, fr: N'a jamais fumé }
+    - value: former
+      label: { en: Former smoker, fr: A fumé par le passé }
+    - value: current
+      label: { en: Current smoker, fr: Fume actuellement }
+  repeatable: any
+  references:
+    snomed: "365981007"
+  devNotes: >-
+    Coded status, not a severity ratio: never / former / current is the shape SNOMED
+    and FHIR use for smoking status. It is a COARSENING of the US Core Smoking
+    Status value set, which splits current into every-day (449868002) and some-day
+    (428041000124106) and carries two unknown states. Note when exporting: `current`
+    maps to 77176002, whose SNOMED FSN is "Smoker (finding)" but which US Core
+    displays as "Smoker, current status unknown" — a US Core-aware reader will read
+    it as unknown frequency, which is accurate here, since v1 stores no tobacco
+    frequency at all. References 365981007 (Finding of tobacco smoking behavior)
+    rather than the broader 365980008 (Finding of tobacco use and exposure), which
+    also covers passive exposure.
+    Quantity is deliberately absent from v1 — cigarettes per day does not generalise
+    to the e-cigarette and smokeless siblings, and pack-years is derived, which this
+    model keeps on the reader side. Adding a quantity item later is additive;
+    shipping a wrong unit is not reversible.
+
+lifestyle-tobacco-ecigarette:
+  version: v1
+  label:
+    en: Vaping status
+    fr: Statut de vapotage
+  description:
+    en: Whether you vape now, vaped in the past, or never have.
+    fr: Si vous vapotez actuellement, si vous avez vapoté par le passé, ou si vous n'avez jamais vapoté.
+  streamId: lifestyle-tobacco-ecigarette
+  eventType: lifestyle/use-status-v1
+  type: select
+  options:
+    - value: never
+      label: { en: Never vaped, fr: N'a jamais vapoté }
+    - value: former
+      label: { en: Former user, fr: A vapoté par le passé }
+    - value: current
+      label: { en: Current user, fr: Vapote actuellement }
+  repeatable: any
+  references:
+    snomed: "722499006"
+  devNotes: >-
+    A sibling item rather than an option on lifestyle-tobacco-smoking: vaping and
+    smoking co-occur, so one exclusive select could not record both, and an
+    e-cigarette may carry nicotine without tobacco.
+
+lifestyle-tobacco-smokeless:
+  version: v1
+  label:
+    en: Smokeless tobacco use
+    fr: Consommation de tabac sans fumée
+  description:
+    en: Whether you use chewing tobacco or snus now, used it in the past, or never have.
+    fr: Si vous consommez du tabac à chiquer ou du snus actuellement, si vous en avez consommé par le passé, ou si vous n'en avez jamais consommé.
+  streamId: lifestyle-tobacco-smokeless
+  eventType: lifestyle/use-status-v1
+  type: select
+  options:
+    - value: never
+      label: { en: Never used, fr: N'a jamais consommé }
+    - value: former
+      label: { en: Former user, fr: A consommé par le passé }
+    - value: current
+      label: { en: Current user, fr: Consomme actuellement }
+  repeatable: any
+  references:
+    snomed: "713914004"
+  devNotes: >-
+    SNOMED carries no equally direct never/former pair for smokeless tobacco, so
+    those two export as the item code plus the status value.
+
+lifestyle-alcohol-frequency:
+  version: v1
+  label:
+    en: Drinking frequency
+    fr: Fréquence de consommation d'alcool
+  description:
+    en: How often you have a drink containing alcohol.
+    fr: À quelle fréquence vous buvez une boisson alcoolisée.
+  streamId: lifestyle-alcohol-frequency
+  eventType: lifestyle/frequency-band-v1
+  type: select
+  options:
+    - value: never
+      label: { en: Never, fr: Jamais }
+    - value: monthly-or-less
+      label: { en: Monthly or less, fr: Une fois par mois ou moins }
+    - value: 2-4-per-month
+      label: { en: 2 to 4 times a month, fr: 2 à 4 fois par mois }
+    - value: 2-3-per-week
+      label: { en: 2 to 3 times a week, fr: 2 à 3 fois par semaine }
+    - value: 4-plus-per-week
+      label: { en: 4 or more times a week, fr: 4 fois par semaine ou plus }
+  repeatable: any
+  references:
+    snomed: "228273003"
+  devNotes: >-
+    AUDIT-C question 1, storing the screener's own coded bands. It selects five of
+    the nine bands lifestyle/frequency-band-v1 offers; the loader validates that
+    every option is in the enum and does not require the item to cover it, which is
+    what lets one shape type serve several instruments. The AUDIT-C 0–4 item score
+    and the 0–12 total are derived on the reader side, positionally over these
+    options, consistent with this model's treatment of derived values.
+
+lifestyle-alcohol-typical-quantity:
+  version: v1
+  label:
+    en: Typical quantity
+    fr: Quantité habituelle
+  description:
+    en: How much pure alcohol you drink on a typical drinking day.
+    fr: La quantité d'alcool pur que vous buvez lors d'une journée de consommation habituelle.
+  streamId: lifestyle-alcohol-typical-quantity
+  eventType: mass/g
+  type: number
+  min: 0
+  number:
+    display:
+      suffix: { en: g, fr: g }
+  repeatable: any
+  references:
+    snomed: "896810008"
+  devNotes: >-
+    Grams of ethanol, not standard drinks: a standard drink is 8 g in the UK (one
+    unit), 10 g in Australia and France, and 14 g in the US, so storing drinks makes
+    cross-cohort comparison silently wrong. The app converts from the local standard
+    drink at entry.
+    Reuses the legacy Pryv `mass/g` rather than a new lifestyle-scoped type — a new
+    one would be numerically identical, which is the equivalence hazard AGENTS.md
+    forbids. `mass/g` itself declares no minimum, so the bound is declared here as
+    the item-level `min: 0`, which the model publishes. Renderers should enforce it;
+    hds-forms-js does not yet (`NumberInput.tsx` ignores it), so a reader should
+    still treat a negative value as invalid.
+    SNOMED 896810008 is "estimated intake of ethanol in grams in 24 hours", a daily
+    observable; this item is per typical DRINKING day, so the mapping is close but
+    not exact.
+
+lifestyle-alcohol-binge-frequency:
+  version: v1
+  label:
+    en: Heavy drinking episodes
+    fr: Épisodes de forte consommation
+  description:
+    en: How often you have six or more drinks on one occasion.
+    fr: À quelle fréquence vous buvez six verres ou plus en une seule occasion.
+  streamId: lifestyle-alcohol-binge-frequency
+  eventType: lifestyle/frequency-band-v1
+  type: select
+  options:
+    - value: never
+      label: { en: Never, fr: Jamais }
+    - value: less-than-monthly
+      label: { en: Less than monthly, fr: Moins d'une fois par mois }
+    - value: monthly
+      label: { en: Monthly, fr: Une fois par mois }
+    - value: weekly
+      label: { en: Weekly, fr: Une fois par semaine }
+    - value: daily-or-almost-daily
+      label: { en: Daily or almost daily, fr: Tous les jours ou presque }
+  repeatable: any
+  references:
+    snomed: "228326007"
+  devNotes: >-
+    AUDIT-C question 3. It selects a different five bands from the same
+    lifestyle/frequency-band-v1 than question 1 does; `streamId` is what
+    distinguishes the two, per the storage identity rule.
+    "Six or more drinks" is AUDIT-C's own wording and is kept deliberately, so this
+    item is AUDIT-C-specific: some instruments use sex-adjusted thresholds (5+ or
+    4+). A form needing different wording overrides it via
+    itemCustomizations.labels rather than forking the item.
+
+lifestyle-diet-pattern:
+  version: v1
+  label:
+    en: Dietary pattern
+    fr: Type d'alimentation
+  description:
+    en: The overall pattern of what you eat.
+    fr: Le type général de votre alimentation.
+  streamId: lifestyle-diet-pattern
+  eventType: lifestyle/diet-pattern-v1
+  type: select
+  options:
+    - value: omnivore
+      label: { en: Omnivore, fr: Omnivore }
+    - value: pescatarian
+      label: { en: Pescatarian, fr: Pescétarien }
+    - value: vegetarian
+      label: { en: Vegetarian, fr: Végétarien }
+    - value: vegan
+      label: { en: Vegan, fr: Végétalien }
+    - value: other
+      label: { en: Other, fr: Autre }
+  repeatable: any
+  references:
+    snomed: "364828006"
+  devNotes: >-
+    Mutually exclusive overall pattern; additive avoidances are recorded separately,
+    since a vegetarian who is also gluten-free needs both. Intake frequency is
+    deliberately out of scope for v1: it is where a food-frequency questionnaire
+    begins, and AGENTS.md §4 puts a questionnaire's identity in the form template,
+    not in the model. Labelled "Type d'alimentation" in French, not "Régime
+    alimentaire", which everyday French reads as a weight-loss diet.
+
+lifestyle-diet-restriction:
+  version: v1
+  label:
+    en: Dietary restrictions
+    fr: Restrictions alimentaires
+  description:
+    en: Foods you avoid, whether by choice, belief or medical need.
+    fr: Les aliments que vous évitez, par choix, par conviction ou par nécessité médicale.
+  streamId: lifestyle-diet-restriction
+  eventType: lifestyle/diet-restriction-v1
+  type: multi-select
+  options:
+    - value: gluten-free
+      label: { en: Gluten-free, fr: Sans gluten }
+    - value: lactose-free
+      label: { en: Lactose-free, fr: Sans lactose }
+    - value: nut-free
+      label: { en: Nut-free (incl. peanuts), fr: Sans fruits à coque ni arachides }
+    - value: low-sodium
+      label: { en: Low sodium, fr: Pauvre en sel }
+    - value: halal
+      label: { en: Halal, fr: Halal }
+    - value: kosher
+      label: { en: Kosher, fr: Casher }
+    - value: other
+      label: { en: Other, fr: Autre }
+  repeatable: any
+  references:
+    snomed: "364828006"
+  devNotes: >-
+    Each event is a complete dated snapshot of the restrictions in force, the same
+    convention as fertility/tracking-method-v1: a restriction that ends simply does
+    not appear in the next snapshot. An empty array is meaningful and means no
+    restriction.
+    `nut-free` is stated as including peanuts on both labels on purpose: EU allergen
+    labelling and French "fruits à coque" EXCLUDE peanuts (arachides are a separate
+    allergen), while English "nut-free" is usually read to include them. For a
+    restriction recorded by medical need that difference matters. A later split into
+    tree-nut-free and peanut-free is additive.
