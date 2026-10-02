@@ -17,13 +17,13 @@ it.
 
 | Category | Count | Description |
 |----------|-------|-------------|
-| Items | **296** (231 active, 65 deprecated) | Health data point definitions (body, fertility, lifestyle, treatment, procedure, …) |
-| Streams | **15** top-level, **276** at all levels | Hierarchical data categories |
-| Event types (HDS) | **70** | Custom Pryv event type schemas |
+| Items | **297** (232 active, 65 deprecated) | Health data point definitions (body, fertility, lifestyle, treatment, procedure, …) |
+| Streams | **16** top-level, **283** at all levels | Hierarchical data categories |
+| Event types (HDS) | **71** | Custom Pryv event type schemas |
 | Event types (legacy) | **354** | Standard Pryv measurement types |
 | Converters | 2 | Cross-method conversion engines (cervical-fluid, mood) |
 
-> Counts are as of `3.11.0` (2026-09-23). A **deprecated** item stays in the pack as a resolvable alias
+> Counts are as of `3.13.0` (2026-10-02). A **deprecated** item stays in the pack as a resolvable alias
 > so consumers pinned to the old key keep working — see `AGENTS.md` on item-key renames — so "active" is
 > the number that matters when reading the vocabulary, and the total is what a consumer can still
 > resolve.
@@ -49,6 +49,7 @@ definitions/
     profile.yaml          10 / 10   display name, DOB, sex, address, reproductive stage
     symptom.yaml          21 / 41   symptom items
     symptom-domains.yaml  28 / 56   symptom items by body-system domain
+    sync-status.yaml       1 / 1    connector status (`type: system`, not user input)
     treatment.yaml         2 / 2    basic (free-text), coded (SNOMED-CT search) — duration-bearing
     wellbeing.yaml         7 / 9    mood (5D vectors), sex drive, mental distress, self-rated health
   streams/         YAML stream hierarchy definitions
@@ -68,6 +69,7 @@ In-depth notes on specific subdomains live in `documentation/`:
 - `TREATMENT-PROCEDURE.md` — D3 mechanic: parent items (`treatment`, `procedure`) reused under descendant streams (e.g. `treatment-fertility`, `procedure-fertility`) via the `forEvent` walk-up. Treatment items carry `event.duration` (Pryv-native); procedures are point-in-time.
 - `BLOOD-CHEMISTRY.md` — blood analytes: the `body-blood` tree, why specimen is explicit in item keys, reported-unit choices (gigacount vs megacount, percentages as fractions), and what is deliberately absent (reference ranges, derived indices).
 - `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md` — the five smaller domains. `FINDING.md` records an **open question**: the `finding` root's scope is undecided, and the doc says so rather than inventing one.
+- `SYNC-STATUS.md` — connector status: the non-clinical `sync-status` root, one `role: context` leaf per connector, the `type: system` item and the `sync-status/connector-v1` eventType, and how it differs from the writer-private `sync` watermark.
 - `CUSTOM-FIELDS-AND-SYSTEM.md`, `DESIGN-NOTES.md`, `TAGS.md`
 
 ## Item Definition Format

@@ -187,6 +187,16 @@ function toBePublished () {
 }
 
 function checkItemVsEvenType (key, item, eventType) {
+  // `system` items are not user input: a machine writes a whole object (e.g. a
+  // connector's status, `sync-status/connector-v1`). There are no options or fields
+  // to reconcile, so the one rule is that the content is an object. Checked first so
+  // no scalar branch below can claim it. (site-agents#19)
+  if (item.type === 'system') {
+    if (eventType.type !== 'object') {
+      throw new Error(`as item "${key}" is of type "system" the matching eventType must be an "object": ` + JSON.stringify({ item, eventType }));
+    }
+    return true;
+  }
   // `multi-select` stores an array of chosen option values, so the matching eventType
   // must be an array whose `items.enum` covers every option (the `select` check below,
   // one level down). Checked before the scalar branches: an array eventType would

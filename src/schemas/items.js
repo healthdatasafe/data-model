@@ -127,11 +127,17 @@ const itemSchema = {
     // event content is an ARRAY of the chosen values rather than one of them. Use it
     // when several options are simultaneously true (site-agents#9/#10). Orthogonal to
     // `repeatable`, which governs how often the item is recorded over time.
+    //
+    // `system` is not an input type: the item is written by a machine (a connector) and
+    // read by apps, and consumers must skip it in pickers, forms and diaries (hds-lib
+    // exposes `isSystem`). Its eventType must be an object (checked in src/items.js).
+    // Deliberately listed here and NOT in `entryType`, which composite fields share: a
+    // composite field can never be `system`.
     type: {
       type: 'string',
       oneOf: [
         { $ref: 'defs.json#/definitions/entryType' },
-        { enum: ['composite', 'datasource-search', 'convertible', 'slider', 'multi-select'] }
+        { enum: ['composite', 'datasource-search', 'convertible', 'slider', 'multi-select', 'system'] }
       ]
     },
     variations: {

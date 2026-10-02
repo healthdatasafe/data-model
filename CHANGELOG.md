@@ -1,5 +1,55 @@
 # Changelog
 
+## [3.13.0] - 2026-10-02
+
+### Added: a connector's status, readable from the user's own account (site-agents#19)
+
+An app the user authorised (first: Cycle Intelligence) needs to show whether a connected service
+such as Mira is working — connected, needs reconnecting, last synced when — and it must read that
+from the user's account with an ordinary permission, not by calling the bridge. Until now the only
+status a bridge wrote was its resume watermark, on the bridge's **own** account, where no app can see
+it.
+
+- **New root stream `sync-status`** ("Connected services"), with one `role: context` leaf per
+  catalogue connector: `sync-status-mira`, `-tempdrop`, `-femm`, `-ryb`, `-cyclefeminin`,
+  `-healthkit`. Leaf names stand alone ("Mira connection status") because a consent screen shows the
+  leaf without its parent.
+- **New item `sync-status`** on that root, eventType `sync-status/connector-v1`, `repeatable: once`.
+  A connector places its single event on its own leaf (D3 context, as `treatment-fertility` does)
+  and updates it in place.
+- **New eventType `sync-status/connector-v1`**: a closed object with `status`
+  (`active` / `needs-reauth` / `error` / `disconnected`), `connectedAt`, `lastRunAt`, `lastSuccessAt`,
+  `syncedUntil` and `lastError { class, code?, at }`, times in Unix seconds. `lastError.code` is
+  constrained to a short operator code, so a writer cannot pass a partner's error message through. No
+  `if`/`then`: the cores compile with `ajv-draft-04`.
+
+**Privacy rule: apps request read on the leaf, never on the item or the root.** Read on
+`sync-status` is inherited by every leaf and would tell an app every service the user has connected.
+Requesting the one leaf it supports shows it that connector and nothing else.
+
+`documentation/SYNC-STATUS.md` documents the tree, the status semantics, the rules (unknown status
+renders as unknown; one event per leaf, latest wins) and how this differs from the two writer-private
+watermarks. The `sync` app-stream comment and the `sync-status/bridge` description now say so too: a
+bridge's resume watermark stays on the bridge account, and only its user-visible status goes to
+`sync-status`.
+
+### ⚠ Consumer-facing: a new item `type` value, `system`
+
+`sync-status` is the first item that is **not user input**. It carries `type: system`, a new value in
+the item `type` enum, and the loader requires a `system` item's eventType to be an object. `system` is
+an item type only, never a composite field type.
+
+**Every consumer that lists, picks, renders or maps items must skip `type: system`.** A consumer that
+switches on `type` and throws on an unknown value will break on this pack; one that renders it would
+show raw status JSON in a form or diary. The item stays fully resolvable (`forKey`, `forEvent`) and
+requestable. hds-lib exposes `HDSItemDef.isSystem` and drops system items from `getAllActive()`, which
+hides it from most pickers at once. **Deploy these before the pack is deployed** (consumers load the pack at runtime, so deploying it
+flips every live app at once): **hds-lib** (then its consumers rebuilt on it), **hds-webapp** (diary),
+**hds-forms-js** (form spec and field renderer), **doctor-dashboard**, **bridge-redcap** (field mapping)
+and **app-web-user-account** (consent row label).
+
+Counts: 297 items (232 active), 16 roots and 283 streams, 71 HDS eventTypes.
+
 ## [3.12.0] - 2026-09-23
 
 ### Added: `select` works over any numeric eventType, not just the `ratio/*` pair

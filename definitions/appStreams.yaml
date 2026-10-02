@@ -70,13 +70,19 @@ webapp-settings:
   display: system
 
 # An app syncing into the user's OWN account needs somewhere to record how far it
-# has synced and read it back next run. Bridges never hit this: a bridge owns one
-# HDS account with a stream per partner user, so its `streamUserId` is a natural
-# home for the marker (lib-bridge-js writes it there via logSyncStatus). An app
-# talking to the user's account directly has no equivalent, so every integration
-# was inventing a private convention — the Cycle Féminin PHP integration chose
-# `app-cyclefeminin-sync`. Standardising later would have forced all of them to
-# migrate. (site-agents#17)
+# has synced and read it back next run. Bridges don't use this suffix for their
+# watermark: a bridge owns one HDS account with a stream per partner user, so its
+# `streamUserId` is a natural home for the resume marker (lib-bridge-js writes it
+# there via logSyncStatus). An app talking to the user's account directly has no
+# equivalent, so every integration was inventing a private convention — the Cycle
+# Féminin PHP integration chose `app-cyclefeminin-sync`. Standardising later would
+# have forced all of them to migrate. (site-agents#17)
+#
+# This suffix is the writer's PRIVATE watermark. A connector's USER-VISIBLE status
+# (connected, needs re-authorisation, last sync) is a different thing and lives in
+# the `sync-status` stream tree (item `sync-status`, eventType
+# `sync-status/connector-v1`, one leaf per connector), where other apps can be
+# granted read access to it. See documentation/SYNC-STATUS.md.
 sync:
   suffix: sync
   eventType: sync-status/bridge
