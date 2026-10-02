@@ -1419,6 +1419,49 @@
     ]
   },
   {
+    "id": "sync-status",
+    "name": "Connected services",
+    "parentId": null,
+    "children": [
+      {
+        "id": "sync-status-mira",
+        "name": "Mira connection status",
+        "role": "context",
+        "parentId": "sync-status"
+      },
+      {
+        "id": "sync-status-tempdrop",
+        "name": "Tempdrop connection status",
+        "role": "context",
+        "parentId": "sync-status"
+      },
+      {
+        "id": "sync-status-femm",
+        "name": "FEMM connection status",
+        "role": "context",
+        "parentId": "sync-status"
+      },
+      {
+        "id": "sync-status-ryb",
+        "name": "Read Your Body connection status",
+        "role": "context",
+        "parentId": "sync-status"
+      },
+      {
+        "id": "sync-status-cyclefeminin",
+        "name": "cyclefeminin connection status",
+        "role": "context",
+        "parentId": "sync-status"
+      },
+      {
+        "id": "sync-status-healthkit",
+        "name": "Apple Health connection status",
+        "role": "context",
+        "parentId": "sync-status"
+      }
+    ]
+  },
+  {
     "id": "treatment",
     "name": "Treatment",
     "parentId": null,

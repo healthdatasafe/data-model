@@ -113,7 +113,8 @@
             "datasource-search",
             "convertible",
             "slider",
-            "multi-select"
+            "multi-select",
+            "system"
           ]
         }
       ]

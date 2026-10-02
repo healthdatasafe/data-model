@@ -8975,6 +8975,22 @@
       ]
     }
   },
+  "sync-status": {
+    "version": "v1",
+    "type": "system",
+    "label": {
+      "en": "Connected services status",
+      "fr": "État des services connectés"
+    },
+    "description": {
+      "en": "Whether your connected services are working and when they last synced.",
+      "fr": "Si vos services connectés fonctionnent et la date de leur dernière synchronisation."
+    },
+    "streamId": "sync-status",
+    "eventType": "sync-status/connector-v1",
+    "repeatable": "once",
+    "devNotes": "One event per connector leaf (D3 context sync-status-<connector>, role: context), updated in place by the connector; /connect may write `disconnected`. Apps request READ on the leaf they support (forItemKeys preRequest), never on this item, so they see only that connector. Readers treat an unknown `status` as unknown."
+  },
   "treatment-basic": {
     "version": "v1",
     "label": {
