@@ -86,8 +86,17 @@ fields accompany which status is a writer convention, not a schema rule.
 1. **Apps request READ on the leaf only, never on the item or the root.** An app asks for the leaf of
    the connector it supports (an hds-lib `forItemKeys` preRequest). Read on `sync-status` would be
    inherited by every leaf and would reveal every service the user has connected, which is not the app's
-   business. The connector's own grant likewise covers only its leaf (`manage`), so connectors are
-   isolated from each other.
+   business. The connector's own grant likewise covers only its leaf, so connectors are isolated from
+   each other. **`contribute` is the level a connector needs:** it reads, creates, updates and deletes
+   events on the leaf and nothing more; it cannot create child streams or edit the leaf. Update rights
+   do not depend on who created the event, so the connector updates in place a `disconnected` event
+   that `/connect` wrote as the user. `manage` also works and is what a CMC grant carries today
+   (bridge-mira); it only adds stream management the status writer does not use. A plain-access
+   connector lists its permissions in its catalogue entry, and the account app's `/connect` (or the
+   webapp) mints the access from them with the user's personal token, after placing the leaf under
+   `sync-status` in the tree (a missing stream named in `accesses.create` would otherwise be created
+   at the root from its `defaultName`); such a connector requests `contribute` on its leaf
+   (bridge-tempdrop).
 2. **An unknown `status` renders as unknown.** A reader that meets a value it does not know shows
    "unknown"; it never fails and never maps it onto a known value.
 3. **One event per leaf, updated in place; latest wins.** The connector updates its single event rather

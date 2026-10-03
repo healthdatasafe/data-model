@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Documentation
+
+- `SYNC-STATUS.md` rule 1: `contribute` on its leaf is the level a connector needs (events only, no
+  stream management); `manage` also works. Plain-access connectors (bridge-tempdrop) request
+  `contribute` in their catalogue `permissions`; CMC connectors keep `manage` for now.
+
 ## [3.13.0] - 2026-10-02
 
 ### Added: a connector's status, readable from the user's own account (site-agents#19)
