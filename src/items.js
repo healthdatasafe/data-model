@@ -90,7 +90,7 @@ function addItem (key, itemSrc) {
   localizeItem(['label', 'description'], item);
 
   // check schma
-  checkItem(item);
+  checkItem(item, key);
 
   // check if streamId and eventType exits
   if (!streams.streamsById[item.streamId]) {

@@ -75,7 +75,7 @@ fertility-cycles-start:
   duration:
     mandatory: false
     canBeNull: true
-    maxSeconds: 7776000 # thershold for amenorrhea  90 days
+    maxSeconds: 7776000 # threshold for amenorrhea: 90 days
   description:
     en: The first day of full bleeding (not just spotting), which starts a new cycle.
     fr: Le premier jour de vraies règles (pas de simples pertes), qui marque le début d'un nouveau cycle.
@@ -95,7 +95,7 @@ fertility-cycles-start:
 fertility-cycles-period-end:
   version: temporary
   label:
-    en: End of period.
+    en: End of period
     fr: Fin des règles
   description:
     en: Last day of your period.

@@ -2,6 +2,27 @@
 
 ## [Unreleased]
 
+## [3.15.0] - 2026-10-07
+
+### Changed: `item.json` declares `references` and `referenceRange`
+
+166 items carry `references` and 8 carry `referenceRange`, but the published item schema never
+declared either. Both are now declared with the shape the items use: `references` maps a code system
+(`snomed`, `loinc`, `icf`, `icd10`, …) to one code or a list of codes; `referenceRange` is `null` or
+`{ source, lowerLimit, upperLimit, units, population }`. Every item in the pack already matches; the
+only `pack.json` change in this release is the `fertility-cycles-period-end` label below.
+
+### Fixed
+
+- The loader refuses an item with an unknown top-level property (a misspelt key used to pass
+  silently), and a schema error names the item and reads as text instead of `[object Object]`.
+- `fertility-cycles-period-end` label: "End of period." → "End of period".
+- README item example: it mixed `eventType` with `variations` and had no `version`, so the loader
+  rejected it. A test now runs it through the schema. `AGENTS.md`: `inputs.yaml` is a draft, not
+  loaded by the build.
+- Dev dependencies: mocha 10 → 12 (drops chokidar 3 and its vulnerable `braces`), `brace-expansion`
+  patched in range (Dependabot). `npm audit`: 0.
+
 ## [3.14.0] - 2026-10-07
 
 ### Changed: `eventTypes-legacy.json` mirrors Pryv's dictionary 1.1.3

@@ -78,13 +78,13 @@ Each item defines a health data point with enough information for storage, displ
 
 ```yaml
 body-weight:
+  version: v1
   label:
     en: Body Weight
     fr: Poids corporel
   description:
     en: Measured body weight
   streamId: body-weight
-  eventType: mass/kg
   type: number
   repeatable: unlimited
   variations:

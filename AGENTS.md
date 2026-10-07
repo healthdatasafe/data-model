@@ -315,7 +315,7 @@ data-model/
 │   ├── conversions/                       # Unit conversions (mass, length, temperature)
 │   ├── settings/settings.yaml             # HDS user-settings definitions
 │   ├── hl7-defaults/category.yaml         # FHIR default categories
-│   └── inputs.yaml                        # Input-type coercion map
+│   └── inputs.yaml                        # Draft input-type coercion map, NOT loaded by the build
 │
 ├── src/
 │   ├── items.js                           # Loader + checkItemVsEvenType validator

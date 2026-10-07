@@ -103,6 +103,32 @@ const itemSchema = {
       type: 'string',
       nullable: true
     },
+    // Codes for the item's concept, per code system (snomed, loinc, icf, icd10, …):
+    // one code or a list of codes.
+    references: {
+      type: 'object',
+      nullable: false,
+      additionalProperties: {
+        anyOf: [
+          { type: 'string' },
+          { type: 'array', items: { type: 'string' } }
+        ]
+      }
+    },
+    // Population reference interval for a measured value (e.g. WHO-2021 semen
+    // analysis lower limits). `null` states that no reference range applies.
+    referenceRange: {
+      type: 'object',
+      nullable: true,
+      properties: {
+        source: { type: 'string' },
+        lowerLimit: { type: 'number', nullable: true },
+        upperLimit: { type: 'number', nullable: true },
+        units: { type: 'string' },
+        population: { type: 'string' }
+      },
+      additionalProperties: false
+    },
     reminder: {
       type: 'object',
       nullable: true,
@@ -337,8 +363,17 @@ const itemSchema = {
     }
   ],
   required: ['version', 'label', 'description', 'streamId', 'type', 'repeatable']
-  // additionalProperties: false // find a way to check no additional properties have been induced
+  // No `additionalProperties: false` here: the type-specific properties are declared
+  // in the `allOf` branches, which draft-07 does not see from the top level. Unknown
+  // keys are refused by `checkItem` instead, against `knownItemProperties`.
 };
+
+// Every top-level property an item may carry: the common ones plus those of each
+// type-specific branch.
+const knownItemProperties = new Set([
+  ...Object.keys(itemSchema.properties),
+  ...itemSchema.allOf.flatMap((branch) => Object.keys(branch.then.properties || {}))
+]);
 
 const ajv = new Ajv({
   schemas: [itemSchema, defsSchema],
@@ -346,12 +381,13 @@ const ajv = new Ajv({
 });
 const validateItem = ajv.getSchema('https://model.datasafe.dev/json-schemas/item.json');
 
-function checkItem (item) {
-  const valid = validateItem(item);
-  if (!valid) {
-    console.log(item);
-    console.log(validateItem.errors);
-    throw new Error(validateItem.errors);
+function checkItem (item, key = 'item') {
+  const unknown = Object.keys(item).filter((p) => !knownItemProperties.has(p));
+  if (unknown.length > 0) {
+    throw new Error(`Item "${key}" has unknown properties: ${unknown.join(', ')}`);
+  }
+  if (!validateItem(item)) {
+    throw new Error(`Item "${key}" is invalid: ${ajv.errorsText(validateItem.errors, { dataVar: key })}`);
   }
 }
 

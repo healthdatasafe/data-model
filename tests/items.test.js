@@ -42,6 +42,48 @@ describe('[ITMP] repeatable value validation', () => {
   });
 });
 
+describe('[ITMK] item properties (B-2026-10-05-12)', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const YAML = require('yaml');
+  const { checkItem } = require('../src/schemas/items');
+
+  const base = {
+    version: 'v1',
+    label: { en: 'Test' },
+    description: { en: 'Test' },
+    streamId: 'test-stream',
+    eventType: 'note/txt',
+    type: 'text',
+    repeatable: 'any'
+  };
+
+  it('[ITMK-1] refuses an unknown top-level property, naming the item and the key', () => {
+    assert.throws(() => checkItem({ ...base, refrences: { snomed: '1' } }, 'test-item'),
+      /Item "test-item" has unknown properties: refrences/);
+  });
+
+  it('[ITMK-2] accepts references as a code or a list of codes, and referenceRange', () => {
+    checkItem({ ...base, references: { snomed: '1', loinc: ['2', '3'] } });
+    checkItem({ ...base, referenceRange: null });
+    checkItem({ ...base, referenceRange: { source: 'WHO-2021', lowerLimit: 0.3, upperLimit: null, units: 'ratio', population: 'p' } });
+    assert.throws(() => checkItem({ ...base, references: { snomed: 1 } }));
+  });
+
+  it('[ITMK-3] a schema error reads as text, not [object Object]', () => {
+    assert.throws(() => checkItem({ ...base, repeatable: 'many' }, 'test-item'),
+      (err) => err.message.startsWith('Item "test-item" is invalid: ') && !err.message.includes('[object Object]'));
+  });
+
+  it('[ITMK-4] the README item example passes the schema', () => {
+    const readme = fs.readFileSync(path.join(__dirname, '../README.md'), 'utf8');
+    const block = readme.split('## Item Definition Format')[1].match(/```yaml\n([\s\S]*?)```/)[1];
+    const [[key, item]] = Object.entries(YAML.parse(block));
+    checkItem(item, key);
+    assert.ok(!(item.eventType && item.variations), 'the example must not mix eventType and variations');
+  });
+});
+
 describe('[ITMM] multi-select cardinality (site-agents#9 / #10)', () => {
   const { itemsById, checkItemVsEvenType } = require('../src/items');
   const { eventTypesById } = require('../src/eventTypes');
