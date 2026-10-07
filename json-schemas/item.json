@@ -65,6 +65,47 @@
       "type": "string",
       "nullable": true
     },
+    "references": {
+      "type": "object",
+      "nullable": false,
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "referenceRange": {
+      "type": "object",
+      "nullable": true,
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "lowerLimit": {
+          "type": "number",
+          "nullable": true
+        },
+        "upperLimit": {
+          "type": "number",
+          "nullable": true
+        },
+        "units": {
+          "type": "string"
+        },
+        "population": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
     "reminder": {
       "type": "object",
       "nullable": true,

@@ -3437,7 +3437,7 @@
   "fertility-cycles-period-end": {
     "version": "temporary",
     "label": {
-      "en": "End of period.",
+      "en": "End of period",
       "fr": "Fin des règles"
     },
     "description": {

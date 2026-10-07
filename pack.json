@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-10-07T09:28:27.042Z",
+  "publicationDate": "2026-10-07T15:22:23.722Z",
   "streams": [
     {
       "id": "activity",
@@ -4958,7 +4958,7 @@
     "fertility-cycles-period-end": {
       "version": "temporary",
       "label": {
-        "en": "End of period.",
+        "en": "End of period",
         "fr": "Fin des règles"
       },
       "description": {
