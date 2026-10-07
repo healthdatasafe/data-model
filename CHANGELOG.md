@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+## [3.14.0] - 2026-10-07
+
+### Changed: `eventTypes-legacy.json` mirrors Pryv's dictionary 1.1.3
+
+Source: `pryv/data-types` `dist/flat.json` at commit **`5ecdc6c`** (merge of `a8167e8`), fetched
+**2026-10-07**, byte-verified against both `https://pryv.github.io/event-types/flat.json` and
+`https://api.pryv.com/event-types/flat.json`. **Additive, no migration:** 0 types added, 0 removed,
+`extras` unchanged; four CMC types gain optional properties.
+
+- `consent/request-cmc`, `consent/scope-request-cmc`, `consent/scope-update-cmc`: permission entries
+  accept an optional boolean `optIn` (the consent UI opens the entry unselected; display-only, not to
+  be combined with `mandatory`).
+- `consent/accept-cmc`: new optional `features` (`chat`, `systemMessaging`: boolean or null), the
+  relationship's channels as the platform reads them; `extra` is now described as deprecated and
+  ignored by the platform (still accepted, so stored events stay valid).
+
+The cores load their dictionary from the same URL (`service.eventTypes`); this brings the mirror
+back in step with it.
+
 ### Documentation
 
 - `SYNC-STATUS.md` rule 1: `contribute` on its leaf is the level a connector needs (events only, no
