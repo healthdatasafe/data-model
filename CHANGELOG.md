@@ -7,7 +7,8 @@
 ### Added: `consents` root, `consent-record` item, `consent/record-v1` eventType (plan 91)
 
 The account-level consent record lives in the user's own account: one append-only event per act
-(`given`, `withdrawn`, `acknowledged`, `lapsed`) on one version of one legal document (`terms`,
+(`given`, `acknowledged`, `lapsed`; `withdrawn` is in the enum but reserved: withdrawing the health-data
+consent is account deletion and writes nothing) on one version of one legal document (`terms`,
 `privacy`, `health-processing`, `us-chd-privacy`, `us-chd-consent`). `consent-record` is a `system`
 item on a new `consents` root that no app requests; the account app writes it with the personal
 token. Closed eventType in the draft-04 subset, no free text; like every HDS type the schema is

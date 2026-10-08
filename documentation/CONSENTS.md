@@ -36,13 +36,13 @@ Closed object (`additionalProperties: false`). One event per act.
 | field | required | meaning |
 |---|---|---|
 | `documentId` | yes | Which document: `terms`, `privacy`, `health-processing`, `us-chd-privacy`, `us-chd-consent` today. Pattern `^[a-z0-9][a-z0-9-]{0,63}$`, so a new document needs no model release. |
-| `version` | yes | The version of that document the act refers to, as published in the website's legal manifest (`1.0`, `1.2`, `2.0.1`; the manifest's versions must match the pattern `^[0-9]{1,4}(\.[0-9]{1,4}){0,2}$`). A `withdrawn` or `lapsed` act carries the version of the `given` it ends. |
+| `version` | yes | The version of that document the act refers to, as published in the website's legal manifest (`1.0`, `1.2`, `2.0.1`; the manifest's versions must match the pattern `^[0-9]{1,4}(\.[0-9]{1,4}){0,2}$`). A `lapsed` (or `withdrawn`) act carries the version of the `given` it ends. |
 | `action` | yes | `given`, `withdrawn`, `acknowledged`, `lapsed`: see below. |
 | `locale` | | The language the text was shown in (`en`, `fr`, `es`, `en-US`). |
 | `url` | | The URL the document was published at when the act happened. Informational: the website's URLs are not versioned, so what version N said is evidenced by the version and the published-documents register, not by this URL. |
 | `residence` | | The residence the user declared at that moment: `{ country, state? }`. `country` is the closed set of jurisdictions the signup distinguishes, not an ISO list: today `US` or `other` ("none of those offered at the time"). The set grows by adding codes (`CH`, `EU`, ...), never by re-reading `other`. `state` is a two-letter US state code, given with `US` (a writer convention; the schema stays shape-only). Nothing more is collected than the US layer needs. |
 | `surface` | | Where the act happened: `signup`, `sign-in` (the prompt shown at sign-in: a first consent for an older account, or a new version after a material change), `center` (the Privacy & Consents area of the account). |
-| `method` | | `checkbox` (a box ticked) or `button` (an explicit button, such as a withdrawal). Omitted on `lapsed`, which the app derives from a residence change. |
+| `method` | | `checkbox` (a box ticked) or `button` (an explicit button, as in the Privacy & Consents center). Omitted on `lapsed`, which the app derives from a residence change. |
 
 ### Actions
 
@@ -50,11 +50,16 @@ Closed object (`additionalProperties: false`). One event per act.
 |---|---|---|
 | `given` | `terms`, `health-processing`, `us-chd-consent` | The user accepted or consented to this version. |
 | `acknowledged` | `privacy`, `us-chd-privacy` | The user was shown this version of a notice and confirmed having read it. A notice is not consented to. |
-| `withdrawn` | `health-processing`, `us-chd-consent` | The user withdrew the consent. For these two documents this leads to export, then account deletion. |
+| `withdrawn` | (reserved) | The user withdrew a consent and the account stays. Not written for `health-processing` or `us-chd-consent`: withdrawing those **is** deleting the account (below). |
 | `lapsed` | `us-chd-consent` | The user declared a residence outside the United States; the US layer stops applying. Declaring US residence again requires a new `given`. |
 
-A refused material change records nothing: it leads to export, then account deletion. "Superseded" is a state derived
-from the manifest, not an act.
+**Withdrawing the health-data consent is deleting the account** (decision, plan 91, 2026-10-08): no one can withdraw
+`health-processing` and keep their data, so there is no "withdrawn but still holding data" state to record. The
+account app's withdraw action leads to export, then account deletion, and writes nothing; the deletion removes the
+record with everything else. The same holds for `us-chd-consent` while the user declares US residence (a user who
+moves away declares the new residence, which records `lapsed`). A refused material change likewise records nothing
+and leads to export, then deletion. `withdrawn` stays in the enum for a future consent whose withdrawal leaves the
+account in place. "Superseded" is a state derived from the manifest, not an act.
 
 No free text anywhere: the record carries identifiers, versions and enumerations only.
 
@@ -65,6 +70,11 @@ the core) and `createdBy` (the personal access of the account app session). Writ
 act, and it should match `created`; a record whose `modified` differs from `created` was edited after the act, and the
 center may show it as such. What version N of a document said is evidenced by the published-documents register in
 compliance, so no hash of the text is stored here.
+
+A withdrawal of `health-processing` leaves no event: it is the deletion of the account. Evidence that the deletion was
+requested and honoured has to live outside the user's account (a platform-side deletion log holding no health data),
+never in this record, which disappears with the account. Before deleting, the user can export their data, consent
+history included.
 
 Residence is a snapshot taken on acts only: a change of residence with no consent effect (one US state to another,
 `other` to `other`) leaves no record. If that is ever needed, a `documentId: residence` with an action `declared` is

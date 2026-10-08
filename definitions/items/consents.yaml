@@ -6,14 +6,15 @@ consent-record:
     fr: Historique des consentements
     es: Registro de consentimientos
   description:
-    en: The consents you gave or withdrew, and when.
-    fr: Les consentements que vous avez donnés ou retirés, et quand.
-    es: Los consentimientos que diste o retiraste, y cuándo.
+    en: The consents you gave and the notices you acknowledged, and when.
+    fr: Les consentements donnés et les notices prises en compte, et quand.
+    es: Los consentimientos dados y los avisos reconocidos, y cuándo.
   streamId: consents
   eventType: consent/record-v1
   repeatable: unlimited
   devNotes: >-
     Append-only history of the account-level consents (plan 91): one event per act, never updated in place; the
     current state of a document is its latest event. Written by the account app with the personal token at
-    signup, at re-consent and from the Privacy & Consents center. No app requests access to this stream. See
+    signup, at re-consent and from the Privacy & Consents center. Withdrawing `health-processing` (or `us-chd-consent`
+    under US residence) is account deletion: export, then delete, no event written; `withdrawn` is reserved. No app requests access to this stream. See
     documentation/CONSENTS.md.
