@@ -109,8 +109,9 @@ fields accompany which status is a writer convention, not a schema rule.
    never carries forward a field it no longer asserts. A fresh connect starts a new content: new
    `connectedAt`, no `lastError` from the previous connection.
 
-The `status` enum is closed and validated by the cores: adding a value later means the cores' pack must
-be updated before any writer emits it.
+The `status` enum is closed in the schema, which is advisory: the cores accept any content for HDS types
+(AGENTS.md, "What the cores actually enforce"), so a new value is a model release, and readers treat a value
+they do not know as unknown (rule 2).
 
 ## Relation to the other sync streams
 

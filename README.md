@@ -69,6 +69,7 @@ In-depth notes on specific subdomains live in `documentation/`:
 - `TREATMENT-PROCEDURE.md` — D3 mechanic: parent items (`treatment`, `procedure`) reused under descendant streams (e.g. `treatment-fertility`, `procedure-fertility`) via the `forEvent` walk-up. Treatment items carry `event.duration` (Pryv-native); procedures are point-in-time.
 - `BLOOD-CHEMISTRY.md` — blood analytes: the `body-blood` tree, why specimen is explicit in item keys, reported-unit choices (gigacount vs megacount, percentages as fractions), and what is deliberately absent (reference ranges, derived indices).
 - `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md` — the five smaller domains. `FINDING.md` records an **open question**: the `finding` root's scope is undecided, and the doc says so rather than inventing one.
+- `CONSENTS.md` — the account-level consent record: the non-clinical `consents` root, the `type: system` item `consent-record` and the `consent/record-v1` eventType (plan 91).
 - `SYNC-STATUS.md` — connector status: the non-clinical `sync-status` root, one `role: context` leaf per connector, the `type: system` item and the `sync-status/connector-v1` eventType, and how it differs from the writer-private `sync` watermark.
 - `CUSTOM-FIELDS-AND-SYSTEM.md`, `DESIGN-NOTES.md`, `TAGS.md`
 

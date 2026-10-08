@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+## [3.16.0] - 2026-10-08
+
+### Added: `consents` root, `consent-record` item, `consent/record-v1` eventType (plan 91)
+
+The account-level consent record lives in the user's own account: one append-only event per act
+(`given`, `withdrawn`, `acknowledged`, `lapsed`) on one version of one legal document (`terms`,
+`privacy`, `health-processing`, `us-chd-privacy`, `us-chd-consent`). `consent-record` is a `system`
+item on a new `consents` root that no app requests; the account app writes it with the personal
+token. Closed eventType in the draft-04 subset, no free text; like every HDS type the schema is
+advisory (the cores accept any content for it). See `documentation/CONSENTS.md`.
+
+### Fixed
+
+- `SYNC-STATUS.md` said the cores validate the `sync-status/connector-v1` enum; they validate no HDS
+  type. Reworded.
+
 ## [3.15.0] - 2026-10-07
 
 ### Changed: `item.json` declares `references` and `referenceRange`

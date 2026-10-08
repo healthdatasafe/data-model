@@ -4,7 +4,7 @@ This file orients future agents (Claude or others) working on the `data-model` r
 
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
-- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
+- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
 
 ---
 
@@ -35,7 +35,9 @@ The same eventType is reused by many items. Adding a new eventType is rare and n
 
 `body-*`, `symptom-*`, `wellbeing-*`, `activity-*`, `fertility-*`, `nutrition-*`, `lifestyle-*`, `medication-*`, `profile-*`, `family-*`. Mirrors body systems / function domains, close to SNOMED CT and ICF categorisations.
 
-**One non-clinical root besides `profile`: `sync-status`** (3.13.0). It holds a connector's user-visible status — one `type: system` item, `sync-status`, and one `role: context` leaf per connector (`sync-status-mira`, …). Partner-named *streams* are accepted there because the leaves are D3 context markers, not vocabulary; partner-named *item keys* stay forbidden (§1). See [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
+**Two non-clinical roots besides `profile`: `sync-status` (3.13.0) and `consents` (plan 91).** `sync-status` holds a connector's user-visible status — one `type: system` item, `sync-status`, and one `role: context` leaf per connector (`sync-status-mira`, …). Partner-named *streams* are accepted there because the leaves are D3 context markers, not vocabulary; partner-named *item keys* stay forbidden (§1). See [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
+
+`consents` holds the account-level consent record: one `type: system` item, `consent-record`, append-only, written by the account app with the personal token and requested by no app. See [`documentation/CONSENTS.md`](documentation/CONSENTS.md).
 
 **Do not create questionnaire-branded streams** (e.g. `questionnaire-eq5d5l`). Each data point lands in its clinical-domain stream; the questionnaire's identity lives in the *form template* (a `CollectorRequest` constructed via [hds-lib-js](https://github.com/healthdatasafe/hds-lib-js)'s `appTemplates.CollectorRequest` / `CollectorSection`), not in `data-model`.
 
@@ -343,7 +345,8 @@ data-model/
 │   ├── FINDING.md                         # Coded findings — ROOT SCOPE UNDECIDED
 │   ├── NUTRITION.md                       # Nutritional state vs lifestyle-diet
 │   ├── FAMILY.md                          # Household / family-structure facts
-│   └── SYNC-STATUS.md                     # Connector status: sync-status root, `type: system` item
+│   ├── SYNC-STATUS.md                     # Connector status: sync-status root, `type: system` item
+│   └── CONSENTS.md                        # Account-level consent record: consents root, `type: system` item
 │
 ├── scripts/                               # setup / deploy shell scripts
 ├── tests/                                 # Vitest test suite
@@ -453,8 +456,8 @@ Commonly-cited scales / terminologies for mapping new items:
 
 ## `type: system` items
 
-An item of `type: system` (3.13.0) is **written by a machine and never entered by a person** — today only
-`sync-status`, a connector's status. Its eventType must be an object (`src/items.js`, tests `[SYNC]`), and
+An item of `type: system` (3.13.0) is **written by a machine and never entered by a person** — today
+`sync-status` (a connector's status) and `consent-record` (the account-level consent record). Its eventType must be an object (`src/items.js`, tests `[SYNC]`), and
 `system` is an item type only: it is not in `entryType`, so a composite field can never be `system`.
 
 **Consumers skip it wherever a person picks or enters data** (pickers, form builders, forms, diaries) and
