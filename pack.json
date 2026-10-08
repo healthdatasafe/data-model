@@ -1,5 +1,5 @@
 {
-  "publicationDate": "2026-10-07T15:22:23.722Z",
+  "publicationDate": "2026-10-08T21:45:00.754Z",
   "streams": [
     {
       "id": "activity",
@@ -746,6 +746,11 @@
     {
       "id": "condition",
       "name": "Condition",
+      "parentId": null
+    },
+    {
+      "id": "consents",
+      "name": "Privacy and consents",
       "parentId": null
     },
     {
@@ -4822,6 +4827,24 @@
       "type": "datasource-search",
       "datasource": "condition",
       "repeatable": "unlimited"
+    },
+    "consent-record": {
+      "version": "v1",
+      "type": "system",
+      "label": {
+        "en": "Consent record",
+        "fr": "Historique des consentements",
+        "es": "Registro de consentimientos"
+      },
+      "description": {
+        "en": "The consents you gave and the notices you acknowledged, and when.",
+        "fr": "Les consentements donnés et les notices prises en compte, et quand.",
+        "es": "Los consentimientos dados y los avisos reconocidos, y cuándo."
+      },
+      "streamId": "consents",
+      "eventType": "consent/record-v1",
+      "repeatable": "unlimited",
+      "devNotes": "Append-only history of the account-level consents (plan 91): one event per act, never updated in place; the current state of a document is its latest event. Written by the account app with the personal token at signup, at re-consent and from the Privacy & Consents center. Withdrawing `health-processing` (or `us-chd-consent` under US residence) is account deletion: export, then delete, no event written; `withdrawn` is reserved. No app requests access to this stream. See documentation/CONSENTS.md."
     },
     "family-children-count": {
       "version": "temporary",
@@ -15578,6 +15601,79 @@
           }
         }
       },
+      "consent/record-v1": {
+        "description": "One account-level consent act on one version of one legal document.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "documentId",
+          "version",
+          "action"
+        ],
+        "properties": {
+          "documentId": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^[0-9]{1,4}(\\.[0-9]{1,4}){0,2}$"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "given",
+              "withdrawn",
+              "acknowledged",
+              "lapsed"
+            ]
+          },
+          "locale": {
+            "type": "string",
+            "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048
+          },
+          "residence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "country"
+            ],
+            "properties": {
+              "country": {
+                "type": "string",
+                "enum": [
+                  "US",
+                  "other"
+                ]
+              },
+              "state": {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$"
+              }
+            }
+          },
+          "surface": {
+            "type": "string",
+            "enum": [
+              "signup",
+              "sign-in",
+              "center"
+            ]
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "checkbox",
+              "button"
+            ]
+          }
+        }
+      },
       "temperature/disturbance-v1": {
         "description": "Reason a basal body temperature reading is unreliable ('parasitic temperature'). Qualifier for a co-occurring body-temperature-basal event: sympto-thermal rules EXCLUDE disturbed readings from the coverline and temperature-shift computation, so a consumer charting BBT must be able to see the flag. Absence of this event means the reading was not flagged, not that it was confirmed reliable.",
         "type": "string",
@@ -17781,11 +17877,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-07-06T13:36:56.618Z"
+      "updatedAt": "2026-06-29T08:13:58.849Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-05-29T09:51:26.178Z"
+      "updatedAt": "2026-05-22T11:53:38.813Z"
     }
   },
   "settings": {

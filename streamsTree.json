@@ -747,6 +747,11 @@
     "parentId": null
   },
   {
+    "id": "consents",
+    "name": "Privacy and consents",
+    "parentId": null
+  },
+  {
     "id": "family",
     "name": "Family",
     "parentId": null,

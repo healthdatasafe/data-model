@@ -4412,6 +4412,79 @@
         }
       }
     },
+    "consent/record-v1": {
+      "description": "One account-level consent act on one version of one legal document.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "documentId",
+        "version",
+        "action"
+      ],
+      "properties": {
+        "documentId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]{1,4}(\\.[0-9]{1,4}){0,2}$"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "given",
+            "withdrawn",
+            "acknowledged",
+            "lapsed"
+          ]
+        },
+        "locale": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2048
+        },
+        "residence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "country"
+          ],
+          "properties": {
+            "country": {
+              "type": "string",
+              "enum": [
+                "US",
+                "other"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            }
+          }
+        },
+        "surface": {
+          "type": "string",
+          "enum": [
+            "signup",
+            "sign-in",
+            "center"
+          ]
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "checkbox",
+            "button"
+          ]
+        }
+      }
+    },
     "temperature/disturbance-v1": {
       "description": "Reason a basal body temperature reading is unreliable ('parasitic temperature'). Qualifier for a co-occurring body-temperature-basal event: sympto-thermal rules EXCLUDE disturbed readings from the coverline and temperature-shift computation, so a consumer charting BBT must be able to see the flag. Absence of this event means the reading was not flagged, not that it was confirmed reliable.",
       "type": "string",
