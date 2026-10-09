@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [3.17.0] - 2026-10-09
+
+### Changed: `eventTypes-legacy.json` mirror refreshed to pryv/data-types 1.2.1
+
+Upstream commit `40a61450` (2026-10-08, "verification/email and email/string descriptions … version 1.2.1"), fetched
+2026-10-09 from `https://pryv.github.io/event-types/flat.json` (`api.pryv.com/event-types/flat.json` now 301-redirects
+there, so the two published URLs serve one file). Byte-faithful copy. 354 → 356 types: **added** `email/string` (the
+account email address) and `verification/email` (read-only, server-derived proof state of the account email:
+`verified`, `method`, `verifiedAt`; open-pryv.io rc.44 returns it with `:system:email`); nothing removed or changed;
+`extras` / `sets` unchanged; `classes` gains `email` and `verification` (66 → 68; classes are not part of the published
+pack). No `$ref`, no key shared with `eventTypes-hds.json`. 171 tests pass. Fable-reviewed (approved).
+
 ## [3.16.0] - 2026-10-08
 
 ### Added: `consents` root, `consent-record` item, `consent/record-v1` eventType (plan 91)

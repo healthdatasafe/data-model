@@ -156,7 +156,7 @@ describe('[ETLM] eventTypes-legacy.json upstream mirror', () => {
     // (jsonValidator.ts createValidator builds a fresh ajv per schema), so a "#/types/..." pointer
     // cannot resolve and the compile throws. medication/prescription-v1 shipped that way in
     // be77036; it went unnoticed because nothing compiles the HDS schemas yet (see [ETLM-AJV-2]).
-    // Upstream's 354 types contain no $ref at all. Inline the shape instead.
+    // Upstream's 356 types contain no $ref at all. Inline the shape instead.
     // Walks the schema looking for an actual `$ref` KEY, rather than matching the serialised text.
     // A substring search over JSON.stringify cannot tell a key from a value, so it also fires on a
     // string that merely equals `$ref`: a data field named `$ref` listed in `required`, or such a

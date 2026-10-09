@@ -308,7 +308,7 @@ data-model/
 │   ├── streams/*.yaml                     # Clinical-domain tree (16 top-level roots, 283 streams in all)
 │   ├── eventTypes/
 │   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (71)
-│   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (354) — see below
+│   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (356) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)
 │   │   └── mood/                          # 5D vector converter (5 methods)
@@ -396,7 +396,7 @@ hand-edited and must not be. HDS additions go in `eventTypes-hds.json`, always.
 - **Never use `$ref` in any event type schema.** Schemas are compiled one at a time with no
   dictionary root, so a `#/types/...` pointer cannot resolve and the compile throws. Inline the
   shape instead, even when it duplicates a standalone type, and add a test pinning the copy to its
-  original. Upstream's 354 types contain no `$ref` at all. See the `medication/prescription-v1`
+  original. Upstream's 356 types contain no `$ref` at all. See the `medication/prescription-v1`
   entry in CHANGELOG 3.7.0.
 
 **What the cores actually enforce.** A core validates content only for types in *Pryv's* dictionary;
