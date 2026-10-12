@@ -23,6 +23,23 @@ if [ ! -d dist/.git ]; then
   exit 1
 fi
 
+# The pack carries package.json's version: refuse to publish build inputs that
+# changed after the last version bump under that same version. Any change to the
+# `"version":` line counts as the bump, a revert included; the live-pack check
+# after the build is what catches a reused or lowered version.
+GUARDED_PATHS=(definitions src package.json package-lock.json)
+BUMP_COMMIT="$(git log -1 --format=%H -G'"version":' -- package.json)"
+if [ -z "$BUMP_COMMIT" ]; then
+  echo "ERROR: no version-bump commit found in history (shallow clone?). Refusing to deploy."
+  exit 1
+fi
+if ! git diff --quiet "$BUMP_COMMIT" HEAD -- "${GUARDED_PATHS[@]}"; then
+  echo "ERROR: build inputs changed since the last version bump ($(git rev-parse --short "$BUMP_COMMIT"))."
+  echo "       Bump package.json's version (and CHANGELOG) before deploying: the pack publishes it."
+  git diff --stat "$BUMP_COMMIT" HEAD -- "${GUARDED_PATHS[@]}"
+  exit 1
+fi
+
 COMMIT_SHORT="$(git rev-parse --short HEAD)"
 COMMIT_FULL="$(git rev-parse HEAD)"
 echo "Deploying commit $COMMIT_SHORT ..."
@@ -110,6 +127,25 @@ echo "Tests OK."
 echo "Building..."
 npm run build
 echo "Build OK."
+
+# One version, one content: dist/ was reset to origin/gh-pages above, so its
+# HEAD holds the live pack. Refuse a new pack that keeps the live version with
+# different content, or carries a lower version. Skipped while the live pack has
+# no version (packs before 3.18.0).
+if ! git -C dist show HEAD:pack.json | node -e '
+const strip = (p) => { const { version, publicationDate, ...rest } = p; return JSON.stringify(rest); };
+const live = JSON.parse(require("fs").readFileSync(0, "utf8"));
+const next = JSON.parse(require("fs").readFileSync("dist/pack.json", "utf8"));
+if (!/^\d+\.\d+\.\d+$/.test(next.version || "")) { console.error("ERROR: pack version \"" + next.version + "\" is not x.y.z."); process.exit(1); }
+if (!live.version) process.exit(0);
+const cmp = (a, b) => { const x = a.split(".").map(Number), y = b.split(".").map(Number); for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] - y[i]; return 0; };
+const c = cmp(next.version, live.version);
+if (c < 0) { console.error("ERROR: version " + next.version + " is lower than the live " + live.version + "."); process.exit(1); }
+if (c === 0 && strip(next) !== strip(live)) { console.error("ERROR: the pack content changed but the version is still the live " + live.version + ". Bump it."); process.exit(1); }
+'; then
+  echo "Refusing to deploy."
+  exit 1
+fi
 
 # Sanity-check build output before committing — a silent build failure that
 # emptied dist/ but produced nothing must not be committed

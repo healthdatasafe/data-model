@@ -548,7 +548,7 @@ This repo is the source of the HDS vocabulary. Other public repos consume `pack.
 - **[hds-forms-js](https://github.com/healthdatasafe/hds-forms-js)** — React renderers for `HDSItemDef`. Implements the `slider`, `select`, `composite`, `convertible`, `datasource-search`, etc. field types declared on items here.
 - **[app-data-model-browser](https://github.com/healthdatasafe/app-data-model-browser)** — small public viewer for the deployed `pack.json`.
 
-When a change here breaks a consumer's typechecks (e.g. removing an option, renaming an item key), bump `version` in `package.json`, document under `[Unreleased]` in `CHANGELOG.md`, and notify the consumer repos.
+**Every change to the pack's build inputs (`definitions/`, `src/`, `package.json`, `package-lock.json`) needs a `version` bump in `package.json` before deploy**, because `pack.json` and `version.json` publish that version (3.18.0+). `scripts/deploy.sh` refuses otherwise: commit the bump in the same commit as the content change, or after it (a bump followed by a content commit is refused, as intended). It also refuses a version lower than the live one, or the live version with different content. Semver for the model: **major** removes or renames an item key, stream or option, or changes an existing key's `eventType`; **minor** is additive (new items, streams, eventTypes, keys); **patch** is labels, descriptions and `src/` edits that do not change the model. Document under `CHANGELOG.md` and notify the consumer repos of a major.
 
 ---
 

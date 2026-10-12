@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [3.18.0] - 2026-10-12
+
+### Added: `version` on the published pack (B-2026-10-05-12 item 2)
+
+`pack.json` and `version.json` now carry `version`, `package.json`'s semver, next to `publicationDate`. Consumers can
+pin or compare the model they read (until now only a publication timestamp and, in `version.json`, a commit).
+`scripts/deploy.sh` now refuses to publish when the build inputs (`definitions/`, `src/`, `package.json`,
+`package-lock.json`) changed after the commit that last changed `package.json`'s version, and, after the build, when
+the new version is lower than the live pack's or equal to it with different content. Versions before 3.18.0 are not
+reliable pins: `852a5d0` changed the definitions after 3.16.0 without a bump and was deployed (gh-pages `2e0f69b`), so
+3.16.0 was published with two contents; it would now be refused. Semver policy stated in README and `AGENTS.md`.
+Additive: consumers read named keys only. Tests `[PVER-1]`, `[PVER-2]`. Fable-reviewed.
+
 ## [3.17.0] - 2026-10-09
 
 ### Changed: `eventTypes-legacy.json` mirror refreshed to pryv/data-types 1.2.1

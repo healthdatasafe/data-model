@@ -8,7 +8,12 @@ Published at [model.datasafe.dev](https://model.datasafe.dev)
 
 **This repo publishes a pack, it is not an importable library.** Consumers read the built pack over
 HTTP from `https://model.datasafe.dev/pack.json` (`version.json` alongside it carries the commit the
-live pack was built from). The modules under `src/` are the build's own loaders and are not a public
+live pack was built from). Both carry `version`, the model's semver from `package.json`: pin or compare
+the model by it. From 3.18.0 on, `scripts/deploy.sh` refuses to publish when the build inputs changed after the
+last version bump, when the version is lower than the live one, or when the live version would be reused for
+different content. Versions before 3.18.0 are not reliable pins (3.16.0 was published with two contents). Semver:
+**major** removes or renames an item key, stream or option, or changes an existing key's `eventType`; **minor** is
+additive; **patch** changes labels, descriptions or tooling only. The modules under `src/` are the build's own loaders and are not a public
 API, so `package.json` deliberately declares no `main` entry point and `require()`-ing this package
 is not expected to resolve, under either its package name or the dependency key a git install gives
 it.

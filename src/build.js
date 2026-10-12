@@ -18,7 +18,10 @@ const sources = [
   require('./appStreams').toBePublished
 ];
 
+// `version` is package.json's: consumers pin or compare the model by it.
+// scripts/deploy.sh refuses a pack whose definitions changed after the last bump.
 const pack = {
+  version: require('../package.json').version,
   publicationDate: (new Date()).toISOString()
 };
 
@@ -61,6 +64,7 @@ const existingVersion = fs.existsSync(versionFilePath)
   : {};
 const versionContent = {
   ...existingVersion,
+  version: pack.version,
   publicationDate: pack.publicationDate,
   files: filesIndex
 };
