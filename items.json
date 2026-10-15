@@ -3410,7 +3410,7 @@
     "repeatable": "once"
   },
   "fertility-cycles-ovulation": {
-    "version": "temporary",
+    "version": "v1",
     "label": {
       "en": "Ovulation Day",
       "fr": "Jour d'ovulation"
@@ -3422,7 +3422,8 @@
     "streamId": "fertility-cycles-ovulation",
     "eventType": "activity/plain",
     "type": "checkbox",
-    "repeatable": "P1D"
+    "repeatable": "P1D",
+    "devNotes": "One event per cycle, `time` anywhere on the calendar day of ovulation, no duration.\nA source writing a *predicted* ovulation (Mira, until the cycle completes) sets\n`clientData.hdsBasis: 'predicted'` and updates the same event in place to `'confirmed'` once\nknown; absent = not stated. Phases are derived from this item (hds-lib `cyclePhaseAt`); it is\nnever a phase itself (see documentation/MENSTRUAL-CYCLE.md)."
   },
   "fertility-cycles-start": {
     "version": "v1",
@@ -3450,10 +3451,10 @@
       },
       "cooldown": "P10D"
     },
-    "devNotes": "Cycle duration is determined by next fertility cycle date unless duration property is given.\nThis item is what opens a new cycle;\n`fertility-cycles-period-end` records the last day of the bleeding."
+    "devNotes": "Cycle duration is determined by next fertility cycle date unless duration property is given.\nThis item is what opens a new cycle;\n`fertility-cycles-period-end` records the last day of the bleeding.\nOn the open (current) cycle, `duration` is always a prediction: only the next start ends a cycle.\nSame `clientData.hdsBasis` convention as `fertility-cycles-ovulation`, qualifying `time` (the day)."
   },
   "fertility-cycles-period-end": {
-    "version": "temporary",
+    "version": "v1",
     "label": {
       "en": "End of period",
       "fr": "Fin des règles"
@@ -3466,10 +3467,10 @@
     "eventType": "activity/plain",
     "type": "checkbox",
     "repeatable": "P1D",
-    "devNotes": "To track start / end of period, use fertility-cycles-start & fertility-cycles-period-end.\nThe FIRST day of a period is not recorded here: it is given by a new cycle indication\n(`fertility-cycles-start`)."
+    "devNotes": "To track start / end of period, use fertility-cycles-start & fertility-cycles-period-end.\nThe FIRST day of a period is not recorded here: it is given by a new cycle indication\n(`fertility-cycles-start`).\nThe stream is `fertility-cycles-period`, not the key: kept, a stream rename moves data.\n`time` is on the last bleeding day; the period is the `-start` day through this day inclusive.\nSame `clientData.hdsBasis` convention as `fertility-cycles-ovulation`."
   },
   "fertility-cycles-fertile-window": {
-    "version": "temporary",
+    "version": "v1",
     "label": {
       "en": "Fertile Window",
       "fr": "Fenêtre fertile"
@@ -3487,7 +3488,7 @@
     },
     "type": "checkbox",
     "repeatable": "P1D",
-    "devNotes": "Use duration property to indicate end of fertile window."
+    "devNotes": "Use duration property to indicate end of fertile window.\n`time` is on the first fertile day and `time + duration` on the last (both inclusive by calendar\nday): Mira's 7-day window is `duration` 6 d, the maximum. Same `clientData.hdsBasis` convention\nas `fertility-cycles-ovulation`."
   },
   "fertility-cycles-peak-day": {
     "version": "v1",
