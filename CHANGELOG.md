@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Documentation: cycle day and cycle phase stay derived (B-2026-10-14-6)
+
+`documentation/MENSTRUAL-CYCLE.md` records why there is no cycle-day or cycle-phase item: both derive from the
+`fertility-cycles-*` items (cycle day in the patient's calendar days, phase from the boundary items with an explicit
+confirmed / predicted / unknown basis), and a source's phase label, such as Mira's `current_phase`, stays in its raw
+events. No definition change, nothing to publish.
+
 ## [3.18.0] - 2026-10-12
 
 ### Added: `version` on the published pack (B-2026-10-05-12 item 2)

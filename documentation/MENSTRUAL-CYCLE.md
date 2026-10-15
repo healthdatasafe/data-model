@@ -113,6 +113,10 @@ Notes:
 - If `spotting` exists without `flow_spotting`, implies spotting-level intensity (0.08).
 - "Blood clots" appears as a single toggle in the Mira UI — may map to `flow_spotting` or a separate field. Not yet seen in real API data. HDS already has `body-vulva-bleeding-clots` item ready.
 - Pink spotting triggers a bleeding event but NOT browndark.
+- Mira's cycle summary (`cycle_length`, `period_end`, `ovulation`, `fertile_window_start` / `_end`) maps to
+  `fertility-cycles-start` (with duration), `-period-end`, `-ovulation` and `-fertile-window`. Its current-cycle
+  fields `current_phase`, `current_cycle_day` and `phase_start_date` are **not** mapped: they stay in the raw
+  `fertility-cycle/mira-current-v1` event as provenance (see "Why no cycle-day or cycle-phase item?" below).
 
 ### FHIR / HL7
 
@@ -131,6 +135,22 @@ A continuous [0, 1] scale with defined reference points allows systems with diff
 
 **Why include Spotting (0.08) in the flow scale?**
 Spotting is bleeding. Apps that separate it do so because spotting can occur between periods (intermenstrual), but the observation itself is about intensity. The timing context (during vs. between periods) is already captured by cycle event data (`fertility-cycles-start`, `fertility-cycles-period-end`).
+
+**Why no cycle-day or cycle-phase item?** (decided 2026-10-15, B-2026-10-14-6)
+Both are derived from items the model already holds, and stored derived state goes stale (the same rule as cycle day
+in [`BLOOD-CHEMISTRY.md`](./BLOOD-CHEMISTRY.md)). Cycle day counts calendar days in the patient's time zone from the
+`fertility-cycles-start` event (day 1 = that day), not 86 400-second steps, which drift across DST. Phase follows from
+the boundary items: menstrual from `fertility-cycles-start` to `fertility-cycles-period-end`, follicular from
+`-period-end` until ovulation (or the fertile window, when ovulation is absent), the fertile window from its own item,
+luteal after `fertility-cycles-ovulation` until the next start. A derivation must report its basis (confirmed /
+predicted / unknown) and never guess: a cycle with no ovulation recorded has no derivable luteal phase. Note that
+sources may write *predicted* boundaries into `-ovulation` and `-fertile-window` (Mira does); a phase derived from
+them inherits that basis, so bridges should record predicted-vs-confirmed in `clientData` where the source
+distinguishes it. The `-ovulation` item is `version: temporary`; stabilise it before any shared helper depends on it.
+A source's own phase label (Mira's `current_phase`) stays in that source's raw events.
+Interoperability does not need a stored item either: a FHIR export can compute the phase observation at export time.
+Not foreclosed: a **clinician-asserted** phase (e.g. "mid-luteal" for a day-21 progesterone) would be a different
+observation, a distinct item if ever needed.
 
 **Why separate browndark and clots as checkboxes?**
 They are qualifiers, not intensity levels. A user can have Heavy flow with or without clots, Light flow that is brown-tinged, etc. Separate items allow any combination. Both always co-occur with a `body-vulva-bleeding` event.
