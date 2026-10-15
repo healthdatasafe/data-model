@@ -146,7 +146,23 @@ luteal after `fertility-cycles-ovulation` until the next start. A derivation mus
 predicted / unknown) and never guess: a cycle with no ovulation recorded has no derivable luteal phase. Note that
 sources may write *predicted* boundaries into `-ovulation` and `-fertile-window` (Mira does); a phase derived from
 them inherits that basis, so bridges should record predicted-vs-confirmed in `clientData` where the source
-distinguishes it. The `-ovulation` item is `version: temporary`; stabilise it before any shared helper depends on it.
+distinguishes it: `clientData.hdsBasis` is `'predicted'` or `'confirmed'` on any of the four boundary items
+(`-start`, `-period-end`, `-fertile-window`, `-ovulation`), it qualifies the event's day, and absent means "not stated",
+never "confirmed". A bridge moving a prediction to confirmed writes `'confirmed'` explicitly (Pryv merges `clientData`
+one level deep). The boundary items are `v1` since 3.18.1.
+
+hds-lib `cyclePhaseAt(time, events, timeZone)` implements the derivation, by calendar day in the patient's zone:
+- a cycle runs from a `-start` day to the day before the next `-start` (its `duration` never bounds a phase; an open
+  cycle stops at the item's 90-day limit); a boundary belongs to the cycle containing its own day, the earliest one
+  when there are several;
+- `menstrual`: the start day, and through the `-period-end` day when there is one;
+- `fertile`: the fertile-window days (first and last inclusive) and the ovulation day;
+- `follicular`: after the period end, before the first fertile day (window start, else ovulation day);
+- `luteal`: after the ovulation day (and after the window), to the end of the cycle;
+- every other day (no period end recorded, no ovulation recorded, between a window and a later ovulation or an
+  ovulation and a later window) has no phase: the helper returns `null`, it never guesses; a period end on or after
+  the first fertile day is ignored;
+- basis: `predicted` when any boundary used is predicted, `confirmed` when all are confirmed, else `unknown`.
 A source's own phase label (Mira's `current_phase`) stays in that source's raw events.
 Interoperability does not need a stored item either: a FHIR export can compute the phase observation at export time.
 Not foreclosed: a **clinician-asserted** phase (e.g. "mid-luteal" for a day-21 progesterone) would be a different

@@ -56,7 +56,7 @@ fertility-cycles-average-luteal-phase:
   type: number
   repeatable: once
 fertility-cycles-ovulation:
-  version: temporary
+  version: v1
   label:
     en: Ovulation Day
     fr: Jour d'ovulation
@@ -67,6 +67,12 @@ fertility-cycles-ovulation:
   eventType: activity/plain
   type: checkbox
   repeatable: P1D
+  devNotes: |-
+    One event per cycle, `time` anywhere on the calendar day of ovulation, no duration.
+    A source writing a *predicted* ovulation (Mira, until the cycle completes) sets
+    `clientData.hdsBasis: 'predicted'` and updates the same event in place to `'confirmed'` once
+    known; absent = not stated. Phases are derived from this item (hds-lib `cyclePhaseAt`); it is
+    never a phase itself (see documentation/MENSTRUAL-CYCLE.md).
 fertility-cycles-start:
   version: v1
   label:
@@ -92,8 +98,10 @@ fertility-cycles-start:
     Cycle duration is determined by next fertility cycle date unless duration property is given.
     This item is what opens a new cycle;
     `fertility-cycles-period-end` records the last day of the bleeding.
+    On the open (current) cycle, `duration` is always a prediction: only the next start ends a cycle.
+    Same `clientData.hdsBasis` convention as `fertility-cycles-ovulation`, qualifying `time` (the day).
 fertility-cycles-period-end:
-  version: temporary
+  version: v1
   label:
     en: End of period
     fr: Fin des règles
@@ -108,8 +116,11 @@ fertility-cycles-period-end:
     To track start / end of period, use fertility-cycles-start & fertility-cycles-period-end.
     The FIRST day of a period is not recorded here: it is given by a new cycle indication
     (`fertility-cycles-start`).
+    The stream is `fertility-cycles-period`, not the key: kept, a stream rename moves data.
+    `time` is on the last bleeding day; the period is the `-start` day through this day inclusive.
+    Same `clientData.hdsBasis` convention as `fertility-cycles-ovulation`.
 fertility-cycles-fertile-window:
-  version: temporary
+  version: v1
   label:
     en: Fertile Window
     fr: Fenêtre fertile
@@ -121,11 +132,14 @@ fertility-cycles-fertile-window:
   duration:
     mandatory: true
     canBeNull: false
-    maxSeconds: 518400 # maximum known fertile window 6 days
+    maxSeconds: 518400 # 6 days between first and last fertile day (7-day inclusive window)
   type: checkbox
   repeatable: P1D
   devNotes: |-
     Use duration property to indicate end of fertile window.
+    `time` is on the first fertile day and `time + duration` on the last (both inclusive by calendar
+    day): Mira's 7-day window is `duration` 6 d, the maximum. Same `clientData.hdsBasis` convention
+    as `fertility-cycles-ovulation`.
 fertility-cycles-peak-day:
   version: v1
   label:

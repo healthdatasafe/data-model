@@ -1,6 +1,17 @@
 # Changelog
 
-## [Unreleased]
+## [3.18.1] - 2026-10-15
+
+### Changed: cycle boundary items are `v1`; `clientData.hdsBasis` convention
+
+`fertility-cycles-ovulation`, `fertility-cycles-period-end` and `fertility-cycles-fertile-window` move from
+`version: temporary` to `v1` (no key, stream or eventType change: all three are written by bridge-mira and read by the
+doctor-dashboard). Their devNotes, and `fertility-cycles-start`'s, now say how to write and read them: the period runs
+from the start day through the period-end day inclusive, the fertile window from `time` to `time + duration`
+inclusive by calendar day (Mira's 7-day window is the 6-day maximum duration), one ovulation event per cycle, and a
+source that distinguishes predictions records `clientData.hdsBasis: 'predicted' | 'confirmed'` (absent = not
+stated). `documentation/MENSTRUAL-CYCLE.md` states the convention and the phase derivation rules implemented by
+hds-lib `cyclePhaseAt`. Fable-reviewed.
 
 ### Documentation: cycle day and cycle phase stay derived (B-2026-10-14-6)
 
