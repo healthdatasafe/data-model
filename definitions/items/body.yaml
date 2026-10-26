@@ -165,6 +165,8 @@ body-semen-concentration:
   repeatable: any
   # Semen analysis reports concentration in 10⁶/mL (WHO manual); the eventType's own symbol is
   # G/L (the same number), which reads as a blood count, so the item keeps the semen notation.
+  # hds-forms-js NumberInput honours this suffix. hds-lib eventToShortText (formatNumber) does
+  # not read number.display for `type: number` items yet, so it prints "15 G/L" here until it does.
   number:
     display:
       suffix: { en: 10⁶/mL, fr: 10⁶/mL }

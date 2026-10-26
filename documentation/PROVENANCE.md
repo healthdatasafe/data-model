@@ -41,8 +41,8 @@ use, and the app tags each measure with the one it was taken with.
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
-| `id` | string | yes | Identifies this instrument within the person's account. Minted by the app the first time the instrument is named; every measure taken with it carries the same `id`. |
-| `name` | string | yes | The name the person gave it, as shown in the app. |
+| `id` | string | yes | Identifies this instrument within the person's account. Opaque, `[a-zA-Z0-9_-]`, at most 64 characters. Minted by the app the first time the instrument is named; every measure taken with it carries the same `id`. |
+| `name` | string | yes | The name the person gave it. Readers display it exactly as written (no translation, no reformatting). |
 | `brand` | string | no | The manufacturer. |
 | `model` | string | no | The model name or number. |
 
@@ -55,9 +55,10 @@ use, and the app tags each measure with the one it was taken with.
   device itself.
 - **Measures only.** It is meaningful on events of a measured value (temperature, weight, blood pressure,
   …), not on answers, notes or self-reports.
-- **`id` is the identity, `name` is a label.** Readers group and compare by `id`. When the person renames
-  an instrument, events already written keep the old `name`; a reader that shows the current name takes
-  it from the most recent event with that `id`.
+- **`id` is the identity, `name` is a label.** Readers group and compare by `id`, and never parse or
+  derive meaning from it. When the person renames an instrument, events already written keep the old
+  `name`. **Interim, until the registry below exists:** a reader that shows the current name takes it from
+  the most recent event with that `id`.
 - **The `name` is visible to everyone who can read the measure.** It is free text from the person (it may
   say "Mum's thermometer"), so the app says so where the person names an instrument.
 - Optional fields may be added later (for example the measurement site: oral, vaginal, wrist). A reader

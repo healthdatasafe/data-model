@@ -307,10 +307,10 @@ data-model/
 ├── package.json, eslint.config.mjs, etc.
 │
 ├── definitions/                           # THE SOURCE OF TRUTH
-│   ├── items/*.yaml                       # Health data point definitions (297 items, 232 active, 19 YAML files)
-│   ├── streams/*.yaml                     # Clinical-domain tree (16 top-level roots, 283 streams in all)
+│   ├── items/*.yaml                       # Health data point definitions (298 items, 233 active, 20 YAML files)
+│   ├── streams/*.yaml                     # Clinical-domain tree (17 top-level roots, 284 streams in all)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (71)
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (73)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)

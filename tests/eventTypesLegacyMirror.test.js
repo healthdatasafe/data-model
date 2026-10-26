@@ -174,7 +174,7 @@ describe('[ETLM] eventTypes-legacy.json upstream mirror', () => {
           newPermissions: [{ streamId: 'body-temperature', level: 'read' }, { streamId: 'body-weight', level: 'read' }],
           hds: { added: ['body-weight'], message: { en: 'Sharing Body weight again.' } }
         },
-        { scopeRequestEventId: 'ckrequest0001', accept: false, hds: { asked: ['body-weight'] } }
+        { scopeRequestEventId: 'ckrequest0001', accept: false, reason: { en: 'Not now.' }, hds: { asked: ['body-weight'] } }
       ];
       for (const validate of validators) {
         for (const note of notes) {

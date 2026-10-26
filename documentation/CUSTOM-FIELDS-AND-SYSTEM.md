@@ -262,18 +262,30 @@ Self-initiated (the person stops sharing `body-weight`):
 }
 ```
 
-Answer to a request (the person declines; `asked` is what the request asked for that was not shared):
+Answer to a request (the person declines; `asked` is what the request asked for that was not shared;
+the words for the connection go in pryv's own `reason`, see the rules):
 
 ```json
-{ "scopeRequestEventId": "<the request event id>", "accept": false, "hds": { "asked": ["body-weight"] } }
+{
+  "scopeRequestEventId": "<the request event id>",
+  "accept": false,
+  "reason": { "en": "I prefer not to share my weight.", "fr": "…" },
+  "hds": { "asked": ["body-weight"] }
+}
 ```
+
+**Who can write it.** `@pryv/cmc` (3.21.1) `acceptScopeUpdate` and `refuseScopeUpdate` write a fixed
+content, `{ scopeRequestEventId, accept }` plus an optional `reason` on a refusal, and take no other field.
+An `hds` block can therefore only come from a helper that writes the `consent/scope-update-cmc` event with
+`events.create` itself (an hds-lib helper, so every HDS app writes the same content) and then waits for the
+outcome as those functions do.
 
 | `hds` field | Type | Meaning |
 |---|---|---|
 | `removed` | array of streamIds, optional | Self-initiated: the streams this update stops sharing |
 | `added` | array of streamIds, optional | Self-initiated: the streams this update shares again |
 | `asked` | array of streamIds, optional | On an answer: the streams the request asked for that were not shared when the person answered, so both sides can still say what was decided |
-| `message` | object, language code → text, optional | The notice for the connection, in every language the writing app has; the same shape as `message` on `consent/scope-request-cmc` |
+| `message` | object, language code → text, optional | Self-initiated (and an acceptance): the notice for the connection, in every language the writing app has; the same shape as `message` on `consent/scope-request-cmc` |
 
 **Rules.**
 
@@ -285,11 +297,17 @@ Answer to a request (the person declines; `asked` is what the request asked for 
   never from a label carried in the event.
 - The `hds` block is written by the person's app only. The platform's own keys (`status`, `applied`,
   `responseEventId`, `from`) stay at the top level, as pryv defines them.
+- **One text, one place.** On a refusal the person's words go in pryv's `reason` (a language code → text
+  object), never also in `hds.message`; `hds.message` carries the notice only where pryv has no field for
+  it (a self-initiated update, an acceptance). `hds.asked` is not text: it lists streams, and a reader names
+  them from the model, so it never repeats `reason`.
 - A field for a conversation's documents is not part of the convention (it waits for the documents
   stream design).
 
-An early hds-webapp prototype wrote `removed`, `added`, `asked` and `message` at the top level of the
-content. No writer may do so; a reader may accept them there as a fallback while such events exist.
+**Read-only fallback, time-boxed.** An early hds-webapp prototype wrote `removed`, `added`, `asked` and
+`message` at the top level of the content, on events written before 2026-10-26 on the demo platform. No
+writer may do so. A reader may accept those keys at the top level for such events, and drops the fallback
+at the next minor release of this model: pryv may later define a top-level `message` with another shape.
 
 ## Cross-references
 

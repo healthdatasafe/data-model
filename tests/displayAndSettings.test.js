@@ -37,6 +37,7 @@ describe('[DSET] Display symbols and app settings types', () => {
 
     it('[DSET-SET-2] settings/hds-webapp-diary accepts the Diary layout, nulls and unknown keys', () => {
       const layout = {
+        v: 1,
         order: ['mood', 'body-weight'],
         visible: null,
         collapsed: ['custom'],

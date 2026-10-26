@@ -12,8 +12,10 @@ The hds-webapp Diary's layout and display state (card order, visibility, collaps
 card tiles and chart rows, tips and lessons seen, set-up answers, daily logging kinds) as one recurring event
 on the existing `webapp-settings` app stream, next to `settings/hds-react-timeline`, so it follows the person
 across devices instead of living in `localStorage`. Same contract as the timeline type: the shape is owned by
-hds-webapp, the 19 known keys are documented, nothing is `required` and other keys are allowed. It holds no
-health data. `appStreams.yaml`'s `webapp-settings` description names both settings types (its single
+hds-webapp, the 20 known keys are documented (including an optional `v`, the version of the shape), nothing
+is `required` and other keys are allowed. It holds no health data: `goals` and `dailyKinds` hold Diary feature
+or card ids and item keys only, the fertility intention stays on `fertility-ttc-tta`, and `methodLater` is a UI
+deferral, not the charting method. `appStreams.yaml`'s `webapp-settings` description names both settings types (its single
 `eventType` field is unchanged). Tests `[DSET-SET-1]`, `[DSET-SET-2]`.
 
 ### Changed: unit text — cell counts as lab reports print them, `kg` (B-2026-10-26-15)
@@ -24,10 +26,16 @@ health data. `appStreams.yaml`'s `webapp-settings` description names both settin
   (hds-lib `eventToShortText`, hds-forms-js) now show "5.2 G/L" for white cells and "4.5 T/L" for red cells.
 - `body-semen-concentration` (also on `megacount-ml`) gains `number.display.suffix` **`10⁶/mL`**, the
   notation of semen analysis, so it does not read as a blood count where the item's display block is honoured.
+  hds-forms-js `NumberInput` honours it. **hds-lib `eventToShortText` does not yet:** its `formatNumber` ignores
+  `number.display` for `type: number` items and prints the eventType symbol, so until hds-lib changes, semen
+  concentration reads "15 G/L" there (today "15 M#/mL"). Follow-up in hds-lib: `formatNumber` honours
+  `number.display.suffix` (and `multiplier`), which also fixes the items stored on `concentration/ug-l` that
+  display ng/mL.
 - `body-weight`'s `mass/kg` unit option label is **`kg`** (was `Kg`), in both languages. The legacy mirror's
   `mass/kg` symbol is still `Kg`: it is pryv's (`pryv/data-types`) and can only be fixed upstream.
 - Tests `[DSET-SYM-1]` to `[DSET-SYM-3]`. `AGENTS.md` states that a display symbol follows the reporting
-  notation.
+  notation. README and `AGENTS.md` counts refreshed (298 items, 233 active; 17 roots, 284 streams; 73 HDS and
+  358 legacy eventTypes).
 
 ### Added: a display `color` per valence stop of the mood converter
 
@@ -44,11 +52,15 @@ hds-lib's `_raw` method copies only `value` and `label` from a stop, so it is un
   (mapped to FHIR `Observation.device` / `Device.manufacturer`, `modelNumber`, `deviceName`, and to HealthKit
   `HKDevice`). **`clientData.related.<eventId>: true`**, a link from a derived event to its source (a value
   read from a document, an answer to its request), generalised from `QUESTIONNAIRE.md` (FHIR
-  `Observation.derivedFrom`). Linked from `AGENTS.md` and `DESIGN-NOTES.md`.
+  `Observation.derivedFrom`). `hdsInstrument.id` is opaque, `[a-zA-Z0-9_-]`, at most 64 characters. Linked
+  from `AGENTS.md`, `DESIGN-NOTES.md` and the README.
 - `documentation/CUSTOM-FIELDS-AND-SYSTEM.md`: the `content.hds` block on `consent/scope-update-cmc`
   (`removed`, `added`, `asked`, `message`), which says what a person stopped or shared again, or what a declined
   request asked for, and carries the notice to the connection. A convention only: the mirrored schema is not
-  changed; the permissions stay authoritative. `[ETLM-CMC-4]` checks that pryv's schema still accepts it under
+  changed; the permissions stay authoritative. `@pryv/cmc` `acceptScopeUpdate` / `refuseScopeUpdate` write a
+  fixed content, so the block needs a helper (hds-lib) that writes the event itself; on a refusal the person's
+  words stay in pryv's `reason`, not repeated in `hds.message`. A prototype's top-level keys (demo events
+  before 2026-10-26) may be read as a fallback until the next minor release. `[ETLM-CMC-4]` checks that pryv's schema still accepts it under
   both validator flavours.
 
 ## [3.19.0] - 2026-10-26
