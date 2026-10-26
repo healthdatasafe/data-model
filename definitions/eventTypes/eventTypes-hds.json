@@ -1144,6 +1144,97 @@
         }
       }
     },
+    "settings/hds-webapp-diary": {
+      "description": "Per-user layout and display state of the hds-webapp Diary, held as a single recurring event on the webapp-settings app stream and updated in place. The shape is owned by hds-webapp, not by this model, so the known keys below are documented rather than enforced: no 'required', and additional properties are permitted on purpose, as for settings/hds-react-timeline. Holds no health data: an observation belongs on its own item, and a display preference shared across apps belongs in HDSSettings. Card ids are defined by hds-webapp; a measure's card id is its item key.",
+      "type": "object",
+      "properties": {
+        "order": {
+          "description": "Card ids in the order chosen; ids not listed follow in their default order.",
+          "type": "array"
+        },
+        "visible": {
+          "description": "Card ids shown, once the person changed them; null for the default set.",
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "collapsed": {
+          "description": "Card ids collapsed to their header.",
+          "type": "array"
+        },
+        "customSeries": {
+          "description": "Item keys overlaid on the custom chart card.",
+          "type": "array"
+        },
+        "customAdded": {
+          "description": "Whether the custom chart card was added.",
+          "type": "boolean"
+        },
+        "customName": {
+          "description": "The custom chart card's name given by the person; empty for the default name.",
+          "type": "string"
+        },
+        "cycleHidden": {
+          "description": "Whether the cycle card is taken off the Diary.",
+          "type": "boolean"
+        },
+        "medsHidden": {
+          "description": "Whether the medications card is taken off the Diary.",
+          "type": "boolean"
+        },
+        "signCards": {
+          "description": "Sign cards turned on or off by the person, keyed by card id.",
+          "type": "object"
+        },
+        "cycleTiles": {
+          "description": "The cycle card's tiles: their order and which are on.",
+          "type": "object"
+        },
+        "chartRows": {
+          "description": "The cycle chart's rows: their order and which are on.",
+          "type": "object"
+        },
+        "chartView": {
+          "description": "The cycle chart view last left on (for example 'one', 'all', 'calendar'); null for the default.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hiddenLines": {
+          "description": "Lines hidden on a chart, keyed by card id, as arrays of line labels.",
+          "type": "object"
+        },
+        "setupDone": {
+          "description": "Whether the Diary set-up questions were answered.",
+          "type": "boolean"
+        },
+        "methodLater": {
+          "description": "Whether the person chose to pick a charting method later.",
+          "type": "boolean"
+        },
+        "learnt": {
+          "description": "Ids of the guide's lessons marked as learnt.",
+          "type": "array"
+        },
+        "tipsSeen": {
+          "description": "Ids of the tip tours already shown.",
+          "type": "array"
+        },
+        "dailyKinds": {
+          "description": "Kinds of data the person chose to log every day.",
+          "type": "array"
+        },
+        "goals": {
+          "description": "What the person chose to follow at set-up; null when not asked.",
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      }
+    },
     "contact/display-name": {
       "description": "User display name",
       "type": "string"
@@ -1920,14 +2011,14 @@
         "en": "Megacounts per milliliter",
         "fr": "Mégacomptes par millilitre"
       },
-      "symbol": "M#/mL"
+      "symbol": "G/L"
     },
     "concentration/gigacount-ml": {
       "name": {
         "en": "Gigacounts per milliliter",
         "fr": "Gigacomptes par millilitre"
       },
-      "symbol": "G#/mL"
+      "symbol": "T/L"
     },
     "concentration/mcg-dl": {
       "name": {

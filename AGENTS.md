@@ -5,6 +5,7 @@ This file orients future agents (Claude or others) working on the `data-model` r
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
 - `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
+- `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `hdsBasis`, …): read it before adding one.
 
 ---
 
@@ -211,6 +212,8 @@ Conventions, equivalences and rationale live **here in `AGENTS.md`**; per-domain
 
 **All-lowercase, long-form SI prefixes.** `megacount-ml` (10⁶/mL), `gigacount-ml` (10⁹/mL) — the long prefix encodes the SI multiplier while staying inside the all-lowercase eventType convention. Micro- is spelled **`mcg`** in HDS-added types (`mass/mcg`, `rate/mcg-hr`, `concentration/mcg-dl`); the legacy Pryv type `concentration/ug-l` keeps its own spelling and stays canonical for μg/L.
 
+**The display symbol is the reporting notation, not the type name.** `extras.symbol` is what a reader prints after the number, so it follows how reports print the unit: `megacount-ml` shows **`G/L`** (10⁶/mL = 10⁹/L) and `gigacount-ml` shows **`T/L`** (10⁹/mL = 10¹²/L), as blood counts are printed. An item whose domain prints the same number another way overrides it with `number.display.suffix` (`body-semen-concentration`: `10⁶/mL`). Symbols are case-sensitive SI: `kg`, never `Kg`. The legacy mirror still carries `mass/kg` → `Kg` (and `luminous-intensity/cd` → `Cd`); those can only be fixed upstream in pryv/data-types.
+
 #### ⚑ Non-negotiable — a new eventType must never be equivalent to a legacy one
 
 **Before adding any unit eventType, prove it is not numerically equivalent to an existing type — especially a legacy Pryv one.** Two types are *equivalent* when the same physical quantity stores as the **same number** in both. An equivalent twin is a silent data-integrity hazard: identical values land under two type names, so queries, aggregations and converters split the same measurement into two populations, and no validator will ever flag it.
@@ -346,6 +349,7 @@ data-model/
 │   ├── NUTRITION.md                       # Nutritional state vs lifestyle-diet
 │   ├── FAMILY.md                          # Household / family-structure facts
 │   ├── SYNC-STATUS.md                     # Connector status: sync-status root, `type: system` item
+│   ├── PROVENANCE.md                      # clientData keys: hdsInstrument, related.<eventId>; index of the others
 │   └── CONSENTS.md                        # Account-level consent record: consents root, `type: system` item
 │
 ├── scripts/                               # setup / deploy shell scripts
@@ -396,7 +400,8 @@ hand-edited and must not be. HDS additions go in `eventTypes-hds.json`, always.
 - **Never add a `*-cmc` key to `eventTypes-hds.json`.** Those types are owned by `pryv/data-types`
   and hardcoded as `ET_*` constants in `@pryv/cmc`. `src/eventTypes.js` throws on a duplicate key
   across the two files, so a copy breaks the entire build. HDS owns only the `content.hds`
-  sub-envelope convention.
+  sub-envelope convention (data-export requests on `notification/alert-cmc`, scope-change notes on
+  `consent/scope-update-cmc`), documented in `documentation/CUSTOM-FIELDS-AND-SYSTEM.md`.
 - **Never use `$ref` in any event type schema.** Schemas are compiled one at a time with no
   dictionary root, so a `#/types/...` pointer cannot resolve and the compile throws. Inline the
   shape instead, even when it duplicates a standalone type, and add a test pinning the copy to its

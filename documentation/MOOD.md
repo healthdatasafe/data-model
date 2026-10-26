@@ -337,3 +337,34 @@ Cross-method conversion verified (82-100% confidence). Converter definitions in 
 - **How We Feel**: curated 44 words from ~144+ (expandable later)
 - **Anxiety/Stress from symptoms field**: skipped — only captured through mood vectors
 - **Mira "Normal"**: maps to neutral vector (0.50 on all axes)
+
+### Valence stop colours (display only)
+
+Each valence stop in `converters/mood/converter/v0.yaml` carries an optional `color`, so every HDS app
+that draws a mood's tone (hds-webapp's Diary strip, doctor-dashboard, hds-react-timeline, hds-forms-js)
+uses the same five colours instead of a private table. It is an additive key on the stop: a consumer that
+ignores it is unaffected, and no other dimension has colours.
+
+| Stop | Label | `color` | Contrast vs white | Contrast vs `#121212` |
+|---|---|---|---|---|
+| 0 | Very unpleasant | `#c62828` | 5.6:1 | 3.3:1 |
+| 0.25 | Unpleasant | `#ef4444` | 3.8:1 | 5.0:1 |
+| 0.5 | Neutral | `#3b82f6` | 3.7:1 | 5.1:1 |
+| 0.75 | Pleasant | `#16a34a` | 3.3:1 | 5.7:1 |
+| 1 | Very pleasant | `#15803d` | 5.0:1 | 3.7:1 |
+
+**How the colours were chosen.** The hues follow the request from hds-webapp's design work (red for
+unpleasant, blue for neutral, green for pleasant), starting from its tones.
+Each colour passes the WCAG 2.x non-text contrast minimum (3:1, SC 1.4.11) against both a white and a dark
+(`#121212`) background, so one value serves both themes; `[CNVM12]` checks it. Two of the starting tones
+were replaced: `#22c55e` (2.3:1 on white) by `#16a34a`, and `#b91c1c` (2.9:1 on `#121212`) by `#c62828`.
+
+**Rules for consumers.**
+
+- **Pick the tone by nearest stop** on `content.vectors.valence`, never by a private threshold table, and
+  show the stop's `label` (or a face) with the colour. Colour is never the only carrier of meaning (WCAG SC
+  1.4.1): red and green are the pair most often confused in colour-vision deficiency.
+- The colour is a **display hint, not a clinical rating**. It says how pleasant the person reported
+  feeling, not whether the mood is a concern.
+- The colour is decided here. An app that needs a different palette (a print view, a high-contrast mode)
+  maps the stop value, not the hex code.

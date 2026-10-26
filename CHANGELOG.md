@@ -1,5 +1,56 @@
 # Changelog
 
+## [Unreleased]
+
+All additive: no item key, stream, option or `eventType` is removed or renamed. Consumers that ignore the new
+keys are unaffected; the only visible change for an existing reader is the unit text of cell counts and of
+the kilogram option label.
+
+### Added: `settings/hds-webapp-diary` eventType
+
+The hds-webapp Diary's layout and display state (card order, visibility, collapsed cards, custom chart, cycle
+card tiles and chart rows, tips and lessons seen, set-up answers, daily logging kinds) as one recurring event
+on the existing `webapp-settings` app stream, next to `settings/hds-react-timeline`, so it follows the person
+across devices instead of living in `localStorage`. Same contract as the timeline type: the shape is owned by
+hds-webapp, the 19 known keys are documented, nothing is `required` and other keys are allowed. It holds no
+health data. `appStreams.yaml`'s `webapp-settings` description names both settings types (its single
+`eventType` field is unchanged). Tests `[DSET-SET-1]`, `[DSET-SET-2]`.
+
+### Changed: unit text — cell counts as lab reports print them, `kg` (B-2026-10-26-15)
+
+- `extras.symbol` of `concentration/megacount-ml` is now **`G/L`** (was `M#/mL`) and of
+  `concentration/gigacount-ml` **`T/L`** (was `G#/mL`): the same stored number (10⁶/mL = 10⁹/L,
+  10⁹/mL = 10¹²/L), in the notation blood counts are printed in. Readers that print the eventType symbol
+  (hds-lib `eventToShortText`, hds-forms-js) now show "5.2 G/L" for white cells and "4.5 T/L" for red cells.
+- `body-semen-concentration` (also on `megacount-ml`) gains `number.display.suffix` **`10⁶/mL`**, the
+  notation of semen analysis, so it does not read as a blood count where the item's display block is honoured.
+- `body-weight`'s `mass/kg` unit option label is **`kg`** (was `Kg`), in both languages. The legacy mirror's
+  `mass/kg` symbol is still `Kg`: it is pryv's (`pryv/data-types`) and can only be fixed upstream.
+- Tests `[DSET-SYM-1]` to `[DSET-SYM-3]`. `AGENTS.md` states that a display symbol follows the reporting
+  notation.
+
+### Added: a display `color` per valence stop of the mood converter
+
+The five valence stops of `converters/mood` (0 / 0.25 / 0.5 / 0.75 / 1) carry an optional `color`: `#c62828`,
+`#ef4444`, `#3b82f6`, `#16a34a`, `#15803d` (red for unpleasant, blue for neutral, green for pleasant). Each has
+at least 3:1 contrast against white and against `#121212`, so one value serves both themes (`[CNVM12]`).
+Display only: never the only carrier of meaning, and not a clinical rating. Rules in `documentation/MOOD.md`.
+hds-lib's `_raw` method copies only `value` and `label` from a stop, so it is unaffected.
+
+### Documentation: provenance on events, and the scope-change note on `consent/scope-update-cmc`
+
+- New `documentation/PROVENANCE.md`: the index of HDS `clientData` keys, and the definition of two of them.
+  **`clientData.hdsInstrument { id, name, brand?, model? }`**, the instrument a measure was taken with
+  (mapped to FHIR `Observation.device` / `Device.manufacturer`, `modelNumber`, `deviceName`, and to HealthKit
+  `HKDevice`). **`clientData.related.<eventId>: true`**, a link from a derived event to its source (a value
+  read from a document, an answer to its request), generalised from `QUESTIONNAIRE.md` (FHIR
+  `Observation.derivedFrom`). Linked from `AGENTS.md` and `DESIGN-NOTES.md`.
+- `documentation/CUSTOM-FIELDS-AND-SYSTEM.md`: the `content.hds` block on `consent/scope-update-cmc`
+  (`removed`, `added`, `asked`, `message`), which says what a person stopped or shared again, or what a declined
+  request asked for, and carries the notice to the connection. A convention only: the mirrored schema is not
+  changed; the permissions stay authoritative. `[ETLM-CMC-4]` checks that pryv's schema still accepts it under
+  both validator flavours.
+
 ## [3.19.0] - 2026-10-26
 
 ### Changed: `eventTypes-legacy.json` mirror refreshed to pryv/data-types 1.3.2

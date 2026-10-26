@@ -193,7 +193,7 @@ The operator's dashboard reads `app-system-in`, joins the ack to the alert by `a
 
 ---
 
-## CMC system messages carrying an HDS payload: data-export requests
+## CMC system messages carrying an HDS payload: data-export requests, scope updates
 
 The CMC plugin (open-pryv.io `components/cmc`) forwards only its own event types between a
 patient and a doctor; a type HDS would define here would never be delivered. HDS therefore rides
@@ -238,6 +238,58 @@ Implementation: `hds-lib` `cmcDataExport` (`requestDataExport`, `fulfillDataExpo
 `listDataExportRequests`); doctor-dashboard shows the queue per patient, hds-webapp lets the
 patient send a request and see its status. Other `hds.kind` values may follow the same pattern;
 none is defined today.
+
+### `consent/scope-update-cmc` with a `content.hds` block *(patient → connection)*: what changed, and why
+
+When a person stops sharing one type of data with a connection, shares it again, or answers the
+connection's `consent/scope-request-cmc`, the app writes a `consent/scope-update-cmc`. The platform
+applies the permissions and delivers the event's whole content (plus `from`) to the connection
+(open-pryv.io `components/cmc/src/handleSystem.ts`, `deliverSystemToPeer`). The permission set alone
+does not say what the person decided, or in which words the connection was told, so the app adds an
+`hds` block. This is a **convention only**: the mirrored schema is pryv's and is not changed; it
+declares no `additionalProperties`, so the extra key validates, and `[ETLM-CMC-4]` keeps it that way.
+
+Self-initiated (the person stops sharing `body-weight`):
+
+```json
+{
+  "accessId": "<the connection's data-grant access id>",
+  "newPermissions": [{ "streamId": "body-temperature", "level": "read" }],
+  "hds": {
+    "removed": ["body-weight"],
+    "message": { "en": "Anna stopped sharing Body weight with you on 26 October 2026.", "fr": "…" }
+  }
+}
+```
+
+Answer to a request (the person declines; `asked` is what the request asked for that was not shared):
+
+```json
+{ "scopeRequestEventId": "<the request event id>", "accept": false, "hds": { "asked": ["body-weight"] } }
+```
+
+| `hds` field | Type | Meaning |
+|---|---|---|
+| `removed` | array of streamIds, optional | Self-initiated: the streams this update stops sharing |
+| `added` | array of streamIds, optional | Self-initiated: the streams this update shares again |
+| `asked` | array of streamIds, optional | On an answer: the streams the request asked for that were not shared when the person answered, so both sides can still say what was decided |
+| `message` | object, language code → text, optional | The notice for the connection, in every language the writing app has; the same shape as `message` on `consent/scope-request-cmc` |
+
+**Rules.**
+
+- **The permissions are authoritative; `hds` is the explanation.** What is shared is what the platform
+  recorded on the trigger (`applied: true`, `newPermissions`). A reader never derives the grant from
+  `removed` / `added`; when they disagree with the permissions, the permissions win.
+- Every field is optional, and a reader ignores keys it does not know. New keys are added here first.
+- Streams are listed by `streamId`; a reader names them from the model (item label for the stream),
+  never from a label carried in the event.
+- The `hds` block is written by the person's app only. The platform's own keys (`status`, `applied`,
+  `responseEventId`, `from`) stay at the top level, as pryv defines them.
+- A field for a conversation's documents is not part of the convention (it waits for the documents
+  stream design).
+
+An early hds-webapp prototype wrote `removed`, `added`, `asked` and `message` at the top level of the
+content. No writer may do so; a reader may accept them there as a fallback while such events exist.
 
 ## Cross-references
 

@@ -71,7 +71,7 @@ When an item uses `ratio/proportion` (or any `ratio/*` eventType) and defines di
 
 ### Data Source
 - Origin tracked via `createdBy` and `modifiedBy`
-- Additional provenance via bridge metadata
+- Additional provenance via documented `clientData` keys (instrument, source event): see [PROVENANCE.md](PROVENANCE.md)
 
 ### Display
 - **Forms**: number input, text (short/long), date (day/year/full), select with IDs and labels
@@ -94,7 +94,7 @@ body-weight:
       label: Unit
       options:
         - value: mass/kg
-          label: Kg
+          label: kg
           hl7fhir:
             unit: kg
             code: kg
