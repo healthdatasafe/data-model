@@ -308,7 +308,7 @@ data-model/
 │   ├── streams/*.yaml                     # Clinical-domain tree (16 top-level roots, 283 streams in all)
 │   ├── eventTypes/
 │   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (71)
-│   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (356) — see below
+│   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)
 │   │   └── mood/                          # 5D vector converter (5 methods)
@@ -385,6 +385,10 @@ hand-edited and must not be. HDS additions go in `eventTypes-hds.json`, always.
    `version` field: 1.1.2 was untagged upstream and two different byte-contents shipped under that
    same label on a single day (2026-09-17). The SHA is the only honest identifier.
 4. Run `npm test`. `tests/eventTypesLegacyMirror.test.js` is the tripwire suite for this file.
+   The "portable subset" rule (schemas compile under both draft-07 and draft-04) binds
+   `eventTypes-hds.json`. An upstream construct outside it cannot be repaired in the mirror: pin it
+   in the test's `KNOWN_DRAFT07_INCOMPATIBLE` (exact ajv message) and raise it upstream.
+   `[ETLM-AJV-1b]` fails once upstream fixes it, so the exception does not outlive the problem.
 5. Re-fetch and re-compare immediately before committing; upstream can move mid-review.
 
 **Two rules that bite:**
@@ -396,7 +400,7 @@ hand-edited and must not be. HDS additions go in `eventTypes-hds.json`, always.
 - **Never use `$ref` in any event type schema.** Schemas are compiled one at a time with no
   dictionary root, so a `#/types/...` pointer cannot resolve and the compile throws. Inline the
   shape instead, even when it duplicates a standalone type, and add a test pinning the copy to its
-  original. Upstream's 356 types contain no `$ref` at all. See the `medication/prescription-v1`
+  original. Upstream's 358 types contain no `$ref` at all. See the `medication/prescription-v1`
   entry in CHANGELOG 3.7.0.
 
 **What the cores actually enforce.** A core validates content only for types in *Pryv's* dictionary;

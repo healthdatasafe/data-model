@@ -8,10 +8,12 @@ const addFormats = require('ajv-formats');
 const LEGACY_PATH = path.join(__dirname, '../definitions/eventTypes/eventTypes-legacy.json');
 const HDS_PATH = path.join(__dirname, '../definitions/eventTypes/eventTypes-hds.json');
 
-// The ten CMC event types are owned by pryv/data-types and hardcoded as ET_* constants in
-// @pryv/cmc. HDS code writes them today (hds-lib-js, doctor-dashboard, hds-webapp, bridge-mira,
-// bridge-redcap), so the mirror must keep carrying them. They must never be copied into
-// eventTypes-hds.json: src/eventTypes.js throws on a duplicate key across the two files.
+// The CMC event types are owned by pryv/data-types and hardcoded as ET_* constants in @pryv/cmc.
+// The ten below are the ones HDS code writes today (hds-lib-js, doctor-dashboard, hds-webapp,
+// bridge-mira, bridge-redcap), so the mirror must keep carrying them. Dictionary 1.3.2 carries 13
+// `*-cmc` types; `notification/ack-cmc`, `consent/member-access-cmc` and `consent/member-revoke-cmc`
+// are platform-written and left out. No `*-cmc` type may ever be copied into eventTypes-hds.json
+// ([ETLM-CMC-2]): src/eventTypes.js throws on a duplicate key across the two files.
 const CMC_TYPES = [
   'consent/request-cmc',
   'consent/accept-cmc',
@@ -47,6 +49,8 @@ describe('[ETLM] eventTypes-legacy.json upstream mirror', () => {
     // Writing only for draft-07 is how questionnaire/request-v1 came to use a numeric
     // `exclusiveMinimum`, which draft-04 spells incompatibly, so it compiled everywhere we looked
     // and nowhere the platform would have looked. Keep schemas in the portable subset.
+    // That rule binds eventTypes-hds.json. The mirror is byte-faithful and cannot be edited, so an
+    // upstream construct outside the subset is pinned in KNOWN_DRAFT07_INCOMPATIBLE instead.
     //
     // This matters even though nothing enforces these schemas today: the cores only compile types
     // from pryv's own dictionary, none of the HDS custom types appear there, so a core treats every
@@ -74,9 +78,23 @@ describe('[ETLM] eventTypes-legacy.json upstream mirror', () => {
       return ajv;
     };
 
+    // Upstream constructs ajv 8 (draft-07) refuses, pinned by type key + the exact ajv message (which
+    // carries the JSON path), so any other non-portable construct still trips [ETLM-AJV-1]. The cores
+    // compile them ([ETLM-AJV-3]). 1.3.2 spells `expireAfter > 0` the draft-04 way
+    // (`exclusiveMinimum: true`), the dictionary's only such construct.
+    const KNOWN_DRAFT07_INCOMPATIBLE = [
+      'consent/member-access-cmc: schema is invalid: data/properties/expireAfter/exclusiveMinimum must be number'
+    ];
+
     it('[ETLM-AJV-1] all legacy event type schemas compile (ajv 8, draft-07)', () => {
-      const failures = compileFailures(legacy.types, draft07);
+      const failures = compileFailures(legacy.types, draft07).filter((f) => !KNOWN_DRAFT07_INCOMPATIBLE.includes(f));
       assert.deepStrictEqual(failures, [], 'uncompilable legacy schemas:\n' + failures.join('\n'));
+    });
+
+    it('[ETLM-AJV-1b] every pinned draft-07 exception is still needed', () => {
+      const failures = compileFailures(legacy.types, draft07);
+      const fixed = KNOWN_DRAFT07_INCOMPATIBLE.filter((f) => !failures.includes(f));
+      assert.deepStrictEqual(fixed, [], 'now compiles under draft-07, remove from KNOWN_DRAFT07_INCOMPATIBLE:\n' + fixed.join('\n'));
     });
 
     it('[ETLM-AJV-2] all HDS custom event type schemas compile (ajv 8, draft-07)', () => {
@@ -101,9 +119,9 @@ describe('[ETLM] eventTypes-legacy.json upstream mirror', () => {
       assert.deepStrictEqual(missing, [], 'CMC types missing from the mirror: ' + missing.join(', '));
     });
 
-    it('[ETLM-CMC-2] no CMC type is duplicated into eventTypes-hds.json', () => {
+    it('[ETLM-CMC-2] no `*-cmc` type is defined in eventTypes-hds.json', () => {
       // src/eventTypes.js throws on any duplicate key, so a copy here breaks the whole build.
-      const duplicated = CMC_TYPES.filter((t) => hds.types[t]);
+      const duplicated = Object.keys(hds.types).filter((t) => t.endsWith('-cmc'));
       assert.deepStrictEqual(duplicated, [], 'CMC types must stay upstream-owned: ' + duplicated.join(', '));
     });
 
@@ -156,7 +174,7 @@ describe('[ETLM] eventTypes-legacy.json upstream mirror', () => {
     // (jsonValidator.ts createValidator builds a fresh ajv per schema), so a "#/types/..." pointer
     // cannot resolve and the compile throws. medication/prescription-v1 shipped that way in
     // be77036; it went unnoticed because nothing compiles the HDS schemas yet (see [ETLM-AJV-2]).
-    // Upstream's 356 types contain no $ref at all. Inline the shape instead.
+    // Upstream's 358 types contain no $ref at all. Inline the shape instead.
     // Walks the schema looking for an actual `$ref` KEY, rather than matching the serialised text.
     // A substring search over JSON.stringify cannot tell a key from a value, so it also fires on a
     // string that merely equals `$ref`: a data field named `$ref` listed in `required`, or such a

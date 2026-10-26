@@ -1,5 +1,25 @@
 # Changelog
 
+## [3.19.0] - 2026-10-26
+
+### Changed: `eventTypes-legacy.json` mirror refreshed to pryv/data-types 1.3.2
+
+Upstream commit `3190851ea5` (2026-10-20, "consent/revoke-cmc description … version 1.3.2"), fetched 2026-10-26 and
+byte-verified against `https://pryv.github.io/event-types/flat.json`, `api.pryv.com/event-types/flat.json` (after its
+redirect) and the commit itself. Byte-faithful copy. 356 → 358 types: **added** `consent/member-access-cmc` and
+`consent/member-revoke-cmc` (group membership, platform-written; HDS writes neither). **Changed**, optional
+properties and descriptions only: `consent/accept-cmc` (`acceptEventId`), `consent/request-cmc` (`membership` on a
+permission entry), `consent/revoke-cmc` (server-written `acceptEventId`, `revokedAt`, `superseded`),
+`consent/invalidate-link-cmc` (description: single-use invites can be withdrawn, server 2.0.0-rc.56). Nothing removed,
+no `required` changed, no CMC type declares `additionalProperties`; `extras` / `classes` / `sets` unchanged. No
+`$ref`, no key shared with `eventTypes-hds.json`. The cores already validate against this dictionary.
+
+**Draft-07 caveat:** `consent/member-access-cmc` spells `expireAfter > 0` the draft-04 way (`"minimum": 0,
+"exclusiveMinimum": true`), the dictionary's only such construct. The cores (ajv-draft-04) compile it; plain ajv 8
+refuses the schema, so a consumer compiling every type under draft-07 throws on this one. The mirror cannot be
+edited, so `[ETLM-AJV-1]` now pins it by its exact ajv message and `[ETLM-AJV-1b]` fails once upstream changes it.
+`[ETLM-CMC-2]` now refuses any `*-cmc` key in `eventTypes-hds.json`, not only the ten HDS writes. Fable-reviewed.
+
 ## [3.18.1] - 2026-10-15
 
 ### Changed: cycle boundary items are `v1`; `clientData.hdsBasis` convention
