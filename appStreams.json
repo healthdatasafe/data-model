@@ -59,8 +59,8 @@
       "fr": "Paramètres de l'application"
     },
     "description": {
-      "en": "User-scoped settings for HDS client apps. Holds one event per feature (distinguished by eventType, e.g. settings/hds-react-timeline). Single recurring event per type, updated in place.",
-      "fr": "Paramètres propres à l'utilisateur pour les applications client HDS. Contient un événement par fonctionnalité (distingué par eventType, ex. settings/hds-react-timeline). Un seul événement récurrent par type, mis à jour sur place."
+      "en": "User-scoped settings for HDS client apps. Holds one event per feature (distinguished by eventType, e.g. settings/hds-react-timeline, settings/hds-webapp-diary). Single recurring event per type, updated in place.",
+      "fr": "Paramètres propres à l'utilisateur pour les applications client HDS. Contient un événement par fonctionnalité (distingué par eventType, ex. settings/hds-react-timeline, settings/hds-webapp-diary). Un seul événement récurrent par type, mis à jour sur place."
     },
     "display": "system"
   },

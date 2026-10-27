@@ -28,6 +28,7 @@
       "stops": [
         {
           "value": 0,
+          "color": "#c62828",
           "label": {
             "en": "Very unpleasant",
             "fr": "Très désagréable"
@@ -35,6 +36,7 @@
         },
         {
           "value": 0.25,
+          "color": "#ef4444",
           "label": {
             "en": "Unpleasant",
             "fr": "Désagréable"
@@ -42,6 +44,7 @@
         },
         {
           "value": 0.5,
+          "color": "#3b82f6",
           "label": {
             "en": "Neutral",
             "fr": "Neutre"
@@ -49,6 +52,7 @@
         },
         {
           "value": 0.75,
+          "color": "#16a34a",
           "label": {
             "en": "Pleasant",
             "fr": "Agréable"
@@ -56,6 +60,7 @@
         },
         {
           "value": 1,
+          "color": "#15803d",
           "label": {
             "en": "Very pleasant",
             "fr": "Très agréable"

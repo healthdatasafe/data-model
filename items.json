@@ -1014,8 +1014,8 @@
           {
             "value": "mass/kg",
             "label": {
-              "en": "Kg",
-              "fr": "Kg"
+              "en": "kg",
+              "fr": "kg"
             }
           },
           {
@@ -1228,6 +1228,14 @@
     "eventType": "concentration/megacount-ml",
     "type": "number",
     "repeatable": "any",
+    "number": {
+      "display": {
+        "suffix": {
+          "en": "10⁶/mL",
+          "fr": "10⁶/mL"
+        }
+      }
+    },
     "referenceRange": null,
     "references": {
       "snomed": "713521005"
