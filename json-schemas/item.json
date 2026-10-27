@@ -194,6 +194,69 @@
         }
       },
       "additionalProperties": false
+    },
+    "unitConversions": {
+      "type": "object",
+      "properties": {
+        "factors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              },
+              "factor": {
+                "type": "number",
+                "minimum": 0
+              },
+              "molarMass": {
+                "type": "number",
+                "minimum": 0
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "from",
+              "to",
+              "factor",
+              "source"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "notConvertible": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "from",
+              "to",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
     }
   },
   "allOf": [
