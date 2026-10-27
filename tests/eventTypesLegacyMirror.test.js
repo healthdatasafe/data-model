@@ -150,6 +150,43 @@ describe('[ETLM] eventTypes-legacy.json upstream mirror', () => {
           '\nRe-check hds-lib-js ts/cmc/dataExport.ts before taking this mirror.'
       );
     });
+
+    it('[ETLM-CMC-4] consent/scope-update-cmc still accepts the content.hds scope-change note', () => {
+      // The `hds` block (removed / added / asked / message) is an HDS convention on top of pryv's
+      // schema (documentation/CUSTOM-FIELDS-AND-SYSTEM.md). Validated under both flavours, as for
+      // [ETLM-CMC-3]: a tightening upstream would make those writes fail at the core.
+      const schema = legacy.types['consent/scope-update-cmc'];
+      assert.ok(schema, 'consent/scope-update-cmc should exist');
+      const draft04 = new AjvDraft04({ strict: false, allErrors: true, logger: false });
+      addFormats(draft04);
+      const validators = [
+        new Ajv({ strict: false, allErrors: true, logger: false }).compile(schema),
+        draft04.compile(schema)
+      ];
+      const notes = [
+        {
+          accessId: 'ckaccess0001',
+          newPermissions: [{ streamId: 'body-temperature', level: 'read' }],
+          hds: { removed: ['body-weight'], message: { en: 'Stopped sharing Body weight.', fr: 'Partage du poids arrêté.' } }
+        },
+        {
+          accessId: 'ckaccess0001',
+          newPermissions: [{ streamId: 'body-temperature', level: 'read' }, { streamId: 'body-weight', level: 'read' }],
+          hds: { added: ['body-weight'], message: { en: 'Sharing Body weight again.' } }
+        },
+        { scopeRequestEventId: 'ckrequest0001', accept: false, reason: { en: 'Not now.' }, hds: { asked: ['body-weight'] } }
+      ];
+      for (const validate of validators) {
+        for (const note of notes) {
+          assert.ok(
+            validate(note),
+            'a scope-change note no longer validates against consent/scope-update-cmc: ' +
+              JSON.stringify(validate.errors) +
+              '\nRe-check documentation/CUSTOM-FIELDS-AND-SYSTEM.md before taking this mirror.'
+          );
+        }
+      }
+    });
   });
 
   describe('[ETLM-INLINE] inlined shapes stay in step with the type they copy', () => {

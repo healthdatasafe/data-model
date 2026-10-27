@@ -16,8 +16,8 @@ body-weight:
       options:
         - value: mass/kg
           label:
-            en: Kg
-            fr: Kg
+            en: kg
+            fr: kg
         - value: mass/lb
           label:
             en: Lbs
@@ -163,6 +163,13 @@ body-semen-concentration:
   eventType: concentration/megacount-ml
   type: number
   repeatable: any
+  # Semen analysis reports concentration in 10⁶/mL (WHO manual); the eventType's own symbol is
+  # G/L (the same number), which reads as a blood count, so the item keeps the semen notation.
+  # hds-forms-js NumberInput honours this suffix. hds-lib eventToShortText (formatNumber) does
+  # not read number.display for `type: number` items yet, so it prints "15 G/L" here until it does.
+  number:
+    display:
+      suffix: { en: 10⁶/mL, fr: 10⁶/mL }
   # referenceRange parked pending direct verification against the WHO 2021 manual (6th ed., Geneva 2021).
   # Secondary sources cite 16 M#/mL but the most rigorous SWOT review (Boitrelle 2021) tabulates total
   # sperm number (39 M#/ejaculate) instead, not concentration. See research.md §2.4. Re-add when verified.

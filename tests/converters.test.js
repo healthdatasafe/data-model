@@ -174,5 +174,29 @@ describe('[CNVX] Converters build output', () => {
       const unique = new Set(vectors);
       assert.strictEqual(unique.size, vectors.length, 'all vectors should be unique');
     });
+
+    it('[CNVM12] each valence stop has an accessible display colour', () => {
+      // Additive, display only (documentation/MOOD.md). Each colour must keep the WCAG non-text
+      // contrast minimum (3:1) against a light and a dark background, so one value serves both themes.
+      const luminance = (hex) => {
+        const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255)
+          .map(c => c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      };
+      const contrast = (a, b) => {
+        const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+        return (hi + 0.05) / (lo + 0.05);
+      };
+      const stops = pack.dimensions.valence.stops;
+      assert.deepStrictEqual(stops.map(s => s.value), [0, 0.25, 0.5, 0.75, 1]);
+      for (const stop of stops) {
+        assert.match(stop.color ?? '', /^#[0-9a-f]{6}$/, `valence stop ${stop.value} needs a #rrggbb color`);
+        for (const background of ['#ffffff', '#121212']) {
+          const ratio = contrast(stop.color, background);
+          assert.ok(ratio >= 3, `valence stop ${stop.value} ${stop.color} has ${ratio.toFixed(2)}:1 against ${background}`);
+        }
+      }
+      assert.strictEqual(new Set(stops.map(s => s.color)).size, stops.length, 'colours are distinct');
+    });
   });
 });

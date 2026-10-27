@@ -22,12 +22,16 @@ dimensions:
       en: "Pleasure/displeasure: 0 = very unpleasant, 0.5 = neutral, 1 = very pleasant."
       fr: "Plaisir/déplaisir : 0 = très désagréable, 0.5 = neutre, 1 = très agréable."
     weight: 0.30
+    # `color` (optional, display only): one tone per stop, red for unpleasant, blue for neutral,
+    # green for pleasant. Each has at least 3:1 contrast against white and against #121212, so a
+    # filled mark reads on a light or a dark background. Never the only carrier of meaning: show
+    # the stop's label or a face with it. See documentation/MOOD.md.
     stops:
-      - { value: 0.0, label: { en: Very unpleasant, fr: Très désagréable } }
-      - { value: 0.25, label: { en: Unpleasant, fr: Désagréable } }
-      - { value: 0.50, label: { en: Neutral, fr: Neutre } }
-      - { value: 0.75, label: { en: Pleasant, fr: Agréable } }
-      - { value: 1.0, label: { en: Very pleasant, fr: Très agréable } }
+      - { value: 0.0, color: "#c62828", label: { en: Very unpleasant, fr: Très désagréable } }
+      - { value: 0.25, color: "#ef4444", label: { en: Unpleasant, fr: Désagréable } }
+      - { value: 0.50, color: "#3b82f6", label: { en: Neutral, fr: Neutre } }
+      - { value: 0.75, color: "#16a34a", label: { en: Pleasant, fr: Agréable } }
+      - { value: 1.0, color: "#15803d", label: { en: Very pleasant, fr: Très agréable } }
 
   arousal:
     label: { en: Energy, fr: Énergie }

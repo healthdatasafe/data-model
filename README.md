@@ -22,13 +22,13 @@ it.
 
 | Category | Count | Description |
 |----------|-------|-------------|
-| Items | **297** (232 active, 65 deprecated) | Health data point definitions (body, fertility, lifestyle, treatment, procedure, …) |
-| Streams | **16** top-level, **283** at all levels | Hierarchical data categories |
-| Event types (HDS) | **71** | Custom Pryv event type schemas |
-| Event types (legacy) | **354** | Standard Pryv measurement types |
+| Items | **298** (233 active, 65 deprecated) | Health data point definitions (body, fertility, lifestyle, treatment, procedure, …) |
+| Streams | **17** top-level, **284** at all levels | Hierarchical data categories |
+| Event types (HDS) | **73** | Custom Pryv event type schemas |
+| Event types (legacy) | **358** | Standard Pryv measurement types |
 | Converters | 2 | Cross-method conversion engines (cervical-fluid, mood) |
 
-> Counts are as of `3.13.0` (2026-10-02). A **deprecated** item stays in the pack as a resolvable alias
+> Counts are as of 2026-10-26. A **deprecated** item stays in the pack as a resolvable alias
 > so consumers pinned to the old key keep working — see `AGENTS.md` on item-key renames — so "active" is
 > the number that matters when reading the vocabulary, and the total is what a consumer can still
 > resolve.
@@ -43,6 +43,7 @@ definitions/
     body-skin.yaml         4 / 4    skin condition items
     body-vulva.yaml        9 / 12   bleeding, mucus, cervix, wetness items
     condition.yaml         1 / 1    coded diagnosis
+    consents.yaml          1 / 1    account-level consent record (`type: system`, not user input)
     family.yaml            1 / 1    children count
     fertility.yaml        22 / 25   cycles, hormones, tests, sexual activity
     finding.yaml           1 / 1    coded clinical finding
@@ -76,6 +77,7 @@ In-depth notes on specific subdomains live in `documentation/`:
 - `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md` — the five smaller domains. `FINDING.md` records an **open question**: the `finding` root's scope is undecided, and the doc says so rather than inventing one.
 - `CONSENTS.md` — the account-level consent record: the non-clinical `consents` root, the `type: system` item `consent-record` and the `consent/record-v1` eventType (plan 91).
 - `SYNC-STATUS.md` — connector status: the non-clinical `sync-status` root, one `role: context` leaf per connector, the `type: system` item and the `sync-status/connector-v1` eventType, and how it differs from the writer-private `sync` watermark.
+- `PROVENANCE.md` — the index of HDS `clientData` keys, and the definitions of `clientData.hdsInstrument` (the instrument a measure was taken with) and `clientData.related.<eventId>` (a link to a source event), with their FHIR and HealthKit mappings.
 - `CUSTOM-FIELDS-AND-SYSTEM.md`, `DESIGN-NOTES.md`, `TAGS.md`
 
 ## Item Definition Format

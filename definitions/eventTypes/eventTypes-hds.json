@@ -1144,6 +1144,101 @@
         }
       }
     },
+    "settings/hds-webapp-diary": {
+      "description": "Per-user layout and display state of the hds-webapp Diary, held as a single recurring event on the webapp-settings app stream and updated in place. The shape is owned by hds-webapp, not by this model, so the known keys below are documented rather than enforced: no 'required', and additional properties are permitted on purpose, as for settings/hds-react-timeline. Holds no health data: every value is a Diary card or feature id, an item key, a UI flag or a label of the Diary itself (a chart name, a chart line). An observation belongs on its own item (the fertility intention on fertility-ttc-tta, the charting method on its own item or setting), and a display preference shared across apps belongs in HDSSettings. Card ids are defined by hds-webapp; a measure's card id is its item key.",
+      "type": "object",
+      "properties": {
+        "v": {
+          "description": "Optional version of this settings shape, set by hds-webapp when it changes the meaning of a key, so a reader can migrate an older event.",
+          "type": "number"
+        },
+        "order": {
+          "description": "Card ids in the order chosen; ids not listed follow in their default order.",
+          "type": "array"
+        },
+        "visible": {
+          "description": "Card ids shown, once the person changed them; null for the default set.",
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "collapsed": {
+          "description": "Card ids collapsed to their header.",
+          "type": "array"
+        },
+        "customSeries": {
+          "description": "Item keys overlaid on the custom chart card.",
+          "type": "array"
+        },
+        "customAdded": {
+          "description": "Whether the custom chart card was added.",
+          "type": "boolean"
+        },
+        "customName": {
+          "description": "The custom chart card's name given by the person; empty for the default name.",
+          "type": "string"
+        },
+        "cycleHidden": {
+          "description": "Whether the cycle card is taken off the Diary.",
+          "type": "boolean"
+        },
+        "medsHidden": {
+          "description": "Whether the medications card is taken off the Diary.",
+          "type": "boolean"
+        },
+        "signCards": {
+          "description": "Sign cards turned on or off by the person, keyed by card id.",
+          "type": "object"
+        },
+        "cycleTiles": {
+          "description": "The cycle card's tiles: their order and which are on.",
+          "type": "object"
+        },
+        "chartRows": {
+          "description": "The cycle chart's rows: their order and which are on.",
+          "type": "object"
+        },
+        "chartView": {
+          "description": "The cycle chart view last left on (for example 'one', 'all', 'calendar'); null for the default.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hiddenLines": {
+          "description": "Lines hidden on a chart, keyed by card id, as arrays of line labels.",
+          "type": "object"
+        },
+        "setupDone": {
+          "description": "Whether the Diary set-up questions were answered.",
+          "type": "boolean"
+        },
+        "methodLater": {
+          "description": "UI deferral: the person chose to pick a charting method later, so the method choice is not shown. Not the method itself.",
+          "type": "boolean"
+        },
+        "learnt": {
+          "description": "Ids of the guide's lessons marked as learnt.",
+          "type": "array"
+        },
+        "tipsSeen": {
+          "description": "Ids of the tip tours already shown.",
+          "type": "array"
+        },
+        "dailyKinds": {
+          "description": "Kinds of data the person chose to log every day, as Diary card ids or item keys only.",
+          "type": "array"
+        },
+        "goals": {
+          "description": "Diary features the person chose to follow at set-up, as Diary feature or card ids only; null when not asked. Never a health intention: trying to conceive or avoid stays on fertility-ttc-tta.",
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      }
+    },
     "contact/display-name": {
       "description": "User display name",
       "type": "string"
@@ -1920,14 +2015,14 @@
         "en": "Megacounts per milliliter",
         "fr": "Mégacomptes par millilitre"
       },
-      "symbol": "M#/mL"
+      "symbol": "G/L"
     },
     "concentration/gigacount-ml": {
       "name": {
         "en": "Gigacounts per milliliter",
         "fr": "Gigacomptes par millilitre"
       },
-      "symbol": "G#/mL"
+      "symbol": "T/L"
     },
     "concentration/mcg-dl": {
       "name": {
