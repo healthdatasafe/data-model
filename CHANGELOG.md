@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.22.0] - 2026-10-27
+
+### Added: a conversion factor for fasting glucose (site-agents#21)
+
+`body-blood-serum-glucose-fasting`, which already offered mg/dL and mmol/L, now publishes the factor between them:
+`concentration/mg-dl` → `concentration/mmol-l` × **0.05551** (molar mass of glucose, C6H12O6, 180.16 g/mol, PubChem
+CID 5793). Same derivation and direction as the 3.21.0 factors (conventional → SI, 4 significant figures); the
+reverse is `1 / 0.05551` ≈ 18.01 (textbook 18.016, from 180.156). It is the one item where a value printed in mmol/L met a reference range written
+in mg/dL with no published factor, so readers had to treat the pair as not convertible (requested by PRH).
+
 ## [3.21.0] - 2026-10-27
 
 ### Added: lab units, first slice — SI units as variations, and conversion factors (site-agents#20, #21)
