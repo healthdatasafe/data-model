@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.21.0] - 2026-10-27
 
 ### Added: lab units, first slice — SI units as variations, and conversion factors (site-agents#20, #21)
 
