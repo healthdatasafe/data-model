@@ -982,6 +982,11 @@
       "type": "number",
       "minimum": 0
     },
+    "concentration/pmol-l": {
+      "description": "Picomoles per liter (pmol/L)",
+      "type": "number",
+      "minimum": 0
+    },
     "concentration/ng-dl": {
       "description": "Nanograms per deciliter (ng/dL)",
       "type": "number",
@@ -2058,6 +2063,13 @@
         "fr": "Nanomoles par litre"
       },
       "symbol": "nmol/L"
+    },
+    "concentration/pmol-l": {
+      "name": {
+        "en": "Picomoles per liter",
+        "fr": "Picomoles par litre"
+      },
+      "symbol": "pmol/L"
     },
     "concentration/ng-dl": {
       "name": {

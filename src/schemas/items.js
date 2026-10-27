@@ -191,6 +191,52 @@ const itemSchema = {
         }
       },
       additionalProperties: false
+    },
+    // Read-side comparison between the units an item offers as `variations.eventType`
+    // (site-agents#21). Values are stored as printed, in the unit of the event's own type;
+    // these factors are only for comparing, charting and checking against a reference
+    // interval in another unit. Each pair (by eventType, in either order) appears at most
+    // once, in `factors` or in `notConvertible`; a pair in neither has no published factor
+    // yet. Rules checked in src/items.js; see documentation/BLOOD-CHEMISTRY.md § Unit conversions.
+    // Kept in the portable subset (no numeric exclusiveMinimum, no const): `factor > 0`
+    // is enforced by the loader.
+    unitConversions: {
+      type: 'object',
+      properties: {
+        factors: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              from: { type: 'string' },
+              to: { type: 'string' },
+              // value in `to` = value in `from` × factor
+              factor: { type: 'number', minimum: 0 },
+              // g/mol, when the factor derives from it
+              molarMass: { type: 'number', minimum: 0 },
+              source: { type: 'string', minLength: 1 }
+            },
+            required: ['from', 'to', 'factor', 'source'],
+            additionalProperties: false
+          }
+        },
+        // A pair whose values must never be converted or compared (assay- or
+        // calibrator-dependent, or not a multiplicative relation).
+        notConvertible: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              from: { type: 'string' },
+              to: { type: 'string' },
+              reason: { type: 'string', minLength: 1 }
+            },
+            required: ['from', 'to', 'reason'],
+            additionalProperties: false
+          }
+        }
+      },
+      additionalProperties: false
     }
   },
   allOf: [

@@ -395,9 +395,19 @@ body-blood-serum-insulin-fasting:
     en: The hormone that moves sugar into your cells, measured after not eating overnight.
     fr: L'hormone qui fait entrer le sucre dans vos cellules, mesurée après une nuit sans manger.
   streamId: body-blood-serum-insulin-fasting
-  eventType: concentration/uiu-ml
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/uiu-ml, label: { en: μIU/mL, fr: μIU/mL } }
+        - { value: concentration/pmol-l, label: { en: pmol/L, fr: pmol/L } }
+  unitConversions:
+    notConvertible:
+      - from: concentration/uiu-ml
+        to: concentration/pmol-l
+        reason: "Insulin units are defined by an international standard, and the factor to pmol/L depends on how the assay is calibrated (6.0 and 6.945 are both in use). Stored as printed, never compared across units."
   # 16890009 is the unqualified insulin measurement; SNOMED has no fasting-specific concept.
   references:
     snomed: ["16890009"]
@@ -485,9 +495,21 @@ body-blood-serum-estradiol:
     en: The main estrogen in your blood.
     fr: Le principal œstrogène dans votre sang.
   streamId: body-blood-serum-estradiol
-  eventType: concentration/pg-ml
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/pg-ml, label: { en: pg/mL, fr: pg/mL } }
+        - { value: concentration/pmol-l, label: { en: pmol/L, fr: pmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/pg-ml
+        to: concentration/pmol-l
+        factor: 3.671
+        molarMass: 272.39
+        source: "Molar mass of estradiol, C18H24O2, 272.39 g/mol (PubChem CID 5757; IUPAC standard atomic weights)"
   references:
     snomed: ["166448005"]
 
@@ -500,14 +522,16 @@ body-blood-serum-amh:
     en: A marker of how many eggs your ovaries still hold.
     fr: Un marqueur du nombre d'ovocytes encore présents dans vos ovaires.
   streamId: body-blood-serum-amh
-  eventType: concentration/ug-l
   type: number
   repeatable: any
-  number:
-    display:
-      suffix: { en: ng/mL, fr: ng/mL }
-  # ng/mL is numerically identical to µg/L, so the legacy concentration/ug-l is used rather
-  # than an equivalent twin. Stored and displayed values are the printed ng/mL number.
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/ug-l, label: { en: ng/mL, fr: ng/mL } }
+        - { value: concentration/pmol-l, label: { en: pmol/L, fr: pmol/L } }
+  # ng/mL ≡ µg/L, so the legacy concentration/ug-l is used rather than an equivalent twin. The
+  # option label carries "ng/mL" (an item-level number.display.suffix would also label the SI option).
   references:
     snomed: ["711358004"]
 
@@ -890,9 +914,21 @@ body-blood-serum-creatinine:
     en: A waste product from your muscles that your kidneys filter out.
     fr: Un déchet produit par vos muscles que vos reins éliminent.
   streamId: body-blood-serum-creatinine
-  eventType: concentration/mg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mg-dl, label: { en: mg/dL, fr: mg/dL } }
+        - { value: concentration/umol-l, label: { en: μmol/L, fr: μmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mg-dl
+        to: concentration/umol-l
+        factor: 88.4
+        molarMass: 113.12
+        source: "Molar mass of creatinine, C4H7N3O, 113.12 g/mol (PubChem CID 588; IUPAC standard atomic weights)"
   references:
     snomed: ["113075003"]
 
@@ -971,9 +1007,21 @@ body-blood-serum-calcium:
     en: The mineral that builds your bones and helps your muscles work.
     fr: Le minéral qui construit vos os et fait fonctionner vos muscles.
   streamId: body-blood-serum-calcium
-  eventType: concentration/mg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mg-dl, label: { en: mg/dL, fr: mg/dL } }
+        - { value: concentration/mmol-l, label: { en: mmol/L, fr: mmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mg-dl
+        to: concentration/mmol-l
+        factor: 0.2495
+        molarMass: 40.08
+        source: "Molar mass of calcium, Ca, 40.08 g/mol (PubChem CID 5460341; IUPAC standard atomic weights)"
   references:
     snomed: ["271240001"]
 
@@ -1121,13 +1169,23 @@ body-blood-serum-vitamin-d-25oh:
     en: The usual measure of your vitamin D level.
     fr: La mesure habituelle de votre taux de vitamine D.
   streamId: body-blood-serum-vitamin-d-25oh
-  eventType: concentration/ug-l
   type: number
   repeatable: any
-  number:
-    display:
-      suffix: { en: ng/mL, fr: ng/mL }
-  # ng/mL ≡ µg/L — the legacy unit is used rather than an equivalent twin.
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/ug-l, label: { en: ng/mL, fr: ng/mL } }
+        - { value: concentration/nmol-l, label: { en: nmol/L, fr: nmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/ug-l
+        to: concentration/nmol-l
+        factor: 2.496
+        molarMass: 400.65
+        source: "Molar mass of 25-hydroxyvitamin D3 (calcifediol), the convention for total 25-OH vitamin D, C27H44O2, 400.65 g/mol (PubChem CID 5283731; IUPAC standard atomic weights)"
+  # ng/mL ≡ µg/L, so the legacy concentration/ug-l is used rather than an equivalent twin. The
+  # option label carries "ng/mL" (an item-level number.display.suffix would also label the SI option).
   references:
     snomed: ["12199005"]
 
@@ -1138,9 +1196,21 @@ body-blood-serum-vitamin-d-125oh:
     en: The active form of vitamin D.
     fr: La forme active de la vitamine D.
   streamId: body-blood-serum-vitamin-d-125oh
-  eventType: concentration/pg-ml
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/pg-ml, label: { en: pg/mL, fr: pg/mL } }
+        - { value: concentration/pmol-l, label: { en: pmol/L, fr: pmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/pg-ml
+        to: concentration/pmol-l
+        factor: 2.4
+        molarMass: 416.65
+        source: "Molar mass of 1,25-dihydroxyvitamin D3 (calcitriol), C27H44O3, 416.65 g/mol (PubChem CID 5280453; IUPAC standard atomic weights). Tables giving 2.6 use cholecalciferol's molar mass (384.6), not the measured calcitriol's"
   references:
     snomed: ["82457009"]
 
@@ -1151,9 +1221,21 @@ body-blood-serum-vitamin-b12:
     en: Vitamin B12 in your blood.
     fr: La vitamine B12 dans votre sang.
   streamId: body-blood-serum-vitamin-b12
-  eventType: concentration/pg-ml
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/pg-ml, label: { en: pg/mL, fr: pg/mL } }
+        - { value: concentration/pmol-l, label: { en: pmol/L, fr: pmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/pg-ml
+        to: concentration/pmol-l
+        factor: 0.7378
+        molarMass: 1355.39
+        source: "Molar mass of cyanocobalamin, the convention for vitamin B12, C63H88CoN14O14P, 1355.39 g/mol (PubChem CID 166596686; IUPAC standard atomic weights)"
   references:
     snomed: ["271216009"]
 
@@ -1164,15 +1246,25 @@ body-blood-serum-folate:
     en: Folate (vitamin B9) in your blood.
     fr: Les folates (vitamine B9) dans votre sang.
   streamId: body-blood-serum-folate
-  eventType: concentration/ug-l
   type: number
   repeatable: any
-  number:
-    display:
-      suffix: { en: ng/mL, fr: ng/mL }
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/ug-l, label: { en: ng/mL, fr: ng/mL } }
+        - { value: concentration/nmol-l, label: { en: nmol/L, fr: nmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/ug-l
+        to: concentration/nmol-l
+        factor: 2.266
+        molarMass: 441.40
+        source: "Molar mass of folic acid, the convention for folate, C19H19N7O6, 441.40 g/mol (PubChem CID 135398658; IUPAC standard atomic weights); 1000 / 441.40 = 2.2655, the AMA SI conversion figure 2.266"
+  # ng/mL ≡ µg/L, so the legacy concentration/ug-l is used rather than an equivalent twin. The
+  # option label carries "ng/mL" (an item-level number.display.suffix would also label the SI option).
   # 250212002 is plasma folate — SNOMED has no serum folate procedure (only findings).
   # Serum and plasma folate are reported interchangeably.
-  # ng/mL ≡ µg/L — the legacy unit is used rather than an equivalent twin.
   references:
     snomed: ["250212002"]
 
@@ -1234,9 +1326,21 @@ body-blood-serum-cholesterol-total:
     en: The total amount of cholesterol in your blood.
     fr: La quantité totale de cholestérol dans votre sang.
   streamId: body-blood-serum-cholesterol-total
-  eventType: concentration/mg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mg-dl, label: { en: mg/dL, fr: mg/dL } }
+        - { value: concentration/mmol-l, label: { en: mmol/L, fr: mmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mg-dl
+        to: concentration/mmol-l
+        factor: 0.02586
+        molarMass: 386.66
+        source: "Molar mass of cholesterol, C27H46O, 386.66 g/mol (PubChem CID 5997; IUPAC standard atomic weights)"
   references:
     snomed: ["412808005"]
 
@@ -1247,9 +1351,21 @@ body-blood-serum-cholesterol-hdl:
     en: The "good" cholesterol that helps clear fat from your blood.
     fr: Le « bon » cholestérol qui aide à éliminer les graisses de votre sang.
   streamId: body-blood-serum-cholesterol-hdl
-  eventType: concentration/mg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mg-dl, label: { en: mg/dL, fr: mg/dL } }
+        - { value: concentration/mmol-l, label: { en: mmol/L, fr: mmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mg-dl
+        to: concentration/mmol-l
+        factor: 0.02586
+        molarMass: 386.66
+        source: "Molar mass of cholesterol, C27H46O, 386.66 g/mol (PubChem CID 5997; IUPAC standard atomic weights)"
   references:
     snomed: ["166832000"]
 
@@ -1260,9 +1376,21 @@ body-blood-serum-cholesterol-ldl:
     en: The "bad" cholesterol that can build up in your arteries.
     fr: Le « mauvais » cholestérol qui peut s'accumuler dans vos artères.
   streamId: body-blood-serum-cholesterol-ldl
-  eventType: concentration/mg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mg-dl, label: { en: mg/dL, fr: mg/dL } }
+        - { value: concentration/mmol-l, label: { en: mmol/L, fr: mmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mg-dl
+        to: concentration/mmol-l
+        factor: 0.02586
+        molarMass: 386.66
+        source: "Molar mass of cholesterol, C27H46O, 386.66 g/mol (PubChem CID 5997; IUPAC standard atomic weights)"
   references:
     snomed: ["166833005"]
 
@@ -1273,9 +1401,21 @@ body-blood-serum-triglycerides:
     en: A type of fat carried in your blood.
     fr: Un type de graisse transporté dans votre sang.
   streamId: body-blood-serum-triglycerides
-  eventType: concentration/mg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mg-dl, label: { en: mg/dL, fr: mg/dL } }
+        - { value: concentration/mmol-l, label: { en: mmol/L, fr: mmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mg-dl
+        to: concentration/mmol-l
+        factor: 0.01129
+        molarMass: 885.45
+        source: "Molar mass of triolein, the reference triglyceride, C57H104O6, 885.45 g/mol (PubChem CID 5497163; IUPAC standard atomic weights)"
   references:
     snomed: ["271245006"]
 
@@ -1317,9 +1457,21 @@ body-blood-serum-free-t4:
     en: The active, unbound form of your main thyroid hormone.
     fr: La forme active et libre de votre principale hormone thyroïdienne.
   streamId: body-blood-serum-free-t4
-  eventType: concentration/ng-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/ng-dl, label: { en: ng/dL, fr: ng/dL } }
+        - { value: concentration/pmol-l, label: { en: pmol/L, fr: pmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/ng-dl
+        to: concentration/pmol-l
+        factor: 12.87
+        molarMass: 776.87
+        source: "Molar mass of thyroxine, C15H11I4NO4, 776.87 g/mol (PubChem CID 5819; IUPAC standard atomic weights)"
   references:
     snomed: ["313837000"]
 
@@ -1330,9 +1482,21 @@ body-blood-serum-free-t3:
     en: The active, unbound form of the stronger thyroid hormone.
     fr: La forme active et libre de l'hormone thyroïdienne la plus puissante.
   streamId: body-blood-serum-free-t3
-  eventType: concentration/pg-ml
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/pg-ml, label: { en: pg/mL, fr: pg/mL } }
+        - { value: concentration/pmol-l, label: { en: pmol/L, fr: pmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/pg-ml
+        to: concentration/pmol-l
+        factor: 1.536
+        molarMass: 650.98
+        source: "Molar mass of triiodothyronine, C15H12I3NO4, 650.98 g/mol (PubChem CID 5920; IUPAC standard atomic weights)"
   references:
     snomed: ["313836009"]
 
@@ -1343,9 +1507,21 @@ body-blood-serum-total-t3:
     en: The total amount of the stronger thyroid hormone in your blood.
     fr: La quantité totale de l'hormone thyroïdienne la plus puissante dans votre sang.
   streamId: body-blood-serum-total-t3
-  eventType: concentration/ng-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/ng-dl, label: { en: ng/dL, fr: ng/dL } }
+        - { value: concentration/nmol-l, label: { en: nmol/L, fr: nmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/ng-dl
+        to: concentration/nmol-l
+        factor: 0.01536
+        molarMass: 650.98
+        source: "Molar mass of triiodothyronine, C15H12I3NO4, 650.98 g/mol (PubChem CID 5920; IUPAC standard atomic weights)"
   references:
     snomed: ["250668004"]
 
@@ -1356,9 +1532,21 @@ body-blood-serum-reverse-t3:
     en: An inactive form of thyroid hormone.
     fr: Une forme inactive de l'hormone thyroïdienne.
   streamId: body-blood-serum-reverse-t3
-  eventType: concentration/ng-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/ng-dl, label: { en: ng/dL, fr: ng/dL } }
+        - { value: concentration/nmol-l, label: { en: nmol/L, fr: nmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/ng-dl
+        to: concentration/nmol-l
+        factor: 0.01536
+        molarMass: 650.98
+        source: "Molar mass of reverse triiodothyronine, C15H12I3NO4, 650.98 g/mol (PubChem CID 644280; IUPAC standard atomic weights)"
   references:
     snomed: ["51583006"]
 
@@ -1446,13 +1634,23 @@ body-blood-serum-progesterone:
     en: A hormone that prepares your body for pregnancy.
     fr: Une hormone qui prépare votre corps à la grossesse.
   streamId: body-blood-serum-progesterone
-  eventType: concentration/ug-l
   type: number
   repeatable: any
-  number:
-    display:
-      suffix: { en: ng/mL, fr: ng/mL }
-  # ng/mL ≡ µg/L — the legacy unit is used rather than an equivalent twin.
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/ug-l, label: { en: ng/mL, fr: ng/mL } }
+        - { value: concentration/nmol-l, label: { en: nmol/L, fr: nmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/ug-l
+        to: concentration/nmol-l
+        factor: 3.18
+        molarMass: 314.47
+        source: "Molar mass of progesterone, C21H30O2, 314.47 g/mol (PubChem CID 5994; IUPAC standard atomic weights)"
+  # ng/mL ≡ µg/L, so the legacy concentration/ug-l is used rather than an equivalent twin. The
+  # option label carries "ng/mL" (an item-level number.display.suffix would also label the SI option).
   references:
     snomed: ["270972001"]
 
@@ -1463,9 +1661,21 @@ body-blood-serum-testosterone-total:
     en: The total amount of testosterone in your blood.
     fr: La quantité totale de testostérone dans votre sang.
   streamId: body-blood-serum-testosterone-total
-  eventType: concentration/ng-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/ng-dl, label: { en: ng/dL, fr: ng/dL } }
+        - { value: concentration/nmol-l, label: { en: nmol/L, fr: nmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/ng-dl
+        to: concentration/nmol-l
+        factor: 0.03467
+        molarMass: 288.43
+        source: "Molar mass of testosterone, C19H28O2, 288.43 g/mol (PubChem CID 6013; IUPAC standard atomic weights)"
   references:
     snomed: ["270973006"]
 
@@ -1476,9 +1686,21 @@ body-blood-serum-testosterone-free:
     en: The active, unbound form of testosterone.
     fr: La forme active et libre de la testostérone.
   streamId: body-blood-serum-testosterone-free
-  eventType: concentration/pg-ml
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/pg-ml, label: { en: pg/mL, fr: pg/mL } }
+        - { value: concentration/pmol-l, label: { en: pmol/L, fr: pmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/pg-ml
+        to: concentration/pmol-l
+        factor: 3.467
+        molarMass: 288.43
+        source: "Molar mass of testosterone, C19H28O2, 288.43 g/mol (PubChem CID 6013; IUPAC standard atomic weights)"
   references:
     snomed: ["20436004"]
 
@@ -1502,9 +1724,21 @@ body-blood-serum-dhea-s:
     en: An adrenal hormone your body converts into sex hormones.
     fr: Une hormone surrénalienne que votre corps transforme en hormones sexuelles.
   streamId: body-blood-serum-dhea-s
-  eventType: concentration/mcg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mcg-dl, label: { en: μg/dL, fr: μg/dL } }
+        - { value: concentration/umol-l, label: { en: μmol/L, fr: μmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mcg-dl
+        to: concentration/umol-l
+        factor: 0.02714
+        molarMass: 368.49
+        source: "Molar mass of dehydroepiandrosterone sulfate, C19H28O5S, 368.49 g/mol (PubChem CID 12594; IUPAC standard atomic weights)"
   references:
     snomed: ["395134004"]
 
@@ -1515,9 +1749,21 @@ body-blood-serum-androstenedione:
     en: A hormone your body uses to make testosterone and estrogen.
     fr: Une hormone que votre corps utilise pour fabriquer testostérone et œstrogènes.
   streamId: body-blood-serum-androstenedione
-  eventType: concentration/ng-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/ng-dl, label: { en: ng/dL, fr: ng/dL } }
+        - { value: concentration/nmol-l, label: { en: nmol/L, fr: nmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/ng-dl
+        to: concentration/nmol-l
+        factor: 0.03491
+        molarMass: 286.41
+        source: "Molar mass of androstenedione, C19H26O2, 286.41 g/mol (PubChem CID 6128; IUPAC standard atomic weights)"
   references:
     snomed: ["271224004"]
 
@@ -1528,9 +1774,21 @@ body-blood-serum-17-oh-progesterone:
     en: An adrenal hormone used to check for certain enzyme conditions.
     fr: Une hormone surrénalienne utilisée pour rechercher certaines anomalies enzymatiques.
   streamId: body-blood-serum-17-oh-progesterone
-  eventType: concentration/ng-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/ng-dl, label: { en: ng/dL, fr: ng/dL } }
+        - { value: concentration/nmol-l, label: { en: nmol/L, fr: nmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/ng-dl
+        to: concentration/nmol-l
+        factor: 0.03026
+        molarMass: 330.47
+        source: "Molar mass of 17α-hydroxyprogesterone, C21H30O3, 330.47 g/mol (PubChem CID 6238; IUPAC standard atomic weights)"
   references:
     snomed: ["41668001"]
 
@@ -1541,13 +1799,21 @@ body-blood-serum-prolactin:
     en: A hormone that stimulates milk production.
     fr: Une hormone qui stimule la production de lait.
   streamId: body-blood-serum-prolactin
-  eventType: concentration/ug-l
   type: number
   repeatable: any
-  number:
-    display:
-      suffix: { en: ng/mL, fr: ng/mL }
-  # ng/mL ≡ µg/L — the legacy unit is used rather than an equivalent twin.
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/ug-l, label: { en: ng/mL, fr: ng/mL } }
+        - { value: concentration/uiu-ml, label: { en: mIU/L, fr: mIU/L } }
+  unitConversions:
+    notConvertible:
+      - from: concentration/ug-l
+        to: concentration/uiu-ml
+        reason: "The factor between ng/mL and mIU/L depends on the international standard the assay is calibrated against. Stored as printed, never compared across units."
+  # ng/mL ≡ µg/L, so the legacy concentration/ug-l is used rather than an equivalent twin. The
+  # option label carries "ng/mL" (an item-level number.display.suffix would also label the SI option).
   references:
     snomed: ["313442000"]
 
@@ -1558,9 +1824,21 @@ body-blood-serum-cortisol:
     en: Your main stress hormone.
     fr: Votre principale hormone du stress.
   streamId: body-blood-serum-cortisol
-  eventType: concentration/mcg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mcg-dl, label: { en: μg/dL, fr: μg/dL } }
+        - { value: concentration/nmol-l, label: { en: nmol/L, fr: nmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mcg-dl
+        to: concentration/nmol-l
+        factor: 27.59
+        molarMass: 362.47
+        source: "Molar mass of cortisol, C21H30O5, 362.47 g/mol (PubChem CID 5754; IUPAC standard atomic weights)"
   references:
     snomed: ["271535005"]
 

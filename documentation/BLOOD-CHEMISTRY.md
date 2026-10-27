@@ -71,7 +71,88 @@ no value. Every analyte stores the number as the lab prints it.
 | **Cell counts** | `concentration/megacount-ml` (10⁶/mL) carries WBC and platelets — × 10⁹/L is × 10⁶/mL, so 3.4–10.8 and 150–400 store as printed. RBC is × 10¹²/L ≡ × 10⁹/mL, which would be 4300–4800 on that unit, so **`concentration/gigacount-ml`** exists for it: 4.3–4.8. The mixed-unit panel *mirrors the report*, which genuinely prints RBC in × 10¹²/L and WBC in × 10⁹/L. The display symbols follow the report too: `megacount-ml` shows `G/L`, `gigacount-ml` shows `T/L`. |
 | **Percentages** | Lab percentages are genuine fractions (HbA1c is the glycated fraction of total hemoglobin; hematocrit the packed-cell fraction), so they store `0..1` on `ratio/proportion` and render via `number.display.multiplier: 100`. The `0..1` bound is enforced, and fractions match Apple HealthKit's `HKUnit.percent()`. FHIR/LOINC export applies the × 100 in the mapper. |
 | **ng/mL** | Not a unit here: **1 ng/mL = 1 μg/L**, so ferritin, folate, 25-OH-D, C-peptide, AMH, thyroglobulin, progesterone and prolactin use the legacy `concentration/ug-l` with the identical stored number. Adding `ng-ml` would have split one measurement across two type names. See the no-equivalent-types rule in `AGENTS.md`. |
+| **SI units as variations** | An analyte that labs print in two units offers both as `variations.eventType` options, conventional unit first (the unit the item had), SI unit second: `body-blood-serum-glucose-fasting` from the start, and since the lab-units release the lipids, calcium, creatinine, the reproductive, adrenal and thyroid hormones, vitamin D (both forms), B12 and folate (site-agents#20). The writer picks the option matching the **printed** unit; nothing is converted at write time. One type was added for it, `concentration/pmol-l` (no pryv type exists; it is a decade apart from `nmol-l`, so not an equivalent twin). On a `ug-l` item the option label reads **ng/mL**, how those analytes are printed; such items no longer carry an item-level `number.display.suffix`, which renderers apply whatever the unit and would put "ng/mL" on a pmol/L value (`[UCNV-VAR-3]`). |
 | **Endocrine reporting units (2.1.0)** | The reproductive/adrenal & thyroid extension added `concentration/ng-dl` (T3/T4, testosterone, androstenedione, 17-OHP, aldosterone), `concentration/nmol-l` (SHBG), `concentration/iu-ml` (TPO & thyroglobulin antibodies), `concentration/u-ml` (CA-125) and `rate/mm-h` (ESR). Each is a genuine scale difference from its nearest existing type (`ng-dl` ≠ `mcg-dl`/`pg-ml`/`ug-l`; `iu-ml` = 1000× `iu-l`; `u-ml` = 1000× `catalytic-activity/u-l`; `nmol-l` ≠ `umol-l`), not an equivalent twin. CA-125 is `concentration/u-ml`, **not** `catalytic-activity/u-ml`: the "U" is an arbitrary immunoassay unit, and `catalytic-activity/*` is reserved for the liver enzymes. |
+
+## Unit conversions
+
+Once an item offers two units, a reader that compares, charts or trends its values, or checks one
+against a reference interval printed in the other unit, needs a factor. The factor is **per
+analyte** (it comes from the analyte's molar mass), so there is no generic mg/dL ↔ mmol/L, and two
+readers with two tables would give two verdicts for one stored value. The model therefore publishes
+the factor on the item (site-agents#21). **It is for reading only:** stored values stay as printed,
+and a reader that converts for display or comparison never writes the converted number back.
+
+### Where it lives
+
+On the itemDef, next to `variations`, as `unitConversions`. It is a plain JSON field of the item, so a
+reader that does not use hds-lib finds it in the published `pack.json` (`pack.items[<itemKey>]`) and in
+`items.json` (`items[<itemKey>]`), at `https://model.datasafe.dev/`. Its shape is in the published
+item schema (`json-schemas/item.json`, `properties.unitConversions`).
+
+```json
+"body-blood-serum-cholesterol-total": {
+  "variations": { "eventType": { "options": [
+    { "value": "concentration/mg-dl", "label": { "en": "mg/dL" } },
+    { "value": "concentration/mmol-l", "label": { "en": "mmol/L" } } ] } },
+  "unitConversions": {
+    "factors": [
+      { "from": "concentration/mg-dl", "to": "concentration/mmol-l", "factor": 0.02586,
+        "molarMass": 386.66,
+        "source": "Molar mass of cholesterol, C27H46O, 386.66 g/mol (PubChem CID 5997; IUPAC standard atomic weights)" } ]
+  }
+}
+```
+
+### Fields
+
+| Field | Meaning |
+|---|---|
+| `factors[]` | The pairs a reader may convert between. |
+| `factors[].from`, `.to` | **Full eventType ids** of the item (`concentration/mg-dl`), never a unit token or a printed symbol. Both are among the item's `variations.eventType` options. |
+| `factors[].factor` | `value in to = value in from × factor`. A finite number above 0, published to 4 significant figures. Multiplicative only. |
+| `factors[].molarMass` | Optional. The molar mass (g/mol) the factor derives from, so it can be checked (`[UCNV-FAC-4]`). |
+| `factors[].source` | Required. Where the factor comes from, citable. |
+| `notConvertible[]` | Pairs whose values must **never** be converted or compared: the two units do not measure on one scale for every assay. |
+| `notConvertible[].from`, `.to` | Full eventType ids, as above. Order carries no meaning. |
+| `notConvertible[].reason` | Required. Why the pair is not convertible. |
+
+### How a reader finds a factor
+
+Given an event of type `A` on an item and a target type `B` (both eventType ids):
+
+1. `A === B`: no conversion.
+2. An entry of `unitConversions.factors` with `from = A, to = B`: multiply by `factor`.
+3. An entry with `from = B, to = A`: **divide** by its `factor`. Each pair is published once, in one
+   direction; the reverse is never a second entry (the loader refuses one, so the two cannot disagree).
+4. An entry of `unitConversions.notConvertible` with the pair in either order: the values are **not
+   comparable**. Show each in its own unit; do not trend them on one axis or compare one against an
+   interval printed in the other unit.
+5. None of the above (or no `unitConversions` at all): **no factor is published yet**. Treat the pair as
+   not convertible until the model publishes one; do not substitute your own factor silently.
+
+A pair appears at most once across `factors` and `notConvertible`, so "not comparable" (step 4) and
+"not yet published" (step 5) are always distinguishable.
+
+### What stays out, by rule
+
+- **Assay- or calibrator-dependent pairs**: insulin µIU/mL ↔ pmol/L (6.0 and 6.945 are both in use),
+  prolactin ng/mL ↔ mIU/L (depends on the international standard), IU-based antibodies. These items
+  offer both units, store as printed, and carry the pair in `notConvertible`. No factor ever crosses
+  between an IU-based unit and a mass or molar one (`[UCNV-FAC-2]`).
+- **Affine relations**: HbA1c % (NGSP) ↔ mmol/mol (IFCC) is `10.929 × (NGSP − 2.152)`, not a factor.
+  `body-blood-hba1c` does not offer the IFCC unit.
+
+### Sources
+
+Mass ↔ molar factors derive from the analyte's molar mass, computed from its molecular formula with
+IUPAC standard atomic weights and identified by its PubChem CID. Where clinical practice expresses an
+analyte as a reference substance, the convention is used and the source says so: triglycerides as
+triolein, total 25-OH vitamin D as 25-hydroxyvitamin D3, vitamin B12 as cyanocobalamin, folate as folic
+acid. These agree with the usual SI conversion tables to the published precision.
+
+AMH offers pmol/L but has **no factor yet**: the usual 7.14 pmol/L per ng/mL is a manufacturers'
+convention (from a 140 kDa molar mass), and a citable primary source is still to be recorded.
 
 ## Sample context
 

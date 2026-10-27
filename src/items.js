@@ -16,7 +16,8 @@ module.exports = {
   itemsByStreamIdTypeId,
   findItemForEvent,
   toBePublished,
-  checkItemVsEvenType
+  checkItemVsEvenType,
+  checkUnitConversions
 };
 
 /**
@@ -160,6 +161,8 @@ function addItem (key, itemSrc) {
     itemsByStreamIdTypeId[streamIdTypeId] = item;
   }
 
+  if (item.unitConversions) checkUnitConversions(key, item.unitConversions, itemEventTypes);
+
   // Derived, published field: the denominator for a `ratio/generic` select item.
   // That legacy Pryv type stores an object `{ value, relativeTo }`, so an item's
   // `options[].value` entries are numerators and the stored content is
@@ -172,6 +175,35 @@ function addItem (key, itemSrc) {
   // [RGEN] tests. (Plan 100, finding F1.)
   if (item.eventType === 'ratio/generic' && item.type === 'select') {
     item.ratioRelativeTo = Math.max(...item.options.map((o) => o.value));
+  }
+}
+
+/**
+ * `unitConversions` relates the units an item offers (site-agents#21). The schema checks
+ * the shape; this checks what it cannot: both ends of a pair are eventTypes of this item,
+ * the ends differ, a factor is a finite number above zero, and a pair (in either order)
+ * is declared once only, so a factor and its reverse, or a factor and a "not convertible"
+ * marker, can never disagree.
+ */
+function checkUnitConversions (key, unitConversions, itemEventTypes) {
+  const seen = new Set();
+  const entries = [
+    ...(unitConversions.factors || []).map((e) => ['factors', e]),
+    ...(unitConversions.notConvertible || []).map((e) => ['notConvertible', e])
+  ];
+  for (const [list, { from, to, factor }] of entries) {
+    for (const end of [from, to]) {
+      if (!itemEventTypes.includes(end)) {
+        throw new Error(`item "${key}" unitConversions.${list}: "${end}" is not one of the item's eventTypes (${itemEventTypes.join(', ')})`);
+      }
+    }
+    if (from === to) throw new Error(`item "${key}" unitConversions.${list}: from and to are both "${from}"`);
+    if (list === 'factors' && !(Number.isFinite(factor) && factor > 0)) {
+      throw new Error(`item "${key}" unitConversions.factors: factor for ${from} → ${to} must be a finite number above 0, got ${factor}`);
+    }
+    const pair = [from, to].sort().join(' ↔ ');
+    if (seen.has(pair)) throw new Error(`item "${key}" unitConversions: the pair ${pair} is declared more than once`);
+    seen.add(pair);
   }
 }
 

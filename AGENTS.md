@@ -24,7 +24,7 @@ The same clinical concept should have **one** HDS item, regardless of which app 
 
 Enforced by the item loader (`src/items.js:103`). The pair `streamId:eventType` is the storage identity of an item and cannot collide across items.
 
-Items may define `variations.eventType` (e.g. kg vs lb for body weight) — these are rendered as unit pickers, not as alternative items.
+Items may define `variations.eventType` (e.g. kg vs lb for body weight) — these are rendered as unit pickers, not as alternative items. A value is stored in the unit it was entered or printed in, never converted at write time. When the units of one item need an analyte-specific factor to be compared (lab values), the item carries `unitConversions` (factors with a citable `source`, and the pairs that are `notConvertible`): see `documentation/BLOOD-CHEMISTRY.md` § Unit conversions.
 
 ### 3. EventTypes describe **shape**, not questions
 
@@ -310,7 +310,7 @@ data-model/
 │   ├── items/*.yaml                       # Health data point definitions (298 items, 233 active, 20 YAML files)
 │   ├── streams/*.yaml                     # Clinical-domain tree (17 top-level roots, 284 streams in all)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (73)
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (74)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)
@@ -557,7 +557,7 @@ This repo is the source of the HDS vocabulary. Other public repos consume `pack.
 - **[hds-forms-js](https://github.com/healthdatasafe/hds-forms-js)** — React renderers for `HDSItemDef`. Implements the `slider`, `select`, `composite`, `convertible`, `datasource-search`, etc. field types declared on items here.
 - **[app-data-model-browser](https://github.com/healthdatasafe/app-data-model-browser)** — small public viewer for the deployed `pack.json`.
 
-**Every change to the pack's build inputs (`definitions/`, `src/`, `package.json`, `package-lock.json`) needs a `version` bump in `package.json` before deploy**, because `pack.json` and `version.json` publish that version (3.18.0+). `scripts/deploy.sh` refuses otherwise: commit the bump in the same commit as the content change, or after it (a bump followed by a content commit is refused, as intended). It also refuses a version lower than the live one, or the live version with different content. Semver for the model: **major** removes or renames an item key, stream or option, or changes an existing key's `eventType`; **minor** is additive (new items, streams, eventTypes, keys); **patch** is labels, descriptions and `src/` edits that do not change the model. Document under `CHANGELOG.md` and notify the consumer repos of a major.
+**Every change to the pack's build inputs (`definitions/`, `src/`, `package.json`, `package-lock.json`) needs a `version` bump in `package.json` before deploy**, because `pack.json` and `version.json` publish that version (3.18.0+). `scripts/deploy.sh` refuses otherwise: commit the bump in the same commit as the content change, or after it (a bump followed by a content commit is refused, as intended). It also refuses a version lower than the live one, or the live version with different content. Semver for the model: **major** removes or renames an item key, stream or option, or changes an existing key's `eventType`; **minor** is additive (new items, streams, eventTypes, keys); **patch** is labels, descriptions and `src/` edits that do not change the model. **Unit variations:** giving an item a `variations.eventType` option (or another one) is **minor** when the unit it had stays option 1, since every existing event still resolves and a reader taking the first option keeps its unit; **replacing or reordering the first option is major**. The lab-units release (site-agents#20, 3.21.0) is the precedent: 25 items moved from `eventType` to two options this way, even though they no longer carry a top-level `eventType` (hds-lib's `eventTemplate()` then needs an explicit choice). Document under `CHANGELOG.md` and notify the consumer repos of a major.
 
 ---
 
