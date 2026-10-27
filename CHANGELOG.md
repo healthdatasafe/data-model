@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.20.0] - 2026-10-27
 
 All additive: no item key, stream, option or `eventType` is removed or renamed. Consumers that ignore the new
 keys are unaffected; the only visible change for an existing reader is the unit text of cell counts and of
