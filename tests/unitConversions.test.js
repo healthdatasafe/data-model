@@ -232,6 +232,13 @@ describe('[UCNV] lab units: SI variations and conversion factors (site-agents#20
       assert.strictEqual(factorFor(calcitriol, C('pg-ml'), C('pmol-l')), 2.4);
     });
 
+    it('[UCNV-FAC-7] fasting glucose (3.22.0, PRH request): 100 mg/dL ≈ 5.55 mmol/L, and 5.5 mmol/L ≈ 99.1 mg/dL', () => {
+      const glucose = itemsById['body-blood-serum-glucose-fasting'];
+      assert.strictEqual(factorFor(glucose, C('mg-dl'), C('mmol-l')), 0.05551);
+      assert.ok(Math.abs(100 * factorFor(glucose, C('mg-dl'), C('mmol-l')) - 5.551) < 1e-9);
+      assert.ok(Math.abs(5.5 * factorFor(glucose, C('mmol-l'), C('mg-dl')) / 99.08 - 1) < 0.001);
+    });
+
     describe('[UCNV-REJ] the loader refuses', () => {
       const types = [C('mg-dl'), C('mmol-l')];
       const ok = { from: C('mg-dl'), to: C('mmol-l'), factor: 0.02586, source: 's' };
