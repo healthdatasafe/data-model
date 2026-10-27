@@ -1210,7 +1210,7 @@ body-blood-serum-vitamin-d-125oh:
         to: concentration/pmol-l
         factor: 2.4
         molarMass: 416.65
-        source: "Molar mass of 1,25-dihydroxyvitamin D3 (calcitriol), C27H44O3, 416.65 g/mol (PubChem CID 5280453; IUPAC standard atomic weights)"
+        source: "Molar mass of 1,25-dihydroxyvitamin D3 (calcitriol), C27H44O3, 416.65 g/mol (PubChem CID 5280453; IUPAC standard atomic weights). Tables giving 2.6 use cholecalciferol's molar mass (384.6), not the measured calcitriol's"
   references:
     snomed: ["82457009"]
 
@@ -1258,9 +1258,9 @@ body-blood-serum-folate:
     factors:
       - from: concentration/ug-l
         to: concentration/nmol-l
-        factor: 2.265
-        molarMass: 441.4
-        source: "Molar mass of folic acid, the convention for folate, C19H19N7O6, 441.4 g/mol (PubChem CID 135398658; IUPAC standard atomic weights)"
+        factor: 2.266
+        molarMass: 441.40
+        source: "Molar mass of folic acid, the convention for folate, C19H19N7O6, 441.40 g/mol (PubChem CID 135398658; IUPAC standard atomic weights); 1000 / 441.40 = 2.2655, the AMA SI conversion figure 2.266"
   # ng/mL ≡ µg/L, so the legacy concentration/ug-l is used rather than an equivalent twin. The
   # option label carries "ng/mL" (an item-level number.display.suffix would also label the SI option).
   # 250212002 is plasma folate — SNOMED has no serum folate procedure (only findings).

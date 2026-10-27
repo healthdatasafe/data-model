@@ -214,13 +214,22 @@ describe('[UCNV] lab units: SI variations and conversion factors (site-agents#20
         ['body-blood-serum-cortisol', 10, 276],
         ['body-blood-serum-free-t4', 1, 12.9],
         ['body-blood-serum-vitamin-d-25oh', 30, 74.9],
-        ['body-blood-serum-vitamin-b12', 400, 295]
+        ['body-blood-serum-vitamin-b12', 400, 295],
+        ['body-blood-serum-folate', 10, 22.66],
+        ['body-blood-serum-vitamin-d-125oh', 50, 120]
       ];
       for (const [key, conventional, si] of anchors) {
         const [was, to] = SLICE[key];
         const got = conventional * factorFor(itemsById[key], C(was), C(to));
         assert.ok(Math.abs(got / si - 1) < 0.005, `${key}: ${conventional} → ${got}, expected about ${si}`);
       }
+    });
+
+    it('[UCNV-FAC-6] figures checked against the usual SI tables: folate 2.266 (half-up from 2.2655), calcitriol 2.4 (not 2.6, which is cholecalciferol)', () => {
+      const folate = itemsById['body-blood-serum-folate'];
+      assert.strictEqual(factorFor(folate, C('ug-l'), C('nmol-l')), 2.266);
+      const calcitriol = itemsById['body-blood-serum-vitamin-d-125oh'];
+      assert.strictEqual(factorFor(calcitriol, C('pg-ml'), C('pmol-l')), 2.4);
     });
 
     describe('[UCNV-REJ] the loader refuses', () => {

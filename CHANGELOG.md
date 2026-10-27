@@ -33,7 +33,20 @@ did; the factors between them are published on the item for read-side comparison
 **For consumers.** These 25 items no longer carry a top-level `eventType`; read `variations.eventType.options` (or
 hds-lib's `eventTypes`). hds-lib's `eventTemplate()` now requires an explicit `eventType` for them, as it already
 did for glucose. Existing events keep resolving: the unit they were written in is still the item's first option.
-The first-option default keeps every reader that picks a unit for the person on the conventional unit.
+The first-option default keeps every reader that picks a unit for the person on the conventional unit. This is a
+minor release: the unit each item had stays option 1 (rule in `AGENTS.md`, semver).
+
+**Display consequence.** hds-lib 2.20 `eventToShortText` prints `number.display.suffix` when an item has one, else
+the eventType symbol. With the "ng/mL" suffix moved to the option label:
+
+- AMH, progesterone, prolactin, vitamin D 25-OH and folate events on `concentration/ug-l` now render **"µg/L"**
+  there (numerically identical to ng/mL, so the value is right, only the notation changes);
+- prolactin events on `concentration/uiu-ml` render **"μIU/mL"**, not "mIU/L" (also numerically identical);
+- hds-forms-js `NumberInput` keeps showing **"ng/mL"**, which it takes from the option label.
+
+Follow-up in hds-lib: `eventToShortText` prefers the label of the variation option matching the event's type, and
+`unitConversions` joins `ITEM_IMMUTABLE_FIELDS` in `HDSModel-Overload.ts`, so an app overload cannot rewrite a
+factor.
 
 **Next** (rest of site-agents#20/#21, not in this release): magnesium (mmol/L), bilirubin (µmol/L), iron, TIBC,
 vitamin A, zinc, copper (µmol/L), C-peptide (nmol/L), hemoglobin, albumin, total protein, globulin (g/L), hs-CRP
