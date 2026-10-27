@@ -24,7 +24,7 @@ The same clinical concept should have **one** HDS item, regardless of which app 
 
 Enforced by the item loader (`src/items.js:103`). The pair `streamId:eventType` is the storage identity of an item and cannot collide across items.
 
-Items may define `variations.eventType` (e.g. kg vs lb for body weight) — these are rendered as unit pickers, not as alternative items.
+Items may define `variations.eventType` (e.g. kg vs lb for body weight) — these are rendered as unit pickers, not as alternative items. A value is stored in the unit it was entered or printed in, never converted at write time. When the units of one item need an analyte-specific factor to be compared (lab values), the item carries `unitConversions` (factors with a citable `source`, and the pairs that are `notConvertible`): see `documentation/BLOOD-CHEMISTRY.md` § Unit conversions.
 
 ### 3. EventTypes describe **shape**, not questions
 
@@ -310,7 +310,7 @@ data-model/
 │   ├── items/*.yaml                       # Health data point definitions (298 items, 233 active, 20 YAML files)
 │   ├── streams/*.yaml                     # Clinical-domain tree (17 top-level roots, 284 streams in all)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (73)
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (74)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)

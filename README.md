@@ -24,7 +24,7 @@ it.
 |----------|-------|-------------|
 | Items | **298** (233 active, 65 deprecated) | Health data point definitions (body, fertility, lifestyle, treatment, procedure, …) |
 | Streams | **17** top-level, **284** at all levels | Hierarchical data categories |
-| Event types (HDS) | **73** | Custom Pryv event type schemas |
+| Event types (HDS) | **74** | Custom Pryv event type schemas |
 | Event types (legacy) | **358** | Standard Pryv measurement types |
 | Converters | 2 | Cross-method conversion engines (cervical-fluid, mood) |
 

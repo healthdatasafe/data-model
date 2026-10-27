@@ -1,5 +1,45 @@
 # Changelog
 
+## [Unreleased]
+
+### Added: lab units, first slice — SI units as variations, and conversion factors (site-agents#20, #21)
+
+Lab values stay stored as the lab prints them (`documentation/BLOOD-CHEMISTRY.md` § Units). An analyte that labs
+print in two units now offers both as `variations.eventType` options, as `body-blood-serum-glucose-fasting` already
+did; the factors between them are published on the item for read-side comparison only.
+
+- **New eventType `concentration/pmol-l`** (pmol/L), HDS-owned: pryv's dictionary has no picomolar type, and it is a
+  decade apart from `nmol-l`, so it is not an equivalent twin (`[UCNV-ET-*]`).
+- **25 items gain a second unit**, the unit they had staying first, with the eventType tokens of site-agents#20:
+  - `concentration/mmol-l`: calcium, cholesterol total, HDL, LDL, triglycerides;
+  - `concentration/umol-l`: creatinine, DHEA-S;
+  - `concentration/nmol-l`: cortisol, testosterone total, androstenedione, 17-OH progesterone, total T3, reverse T3,
+    progesterone, vitamin D 25-OH, folate;
+  - `concentration/pmol-l`: estradiol, free testosterone, free T3, free T4, vitamin D 1,25-(OH)2, vitamin B12, AMH,
+    fasting insulin;
+  - `concentration/uiu-ml` (printed mIU/L): prolactin.
+- **New item field `unitConversions`** (`factors[]` with `from`, `to`, `factor`, optional `molarMass`, `source`;
+  `notConvertible[]` with `from`, `to`, `reason`). Keyed by eventType id; one entry per pair, the reverse is
+  `1 / factor`. 22 items carry a factor derived from the analyte's molar mass (PubChem CID, IUPAC atomic weights).
+  Insulin µIU/mL ↔ pmol/L and prolactin ng/mL ↔ mIU/L are marked `notConvertible` (assay- or calibrator-dependent).
+  AMH has no factor yet (no citable primary source recorded for the 7.14 convention). The loader checks both ends
+  are eventTypes of the item, the factor is above 0 and a pair is declared once (`[UCNV-REJ-*]`). The field is in
+  `pack.json` and `items.json` as published, for readers that do not use hds-lib; how to read it is in
+  `BLOOD-CHEMISTRY.md` § Unit conversions.
+- AMH, progesterone, prolactin, vitamin D 25-OH and folate drop their item-level `number.display.suffix` ("ng/mL"):
+  renderers apply it whatever the unit, so it would label a pmol/L or nmol/L value "ng/mL". The `ug-l` option label
+  now reads **ng/mL**, so hds-forms-js shows the same text as before (`[UCNV-VAR-3]`).
+
+**For consumers.** These 25 items no longer carry a top-level `eventType`; read `variations.eventType.options` (or
+hds-lib's `eventTypes`). hds-lib's `eventTemplate()` now requires an explicit `eventType` for them, as it already
+did for glucose. Existing events keep resolving: the unit they were written in is still the item's first option.
+The first-option default keeps every reader that picks a unit for the person on the conventional unit.
+
+**Next** (rest of site-agents#20/#21, not in this release): magnesium (mmol/L), bilirubin (µmol/L), iron, TIBC,
+vitamin A, zinc, copper (µmol/L), C-peptide (nmol/L), hemoglobin, albumin, total protein, globulin (g/L), hs-CRP
+(mg/dL), ceruloplasmin (mg/L), with their factors; a factor for fasting glucose (already two units); AMH's factor
+once sourced. Censored values ("<1.5", site-agents#22) are a separate change.
+
 ## [3.20.0] - 2026-10-27
 
 All additive: no item key, stream, option or `eventType` is removed or renamed. Consumers that ignore the new
