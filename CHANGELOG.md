@@ -1,12 +1,15 @@
 # Changelog
 
-## [Unreleased]
+## [3.24.0] - 2026-10-28
 
 ### Added: cycle charting items, the coverline rule of each method, Sensiplan in the converter pack
 
 - **`fertility-cycles-coverline`**: the basal-temperature coverline of one cycle, `temperature/c`, one event per cycle
   dated on the cycle's `fertility-cycles-start` day; `clientData.hdsBasis` `'manual'` (drawn or moved by the person)
-  or `'auto'` (computed by the method's rule). New stream under `fertility-cycles`.
+  or `'auto'` (computed by the method's rule, written only by the writer that owns the cycle's data, such as an
+  import). A reader that computes shows a `'manual'` event, else its own computation, never a stored `'auto'`; apps
+  that compute never store `'auto'`. Writers are recommended to set `clientData.related.<cycleStartEventId>: true`.
+  New stream under `fertility-cycles`.
 - **`fertility-cycles-lh-peak-day`**: the LH peak day, beside the mucus Peak Day (below). New sibling stream under
   `fertility-cycles`.
 - **`temperatureRule` on every cervical-fluid converter method** (`converters/cervical-fluid/pack-latest.json`), and
@@ -26,7 +29,9 @@
   Intelligence the LH peak. The data in real accounts is the import's (Cycle Intelligence runs on demo only), and "Peak
   Day" is the mucus methods' term, so the item keeps that meaning and the LH peak moves to the new
   `fertility-cycles-lh-peak-day`. Label "Peak day of fertility" → **"Peak Day"** (fr "Jour sommet"), description now
-  "The last day of peak-type mucus in your cycle." (no fertility statement). Same key, stream and eventType.
+  "The last day of peak-type mucus in your cycle." (no fertility statement). Same key, stream and eventType; item
+  version `v1` → `v2` (precedent: `body-vulva-cervix-position`). Events written before 3.24.0 by Cycle Intelligence
+  (demo accounts only) may be LH peaks.
 - **`fertility-tracking-method`**: the `billings` option is labelled **"Billings"** (en, fr), was "Billings Ovulation
   Method" (B-2026-10-28-2: no full method denomination as a label, as committed to WOOMB in July 2026). Value unchanged.
 
@@ -39,10 +44,11 @@ files are byte-identical to it.
 The Low / High / Peak monitor item, as Cycle Intelligence's overlay defines it, is **not** in this release. Cycle
 Intelligence (and the `loic` webapp prototype's `dysnetOverload.ts`) carry the full item in an hds-lib overload, and
 hds-lib's `validateOverload` refuses an overload that restates an existing item's `type`, `streamId`, `eventType` or
-`options`, even unchanged: making the item canonical would make their model load throw. It ships once Cycle
-Intelligence drops it from its overlay (or treats it as a base item) and hds-lib accepts an identical restatement. The
-definition, its streams, tests and documentation are kept on branch `feature/marquette-monitor-item`. `[CYC-2]` pins
-its absence until then.
+`options`, which makes their model load throw once the item is canonical. hds-lib 2.24.0 accepts an identical
+restatement, so the item ships once Cycle Intelligence either runs hds-lib ≥ 2.24.0 with an overlay that matches the
+canonical item exactly, or adds the key to its `UPSTREAM_ITEM_KEYS`. Today the overlay does not match: its option
+labels are en/fr/es/it where the canonical item has en/fr (B-2026-10-28-5). The definition, its streams, tests and
+documentation are kept on branch `feature/marquette-monitor-item`. `[CYC-2]` pins its absence until then.
 
 **For consumers.**
 - **Cycle Intelligence**: write the LH peak to `fertility-cycles-lh-peak-day` instead of `fertility-cycles-peak-day`, move the overlay's
@@ -54,8 +60,8 @@ its absence until then.
   hds-feminine-cycle-ui): label `fertility-cycles-peak-day` as the (mucus) Peak Day; show `fertility-cycles-lh-peak-day`
   separately if at all. doctor-dashboard's own LH-surge detection is unaffected.
 - **hds-lib**: `MethodDef` gains an optional `temperatureRule` and the converter pack an optional `temperatureRules`;
-  the coverline computation (`temperatureShift`) reads the rule from there, never from a method-name table, and
-  honours a `'manual'` coverline event over its own.
+  the coverline computation (`temperatureShift`) reads the rule from there, never from a method-name table, shows a
+  `'manual'` coverline event over its own, and ignores a stored `'auto'`.
 - **Apps showing the method list** (Settings, method choosers): Sensiplan now appears among the converter methods.
 - **hds-forms-js / pickers**: two new active items appear (`fertility-cycles-coverline`,
   `fertility-cycles-lh-peak-day`). Apps with fixed stream permissions that want them must request the new streams; a
