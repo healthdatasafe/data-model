@@ -540,6 +540,11 @@
             "id": "body-blood-esr",
             "name": "ESR",
             "parentId": "body-blood"
+          },
+          {
+            "id": "body-blood-coded",
+            "name": "Other blood results",
+            "parentId": "body-blood"
           }
         ],
         "parentId": "body"
@@ -713,6 +718,23 @@
               }
             ],
             "parentId": "body-urine"
+          },
+          {
+            "id": "body-urine-coded",
+            "name": "Other urine results",
+            "parentId": "body-urine"
+          }
+        ],
+        "parentId": "body"
+      },
+      {
+        "id": "body-csf",
+        "name": "Cerebrospinal fluid",
+        "children": [
+          {
+            "id": "body-csf-coded",
+            "name": "Cerebrospinal fluid results",
+            "parentId": "body-csf"
           }
         ],
         "parentId": "body"

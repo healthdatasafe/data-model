@@ -156,7 +156,8 @@
             "slider",
             "multi-select",
             "system",
-            "attachments"
+            "attachments",
+            "imported"
           ]
         }
       ]

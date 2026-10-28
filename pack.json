@@ -1,6 +1,6 @@
 {
-  "version": "3.26.0",
-  "publicationDate": "2026-10-28T12:56:46.208Z",
+  "version": "3.27.0",
+  "publicationDate": "2026-10-28T14:36:44.631Z",
   "streams": [
     {
       "id": "activity",
@@ -543,6 +543,11 @@
               "id": "body-blood-esr",
               "name": "ESR",
               "parentId": "body-blood"
+            },
+            {
+              "id": "body-blood-coded",
+              "name": "Other blood results",
+              "parentId": "body-blood"
             }
           ],
           "parentId": "body"
@@ -716,6 +721,23 @@
                 }
               ],
               "parentId": "body-urine"
+            },
+            {
+              "id": "body-urine-coded",
+              "name": "Other urine results",
+              "parentId": "body-urine"
+            }
+          ],
+          "parentId": "body"
+        },
+        {
+          "id": "body-csf",
+          "name": "Cerebrospinal fluid",
+          "children": [
+            {
+              "id": "body-csf-coded",
+              "name": "Cerebrospinal fluid results",
+              "parentId": "body-csf"
             }
           ],
           "parentId": "body"
@@ -17740,6 +17762,181 @@
           "4-plus-per-week",
           "daily-or-almost-daily"
         ]
+      },
+      "lab-result/coded-v1": {
+        "description": "A laboratory result for an analyte with no item of its own, coded in content and stored as printed. 'analyte' is the coded test (LOINC whenever a verified code exists); the result is a number in its UCUM unit, possibly a limit ('comparator'), and/or the result as printed ('valueText'). Never converted. Maps to FHIR Observation: analyte → code, value/comparator/unit → valueQuantity, valueCodes/valueText → valueCodeableConcept/valueString. See documentation/BLOOD-CHEMISTRY.md.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "analyte"
+        ],
+        "anyOf": [
+          {
+            "required": [
+              "value"
+            ]
+          },
+          {
+            "required": [
+              "valueText"
+            ]
+          }
+        ],
+        "dependencies": {
+          "value": [
+            "unit"
+          ],
+          "unit": [
+            "value"
+          ],
+          "unitText": [
+            "unit"
+          ],
+          "comparator": [
+            "value"
+          ],
+          "valueCodes": [
+            "valueText"
+          ]
+        },
+        "properties": {
+          "analyte": {
+            "description": "The coded test. Coded by the writer from a curated table: 'hdsId' is absent until a datasource provides one, and a datasource that does emits canonical URI systems.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "codes"
+            ],
+            "properties": {
+              "label": {
+                "description": "The test name, by language; 'en' is required.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "en"
+                ],
+                "properties": {
+                  "en": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "fr": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "es": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "codes": {
+                "description": "FHIR Codings of the test: one LOINC entry (system http://loinc.org) whenever a verified code exists, otherwise the lab's own code system.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "system",
+                    "code"
+                  ],
+                  "properties": {
+                    "system": {
+                      "description": "Canonical URI of the code system (http://loinc.org, urn:oid:…).",
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+                    },
+                    "version": {
+                      "description": "The code system version, when it matters.",
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "display": {
+                      "description": "The code system's display name (LOINC Long Common Name).",
+                      "type": "string"
+                    },
+                    "hdsId": {
+                      "description": "The datasource id of the test, when a datasource provides one.",
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "value": {
+            "description": "The figure as printed; with 'comparator', the printed limit.",
+            "type": "number"
+          },
+          "comparator": {
+            "description": "The value is a limit, not an exact figure: the true value is below, at most, above, at least it (FHIR Quantity.comparator).",
+            "type": "string",
+            "enum": [
+              "<",
+              "<=",
+              ">",
+              ">="
+            ]
+          },
+          "unit": {
+            "description": "UCUM code of the printed unit, case-sensitive ('umol/L', '{copies}/mL', '1' when unitless). Printable ASCII, no space.",
+            "type": "string",
+            "pattern": "^[!-~]{1,64}$"
+          },
+          "unitText": {
+            "description": "The unit exactly as printed ('µmol/l', 'mUI/mL'), for display.",
+            "type": "string",
+            "minLength": 1
+          },
+          "valueText": {
+            "description": "The result exactly as printed when it is not only a number ('negative', 'détecté', '1:160', '< LOQ').",
+            "type": "string",
+            "minLength": 1
+          },
+          "valueCodes": {
+            "description": "The printed qualitative result as FHIR Codings (CodeableConcept.coding), with 'valueText': a SNOMED CT qualifier value, and the lab's own result code when it printed one.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "system",
+                "code"
+              ],
+              "properties": {
+                "system": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "code": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "display": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "notes": {
+            "description": "The comment printed with the result ('haemolysed sample').",
+            "type": "string"
+          }
+        }
       }
     },
     "extras": {
