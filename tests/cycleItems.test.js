@@ -30,9 +30,11 @@ describe('[CYC] Cycle items (3.24.0)', () => {
   });
 
   it('[CYC-2] the fertility monitor item is deferred while Cycle Intelligence carries it in its overlay', () => {
-    // hds-lib's validateOverload refuses an overload restating an existing item's type, streamId,
-    // eventType or options, so making it canonical now would break Cycle Intelligence's model load.
-    // It is kept on branch feature/marquette-monitor-item; see CHANGELOG 3.24.0.
+    // Before hds-lib 2.24.0, validateOverload refuses an overload restating an existing item's type,
+    // streamId, eventType or options, so making it canonical would break Cycle Intelligence's model
+    // load. It ships once CI runs hds-lib >= 2.24.0 with an overlay matching the canonical item exactly
+    // (its option labels differ today, B-2026-10-28-5) or lists the key in UPSTREAM_ITEM_KEYS. Kept on
+    // branch feature/marquette-monitor-item; see CHANGELOG 3.24.0.
     assert.strictEqual(itemsById['fertility-monitor-lh-marquette'], undefined);
     assert.strictEqual(streams.streamsById['fertility-monitor'], undefined);
   });
@@ -56,6 +58,9 @@ describe('[CYC] Cycle items (3.24.0)', () => {
       assert.match(notes, /clientData\.hdsBasis/);
       assert.match(notes, /'manual'/);
       assert.match(notes, /'auto'/);
+      assert.match(notes, /never a stored 'auto'/, 'one precedence rule for readers');
+      assert.match(notes, /apps that compute never store 'auto'/);
+      assert.match(notes, /clientData\.related\.<cycleStartEventId>/);
     });
   });
 
@@ -73,6 +78,8 @@ describe('[CYC] Cycle items (3.24.0)', () => {
       const item = itemsById['fertility-cycles-peak-day'];
       assert.match(item.description.en, /mucus/);
       assert.match(item.devNotes, /never the LH peak/);
+      assert.strictEqual(item.version, 'v2', 'the meaning changed in 3.24.0');
+      assert.match(item.devNotes, /before 3\.24\.0 by Cycle\s+Intelligence/);
       assert.doesNotMatch(item.description.en, /fertility/i, 'chart notation, not a fertility statement');
       assert.match(itemsById['fertility-cycles-lh-peak-day'].description.en, /LH/);
     });

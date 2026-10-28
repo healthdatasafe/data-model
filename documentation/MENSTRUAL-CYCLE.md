@@ -186,13 +186,17 @@ Neither is ovulation (`fertility-cycles-ovulation`), and neither is a fertility 
 reading (no item yet: see the 3.24.0 CHANGELOG). The two peaks usually fall a day or two apart and either can be
 recorded without the other.
 
+HealthKit has no peak-day sample: `HKCategoryValueOvulationTestResult.luteinizingHormoneSurge` is a per-test result
+and maps to `fertility-test-opk`. A FHIR export carries either peak as a locally coded Observation, or leaves it out.
+
 **Why the existing item is the mucus peak.** Until 3.24.0 the item said only "peak day of fertility", and two writers
 read it differently: the Cyclefeminin import (`bridge-cycles-files`, and the earlier `bridge-cyclefeminin-net`) writes
 Cyclefeminin's `isPeak` day, the mucus peak; Cycle Intelligence writes the day the person marks the LH peak (from its
 hormone or monitor card). The stored data that reaches real accounts is the import's (Cycle Intelligence runs on demo
 only), "Peak Day" is the mucus methods' own term (Billings, Creighton, FEMM, Sensiplan, STM, and the `peak-day` option
 of `fertility-tracking-method`), and hds-feminine-cycle-ui and the method specification read the item as the mucus
-peak. Keeping that meaning moves no real data; the LH peak gets the new item.
+peak. Keeping that meaning moves no real data; the LH peak gets the new item. The item is `v2` since 3.24.0: events
+written before 3.24.0 by Cycle Intelligence (demo accounts only) may be LH peaks.
 
 **Not a fertility statement.** Both are chart notation the person or her method records. HDS apps show them as
 recorded; they do not derive fertile or infertile days from them.
@@ -207,13 +211,20 @@ cycle, `time` on the calendar day of that cycle's `fertility-cycles-start` (the 
 | `hdsBasis` | Meaning |
 |---|---|
 | `'manual'` | The person drew the line or moved it (the methods that publish no calculation, such as Justisse, are always drawn) |
-| `'auto'` | Computed by the method's coverline rule (below) and stored as computed, for example by an import or by a reader that cannot compute it |
+| `'auto'` | Computed by the method's coverline rule (below) and stored as computed, by the writer that owns the cycle's data (an import) |
 | absent | Not stated |
 
-A reader that computes the line itself (hds-lib, from the rule) shows a `'manual'` line instead of its own; an `'auto'`
-line is what its writer computed and may be recomputed. Going back to the method's rule deletes the event. If the
-cycle's start is moved, the writer moves the coverline with it. Like the peaks, the coverline and its counted high
-temperatures are chart notation; HDS does not derive "infertile from day N" from them.
+**Precedence, one rule:**
+- a reader that computes the line (hds-lib, from the rule) shows the `'manual'` event if there is one, otherwise its
+  own computation, and never a stored `'auto'`;
+- a reader that cannot compute shows whichever event exists;
+- an `'auto'` event is written only by the writer that owns the cycle's data (an import), and replaced by that writer;
+- apps that compute never store `'auto'`.
+
+Going back to the method's rule deletes the event. Writers are recommended to link the line to its cycle with
+`clientData.related.<cycleStartEventId>: true` ([PROVENANCE.md](PROVENANCE.md)), so a moved start does not orphan it;
+if the cycle's start is moved, the writer moves the coverline with it. Like the peaks, the coverline and its counted
+high temperatures are chart notation; HDS does not derive "infertile from day N" from them.
 
 No LOINC or SNOMED CT concept exists for a coverline (searched 2026-10-28); a FHIR export would carry it as an
 Observation with a local code, or leave it out.

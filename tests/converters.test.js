@@ -99,7 +99,7 @@ describe('[CNVX] Converters build output', () => {
       assert.deepStrictEqual(Object.keys(pack.temperatureRules).sort(), [...RULE_IDS].sort());
       for (const [id, rule] of Object.entries(pack.temperatureRules)) {
         assert.ok(rule.label.en && rule.label.fr, `${id} label is localised`);
-        assert.match(rule.source, /coverline-rules\.json/, `${id} points at the method specification`);
+        assert.match(rule.source, /coverline-rules\.json \(version 2026-10-28\)/, `${id} points at a version of the method specification`);
       }
     });
 

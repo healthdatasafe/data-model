@@ -164,13 +164,13 @@ dimensions:
 temperatureRules:
   sympto-thermal:
     label: { en: "STM / TCOYF", fr: "MST / TCOYF" }
-    source: model-cervical-fluid references/rules/coverline-rules.json, methods.sympto-thermal
+    source: model-cervical-fluid references/rules/coverline-rules.json (version 2026-10-28), methods.sympto-thermal
   sensiplan:
     label: { en: "Sensiplan (3 over 6)", fr: "Sensiplan (3 sur 6)" }
-    source: model-cervical-fluid references/rules/coverline-rules.json, methods.sensiplan
+    source: model-cervical-fluid references/rules/coverline-rules.json (version 2026-10-28), methods.sensiplan
   manual:
     label: { en: "Drawn by the person", fr: "Tracée par la personne" }
-    source: model-cervical-fluid references/rules/coverline-rules.json, methods.justisse (kind manual)
+    source: model-cervical-fluid references/rules/coverline-rules.json (version 2026-10-28), methods.justisse (kind manual)
 
 methodTemperatureRule:
   sympto-thermal: sympto-thermal
