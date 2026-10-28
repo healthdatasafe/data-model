@@ -5,7 +5,8 @@ This file orients future agents (Claude or others) working on the `data-model` r
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
 - `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md`, `DOCUMENTS.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
-- `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `hdsBasis`, …): read it before adding one.
+- `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `sourceKey`, `hdsBasis`, …): read it before adding one. New keys are `hds`-prefixed.
+- `documentation/PARTIAL-DATES.md` — partial and approximate dates (`hdsTimePrecision`): cross-domain, applies to any event whose date is known only to the month or the year.
 
 ---
 
@@ -351,7 +352,8 @@ data-model/
 │   ├── NUTRITION.md                       # Nutritional state vs lifestyle-diet
 │   ├── FAMILY.md                          # Household / family-structure facts
 │   ├── SYNC-STATUS.md                     # Connector status: sync-status root, `type: system` item
-│   ├── PROVENANCE.md                      # clientData keys: hdsInstrument, related.<eventId>; index of the others
+│   ├── PROVENANCE.md                      # clientData keys: hdsInstrument, related.<eventId>, sourceKey; index of the others
+│   ├── PARTIAL-DATES.md                   # Partial / approximate dates: hdsTimePrecision, time at period start 12:00 UTC
 │   ├── CONSENTS.md                        # Account-level consent record: consents root, `type: system` item
 │   └── DOCUMENTS.md                       # Medical documents: documents root, `type: attachments` item, file/xds-v1
 │

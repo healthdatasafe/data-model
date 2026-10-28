@@ -154,6 +154,90 @@ acid. These agree with the usual SI conversion tables to the published precision
 AMH offers pmol/L but has **no factor yet**: the usual 7.14 pmol/L per ng/mL is a manufacturers'
 convention (from a 140 kDa molar mass), and a citable primary source is still to be recorded.
 
+## The printed reference range, flag and interpretation of one result
+
+The model holds no reference range per analyte (see "Deliberately absent"), but a lab report prints one next
+to each value, often with a flag (`H`, `L`, `*`). That printed range belongs to **the result**, not to the
+analyte: it is the lab's, for its assay and for this patient. A reader needs it to display the result as the
+report did, and FHIR export needs it for `Observation.referenceRange` and `Observation.interpretation`
+(site-agents#29). It is carried per event, in `clientData`:
+
+```json
+{
+  "streamIds": ["body-blood-serum-ferritin"],
+  "type": "concentration/ug-l",
+  "content": 412,
+  "clientData": {
+    "hdsRefRange": { "lowerLimit": 30, "upperLimit": 400, "text": "30 - 400 ng/mL" },
+    "hdsFlag": "H",
+    "hdsInterpretation": "H"
+  }
+}
+```
+
+| Key | Type | Meaning |
+|---|---|---|
+| `hdsRefRange.lowerLimit` | number, optional | Lower limit as printed, **on the stored scale of the value** (see the rules). |
+| `hdsRefRange.upperLimit` | number, optional | Upper limit as printed, on the stored scale of the value. |
+| `hdsRefRange.text` | string, optional | The range exactly as printed (`"30 - 400 ng/mL"`, `"< 5.0"`, `"36 - 46 %"`, `"negative"`). |
+| `hdsFlag` | string, optional | The flag exactly as printed (`H`, `L`, `*`, `+`, `↑`). |
+| `hdsInterpretation` | `H`, `L`, `N`, `A`, `HH`, `LL`, optional | The printed flag, normalised to HL7 v3 ObservationInterpretation: high, low, normal, abnormal, critically high, critically low. |
+
+`hdsRefRange` carries at least one of its three fields. The limit names are the item-level
+`referenceRange`'s (`lowerLimit`, `upperLimit`); `source` and `population` stay item-level only, since a
+printed range is the lab's by definition.
+
+**Rules.**
+
+- **Limits are on the stored scale of the value.** The event's eventType is its unit, and the limits share it,
+  so there is no `units` key that could contradict it. On a `ratio/proportion` item the value is stored as a
+  fraction (Units, above), and so are the limits: a printed `36 - 46 %` is `lowerLimit: 0.36`,
+  `upperLimit: 0.46`, exactly as the value 41 % is stored as `0.41`; `text` keeps the printed form. A range
+  printed in another unit than the value (rare) is kept as `text` only, without limits: nothing is converted
+  between units at write time.
+- **A one-sided range** has one limit (`"< 5.0"` is `upperLimit: 5`). A qualitative range (`"negative"`)
+  is `text` only.
+- **`hdsInterpretation` is the lab's verdict, never the importer's.** Write it only by normalising a flag
+  the lab printed (or an explicit "normal" the lab printed). Do not compute it from the value and the
+  range: the lab may judge against limits it did not print (age, sex, cycle phase), a censored value
+  (site-agents#22) does not compare simply, and a stored code looks like the lab's own statement. **No flag
+  printed means no `hdsInterpretation`, not `N`.** A reader that wants a verdict where the lab gave none
+  compares the value with `hdsRefRange` at read time and labels the result as its own.
+- **Mapping a printed flag:** `H`, `↑` → `H`; `L`, `↓` → `L`; `HH`, `!!` (or "critical" high) → `HH`; `LL` (or
+  "critical" low) → `LL`; `*`, `!` (abnormal, no direction) → `A`; a printed "normal" → `N`, which may then come
+  without `hdsFlag`. A flag that maps to no code, or whose meaning is ambiguous (`+` means "high" on some reports and
+  "positive" on others), is kept in `hdsFlag` alone.
+- **An unknown `hdsInterpretation` value is read as absent**, so the list can grow by addition (qualitative codes
+  such as `POS` / `NEG` when qualitative results are modelled).
+- **Readers prefer the printed range** to the item-level `referenceRange` when an event carries one: the
+  item-level range is a population reference (WHO 2021 for semen analysis), the printed one is the lab's for
+  this result.
+- These keys apply to any lab result, whichever the domain (`body-blood-*`, `body-urine-*`,
+  `body-semen-*`).
+
+**Cross-system.**
+
+| HDS | HL7 FHIR R4 / R5 |
+|---|---|
+| `hdsRefRange.lowerLimit`, `.upperLimit` | `Observation.referenceRange.low`, `.high` (a `Quantity` in the value's unit) |
+| `hdsRefRange.text` | `Observation.referenceRange.text` |
+| `hdsInterpretation` | `Observation.interpretation`, system `http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation` |
+| `hdsFlag` | `Observation.interpretation.text` |
+
+### Not keys: the printed value, the printed unit and a conversion
+
+site-agents#29 also asked for `printedValue`, `printedUnit` and `conversion`, for when the importer had to
+convert a value to fit the item. These are **not defined**, because a stored value is never converted
+(Units, above): the event's content is the printed figure and its eventType is the printed unit, so each of
+the three would duplicate the event or record a conversion that must not happen.
+
+What covers the need, when the lab printed a unit the item does not offer:
+
+1. **Ask for the unit as a variation of the item** (an issue on site-agents). Adding a unit is additive and
+   is released quickly (#20 and #27 are the precedent); the value is then stored as printed on the item.
+2. **Meanwhile, store it as printed in `lab-result/coded`** (site-agents#28), with its UCUM unit, and move it
+   to the item once the variation ships. Nothing on the report is lost and nothing is converted.
+
 ## Sample context
 
 The context a sample needs is **not** one mechanism — it decomposes, and the model already answers most
@@ -174,7 +258,9 @@ Note the schema's `variations` block supports **`eventType` only**. The `measure
 
 - **Reference / "optimal" ranges.** They vary by lab, assay and population, and functional-medicine
   "optimal" bands are a practice's *interpretation*, not a fact about the analyte. **The model carries
-  the measured value; interpretation stays with the interpreter.**
+  the measured value; interpretation stays with the interpreter.** The range a lab printed for one result
+  is a different thing and is kept with that result (see "The printed reference range, flag and
+  interpretation of one result").
 - **Derived indices** — HOMA-IR, LH:FSH, AST:ALT, BUN/creatinine, A/G, corrected calcium. Computable
   from the analytes; recompute rather than store. (Transferrin saturation is the grey zone — labs
   universally print it.)
