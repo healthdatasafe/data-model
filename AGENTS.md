@@ -310,7 +310,7 @@ data-model/
 ├── package.json, eslint.config.mjs, etc.
 │
 ├── definitions/                           # THE SOURCE OF TRUTH
-│   ├── items/*.yaml                       # Health data point definitions (298 items, 233 active, 20 YAML files)
+│   ├── items/*.yaml                       # Health data point definitions (309 items, 244 active, 20 YAML files)
 │   ├── streams/*.yaml                     # Clinical-domain tree (17 top-level roots, 296 streams in all)
 │   ├── eventTypes/
 │   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (77)

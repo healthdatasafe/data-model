@@ -1,6 +1,6 @@
 {
   "name": "@hds/data-model",
-  "version": "3.27.0",
+  "version": "3.28.0",
   "description": "HDS data model",
   "engines": {
     "node": ">=24"

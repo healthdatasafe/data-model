@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.28.0] - 2026-10-28
+
+### The three coded lab-result items (site-agents#28)
+
+- **Items `body-blood-coded`, `body-urine-coded` and `body-csf-coded`.** Each is `type: imported` on
+  `lab-result/coded-v1`, with `repeatable: unlimited` and no references (the analyte is coded per event). They are
+  published as 3.27.0 documented them, unchanged. No deployed build has real users (plan 114 Q14), so no consumer
+  rollout gates them. Readers need hds-lib ≥ 2.28.0 / hds-forms-js ≥ 0.24.0. A writer's overload that restated them
+  keeps loading (identical immutable fields) and can drop the restatement.
+- `BLOOD-CHEMISTRY.md` § "The three items" replaces "published later". Tests `[LABC-ITM-1..3]` and `[LABC-PACK-1]`
+  now check the published items.
+
 ## [3.27.0] - 2026-10-28
 
 ### Lab results: a printed limit (`hdsComparator`), coded results with no item (`lab-result/coded-v1`), item type `imported`
