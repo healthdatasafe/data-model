@@ -155,7 +155,8 @@
             "convertible",
             "slider",
             "multi-select",
-            "system"
+            "system",
+            "attachments"
           ]
         }
       ]

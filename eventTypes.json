@@ -4437,6 +4437,24 @@
         }
       }
     },
+    "settings/hds-webapp-read": {
+      "description": "Where the person stopped reading each conversation in hds-webapp, held as a single recurring event on the webapp-settings app stream and updated in place, so the unread count is the same on every device. Holds no health data and no message content: only contact keys and times. A writer re-reads the event just before writing, keeps per contact the later of the two times, and writes the whole object back; Pryv updates are not conditional, so two devices writing at once can lose one update, which only shows read messages as unread again. A writer may drop the keys of contacts that no longer exist. Additional properties are permitted, as for the other hds-webapp settings types.",
+      "type": "object",
+      "properties": {
+        "v": {
+          "description": "Optional version of this settings shape, set by hds-webapp when it changes the meaning of a key, so a reader can migrate an older event.",
+          "type": "number"
+        },
+        "lastRead": {
+          "description": "Per contact, the time (Pryv event time of the message, seconds) of the newest message the person has read: a message counts as unread when its time is later. The key is the counterparty's lowercased username@host (hds-lib's contact key), or its access id for a contact with no username. A contact with no entry has no marker: its unread count is unknown, not zero.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      }
+    },
     "contact/display-name": {
       "description": "User display name",
       "type": "string"
@@ -5068,6 +5086,287 @@
             "checkbox",
             "button"
           ]
+        }
+      }
+    },
+    "file/xds-v1": {
+      "description": "A medical document (lab report, letter, prescription, imaging or procedure report, administrative document) as one or more Pryv attachments, with the IHE XDS / CH:EPR DocumentEntry metadata as validated content, so HDS can publish it as a FHIR DocumentReference or an XDS DocumentEntry without reading clientData. Codings follow FHIR Coding: system is a URI (http://snomed.info/sct, http://loinc.org). class and type take their codes from the CH:EPR value sets http://fhir.ch/ig/ch-term/ValueSet/DocumentEntry.classCode and .typeCode. The attachment's own integrity is its sha256; the XDS SHA-1 hash and the confidentiality code are not stored, because they are set at publication. See documentation/DOCUMENTS.md.",
+      "type": "object",
+      "attachmentRequired": true,
+      "additionalProperties": false,
+      "required": [
+        "class",
+        "type",
+        "title",
+        "language"
+      ],
+      "properties": {
+        "class": {
+          "description": "The document's class: DocumentEntry.classCode, FHIR DocumentReference.category. One coding.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "system",
+            "code"
+          ],
+          "properties": {
+            "system": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+            },
+            "version": {
+              "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+              "type": "string",
+              "minLength": 1
+            },
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "display": {
+              "type": "string"
+            }
+          }
+        },
+        "type": {
+          "description": "The document's type: DocumentEntry.typeCode first, then other codings of the same type (a CDA document code, the source system's code). FHIR DocumentReference.type.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "system",
+              "code"
+            ],
+            "properties": {
+              "system": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+              },
+              "version": {
+                "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+                "type": "string",
+                "minLength": 1
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "display": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "title": {
+          "description": "The document's title as printed, or as the person named it. Shown to every reader of the stream.",
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "description": "The document's language, a BCP-47 tag (fr, de-CH); und when it is not known.",
+          "type": "string",
+          "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$"
+        },
+        "creation": {
+          "description": "When the document was written, ISO 8601 as FHIR dateTime: a year, a year-month, a date, or a date-time with its offset (2026, 2026-10, 2026-10-28, 2026-10-28T09:30:00+01:00), when it differs from the event time. The event time is when the document belongs on the person's timeline.",
+          "type": "string",
+          "pattern": "^[0-9]{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12][0-9]|3[01])(T([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9](\\.[0-9]+)?)?(Z|[+-][0-9]{2}:[0-9]{2}))?)?)?$"
+        },
+        "status": {
+          "description": "current, or superseded once a newer document replaces this one. A replacement is a new event that lists this one in 'supersedes'; this event stays. A reader treats a document as superseded when another document supersedes it, whatever this field says.",
+          "type": "string",
+          "enum": [
+            "current",
+            "superseded"
+          ]
+        },
+        "supersedes": {
+          "description": "Event ids of the documents this one replaces (DocumentEntry relationship RPLC). Each id is mirrored in clientData.related.<eventId> (documentation/PROVENANCE.md).",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "authors": {
+          "description": "Who wrote the document: DocumentEntry.author, FHIR DocumentReference.author. eventId points at a provider event when one exists (mirrored in clientData.related); name, organization and service are free text as printed and are shown to every reader of the stream.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "eventId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string"
+              },
+              "organization": {
+                "type": "string"
+              },
+              "service": {
+                "type": "string"
+              },
+              "role": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "system",
+                  "code"
+                ],
+                "properties": {
+                  "system": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+                  },
+                  "version": {
+                    "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "code": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "display": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "minProperties": 1
+          }
+        },
+        "encounterId": {
+          "description": "Event id of the encounter the document comes from, when one is recorded (mirrored in clientData.related).",
+          "type": "string",
+          "minLength": 1
+        },
+        "practiceSetting": {
+          "description": "DocumentEntry.practiceSettingCode (the clinical specialty), FHIR DocumentReference.context.practiceSetting.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "system",
+            "code"
+          ],
+          "properties": {
+            "system": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+            },
+            "version": {
+              "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+              "type": "string",
+              "minLength": 1
+            },
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "display": {
+              "type": "string"
+            }
+          }
+        },
+        "facilityType": {
+          "description": "DocumentEntry.healthcareFacilityTypeCode, FHIR DocumentReference.context.facilityType.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "system",
+            "code"
+          ],
+          "properties": {
+            "system": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+            },
+            "version": {
+              "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+              "type": "string",
+              "minLength": 1
+            },
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "display": {
+              "type": "string"
+            }
+          }
+        },
+        "format": {
+          "description": "DocumentEntry.formatCode, FHIR DocumentReference.content.format.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "system",
+            "code"
+          ],
+          "properties": {
+            "system": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+            },
+            "version": {
+              "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+              "type": "string",
+              "minLength": 1
+            },
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "display": {
+              "type": "string"
+            }
+          }
+        },
+        "event": {
+          "description": "DocumentEntry.eventCodeList: the main acts or conditions the document is about, FHIR DocumentReference.event.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "system",
+              "code"
+            ],
+            "properties": {
+              "system": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+              },
+              "version": {
+                "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+                "type": "string",
+                "minLength": 1
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "display": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "pages": {
+          "description": "Number of pages of the original, when known.",
+          "type": "integer",
+          "minimum": 1
         }
       }
     },

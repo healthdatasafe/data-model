@@ -777,6 +777,11 @@
     "parentId": null
   },
   {
+    "id": "documents",
+    "name": "Medical documents",
+    "parentId": null
+  },
+  {
     "id": "family",
     "name": "Family",
     "parentId": null,
