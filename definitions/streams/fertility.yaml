@@ -15,6 +15,10 @@ children:
         name: Ovulation Day
       - id: fertility-cycles-peak-day
         name: Peak Day
+      - id: fertility-cycles-lh-peak-day
+        name: LH Peak Day
+      - id: fertility-cycles-coverline
+        name: Coverline
       - id: fertility-cycles-charted-estimation
         name: Cycles charted estimation
       - id: fertility-cycles-average-length

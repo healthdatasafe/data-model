@@ -54,17 +54,101 @@ describe('[CNVX] Converters build output', () => {
       assert.ok(Math.abs(sum - 1.0) < 0.01, `weights should sum to 1.0, got ${sum}`);
     });
 
-    it('[CNVC5] pack-latest has 11 methods', () => {
-      assert.strictEqual(pack.methods.length, 11);
+    it('[CNVC5] pack-latest has 12 methods', () => {
+      assert.strictEqual(pack.methods.length, 12);
     });
 
     it('[CNVC6] methods have correct IDs (no removed or old IDs)', () => {
       const ids = pack.methods.map(m => m.methodId).sort();
       const expected = [
         'appleHealth', 'bigelow', 'billings', 'chartneo', 'creighton',
-        'descriptive', 'femm', 'justisse', 'marquette', 'mira', 'sympto-thermal'
+        'descriptive', 'femm', 'justisse', 'marquette', 'mira', 'sensiplan', 'sympto-thermal'
       ].sort();
       assert.deepStrictEqual(ids, expected);
+    });
+
+    it('[CNVC9] sensiplan is published as model-cervical-fluid defines it (B-2026-10-26-18)', () => {
+      const sensiplan = pack.methods.find(m => m.methodId === 'sensiplan');
+      assert.ok(sensiplan, 'sensiplan method should exist');
+      assert.strictEqual(sensiplan.order, 30);
+      assert.deepStrictEqual(sensiplan.components.map(c => c.field), ['observation']);
+      assert.deepStrictEqual(sensiplan.components[0].options.map(o => o.value), ['t', 'ø', 'f', 'S', 'S+']);
+      const orders = pack.methods.map(m => m.order);
+      assert.strictEqual(new Set(orders).size, orders.length, 'method orders are distinct');
+    });
+
+    // The coverline rule each method charts the basal temperature by (3.24.0). Rule ids are those of
+    // model-cervical-fluid references/rules/coverline-rules.json; `none` = the method draws no coverline.
+    const RULE_IDS = ['sympto-thermal', 'sensiplan', 'manual'];
+    const EXPECTED_RULES = {
+      'sympto-thermal': 'sympto-thermal',
+      sensiplan: 'sensiplan',
+      chartneo: 'sensiplan',
+      justisse: 'manual',
+      billings: 'none',
+      creighton: 'none',
+      marquette: 'none',
+      femm: 'none',
+      appleHealth: 'none',
+      mira: 'none',
+      bigelow: 'none',
+      descriptive: 'none'
+    };
+
+    it('[CNVC10] the rule catalogue holds the known coverline rule ids, each labelled and sourced', () => {
+      assert.deepStrictEqual(Object.keys(pack.temperatureRules).sort(), [...RULE_IDS].sort());
+      for (const [id, rule] of Object.entries(pack.temperatureRules)) {
+        assert.ok(rule.label.en && rule.label.fr, `${id} label is localised`);
+        assert.match(rule.source, /coverline-rules\.json \(version 2026-10-28\)/, `${id} points at a version of the method specification`);
+      }
+    });
+
+    it('[CNVC11] every method declares a temperatureRule among the known ids or none', () => {
+      for (const method of pack.methods) {
+        assert.ok([...RULE_IDS, 'none'].includes(method.temperatureRule),
+          `${method.methodId} has temperatureRule ${method.temperatureRule}`);
+      }
+      const actual = Object.fromEntries(pack.methods.map(m => [m.methodId, m.temperatureRule]));
+      assert.deepStrictEqual(actual, EXPECTED_RULES);
+    });
+
+    describe('[CNVT] temperature rule declaration is checked by the loader', () => {
+      const { checkTemperatureRules } = require('../src/converters');
+      const rules = { sensiplan: { label: { en: 'Sensiplan' }, source: 'coverline-rules.json' } };
+      const methods = [{ methodId: 'a' }, { methodId: 'b' }];
+
+      it('[CNVT-1] a complete declaration is added to each method', () => {
+        const out = checkTemperatureRules('x', { temperatureRules: rules, methodTemperatureRule: { a: 'sensiplan', b: 'none' } }, methods);
+        assert.deepStrictEqual(out.map(m => m.temperatureRule), ['sensiplan', 'none']);
+        assert.strictEqual(methods[0].temperatureRule, undefined, 'the source objects are not mutated');
+      });
+
+      it('[CNVT-2] a converter with no declaration is unchanged', () => {
+        assert.strictEqual(checkTemperatureRules('mood', {}, methods), methods);
+      });
+
+      it('[CNVT-3] a method without an entry is rejected', () => {
+        assert.throws(() => checkTemperatureRules('x', { temperatureRules: rules, methodTemperatureRule: { a: 'none' } }, methods),
+          /method "b" has no methodTemperatureRule entry/);
+      });
+
+      it('[CNVT-4] an unknown rule id is rejected', () => {
+        assert.throws(() => checkTemperatureRules('x', { temperatureRules: rules, methodTemperatureRule: { a: 'tcoyf', b: 'none' } }, methods),
+          /method "a" has unknown temperatureRule "tcoyf"/);
+        assert.throws(() => checkTemperatureRules('x', { temperatureRules: rules, methodTemperatureRule: { a: 'constructor', b: 'none' } }, methods),
+          /unknown temperatureRule "constructor"/);
+      });
+
+      it('[CNVT-5] an entry for a method not in the pack is rejected', () => {
+        assert.throws(() => checkTemperatureRules('x', { temperatureRules: rules, methodTemperatureRule: { a: 'none', b: 'none', c: 'none' } }, methods),
+          /unknown method "c"/);
+      });
+
+      it('[CNVT-6] "none" cannot be declared as a rule', () => {
+        const withNone = { ...rules, none: { label: { en: 'None' }, source: 's' } };
+        assert.throws(() => checkTemperatureRules('x', { temperatureRules: withNone, methodTemperatureRule: { a: 'none', b: 'none' } }, methods),
+          /"none" is reserved/);
+      });
     });
 
     it('[CNVC7] each method has components with options and vectors', () => {
@@ -132,6 +216,11 @@ describe('[CNVX] Converters build output', () => {
       const mira = pack.methods.find(m => m.methodId === 'mira');
       assert.ok(mira, 'mira method should exist');
       assert.strictEqual(mira.components[0].options.length, 16);
+    });
+
+    it('[CNVM13] mood declares no temperature rule', () => {
+      assert.strictEqual(pack.temperatureRules, undefined);
+      for (const method of pack.methods) assert.strictEqual(method.temperatureRule, undefined, method.methodId);
     });
 
     it('[CNVM7] _raw virtual method replaces hds (auto-generated by engine)', () => {
