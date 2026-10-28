@@ -1,6 +1,0 @@
-# Contains HL7 default categories for observations
-# used with the value of shortcut hl7fhir:category-default
-vital-sign:
-  code: vital-sign
-  system: http://terminology.hl7.org/CodeSystem/observation-category
-  display: Vital Sign

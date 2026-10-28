@@ -254,7 +254,10 @@ The EQ-5D-5L questionnaire has 5 dimensions + a VAS. **None of them are EQ-5D-5L
 | Usual activities | `function-usual-activities` | ICF `d630`/`d845`/`d920` role/participation | SF-36 Role, PROMIS Social Roles, WHODAS |
 | Pain/Discomfort | `symptom-pain-severity` | Overall pain intensity (VRS-5 / NRS) | PROMIS Pain Intensity, SF-36 BP, BPI, NRS |
 | Anxiety/Depression | `wellbeing-mental-distress` | Summary distress severity | K6/K10, HADS-Total, PROMIS Emotional Distress |
-| EQ VAS | `wellbeing-self-rated-health` | Self-rated health (SRH) | EQ VAS, SF-36 GH, PROMIS Global01, NHIS/MEPS |
+| EQ VAS | `wellbeing-self-rated-health` | Self-rated health (SRH), 0..100 scale | EQ VAS |
+
+The 5-level general-health question (SF-1, SF-36 / RAND-36 item 1, PROMIS Global01, NHIS/MEPS) is its own item,
+`wellbeing-general-health`, and is the one that carries a FHIR mapping (LOINC 61577-3).
 
 The questionnaire's identity lives in the *form template* (a `CollectorRequest` built with [`appTemplates.CollectorRequest`](https://github.com/healthdatasafe/hds-lib-js) plus per-section `itemCustomizations.labels` for the EuroQol-licensed wording), not in the data model. When PROMIS Short Forms or SF-36 are added later, they reuse the same items via new templates.
 
@@ -319,11 +322,13 @@ data-model/
 │   ├── datasources/                       # External data source references
 │   ├── conversions/                       # Unit conversions (mass, length, temperature)
 │   ├── settings/settings.yaml             # HDS user-settings definitions
-│   ├── hl7-defaults/category.yaml         # FHIR default categories
+│   ├── fhir/mapping.yaml                  # FHIR tables: categories per resourceType, systems, IG versions
+│   ├── fhir/scopes.lock.json              # Every published SMART grant root (npm run fhir:lock; never edited by hand)
 │   └── inputs.yaml                        # Draft input-type coercion map, NOT loaded by the build
 │
 ├── src/
 │   ├── items.js                           # Loader + checkItemVsEvenType validator
+│   ├── fhir.js                            # fhir: block checks, SMART scope grant table and its lock
 │   ├── streams.js                         # Stream loader
 │   ├── eventTypes.js                      # EventType registry loader
 │   ├── appStreams.js                      # App-stream loader
@@ -449,10 +454,15 @@ Commonly-cited scales / terminologies for mapping new items:
 - **Apple HealthKit `HKStateOfMind`** (iOS 17+) — valence + 38 emotion labels.
 
 ### Self-rated health
-- **EQ VAS** — 0–100 mm (EuroQol).
-- **SF-1 / SF-36 GH item 1 / PROMIS Global01** — 5-level (Excellent / Very good / Good / Fair / Poor).
+- **EQ VAS** — 0–100 mm (EuroQol). HDS item `wellbeing-self-rated-health`; no standard code fits the scale.
+- **SF-1 / SF-36 GH item 1 / RAND-36 item 1 / PROMIS Global01** — 5-level (Excellent / Very good / Good / Fair / Poor).
+  HDS item `wellbeing-general-health` (RAND-36 wording, public domain).
 - **NHIS / MEPS / ESS / SILC** — national health surveys, 5-level SRH question.
-- SNOMED `425058002`; LOINC `72006-0`, `32622-6`, `82589-3`.
+- LOINC `61577-3` "In general, would you say your health is [PROMIS]" with answer list `LL1012-5`
+  (`LA9206-9` Excellent, `LA13913-1` Very Good, `LA8967-7` Good, `LA8968-5` Fair, `LA8969-3` Poor). SNOMED findings
+  `135816001` excellent, `135815002` good, `135817005` fair, `135818000` poor; none for "very good".
+- Not valid for SRH, though once listed here: SNOMED `425058002` (not a valid SCTID); LOINC `72006-0` (VR-36
+  physical functioning T-score), `32622-6` (does not exist), `82589-3` (highest level of education).
 
 ### Terminologies (codes to include in item references)
 - **SNOMED CT** — https://bioportal.bioontology.org/ontologies/SNOMEDCT

@@ -4,15 +4,49 @@
 
 ### Added: `fhir:` mapping block on items (plan 115, SMART on FHIR)
 
-- New optional item property `fhir` (schema in `src/schemas/items.js`): resourceType, category, code, value kind
-  (`quantity`, `coded`, `scaled`, `components`, `datasource-codes`), optional `split`, profiles per flavour (us, ips,
-  ch). Canonical system URIs only. Documented in `documentation/FHIR-MAPPING.md`.
-- Build-time checks: the block agrees with its item (units, options, components, split keys) and the stream-subtree
-  invariant (a granted subtree maps to one resourceType and category).
-- Blocks on `body-weight`, `body-blood-pressure`, `lifestyle-tobacco-smoking`, `condition-coded`,
-  `wellbeing-self-rated-health`. Rendered output validates against US Core 6.1.0 and IPS 2.0.1 (hds-fhir-js CI).
+- New optional item property `fhir` (schema in `src/schemas/items.js`, `defs.json` `fhirBlock`), bidirectional: it
+  says how an item's events render as FHIR R4 and how a FHIR resource imports back. A mapping has `resourceType`
+  (Observation, Condition), `category`, `code` (a static coding with a required `display`, or `{ from: datasource,
+  field }` for codes a datasets-service selection stored in the content), optional `alsoMatch` (codes accepted on
+  import only), optional `value` (`quantity`, `coded` or `components`, the schema discriminating by kind), optional
+  `split` (extra resources from numeric composite fields, inheriting the parent's resourceType and category),
+  optional `ignore` (composite fields not rendered) and `profiles` per flavour (us, ips, ch; an absent flavour renders
+  the base resource). Or `{ companionOf: <item key> }` for a qualifier item that rides under its parent's SMART scope.
+  Documented in `documentation/FHIR-MAPPING.md`, rewritten as an authoring guide (fields, kinds, split and nullable
+  fields, profiles and IG versions, categories, companions, permanence, forward compatibility, import semantics and
+  provenance keys, code verification).
+- New `definitions/fhir/mapping.yaml`, published as **`pack.fhirMapping`**: `formatVersion` 1, `fhirVersion` 4.0.1,
+  the IG of each flavour (US Core 6.1.0, IPS 2.0.1, CH Core 6.0.0), the category table per resourceType (the one place
+  the build reads it) and the datasets-service system label → URI table.
+- New **`pack.fhirScopes`**: the SMART scope grant table (`"ResourceType|category"` → maximal stream subtree roots),
+  computed by the build. Every item counts: an unmapped active item as `(unmapped)`, a deprecated item with its
+  mapping or as unmapped, a companion as its parent's pair.
+- New **`definitions/fhir/scopes.lock.json`** and `npm run fhir:lock` (adds the current table, never removes): the
+  build fails if a published grant root's subtree comes to hold another pair, `(unmapped)` included; a test fails if a
+  current root is not locked.
+- Build checks (`src/fhir.js`): category per resourceType; the block agrees with its item (`quantity` on numeric
+  `number` items with every eventType mapped, `coded` on `select` only and refused on `multi-select`, every composite
+  field mapped or ignored, components and splits numeric and disjoint, a datasource source only on a datasource field
+  holding `codes`, no `value` on a Condition); codings unique within an item; import match keys unique across active
+  items; the one-pair-per-granted-subtree invariant; companions valid; the lock.
+- Blocks on `body-weight` (with `alsoMatch` LOINC 3141-9), `body-blood-pressure`, `lifestyle-tobacco-smoking`,
+  `condition-coded` and the new `wellbeing-general-health`. Rendered output validates against US Core 6.1.0 and IPS
+  2.0.1 and round-trips through import (hds-fhir-js).
 - Fixed: AGENTS.md pointed authors at the never-implemented `hl7fhir:` block (B-2026-10-28-24); DESIGN-NOTES marks it
-  superseded.
+  superseded. Removed the unread `definitions/hl7-defaults/category.yaml`.
+
+### Added: `wellbeing-general-health`
+
+- The 5-level self-rated health question, RAND-36 item 1 wording (public domain): "In general, would you say your
+  health is:" Excellent / Very good / Good / Fair / Poor, on `ratio/proportion` at the canonical hooks, **higher is
+  better** (excellent 1.0 … poor 0.0). New stream `wellbeing-general-health` under `wellbeing`. FHIR: LOINC 61577-3
+  with the LL1012-5 answers; SNOMED CT findings in `references` (none exists for "very good").
+
+### Changed: `wellbeing-self-rated-health` references
+
+- The 0..100 slider stays HDS-only, with no FHIR mapping (B-2026-10-28-42). Its `references` are removed: 72006-0 is
+  the VR-36 physical functioning T-score, 32622-6 does not exist in LOINC, 82589-3 is "Highest level of education";
+  no standard code fits the scale. AGENTS.md no longer lists them.
 
 ## [3.24.0] - 2026-10-28
 

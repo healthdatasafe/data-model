@@ -1,0 +1,15 @@
+{
+  "Condition|problem-list-item": [
+    "condition"
+  ],
+  "Observation|social-history": [
+    "lifestyle-tobacco-smoking"
+  ],
+  "Observation|survey": [
+    "wellbeing-general-health"
+  ],
+  "Observation|vital-signs": [
+    "body-blood-pressure",
+    "body-weight"
+  ]
+}

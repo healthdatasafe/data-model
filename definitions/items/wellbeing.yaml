@@ -370,9 +370,10 @@ wellbeing-mental-distress-stress-presence:
     snomed: ["73595000", "224974006"]
 
 # Self-rated health ("SRH") — the most validated single-item PRO in epidemiology.
-# One item covers both common capture formats: continuous 0..100 VAS (stored 0..1 at
-# step 0.01) and 5-level categorical (SF-1 / PROMIS Global01 / NHIS SRH question,
-# mapped to the canonical 5-level hooks 0.0/0.25/0.5/0.75/1.0).
+# Two capture formats, two items: this continuous 0..100 VAS (stored 0..1 at step
+# 0.01), and the 5-level categorical question (SF-1 / RAND-36 item 1 / PROMIS
+# Global01 / NHIS SRH) as `wellbeing-general-health` below. The VAS stays HDS-only:
+# no FHIR mapping (licensing of the EQ VAS anchors: B-2026-10-28-42).
 
 wellbeing-self-rated-health:
   version: v1
@@ -412,19 +413,70 @@ wellbeing-self-rated-health:
           en: The best health you can imagine
           fr: La meilleure santé que vous puissiez imaginer
   repeatable: unlimited
+  # No `references`: no standard code fits this 0..100 scale. The SNOMED ids once
+  # listed ("425058002", "104346004") are not valid SCTIDs, and the LOINC codes were
+  # wrong: 72006-0 is the VR-36 physical functioning T-score, 32622-6 does not exist,
+  # 82589-3 is "Highest level of education" (checked 2026-10-28). Add a code only
+  # once one with this exact meaning is verified (snomed-db, tx.fhir.org).
+
+# General health: the 5-level self-rated health question. Wording from the RAND
+# 36-Item Health Survey 1.0, item 1 (RAND, public domain; the same question as SF-36
+# item 1, SF-1 and PROMIS Global01): "In general, would you say your health is:
+# Excellent / Very good / Good / Fair / Poor".
+#
+# Direction: HIGHER IS BETTER HEALTH (excellent 1.0 … poor 0.0), the reverse of the
+# severity items above. Hooks on the canonical 5-level positions (DESIGN-NOTES.md).
+# FHIR: LOINC 61577-3 with its answer list LL1012-5. The generic 11323-3 "General
+# health - Reported" has no answer list, so it cannot carry these answers.
+wellbeing-general-health:
+  version: v1
+  label:
+    en: General health
+    fr: Santé générale
+  description:
+    en: "In general, would you say your health is:"
+    fr: "En général, diriez-vous que votre santé est :"
+  streamId: wellbeing-general-health
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 1.0
+      label:
+        en: Excellent
+        fr: Excellente
+    - value: 0.75
+      label:
+        en: Very good
+        fr: Très bonne
+    - value: 0.5
+      label:
+        en: Good
+        fr: Bonne
+    - value: 0.25
+      label:
+        en: Fair
+        fr: Médiocre
+    - value: 0.0
+      label:
+        en: Poor
+        fr: Mauvaise
+  repeatable: unlimited
   references:
-    # No clean SNOMED concept for the self-rated-health / EQ-VAS *scale* itself
-    # (the prior "425058002"/"104346004" were not valid SCTIDs). LOINC is the
-    # appropriate terminology for this PRO/VAS measure. Add a SNOMED ref only if a
-    # correct observable is identified (verify via snomed-db before adding).
-    loinc: ["72006-0", "32622-6", "82589-3"]
+    # Findings per answer; SNOMED CT has none for "very good".
+    snomed: ["135816001", "135815002", "135817005", "135818000"]
+    loinc: "61577-3"
   fhir:
     resourceType: Observation
     category: survey
-    code: { system: http://loinc.org, code: 72006-0 }
+    code: { system: http://loinc.org, code: 61577-3, display: "In general, would you say your health is [PROMIS]" }
     value:
-      kind: scaled
-      multiplier: 100
+      kind: coded
+      # keyed by the option value as a string
+      options:
+        "1": { system: http://loinc.org, code: LA9206-9, display: Excellent }
+        "0.75": { system: http://loinc.org, code: LA13913-1, display: Very Good }
+        "0.5": { system: http://loinc.org, code: LA8967-7, display: Good }
+        "0.25": { system: http://loinc.org, code: LA8968-5, display: Fair }
+        "0": { system: http://loinc.org, code: LA8969-3, display: Poor }
     profiles:
       us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-screening-assessment
-      ips: null

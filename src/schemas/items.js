@@ -59,26 +59,150 @@ const defsSchema = {
       },
       additionalProperties: false
     },
-    // A FHIR coding with a canonical system URI (http://loinc.org, http://snomed.info/sct, …).
+    // ── FHIR mapping (plan 115) ─────────────────────────────────────────────────
+    // The shapes of an item's `fhir` block. Semantic rules (the block agrees with its item, category per
+    // resourceType from definitions/fhir/mapping.yaml, codings unique, the stream-scope invariant and the
+    // lock) are checked in src/fhir.js; see documentation/FHIR-MAPPING.md.
+
+    // A FHIR coding with a canonical system URI (http://loinc.org, http://snomed.info/sct, …). `display`
+    // is required: it is the text a reader falls back on, and what a reviewer checks the code against.
     fhirCoding: {
       type: 'object',
       properties: {
         system: { type: 'string', pattern: '^(https?:|urn:)' },
         code: { type: 'string', minLength: 1 },
-        display: { type: 'string' }
+        display: { type: 'string', minLength: 1 }
       },
-      required: ['system', 'code'],
+      required: ['system', 'code', 'display'],
       additionalProperties: false
     },
-    // Profile canonical per rendering flavour; `null` states the flavour has no profile for this item.
+    // The resource's code: a static coding, or a source `{ from: datasource, field }` naming the dotted
+    // path in the event content where a datasets-service selection stored its `codes[]`.
+    fhirCode: {
+      if: { type: 'object', required: ['from'] },
+      then: {
+        type: 'object',
+        properties: {
+          from: { enum: ['datasource'] },
+          field: { type: 'string', pattern: '^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$' }
+        },
+        required: ['from', 'field'],
+        additionalProperties: false
+      },
+      else: { $ref: 'defs.json#/definitions/fhirCoding' }
+    },
+    // A UCUM unit code (`kg`, `mm[Hg]`, `/min`, `[lb_av]`).
+    fhirUnit: { type: 'string', minLength: 1 },
+    // Profile canonical per rendering flavour. An absent flavour renders the base resource with no
+    // profile claim.
     fhirProfiles: {
       type: 'object',
       properties: {
-        us: { type: ['string', 'null'] },
-        ips: { type: ['string', 'null'] },
-        ch: { type: ['string', 'null'] }
+        us: { type: 'string', minLength: 1 },
+        ips: { type: 'string', minLength: 1 },
+        ch: { type: 'string', minLength: 1 }
       },
       additionalProperties: false
+    },
+    // `value[x]`, discriminated by `kind`: each kind admits only its own fields.
+    fhirValue: {
+      type: 'object',
+      properties: {
+        kind: { enum: ['quantity', 'coded', 'components'] }
+      },
+      required: ['kind'],
+      allOf: [
+        { // quantity: eventType → UCUM unit; renders valueQuantity
+          if: { properties: { kind: { const: 'quantity' } } },
+          then: {
+            properties: {
+              kind: {},
+              units: { type: 'object', minProperties: 1, additionalProperties: { $ref: 'defs.json#/definitions/fhirUnit' } }
+            },
+            required: ['units'],
+            additionalProperties: false
+          }
+        },
+        { // coded: option value → coding; renders valueCodeableConcept
+          if: { properties: { kind: { const: 'coded' } } },
+          then: {
+            properties: {
+              kind: {},
+              options: { type: 'object', minProperties: 1, additionalProperties: { $ref: 'defs.json#/definitions/fhirCoding' } }
+            },
+            required: ['options'],
+            additionalProperties: false
+          }
+        },
+        { // components: composite field → component code and UCUM unit; renders component[]
+          if: { properties: { kind: { const: 'components' } } },
+          then: {
+            properties: {
+              kind: {},
+              components: {
+                type: 'object',
+                minProperties: 1,
+                additionalProperties: {
+                  type: 'object',
+                  properties: { code: { $ref: 'defs.json#/definitions/fhirCoding' }, unit: { $ref: 'defs.json#/definitions/fhirUnit' } },
+                  required: ['code', 'unit'],
+                  additionalProperties: false
+                }
+              }
+            },
+            required: ['components'],
+            additionalProperties: false
+          }
+        }
+      ]
+    },
+    // A mapping: how the item's events render as (and import from) one FHIR resource.
+    fhirMapping: {
+      type: 'object',
+      properties: {
+        resourceType: { enum: ['Observation', 'Condition'] },
+        // Required or refused per resourceType, from the category table in definitions/fhir/mapping.yaml.
+        category: { type: 'string', minLength: 1 },
+        code: { $ref: 'defs.json#/definitions/fhirCode' },
+        // Extra codes accepted on import only, never emitted (static code only).
+        alsoMatch: { type: 'array', minItems: 1, items: { $ref: 'defs.json#/definitions/fhirCoding' } },
+        value: { $ref: 'defs.json#/definitions/fhirValue' },
+        // Extra resources, one per numeric composite field, inheriting the parent's resourceType and
+        // category (e.g. the heart rate of a blood-pressure event).
+        split: {
+          type: 'object',
+          minProperties: 1,
+          additionalProperties: {
+            type: 'object',
+            properties: {
+              code: { $ref: 'defs.json#/definitions/fhirCoding' },
+              unit: { $ref: 'defs.json#/definitions/fhirUnit' },
+              profiles: { $ref: 'defs.json#/definitions/fhirProfiles' }
+            },
+            required: ['code', 'unit', 'profiles'],
+            additionalProperties: false
+          }
+        },
+        // Composite fields deliberately left out of the FHIR rendering.
+        ignore: { type: 'array', minItems: 1, uniqueItems: true, items: { type: 'string', minLength: 1 } },
+        profiles: { $ref: 'defs.json#/definitions/fhirProfiles' }
+      },
+      required: ['resourceType', 'code', 'profiles'],
+      additionalProperties: false
+    },
+    // A qualifier item that rides under its parent item's SMART scope and is never rendered on its own.
+    fhirCompanion: {
+      type: 'object',
+      properties: {
+        companionOf: { type: 'string', minLength: 1 }
+      },
+      required: ['companionOf'],
+      additionalProperties: false
+    },
+    fhirBlock: {
+      if: { type: 'object', required: ['companionOf'] },
+      then: { $ref: 'defs.json#/definitions/fhirCompanion' },
+      else: { $ref: 'defs.json#/definitions/fhirMapping' }
     }
   }
 };
@@ -259,62 +383,11 @@ const itemSchema = {
       },
       additionalProperties: false
     },
-    // How the item renders as FHIR R4 (plan 115; consumed by hds-fhir-js). Semantic rules (unit keys match the
-    // item's eventTypes, coded options match its options, component and split keys match its composite fields)
-    // and the stream-subtree invariant are checked in src/items.js; see documentation/FHIR-MAPPING.md.
-    fhir: {
-      type: 'object',
-      properties: {
-        resourceType: { enum: ['Observation', 'Condition'] },
-        category: { type: 'string' },
-        code: { $ref: 'defs.json#/definitions/fhirCoding' },
-        value: {
-          type: 'object',
-          properties: {
-            kind: { enum: ['quantity', 'coded', 'scaled', 'components', 'datasource-codes'] },
-            // quantity: eventType → UCUM code
-            units: { type: 'object', additionalProperties: { type: 'string' } },
-            // coded: option value → coding
-            options: { type: 'object', additionalProperties: { $ref: 'defs.json#/definitions/fhirCoding' } },
-            // scaled: a 0..1 proportion × multiplier, rounded to an integer
-            multiplier: { type: 'number', minimum: 1 },
-            // components: composite field → component code and UCUM unit
-            components: {
-              type: 'object',
-              additionalProperties: {
-                type: 'object',
-                properties: { code: { $ref: 'defs.json#/definitions/fhirCoding' }, unit: { type: 'string' } },
-                required: ['code', 'unit'],
-                additionalProperties: false
-              }
-            },
-            // datasource-codes: content field holding datasets-service `{ label, codes[] }`
-            field: { type: 'string' }
-          },
-          required: ['kind'],
-          additionalProperties: false
-        },
-        // Extra resources derived from one composite field (e.g. heart rate from a blood-pressure event).
-        split: {
-          type: 'object',
-          additionalProperties: {
-            type: 'object',
-            properties: {
-              resourceType: { enum: ['Observation'] },
-              category: { type: 'string' },
-              code: { $ref: 'defs.json#/definitions/fhirCoding' },
-              unit: { type: 'string' },
-              profiles: { $ref: 'defs.json#/definitions/fhirProfiles' }
-            },
-            required: ['resourceType', 'category', 'code', 'unit', 'profiles'],
-            additionalProperties: false
-          }
-        },
-        profiles: { $ref: 'defs.json#/definitions/fhirProfiles' }
-      },
-      required: ['resourceType', 'category', 'value', 'profiles'],
-      additionalProperties: false
-    }
+    // How the item's events render as FHIR R4 and import back (plan 115; consumed by hds-fhir-js): either a
+    // mapping, or `{ companionOf: <item key> }` for a qualifier that rides under its parent's SMART scope.
+    // Shapes in defs.json (`fhirBlock`); semantic rules, the stream-scope invariant and the scope lock are
+    // checked in src/fhir.js. See documentation/FHIR-MAPPING.md.
+    fhir: { $ref: 'defs.json#/definitions/fhirBlock' }
   },
   allOf: [
     { // type is select

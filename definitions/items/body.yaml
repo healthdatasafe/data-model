@@ -31,6 +31,9 @@ body-weight:
     resourceType: Observation
     category: vital-signs
     code: { system: http://loinc.org, code: 29463-7, display: Body weight }
+    # Import only: EHRs often send the "measured" variant.
+    alsoMatch:
+      - { system: http://loinc.org, code: 3141-9, display: Body weight Measured }
     value:
       kind: quantity
       units:
@@ -82,8 +85,6 @@ body-blood-pressure:
         diastolic: { code: { system: http://loinc.org, code: 8462-4, display: Diastolic blood pressure }, unit: "mm[Hg]" }
     split:
       rate:
-        resourceType: Observation
-        category: vital-signs
         code: { system: http://loinc.org, code: 8867-4, display: Heart rate }
         unit: /min
         profiles:

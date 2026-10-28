@@ -1,64 +1,333 @@
 const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const Ajv = require('ajv');
 
 describe('[FHIR] item fhir blocks (plan 115)', () => {
-  const { itemsById, checkFhirMapping, checkFhirSubtrees } = require('../src/items');
-  const { checkItem } = require('../src/schemas/items');
+  const { itemsById, fhirScopes, toBePublished } = require('../src/items');
+  const { checkItem, toBePublished: schemasToBePublished } = require('../src/schemas/items');
+  const { checkFhirMapping, checkFhirScopes, computeFhirScopes, readLock, mergeLock, fhirMapping, UNMAPPED } = require('../src/fhir');
 
-  const weight = () => structuredClone(itemsById['body-weight']);
+  const MAPPED = ['body-weight', 'body-blood-pressure', 'lifestyle-tobacco-smoking', 'condition-coded', 'wellbeing-general-health'];
+  const item = (k) => structuredClone(itemsById[k]);
+  const eventTypesOf = (it) => it.variations?.eventType ? it.variations.eventType.options.map((o) => o.value) : [it.eventType];
+  const check = (it, key = 'x') => checkFhirMapping(key, it, eventTypesOf(it));
+  const coding = (code, system = 'http://loinc.org') => ({ system, code, display: `display ${code}` });
 
-  it('[FHIR-1] the mapped items load and keep their blocks', () => {
-    for (const k of ['body-weight', 'body-blood-pressure', 'lifestyle-tobacco-smoking', 'condition-coded', 'wellbeing-self-rated-health']) {
-      assert.ok(itemsById[k].fhir, `${k} has no fhir block`);
-    }
+  describe('[FHIR-ITEM] the shipped blocks', () => {
+    it('[FHIR-ITEM-1] the mapped items load and keep their blocks; the VAS slider is unmapped', () => {
+      for (const k of MAPPED) assert.ok(itemsById[k].fhir, `${k} has no fhir block`);
+      assert.strictEqual(itemsById['wellbeing-self-rated-health'].fhir, undefined);
+    });
+
+    it('[FHIR-ITEM-2] wellbeing-general-health: 5 levels, higher is better, LOINC answers on every option', () => {
+      const gh = itemsById['wellbeing-general-health'];
+      assert.strictEqual(gh.eventType, 'ratio/proportion');
+      assert.deepStrictEqual(gh.options.map((o) => [o.value, o.label.en]), [[1, 'Excellent'], [0.75, 'Very good'], [0.5, 'Good'], [0.25, 'Fair'], [0, 'Poor']]);
+      assert.deepStrictEqual(gh.fhir.code, { system: 'http://loinc.org', code: '61577-3', display: 'In general, would you say your health is [PROMIS]' });
+      // keyed by String(option value): 1.0 is "1", 0.0 is "0"
+      assert.deepStrictEqual(Object.fromEntries(Object.entries(gh.fhir.value.options).map(([k, c]) => [k, c.code])),
+        { 1: 'LA9206-9', 0.75: 'LA13913-1', 0.5: 'LA8967-7', 0.25: 'LA8968-5', 0: 'LA8969-3' });
+      assert.strictEqual(gh.fhir.profiles.ips, undefined, 'no IPS profile: base resource');
+    });
+
+    it('[FHIR-ITEM-3] condition-coded takes its code from the datasource selection and has no value', () => {
+      const c = itemsById['condition-coded'].fhir;
+      assert.deepStrictEqual(c.code, { from: 'datasource', field: 'condition' });
+      assert.strictEqual(c.value, undefined);
+    });
   });
 
-  it('[FHIR-2] the schema refuses a label instead of a canonical system URI, and unknown keys', () => {
-    const item = weight();
-    item.fhir.code.system = 'loinc';
-    assert.throws(() => checkItem(item, 'w'), /pattern/);
-    const item2 = weight();
-    item2.fhir.extra = 1;
-    assert.throws(() => checkItem(item2, 'w'), /additional properties/);
+  describe('[FHIR-SCH] the schema', () => {
+    it('[FHIR-SCH-1] refuses a label instead of a canonical system URI, a coding without display, and unknown keys', () => {
+      const a = item('body-weight');
+      a.fhir.code.system = 'loinc';
+      assert.throws(() => checkItem(a, 'w'), /pattern/);
+      const b = item('body-weight');
+      delete b.fhir.code.display;
+      assert.throws(() => checkItem(b, 'w'), /display/);
+      const c = item('body-weight');
+      c.fhir.extra = 1;
+      assert.throws(() => checkItem(c, 'w'), /additional properties/);
+    });
+
+    it('[FHIR-SCH-2] discriminates by value kind: a field of another kind is refused', () => {
+      const a = item('body-weight');
+      a.fhir.value.options = { 1: coding('1') };
+      assert.throws(() => checkItem(a, 'w'), /additional properties/);
+      const b = item('lifestyle-tobacco-smoking');
+      b.fhir.value.units = { x: 'kg' };
+      assert.throws(() => checkItem(b, 's'), /additional properties/);
+      const c = item('body-blood-pressure');
+      c.fhir.value.units = { x: 'kg' };
+      assert.throws(() => checkItem(c, 'bp'), /additional properties/);
+      const d = item('body-weight');
+      delete d.fhir.value.units;
+      assert.throws(() => checkItem(d, 'w'), /units/);
+    });
+
+    it('[FHIR-SCH-3] removed shapes are refused: scaled, datasource-codes, split pair, null profile, empty unit', () => {
+      const a = item('wellbeing-general-health');
+      a.fhir.value = { kind: 'scaled', multiplier: 100 };
+      assert.throws(() => checkItem(a, 'gh'), /allowed values/);
+      const b = item('condition-coded');
+      b.fhir.value = { kind: 'datasource-codes', field: 'condition' };
+      assert.throws(() => checkItem(b, 'c'), /allowed values/);
+      const c = item('body-blood-pressure');
+      c.fhir.split.rate.category = 'vital-signs';
+      assert.throws(() => checkItem(c, 'bp'), /additional properties/);
+      const d = item('wellbeing-general-health');
+      d.fhir.profiles.ips = null;
+      assert.throws(() => checkItem(d, 'gh'), /must be string/);
+      const e = item('body-weight');
+      e.fhir.value.units['mass/kg'] = '';
+      assert.throws(() => checkItem(e, 'w'), /fewer than 1 characters/);
+    });
+
+    it('[FHIR-SCH-4] a code source is `{ from: datasource, field }` and nothing else', () => {
+      const a = item('condition-coded');
+      a.fhir.code.from = 'content';
+      assert.throws(() => checkItem(a, 'c'), /allowed values/);
+      const b = item('condition-coded');
+      b.fhir.code.display = 'x';
+      assert.throws(() => checkItem(b, 'c'), /additional properties/);
+    });
+
+    it('[FHIR-SCH-5] a companion block holds companionOf only', () => {
+      const a = item('body-temperature-basal');
+      a.fhir = { companionOf: 'body-weight' };
+      checkItem(a, 't');
+      a.fhir.category = 'vital-signs';
+      assert.throws(() => checkItem(a, 't'), /additional properties/);
+    });
+
+    it('[FHIR-SCH-6] round trip: every published item validates against the published schema, compiled afresh', () => {
+      const [itemSchema, defsSchema] = schemasToBePublished().map((f) => JSON.parse(JSON.stringify(f.content)));
+      const ajv = new Ajv({ schemas: [itemSchema, defsSchema], allowUnionTypes: true });
+      const validate = ajv.getSchema(itemSchema.$id);
+      const published = JSON.parse(JSON.stringify(toBePublished()[0].content));
+      for (const [key, it] of Object.entries(published)) {
+        assert.ok(validate(it), `${key}: ${ajv.errorsText(validate.errors)}`);
+      }
+    });
   });
 
-  it('[FHIR-3] quantity units must cover exactly the item eventTypes', () => {
-    const item = weight();
-    delete item.fhir.value.units['mass/lb'];
-    assert.throws(() => checkFhirMapping('w', item, ['mass/kg', 'mass/lb']), /missing \[mass\/lb\]/);
-    const item2 = weight();
-    item2.fhir.value.units['mass/g'] = 'g';
-    assert.throws(() => checkFhirMapping('w', item2, ['mass/kg', 'mass/lb']), /unknown \[mass\/g\]/);
+  describe('[FHIR-MAP] the block agrees with its item', () => {
+    it('[FHIR-MAP-1] quantity units cover exactly the item eventTypes, on number items only', () => {
+      const a = item('body-weight');
+      delete a.fhir.value.units['mass/lb'];
+      assert.throws(() => check(a), /missing \[mass\/lb\]/);
+      const b = item('body-weight');
+      b.fhir.value.units['mass/g'] = 'g';
+      assert.throws(() => check(b), /unknown \[mass\/g\]/);
+      const c = item('wellbeing-general-health');
+      c.fhir.value = { kind: 'quantity', units: { 'ratio/proportion': '1' } };
+      assert.throws(() => check(c), /applies to "number" items only/);
+    });
+
+    it('[FHIR-MAP-2] coded options match the item options and codings are unique within the item', () => {
+      const a = item('lifestyle-tobacco-smoking');
+      delete a.fhir.value.options.current;
+      assert.throws(() => check(a), /missing \[current\]/);
+      const b = item('lifestyle-tobacco-smoking');
+      b.fhir.value.options.current = b.fhir.value.options.former;
+      assert.throws(() => check(b), /appears more than once/);
+    });
+
+    it('[FHIR-MAP-3] coded is refused on a multi-select', () => {
+      const ms = Object.entries(itemsById).find(([, it]) => it.type === 'multi-select');
+      assert.ok(ms, 'the model has a multi-select item');
+      const it = structuredClone(ms[1]);
+      it.fhir = { resourceType: 'Observation', category: 'survey', code: coding('1'), value: { kind: 'coded', options: {} }, profiles: {} };
+      for (const o of it.options) it.fhir.value.options[String(o.value)] = coding(String(o.value));
+      assert.throws(() => check(it), /multi-select is not supported/);
+    });
+
+    it('[FHIR-MAP-4] category is required for Observation and Condition, and checked against its resourceType table', () => {
+      const a = item('body-weight');
+      a.fhir.category = 'vital-sign';
+      assert.throws(() => check(a), /unknown Observation category "vital-sign"/);
+      const b = item('body-weight');
+      delete b.fhir.category;
+      assert.throws(() => check(b), /needs a "category"/);
+      const c = item('body-weight');
+      c.fhir.category = 'problem-list-item';
+      assert.throws(() => check(c), /unknown Observation category/);
+      const d = item('condition-coded');
+      d.fhir.category = 'encounter-diagnosis';
+      check(d);
+      d.fhir.category = 'vital-signs';
+      assert.throws(() => check(d), /unknown Condition category/);
+    });
+
+    it('[FHIR-MAP-5] split and component fields are numeric composite fields, never both', () => {
+      const a = item('body-blood-pressure');
+      a.fhir.split.pulse = a.fhir.split.rate;
+      assert.throws(() => check(a), /split "pulse" is not a composite field/);
+      const b = item('body-blood-pressure');
+      b.fhir.value.components.rate = { code: coding('8867-4'), unit: '/min' };
+      assert.throws(() => check(b), /both a component and a split/);
+      const c = item('body-blood-pressure');
+      c.composite.rate.type = 'text';
+      assert.throws(() => check(c), /must be a numeric composite field/);
+    });
+
+    it('[FHIR-MAP-6] every composite field is mapped or listed in ignore', () => {
+      const a = item('body-blood-pressure');
+      delete a.fhir.split;
+      assert.throws(() => check(a), /composite field "rate" is neither mapped nor listed in "ignore"/);
+      a.fhir.ignore = ['rate'];
+      check(a);
+      a.fhir.ignore = ['rate', 'systolic'];
+      assert.throws(() => check(a), /both mapped and ignored/);
+      a.fhir.ignore = ['rate', 'mean'];
+      assert.throws(() => check(a), /ignore "mean" is not a composite field/);
+    });
+
+    it('[FHIR-MAP-7] a split code differs from the parent code and components', () => {
+      const a = item('body-blood-pressure');
+      a.fhir.split.rate.code = a.fhir.value.components.systolic.code;
+      assert.throws(() => check(a), /appears more than once/);
+    });
+
+    it('[FHIR-MAP-8] Condition rules: no value, a datasource source must name a datasource field', () => {
+      const a = item('condition-coded');
+      a.fhir.value = { kind: 'coded', options: { x: coding('x') } };
+      assert.throws(() => check(a), /a Condition has no value\[x\]/);
+      const b = item('condition-coded');
+      b.fhir.code.field = 'notes';
+      assert.throws(() => check(b), /does not hold a datasets-service "codes" array|is not a content property/);
+      const c = item('condition-coded');
+      c.fhir.code.field = 'nothing';
+      assert.throws(() => check(c), /is not a content property of eventType "condition\/coded-v1"/);
+      const d = item('condition-coded');
+      delete d.fhir.code;
+      assert.throws(() => checkItem(d, 'c'), /required property 'code'/);
+    });
+
+    it('[FHIR-MAP-9] a datasource source on a non-datasource item is refused', () => {
+      const a = item('body-weight');
+      a.fhir = { resourceType: 'Observation', category: 'vital-signs', code: { from: 'datasource', field: 'x' }, profiles: {} };
+      assert.throws(() => check(a), /datasource code source needs an item with exactly one eventType|is not a content property/);
+      const b = item('wellbeing-general-health');
+      b.fhir = { resourceType: 'Observation', category: 'survey', code: { from: 'datasource', field: 'x' }, profiles: {} };
+      assert.throws(() => check(b), /is not a content property/);
+    });
+
+    it('[FHIR-MAP-10] alsoMatch: static code only, and not a repeat of the code', () => {
+      const a = item('body-weight');
+      a.fhir.alsoMatch.push(a.fhir.code);
+      assert.throws(() => check(a), /appears more than once/);
+      const b = item('condition-coded');
+      b.fhir.alsoMatch = [coding('1')];
+      assert.throws(() => check(b), /"alsoMatch" applies to a static code only/);
+    });
   });
 
-  it('[FHIR-4] coded options must match the item options', () => {
-    const item = structuredClone(itemsById['lifestyle-tobacco-smoking']);
-    delete item.fhir.value.options.current;
-    assert.throws(() => checkFhirMapping('s', item, [item.eventType]), /missing \[current\]/);
+  describe('[FHIR-SCOPE] the SMART scope grant table', () => {
+    const obs = (category, code = '1') => ({ resourceType: 'Observation', category, code: coding(code), value: { kind: 'quantity', units: { 'mass/kg': 'kg' } }, profiles: {} });
+    const it_ = (streamId, fhir, extra = {}) => ({ streamId, ...(fhir ? { fhir } : {}), ...extra });
+    const tree = [
+      { id: 'body', children: [{ id: 'body-a', children: [{ id: 'body-a-flag' }] }, { id: 'body-b' }] },
+      { id: 'mood' }
+    ];
+    const run = (items, lock = {}) => checkFhirScopes(items, { roots: tree, lock });
+
+    it('[FHIR-SCOPE-1] grants the maximal subtree roots holding one pair', () => {
+      const grants = run({ a: it_('body-a', obs('vital-signs', 'a')), f: it_('body-a-flag', obs('vital-signs', 'f')), b: it_('body-b', obs('vital-signs', 'b')) });
+      assert.deepStrictEqual(grants, { 'Observation|vital-signs': ['body'] });
+    });
+
+    it('[FHIR-SCOPE-2] a root that carries no item descends into its children', () => {
+      const grants = run({ a: it_('body-a', obs('vital-signs', 'a')), b: it_('body-b', obs('survey', 'b')), m: it_('mood') });
+      assert.deepStrictEqual(grants, { 'Observation|survey': ['body-b'], 'Observation|vital-signs': ['body-a'] });
+    });
+
+    it('[FHIR-SCOPE-3] a mapped parent with an unmapped child fails, with another pair too', () => {
+      assert.throws(() => run({ a: it_('body-a', obs('vital-signs')), f: it_('body-a-flag') }), /stream "body-a" carries a mapped or companion item but its subtree spans \(unmapped\), Observation\|vital-signs/);
+      assert.throws(() => run({ a: it_('body-a', obs('vital-signs', 'a')), f: it_('body-a-flag', obs('survey', 'f')) }), /spans Observation\|survey, Observation\|vital-signs/);
+    });
+
+    it('[FHIR-SCOPE-4] unmapped streams are never granted and do not fail on their own', () => {
+      const { grants, violations } = computeFhirScopes({ a: it_('body-a'), f: it_('body-a-flag', obs('vital-signs')) }, tree);
+      assert.deepStrictEqual(grants, { 'Observation|vital-signs': ['body-a-flag'] });
+      assert.deepStrictEqual(violations, []);
+    });
+
+    it('[FHIR-SCOPE-5] deprecated items count: with their mapping, or as unmapped', () => {
+      assert.throws(() => run({ a: it_('body-a', obs('vital-signs')), old: it_('body-a', null, { deprecated: true }) }), /\(unmapped\)/);
+      // body-b carries no item, so body's whole subtree holds one pair
+      const grants = run({ a: it_('body-a', obs('vital-signs', 'a')), old: it_('body-a-flag', obs('vital-signs', 'o'), { deprecated: true }) });
+      assert.deepStrictEqual(grants, { 'Observation|vital-signs': ['body'] });
+    });
+
+    it('[FHIR-SCOPE-6] a companion counts as its parent\'s pair', () => {
+      const grants = run({ a: it_('body-a', obs('vital-signs')), f: it_('body-a-flag', { companionOf: 'a' }), b: it_('body-b') });
+      assert.deepStrictEqual(grants, { 'Observation|vital-signs': ['body-a'] });
+    });
+
+    it('[FHIR-SCOPE-7] a companion needs a mapped parent and a stream inside the parent\'s subtree', () => {
+      assert.throws(() => run({ a: it_('body-a'), f: it_('body-a-flag', { companionOf: 'a' }) }), /the parent must carry a mapping/);
+      assert.throws(() => run({ f: it_('body-a-flag', { companionOf: 'nope' }) }), /no such item/);
+      assert.throws(() => run({ a: it_('body-a-flag', obs('vital-signs')), f: it_('body-a', { companionOf: 'a' }) }), /is not inside the parent's stream subtree/);
+      assert.throws(() => run({ a: it_('body-a', obs('vital-signs')), c: it_('body-a-flag', { companionOf: 'a' }), d: it_('body-a-flag', { companionOf: 'c' }) }), /the parent must carry a mapping/);
+    });
+
+    it('[FHIR-SCOPE-8] the lock: a widened root fails, a new root passes, a vanished root fails', () => {
+      const lock = { 'Observation|vital-signs': ['body-a'] };
+      assert.throws(() => run({ f: it_('body-a-flag', obs('survey', 'f')) }, { 'Observation|vital-signs': ['body-a-flag'] }), /"body-a-flag" was published as a grant root of Observation\|vital-signs; its subtree now also holds Observation\|survey/);
+      assert.throws(() => run({ a: it_('body-a', obs('vital-signs', 'a')), b: it_('body-b') }, { 'Observation|vital-signs': ['body'] }), /"body" was published .* now also holds \(unmapped\)/);
+      const grants = run({ a: it_('body-a', obs('vital-signs', 'a')), b: it_('body-b', obs('survey', 'b')) }, lock);
+      assert.deepStrictEqual(grants, { 'Observation|survey': ['body-b'], 'Observation|vital-signs': ['body-a'] });
+      assert.throws(() => run({ a: it_('body-a', obs('vital-signs')) }, { 'Observation|vital-signs': ['gone'] }), /"gone" .* is no longer a stream/);
+    });
+
+    it('[FHIR-SCOPE-9] mergeLock adds and never removes', () => {
+      const merged = mergeLock({ 'Observation|survey': ['x'] }, { 'Observation|survey': ['y'], 'Condition|problem-list-item': ['c'] });
+      assert.deepStrictEqual(merged, { 'Condition|problem-list-item': ['c'], 'Observation|survey': ['x', 'y'] });
+    });
+
+    it('[FHIR-SCOPE-10] import keys are unique across active items', () => {
+      assert.throws(() => run({ a: it_('body-a', obs('vital-signs', 'same')), b: it_('body-b', obs('vital-signs', 'same')) }), /claimed by both "a" and "b"/);
+      const withAlso = obs('vital-signs', 'b');
+      withAlso.alsoMatch = [coding('a')];
+      assert.throws(() => run({ a: it_('body-a', obs('vital-signs', 'a')), b: it_('body-b', withAlso) }), /claimed by both/);
+      run({ a: it_('body-a', obs('vital-signs', 'same')), b: it_('body-b', obs('vital-signs', 'same'), { deprecated: true }) });
+    });
+
+    it('[FHIR-SCOPE-11] the model\'s table, every grant root in the committed lock (run npm run fhir:lock)', () => {
+      assert.deepStrictEqual(fhirScopes, {
+        'Condition|problem-list-item': ['condition'],
+        'Observation|social-history': ['lifestyle-tobacco-smoking'],
+        'Observation|survey': ['wellbeing-general-health'],
+        'Observation|vital-signs': ['body-blood-pressure', 'body-weight']
+      });
+      assert.deepStrictEqual(mergeLock(readLock(), fhirScopes), readLock(), 'a grant root is missing from definitions/fhir/scopes.lock.json');
+      assert.ok(!JSON.stringify(fhirScopes).includes(UNMAPPED));
+    });
   });
 
-  it('[FHIR-5] components and split keys must be composite fields', () => {
-    const item = structuredClone(itemsById['body-blood-pressure']);
-    item.fhir.split.pulse = item.fhir.split.rate;
-    assert.throws(() => checkFhirMapping('bp', item, [item.eventType]), /split "pulse" is not a composite field/);
-  });
+  describe('[FHIR-PACK] what readers download', () => {
+    it('[FHIR-PACK-1] the pack carries fhirScopes and fhirMapping (in memory, as build.js assembles them)', () => {
+      const byPack = Object.fromEntries(toBePublished().filter((f) => f.includeInPack).map((f) => [f.includeInPack, f.content]));
+      assert.deepStrictEqual(byPack.fhirScopes, fhirScopes);
+      const m = byPack.fhirMapping;
+      assert.strictEqual(m.formatVersion, 1);
+      assert.strictEqual(m.fhirVersion, '4.0.1');
+      assert.deepStrictEqual(m.flavours, { us: 'hl7.fhir.us.core#6.1.0', ips: 'hl7.fhir.uv.ips#2.0.1', ch: 'ch.fhir.ig.ch-core#6.0.0' });
+      assert.deepStrictEqual(Object.keys(m.categories.Observation), ['vital-signs', 'social-history', 'survey', 'laboratory', 'exam', 'imaging', 'procedure', 'therapy', 'activity']);
+      assert.deepStrictEqual(Object.keys(m.categories.Condition), ['problem-list-item', 'encounter-diagnosis', 'health-concern']);
+      assert.strictEqual(m.systems['SNOMED-CT'], 'http://snomed.info/sct');
+      assert.strictEqual(m.systems['ICD-10'], 'http://hl7.org/fhir/sid/icd-10');
+      assert.strictEqual(fhirMapping, m);
+    });
 
-  it('[FHIR-6] refuses an unknown category and an Observation without code', () => {
-    const item = weight();
-    item.fhir.category = 'vital-sign';
-    assert.throws(() => checkFhirMapping('w', item, ['mass/kg', 'mass/lb']), /unknown category "vital-sign"/);
-    const item2 = weight();
-    delete item2.fhir.code;
-    assert.throws(() => checkFhirMapping('w', item2, ['mass/kg', 'mass/lb']), /needs a "code"/);
-  });
-
-  it('[FHIR-7] the subtree invariant refuses a mapped parent whose subtree spans another pair', () => {
-    const parent = structuredClone(itemsById['body-temperature-basal']);
-    const child = structuredClone(itemsById['body-temperature-basal-disturbance']);
-    const obs = (category) => ({ resourceType: 'Observation', category, code: { system: 'http://loinc.org', code: '1' }, value: { kind: 'scaled', multiplier: 1 }, profiles: {} });
-    parent.fhir = obs('vital-signs');
-    child.fhir = obs('survey');
-    assert.throws(() => checkFhirSubtrees({ parent, child }), /stream "body-temperature-basal" carries mapped items but its subtree spans/);
-    child.fhir = obs('vital-signs');
-    checkFhirSubtrees({ parent, child });
+    it('[FHIR-PACK-2] the built dist/pack.json carries them', () => {
+      const p = path.join(__dirname, '../dist/pack.json');
+      if (!fs.existsSync(p)) return; // npm run build has not run yet
+      const pack = JSON.parse(fs.readFileSync(p, 'utf-8'));
+      assert.deepStrictEqual(pack.fhirScopes, fhirScopes);
+      assert.strictEqual(pack.fhirMapping.formatVersion, 1);
+    });
   });
 });

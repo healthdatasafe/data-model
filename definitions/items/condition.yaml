@@ -14,9 +14,7 @@ condition-coded:
   fhir:
     resourceType: Condition
     category: problem-list-item
-    value:
-      kind: datasource-codes
-      field: condition
+    code: { from: datasource, field: condition }
     profiles:
       us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-problems-health-concerns
       ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips
