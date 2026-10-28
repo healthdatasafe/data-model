@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.25.0] - 2026-10-28
+
+### Added: medical documents, read markers for conversations
+
+- **`documents` root ("Medical documents") and eventType `file/xds-v1`** (site-agents#23): a medical document as Pryv
+  attachments, with the IHE XDS / CH:EPR DocumentEntry metadata as closed, validated content: `class`, `type`, `title`
+  and `language` required (`creation` as FHIR dateTime; Codings `{ system (URI), version?, code, display? }`); `creation`, `status`, `supersedes`, `authors`, `encounterId`, `practiceSetting`,
+  `facilityType`, `format`, `event`, `pages` optional. Codings are FHIR Codings; `class` and `type` take their codes
+  from the CH:EPR DocumentEntry value sets. A replacement is a new event listing the old one in `supersedes`. The
+  document's kind is its codes, not a stream; `documents` is a new root, so no existing grant covers it. See
+  `documentation/DOCUMENTS.md`.
+- **The `document` item is not published yet**: deployed apps would offer it in their pickers and fail on its item
+  type. It ships once hds-lib skips `attachments` items in `getAllActive`, hds-forms-js renders them as not editable,
+  and hds-webapp and doctor-dashboard run those versions on demo and prod. Its definition is in DOCUMENTS.md for a
+  writer's overload meanwhile.
+- **Item type `attachments`**: an item whose files are Pryv attachments; its eventType must declare
+  `attachmentRequired: true`. An item type only, like `system`. Forms show it as not editable.
+- **`settings/hds-webapp-read`**: where the person stopped reading each hds-webapp conversation,
+  `lastRead: { <username@host lowercased, or access id>: <message time> }`, one recurring event on the
+  `webapp-settings` app stream. Writers re-read and keep the later time per contact (a lost concurrent update only
+  shows read messages as unread); a contact with no entry has no marker (unread unknown, not zero).
+- PROVENANCE.md: event ids held in content are mirrored in `clientData.related` (content authoritative); the link
+  kind is told by the two event types.
+- Reviewed by a general-purpose reviewer in place of the usual Fable review (unavailable).
+
 ## [3.24.0] - 2026-10-28
 
 ### Added: cycle charting items, the coverline rule of each method, Sensiplan in the converter pack

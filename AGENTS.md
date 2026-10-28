@@ -4,7 +4,7 @@ This file orients future agents (Claude or others) working on the `data-model` r
 
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
-- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
+- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md`, `DOCUMENTS.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
 - `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `hdsBasis`, …): read it before adding one.
 
 ---
@@ -36,9 +36,11 @@ The same eventType is reused by many items. Adding a new eventType is rare and n
 
 `body-*`, `symptom-*`, `wellbeing-*`, `activity-*`, `fertility-*`, `nutrition-*`, `lifestyle-*`, `medication-*`, `profile-*`, `family-*`. Mirrors body systems / function domains, close to SNOMED CT and ICF categorisations.
 
-**Two non-clinical roots besides `profile`: `sync-status` (3.13.0) and `consents` (plan 91).** `sync-status` holds a connector's user-visible status — one `type: system` item, `sync-status`, and one `role: context` leaf per connector (`sync-status-mira`, …). Partner-named *streams* are accepted there because the leaves are D3 context markers, not vocabulary; partner-named *item keys* stay forbidden (§1). See [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
+**Three non-clinical roots besides `profile`: `sync-status` (3.13.0), `consents` (plan 91) and `documents` (3.25.0).** `sync-status` holds a connector's user-visible status — one `type: system` item, `sync-status`, and one `role: context` leaf per connector (`sync-status-mira`, …). Partner-named *streams* are accepted there because the leaves are D3 context markers, not vocabulary; partner-named *item keys* stay forbidden (§1). See [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
 
 `consents` holds the account-level consent record: one `type: system` item, `consent-record`, append-only, written by the account app with the personal token and requested by no app. See [`documentation/CONSENTS.md`](documentation/CONSENTS.md).
+
+`documents` holds medical documents on `file/xds-v1`; its `type: attachments` item, `document`, is published once deployed consumers handle that type (DOCUMENTS.md). A document's kind and theme are its class and type codes, never a child of a clinical root (such a child would be covered by every grant on that root). See [`documentation/DOCUMENTS.md`](documentation/DOCUMENTS.md).
 
 **Do not create questionnaire-branded streams** (e.g. `questionnaire-eq5d5l`). Each data point lands in its clinical-domain stream; the questionnaire's identity lives in the *form template* (a `CollectorRequest` constructed via [hds-lib-js](https://github.com/healthdatasafe/hds-lib-js)'s `appTemplates.CollectorRequest` / `CollectorSection`), not in `data-model`.
 
@@ -350,7 +352,8 @@ data-model/
 │   ├── FAMILY.md                          # Household / family-structure facts
 │   ├── SYNC-STATUS.md                     # Connector status: sync-status root, `type: system` item
 │   ├── PROVENANCE.md                      # clientData keys: hdsInstrument, related.<eventId>; index of the others
-│   └── CONSENTS.md                        # Account-level consent record: consents root, `type: system` item
+│   ├── CONSENTS.md                        # Account-level consent record: consents root, `type: system` item
+│   └── DOCUMENTS.md                       # Medical documents: documents root, `type: attachments` item, file/xds-v1
 │
 ├── scripts/                               # setup / deploy shell scripts
 ├── tests/                                 # Vitest test suite
