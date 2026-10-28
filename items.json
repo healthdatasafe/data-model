@@ -4326,6 +4326,24 @@
     "repeatable": "unlimited",
     "devNotes": "Append-only history of the account-level consents (plan 91): one event per act, never updated in place; the current state of a document is its latest event. Written by the account app with the personal token at signup, at re-consent and from the Privacy & Consents center. Withdrawing `health-processing` (or `us-chd-consent` under US residence) is account deletion: export, then delete, no event written; `withdrawn` is reserved. No app requests access to this stream. See documentation/CONSENTS.md."
   },
+  "document": {
+    "version": "v1",
+    "type": "attachments",
+    "label": {
+      "en": "Medical document",
+      "fr": "Document médical",
+      "es": "Documento médico"
+    },
+    "description": {
+      "en": "A medical document you keep, such as a lab report, a letter, a prescription or an imaging report.",
+      "fr": "Un document médical que vous conservez, comme un résultat de laboratoire, une lettre, une ordonnance ou un compte rendu d'imagerie.",
+      "es": "Un documento médico que conserva, como un informe de laboratorio, una carta, una receta o un informe de imagen."
+    },
+    "streamId": "documents",
+    "eventType": "file/xds-v1",
+    "repeatable": "any",
+    "devNotes": "One event per document: the file (or its pages) as Pryv attachments, the DocumentEntry metadata as content. The kind of document is its class and type codes, not a stream, and the `documents` root is a new root so no existing grant covers it. Not entered through a form: the person imports a file (forms show \"not editable here\"). A replacement is a new event listing the old one in `supersedes`. See documentation/DOCUMENTS.md."
+  },
   "family-children-count": {
     "version": "temporary",
     "label": {

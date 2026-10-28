@@ -1,6 +1,6 @@
 {
-  "version": "3.28.0",
-  "publicationDate": "2026-10-28T15:04:20.915Z",
+  "version": "3.29.0",
+  "publicationDate": "2026-10-28T15:18:29.504Z",
   "streams": [
     {
       "id": "activity",
@@ -5914,6 +5914,24 @@
       "eventType": "consent/record-v1",
       "repeatable": "unlimited",
       "devNotes": "Append-only history of the account-level consents (plan 91): one event per act, never updated in place; the current state of a document is its latest event. Written by the account app with the personal token at signup, at re-consent and from the Privacy & Consents center. Withdrawing `health-processing` (or `us-chd-consent` under US residence) is account deletion: export, then delete, no event written; `withdrawn` is reserved. No app requests access to this stream. See documentation/CONSENTS.md."
+    },
+    "document": {
+      "version": "v1",
+      "type": "attachments",
+      "label": {
+        "en": "Medical document",
+        "fr": "Document médical",
+        "es": "Documento médico"
+      },
+      "description": {
+        "en": "A medical document you keep, such as a lab report, a letter, a prescription or an imaging report.",
+        "fr": "Un document médical que vous conservez, comme un résultat de laboratoire, une lettre, une ordonnance ou un compte rendu d'imagerie.",
+        "es": "Un documento médico que conserva, como un informe de laboratorio, una carta, una receta o un informe de imagen."
+      },
+      "streamId": "documents",
+      "eventType": "file/xds-v1",
+      "repeatable": "any",
+      "devNotes": "One event per document: the file (or its pages) as Pryv attachments, the DocumentEntry metadata as content. The kind of document is its class and type codes, not a stream, and the `documents` root is a new root so no existing grant covers it. Not entered through a form: the person imports a file (forms show \"not editable here\"). A replacement is a new event listing the old one in `supersedes`. See documentation/DOCUMENTS.md."
     },
     "family-children-count": {
       "version": "temporary",
@@ -16722,7 +16740,7 @@
         }
       },
       "settings/hds-webapp-diary": {
-        "description": "Per-user layout and display state of the hds-webapp Diary, held as a single recurring event on the webapp-settings app stream and updated in place. The shape is owned by hds-webapp, not by this model, so the known keys below are documented rather than enforced: no 'required', and additional properties are permitted on purpose, as for settings/hds-react-timeline. Holds no health data: every value is a Diary card or feature id, an item key, a UI flag or a label of the Diary itself (a chart name, a chart line). An observation belongs on its own item (the fertility intention on fertility-ttc-tta, the charting method on its own item or setting), and a display preference shared across apps belongs in HDSSettings. Card ids are defined by hds-webapp; a measure's card id is its item key.",
+        "description": "Per-user layout and display state of the hds-webapp Diary, held as a single recurring event on the webapp-settings app stream and updated in place. The shape is owned by hds-webapp, not by this model, so the known keys below are documented rather than enforced: no 'required', and additional properties are permitted on purpose, as for settings/hds-react-timeline. Holds no health data: every value is a Diary card or feature id, an item key, a UI flag or a label of the Diary itself (a chart name) or a chart line's id. An observation belongs on its own item (the fertility intention on fertility-ttc-tta, the charting method on its own item or setting), and a display preference shared across apps belongs in HDSSettings. Card ids are defined by hds-webapp; a measure's card id is its item key.",
         "type": "object",
         "properties": {
           "v": {
@@ -16784,8 +16802,12 @@
             ]
           },
           "hiddenLines": {
-            "description": "Lines hidden on a chart, keyed by card id, as arrays of line labels.",
+            "description": "Lines hidden on a chart, keyed by card id, as arrays of line ids (a device's key, never the line's label): instrument:<hdsInstrument id>, healthkit:<HealthKit sourceName>, connector:<connector id>, document or default, followed by #systolic / #diastolic for a blood-pressure part.",
             "type": "object"
+          },
+          "pastCyclesAsRecorded": {
+            "description": "Whether past cycles are drawn in the method each was recorded in rather than in the chosen method (a display choice; the observations are never converted when stored).",
+            "type": "boolean"
           },
           "setupDone": {
             "description": "Whether the Diary set-up questions were answered.",
@@ -20134,11 +20156,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-10-28T11:04:17.041Z"
+      "updatedAt": "2026-10-28T09:29:14.399Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-10-27T12:04:35.731Z"
+      "updatedAt": "2026-10-27T11:01:34.694Z"
     }
   },
   "settings": {
