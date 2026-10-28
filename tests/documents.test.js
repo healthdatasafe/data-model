@@ -19,8 +19,8 @@ describe('[DOCS] Medical documents and read markers', () => {
   const coding = (code) => ({ system: 'http://snomed.info/sct', code });
   const minimal = () => ({ class: coding('371531000'), type: [coding('4241000179101')], title: 'Bilan sanguin', language: 'fr' });
 
-  // The `document` item is held back until deployed consumers handle `attachments` (DOCUMENTS.md); its definition
-  // lives in DOCUMENTS.md for writers' overloads, so it is checked from there.
+  // The `document` item is canonical since 3.29.0; DOCUMENTS.md keeps its definition for writers' overloads, so it is
+  // checked to stay identical to the published one.
   const planned = () => {
     const text = fs.readFileSync(path.join(__dirname, '../documentation/DOCUMENTS.md'), 'utf-8');
     const block = text.match(/```yaml\n([\s\S]*?)```/);
@@ -29,9 +29,11 @@ describe('[DOCS] Medical documents and read markers', () => {
   };
 
   describe('[DOCS-ITM] item', () => {
-    it('[DOCS-ITM-1] document is not published yet; nothing resolves on documents', () => {
-      assert.strictEqual(itemsById.document, undefined);
-      assert.strictEqual(findItemForEvent('file/xds-v1', 'documents'), null);
+    it('[DOCS-ITM-1] document is published (3.29.0), identical to its definition in DOCUMENTS.md, and resolves on documents', () => {
+      const item = itemsById.document;
+      assert.ok(item, 'document must exist');
+      assert.deepStrictEqual(item, planned());
+      assert.strictEqual(findItemForEvent('file/xds-v1', 'documents'), item);
     });
 
     it('[DOCS-ITM-2] the planned document item passes the item checks', () => {
@@ -181,9 +183,9 @@ describe('[DOCS] Medical documents and read markers', () => {
       pack = JSON.parse(fs.readFileSync(packPath, 'utf-8'));
     });
 
-    it('[DOCS-PACK-1] the pack carries the stream and the eventTypes, not the item yet', function () {
+    it('[DOCS-PACK-1] the pack carries the stream, the eventTypes and the item', function () {
       if (!pack || !pack.eventTypes.types['file/xds-v1']) return this.skip(); // pack built before this change
-      assert.strictEqual(pack.items.document, undefined);
+      assert.strictEqual(pack.items.document?.type, 'attachments');
       assert.ok(pack.streams.find((r) => r.id === 'documents'), 'documents root in pack');
       assert.ok(pack.eventTypes.types['file/xds-v1']);
       assert.ok(pack.eventTypes.types['settings/hds-webapp-read']);

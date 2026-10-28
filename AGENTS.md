@@ -41,7 +41,7 @@ The same eventType is reused by many items. Adding a new eventType is rare and n
 
 `consents` holds the account-level consent record: one `type: system` item, `consent-record`, append-only, written by the account app with the personal token and requested by no app. See [`documentation/CONSENTS.md`](documentation/CONSENTS.md).
 
-`documents` holds medical documents on `file/xds-v1`; its `type: attachments` item, `document`, is published once deployed consumers handle that type (DOCUMENTS.md). A document's kind and theme are its class and type codes, never a child of a clinical root (such a child would be covered by every grant on that root). See [`documentation/DOCUMENTS.md`](documentation/DOCUMENTS.md).
+`documents` holds medical documents on `file/xds-v1`; its `type: attachments` item is `document` (3.29.0; DOCUMENTS.md). A document's kind and theme are its class and type codes, never a child of a clinical root (such a child would be covered by every grant on that root). See [`documentation/DOCUMENTS.md`](documentation/DOCUMENTS.md).
 
 **Do not create questionnaire-branded streams** (e.g. `questionnaire-eq5d5l`). Each data point lands in its clinical-domain stream; the questionnaire's identity lives in the *form template* (a `CollectorRequest` constructed via [hds-lib-js](https://github.com/healthdatasafe/hds-lib-js)'s `appTemplates.CollectorRequest` / `CollectorSection`), not in `data-model`.
 
