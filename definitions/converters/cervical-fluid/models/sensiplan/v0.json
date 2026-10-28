@@ -1,0 +1,99 @@
+{
+  "methodId": "sensiplan",
+  "order": 30,
+  "name": {
+    "en": "Sensiplan",
+    "fr": "Sensiplan"
+  },
+  "description": {
+    "en": "German-developed method using letter codes (t, ø, f, S, S+) from dry to peak quality.",
+    "fr": "Méthode d'origine allemande utilisant des codes lettres (t, ø, f, S, S+) de sec à qualité maximale."
+  },
+  "referenceUrl": "https://www.sensiplan.de/",
+  "components": [
+    {
+      "field": "observation",
+      "label": {
+        "en": "Observation",
+        "fr": "Observation"
+      },
+      "options": [
+        {
+          "value": "t",
+          "label": {
+            "en": "t — Dry",
+            "fr": "t — Sec"
+          },
+          "vector": {}
+        },
+        {
+          "value": "ø",
+          "label": {
+            "en": "ø — Nothing seen",
+            "fr": "ø — Rien observé"
+          },
+          "vector": {
+            "lubricative": 0.05,
+            "wetness": 0.4,
+            "sensation": 0.4,
+            "mucusVolume": 0.1
+          }
+        },
+        {
+          "value": "f",
+          "label": {
+            "en": "f — Mucus seen",
+            "fr": "f — Glaire observée"
+          },
+          "vector": {
+            "threadiness": 0.38,
+            "stretchability": 0.25,
+            "lubricative": 0.25,
+            "transparency": 0.15,
+            "wetness": 0.35,
+            "densityFluidity": 0.25,
+            "color": 0.1,
+            "sensation": 0.25,
+            "mucusVolume": 0.35
+          }
+        },
+        {
+          "value": "S",
+          "label": {
+            "en": "S — Stretchy",
+            "fr": "S — Étirable"
+          },
+          "vector": {
+            "threadiness": 0.9,
+            "stretchability": 0.9,
+            "lubricative": 0.8,
+            "transparency": 0.85,
+            "wetness": 0.85,
+            "densityFluidity": 0.75,
+            "color": 0.5,
+            "sensation": 0.85,
+            "mucusVolume": 0.7
+          }
+        },
+        {
+          "value": "S+",
+          "label": {
+            "en": "S+ — Peak",
+            "fr": "S+ — Sommet"
+          },
+          "vector": {
+            "threadiness": 1,
+            "stretchability": 1,
+            "lubricative": 1,
+            "transparency": 0.9,
+            "wetness": 1,
+            "densityFluidity": 0.85,
+            "color": 0.5,
+            "sensation": 1,
+            "mucusVolume": 0.9
+          }
+        }
+      ]
+    }
+  ]
+}

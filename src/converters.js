@@ -4,6 +4,9 @@ const YAML = require('yaml');
 
 const defsDir = path.resolve(__dirname, '../definitions/converters');
 
+/** The `temperatureRule` value of a method that draws no coverline. */
+const NO_TEMPERATURE_RULE = 'none';
+
 /**
  * Last modification time of a definition file, as an ISO string.
  *
@@ -108,6 +111,7 @@ for (const itemKey of itemKeys) {
         latestModels.push(models[sourceKey][latestModelVersion]);
       }
     }
+    const methods = checkTemperatureRules(itemKey, latestConfig, latestModels);
     packLatest = {
       itemKey,
       converterVersion: latestVersion,
@@ -116,7 +120,8 @@ for (const itemKey of itemKeys) {
       dimensionNames: latestConfig.dimensionNames,
       dimensions: latestConfig.dimensions,
       colorToRGB: latestConfig.colorToRGB || undefined,
-      methods: latestModels
+      temperatureRules: latestConfig.temperatureRules || undefined,
+      methods
     };
   }
 
@@ -131,8 +136,40 @@ for (const itemKey of itemKeys) {
 }
 
 module.exports = {
-  toBePublished
+  toBePublished,
+  checkTemperatureRules
 };
+
+/**
+ * Check a converter's per-method temperature rule declaration (3.24.0) and return the methods,
+ * each with its `temperatureRule`. A converter that declares neither block is returned unchanged.
+ *
+ * The model JSON files are byte copies of model-cervical-fluid's definitions, so the declaration
+ * lives in the converter config (owned here) and is added to each method at build time. It must
+ * be complete: a method copied in later without a declaration fails the build rather than
+ * publishing a method of unknown rule.
+ */
+function checkTemperatureRules (itemKey, config, methods) {
+  const rules = config.temperatureRules;
+  const perMethod = config.methodTemperatureRule;
+  if (rules === undefined && perMethod === undefined) return methods;
+  const fail = (msg) => { throw new Error(`converter "${itemKey}": ${msg}`); };
+  if (!rules || typeof rules !== 'object' || Array.isArray(rules)) fail('temperatureRules must be a map of rule id to { label, source }');
+  if (!perMethod || typeof perMethod !== 'object' || Array.isArray(perMethod)) fail('methodTemperatureRule must be a map of methodId to a rule id');
+  if (rules[NO_TEMPERATURE_RULE]) fail(`"${NO_TEMPERATURE_RULE}" is reserved and cannot be a temperatureRules id`);
+  for (const [id, rule] of Object.entries(rules)) {
+    if (!rule?.label?.en || !rule.source) fail(`temperatureRules.${id} needs label.en and source`);
+  }
+  const methodIds = methods.map(m => m.methodId);
+  for (const methodId of methodIds) {
+    if (!Object.hasOwn(perMethod, methodId)) fail(`method "${methodId}" has no methodTemperatureRule entry`);
+  }
+  for (const [methodId, ruleId] of Object.entries(perMethod)) {
+    if (!methodIds.includes(methodId)) fail(`methodTemperatureRule names unknown method "${methodId}"`);
+    if (ruleId !== NO_TEMPERATURE_RULE && !Object.hasOwn(rules, ruleId)) fail(`method "${methodId}" has unknown temperatureRule "${ruleId}"`);
+  }
+  return methods.map(m => ({ ...m, temperatureRule: perMethod[m.methodId] }));
+}
 
 function toBePublished () {
   const files = [];

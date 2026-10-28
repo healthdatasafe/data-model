@@ -156,6 +156,36 @@ dimensions:
       - { value: 0.80, label: { en: Red, fr: Rouge } }
       - { value: 1.0, label: { en: Brown, fr: Brun } }
 
+# Temperature coverline rule of each method (3.24.0). Data only: which rule a method charts the
+# basal temperature by; the rule's parameters and its computation live in model-cervical-fluid
+# (references/rules/coverline-rules.json, the method specification) and hds-lib. Published on
+# every method of pack-latest as `temperatureRule`, a key of `temperatureRules` or `none`
+# (the method draws no coverline). The loader requires one entry per method, no more.
+temperatureRules:
+  sympto-thermal:
+    label: { en: "STM / TCOYF", fr: "MST / TCOYF" }
+    source: model-cervical-fluid references/rules/coverline-rules.json, methods.sympto-thermal
+  sensiplan:
+    label: { en: "Sensiplan (3 over 6)", fr: "Sensiplan (3 sur 6)" }
+    source: model-cervical-fluid references/rules/coverline-rules.json, methods.sensiplan
+  manual:
+    label: { en: "Drawn by the person", fr: "Tracée par la personne" }
+    source: model-cervical-fluid references/rules/coverline-rules.json, methods.justisse (kind manual)
+
+methodTemperatureRule:
+  sympto-thermal: sympto-thermal
+  sensiplan: sensiplan
+  chartneo: sensiplan        # coverline-rules.json methods.chartneo: sameAs sensiplan
+  justisse: manual           # no calculation published: the person draws the line
+  billings: none
+  creighton: none
+  marquette: none            # temperature rule not published
+  femm: none
+  appleHealth: none
+  mira: none
+  bigelow: none
+  descriptive: none
+
 # Helper: color dimension value to RGB mapping for UI rendering
 colorToRGB:
   0.0: "#FFFFFF"
