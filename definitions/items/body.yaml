@@ -1959,3 +1959,50 @@ body-blood-serum-aldosterone:
   repeatable: any
   references:
     snomed: ["42379004"]
+
+# ── Results with no item of their own (lab-result/coded-v1) ──────────────────
+# Written by importers, never entered in a form (type: imported). The analyte is coded per event,
+# so the items carry no references. See BLOOD-CHEMISTRY.md § Results with no item of their own.
+
+body-blood-coded:
+  version: v1
+  type: imported
+  label:
+    en: Other blood results
+    fr: Autres résultats sanguins
+    es: Otros resultados de sangre
+  description:
+    en: Blood test results that have no field of their own.
+    fr: Résultats d'analyses de sang qui n'ont pas de champ dédié.
+    es: Resultados de análisis de sangre que no tienen un campo propio.
+  streamId: body-blood-coded
+  eventType: lab-result/coded-v1
+  repeatable: unlimited
+body-urine-coded:
+  version: v1
+  type: imported
+  label:
+    en: Other urine results
+    fr: Autres résultats urinaires
+    es: Otros resultados de orina
+  description:
+    en: Urine test results that have no field of their own.
+    fr: Résultats d'analyses d'urine qui n'ont pas de champ dédié.
+    es: Resultados de análisis de orina que no tienen un campo propio.
+  streamId: body-urine-coded
+  eventType: lab-result/coded-v1
+  repeatable: unlimited
+body-csf-coded:
+  version: v1
+  type: imported
+  label:
+    en: Cerebrospinal fluid results
+    fr: Résultats du liquide céphalorachidien
+    es: Resultados del líquido cefalorraquídeo
+  description:
+    en: Results of a cerebrospinal fluid test.
+    fr: Résultats d'une analyse du liquide céphalorachidien.
+    es: Resultados de un análisis del líquido cefalorraquídeo.
+  streamId: body-csf-coded
+  eventType: lab-result/coded-v1
+  repeatable: unlimited

@@ -22,7 +22,7 @@ body/
     body-urine-hormones/       ← urine hormone assays
     body-urine-coded           ← results with no item of their own
   body-csf/
-    body-csf-coded             ← cerebrospinal fluid results (no item of its own yet)
+    body-csf-coded             ← cerebrospinal fluid results (lab-result/coded-v1)
 ```
 
 Three blood specimens, not one. `body-blood-rbc-magnesium` and `body-blood-serum-magnesium` are the
@@ -370,70 +370,14 @@ Only results with a `value` and no `valueText` move: an item event has no place 
 qualitative or semi-quantitative result stays coded. The move is a separate step of the importer, run after a
 data-model release, with contribute access on both streams.
 
-### The three items: published later
+### The three items
 
-The pack is loaded at runtime by every deployed app. Before hds-lib 2.28.0 `itemsDefs.getAllActive()` lists any item
-type it does not exclude by name, and before hds-forms-js 0.24.0 `schemaFor` throws on an item type it does not know,
-so a published `imported` item would show in the pickers and break the forms of every build already deployed. 3.27.0
-therefore ships the eventType, the streams and the `imported` rule, and **not the items**. They are published in a
-later minor once every consumer that lists items for a person to pick runs hds-lib ≥ 2.28.0 and hds-forms-js ≥ 0.24.0:
-hds-webapp (web on demo **and prod**, and the iOS / Android builds in use, which bundle the libraries and load the pack
-at runtime), doctor-dashboard, the account app, and anything else calling `getAllActive` (hds-lib `cmc/formSpec.ts` in
-bridges). The precedent is the `document` item ([DOCUMENTS.md](DOCUMENTS.md)).
-
-**The same gate applies to writers.** A build before hds-lib 2.28.0 shows a censored ferritin as an exact `1.5 ng/mL`
-and a coded result as its bare `value` (`20`, with no analyte, unit or comparator): nothing breaks, but a reader sees
-a wrong figure. A writer therefore writes `hdsComparator` and `lab-result/coded-v1` events into accounts read by
-those apps only once hds-webapp (web and mobile) and doctor-dashboard run hds-lib ≥ 2.28.0.
-
-Until then a writer that needs `forEvent` to resolve its results, or stream auto-creation to create the streams,
-declares the items in its own overload with exactly this definition (hds-lib ≥ 2.24.0 accepts a restatement whose
-immutable fields are identical, so the overload keeps working once the items are canonical):
-
-```yaml
-body-blood-coded:
-  version: v1
-  type: imported
-  label:
-    en: Other blood results
-    fr: Autres résultats sanguins
-    es: Otros resultados de sangre
-  description:
-    en: Blood test results that have no field of their own.
-    fr: Résultats d'analyses de sang qui n'ont pas de champ dédié.
-    es: Resultados de análisis de sangre que no tienen un campo propio.
-  streamId: body-blood-coded
-  eventType: lab-result/coded-v1
-  repeatable: unlimited
-body-urine-coded:
-  version: v1
-  type: imported
-  label:
-    en: Other urine results
-    fr: Autres résultats urinaires
-    es: Otros resultados de orina
-  description:
-    en: Urine test results that have no field of their own.
-    fr: Résultats d'analyses d'urine qui n'ont pas de champ dédié.
-    es: Resultados de análisis de orina que no tienen un campo propio.
-  streamId: body-urine-coded
-  eventType: lab-result/coded-v1
-  repeatable: unlimited
-body-csf-coded:
-  version: v1
-  type: imported
-  label:
-    en: Cerebrospinal fluid results
-    fr: Résultats du liquide céphalorachidien
-    es: Resultados del líquido cefalorraquídeo
-  description:
-    en: Results of a cerebrospinal fluid test.
-    fr: Résultats d'une analyse du liquide céphalorachidien.
-    es: Resultados de un análisis del líquido cefalorraquídeo.
-  streamId: body-csf-coded
-  eventType: lab-result/coded-v1
-  repeatable: unlimited
-```
+`body-blood-coded`, `body-urine-coded` and `body-csf-coded` (`type: imported`, `lab-result/coded-v1`,
+`repeatable: unlimited`, no references: the code is per event) are in `definitions/items/body.yaml` since 3.28.0;
+3.27.0 shipped the eventType and the streams first. Readers need hds-lib ≥ 2.28.0 and hds-forms-js ≥ 0.24.0: an
+older build lists an `imported` item in its pickers, breaks its form, and shows a coded result or a censored value as
+a bare number. A writer that restated the items in its overload under 3.27.0 can drop the restatement; until it does,
+the overload keeps loading (its immutable fields are identical).
 
 **Cross-system.** FHIR `Observation`: `code.coding` ← `analyte.codes`, `code.text` ← `analyte.label`;
 `valueQuantity` ← `value`, `comparator`, `unit` as `code` with system `http://unitsofmeasure.org`, `unitText` (or the

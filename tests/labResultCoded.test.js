@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 const Ajv = require('ajv');
 const AjvDraft04 = require('ajv-draft-04');
-const YAML = require('yaml');
 
 // Lab results with no item of their own (site-agents#28): `lab-result/coded-v1`, one coded stream per specimen,
 // item type `imported`; and the LOINC ownership checks. See documentation/BLOOD-CHEMISTRY.md.
@@ -19,14 +18,6 @@ describe('[LABC] Coded lab results', () => {
   const numeric = () => ({ analyte: hiv(), value: 20, unit: '{copies}/mL' });
   const qualitative = () => ({ analyte: { label: { en: 'HBsAg' }, codes: [loinc('5196-1')] }, valueText: 'negative' });
 
-  // The three items are held back until deployed consumers handle `imported` (BLOOD-CHEMISTRY.md); their
-  // definitions live there for writers' overloads, so they are checked from there.
-  const planned = () => {
-    const text = fs.readFileSync(path.join(__dirname, '../documentation/BLOOD-CHEMISTRY.md'), 'utf-8');
-    const block = text.split('### The three items: published later')[1]?.match(/```yaml\n([\s\S]*?)```/);
-    assert.ok(block, 'BLOOD-CHEMISTRY.md carries the planned items');
-    return YAML.parse(block[1]);
-  };
   const CODED = { 'body-blood-coded': 'body-blood', 'body-urine-coded': 'body-urine', 'body-csf-coded': 'body-csf' };
 
   for (const [flavour, make] of [
@@ -97,19 +88,22 @@ describe('[LABC] Coded lab results', () => {
   });
 
   describe('[LABC-ITM] items', () => {
-    it('[LABC-ITM-1] the items are not published yet; nothing resolves on the coded streams', () => {
+    it('[LABC-ITM-1] each coded stream resolves to its item; a coded result elsewhere resolves to none', () => {
       for (const id of Object.keys(CODED)) {
-        assert.strictEqual(itemsById[id], undefined, id);
-        assert.strictEqual(findItemForEvent('lab-result/coded-v1', id), null, id);
+        assert.strictEqual(findItemForEvent('lab-result/coded-v1', id), itemsById[id], id);
+        assert.ok(itemsById[id], id);
       }
+      assert.strictEqual(findItemForEvent('lab-result/coded-v1', 'body-blood-serum'), null);
+      const imported = Object.entries(itemsById).filter(([, i]) => i.type === 'imported').map(([k]) => k).sort();
+      assert.deepStrictEqual(imported, Object.keys(CODED).sort(), 'the three coded items are the only imported items');
     });
 
-    it('[LABC-ITM-2] the planned items pass the item checks', () => {
-      const items = planned();
-      assert.deepStrictEqual(Object.keys(items).sort(), Object.keys(CODED).sort());
-      for (const [key, item] of Object.entries(items)) {
+    it('[LABC-ITM-2] the three items pass the item checks', () => {
+      for (const key of Object.keys(CODED)) {
+        const item = itemsById[key];
         assert.doesNotThrow(() => checkItem(item, key), key);
         assert.strictEqual(item.type, 'imported');
+        assert.strictEqual(item.repeatable, 'unlimited');
         assert.strictEqual(item.streamId, key);
         assert.ok(streams.streamsById[item.streamId], `${key} stream exists`);
         assert.strictEqual(item.eventType, 'lab-result/coded-v1');
@@ -119,7 +113,7 @@ describe('[LABC] Coded lab results', () => {
     });
 
     it('[LABC-ITM-3] an imported item needs an object eventType, and is not a composite field type', () => {
-      const item = { ...planned()['body-blood-coded'], eventType: 'note/txt' };
+      const item = { ...itemsById['body-blood-coded'], eventType: 'note/txt' };
       assert.throws(() => checkItemVsEvenType('x', item, eventTypesById('note/txt')), /"imported".*"object"/);
       const base = { label: { en: 'x' }, description: { en: 'x' }, streamId: 'body-blood-coded', eventType: 'lab-result/coded-v1', version: 'v1', repeatable: 'unlimited' };
       assert.doesNotThrow(() => checkItem({ ...base, type: 'imported' }, 'x'));
@@ -174,9 +168,10 @@ describe('[LABC] Coded lab results', () => {
       pack = JSON.parse(fs.readFileSync(packPath, 'utf-8'));
     });
 
-    it('[LABC-PACK-1] the pack carries the eventType and the streams, not the items yet', function () {
-      if (!pack || !pack.eventTypes.types['lab-result/coded-v1']) return this.skip(); // pack built before this change
-      for (const id of Object.keys(CODED)) assert.strictEqual(pack.items[id], undefined, id);
+    it('[LABC-PACK-1] the pack carries the eventType, the streams and the items', function () {
+      if (!pack || !pack.items['body-blood-coded']) return this.skip(); // pack built before this change
+      assert.ok(pack.eventTypes.types['lab-result/coded-v1']);
+      for (const id of Object.keys(CODED)) assert.strictEqual(pack.items[id].type, 'imported', id);
       const body = pack.streams.find((r) => r.id === 'body');
       assert.ok(body.children.find((s) => s.id === 'body-csf'), 'body-csf in pack');
     });
