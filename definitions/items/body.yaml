@@ -27,6 +27,18 @@ body-weight:
     cooldown: P1D
   references:
     snomed: "27113001"
+  fhir:
+    resourceType: Observation
+    category: vital-signs
+    code: { system: http://loinc.org, code: 29463-7, display: Body weight }
+    value:
+      kind: quantity
+      units:
+        mass/kg: kg
+        mass/lb: "[lb_av]"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-weight
+      ips: http://hl7.org/fhir/StructureDefinition/bodyweight
 body-blood-pressure:
   version: v1
   label:
@@ -59,6 +71,27 @@ body-blood-pressure:
   references:
     snomed: ["75367002", "271649006", "271650006"]
     loinc: ["85354-9", "8480-6", "8462-4"]
+  fhir:
+    resourceType: Observation
+    category: vital-signs
+    code: { system: http://loinc.org, code: 85354-9, display: Blood pressure panel with all children optional }
+    value:
+      kind: components
+      components:
+        systolic: { code: { system: http://loinc.org, code: 8480-6, display: Systolic blood pressure }, unit: "mm[Hg]" }
+        diastolic: { code: { system: http://loinc.org, code: 8462-4, display: Diastolic blood pressure }, unit: "mm[Hg]" }
+    split:
+      rate:
+        resourceType: Observation
+        category: vital-signs
+        code: { system: http://loinc.org, code: 8867-4, display: Heart rate }
+        unit: /min
+        profiles:
+          us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-heart-rate
+          ips: http://hl7.org/fhir/StructureDefinition/heartrate
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-blood-pressure
+      ips: http://hl7.org/fhir/StructureDefinition/bp
 body-temperature-basal:
   version: v1
   label:

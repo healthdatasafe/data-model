@@ -418,3 +418,13 @@ wellbeing-self-rated-health:
     # appropriate terminology for this PRO/VAS measure. Add a SNOMED ref only if a
     # correct observable is identified (verify via snomed-db before adding).
     loinc: ["72006-0", "32622-6", "82589-3"]
+  fhir:
+    resourceType: Observation
+    category: survey
+    code: { system: http://loinc.org, code: 72006-0 }
+    value:
+      kind: scaled
+      multiplier: 100
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-screening-assessment
+      ips: null

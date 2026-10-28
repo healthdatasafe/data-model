@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased] (branch `feat/fhir-mapping-block`, not to be merged before the data-model review)
+
+### Added: `fhir:` mapping block on items (plan 115, SMART on FHIR)
+
+- New optional item property `fhir` (schema in `src/schemas/items.js`): resourceType, category, code, value kind
+  (`quantity`, `coded`, `scaled`, `components`, `datasource-codes`), optional `split`, profiles per flavour (us, ips,
+  ch). Canonical system URIs only. Documented in `documentation/FHIR-MAPPING.md`.
+- Build-time checks: the block agrees with its item (units, options, components, split keys) and the stream-subtree
+  invariant (a granted subtree maps to one resourceType and category).
+- Blocks on `body-weight`, `body-blood-pressure`, `lifestyle-tobacco-smoking`, `condition-coded`,
+  `wellbeing-self-rated-health`. Rendered output validates against US Core 6.1.0 and IPS 2.0.1 (hds-fhir-js CI).
+- Fixed: AGENTS.md pointed authors at the never-implemented `hl7fhir:` block (B-2026-10-28-24); DESIGN-NOTES marks it
+  superseded.
+
 ## [3.24.0] - 2026-10-28
 
 ### Added: cycle charting items, the coverline rule of each method, Sensiplan in the converter pack

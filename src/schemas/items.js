@@ -58,6 +58,27 @@ const defsSchema = {
         }
       },
       additionalProperties: false
+    },
+    // A FHIR coding with a canonical system URI (http://loinc.org, http://snomed.info/sct, …).
+    fhirCoding: {
+      type: 'object',
+      properties: {
+        system: { type: 'string', pattern: '^(https?:|urn:)' },
+        code: { type: 'string', minLength: 1 },
+        display: { type: 'string' }
+      },
+      required: ['system', 'code'],
+      additionalProperties: false
+    },
+    // Profile canonical per rendering flavour; `null` states the flavour has no profile for this item.
+    fhirProfiles: {
+      type: 'object',
+      properties: {
+        us: { type: ['string', 'null'] },
+        ips: { type: ['string', 'null'] },
+        ch: { type: ['string', 'null'] }
+      },
+      additionalProperties: false
     }
   }
 };
@@ -236,6 +257,62 @@ const itemSchema = {
           }
         }
       },
+      additionalProperties: false
+    },
+    // How the item renders as FHIR R4 (plan 115; consumed by hds-fhir-js). Semantic rules (unit keys match the
+    // item's eventTypes, coded options match its options, component and split keys match its composite fields)
+    // and the stream-subtree invariant are checked in src/items.js; see documentation/FHIR-MAPPING.md.
+    fhir: {
+      type: 'object',
+      properties: {
+        resourceType: { enum: ['Observation', 'Condition'] },
+        category: { type: 'string' },
+        code: { $ref: 'defs.json#/definitions/fhirCoding' },
+        value: {
+          type: 'object',
+          properties: {
+            kind: { enum: ['quantity', 'coded', 'scaled', 'components', 'datasource-codes'] },
+            // quantity: eventType → UCUM code
+            units: { type: 'object', additionalProperties: { type: 'string' } },
+            // coded: option value → coding
+            options: { type: 'object', additionalProperties: { $ref: 'defs.json#/definitions/fhirCoding' } },
+            // scaled: a 0..1 proportion × multiplier, rounded to an integer
+            multiplier: { type: 'number', minimum: 1 },
+            // components: composite field → component code and UCUM unit
+            components: {
+              type: 'object',
+              additionalProperties: {
+                type: 'object',
+                properties: { code: { $ref: 'defs.json#/definitions/fhirCoding' }, unit: { type: 'string' } },
+                required: ['code', 'unit'],
+                additionalProperties: false
+              }
+            },
+            // datasource-codes: content field holding datasets-service `{ label, codes[] }`
+            field: { type: 'string' }
+          },
+          required: ['kind'],
+          additionalProperties: false
+        },
+        // Extra resources derived from one composite field (e.g. heart rate from a blood-pressure event).
+        split: {
+          type: 'object',
+          additionalProperties: {
+            type: 'object',
+            properties: {
+              resourceType: { enum: ['Observation'] },
+              category: { type: 'string' },
+              code: { $ref: 'defs.json#/definitions/fhirCoding' },
+              unit: { type: 'string' },
+              profiles: { $ref: 'defs.json#/definitions/fhirProfiles' }
+            },
+            required: ['resourceType', 'category', 'code', 'unit', 'profiles'],
+            additionalProperties: false
+          }
+        },
+        profiles: { $ref: 'defs.json#/definitions/fhirProfiles' }
+      },
+      required: ['resourceType', 'category', 'value', 'profiles'],
       additionalProperties: false
     }
   },

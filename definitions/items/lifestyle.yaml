@@ -40,6 +40,19 @@ lifestyle-tobacco-smoking:
     to the e-cigarette and smokeless siblings, and pack-years is derived, which this
     model keeps on the reader side. Adding a quantity item later is additive;
     shipping a wrong unit is not reversible.
+  fhir:
+    resourceType: Observation
+    category: social-history
+    code: { system: http://loinc.org, code: 72166-2, display: Tobacco smoking status }
+    value:
+      kind: coded
+      options:
+        never: { system: http://snomed.info/sct, code: "266919005", display: Never smoked tobacco }
+        former: { system: http://snomed.info/sct, code: "8517006", display: Ex-smoker }
+        current: { system: http://snomed.info/sct, code: "77176002", display: Smoker }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-smokingstatus
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-tobaccouse-uv-ips
 
 lifestyle-tobacco-ecigarette:
   version: v1

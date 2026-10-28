@@ -177,7 +177,7 @@ needs to publish its own scale denominator alongside the value.
 2. Survey competing scales for the construct (PROMIS, ICF, SNOMED, LOINC, Apple HealthKit, FHIR questionnaires). Place your hooks at semantic anchors.
 3. Pick the kebab-case domain key (`<stream>-<concept>`). No app / source / questionnaire prefixes.
 4. Localise `label`, `description`, option `label`s with at minimum `{ en, fr }`.
-5. Add SNOMED CT / LOINC / ICF / FHIR references — per the cross-system compatibility principle. Use the existing `hl7fhir:` block pattern for FHIR mapping (see `documentation/DESIGN-NOTES.md` body-weight example).
+5. Add SNOMED CT / LOINC / ICF / FHIR references — per the cross-system compatibility principle. FHIR rendering goes in the item's `fhir:` block (see `documentation/FHIR-MAPPING.md`); the older `hl7fhir:` sketch in `documentation/DESIGN-NOTES.md` was never implemented and is superseded.
 6. Place the item in the correct clinical-domain stream. Create a new child stream under an existing parent before creating a new top-level domain.
 7. Run `npm run build` to verify validation passes.
 

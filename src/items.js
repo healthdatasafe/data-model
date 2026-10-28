@@ -17,8 +17,13 @@ module.exports = {
   findItemForEvent,
   toBePublished,
   checkItemVsEvenType,
-  checkUnitConversions
+  checkUnitConversions,
+  checkFhirMapping,
+  checkFhirSubtrees
 };
+
+// FHIR categories an item's `fhir` block may use (keys of the category table in hds-fhir-js).
+const FHIR_CATEGORIES = new Set(['vital-signs', 'laboratory', 'social-history', 'survey', 'exam', 'activity', 'problem-list-item', 'health-concern']);
 
 /**
  * Resolve the itemDef matching a given (eventType, streamId) pair using the
@@ -56,6 +61,7 @@ for (const file of fs.readdirSync(streamsFilePath)) {
     }
   }
 }
+checkFhirSubtrees(itemsById);
 
 /**
  * label and description must be localized
@@ -162,6 +168,7 @@ function addItem (key, itemSrc) {
   }
 
   if (item.unitConversions) checkUnitConversions(key, item.unitConversions, itemEventTypes);
+  if (item.fhir) checkFhirMapping(key, item, itemEventTypes);
 
   // Derived, published field: the denominator for a `ratio/generic` select item.
   // That legacy Pryv type stores an object `{ value, relativeTo }`, so an item's
@@ -204,6 +211,78 @@ function checkUnitConversions (key, unitConversions, itemEventTypes) {
     const pair = [from, to].sort().join(' ↔ ');
     if (seen.has(pair)) throw new Error(`item "${key}" unitConversions: the pair ${pair} is declared more than once`);
     seen.add(pair);
+  }
+}
+
+/**
+ * What the schema cannot check about an item's `fhir` block: that it agrees with the item it maps. Every unit,
+ * option, component and split key must name something the item really has, and every unit variant and option must
+ * be mapped, so the renderer never meets content it cannot place. (Plan 115.)
+ */
+function checkFhirMapping (key, item, itemEventTypes) {
+  const f = item.fhir;
+  const fail = (msg) => { throw new Error(`item "${key}" fhir: ${msg}`); };
+  const sameSet = (what, mapped, expected) => {
+    const missing = expected.filter((x) => !mapped.includes(x));
+    const extra = mapped.filter((x) => !expected.includes(x));
+    if (missing.length > 0 || extra.length > 0) fail(`${what} must match exactly; missing [${missing.join(', ')}], unknown [${extra.join(', ')}]`);
+  };
+  for (const c of [f.category, ...Object.values(f.split || {}).map((s) => s.category)]) {
+    if (!FHIR_CATEGORIES.has(c)) fail(`unknown category "${c}" (known: ${[...FHIR_CATEGORIES].join(', ')})`);
+  }
+  if (f.resourceType === 'Observation' && f.code == null) fail('an Observation mapping needs a "code"');
+  if (f.resourceType === 'Condition' && f.value.kind !== 'datasource-codes') fail('a Condition mapping needs value.kind "datasource-codes"');
+  const v = f.value;
+  switch (v.kind) {
+    case 'quantity':
+      if (v.units == null) fail('value.kind "quantity" needs "units"');
+      sameSet('value.units keys vs the item eventTypes', Object.keys(v.units), itemEventTypes);
+      break;
+    case 'coded':
+      if (v.options == null || !Array.isArray(item.options)) fail('value.kind "coded" needs "options" on both the item and the mapping');
+      sameSet('value.options keys vs the item options', Object.keys(v.options), item.options.map((o) => String(o.value)));
+      break;
+    case 'scaled':
+      if (v.multiplier == null) fail('value.kind "scaled" needs "multiplier"');
+      if (!itemEventTypes.every((t) => t === 'ratio/proportion')) fail('value.kind "scaled" applies to "ratio/proportion" items only');
+      break;
+    case 'components':
+      if (v.components == null || item.composite == null) fail('value.kind "components" needs "components" and a composite item');
+      for (const k of Object.keys(v.components)) if (item.composite[k] == null) fail(`component "${k}" is not a composite field`);
+      break;
+    case 'datasource-codes':
+      if (item.type !== 'datasource-search') fail('value.kind "datasource-codes" applies to "datasource-search" items only');
+      if (v.field == null) fail('value.kind "datasource-codes" needs "field"');
+      break;
+  }
+  for (const k of Object.keys(f.split || {})) {
+    if (item.composite?.[k] == null) fail(`split "${k}" is not a composite field`);
+  }
+}
+
+/**
+ * Stream-subtree invariant (plan 115 D11). SMART scopes are granted as Pryv stream permissions, which inherit down
+ * the stream tree, so a stream carrying a mapped item may be granted only if every mapped item in its subtree has
+ * the same (resourceType, category). Unmapped items are ignored until every active item is mapped.
+ */
+function checkFhirSubtrees (items) {
+  const pairsOf = (f) => [f.resourceType + '|' + f.category, ...Object.values(f.split || {}).map((s) => s.resourceType + '|' + s.category)];
+  const subtreePairs = {};
+  const ownPairs = {};
+  for (const item of Object.values(items)) {
+    if (item.deprecated || item.fhir == null) continue;
+    const pairs = pairsOf(item.fhir);
+    (ownPairs[item.streamId] ??= new Set());
+    for (const p of pairs) ownPairs[item.streamId].add(p);
+    for (const s of new Set([item.streamId, ...streams.getAncestorsById(item.streamId)])) {
+      (subtreePairs[s] ??= new Set());
+      for (const p of pairs) subtreePairs[s].add(p);
+    }
+  }
+  for (const streamId of Object.keys(ownPairs)) {
+    if (subtreePairs[streamId].size > 1) {
+      throw new Error(`fhir subtree invariant: stream "${streamId}" carries mapped items but its subtree spans ${[...subtreePairs[streamId]].sort().join(', ')}; granting it would over-grant`);
+    }
   }
 }
 
