@@ -1230,7 +1230,7 @@
       }
     },
     "settings/hds-webapp-diary": {
-      "description": "Per-user layout and display state of the hds-webapp Diary, held as a single recurring event on the webapp-settings app stream and updated in place. The shape is owned by hds-webapp, not by this model, so the known keys below are documented rather than enforced: no 'required', and additional properties are permitted on purpose, as for settings/hds-react-timeline. Holds no health data: every value is a Diary card or feature id, an item key, a UI flag or a label of the Diary itself (a chart name, a chart line). An observation belongs on its own item (the fertility intention on fertility-ttc-tta, the charting method on its own item or setting), and a display preference shared across apps belongs in HDSSettings. Card ids are defined by hds-webapp; a measure's card id is its item key.",
+      "description": "Per-user layout and display state of the hds-webapp Diary, held as a single recurring event on the webapp-settings app stream and updated in place. The shape is owned by hds-webapp, not by this model, so the known keys below are documented rather than enforced: no 'required', and additional properties are permitted on purpose, as for settings/hds-react-timeline. Holds no health data: every value is a Diary card or feature id, an item key, a UI flag or a label of the Diary itself (a chart name) or a chart line's id. An observation belongs on its own item (the fertility intention on fertility-ttc-tta, the charting method on its own item or setting), and a display preference shared across apps belongs in HDSSettings. Card ids are defined by hds-webapp; a measure's card id is its item key.",
       "type": "object",
       "properties": {
         "v": {
@@ -1292,8 +1292,12 @@
           ]
         },
         "hiddenLines": {
-          "description": "Lines hidden on a chart, keyed by card id, as arrays of line labels.",
+          "description": "Lines hidden on a chart, keyed by card id, as arrays of line ids (a device's key, never the line's label): instrument:<hdsInstrument id>, healthkit:<HealthKit sourceName>, connector:<connector id>, document or default, followed by #systolic / #diastolic for a blood-pressure part.",
           "type": "object"
+        },
+        "pastCyclesAsRecorded": {
+          "description": "Whether past cycles are drawn in the method each was recorded in rather than in the chosen method (a display choice; the observations are never converted when stored).",
+          "type": "boolean"
         },
         "setupDone": {
           "description": "Whether the Diary set-up questions were answered.",
@@ -1321,6 +1325,24 @@
             "array",
             "null"
           ]
+        }
+      }
+    },
+    "settings/hds-webapp-read": {
+      "description": "Where the person stopped reading each conversation in hds-webapp, held as a single recurring event on the webapp-settings app stream and updated in place, so the unread count is the same on every device. Holds no health data and no message content: only contact keys and times. A writer re-reads the event just before writing, keeps per contact the later of the two times, and writes the whole object back; Pryv updates are not conditional, so two devices writing at once can lose one update, which only shows read messages as unread again. A writer may drop the keys of contacts that no longer exist. Additional properties are permitted, as for the other hds-webapp settings types.",
+      "type": "object",
+      "properties": {
+        "v": {
+          "description": "Optional version of this settings shape, set by hds-webapp when it changes the meaning of a key, so a reader can migrate an older event.",
+          "type": "number"
+        },
+        "lastRead": {
+          "description": "Per contact, the time (Pryv event time of the message, seconds) of the newest message the person has read: a message counts as unread when its time is later. The key is the counterparty's lowercased username@host (hds-lib's contact key), or its access id for a contact with no username. A contact with no entry has no marker: its unread count is unknown, not zero.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0
+          }
         }
       }
     },
@@ -1958,6 +1980,287 @@
         }
       }
     },
+    "file/xds-v1": {
+      "description": "A medical document (lab report, letter, prescription, imaging or procedure report, administrative document) as one or more Pryv attachments, with the IHE XDS / CH:EPR DocumentEntry metadata as validated content, so HDS can publish it as a FHIR DocumentReference or an XDS DocumentEntry without reading clientData. Codings follow FHIR Coding: system is a URI (http://snomed.info/sct, http://loinc.org). class and type take their codes from the CH:EPR value sets http://fhir.ch/ig/ch-term/ValueSet/DocumentEntry.classCode and .typeCode. The attachment's own integrity is its sha256; the XDS SHA-1 hash and the confidentiality code are not stored, because they are set at publication. See documentation/DOCUMENTS.md.",
+      "type": "object",
+      "attachmentRequired": true,
+      "additionalProperties": false,
+      "required": [
+        "class",
+        "type",
+        "title",
+        "language"
+      ],
+      "properties": {
+        "class": {
+          "description": "The document's class: DocumentEntry.classCode, FHIR DocumentReference.category. One coding.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "system",
+            "code"
+          ],
+          "properties": {
+            "system": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+            },
+            "version": {
+              "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+              "type": "string",
+              "minLength": 1
+            },
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "display": {
+              "type": "string"
+            }
+          }
+        },
+        "type": {
+          "description": "The document's type: DocumentEntry.typeCode first, then other codings of the same type (a CDA document code, the source system's code). FHIR DocumentReference.type.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "system",
+              "code"
+            ],
+            "properties": {
+              "system": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+              },
+              "version": {
+                "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+                "type": "string",
+                "minLength": 1
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "display": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "title": {
+          "description": "The document's title as printed, or as the person named it. Shown to every reader of the stream.",
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "description": "The document's language, a BCP-47 tag (fr, de-CH); und when it is not known.",
+          "type": "string",
+          "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$"
+        },
+        "creation": {
+          "description": "When the document was written, ISO 8601 as FHIR dateTime: a year, a year-month, a date, or a date-time with its offset (2026, 2026-10, 2026-10-28, 2026-10-28T09:30:00+01:00), when it differs from the event time. The event time is when the document belongs on the person's timeline.",
+          "type": "string",
+          "pattern": "^[0-9]{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12][0-9]|3[01])(T([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9](\\.[0-9]+)?)?(Z|[+-][0-9]{2}:[0-9]{2}))?)?)?$"
+        },
+        "status": {
+          "description": "current, or superseded once a newer document replaces this one. A replacement is a new event that lists this one in 'supersedes'; this event stays. A reader treats a document as superseded when another document supersedes it, whatever this field says.",
+          "type": "string",
+          "enum": [
+            "current",
+            "superseded"
+          ]
+        },
+        "supersedes": {
+          "description": "Event ids of the documents this one replaces (DocumentEntry relationship RPLC). Each id is mirrored in clientData.related.<eventId> (documentation/PROVENANCE.md).",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "authors": {
+          "description": "Who wrote the document: DocumentEntry.author, FHIR DocumentReference.author. eventId points at a provider event when one exists (mirrored in clientData.related); name, organization and service are free text as printed and are shown to every reader of the stream.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "eventId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string"
+              },
+              "organization": {
+                "type": "string"
+              },
+              "service": {
+                "type": "string"
+              },
+              "role": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "system",
+                  "code"
+                ],
+                "properties": {
+                  "system": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+                  },
+                  "version": {
+                    "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "code": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "display": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "minProperties": 1
+          }
+        },
+        "encounterId": {
+          "description": "Event id of the encounter the document comes from, when one is recorded (mirrored in clientData.related).",
+          "type": "string",
+          "minLength": 1
+        },
+        "practiceSetting": {
+          "description": "DocumentEntry.practiceSettingCode (the clinical specialty), FHIR DocumentReference.context.practiceSetting.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "system",
+            "code"
+          ],
+          "properties": {
+            "system": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+            },
+            "version": {
+              "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+              "type": "string",
+              "minLength": 1
+            },
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "display": {
+              "type": "string"
+            }
+          }
+        },
+        "facilityType": {
+          "description": "DocumentEntry.healthcareFacilityTypeCode, FHIR DocumentReference.context.facilityType.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "system",
+            "code"
+          ],
+          "properties": {
+            "system": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+            },
+            "version": {
+              "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+              "type": "string",
+              "minLength": 1
+            },
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "display": {
+              "type": "string"
+            }
+          }
+        },
+        "format": {
+          "description": "DocumentEntry.formatCode, FHIR DocumentReference.content.format.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "system",
+            "code"
+          ],
+          "properties": {
+            "system": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+            },
+            "version": {
+              "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+              "type": "string",
+              "minLength": 1
+            },
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "display": {
+              "type": "string"
+            }
+          }
+        },
+        "event": {
+          "description": "DocumentEntry.eventCodeList: the main acts or conditions the document is about, FHIR DocumentReference.event.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "system",
+              "code"
+            ],
+            "properties": {
+              "system": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+              },
+              "version": {
+                "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+                "type": "string",
+                "minLength": 1
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "display": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "pages": {
+          "description": "Number of pages of the original, when known.",
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
     "temperature/disturbance-v1": {
       "description": "Reason a basal body temperature reading is unreliable ('parasitic temperature'). Qualifier for a co-occurring body-temperature-basal event: sympto-thermal rules EXCLUDE disturbed readings from the coverline and temperature-shift computation, so a consumer charting BBT must be able to see the flag. Absence of this event means the reading was not flagged, not that it was confirmed reliable.",
       "type": "string",
@@ -2022,6 +2325,181 @@
         "4-plus-per-week",
         "daily-or-almost-daily"
       ]
+    },
+    "lab-result/coded-v1": {
+      "description": "A laboratory result for an analyte with no item of its own, coded in content and stored as printed. 'analyte' is the coded test (LOINC whenever a verified code exists); the result is a number in its UCUM unit, possibly a limit ('comparator'), and/or the result as printed ('valueText'). Never converted. Maps to FHIR Observation: analyte → code, value/comparator/unit → valueQuantity, valueCodes/valueText → valueCodeableConcept/valueString. See documentation/BLOOD-CHEMISTRY.md.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "analyte"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "value"
+          ]
+        },
+        {
+          "required": [
+            "valueText"
+          ]
+        }
+      ],
+      "dependencies": {
+        "value": [
+          "unit"
+        ],
+        "unit": [
+          "value"
+        ],
+        "unitText": [
+          "unit"
+        ],
+        "comparator": [
+          "value"
+        ],
+        "valueCodes": [
+          "valueText"
+        ]
+      },
+      "properties": {
+        "analyte": {
+          "description": "The coded test. Coded by the writer from a curated table: 'hdsId' is absent until a datasource provides one, and a datasource that does emits canonical URI systems.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "label",
+            "codes"
+          ],
+          "properties": {
+            "label": {
+              "description": "The test name, by language; 'en' is required.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "en"
+              ],
+              "properties": {
+                "en": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "fr": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "es": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "codes": {
+              "description": "FHIR Codings of the test: one LOINC entry (system http://loinc.org) whenever a verified code exists, otherwise the lab's own code system.",
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "system",
+                  "code"
+                ],
+                "properties": {
+                  "system": {
+                    "description": "Canonical URI of the code system (http://loinc.org, urn:oid:…).",
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+                  },
+                  "version": {
+                    "description": "The code system version, when it matters.",
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "code": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "display": {
+                    "description": "The code system's display name (LOINC Long Common Name).",
+                    "type": "string"
+                  },
+                  "hdsId": {
+                    "description": "The datasource id of the test, when a datasource provides one.",
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "value": {
+          "description": "The figure as printed; with 'comparator', the printed limit.",
+          "type": "number"
+        },
+        "comparator": {
+          "description": "The value is a limit, not an exact figure: the true value is below, at most, above, at least it (FHIR Quantity.comparator).",
+          "type": "string",
+          "enum": [
+            "<",
+            "<=",
+            ">",
+            ">="
+          ]
+        },
+        "unit": {
+          "description": "UCUM code of the printed unit, case-sensitive ('umol/L', '{copies}/mL', '1' when unitless). Printable ASCII, no space.",
+          "type": "string",
+          "pattern": "^[!-~]{1,64}$"
+        },
+        "unitText": {
+          "description": "The unit exactly as printed ('µmol/l', 'mUI/mL'), for display.",
+          "type": "string",
+          "minLength": 1
+        },
+        "valueText": {
+          "description": "The result exactly as printed when it is not only a number ('negative', 'détecté', '1:160', '< LOQ').",
+          "type": "string",
+          "minLength": 1
+        },
+        "valueCodes": {
+          "description": "The printed qualitative result as FHIR Codings (CodeableConcept.coding), with 'valueText': a SNOMED CT qualifier value, and the lab's own result code when it printed one.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "system",
+              "code"
+            ],
+            "properties": {
+              "system": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "display": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "notes": {
+          "description": "The comment printed with the result ('haemolysed sample').",
+          "type": "string"
+        }
+      }
     }
   },
   "extras": {

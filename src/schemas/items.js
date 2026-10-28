@@ -304,11 +304,20 @@ const itemSchema = {
     // exposes `isSystem`). Its eventType must be an object (checked in src/items.js).
     // Deliberately listed here and NOT in `entryType`, which composite fields share: a
     // composite field can never be `system`.
+    //
+    // `attachments` is a document: files carried as Pryv attachments, with metadata as
+    // content. Not entered field by field (forms show it as not editable); its eventType
+    // must declare `attachmentRequired` (checked in src/items.js). Item-only, like `system`.
+    //
+    // `imported` is an object written by an importer from a coded source (`lab-result/coded-v1`),
+    // never entered in a form: read, shown and requested like any item (unlike `system`), left out
+    // of pickers and form sections. Its eventType must be an object (checked in src/items.js).
+    // Item-only, like `system`.
     type: {
       type: 'string',
       oneOf: [
         { $ref: 'defs.json#/definitions/entryType' },
-        { enum: ['composite', 'datasource-search', 'convertible', 'slider', 'multi-select', 'system'] }
+        { enum: ['composite', 'datasource-search', 'convertible', 'slider', 'multi-select', 'system', 'attachments', 'imported'] }
       ]
     },
     variations: {

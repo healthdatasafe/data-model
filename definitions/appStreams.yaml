@@ -60,7 +60,7 @@ system-in:
 
 # `eventType` is a single value, so it names the first settings type this stream held. The stream
 # holds one event per settings type; the ones declared in eventTypes-hds.json are
-# settings/hds-react-timeline and settings/hds-webapp-diary.
+# settings/hds-react-timeline, settings/hds-webapp-diary and settings/hds-webapp-read.
 webapp-settings:
   suffix: webapp-settings
   eventType: settings/hds-react-timeline
@@ -68,8 +68,8 @@ webapp-settings:
     en: Webapp Settings
     fr: Paramètres de l'application
   description:
-    en: User-scoped settings for HDS client apps. Holds one event per feature (distinguished by eventType, e.g. settings/hds-react-timeline, settings/hds-webapp-diary). Single recurring event per type, updated in place.
-    fr: Paramètres propres à l'utilisateur pour les applications client HDS. Contient un événement par fonctionnalité (distingué par eventType, ex. settings/hds-react-timeline, settings/hds-webapp-diary). Un seul événement récurrent par type, mis à jour sur place.
+    en: User-scoped settings for HDS client apps. Holds one event per feature (distinguished by eventType, e.g. settings/hds-react-timeline, settings/hds-webapp-diary, settings/hds-webapp-read). Single recurring event per type, updated in place.
+    fr: Paramètres propres à l'utilisateur pour les applications client HDS. Contient un événement par fonctionnalité (distingué par eventType, ex. settings/hds-react-timeline, settings/hds-webapp-diary, settings/hds-webapp-read). Un seul événement récurrent par type, mis à jour sur place.
   display: system
 
 # An app syncing into the user's OWN account needs somewhere to record how far it

@@ -236,6 +236,22 @@ function checkItemVsEvenType (key, item, eventType) {
     }
     return true;
   }
+  // `attachments` items are documents: the files are Pryv attachments, so the eventType must
+  // say so. Content, when the eventType has any, is the document's metadata (`file/xds-v1`).
+  if (item.type === 'attachments') {
+    if (eventType.attachmentRequired !== true) {
+      throw new Error(`as item "${key}" is of type "attachments" the matching eventType must declare "attachmentRequired: true": ` + JSON.stringify({ item, eventType }));
+    }
+    return true;
+  }
+  // `imported` items hold an object an importer wrote from a coded source (`lab-result/coded-v1`);
+  // nothing is entered field by field, so the one rule is that the content is an object.
+  if (item.type === 'imported') {
+    if (eventType.type !== 'object') {
+      throw new Error(`as item "${key}" is of type "imported" the matching eventType must be an "object": ` + JSON.stringify({ item, eventType }));
+    }
+    return true;
+  }
   // `multi-select` stores an array of chosen option values, so the matching eventType
   // must be an array whose `items.enum` covers every option (the `select` check below,
   // one level down). Checked before the scalar branches: an array eventType would
@@ -259,7 +275,7 @@ function checkItemVsEvenType (key, item, eventType) {
   }
   if (eventType.type === 'string') {
     if (item.type === 'select') { // check that all options value are string
-      if (eventType.enum === null) throw new Error(`for item "${key}", as a "select" of type "string", matching eventType must have an "enum" property`, JSON.stringify({ item, eventType }));
+      if (!Array.isArray(eventType.enum)) throw new Error(`for item "${key}", as a "select" of type "string", matching eventType must have an "enum" property: ` + JSON.stringify({ item, eventType }));
       for (const option of item.options) {
         if (typeof option.value !== 'string') throw new Error(`as item "${key}" is of type "select" and matching event type is "string" all options value must be string check the following option: ` + JSON.stringify(option));
         const found = eventType.enum.find((v) => (v === option.value));

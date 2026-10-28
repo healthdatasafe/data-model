@@ -2,6 +2,10 @@
 
 ## [Unreleased] (branch `feat/fhir-mapping-block`, not to be merged before the data-model review)
 
+### Fixed
+- A string `select` item whose eventType has no `enum` now fails the build with a clear message instead of crashing
+  on `.find` (the check compared with `null` only and passed the JSON as a second `Error` argument).
+
 ### Added: `fhir:` mapping block on items (plan 115, SMART on FHIR)
 
 - New optional item property `fhir` (schema in `src/schemas/items.js`, `defs.json` `fhirBlock`), bidirectional: it
@@ -47,6 +51,126 @@
 - The 0..100 slider stays HDS-only, with no FHIR mapping (B-2026-10-28-42). Its `references` are removed: 72006-0 is
   the VR-36 physical functioning T-score, 32622-6 does not exist in LOINC, 82589-3 is "Highest level of education";
   no standard code fits the scale. AGENTS.md no longer lists them.
+
+## [3.29.0] - 2026-10-28
+
+### Added: the `document` item
+
+- **`document`** (`type: attachments`, stream `documents`, eventType `file/xds-v1`, `repeatable: any`): held back in
+  3.25.0 until deployed consumers handled the `attachments` type; the definition is the one DOCUMENTS.md carried (a
+  writer's overload of it keeps working). hds-lib ≥ 2.26.0 keeps it out of pickers, hds-forms-js ≥ 0.23.0 shows it as
+  not editable; hds-webapp, doctor-dashboard and the account app run hds-lib 2.28.0 / hds-forms-js 0.24.0 on demo and
+  prod.
+
+### Changed: `settings/hds-webapp-diary` documentation
+
+- `hiddenLines` holds line ids, a device's key and never the line's label (`instrument:<id>`, `healthkit:<sourceName>`,
+  `connector:<id>`, `document` or `default`, followed by `#systolic` / `#diastolic` for a blood-pressure part); new documented key `pastCyclesAsRecorded` (boolean). The object
+  stays open; no stored value changes.
+
+## [3.28.0] - 2026-10-28
+
+### The three coded lab-result items (site-agents#28)
+
+- **Items `body-blood-coded`, `body-urine-coded` and `body-csf-coded`.** Each is `type: imported` on
+  `lab-result/coded-v1`, with `repeatable: unlimited` and no references (the analyte is coded per event). They are
+  published as 3.27.0 documented them, unchanged. No deployed build has real users (plan 114 Q14), so no consumer
+  rollout gates them. Readers need hds-lib ≥ 2.28.0 / hds-forms-js ≥ 0.24.0. A writer's overload that restated them
+  keeps loading (identical immutable fields) and can drop the restatement.
+- `BLOOD-CHEMISTRY.md` § "The three items" replaces "published later". Tests `[LABC-ITM-1..3]` and `[LABC-PACK-1]`
+  now check the published items.
+
+## [3.27.0] - 2026-10-28
+
+### Lab results: a printed limit (`hdsComparator`), coded results with no item (`lab-result/coded-v1`), item type `imported`
+
+Plan 114 WP-D (site-agents#22, #28). The design was reviewed by Opus before release.
+
+- **`clientData.hdsComparator`** (site-agents#22). It takes `<`, `<=`, `>`, `>=` and says that a numeric lab value
+  is a printed limit (`< 1.5`), not an exact figure. Every reader must check it. It is documented in
+  `BLOOD-CHEMISTRY.md` § "A censored value" (display, charts, unknown values, FHIR `valueQuantity.comparator`) and
+  indexed in `PROVENANCE.md`. A limit with no figure (`< LOQ`) is a coded `valueText`.
+- **EventType `lab-result/coded-v1`** (site-agents#28; id with the version suffix, plan 114 Q12): a result for an
+  analyte with no item of its own, stored as printed. The object is closed:
+  - `analyte` `{ label {en required}, codes[] }`. Each code is a closed FHIR Coding aligned with `file/xds-v1`, with
+    an optional `hdsId`.
+  - `value` + `unit` (the UCUM code, printable ASCII) + `unitText` (the unit as printed).
+  - `comparator`.
+  - `valueText`.
+  - `valueCodes[]` (FHIR Codings of a qualitative result: SNOMED CT qualifier value, the lab's own code; with
+    `valueText`).
+  - `notes`.
+  At least one of `value` / `valueText` is required; both together are allowed (semi-quantitative results).
+  `specimen` is not a field: the stream and the LOINC System axis carry it.
+- **Streams** `body-blood-coded`, `body-urine-coded`, and the new branch `body-csf` > `body-csf-coded`.
+- **Item type `imported`**: an object written by an importer, never entered in a form. It is shown everywhere data is
+  read and left out of pickers. Its eventType must be an object (`src/items.js`).
+- **The three items `body-blood-coded`, `body-urine-coded` and `body-csf-coded` are not published yet.** Deployed
+  builds before hds-lib 2.28.0 / hds-forms-js 0.24.0 would offer them in pickers and break their forms. Their
+  definitions are in `BLOOD-CHEMISTRY.md` § "The three items: published later", for writers' overloads. They ship
+  in a later minor, once consumers run those versions. This follows the `document` item precedent.
+- `BLOOD-CHEMISTRY.md` also covers:
+  - the writer rules: never an analyte an item owns, LOINC per property, stored as printed, curated codes;
+  - the consent note;
+  - moving a result to its item once the variation ships (`events.update` in place, with the field mapping; only
+    results with no `valueText` move);
+  - the writer gate: `hdsComparator` and coded results go to accounts read by deployed apps once those run
+    hds-lib ≥ 2.28.0;
+  - the FHIR mapping.
+- Tests `[LABC-ET-1..3]` (draft-04 and draft-07), `[LABC-STR-1]`, `[LABC-ITM-1..3]`, `[LABC-PACK-1]`, and `[LABC-LOINC-1]` (no LOINC
+  code asserted by two active items). `[LABC-LOINC-2]` checks the LOINC check digit. It found five codes asserted by
+  plan 44 that LOINC 2.83 does not know (`32622-6`, `63800-5`, `63801-3`, `63802-1`, `77564-4`). They are frozen as
+  known exceptions, pending correction.
+
+## [3.26.0] - 2026-10-28
+
+### Documentation: partial dates, the printed range and flag of a lab result, the import identity `sourceKey`
+
+Conventions only: no item, stream or eventType changes. They are contracts between writers and readers, reviewed
+before publishing (plan 114 WP-C).
+
+- **New `documentation/PARTIAL-DATES.md`** (site-agents#26): a date known only to the month or the year, or
+  approximately ("March 1999", "1997", "about spring 1998"). `time` = start of the period at 12:00 UTC, `duration`
+  unchanged (a partial date never becomes a duration), `clientData.hdsTimePrecision` (`minute | day | month | year
+  | approx`), `hdsTimeText` (the expression as written, required with `approx`), `hdsTimeZone` (IANA, with
+  `minute`), `hdsEndPrecision` for a span whose end is known to another precision (the end is 12:00 UTC on the last
+  day of its end period). Readers take the calendar fields in UTC. FHIR partial `dateTime` mapping. hds-lib 2.27.0
+  `formatEventDate(event)` displays it.
+- **`documentation/BLOOD-CHEMISTRY.md` § "The printed reference range, flag and interpretation of one result"**
+  (site-agents#29): `clientData.hdsRefRange` (`lowerLimit`, `upperLimit` on the stored scale of the value, `text` as
+  printed), `hdsFlag` (as printed), `hdsInterpretation` (`H | L | N | A | HH | LL`, the lab's printed flag
+  normalised, never computed; unknown values read as absent), with the flag mapping and the FHIR mapping.
+  `printedValue` / `printedUnit` / `conversion` are not defined (values are never converted); the alternative is a
+  unit variation on the item, or `lab-result/coded` meanwhile.
+- **`documentation/PROVENANCE.md`**: `clientData.sourceKey` (`<tool>:<kind>:<id>`, the identity of an imported
+  record: one event per key, re-runs update in place and never restore a trashed event; find a whole import with
+  the `prefix` condition of `events.get`), site-agents#33; the index lists the new keys; new keys are `hds`-prefixed.
+  The bulk-import contract itself is on the agents site (`llms-full.txt` § 5f).
+
+## [3.25.0] - 2026-10-28
+
+### Added: medical documents, read markers for conversations
+
+- **`documents` root ("Medical documents") and eventType `file/xds-v1`** (site-agents#23): a medical document as Pryv
+  attachments, with the IHE XDS / CH:EPR DocumentEntry metadata as closed, validated content: `class`, `type`, `title`
+  and `language` required (`creation` as FHIR dateTime; Codings `{ system (URI), version?, code, display? }`); `creation`, `status`, `supersedes`, `authors`, `encounterId`, `practiceSetting`,
+  `facilityType`, `format`, `event`, `pages` optional. Codings are FHIR Codings; `class` and `type` take their codes
+  from the CH:EPR DocumentEntry value sets. A replacement is a new event listing the old one in `supersedes`. The
+  document's kind is its codes, not a stream; `documents` is a new root, so no existing grant covers it. See
+  `documentation/DOCUMENTS.md`.
+- **The `document` item is not published yet**: deployed apps would offer it in their pickers and fail on its item
+  type. It ships once hds-lib skips `attachments` items in `getAllActive`, hds-forms-js renders them as not editable,
+  and hds-webapp and doctor-dashboard run those versions on demo and prod. Its definition is in DOCUMENTS.md for a
+  writer's overload meanwhile.
+- **Item type `attachments`**: an item whose files are Pryv attachments; its eventType must declare
+  `attachmentRequired: true`. An item type only, like `system`. Forms show it as not editable.
+- **`settings/hds-webapp-read`**: where the person stopped reading each hds-webapp conversation,
+  `lastRead: { <username@host lowercased, or access id>: <message time> }`, one recurring event on the
+  `webapp-settings` app stream. Writers re-read and keep the later time per contact (a lost concurrent update only
+  shows read messages as unread); a contact with no entry has no marker (unread unknown, not zero).
+- PROVENANCE.md: event ids held in content are mirrored in `clientData.related` (content authoritative); the link
+  kind is told by the two event types.
+- Reviewed by a general-purpose reviewer in place of the usual Fable review (unavailable).
 
 ## [3.24.0] - 2026-10-28
 

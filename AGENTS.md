@@ -4,8 +4,9 @@ This file orients future agents (Claude or others) working on the `data-model` r
 
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
-- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
-- `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `hdsBasis`, …): read it before adding one.
+- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md`, `DOCUMENTS.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
+- `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `sourceKey`, `hdsBasis`, …): read it before adding one. New keys are `hds`-prefixed.
+- `documentation/PARTIAL-DATES.md` — partial and approximate dates (`hdsTimePrecision`): cross-domain, applies to any event whose date is known only to the month or the year.
 
 ---
 
@@ -36,9 +37,11 @@ The same eventType is reused by many items. Adding a new eventType is rare and n
 
 `body-*`, `symptom-*`, `wellbeing-*`, `activity-*`, `fertility-*`, `nutrition-*`, `lifestyle-*`, `medication-*`, `profile-*`, `family-*`. Mirrors body systems / function domains, close to SNOMED CT and ICF categorisations.
 
-**Two non-clinical roots besides `profile`: `sync-status` (3.13.0) and `consents` (plan 91).** `sync-status` holds a connector's user-visible status — one `type: system` item, `sync-status`, and one `role: context` leaf per connector (`sync-status-mira`, …). Partner-named *streams* are accepted there because the leaves are D3 context markers, not vocabulary; partner-named *item keys* stay forbidden (§1). See [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
+**Three non-clinical roots besides `profile`: `sync-status` (3.13.0), `consents` (plan 91) and `documents` (3.25.0).** `sync-status` holds a connector's user-visible status — one `type: system` item, `sync-status`, and one `role: context` leaf per connector (`sync-status-mira`, …). Partner-named *streams* are accepted there because the leaves are D3 context markers, not vocabulary; partner-named *item keys* stay forbidden (§1). See [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
 
 `consents` holds the account-level consent record: one `type: system` item, `consent-record`, append-only, written by the account app with the personal token and requested by no app. See [`documentation/CONSENTS.md`](documentation/CONSENTS.md).
+
+`documents` holds medical documents on `file/xds-v1`; its `type: attachments` item is `document` (3.29.0; DOCUMENTS.md). A document's kind and theme are its class and type codes, never a child of a clinical root (such a child would be covered by every grant on that root). See [`documentation/DOCUMENTS.md`](documentation/DOCUMENTS.md).
 
 **Do not create questionnaire-branded streams** (e.g. `questionnaire-eq5d5l`). Each data point lands in its clinical-domain stream; the questionnaire's identity lives in the *form template* (a `CollectorRequest` constructed via [hds-lib-js](https://github.com/healthdatasafe/hds-lib-js)'s `appTemplates.CollectorRequest` / `CollectorSection`), not in `data-model`.
 
@@ -310,10 +313,10 @@ data-model/
 ├── package.json, eslint.config.mjs, etc.
 │
 ├── definitions/                           # THE SOURCE OF TRUTH
-│   ├── items/*.yaml                       # Health data point definitions (298 items, 233 active, 20 YAML files)
-│   ├── streams/*.yaml                     # Clinical-domain tree (17 top-level roots, 284 streams in all)
+│   ├── items/*.yaml                       # Health data point definitions (309 items, 244 active, 20 YAML files)
+│   ├── streams/*.yaml                     # Clinical-domain tree (17 top-level roots, 296 streams in all)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (74)
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (77)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)
@@ -354,8 +357,10 @@ data-model/
 │   ├── NUTRITION.md                       # Nutritional state vs lifestyle-diet
 │   ├── FAMILY.md                          # Household / family-structure facts
 │   ├── SYNC-STATUS.md                     # Connector status: sync-status root, `type: system` item
-│   ├── PROVENANCE.md                      # clientData keys: hdsInstrument, related.<eventId>; index of the others
-│   └── CONSENTS.md                        # Account-level consent record: consents root, `type: system` item
+│   ├── PROVENANCE.md                      # clientData keys: hdsInstrument, related.<eventId>, sourceKey; index of the others
+│   ├── PARTIAL-DATES.md                   # Partial / approximate dates: hdsTimePrecision, time at period start 12:00 UTC
+│   ├── CONSENTS.md                        # Account-level consent record: consents root, `type: system` item
+│   └── DOCUMENTS.md                       # Medical documents: documents root, `type: attachments` item, file/xds-v1
 │
 ├── scripts/                               # setup / deploy shell scripts
 ├── tests/                                 # Vitest test suite
@@ -483,6 +488,16 @@ An item of `type: system` (3.13.0) is **written by a machine and never entered b
 still resolve it everywhere else (`forKey`, `forEvent`, authorization requests, consent labels). hds-lib
 exposes this as `HDSItemDef.isSystem`, and `getAllActive()` excludes it. The consumer list is in
 [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
+
+## `type: imported` items
+
+An item of `type: imported` (3.27.0) holds an **object written by an importer from a coded source**, never entered
+in a form: today the coded lab results on `lab-result/coded-v1` ([`documentation/BLOOD-CHEMISTRY.md`](documentation/BLOOD-CHEMISTRY.md#results-with-no-item-of-their-own-lab-resultcoded-v1)).
+Its eventType must be an object (`src/items.js`), and like `system` it is an item type only. Unlike `system`, it is
+**shown everywhere data is read** (timelines, diaries, dashboards, exports); like `system` and `attachments`, it is
+left out of pickers and form sections. hds-lib exposes `HDSItemDef.isImported`, and since 2.28.0 `getAllActive()` is a
+whitelist of the types a form renders, so an item type added later never reaches a picker of a build that does not
+know it.
 
 ## `deprecated: true` on items
 
