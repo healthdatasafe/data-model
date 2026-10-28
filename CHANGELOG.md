@@ -4,12 +4,6 @@
 
 ### Added: cycle charting items, the coverline rule of each method, Sensiplan in the converter pack
 
-- **`fertility-monitor-lh-marquette`**: the daily Low / High / Peak reading of a home fertility monitor (the
-  Clearblue Fertility Monitor of the Marquette Method), `ratio/generic` select `0 / 1 / 2`, `ratioRelativeTo` 2, on
-  new streams `fertility-monitor` → `fertility-monitor-lh-marquette`. Key, stream, eventType and options are exactly
-  those of Cycle Intelligence's overlay item, so events it wrote resolve unchanged. No LOINC or SNOMED CT concept found
-  (tx.fhir.org, snomed-db); FHIR: an Observation with a coded value. The Marquette 1–8 ↔ Low/High/Peak level mapping is
-  not included (it waits for the method's experts).
 - **`fertility-cycles-coverline`**: the basal-temperature coverline of one cycle, `temperature/c`, one event per cycle
   dated on the cycle's `fertility-cycles-start` day; `clientData.hdsBasis` `'manual'` (drawn or moved by the person)
   or `'auto'` (computed by the method's rule). New stream under `fertility-cycles`.
@@ -40,13 +34,18 @@ B-2026-10-28-3 (the "descriptive" cervical-fluid model differing between model-c
 change here: model-cervical-fluid 1.2.0 was aligned on the published pack, and all 11 previously published method
 files are byte-identical to it.
 
+### Deferred: the fertility monitor reading (`fertility-monitor-lh-marquette`)
+
+The Low / High / Peak monitor item, as Cycle Intelligence's overlay defines it, is **not** in this release. Cycle
+Intelligence (and the `loic` webapp prototype's `dysnetOverload.ts`) carry the full item in an hds-lib overload, and
+hds-lib's `validateOverload` refuses an overload that restates an existing item's `type`, `streamId`, `eventType` or
+`options`, even unchanged: making the item canonical would make their model load throw. It ships once Cycle
+Intelligence drops it from its overlay (or treats it as a base item) and hds-lib accepts an identical restatement. The
+definition, its streams, tests and documentation are kept on branch `feature/marquette-monitor-item`. `[CYC-2]` pins
+its absence until then.
+
 **For consumers.**
-- **Cycle Intelligence** (and any app carrying the monitor item in an hds-lib overload, such as the `loic` webapp
-  prototype's `dysnetOverload.ts`): **before this release is live**, treat `fertility-monitor-lh-marquette` as a base
-  item (add it to `UPSTREAM_ITEM_KEYS` or drop it from the overlay). hds-lib's `validateOverload` refuses an overload
-  that restates an existing item's `type`, `streamId`, `eventType` or `options`, so the full overlay definition makes
-  model loading throw once the item is canonical. The overlay's streams match the canonical tree and keep loading.
-  Then write the LH peak to `fertility-cycles-lh-peak-day` instead of `fertility-cycles-peak-day`, move the overlay's
+- **Cycle Intelligence**: write the LH peak to `fertility-cycles-lh-peak-day` instead of `fertility-cycles-peak-day`, move the overlay's
   peak-day description to the new item, and relabel its existing demo events (stream change) or leave them, knowing
   they now read as mucus peaks.
 - **bridge-cycles-files (Cyclefeminin) and bridge-cyclefeminin-net**: nothing to change; they already write the mucus
@@ -58,13 +57,13 @@ files are byte-identical to it.
   the coverline computation (`temperatureShift`) reads the rule from there, never from a method-name table, and
   honours a `'manual'` coverline event over its own.
 - **Apps showing the method list** (Settings, method choosers): Sensiplan now appears among the converter methods.
-- **hds-forms-js / pickers**: three new active items appear (`fertility-monitor-lh-marquette`,
-  `fertility-cycles-coverline`, `fertility-cycles-lh-peak-day`). Apps with fixed stream permissions that want them
-  must request the new streams; a permission on `fertility-cycles` already covers the two new cycle streams.
+- **hds-forms-js / pickers**: two new active items appear (`fertility-cycles-coverline`,
+  `fertility-cycles-lh-peak-day`). Apps with fixed stream permissions that want them must request the new streams; a
+  permission on `fertility-cycles` already covers both.
 
 Minor release: additions only, plus label and description changes on existing items (semver rule in `AGENTS.md`).
 
-Tests `[CYC-*]` (items, streams, contents under draft-07 and draft-04, the Billings label), `[CNVC5]`, `[CNVC6]`,
+Tests `[CYC-*]` (items, streams, contents under draft-07 and draft-04, the Billings label, the deferred monitor item), `[CNVC5]`, `[CNVC6]`,
 `[CNVC9]` to `[CNVC11]`, `[CNVT-*]`, `[CNVM13]`.
 
 ## [3.23.0] - 2026-10-28

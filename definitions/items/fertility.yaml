@@ -157,8 +157,8 @@ fertility-cycles-peak-day:
     Sensiplan, STM, Peak Day tracking): the last day of peak-type cervical fluid, in the method's own
     terms, known in retrospect once the fluid changes. One event per cycle, `time` anywhere on that
     calendar day, no duration. Meaning fixed in 3.24.0 (B-2026-10-26-19): it is never the LH peak
-    (`fertility-cycles-lh-peak-day`), a monitor's Peak reading (`fertility-monitor-lh-marquette`),
-    or ovulation (`fertility-cycles-ovulation`). Chart notation recorded by the person or a charting
+    (`fertility-cycles-lh-peak-day`), a fertility monitor's Peak reading, or ovulation
+    (`fertility-cycles-ovulation`). Chart notation recorded by the person or a charting
     app, not a statement of fertility. See documentation/MENSTRUAL-CYCLE.md "Peak days".
 fertility-cycles-lh-peak-day:
   version: v1
@@ -174,9 +174,8 @@ fertility-cycles-lh-peak-day:
   repeatable: P1D
   devNotes: |-
     The peak of the luteinizing-hormone surge, as the person (or an app) marks it from urine LH
-    tests (`fertility-test-opk`, `body-urine-hormones-lh`) or a fertility monitor
-    (`fertility-monitor-lh-marquette`). One event per cycle, `time` anywhere on that calendar day,
-    no duration. Distinct from the mucus Peak Day (`fertility-cycles-peak-day`): the two usually
+    tests (`fertility-test-opk`, `body-urine-hormones-lh`) or a fertility monitor. One event per
+    cycle, `time` anywhere on that calendar day, no duration. Distinct from the mucus Peak Day (`fertility-cycles-peak-day`): the two usually
     fall a day or two apart and either can be recorded without the other. Added in 3.24.0
     (B-2026-10-26-19). A sibling stream, not a child of `fertility-cycles-peak-day`, so a
     permission on one never grants the other. No LOINC or SNOMED CT concept found for it
@@ -644,37 +643,6 @@ fertility-test-opk:
     device bridge may write e.g. 0.5 for a weak positive and a reader must expect it. Was a bare
     `type: number` until 3.12.0, which left nothing user-facing saying what to enter once the scale
     was moved out of the description. (B-2026-09-23-3.)
-fertility-monitor-lh-marquette:
-  version: v1
-  label:
-    en: Fertility monitor reading
-    fr: Lecture du moniteur de fertilité
-  description:
-    en: Low, High or Peak, as your fertility monitor shows it.
-    fr: Bas, Haut ou Pic, tel que l'affiche votre moniteur de fertilité.
-  streamId: fertility-monitor-lh-marquette
-  eventType: ratio/generic
-  type: select
-  options:
-    - value: 0
-      label: { en: Low, fr: Bas }
-    - value: 1
-      label: { en: High, fr: Haut }
-    - value: 2
-      label: { en: Peak, fr: Pic }
-  repeatable: P1D
-  devNotes: |-
-    The daily reading of a home fertility monitor that tests urine for estrogen (E3G) and LH and
-    shows Low, High or Peak: the Clearblue Fertility Monitor, the device the Marquette Method is
-    taught with. High follows the estrogen rise, Peak the LH surge. Content
-    `{ value: 0 | 1 | 2, relativeTo: 2 }` (`ratioRelativeTo`). Not a quantity: quantitative LH is
-    `body-urine-hormones-lh`, a test strip `fertility-test-opk`. Key, streamId, eventType and
-    options are those of Cycle Intelligence's overlay, which wrote the item first, so its events
-    resolve unchanged; the name says Marquette, the reading is the device's. The Marquette mucus
-    1-8 to Low/High/Peak mapping is not modelled here (it waits for the method's experts). FHIR: an
-    Observation with a coded value (Low/High/Peak) and the device as `Observation.device`
-    (`clientData.hdsInstrument`); no LOINC or SNOMED CT concept found for the reading (2026-10-28).
-    Added in 3.24.0.
 fertility-test-pregnancy:
   version: v1
   label:

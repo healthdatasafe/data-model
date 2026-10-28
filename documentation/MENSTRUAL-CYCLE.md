@@ -182,9 +182,9 @@ other).
 | `fertility-cycles-peak-day` | The **mucus Peak Day**: the last day of peak-type cervical fluid, in the charting method's own terms, known in retrospect once the fluid changes | the person, a charting app (Cyclefeminin, Read Your Body), a method's own chart |
 | `fertility-cycles-lh-peak-day` | The **LH peak**: the day the LH surge peaked, as marked from urine LH tests or a fertility monitor | the person, an LH or monitor app (Cycle Intelligence) |
 
-Neither is ovulation (`fertility-cycles-ovulation`), and neither is a monitor reading (`fertility-monitor-lh-marquette`
-records each day's Low / High / Peak). The two peaks usually fall a day or two apart and either can be recorded without
-the other.
+Neither is ovulation (`fertility-cycles-ovulation`), and neither is a fertility monitor's daily Low / High / Peak
+reading (no item yet: see the 3.24.0 CHANGELOG). The two peaks usually fall a day or two apart and either can be
+recorded without the other.
 
 **Why the existing item is the mucus peak.** Until 3.24.0 the item said only "peak day of fertility", and two writers
 read it differently: the Cyclefeminin import (`bridge-cycles-files`, and the earlier `bridge-cyclefeminin-net`) writes
@@ -236,23 +236,3 @@ The declaration lives in `converter/v0.yaml` (`temperatureRules`, `methodTempera
 are copies of model-cervical-fluid's; the build adds it to each method and fails if a method has no entry or names an
 unknown rule. When the experts settle an open rule (Chart Neo's double check, Marquette's temperature rule), the
 value changes here.
-
-## Fertility monitor reading (3.24.0)
-
-`fertility-monitor-lh-marquette` is the daily reading of a home fertility monitor that tests urine for estrogen (E3G)
-and LH and shows **Low, High or Peak**: the Clearblue Fertility Monitor, the device the Marquette Method is taught
-with. High follows the estrogen rise, Peak the LH surge. It is a `ratio/generic` select stored as
-`{ value: 0 | 1 | 2, relativeTo: 2 }` (`ratioRelativeTo`), on `fertility-monitor` → `fertility-monitor-lh-marquette`.
-
-The key, stream, eventType and options are exactly those of Cycle Intelligence's overlay item, which wrote these
-readings first, so its events resolve with no migration. The key names Marquette; the reading is the device's, and any
-monitor with the same three levels writes it. Not modelled yet: the Marquette mucus scale's 1 to 8 ↔ Low / High / Peak
-levels, which wait for the method's experts.
-
-| HDS | HL7 FHIR | Apple HealthKit |
-|---|---|---|
-| the reading | `Observation`, `valueCodeableConcept` (Low / High / Peak, a local code system) | closest: `ovulationTestResult`, Low → `negative`, High → `estrogenSurge`, Peak → `luteinizingHormoneSurge` (export only: an imported HealthKit result is a test result, `fertility-test-opk`) |
-| the monitor | `Observation.device` (from `clientData.hdsInstrument`, [PROVENANCE.md](PROVENANCE.md)) | `HKDevice` |
-
-No LOINC or SNOMED CT concept was found for a fertility-monitor reading (LOINC on tx.fhir.org, SNOMED CT in snomed-db,
-2026-10-28), so the item asserts none. Quantitative LH stays `body-urine-hormones-lh`, an LH strip `fertility-test-opk`.
