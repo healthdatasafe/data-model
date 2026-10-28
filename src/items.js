@@ -229,6 +229,14 @@ function checkItemVsEvenType (key, item, eventType) {
     }
     return true;
   }
+  // `attachments` items are documents: the files are Pryv attachments, so the eventType must
+  // say so. Content, when the eventType has any, is the document's metadata (`file/xds-v1`).
+  if (item.type === 'attachments') {
+    if (eventType.attachmentRequired !== true) {
+      throw new Error(`as item "${key}" is of type "attachments" the matching eventType must declare "attachmentRequired: true": ` + JSON.stringify({ item, eventType }));
+    }
+    return true;
+  }
   // `multi-select` stores an array of chosen option values, so the matching eventType
   // must be an array whose `items.enum` covers every option (the `select` check below,
   // one level down). Checked before the scalar branches: an array eventType would

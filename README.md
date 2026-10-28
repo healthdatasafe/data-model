@@ -22,13 +22,13 @@ it.
 
 | Category | Count | Description |
 |----------|-------|-------------|
-| Items | **298** (233 active, 65 deprecated) | Health data point definitions (body, fertility, lifestyle, treatment, procedure, …) |
-| Streams | **17** top-level, **284** at all levels | Hierarchical data categories |
-| Event types (HDS) | **74** | Custom Pryv event type schemas |
+| Items | **306** (241 active, 65 deprecated) | Health data point definitions (body, fertility, lifestyle, treatment, procedure, …) |
+| Streams | **18** top-level, **292** at all levels | Hierarchical data categories |
+| Event types (HDS) | **76** | Custom Pryv event type schemas |
 | Event types (legacy) | **358** | Standard Pryv measurement types |
 | Converters | 2 | Cross-method conversion engines (cervical-fluid, mood) |
 
-> Counts are as of 2026-10-26. A **deprecated** item stays in the pack as a resolvable alias
+> Counts are as of 2026-10-28. A **deprecated** item stays in the pack as a resolvable alias
 > so consumers pinned to the old key keep working — see `AGENTS.md` on item-key renames — so "active" is
 > the number that matters when reading the vocabulary, and the total is what a consumer can still
 > resolve.
@@ -77,6 +77,7 @@ In-depth notes on specific subdomains live in `documentation/`:
 - `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md` — the five smaller domains. `FINDING.md` records an **open question**: the `finding` root's scope is undecided, and the doc says so rather than inventing one.
 - `CONSENTS.md` — the account-level consent record: the non-clinical `consents` root, the `type: system` item `consent-record` and the `consent/record-v1` eventType (plan 91).
 - `SYNC-STATUS.md` — connector status: the non-clinical `sync-status` root, one `role: context` leaf per connector, the `type: system` item and the `sync-status/connector-v1` eventType, and how it differs from the writer-private `sync` watermark.
+- `DOCUMENTS.md` — medical documents: the `documents` root, the `file/xds-v1` eventType and the `type: attachments` item `document` (to follow) (XDS DocumentEntry / FHIR DocumentReference metadata, site-agents#23).
 - `PROVENANCE.md` — the index of HDS `clientData` keys, and the definitions of `clientData.hdsInstrument` (the instrument a measure was taken with) and `clientData.related.<eventId>` (a link to a source event), with their FHIR and HealthKit mappings.
 - `CUSTOM-FIELDS-AND-SYSTEM.md`, `DESIGN-NOTES.md`, `TAGS.md`
 

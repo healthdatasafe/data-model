@@ -100,7 +100,8 @@ convention): one key per referenced event id, value `true`.
 }
 ```
 
-Here `ckq3w8n1x0001` is the `file/attached` event of the lab report the value was read from.
+Here `ckq3w8n1x0001` is the document event (`file/xds-v1`, [DOCUMENTS.md](DOCUMENTS.md)) of the lab report the value
+was read from.
 
 **Rules.**
 
@@ -110,6 +111,12 @@ Here `ckq3w8n1x0001` is the `file/attached` event of the lab report the value wa
   document: read from it; an answer and a request: answers it). A link that needs more than that gets its
   own documented key.
 - **Write the whole `related` object** when changing the set of links.
+- **An event id held in content is mirrored here.** When an eventType carries event ids in its content (a document's
+  `supersedes`, `authors[].eventId`, `encounterId`), each one is also a key of `related`, so a cohort query finds the
+  link. If the two drift, the content is authoritative.
+- **The kind of link is told apart by the event types only.** That holds while each pair of types has one kind of
+  link; a second kind between the same types (a document appending to, or transforming, another besides replacing
+  it) needs its own documented key.
 - **A referenced event may be unreadable** by whoever reads the link: deleted, or on a stream the reader
   has no permission for. A reader shows the value without its source rather than failing.
 - Event ids match the `clientData` query path grammar (`^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*$`), so the
