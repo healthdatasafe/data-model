@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.29.0] - 2026-10-28
+
+### Added: the `document` item
+
+- **`document`** (`type: attachments`, stream `documents`, eventType `file/xds-v1`, `repeatable: any`): held back in
+  3.25.0 until deployed consumers handled the `attachments` type; the definition is the one DOCUMENTS.md carried (a
+  writer's overload of it keeps working). hds-lib ≥ 2.26.0 keeps it out of pickers, hds-forms-js ≥ 0.23.0 shows it as
+  not editable; hds-webapp, doctor-dashboard and the account app run hds-lib 2.28.0 / hds-forms-js 0.24.0 on demo and
+  prod.
+
+### Changed: `settings/hds-webapp-diary` documentation
+
+- `hiddenLines` holds line ids, a device's key and never the line's label (`instrument:<id>`, `healthkit:<sourceName>`,
+  `connector:<id>`, `document` or `default`, followed by `#systolic` / `#diastolic` for a blood-pressure part); new documented key `pastCyclesAsRecorded` (boolean). The object
+  stays open; no stored value changes.
+
 ## [3.28.0] - 2026-10-28
 
 ### The three coded lab-result items (site-agents#28)

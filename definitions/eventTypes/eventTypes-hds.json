@@ -1230,7 +1230,7 @@
       }
     },
     "settings/hds-webapp-diary": {
-      "description": "Per-user layout and display state of the hds-webapp Diary, held as a single recurring event on the webapp-settings app stream and updated in place. The shape is owned by hds-webapp, not by this model, so the known keys below are documented rather than enforced: no 'required', and additional properties are permitted on purpose, as for settings/hds-react-timeline. Holds no health data: every value is a Diary card or feature id, an item key, a UI flag or a label of the Diary itself (a chart name, a chart line). An observation belongs on its own item (the fertility intention on fertility-ttc-tta, the charting method on its own item or setting), and a display preference shared across apps belongs in HDSSettings. Card ids are defined by hds-webapp; a measure's card id is its item key.",
+      "description": "Per-user layout and display state of the hds-webapp Diary, held as a single recurring event on the webapp-settings app stream and updated in place. The shape is owned by hds-webapp, not by this model, so the known keys below are documented rather than enforced: no 'required', and additional properties are permitted on purpose, as for settings/hds-react-timeline. Holds no health data: every value is a Diary card or feature id, an item key, a UI flag or a label of the Diary itself (a chart name) or a chart line's id. An observation belongs on its own item (the fertility intention on fertility-ttc-tta, the charting method on its own item or setting), and a display preference shared across apps belongs in HDSSettings. Card ids are defined by hds-webapp; a measure's card id is its item key.",
       "type": "object",
       "properties": {
         "v": {
@@ -1292,8 +1292,12 @@
           ]
         },
         "hiddenLines": {
-          "description": "Lines hidden on a chart, keyed by card id, as arrays of line labels.",
+          "description": "Lines hidden on a chart, keyed by card id, as arrays of line ids (a device's key, never the line's label): instrument:<hdsInstrument id>, healthkit:<HealthKit sourceName>, connector:<connector id>, document or default, followed by #systolic / #diastolic for a blood-pressure part.",
           "type": "object"
+        },
+        "pastCyclesAsRecorded": {
+          "description": "Whether past cycles are drawn in the method each was recorded in rather than in the chosen method (a display choice; the observations are never converted when stored).",
+          "type": "boolean"
         },
         "setupDone": {
           "description": "Whether the Diary set-up questions were answered.",

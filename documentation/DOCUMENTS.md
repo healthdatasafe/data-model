@@ -10,7 +10,7 @@ document: the person keeps the file, and HDS keeps enough validated metadata to 
 | | |
 |---|---|
 | Stream | `documents` ("Medical documents"), a root with no children |
-| Item | `document`, `type: attachments`, `repeatable: any`: **not published yet** (see below) |
+| Item | `document`, `type: attachments`, `repeatable: any` (since 3.29.0) |
 | eventType | `file/xds-v1` |
 
 **One root, no per-theme children.** A document's kind (lab report, letter, …) and its clinical theme are carried by
@@ -30,12 +30,14 @@ eventType must declare `attachmentRequired: true` (`src/items.js`). It is an ite
 composite field can be one. Forms do not enter it field by field: a document comes from an import, and forms show it
 as not editable.
 
-## The `document` item: published later
+## The `document` item: held back in 3.25.0, published in 3.29.0
 
-The pack is loaded at runtime by every deployed app. Today hds-lib `itemsDefs.getAllActive()` skips only `system`
-items, and hds-forms-js `schemaFor` throws on an item type it does not know, so a published `document` item would
-show in the webapp Diary picker and break its form in every build already deployed. 3.25.0 therefore ships the root,
-the eventType and the `attachments` rule, and **not the item**. It is published in a later minor once:
+The pack is loaded at runtime by every deployed app. In 3.25.0 hds-lib `itemsDefs.getAllActive()` skipped only
+`system` items, and hds-forms-js `schemaFor` threw on an item type it did not know, so a published `document` item
+would have shown in the webapp Diary picker and broken its form in every build then deployed. 3.25.0 therefore shipped the root,
+the eventType and the `attachments` rule, and **not the item**. The gate below was met on 2026-10-28 (hds-lib 2.28.0
+and hds-forms-js 0.24.0 in hds-webapp, doctor-dashboard and the account app on demo and prod; no real users on any
+build, mobile included, per the product owner), and 3.29.0 publishes the item. The gate, for the record:
 
 1. hds-lib skips `attachments` items where a person picks or enters data (`getAllActive`);
 2. hds-forms-js `schemaFor` and `HDSFormField` handle `attachments` ("not editable here");
@@ -46,10 +48,10 @@ the eventType and the `attachments` rule, and **not the item**. It is published 
 `deploy.sh` cannot check consumer versions, so this list is an explicit checklist item of the release that adds the
 item; adding it is a minor (AGENTS.md), but it changes what every deployed consumer shows.
 
-Until then a writer that needs `forEvent` to resolve its documents declares the item in its own overload, with the
+Until 3.29.0 a writer that needed `forEvent` to resolve its documents declared the item in its own overload, with the
 same definition as below (hds-lib ≥ 2.24.0 accepts a restatement whose immutable fields — `type`, `streamId`,
 `eventType`, … — are identical, so the overload keeps working once the item is canonical). An event on `documents`
-resolves to no item meanwhile.
+resolved to no item until then.
 
 ```yaml
 document:
