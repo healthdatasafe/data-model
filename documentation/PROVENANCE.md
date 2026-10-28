@@ -14,7 +14,7 @@ conventions below are contracts between HDS apps, documented here so every write
 |---|---|---|
 | `clientData.hdsInstrument` | The instrument a measure was taken with | this page |
 | `clientData.related.<eventId>` | A link to another event this one derives from or answers | this page; first used by [QUESTIONNAIRE.md](QUESTIONNAIRE.md) |
-| `clientData.hdsBasis` | Whether a cycle boundary was predicted or confirmed by its source | [MENSTRUAL-CYCLE.md](MENSTRUAL-CYCLE.md) |
+| `clientData.hdsBasis` | Where a cycle value comes from: on the four cycle boundaries, `'predicted'` or `'confirmed'` by its source; on `fertility-cycles-coverline`, `'auto'` (computed by the method's rule) or `'manual'` (drawn or moved by the person) | [MENSTRUAL-CYCLE.md](MENSTRUAL-CYCLE.md) |
 | `clientData.hdsCustomField`, `clientData.hdsSystemFeature` | Custom-field and system-stream declarations | [CUSTOM-FIELDS-AND-SYSTEM.md](CUSTOM-FIELDS-AND-SYSTEM.md) |
 
 A reader ignores any `clientData` key it does not know. A new `hds*` key is documented here (or in its

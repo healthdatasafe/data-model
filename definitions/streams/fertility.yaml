@@ -15,6 +15,10 @@ children:
         name: Ovulation Day
       - id: fertility-cycles-peak-day
         name: Peak Day
+      - id: fertility-cycles-lh-peak-day
+        name: LH Peak Day
+      - id: fertility-cycles-coverline
+        name: Coverline
       - id: fertility-cycles-charted-estimation
         name: Cycles charted estimation
       - id: fertility-cycles-average-length
@@ -35,6 +39,11 @@ children:
     name: Non-intercourse genital contact
   - id: fertility-tracking-method
     name: Fertility-tracking method
+  - id: fertility-monitor
+    name: Fertility monitor
+    children:
+      - id: fertility-monitor-lh-marquette
+        name: Fertility monitor reading
   - id: fertility-test-opk
     name: Ovulation Test (OPK)
   - id: fertility-test-pregnancy

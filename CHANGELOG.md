@@ -1,5 +1,72 @@
 # Changelog
 
+## [Unreleased]
+
+### Added: cycle charting items, the coverline rule of each method, Sensiplan in the converter pack
+
+- **`fertility-monitor-lh-marquette`**: the daily Low / High / Peak reading of a home fertility monitor (the
+  Clearblue Fertility Monitor of the Marquette Method), `ratio/generic` select `0 / 1 / 2`, `ratioRelativeTo` 2, on
+  new streams `fertility-monitor` → `fertility-monitor-lh-marquette`. Key, stream, eventType and options are exactly
+  those of Cycle Intelligence's overlay item, so events it wrote resolve unchanged. No LOINC or SNOMED CT concept found
+  (tx.fhir.org, snomed-db); FHIR: an Observation with a coded value. The Marquette 1–8 ↔ Low/High/Peak level mapping is
+  not included (it waits for the method's experts).
+- **`fertility-cycles-coverline`**: the basal-temperature coverline of one cycle, `temperature/c`, one event per cycle
+  dated on the cycle's `fertility-cycles-start` day; `clientData.hdsBasis` `'manual'` (drawn or moved by the person)
+  or `'auto'` (computed by the method's rule). New stream under `fertility-cycles`.
+- **`fertility-cycles-lh-peak-day`**: the LH peak day, beside the mucus Peak Day (below). New sibling stream under
+  `fertility-cycles`.
+- **`temperatureRule` on every cervical-fluid converter method** (`converters/cervical-fluid/pack-latest.json`), and
+  the rule catalogue `temperatureRules` on the pack: `sympto-thermal` (STM / TCOYF), `sensiplan` (Sensiplan, and Chart
+  Neo, which charts by Sensiplan's rule), `manual` (Justisse: the person draws the line), `none` for the eight methods
+  with no coverline. Data only, ids from model-cervical-fluid `references/rules/coverline-rules.json`; declared in
+  `converter/v0.yaml` because the method files are copies, checked complete by the build (`[CNVT-*]`).
+- **Sensiplan in the cervical-fluid converter pack** (B-2026-10-26-18): `models/sensiplan/v0.json`, a byte copy of
+  model-cervical-fluid `src/definitions/v0/sensiplan.json` (1.2.0), order 30, codes `t ø f S S+`. 12 methods. It was
+  left out on 2026-03-19 with four other methods judged niche, for no recorded reason. Not added to the
+  `fertility-tracking-method` options.
+
+### Changed: the meaning of `fertility-cycles-peak-day`, and two labels
+
+- **`fertility-cycles-peak-day` is the mucus Peak Day** (B-2026-10-26-19): the last day of peak-type cervical fluid in
+  the method's terms. It had two meanings across writers: the Cyclefeminin import writes the mucus peak, Cycle
+  Intelligence the LH peak. The data in real accounts is the import's (Cycle Intelligence runs on demo only), and "Peak
+  Day" is the mucus methods' term, so the item keeps that meaning and the LH peak moves to the new
+  `fertility-cycles-lh-peak-day`. Label "Peak day of fertility" → **"Peak Day"** (fr "Jour sommet"), description now
+  "The last day of peak-type mucus in your cycle." (no fertility statement). Same key, stream and eventType.
+- **`fertility-tracking-method`**: the `billings` option is labelled **"Billings"** (en, fr), was "Billings Ovulation
+  Method" (B-2026-10-28-2: no full method denomination as a label, as committed to WOOMB in July 2026). Value unchanged.
+
+B-2026-10-28-3 (the "descriptive" cervical-fluid model differing between model-cervical-fluid and the pack) needed no
+change here: model-cervical-fluid 1.2.0 was aligned on the published pack, and all 11 previously published method
+files are byte-identical to it.
+
+**For consumers.**
+- **Cycle Intelligence** (and any app carrying the monitor item in an hds-lib overload, such as the `loic` webapp
+  prototype's `dysnetOverload.ts`): **before this release is live**, treat `fertility-monitor-lh-marquette` as a base
+  item (add it to `UPSTREAM_ITEM_KEYS` or drop it from the overlay). hds-lib's `validateOverload` refuses an overload
+  that restates an existing item's `type`, `streamId`, `eventType` or `options`, so the full overlay definition makes
+  model loading throw once the item is canonical. The overlay's streams match the canonical tree and keep loading.
+  Then write the LH peak to `fertility-cycles-lh-peak-day` instead of `fertility-cycles-peak-day`, move the overlay's
+  peak-day description to the new item, and relabel its existing demo events (stream change) or leave them, knowing
+  they now read as mucus peaks.
+- **bridge-cycles-files (Cyclefeminin) and bridge-cyclefeminin-net**: nothing to change; they already write the mucus
+  Peak Day.
+- **Readers** (hds-react-timeline and hds-webapp `FertilityCycleGraph`, doctor-dashboard `cycleModel`,
+  hds-feminine-cycle-ui): label `fertility-cycles-peak-day` as the (mucus) Peak Day; show `fertility-cycles-lh-peak-day`
+  separately if at all. doctor-dashboard's own LH-surge detection is unaffected.
+- **hds-lib**: `MethodDef` gains an optional `temperatureRule` and the converter pack an optional `temperatureRules`;
+  the coverline computation (`temperatureShift`) reads the rule from there, never from a method-name table, and
+  honours a `'manual'` coverline event over its own.
+- **Apps showing the method list** (Settings, method choosers): Sensiplan now appears among the converter methods.
+- **hds-forms-js / pickers**: three new active items appear (`fertility-monitor-lh-marquette`,
+  `fertility-cycles-coverline`, `fertility-cycles-lh-peak-day`). Apps with fixed stream permissions that want them
+  must request the new streams; a permission on `fertility-cycles` already covers the two new cycle streams.
+
+Minor release: additions only, plus label and description changes on existing items (semver rule in `AGENTS.md`).
+
+Tests `[CYC-*]` (items, streams, contents under draft-07 and draft-04, the Billings label), `[CNVC5]`, `[CNVC6]`,
+`[CNVC9]` to `[CNVC11]`, `[CNVT-*]`, `[CNVM13]`.
+
 ## [3.23.0] - 2026-10-28
 
 ### Added: vital signs, daily activity totals, medication regimen frequency (site-agents#25, #30, #31, #32)

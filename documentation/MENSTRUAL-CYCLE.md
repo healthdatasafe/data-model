@@ -170,3 +170,89 @@ observation, a distinct item if ever needed.
 
 **Why separate browndark and clots as checkboxes?**
 They are qualifiers, not intensity levels. A user can have Heavy flow with or without clots, Light flow that is brown-tinged, etc. Separate items allow any combination. Both always co-occur with a `body-vulva-bleeding` event.
+
+## Peak days (3.24.0, B-2026-10-26-19)
+
+Two different peaks, two items. Both are `activity/plain` checkboxes, one event per cycle, `time` anywhere on the
+calendar day, no duration, on **sibling** streams under `fertility-cycles` (so a permission on one never grants the
+other).
+
+| Item | What it is | Typical source |
+|---|---|---|
+| `fertility-cycles-peak-day` | The **mucus Peak Day**: the last day of peak-type cervical fluid, in the charting method's own terms, known in retrospect once the fluid changes | the person, a charting app (Cyclefeminin, Read Your Body), a method's own chart |
+| `fertility-cycles-lh-peak-day` | The **LH peak**: the day the LH surge peaked, as marked from urine LH tests or a fertility monitor | the person, an LH or monitor app (Cycle Intelligence) |
+
+Neither is ovulation (`fertility-cycles-ovulation`), and neither is a monitor reading (`fertility-monitor-lh-marquette`
+records each day's Low / High / Peak). The two peaks usually fall a day or two apart and either can be recorded without
+the other.
+
+**Why the existing item is the mucus peak.** Until 3.24.0 the item said only "peak day of fertility", and two writers
+read it differently: the Cyclefeminin import (`bridge-cycles-files`, and the earlier `bridge-cyclefeminin-net`) writes
+Cyclefeminin's `isPeak` day, the mucus peak; Cycle Intelligence writes the day the person marks the LH peak (from its
+hormone or monitor card). The stored data that reaches real accounts is the import's (Cycle Intelligence runs on demo
+only), "Peak Day" is the mucus methods' own term (Billings, Creighton, FEMM, Sensiplan, STM, and the `peak-day` option
+of `fertility-tracking-method`), and hds-feminine-cycle-ui and the method specification read the item as the mucus
+peak. Keeping that meaning moves no real data; the LH peak gets the new item.
+
+**Not a fertility statement.** Both are chart notation the person or her method records. HDS apps show them as
+recorded; they do not derive fertile or infertile days from them.
+
+## Coverline (3.24.0)
+
+`fertility-cycles-coverline` is the basal-temperature coverline of one cycle, `temperature/c` (°C), one event per
+cycle, `time` on the calendar day of that cycle's `fertility-cycles-start` (the patient's time zone), no duration.
+
+`clientData.hdsBasis` says where the value comes from:
+
+| `hdsBasis` | Meaning |
+|---|---|
+| `'manual'` | The person drew the line or moved it (the methods that publish no calculation, such as Justisse, are always drawn) |
+| `'auto'` | Computed by the method's coverline rule (below) and stored as computed, for example by an import or by a reader that cannot compute it |
+| absent | Not stated |
+
+A reader that computes the line itself (hds-lib, from the rule) shows a `'manual'` line instead of its own; an `'auto'`
+line is what its writer computed and may be recomputed. Going back to the method's rule deletes the event. If the
+cycle's start is moved, the writer moves the coverline with it. Like the peaks, the coverline and its counted high
+temperatures are chart notation; HDS does not derive "infertile from day N" from them.
+
+No LOINC or SNOMED CT concept exists for a coverline (searched 2026-10-28); a FHIR export would carry it as an
+Observation with a local code, or leave it out.
+
+### Which rule a method charts the temperature by: `temperatureRule`
+
+The cervical-fluid converter declares, for each method, the coverline rule its charts use. It is data only: the rule
+parameters and their sources are in model-cervical-fluid (`references/rules/coverline-rules.json`, the method
+specification), and the computation is hds-lib's. Each method of `converters/cervical-fluid/pack-latest.json` carries
+`temperatureRule`, a key of the pack's `temperatureRules` or `none`:
+
+| `temperatureRule` | Methods |
+|---|---|
+| `sympto-thermal` (STM / TCOYF: 6 lows, line 0.05 °C above the highest, 3 highs, the 3rd ≥ 0.15 °C above the line) | `sympto-thermal` |
+| `sensiplan` ("3 over 6": line on the highest of 6 lows, 3 highs, the 3rd ≥ 0.2 °C above, two exceptions) | `sensiplan`, `chartneo` (Chart Neo charts by Sensiplan's rule) |
+| `manual` (no calculation published: the person draws the line) | `justisse` |
+| `none` (the method draws no coverline) | `billings`, `creighton`, `marquette` (rule not published), `femm`, `appleHealth`, `mira`, `bigelow`, `descriptive` |
+
+The declaration lives in `converter/v0.yaml` (`temperatureRules`, `methodTemperatureRule`) because the method files
+are copies of model-cervical-fluid's; the build adds it to each method and fails if a method has no entry or names an
+unknown rule. When the experts settle an open rule (Chart Neo's double check, Marquette's temperature rule), the
+value changes here.
+
+## Fertility monitor reading (3.24.0)
+
+`fertility-monitor-lh-marquette` is the daily reading of a home fertility monitor that tests urine for estrogen (E3G)
+and LH and shows **Low, High or Peak**: the Clearblue Fertility Monitor, the device the Marquette Method is taught
+with. High follows the estrogen rise, Peak the LH surge. It is a `ratio/generic` select stored as
+`{ value: 0 | 1 | 2, relativeTo: 2 }` (`ratioRelativeTo`), on `fertility-monitor` → `fertility-monitor-lh-marquette`.
+
+The key, stream, eventType and options are exactly those of Cycle Intelligence's overlay item, which wrote these
+readings first, so its events resolve with no migration. The key names Marquette; the reading is the device's, and any
+monitor with the same three levels writes it. Not modelled yet: the Marquette mucus scale's 1 to 8 ↔ Low / High / Peak
+levels, which wait for the method's experts.
+
+| HDS | HL7 FHIR | Apple HealthKit |
+|---|---|---|
+| the reading | `Observation`, `valueCodeableConcept` (Low / High / Peak, a local code system) | closest: `ovulationTestResult`, Low → `negative`, High → `estrogenSurge`, Peak → `luteinizingHormoneSurge` (export only: an imported HealthKit result is a test result, `fertility-test-opk`) |
+| the monitor | `Observation.device` (from `clientData.hdsInstrument`, [PROVENANCE.md](PROVENANCE.md)) | `HKDevice` |
+
+No LOINC or SNOMED CT concept was found for a fertility-monitor reading (LOINC on tx.fhir.org, SNOMED CT in snomed-db,
+2026-10-28), so the item asserts none. Quantitative LH stays `body-urine-hormones-lh`, an LH strip `fertility-test-opk`.
