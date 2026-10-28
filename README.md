@@ -73,12 +73,13 @@ In-depth notes on specific subdomains live in `documentation/`:
 - `MENSTRUAL-CYCLE.md`, `CERVICAL-POSITION.md`, `MOOD.md`, `SKIN.md`, `SYMPTOMS.md`, `PHYSICAL-ACTIVITY.md`, `FUNCTION.md`
 - `LIFESTYLE.md` — tobacco, alcohol and diet: why `lifestyle` is a top-level domain, the AUDIT-C mapping, why alcohol quantity is stored in grams of ethanol, and the per-option SNOMED tables.
 - `TREATMENT-PROCEDURE.md` — D3 mechanic: parent items (`treatment`, `procedure`) reused under descendant streams (e.g. `treatment-fertility`, `procedure-fertility`) via the `forEvent` walk-up. Treatment items carry `event.duration` (Pryv-native); procedures are point-in-time.
-- `BLOOD-CHEMISTRY.md` — blood analytes: the `body-blood` tree, why specimen is explicit in item keys, reported-unit choices (gigacount vs megacount, percentages as fractions), and what is deliberately absent (reference ranges, derived indices).
+- `BLOOD-CHEMISTRY.md` — blood analytes: the `body-blood` tree, why specimen is explicit in item keys, reported-unit choices (gigacount vs megacount, percentages as fractions), unit conversions, the reference range and flag a lab printed for one result (`clientData.hdsRefRange`, `hdsFlag`, `hdsInterpretation`), and what is deliberately absent (per-analyte reference ranges, derived indices).
 - `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md` — the five smaller domains. `FINDING.md` records an **open question**: the `finding` root's scope is undecided, and the doc says so rather than inventing one.
 - `CONSENTS.md` — the account-level consent record: the non-clinical `consents` root, the `type: system` item `consent-record` and the `consent/record-v1` eventType (plan 91).
 - `SYNC-STATUS.md` — connector status: the non-clinical `sync-status` root, one `role: context` leaf per connector, the `type: system` item and the `sync-status/connector-v1` eventType, and how it differs from the writer-private `sync` watermark.
 - `DOCUMENTS.md` — medical documents: the `documents` root, the `file/xds-v1` eventType and the `type: attachments` item `document` (to follow) (XDS DocumentEntry / FHIR DocumentReference metadata, site-agents#23).
-- `PROVENANCE.md` — the index of HDS `clientData` keys, and the definitions of `clientData.hdsInstrument` (the instrument a measure was taken with) and `clientData.related.<eventId>` (a link to a source event), with their FHIR and HealthKit mappings.
+- `PROVENANCE.md` — the index of HDS `clientData` keys, and the definitions of `clientData.hdsInstrument` (the instrument a measure was taken with) and `clientData.related.<eventId>` (a link to a source event) and `clientData.sourceKey` (the identity of an imported record), with their FHIR and HealthKit mappings.
+- `PARTIAL-DATES.md` — dates known only to the month or the year, or approximately ("March 1999", "about spring 1998"): `time` at the period start at 12:00 UTC, `clientData.hdsTimePrecision` and its companions, and the FHIR mapping.
 - `CUSTOM-FIELDS-AND-SYSTEM.md`, `DESIGN-NOTES.md`, `TAGS.md`
 
 ## Item Definition Format

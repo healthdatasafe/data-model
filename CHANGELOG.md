@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.26.0] - 2026-10-28
+
+### Documentation: partial dates, the printed range and flag of a lab result, the import identity `sourceKey`
+
+Conventions only: no item, stream or eventType changes. They are contracts between writers and readers, reviewed
+before publishing (plan 114 WP-C).
+
+- **New `documentation/PARTIAL-DATES.md`** (site-agents#26): a date known only to the month or the year, or
+  approximately ("March 1999", "1997", "about spring 1998"). `time` = start of the period at 12:00 UTC, `duration`
+  unchanged (a partial date never becomes a duration), `clientData.hdsTimePrecision` (`minute | day | month | year
+  | approx`), `hdsTimeText` (the expression as written, required with `approx`), `hdsTimeZone` (IANA, with
+  `minute`), `hdsEndPrecision` for a span whose end is known to another precision (the end is 12:00 UTC on the last
+  day of its end period). Readers take the calendar fields in UTC. FHIR partial `dateTime` mapping. hds-lib 2.27.0
+  `formatEventDate(event)` displays it.
+- **`documentation/BLOOD-CHEMISTRY.md` § "The printed reference range, flag and interpretation of one result"**
+  (site-agents#29): `clientData.hdsRefRange` (`lowerLimit`, `upperLimit` on the stored scale of the value, `text` as
+  printed), `hdsFlag` (as printed), `hdsInterpretation` (`H | L | N | A | HH | LL`, the lab's printed flag
+  normalised, never computed; unknown values read as absent), with the flag mapping and the FHIR mapping.
+  `printedValue` / `printedUnit` / `conversion` are not defined (values are never converted); the alternative is a
+  unit variation on the item, or `lab-result/coded` meanwhile.
+- **`documentation/PROVENANCE.md`**: `clientData.sourceKey` (`<tool>:<kind>:<id>`, the identity of an imported
+  record: one event per key, re-runs update in place and never restore a trashed event; find a whole import with
+  the `prefix` condition of `events.get`), site-agents#33; the index lists the new keys; new keys are `hds`-prefixed.
+  The bulk-import contract itself is on the agents site (`llms-full.txt` § 5f).
+
 ## [3.25.0] - 2026-10-28
 
 ### Added: medical documents, read markers for conversations
