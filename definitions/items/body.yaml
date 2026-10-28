@@ -123,6 +123,65 @@ body-temperature-basal-disturbance:
     A "parasitic temperature" qualifier for a co-occurring `body-temperature-basal` event: a
     reader should exclude the flagged reading from coverline and thermal-shift computation.
     Absence means the reading was not flagged, NOT that it was confirmed reliable.
+# Vital signs printed on letters and reports, or measured by a device (site-agents#30). The basal
+# fertility reading stays `body-temperature-basal`; this is any other measured body temperature, on
+# the parent stream, so the pair (body-temperature, temperature/c) differs from the basal one.
+body-heart-rate:
+  version: v1
+  label:
+    en: Heart rate
+    fr: Fréquence cardiaque
+  description:
+    en: Your measured heart rate, in beats per minute.
+    fr: Votre fréquence cardiaque mesurée, en battements par minute.
+  streamId: body-heart-rate
+  eventType: frequency/bpm
+  type: number
+  repeatable: unlimited
+  references:
+    snomed: "364075005"
+    loinc: "8867-4"
+  devNotes: >-
+    The pulse taken with a blood pressure reading stays in `body-blood-pressure` (`rate`);
+    this item is a heart rate recorded on its own.
+body-oxygen-saturation:
+  version: v1
+  label:
+    en: Oxygen saturation (SpO2)
+    fr: Saturation en oxygène (SpO2)
+  description:
+    en: How much oxygen your blood carries, as a percentage.
+    fr: La quantité d'oxygène transportée par votre sang, en pourcentage.
+  streamId: body-oxygen-saturation
+  eventType: ratio/proportion
+  type: number
+  repeatable: unlimited
+  number:
+    display: { multiplier: 100, suffix: { en: "%", fr: "%" } }
+  references:
+    snomed: "431314004"
+    loinc: ["2708-6", "59408-5"]
+  devNotes: >-
+    Stored as a proportion (0.97 for 97 %). LOINC codes as the FHIR vital-signs profile pairs them:
+    2708-6 first (the profile's primary oxygen-saturation code), then 59408-5 (by pulse oximetry).
+body-temperature:
+  version: v1
+  label:
+    en: Body temperature
+    fr: Température corporelle
+  description:
+    en: Your measured body temperature.
+    fr: Votre température corporelle mesurée.
+  streamId: body-temperature
+  eventType: temperature/c
+  type: number
+  repeatable: unlimited
+  references:
+    snomed: "386725007"
+    loinc: "8310-5"
+  devNotes: >-
+    Any measured body temperature except the basal fertility reading, which stays
+    `body-temperature-basal`. A grant on `body-temperature` also covers the basal child.
 body-height:
   version: v1
   label:

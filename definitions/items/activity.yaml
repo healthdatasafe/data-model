@@ -344,3 +344,71 @@ activity-hiking-intensity:
         en: Vigorous intensity
         fr: Intensité élevée
   repeatable: unlimited
+
+## Daily totals (site-agents#25)
+# One event per day, as phone and watch exports carry them: a period starting at local midnight,
+# duration 86400 s (a convention: a DST day is 23 or 25 h). Not sessions: a session stays
+# activity-<sport>. See documentation/PHYSICAL-ACTIVITY.md § Daily totals.
+activity-steps:
+  version: v1
+  label:
+    en: Daily steps
+    fr: Pas quotidiens
+  description:
+    en: How many steps you took in a day.
+    fr: Le nombre de pas que vous avez faits dans la journée.
+  streamId: activity-steps
+  eventType: count/steps
+  type: number
+  duration:
+    mandatory: true
+    canBeNull: false
+    maxSeconds: 90000 # one day; 25 h covers the DST change. UI hint only, not validated.
+  repeatable: P1D
+  references:
+    loinc: "41950-7"
+  devNotes: >-
+    HealthKit stepCount, Google Fit step_count.delta, summed over the day.
+activity-distance-walking-running:
+  version: v1
+  label:
+    en: Daily walking and running distance
+    fr: Distance quotidienne de marche et de course
+  description:
+    en: How far you walked or ran in a day.
+    fr: La distance parcourue à pied ou en courant dans la journée.
+  streamId: activity-distance-walking-running
+  eventType: length/m
+  type: number
+  duration:
+    mandatory: true
+    canBeNull: false
+    maxSeconds: 90000 # one day; 25 h covers the DST change. UI hint only, not validated.
+  repeatable: P1D
+  references:
+    loinc: "41953-1"
+  devNotes: >-
+    HealthKit distanceWalkingRunning, summed over the day. Walking and running together because
+    that is what phones and watches export; a source that counts walking only writes it here too.
+    LOINC 41953-1 is "Walking distance 24 hour"; there is no walking+running code.
+activity-duration-active:
+  version: v1
+  label:
+    en: Daily active time
+    fr: Temps actif quotidien
+  description:
+    en: How long you were active in a day, as your device counts it.
+    fr: Le temps passé à bouger dans la journée, tel que votre appareil le compte.
+  streamId: activity-duration-active
+  eventType: time/s
+  type: number
+  duration:
+    mandatory: true
+    canBeNull: false
+    maxSeconds: 90000 # one day; 25 h covers the DST change. UI hint only, not validated.
+  repeatable: P1D
+  devNotes: >-
+    The source's own "active" or "exercise" minutes (HealthKit appleExerciseTime, Google Fit
+    active_minutes), in seconds; each source defines active differently, so compare a person with
+    themself, not across devices. No LOINC asserted: 55411-3 "Exercise duration" is one session,
+    not a daily total.

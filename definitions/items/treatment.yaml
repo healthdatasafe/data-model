@@ -11,7 +11,7 @@ treatment-basic:
   duration:
     mandatory: false
     canBeNull: true
-    maxSeconds: 315360000 # 10 years — accommodates lifelong HRT, multi-year IVF journey, chemotherapy regimens
+    maxSeconds: 1576800000 # 50 years (site-agents#32): lifelong regimens. UI hint only, not validated. Ongoing use is duration null, not a long span.
   type: composite
   composite:
     name:
@@ -42,7 +42,7 @@ treatment-coded:
   duration:
     mandatory: false
     canBeNull: true
-    maxSeconds: 315360000 # 10 years
+    maxSeconds: 1576800000 # 50 years (site-agents#32): lifelong regimens. UI hint only, not validated. Ongoing use is duration null, not a long span.
   type: datasource-search
   datasource: treatment
   repeatable: unlimited

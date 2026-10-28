@@ -188,8 +188,18 @@ describe('[ITMC] Composite↔eventType validation (B-2026-06-12-1)', () => {
     assert.equal(item.composite.intake.type, 'composite');
     assert.deepEqual(
       Object.keys(item.composite.intake.composite),
-      ['doseValue', 'doseUnit', 'route']
+      ['doseValue', 'doseUnit', 'route', 'frequency', 'asNeeded', 'note']
     );
+  });
+
+  it('[ITMC1b] intake frequency / asNeeded are spelled exactly as prescription posology (site-agents#31)', () => {
+    const posology = eventTypesById('medication/prescription-v1').properties.posology.properties;
+    for (const type of ['medication/basic', 'medication/coded-v1']) {
+      const intake = eventTypesById(type).properties.intake.properties;
+      assert.deepEqual(intake.frequency, posology.frequency, `${type} intake.frequency`);
+      assert.deepEqual(intake.asNeeded, posology.asNeeded, `${type} intake.asNeeded`);
+      assert.equal(intake.note.type, 'string', `${type} intake.note`);
+    }
   });
 
   it('[ITMC2] valid nested composite passes the check', () => {
@@ -323,5 +333,48 @@ describe('[ITMR] Reproductive stage (site-agents#7)', () => {
   it('[ITMR-4] findItemForEvent resolves the pair to this item', () => {
     const found = findItemForEvent('attributes/reproductive-stage', 'profile-reproductive-stage');
     assert.strictEqual(found, itemsById['profile-reproductive-stage']);
+  });
+});
+
+describe('[ITMV] Vital signs, daily activity totals, regimen caps (site-agents#25, #30, #32)', () => {
+  const { itemsById, findItemForEvent } = require('../src/items');
+
+  const PAIRS = {
+    'body-heart-rate': ['body-heart-rate', 'frequency/bpm'],
+    'body-oxygen-saturation': ['body-oxygen-saturation', 'ratio/proportion'],
+    'body-temperature': ['body-temperature', 'temperature/c'],
+    'activity-steps': ['activity-steps', 'count/steps'],
+    'activity-distance-walking-running': ['activity-distance-walking-running', 'length/m'],
+    'activity-duration-active': ['activity-duration-active', 'time/s']
+  };
+
+  it('[ITMV-1] each new item owns its streamId:eventType pair', () => {
+    for (const [key, [streamId, eventType]] of Object.entries(PAIRS)) {
+      const item = itemsById[key];
+      assert.ok(item, `${key} must exist`);
+      assert.equal(item.streamId, streamId);
+      assert.equal(item.eventType, eventType);
+      assert.equal(findItemForEvent(eventType, streamId), item, key);
+    }
+  });
+
+  it('[ITMV-2] a basal temperature still resolves to body-temperature-basal', () => {
+    assert.equal(findItemForEvent('temperature/c', 'body-temperature-basal'), itemsById['body-temperature-basal']);
+    assert.equal(findItemForEvent('temperature/c', 'body-temperature'), itemsById['body-temperature']);
+  });
+
+  it('[ITMV-3] daily totals are one-day periods, one per day', () => {
+    for (const key of ['activity-steps', 'activity-distance-walking-running', 'activity-duration-active']) {
+      const item = itemsById[key];
+      assert.equal(item.repeatable, 'P1D', key);
+      assert.equal(item.duration.mandatory, true, key);
+      assert.equal(item.duration.canBeNull, false, key);
+    }
+  });
+
+  it('[ITMV-4] regimen items allow 50 years; fertility caps are untouched', () => {
+    for (const key of ['treatment-basic', 'treatment-coded', 'medication-intake-basic', 'medication-intake-coded']) {
+      assert.equal(itemsById[key].duration.maxSeconds, 50 * 365 * 86400, key);
+    }
   });
 });

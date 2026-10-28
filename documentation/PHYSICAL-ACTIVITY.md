@@ -63,9 +63,31 @@ The LOINC answer list is limited (7 values) — missing yoga, pilates, stretchin
 
 Both treat exercise as simple presence-based categorical data.
 
+## Daily totals (3.23.0, site-agents#25)
+
+Phones and watches export daily totals, not sessions. Three items carry them, one event per day:
+
+| HDS item | eventType | HealthKit | Google Fit | LOINC |
+|---|---|---|---|---|
+| `activity-steps` | `count/steps` | `stepCount` | `step_count.delta` | 41950-7 Number of steps in 24 hour |
+| `activity-distance-walking-running` | `length/m` | `distanceWalkingRunning` | `distance.delta` | 41953-1 Walking distance 24 hour |
+| `activity-duration-active` | `time/s` | `appleExerciseTime` | `active_minutes` | none (55411-3 is per session) |
+
+- **A day is a period:** `time` = local midnight, `duration` = 86400 (mandatory), `repeatable: P1D`.
+  86400 is a convention: a DST day is 23 or 25 h, and the item's `maxSeconds` (90000) allows it.
+  This differs on purpose from a partial date (site-agents#26), which is a *point* at 12:00 UTC of an
+  uncertain day: a total covers the whole day, a partial date only says which day.
+- **Walking and running together**, because that is the quantity devices export; a source that counts
+  walking only writes it here too.
+- **Active time is the source's own definition** (each vendor counts "active" or "exercise" minutes
+  differently): compare a person with themself, not across devices.
+- **Not sessions:** a yoga class stays `activity-yoga-intensity`; a session's duration is the event's
+  own `duration`. One length unit (`length/m`), per the equivalent-twin rule.
+- No SNOMED reference: SNOMED has no observable for these daily counts.
+
 ## Design Decisions
 
 - **Presence flags** (`activity/plain`): Matches Mira, Clue, Flo. No duration or intensity.
 - **Flat stream**: All activities directly under `activity/` — no sub-categories needed (unlike symptoms).
 - **Extensible**: New activity types can be added as new items when HealthKit or other sources provide them.
-- **Future**: When richer sources provide duration/calories, the event type can evolve (e.g. to a composite type or link to duration observations).
+- **Future**: When richer sources provide calories per session, the event type can evolve (e.g. to a composite type or link to duration observations).
