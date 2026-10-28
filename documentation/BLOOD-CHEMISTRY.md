@@ -220,6 +220,12 @@ and kept, so existing events still resolve and render; new data uses `body-urine
 - The 2.1.0 batch again earned its verification: five obvious top-of-search hits were **inactive**
   (`270996006` serum cholesterol, `28437009` DHEA-S measurement, `408253004` + `144297009` CA-125,
   and the TPO-Ab concepts above) and were rejected for their active equivalents.
-- **LOINC** has no local source to verify against, so codes are **not** asserted. Follows the existing
-  precedent (`body-semen-morphology-normal`): note the candidate in a comment marked pending
-  verification rather than ship a guess.
+- **LOINC** codes are **asserted** in `references.loinc` once verified (since 3.23.0, decision of
+  plan 114; until then they were not asserted). Verification source: the official LOINC release
+  served by the HL7 terminology server, `https://tx.fhir.org/r4/CodeSystem/$lookup?system=http://loinc.org&code=<code>`
+  (LOINC 2.83 at 3.23.0; loinc.org itself refuses automated requests). A code ships only when it is
+  `ACTIVE` and its Long Common Name matches the item's concept, including the time aspect (a
+  per-session code does not fit a daily total). Where no code fits, the item asserts none and its
+  `devNotes` say why. Candidates noted in comments before 3.23.0 (`body-semen-morphology-normal`)
+  stay pending until someone verifies them this way. This applies to every domain, not only blood
+  chemistry.

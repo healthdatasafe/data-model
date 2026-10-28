@@ -231,7 +231,12 @@ does not cover it.
 
 ## Boundary with `medication-*`
 
-- `medication-*` records what was **taken** (with dose, route, schedule). One event per intake.
+- `medication-*` records what was **taken** (with dose, route, schedule). One event per intake, or one
+  event per regimen: an event with a `duration` covering the period, and `intake.frequency`
+  (`{times, period, periodUnit}`), `intake.asNeeded` and `intake.note` (the regimen as printed) since
+  3.23.0, spelled exactly as `medication/prescription-v1` `posology` (site-agents#31). An ongoing
+  regimen has `duration: null`; a finished one may span up to 50 years (`maxSeconds`, a UI hint,
+  site-agents#32), and the cores never cap it.
 - A treatment may aggregate medications and procedures; a procedure may have associated peri-procedure medications. The subdomains compose; they do not subsume each other.
 
 ## Edge case — IVF egg retrieval

@@ -257,6 +257,10 @@ children:
         name: Oily Skin
       - id: body-skin-glowing
         name: Glowing Skin
+  - id: body-heart-rate
+    name: Heart Rate
+  - id: body-oxygen-saturation
+    name: Oxygen Saturation
   - id: body-temperature
     name: Body Temperature
     children:

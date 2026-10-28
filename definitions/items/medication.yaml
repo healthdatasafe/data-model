@@ -11,7 +11,7 @@ medication-intake-basic:
   duration:
     mandatory: false
     canBeNull: true
-    maxSeconds: 315360000 # 10 years, matching treatment-*. UI hint only, not validated. Ongoing use is duration null, not a long span.
+    maxSeconds: 1576800000 # 50 years (site-agents#32): lifelong regimens. UI hint only, not validated. Ongoing use is duration null, not a long span.
   type: composite
   composite:
     name:
@@ -80,10 +80,48 @@ medication-intake-basic:
               label: { en: Intramuscular (IM), fr: Intramusculaire (IM) }
             - value: subcutaneous
               label: { en: Subcutaneous (SC), fr: Sous-cutané (SC) }
+        frequency:
+          label: { en: How often, fr: Fréquence }
+          type: composite
+          canBeNull: true
+          composite:
+            times:
+              label: { en: Times, fr: Fois }
+              type: number
+              canBeNull: true
+            period:
+              label: { en: Every, fr: Tous les }
+              type: number
+              canBeNull: true
+            periodUnit:
+              label: { en: Period, fr: Période }
+              type: select
+              canBeNull: true
+              options:
+                - value: h
+                  label: { en: Hours, fr: Heures }
+                - value: d
+                  label: { en: Days, fr: Jours }
+                - value: wk
+                  label: { en: Weeks, fr: Semaines }
+                - value: mo
+                  label: { en: Months, fr: Mois }
+                - value: y
+                  label: { en: Years, fr: Ans }
+        asNeeded:
+          label: { en: As needed, fr: Si besoin }
+          type: checkbox
+          canBeNull: true
+        note:
+          label: { en: Regimen as written, fr: Posologie telle qu'écrite }
+          type: text
+          canBeNull: true
   repeatable: unlimited
   devNotes: >-
-    Content carries an `intake` sub-object with the same structure as `medication/coded-v1`,
-    including the optional dose and route.
+    Content carries an `intake` sub-object with the same structure as `medication/coded-v1`:
+    optional dose, route, frequency, asNeeded and note. `frequency`, `asNeeded` and `note` are
+    spelled exactly as `medication/prescription-v1` `posology` (site-agents#31), so an intake and
+    a prescription carry the same regimen the same way (FHIR Dosage.timing.repeat, asNeeded, text).
 
 medication-intake-coded:
   version: v1
@@ -98,7 +136,7 @@ medication-intake-coded:
   duration:
     mandatory: false
     canBeNull: true
-    maxSeconds: 315360000 # 10 years, matching treatment-*. UI hint only, not validated. Ongoing use is duration null, not a long span.
+    maxSeconds: 1576800000 # 50 years (site-agents#32): lifelong regimens. UI hint only, not validated. Ongoing use is duration null, not a long span.
   type: datasource-search
   datasource: medication
   repeatable: unlimited

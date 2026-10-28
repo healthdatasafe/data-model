@@ -1,5 +1,38 @@
 # Changelog
 
+## [3.23.0] - 2026-10-28
+
+### Added: vital signs, daily activity totals, medication regimen frequency (site-agents#25, #30, #31, #32)
+
+- **Vital signs (#30):** `body-heart-rate` (`frequency/bpm`), `body-oxygen-saturation` (`ratio/proportion`, shown
+  as %) on two new streams under `body`, and `body-temperature` (`temperature/c`) on the existing
+  `body-temperature` stream, which had no item (the basal fertility reading stays `body-temperature-basal`; the
+  pairs differ, so both resolve). SNOMED 364075005, 431314004, 386725007; LOINC 8867-4, 2708-6 + 59408-5,
+  8310-5. **Consent:** stream permissions are recursive, so an app requesting `body-temperature` also receives
+  the basal fertility readings (`body-temperature-basal`, `-disturbance`); consent screens that name the item
+  should say so. The reverse is unaffected.
+- **Daily activity totals (#25):** `activity-steps` (`count/steps`), `activity-distance-walking-running`
+  (`length/m`), `activity-duration-active` (`time/s`), on three new streams under `activity`: one event per day,
+  a period from local midnight, `duration` mandatory, `repeatable: P1D`. Named walking-*running* because that is
+  what devices export (HealthKit `distanceWalkingRunning`). LOINC 41950-7, 41953-1; none for active time.
+  `documentation/PHYSICAL-ACTIVITY.md` § Daily totals.
+- **Medication regimen (#31):** `intake` in `medication/basic` and `medication/coded-v1` gains `frequency`
+  (`{times, period, periodUnit}`), `asNeeded` and `note`, copied from `medication/prescription-v1` `posology` so an
+  intake and a prescription carry a regimen the same way (FHIR `Dosage.timing.repeat`, `asNeeded`, `text`). The
+  `medication-intake-basic` form gains the three fields. The issue's own spelling (`frequency.frequency`, a
+  nested `asNeeded`, `text`) is not used: the published `posology` spelling covers the same need.
+- **Regimen duration (#32):** `duration.maxSeconds` 10 → 50 years on `treatment-basic`, `treatment-coded`,
+  `medication-intake-basic`, `medication-intake-coded`. It was always a UI hint (hds-forms-js), never validated by
+  the cores, so API writers were not capped; ongoing use is still `duration: null`. Fertility caps unchanged.
+
+### Changed: LOINC codes are asserted once verified
+
+`BLOOD-CHEMISTRY.md` § Codes: LOINC codes now ship in `references.loinc` when verified as `ACTIVE` with a matching
+Long Common Name against the official release on tx.fhir.org (`$lookup`, LOINC 2.83); previously they were not
+asserted. Applies to every domain.
+
+Tests `[ITMC1b]`, `[ITMV-1]` to `[ITMV-4]`; `[ITMC1]` lists the new intake fields.
+
 ## [3.22.0] - 2026-10-27
 
 ### Added: a conversion factor for fasting glucose (site-agents#21)

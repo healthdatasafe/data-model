@@ -200,7 +200,7 @@
       ]
     },
     "medication/basic": {
-      "description": "Simple medication intake identified by free-text name. 'intake' follows the same structure as medication/coded-v1 for dose and route.",
+      "description": "Simple medication intake identified by free-text name. 'intake' follows the same structure as medication/coded-v1 for dose, route and frequency.",
       "type": "object",
       "required": [
         "name"
@@ -253,6 +253,46 @@
                 "rectal",
                 "vaginal"
               ]
+            },
+            "frequency": {
+              "description": "Prescribed frequency (e.g. 2 times per day). Kept structurally identical to the standalone frequency/times-period type; inlined rather than $ref'd because cores compile each event type schema on its own, with no dictionary root to resolve against.",
+              "type": "object",
+              "required": [
+                "times",
+                "period",
+                "periodUnit"
+              ],
+              "properties": {
+                "times": {
+                  "description": "Number of intakes per period (e.g. 2 for 'twice a day')",
+                  "type": "number",
+                  "minimum": 1
+                },
+                "period": {
+                  "description": "Length of the period (e.g. 1 for 'per day', 8 for 'every 8 hours')",
+                  "type": "number",
+                  "minimum": 1
+                },
+                "periodUnit": {
+                  "description": "Unit of the period",
+                  "type": "string",
+                  "enum": [
+                    "h",
+                    "d",
+                    "wk",
+                    "mo",
+                    "y"
+                  ]
+                }
+              }
+            },
+            "asNeeded": {
+              "description": "True if taken as needed (PRN) rather than on schedule",
+              "type": "boolean"
+            },
+            "note": {
+              "description": "Free text regimen as given or printed (e.g. '2 tablets in the morning', 'every 48 hours')",
+              "type": "string"
             }
           }
         }
@@ -371,6 +411,46 @@
                 "rectal",
                 "vaginal"
               ]
+            },
+            "frequency": {
+              "description": "Prescribed frequency (e.g. 2 times per day). Kept structurally identical to the standalone frequency/times-period type; inlined rather than $ref'd because cores compile each event type schema on its own, with no dictionary root to resolve against.",
+              "type": "object",
+              "required": [
+                "times",
+                "period",
+                "periodUnit"
+              ],
+              "properties": {
+                "times": {
+                  "description": "Number of intakes per period (e.g. 2 for 'twice a day')",
+                  "type": "number",
+                  "minimum": 1
+                },
+                "period": {
+                  "description": "Length of the period (e.g. 1 for 'per day', 8 for 'every 8 hours')",
+                  "type": "number",
+                  "minimum": 1
+                },
+                "periodUnit": {
+                  "description": "Unit of the period",
+                  "type": "string",
+                  "enum": [
+                    "h",
+                    "d",
+                    "wk",
+                    "mo",
+                    "y"
+                  ]
+                }
+              }
+            },
+            "asNeeded": {
+              "description": "True if taken as needed (PRN) rather than on schedule",
+              "type": "boolean"
+            },
+            "note": {
+              "description": "Free text regimen as given or printed (e.g. '2 tablets in the morning', 'every 48 hours')",
+              "type": "string"
             }
           }
         }

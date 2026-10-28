@@ -20,3 +20,9 @@ children:
     name: Jogging
   - id: activity-hiking
     name: Hiking
+  - id: activity-steps
+    name: Daily Steps
+  - id: activity-distance-walking-running
+    name: Daily Walking and Running Distance
+  - id: activity-duration-active
+    name: Daily Active Time
