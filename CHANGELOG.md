@@ -1,5 +1,47 @@
 # Changelog
 
+## [3.27.0] - 2026-10-28
+
+### Lab results: a printed limit (`hdsComparator`), coded results with no item (`lab-result/coded-v1`), item type `imported`
+
+Plan 114 WP-D (site-agents#22, #28). The design was reviewed by Opus before release.
+
+- **`clientData.hdsComparator`** (site-agents#22). It takes `<`, `<=`, `>`, `>=` and says that a numeric lab value
+  is a printed limit (`< 1.5`), not an exact figure. Every reader must check it. It is documented in
+  `BLOOD-CHEMISTRY.md` § "A censored value" (display, charts, unknown values, FHIR `valueQuantity.comparator`) and
+  indexed in `PROVENANCE.md`. A limit with no figure (`< LOQ`) is a coded `valueText`.
+- **EventType `lab-result/coded-v1`** (site-agents#28; id with the version suffix, plan 114 Q12): a result for an
+  analyte with no item of its own, stored as printed. The object is closed:
+  - `analyte` `{ label {en required}, codes[] }`. Each code is a closed FHIR Coding aligned with `file/xds-v1`, with
+    an optional `hdsId`.
+  - `value` + `unit` (the UCUM code, printable ASCII) + `unitText` (the unit as printed).
+  - `comparator`.
+  - `valueText`.
+  - `valueCodes[]` (FHIR Codings of a qualitative result: SNOMED CT qualifier value, the lab's own code; with
+    `valueText`).
+  - `notes`.
+  At least one of `value` / `valueText` is required; both together are allowed (semi-quantitative results).
+  `specimen` is not a field: the stream and the LOINC System axis carry it.
+- **Streams** `body-blood-coded`, `body-urine-coded`, and the new branch `body-csf` > `body-csf-coded`.
+- **Item type `imported`**: an object written by an importer, never entered in a form. It is shown everywhere data is
+  read and left out of pickers. Its eventType must be an object (`src/items.js`).
+- **The three items `body-blood-coded`, `body-urine-coded` and `body-csf-coded` are not published yet.** Deployed
+  builds before hds-lib 2.28.0 / hds-forms-js 0.24.0 would offer them in pickers and break their forms. Their
+  definitions are in `BLOOD-CHEMISTRY.md` § "The three items: published later", for writers' overloads. They ship
+  in a later minor, once consumers run those versions. This follows the `document` item precedent.
+- `BLOOD-CHEMISTRY.md` also covers:
+  - the writer rules: never an analyte an item owns, LOINC per property, stored as printed, curated codes;
+  - the consent note;
+  - moving a result to its item once the variation ships (`events.update` in place, with the field mapping; only
+    results with no `valueText` move);
+  - the writer gate: `hdsComparator` and coded results go to accounts read by deployed apps once those run
+    hds-lib ≥ 2.28.0;
+  - the FHIR mapping.
+- Tests `[LABC-ET-1..3]` (draft-04 and draft-07), `[LABC-STR-1]`, `[LABC-ITM-1..3]`, `[LABC-PACK-1]`, and `[LABC-LOINC-1]` (no LOINC
+  code asserted by two active items). `[LABC-LOINC-2]` checks the LOINC check digit. It found five codes asserted by
+  plan 44 that LOINC 2.83 does not know (`32622-6`, `63800-5`, `63801-3`, `63802-1`, `77564-4`). They are frozen as
+  known exceptions, pending correction.
+
 ## [3.26.0] - 2026-10-28
 
 ### Documentation: partial dates, the printed range and flag of a lab result, the import identity `sourceKey`

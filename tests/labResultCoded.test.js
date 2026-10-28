@@ -1,0 +1,184 @@
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const Ajv = require('ajv');
+const AjvDraft04 = require('ajv-draft-04');
+const YAML = require('yaml');
+
+// Lab results with no item of their own (site-agents#28): `lab-result/coded-v1`, one coded stream per specimen,
+// item type `imported`; and the LOINC ownership checks. See documentation/BLOOD-CHEMISTRY.md.
+
+describe('[LABC] Coded lab results', () => {
+  const { itemsById, findItemForEvent, checkItemVsEvenType } = require('../src/items');
+  const { checkItem } = require('../src/schemas/items');
+  const streams = require('../src/streams');
+  const { eventTypesById } = require('../src/eventTypes');
+
+  const loinc = (code) => ({ system: 'http://loinc.org', code });
+  const hiv = () => ({ label: { en: 'HIV-1 RNA (viral load)' }, codes: [loinc('20447-9')] });
+  const numeric = () => ({ analyte: hiv(), value: 20, unit: '{copies}/mL' });
+  const qualitative = () => ({ analyte: { label: { en: 'HBsAg' }, codes: [loinc('5196-1')] }, valueText: 'negative' });
+
+  // The three items are held back until deployed consumers handle `imported` (BLOOD-CHEMISTRY.md); their
+  // definitions live there for writers' overloads, so they are checked from there.
+  const planned = () => {
+    const text = fs.readFileSync(path.join(__dirname, '../documentation/BLOOD-CHEMISTRY.md'), 'utf-8');
+    const block = text.split('### The three items: published later')[1]?.match(/```yaml\n([\s\S]*?)```/);
+    assert.ok(block, 'BLOOD-CHEMISTRY.md carries the planned items');
+    return YAML.parse(block[1]);
+  };
+  const CODED = { 'body-blood-coded': 'body-blood', 'body-urine-coded': 'body-urine', 'body-csf-coded': 'body-csf' };
+
+  for (const [flavour, make] of [
+    ['draft-04 (the cores)', () => new AjvDraft04({ strict: false, allErrors: true, coerceTypes: false, logger: false })],
+    ['draft-07', () => new Ajv({ strict: false, allErrors: true, coerceTypes: false, logger: false })]
+  ]) {
+    describe(`[LABC-ET] lab-result/coded-v1 under ${flavour}`, () => {
+      let validate;
+      before(() => { validate = make().compile(eventTypesById('lab-result/coded-v1')); });
+      const ok = (c, why) => assert.ok(validate(c), `${why}: ${JSON.stringify(validate.errors)}`);
+      const ko = (c, why) => assert.ok(!validate(c), why);
+
+      it('[LABC-ET-1] accepts numeric, censored, qualitative, coded and semi-quantitative results', () => {
+        ok(numeric(), 'numeric + unit');
+        ok({ ...numeric(), comparator: '<' }, 'censored');
+        for (const comparator of ['<', '<=', '>', '>=']) ok({ ...numeric(), comparator }, comparator);
+        ok({ ...numeric(), unitText: 'copies/mL', notes: 'haemolysed sample' }, 'unitText and notes');
+        ok({ ...numeric(), unit: '1' }, 'unitless');
+        ok(qualitative(), 'valueText alone');
+        ok({ ...qualitative(), valueCodes: [{ system: 'http://snomed.info/sct', code: '260385009', display: 'Negative' }] }, 'valueText + valueCodes');
+        ok({ ...qualitative(), valueCodes: [{ system: 'http://snomed.info/sct', code: '260385009' }, { system: 'urn:oid:1.2.3', code: 'NEG' }] }, 'SNOMED + the lab code');
+        ok({ ...numeric(), unit: '{index}', valueText: 'positive' }, 'semi-quantitative: value and valueText');
+        ok({ analyte: { label: { en: 'X', fr: 'X', es: 'X' }, codes: [{ system: 'urn:oid:1.2.3', code: 'X1', version: '2', display: 'x', hdsId: 'x' }] }, valueText: 'x' }, 'non-LOINC system, full coding');
+      });
+
+      it('[LABC-ET-2] rejects malformed results', () => {
+        const without = (k) => { const c = numeric(); delete c[k]; return c; };
+        ko(without('analyte'), 'no analyte');
+        ko({ ...numeric(), analyte: { ...hiv(), codes: [] } }, 'empty codes');
+        ko({ ...numeric(), analyte: { ...hiv(), codes: [{ code: '20447-9' }] } }, 'a code without system');
+        ko({ ...numeric(), analyte: { ...hiv(), codes: [{ system: 'LOINC', code: '20447-9' }] } }, 'system not a URI');
+        ko({ ...numeric(), analyte: { ...hiv(), codes: [{ ...loinc('20447-9'), source: { key: 'x' } }] } }, 'no source on a coding');
+        ko({ ...numeric(), analyte: { label: { fr: 'ARN VIH-1' }, codes: [loinc('20447-9')] } }, 'label without en');
+        ko({ ...numeric(), analyte: { ...hiv(), label: { en: 'x', de: 'x' } } }, 'label: unknown language');
+        ko({ ...numeric(), analyte: { ...hiv(), specimen: 'serum' } }, 'analyte is closed');
+        ko(without('unit'), 'value without unit');
+        ko({ analyte: hiv(), unit: 'mg/L', valueText: 'x' }, 'unit without value');
+        ko({ ...qualitative(), unitText: 'mg/L' }, 'unitText without unit');
+        ko({ ...qualitative(), comparator: '<' }, 'comparator without value');
+        for (const comparator of ['=', '≤', '<<']) ko({ ...numeric(), comparator }, `comparator ${comparator}`);
+        ko({ analyte: hiv() }, 'neither value nor valueText');
+        ko({ ...numeric(), value: '20' }, 'value is a number');
+        ko({ ...numeric(), valueCodes: [{ system: 'http://snomed.info/sct', code: '1' }] }, 'valueCodes without valueText');
+        ko({ ...qualitative(), valueCodes: [{ system: 'http://snomed.info/sct', code: '1', note: 'x' }] }, 'a value coding is closed');
+        ko({ ...qualitative(), valueCodes: [] }, 'valueCodes not empty');
+        ko({ ...qualitative(), valueCodes: { system: 'http://snomed.info/sct', code: '1' } }, 'valueCodes is an array');
+        ko({ ...numeric(), analyte: { ...hiv(), codes: [{ system: 'http://loinc.org', code: '' }] } }, 'empty code');
+        for (const unit of ['µg/L', 'x10^9 /L', '', 'm'.repeat(65)]) ko({ ...numeric(), unit }, `unit ${unit}`);
+        ko({ ...numeric(), comparitor: '<' }, 'unknown key');
+        ko({ ...qualitative(), valueText: '' }, 'empty valueText');
+      });
+    });
+  }
+
+  it('[LABC-ET-3] uses no if/then/const and no $ref (the cores compile draft-04)', () => {
+    const text = JSON.stringify(eventTypesById('lab-result/coded-v1'));
+    assert.ok(!/"(if|then|else|const|\$ref)"/.test(text));
+  });
+
+  describe('[LABC-STR] streams', () => {
+    it('[LABC-STR-1] one coded stream per specimen, body-csf under body', () => {
+      for (const [id, parent] of Object.entries(CODED)) {
+        assert.ok(streams.streamsById[id], `${id} exists`);
+        assert.strictEqual(streams.streamsById[id].parentId, parent, `${id} under ${parent}`);
+      }
+      assert.strictEqual(streams.streamsById['body-csf'].parentId, 'body');
+    });
+  });
+
+  describe('[LABC-ITM] items', () => {
+    it('[LABC-ITM-1] the items are not published yet; nothing resolves on the coded streams', () => {
+      for (const id of Object.keys(CODED)) {
+        assert.strictEqual(itemsById[id], undefined, id);
+        assert.strictEqual(findItemForEvent('lab-result/coded-v1', id), null, id);
+      }
+    });
+
+    it('[LABC-ITM-2] the planned items pass the item checks', () => {
+      const items = planned();
+      assert.deepStrictEqual(Object.keys(items).sort(), Object.keys(CODED).sort());
+      for (const [key, item] of Object.entries(items)) {
+        assert.doesNotThrow(() => checkItem(item, key), key);
+        assert.strictEqual(item.type, 'imported');
+        assert.strictEqual(item.streamId, key);
+        assert.ok(streams.streamsById[item.streamId], `${key} stream exists`);
+        assert.strictEqual(item.eventType, 'lab-result/coded-v1');
+        assert.ok(item.label.fr && item.label.es && item.description.fr && item.description.es, `${key} is localised`);
+        assert.strictEqual(checkItemVsEvenType(key, item, eventTypesById('lab-result/coded-v1')), true);
+      }
+    });
+
+    it('[LABC-ITM-3] an imported item needs an object eventType, and is not a composite field type', () => {
+      const item = { ...planned()['body-blood-coded'], eventType: 'note/txt' };
+      assert.throws(() => checkItemVsEvenType('x', item, eventTypesById('note/txt')), /"imported".*"object"/);
+      const base = { label: { en: 'x' }, description: { en: 'x' }, streamId: 'body-blood-coded', eventType: 'lab-result/coded-v1', version: 'v1', repeatable: 'unlimited' };
+      assert.doesNotThrow(() => checkItem({ ...base, type: 'imported' }, 'x'));
+      assert.throws(() => checkItem({ ...base, type: 'composite', composite: { result: { label: { en: 'Result' }, type: 'imported' } } }, 'x'));
+    });
+  });
+
+  describe('[LABC-LOINC] LOINC codes asserted by items', () => {
+    const asserted = () => {
+      const out = [];
+      for (const [key, item] of Object.entries(itemsById)) {
+        if (item.deprecated) continue;
+        const l = item.references?.loinc;
+        for (const code of (Array.isArray(l) ? l : (l != null ? [l] : []))) out.push({ key, code });
+      }
+      return out;
+    };
+
+    it('[LABC-LOINC-1] no LOINC code is asserted by two active items', () => {
+      const owners = {};
+      for (const { key, code } of asserted()) (owners[code] ??= []).push(key);
+      const shared = Object.entries(owners).filter(([, keys]) => keys.length > 1);
+      assert.deepStrictEqual(shared, [], 'codes with two owners');
+    });
+
+    it('[LABC-LOINC-2] every asserted LOINC code has a valid mod-10 check digit', () => {
+      const valid = (code) => {
+        if (!/^\d{1,7}-\d$/.test(code)) return false;
+        const d = code.replace('-', '');
+        let sum = 0;
+        for (let i = 0; i < d.length; i++) {
+          let n = Number(d[d.length - 1 - i]);
+          if (i % 2 === 1) { n *= 2; if (n > 9) n -= 9; }
+          sum += n;
+        }
+        return sum % 10 === 0;
+      };
+      assert.ok(valid('20447-9') && !valid('20447-8'), 'the check itself');
+      // Asserted by plan 44 (before LOINC verification, 3.23.0) and unknown to LOINC 2.83: to be corrected, never
+      // extended. A new invalid code fails here.
+      const KNOWN_INVALID = ['32622-6', '63800-5', '63801-3', '63802-1', '77564-4'];
+      const bad = asserted().filter(({ code }) => !valid(code) && !KNOWN_INVALID.includes(code));
+      assert.deepStrictEqual(bad, [], 'invalid LOINC codes');
+    });
+  });
+
+  describe('[LABC-PACK] built pack.json', () => {
+    let pack;
+    before(() => {
+      const packPath = path.join(__dirname, '../dist/pack.json');
+      if (!fs.existsSync(packPath)) return;
+      pack = JSON.parse(fs.readFileSync(packPath, 'utf-8'));
+    });
+
+    it('[LABC-PACK-1] the pack carries the eventType and the streams, not the items yet', function () {
+      if (!pack || !pack.eventTypes.types['lab-result/coded-v1']) return this.skip(); // pack built before this change
+      for (const id of Object.keys(CODED)) assert.strictEqual(pack.items[id], undefined, id);
+      const body = pack.streams.find((r) => r.id === 'body');
+      assert.ok(body.children.find((s) => s.id === 'body-csf'), 'body-csf in pack');
+    });
+  });
+});
