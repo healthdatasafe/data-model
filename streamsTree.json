@@ -48,6 +48,21 @@
         "id": "activity-hiking",
         "name": "Hiking",
         "parentId": "activity"
+      },
+      {
+        "id": "activity-steps",
+        "name": "Daily Steps",
+        "parentId": "activity"
+      },
+      {
+        "id": "activity-distance-walking-running",
+        "name": "Daily Walking and Running Distance",
+        "parentId": "activity"
+      },
+      {
+        "id": "activity-duration-active",
+        "name": "Daily Active Time",
+        "parentId": "activity"
       }
     ]
   },
@@ -632,6 +647,16 @@
             "parentId": "body-skin"
           }
         ],
+        "parentId": "body"
+      },
+      {
+        "id": "body-heart-rate",
+        "name": "Heart Rate",
+        "parentId": "body"
+      },
+      {
+        "id": "body-oxygen-saturation",
+        "name": "Oxygen Saturation",
         "parentId": "body"
       },
       {
