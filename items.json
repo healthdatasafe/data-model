@@ -4446,19 +4446,52 @@
     "devNotes": "Use duration property to indicate end of fertile window.\n`time` is on the first fertile day and `time + duration` on the last (both inclusive by calendar\nday): Mira's 7-day window is `duration` 6 d, the maximum. Same `clientData.hdsBasis` convention\nas `fertility-cycles-ovulation`."
   },
   "fertility-cycles-peak-day": {
-    "version": "v1",
+    "version": "v2",
     "label": {
-      "en": "Peak day of fertility",
-      "fr": "Jour sommet de fertilité"
+      "en": "Peak Day",
+      "fr": "Jour sommet"
     },
     "description": {
-      "en": "The day your fertility is at its highest.",
-      "fr": "Le jour où votre fertilité est à son maximum."
+      "en": "The last day of peak-type mucus in your cycle.",
+      "fr": "Le dernier jour de glaire de type sommet de votre cycle."
     },
     "streamId": "fertility-cycles-peak-day",
     "eventType": "activity/plain",
     "type": "checkbox",
-    "repeatable": "P1D"
+    "repeatable": "P1D",
+    "devNotes": "The mucus Peak Day of the fertility-awareness methods (Billings, Creighton, FEMM, Marquette,\nSensiplan, STM, Peak Day tracking): the last day of peak-type cervical fluid, in the method's own\nterms, known in retrospect once the fluid changes. One event per cycle, `time` anywhere on that\ncalendar day, no duration. Meaning fixed in 3.24.0 (B-2026-10-26-19): it is never the LH peak\n(`fertility-cycles-lh-peak-day`), a fertility monitor's Peak reading, or ovulation\n(`fertility-cycles-ovulation`). v2 since 3.24.0: events written before 3.24.0 by Cycle\nIntelligence (demo accounts only) may be LH peaks. Chart notation recorded by the person or a\ncharting app, not a statement of fertility. See documentation/MENSTRUAL-CYCLE.md \"Peak days\"."
+  },
+  "fertility-cycles-lh-peak-day": {
+    "version": "v1",
+    "label": {
+      "en": "LH peak day",
+      "fr": "Jour du pic de LH"
+    },
+    "description": {
+      "en": "The day your LH surge peaked, on a urine test or a monitor.",
+      "fr": "Le jour du pic de votre LH, sur un test urinaire ou un moniteur."
+    },
+    "streamId": "fertility-cycles-lh-peak-day",
+    "eventType": "activity/plain",
+    "type": "checkbox",
+    "repeatable": "P1D",
+    "devNotes": "The peak of the luteinizing-hormone surge, as the person (or an app) marks it from urine LH\ntests (`fertility-test-opk`, `body-urine-hormones-lh`) or a fertility monitor. One event per\ncycle, `time` anywhere on that calendar day, no duration. Distinct from the mucus Peak Day\n(`fertility-cycles-peak-day`): the two usually fall a day or two apart and either can be\nrecorded without the other. Added in 3.24.0 (B-2026-10-26-19). A sibling stream, not a child of\n`fertility-cycles-peak-day`, so a permission on one never grants the other. No LOINC or SNOMED\nCT concept found for it (2026-10-28). HealthKit has no peak-day sample:\n`HKCategoryValueOvulationTestResult.luteinizingHormoneSurge` is a per-test result and maps to\n`fertility-test-opk`. FHIR: a locally coded Observation, or omitted."
+  },
+  "fertility-cycles-coverline": {
+    "version": "v1",
+    "label": {
+      "en": "Coverline",
+      "fr": "Ligne de couverture"
+    },
+    "description": {
+      "en": "The temperature line drawn on this cycle's chart.",
+      "fr": "La ligne de température tracée sur la courbe de ce cycle."
+    },
+    "streamId": "fertility-cycles-coverline",
+    "eventType": "temperature/c",
+    "type": "number",
+    "repeatable": "P1D",
+    "devNotes": "The basal-temperature coverline of one cycle, in °C. One event per cycle, `time` on the\ncalendar day of that cycle's `fertility-cycles-start` (the patient's time zone), no duration.\n`clientData.hdsBasis` says where the value comes from: 'manual' (the person drew or moved the\nline) or 'auto' (computed by the method's coverline rule, see the converter's\n`temperatureRule`, and stored as computed); absent = not stated. Precedence, one rule: a\nreader that computes the line shows a 'manual' event if there is one, otherwise its own\ncomputation, never a stored 'auto'; a reader that cannot compute shows whichever event exists.\nAn 'auto' event is written only by the writer that owns the cycle's data (an import), and\nreplaced by that writer; apps that compute never store 'auto'. Going back to the method's rule\ndeletes the event. Recommended: `clientData.related.<cycleStartEventId>: true`, so a moved\nstart does not orphan the line; if the cycle start moves, the writer moves the coverline with\nit. Chart notation, never a fertility verdict. Added in 3.24.0; see\ndocumentation/MENSTRUAL-CYCLE.md \"Coverline\"."
   },
   "fertility-miscarriages-count": {
     "version": "temporary",
@@ -4654,8 +4687,8 @@
       {
         "value": "billings",
         "label": {
-          "en": "Billings Ovulation Method",
-          "fr": "Méthode Billings"
+          "en": "Billings",
+          "fr": "Billings"
         }
       },
       {

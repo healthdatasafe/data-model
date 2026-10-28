@@ -823,6 +823,16 @@
             "parentId": "fertility-cycles"
           },
           {
+            "id": "fertility-cycles-lh-peak-day",
+            "name": "LH Peak Day",
+            "parentId": "fertility-cycles"
+          },
+          {
+            "id": "fertility-cycles-coverline",
+            "name": "Coverline",
+            "parentId": "fertility-cycles"
+          },
+          {
             "id": "fertility-cycles-charted-estimation",
             "name": "Cycles charted estimation",
             "parentId": "fertility-cycles"
