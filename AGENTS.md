@@ -311,9 +311,9 @@ data-model/
 │
 ├── definitions/                           # THE SOURCE OF TRUTH
 │   ├── items/*.yaml                       # Health data point definitions (298 items, 233 active, 20 YAML files)
-│   ├── streams/*.yaml                     # Clinical-domain tree (17 top-level roots, 284 streams in all)
+│   ├── streams/*.yaml                     # Clinical-domain tree (17 top-level roots, 296 streams in all)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (74)
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (77)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)
@@ -478,6 +478,16 @@ An item of `type: system` (3.13.0) is **written by a machine and never entered b
 still resolve it everywhere else (`forKey`, `forEvent`, authorization requests, consent labels). hds-lib
 exposes this as `HDSItemDef.isSystem`, and `getAllActive()` excludes it. The consumer list is in
 [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
+
+## `type: imported` items
+
+An item of `type: imported` (3.27.0) holds an **object written by an importer from a coded source**, never entered
+in a form: today the coded lab results on `lab-result/coded-v1` ([`documentation/BLOOD-CHEMISTRY.md`](documentation/BLOOD-CHEMISTRY.md#results-with-no-item-of-their-own-lab-resultcoded-v1)).
+Its eventType must be an object (`src/items.js`), and like `system` it is an item type only. Unlike `system`, it is
+**shown everywhere data is read** (timelines, diaries, dashboards, exports); like `system` and `attachments`, it is
+left out of pickers and form sections. hds-lib exposes `HDSItemDef.isImported`, and since 2.28.0 `getAllActive()` is a
+whitelist of the types a form renders, so an item type added later never reaches a picker of a build that does not
+know it.
 
 ## `deprecated: true` on items
 

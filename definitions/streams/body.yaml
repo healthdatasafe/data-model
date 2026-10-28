@@ -214,6 +214,9 @@ children:
       # Whole blood — erythrocyte sedimentation rate (not a serum assay)
       - id: body-blood-esr
         name: ESR
+      # Results with no item of their own (lab-result/coded-v1), see BLOOD-CHEMISTRY.md
+      - id: body-blood-coded
+        name: Other blood results
   - id: body-vulva
     name: Vulva
     children:
@@ -285,6 +288,13 @@ children:
             name: FSH
           - id: body-urine-hormones-hcg
             name: hCG
+      - id: body-urine-coded
+        name: Other urine results
+  - id: body-csf
+    name: Cerebrospinal fluid
+    children:
+      - id: body-csf-coded
+        name: Cerebrospinal fluid results
   - id: body-semen
     name: Semen
     children:

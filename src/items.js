@@ -237,6 +237,14 @@ function checkItemVsEvenType (key, item, eventType) {
     }
     return true;
   }
+  // `imported` items hold an object an importer wrote from a coded source (`lab-result/coded-v1`);
+  // nothing is entered field by field, so the one rule is that the content is an object.
+  if (item.type === 'imported') {
+    if (eventType.type !== 'object') {
+      throw new Error(`as item "${key}" is of type "imported" the matching eventType must be an "object": ` + JSON.stringify({ item, eventType }));
+    }
+    return true;
+  }
   // `multi-select` stores an array of chosen option values, so the matching eventType
   // must be an array whose `items.enum` covers every option (the `select` check below,
   // one level down). Checked before the scalar branches: an array eventType would

@@ -19,6 +19,7 @@ conventions below are contracts between HDS apps, documented here so every write
 | `clientData.sourceKey` | The stable identity of an imported record in its source, for re-runs and removal | this page |
 | `clientData.hdsTimePrecision`, `hdsTimeText`, `hdsTimeZone`, `hdsEndPrecision` | How much of `time` is known: partial and approximate dates ("March 1999", "about spring 1998") | [PARTIAL-DATES.md](PARTIAL-DATES.md) |
 | `clientData.hdsRefRange`, `hdsFlag`, `hdsInterpretation` | The reference range and flag a lab printed for one result, and the flag normalised | [BLOOD-CHEMISTRY.md](BLOOD-CHEMISTRY.md#the-printed-reference-range-flag-and-interpretation-of-one-result) |
+| `clientData.hdsComparator` | The value is a printed limit (`<`, `<=`, `>`, `>=`), not an exact figure | [BLOOD-CHEMISTRY.md](BLOOD-CHEMISTRY.md#a-censored-value-hdscomparator) |
 
 A reader ignores any `clientData` key it does not know. A new key is `hds`-prefixed and documented here (or in
 its domain document, and indexed here) before an app ships it. `related` and `sourceKey` predate the prefix

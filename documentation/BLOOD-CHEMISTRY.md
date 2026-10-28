@@ -17,8 +17,12 @@ body/
     body-blood-cbc/            ← whole blood — complete blood count
     body-blood-rbc/            ← erythrocyte specimen (RBC magnesium)
     body-blood-hba1c           ← whole blood, not serum — hence the direct placement
+    body-blood-coded           ← results with no item of their own (lab-result/coded-v1)
   body-urine/
     body-urine-hormones/       ← urine hormone assays
+    body-urine-coded           ← results with no item of their own
+  body-csf/
+    body-csf-coded             ← cerebrospinal fluid results (no item of its own yet)
 ```
 
 Three blood specimens, not one. `body-blood-rbc-magnesium` and `body-blood-serum-magnesium` are the
@@ -235,8 +239,208 @@ What covers the need, when the lab printed a unit the item does not offer:
 
 1. **Ask for the unit as a variation of the item** (an issue on site-agents). Adding a unit is additive and
    is released quickly (#20 and #27 are the precedent); the value is then stored as printed on the item.
-2. **Meanwhile, store it as printed in `lab-result/coded`** (site-agents#28), with its UCUM unit, and move it
-   to the item once the variation ships. Nothing on the report is lost and nothing is converted.
+2. **Meanwhile, store it as printed in `lab-result/coded-v1`** (site-agents#28), with its UCUM unit, and move it
+   to the item once the variation ships (§ Moving a result to its item). Nothing on the report is lost and nothing
+   is converted.
+
+## A censored value: `hdsComparator`
+
+A lab prints some results as a limit rather than a figure: `< 1.5` (below what the assay measures), `> 2000` (above
+its range). The marker was tested and the result is real, but the figure is a bound (site-agents#22). The event
+stores the limit as `content`, in the eventType of the printed unit as always, and says that it is a limit in
+`clientData.hdsComparator`:
+
+```json
+{
+  "streamIds": ["body-blood-serum-ferritin"],
+  "type": "concentration/ug-l",
+  "content": 1.5,
+  "description": "< 1.5 ng/mL",
+  "clientData": { "hdsComparator": "<" }
+}
+```
+
+| Key | Values | Meaning |
+|---|---|---|
+| `hdsComparator` | `<`, `<=`, `>`, `>=` | `content` is a limit: the true value is below / at most / above / at least it. Absent: the value is exact. |
+
+**Every reader of a numeric lab event must check it before using the value as exact.** A reader that ignores it
+reads `< 1.5` as an exact 1.5, in a chart, a trend, an average or a FHIR export: the value is silently wrong.
+
+- **Display:** the comparator before the value (`< 1.5 ng/mL`); hds-lib `eventToShortText` does it (2.28.0).
+- **Charts and statistics:** a censored value is never plotted or averaged as exact. Mark it (an open marker at the
+  limit) or leave it out, and say which (hds-lib `isExactLabValue`).
+- **An unknown value** of `hdsComparator` means the value is not exact either.
+- **Unit conversion** (§ Unit conversions) applies to the limit with the same factor; the comparator is kept.
+- **Writers** also put the printed result in the event `description` (`< 1.5 ng/mL`), so a reader that knows no HDS
+  key still shows that the figure is not exact.
+- **A limit with no figure** (`< LOQ`, "below detection limit") is not a numeric event: it is a `valueText` in
+  `lab-result/coded-v1`.
+- **`hdsInterpretation` is unaffected:** it stays the lab's printed flag; a censored value is never compared with the
+  range by the importer.
+- On `lab-result/coded-v1` the comparator is content (`comparator`, validated); `clientData.hdsComparator` is not
+  written there and is ignored if present.
+- FHIR: `Observation.valueQuantity.comparator`, same four codes (hds-lib `labValueToFhir`).
+
+## Results with no item of their own: `lab-result/coded-v1`
+
+After the common analytes, records carry a long tail: drug levels, viral loads, blood gases, serologies,
+electrophoresis fractions, cerebrospinal-fluid chemistry. One item per analyte would explode the stream tree and the
+consent screen, so these results are coded **in content**, like `condition/coded-v1` (site-agents#28), in one stream
+per specimen: `body-blood-coded`, `body-urine-coded`, `body-csf-coded`.
+
+```json
+{
+  "streamIds": ["body-blood-coded"],
+  "type": "lab-result/coded-v1",
+  "content": {
+    "analyte": {
+      "label": { "en": "HIV-1 RNA (viral load)" },
+      "codes": [{ "system": "http://loinc.org", "code": "20447-9",
+                  "display": "HIV 1 RNA [#/volume] (viral load) in Serum or Plasma by NAA with probe detection" }]
+    },
+    "value": 20, "comparator": "<", "unit": "{copies}/mL", "unitText": "copies/mL"
+  },
+  "clientData": { "hdsRefRange": { "text": "< 20 copies/mL" } }
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `analyte.label` | The test name, by language (`en` required, `fr`, `es`). |
+| `analyte.codes[]` | FHIR Codings `{ system, code, display?, version?, hdsId? }`; `system` is a canonical URI. A LOINC code (`http://loinc.org`) whenever one fits, verified as in § Codes; otherwise the lab's own code system (`urn:oid:…`). `hdsId` only when a datasource provides the test (none does yet; a datasource that does emits URI systems). |
+| `value` | The figure as printed. Requires `unit`. |
+| `unit` | The **UCUM code** of the printed unit: case-sensitive, printable ASCII (`umol/L`, not `µmol/L`; `10*9/L`; `{copies}/mL`; `1` when unitless). |
+| `unitText` | Optional: the unit exactly as printed (`µmol/l`, `mUI/mL`), for display. Readers show it when present, else a readable form of `unit` (hds-lib `labUnitText`). |
+| `comparator` | `<`, `<=`, `>`, `>=`: `value` is a limit (§ A censored value). |
+| `valueText` | The result exactly as printed when it is not only a number (`negative`, `détecté`, `1:160`, `< LOQ`). |
+| `valueCodes[]` | Optional, with `valueText`: the qualitative result as FHIR Codings, a SNOMED CT qualifier value (positive, negative, detected, not detected, …) and the lab's own result code when it printed one. |
+| `notes` | The comment printed with the result (`haemolysed sample`). |
+
+At least one of `value` and `valueText`. Both together are a semi-quantitative result (an index `3.2` read as
+`positive`), or a figure whose printed form a number loses (`0.10`: a JSON number drops the trailing zero, so a
+writer that needs the printed digits keeps them in `valueText`). Every object is closed (`additionalProperties:
+false`): a misspelt `comparitor` fails validation instead of silently dropping its meaning.
+
+**Rules.**
+
+- **Never an analyte an item owns.** A result whose analyte and specimen have an item goes to the item, in its printed
+  unit's variation. An item owns the LOINC codes in its `references.loinc`, one owner per code (`[LABC-LOINC-1]`). The
+  one exception is the interim of § Not keys: the item lacks the printed unit; the result moves to the item once the
+  variation ships. A whole-blood sodium (`2947-0`, a blood-gas analyser) is not the serum sodium item's analyte: the
+  specimen is part of the analyte (§ Specimen is explicit in the item key).
+- **LOINC is per property.** Mass and substance concentrations of one analyte have different codes (bilirubin
+  `1975-2` mass, `14631-6` substance). An item lists in `references.loinc` the code of every property its variations
+  store; until codes are per variation, a FHIR export puts no `code.coding` on an item event whose item asserts more
+  than one code.
+- **Stored as printed, never converted.** No variations, no factors. A reader never converts a coded value, and draws
+  a series only from events with the same code and the same `unit` (hds-lib `labSeriesKey`).
+- **Reference range, flag, interpretation:** the `clientData` keys of § The printed reference range, unchanged; the
+  limits are in `unit`.
+- **No specimen field:** the stream gives the specimen family and the LOINC code the precise specimen. A `specimen`
+  property would be additive later.
+- **Only curated codes.** A writer codes the analyte from a table it maintains, never from unrecognised text (an
+  unrecognised result stays in the source document).
+- **Derived indices** printed by the lab (anion gap, corrected calcium, calculated osmolality) are stored here under
+  their own LOINC, as printed: no item owns them (plan 114 Q5). They are never computed into this stream.
+- hds-lib `checkLabResultCoded` warns about `owned-by-item`, `no-loinc` and `invalid-loinc` (check digit).
+
+**Consent.** The coded streams sit under their specimen, so a grant on `body-blood` (or `body-urine`, or `body`)
+covers every result of that specimen, including infectious serology, viral loads and drug levels. Consent screens name
+such a grant "Blood and everything under it" (hds-lib `permissionLabels`); an app that needs fewer results requests
+the item streams it needs, never the specimen.
+
+### Moving a result to its item
+
+When the item gains the printed unit, a result stored meanwhile in `lab-result/coded-v1` moves with **`events.update`
+in place**, never trash and re-create: the event id stays (so `clientData.related` links from documents stay valid),
+`clientData.sourceKey` stays (so a re-run still recognises it), and the history records the old type.
+
+| `lab-result/coded-v1` | the item's event |
+|---|---|
+| `type` | the variation's eventType |
+| `streamIds` | the item's stream |
+| `content.value` | `content` |
+| `content.comparator` | `clientData.hdsComparator` |
+| `clientData.hdsRefRange`, `hdsFlag`, `hdsInterpretation` | kept (same unit) |
+| `content.notes` | appended to `description`, after the printed result (`< 1.5 ng/mL; haemolysed sample`) |
+| `content.analyte`, `unit`, `unitText` | dropped (the item and its variation say it) |
+
+Only results with a `value` and no `valueText` move: an item event has no place for the printed text, so a
+qualitative or semi-quantitative result stays coded. The move is a separate step of the importer, run after a
+data-model release, with contribute access on both streams.
+
+### The three items: published later
+
+The pack is loaded at runtime by every deployed app. Before hds-lib 2.28.0 `itemsDefs.getAllActive()` lists any item
+type it does not exclude by name, and before hds-forms-js 0.24.0 `schemaFor` throws on an item type it does not know,
+so a published `imported` item would show in the pickers and break the forms of every build already deployed. 3.27.0
+therefore ships the eventType, the streams and the `imported` rule, and **not the items**. They are published in a
+later minor once every consumer that lists items for a person to pick runs hds-lib ≥ 2.28.0 and hds-forms-js ≥ 0.24.0:
+hds-webapp (web on demo **and prod**, and the iOS / Android builds in use, which bundle the libraries and load the pack
+at runtime), doctor-dashboard, the account app, and anything else calling `getAllActive` (hds-lib `cmc/formSpec.ts` in
+bridges). The precedent is the `document` item ([DOCUMENTS.md](DOCUMENTS.md)).
+
+**The same gate applies to writers.** A build before hds-lib 2.28.0 shows a censored ferritin as an exact `1.5 ng/mL`
+and a coded result as its bare `value` (`20`, with no analyte, unit or comparator): nothing breaks, but a reader sees
+a wrong figure. A writer therefore writes `hdsComparator` and `lab-result/coded-v1` events into accounts read by
+those apps only once hds-webapp (web and mobile) and doctor-dashboard run hds-lib ≥ 2.28.0.
+
+Until then a writer that needs `forEvent` to resolve its results, or stream auto-creation to create the streams,
+declares the items in its own overload with exactly this definition (hds-lib ≥ 2.24.0 accepts a restatement whose
+immutable fields are identical, so the overload keeps working once the items are canonical):
+
+```yaml
+body-blood-coded:
+  version: v1
+  type: imported
+  label:
+    en: Other blood results
+    fr: Autres résultats sanguins
+    es: Otros resultados de sangre
+  description:
+    en: Blood test results that have no field of their own.
+    fr: Résultats d'analyses de sang qui n'ont pas de champ dédié.
+    es: Resultados de análisis de sangre que no tienen un campo propio.
+  streamId: body-blood-coded
+  eventType: lab-result/coded-v1
+  repeatable: unlimited
+body-urine-coded:
+  version: v1
+  type: imported
+  label:
+    en: Other urine results
+    fr: Autres résultats urinaires
+    es: Otros resultados de orina
+  description:
+    en: Urine test results that have no field of their own.
+    fr: Résultats d'analyses d'urine qui n'ont pas de champ dédié.
+    es: Resultados de análisis de orina que no tienen un campo propio.
+  streamId: body-urine-coded
+  eventType: lab-result/coded-v1
+  repeatable: unlimited
+body-csf-coded:
+  version: v1
+  type: imported
+  label:
+    en: Cerebrospinal fluid results
+    fr: Résultats du liquide céphalorachidien
+    es: Resultados del líquido cefalorraquídeo
+  description:
+    en: Results of a cerebrospinal fluid test.
+    fr: Résultats d'une analyse du liquide céphalorachidien.
+    es: Resultados de un análisis del líquido cefalorraquídeo.
+  streamId: body-csf-coded
+  eventType: lab-result/coded-v1
+  repeatable: unlimited
+```
+
+**Cross-system.** FHIR `Observation`: `code.coding` ← `analyte.codes`, `code.text` ← `analyte.label`;
+`valueQuantity` ← `value`, `comparator`, `unit` as `code` with system `http://unitsofmeasure.org`, `unitText` (or the
+readable code) as `unit`; else `valueCodeableConcept` ← `valueCodes` with `valueText` as its `text`, else
+`valueString` ← `valueText`. A semi-quantitative result exports its `valueQuantity`, and its `valueText` as a `note`;
+`note` ← `notes`; `category` `laboratory`; `referenceRange` / `interpretation` from `clientData` as above.
+`Observation.specimen` is a Reference, not exported: the LOINC System axis carries the specimen.
 
 ## Sample context
 
@@ -263,7 +467,8 @@ Note the schema's `variations` block supports **`eventType` only**. The `measure
   interpretation of one result").
 - **Derived indices** — HOMA-IR, LH:FSH, AST:ALT, BUN/creatinine, A/G, corrected calcium. Computable
   from the analytes; recompute rather than store. (Transferrin saturation is the grey zone — labs
-  universally print it.)
+  universally print it.) When the lab printed one, it is kept in `lab-result/coded-v1` (§ Results with no item of
+  their own).
 - **Non-blood markers** — stool (elastase, calprotectin), saliva (diurnal cortisol), 24-hr urine iodine.
   Demand exists; out of scope here.
 
@@ -314,4 +519,5 @@ and kept, so existing events still resolve and render; new data uses `body-urine
   per-session code does not fit a daily total). Where no code fits, the item asserts none and its
   `devNotes` say why. Candidates noted in comments before 3.23.0 (`body-semen-morphology-normal`)
   stay pending until someone verifies them this way. This applies to every domain, not only blood
-  chemistry.
+  chemistry. The codes an item asserts also decide that it owns an analyte (§ Results with no item of their own):
+  a code is asserted by one active item at most, with a valid check digit (`[LABC-LOINC-1]`, `[LABC-LOINC-2]`).
