@@ -78,6 +78,7 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 |---|---|---|
 | `resourceType` | yes | `Observation` or `Condition` (`Patient` is an [element block](#patient-elements)). *Permanent.* |
 | `category` | per resourceType (table above) | Category key. *Permanent.* |
+| `alsoMatchCategories` | no | Further category keys of the same table that a resource may carry and still import into this item, **on import only**, never emitted (smoking status filed under `survey` by older sources). Never the block's own category. |
 | `code` | yes | The resource code: a **static coding** `{ system, code, display }`, or a **source** `{ from: datasource, field: <dotted path> }` (below). |
 | `alsoMatch` | no | Extra codings accepted **on import only**, never emitted. Static code only. |
 | `value` | no | FHIR `value[x]`, by `kind` (below). Absent on a Condition, which has no `value[x]`. |
@@ -105,7 +106,7 @@ reviewer checks the code against and what a reader falls back on.
 | `kind` | Item | Block fields | Renders |
 |---|---|---|---|
 | `quantity` | `number`, every eventType numeric | `units`: every eventType of the item (its unit variants) → UCUM code, none empty | `valueQuantity` (`system` UCUM, `code` = `unit`) |
-| `coded` | `select` | `options`: every option value → coding, each coding once | `valueCodeableConcept` |
+| `coded` | `select` | `options`: every option value → coding, each coding once; optional `alsoMatch`: option value → extra codings accepted for that option on import only | `valueCodeableConcept` (the option coding, never an `alsoMatch` one) |
 | `components` | `composite` | `components`: numeric composite field → `{ code, unit }` | `component[]`, one per field present |
 
 The schema discriminates by kind: a kind's fields are refused on another kind. `coded` is refused on a
@@ -114,6 +115,26 @@ answers. A multi-select mapping needs its own design.
 
 **Option keys** are the option value as a string, as JavaScript prints it: `never`, `0.75`, and `1` for `1.0`, `0` for
 `0.0`. Quote them in YAML (`"1": …`).
+
+**Per-option `alsoMatch`** lists answer codings a source may send for an option, finer or older than the option's
+own, that **truly mean that option**: US Core's "Smokes tobacco daily" (449868002) is a current smoker, so it is
+an `alsoMatch` of `current`. Keys are option keys; every coding, option codings and `alsoMatch` codings together,
+appears once in the item, so an imported answer maps back to one option. What the finer coding adds (daily, heavy)
+is not stored. Not on a Patient element.
+
+```yaml
+lifestyle-tobacco-smoking:
+  fhir:
+    # …
+    value:
+      kind: coded
+      options:
+        current: { system: http://snomed.info/sct, code: "77176002", display: Smoker }
+        # …
+      alsoMatch:
+        current:
+          - { system: http://snomed.info/sct, code: "449868002", display: Smokes tobacco daily }
+```
 
 ### Composite items: `components`, `split`, `ignore`
 
@@ -226,7 +247,7 @@ holds one (resourceType, category) pair. The build computes the table and publis
 ```json
 "fhirScopes": {
   "Condition|problem-list-item": ["condition"],
-  "Observation|vital-signs": ["body-blood-pressure", "body-weight"],
+  "Observation|vital-signs": ["body-blood-pressure", "body-heart-rate", "body-weight"],
   "Patient": ["profile-address", "profile-date-of-birth", "profile-name", "profile-sex"]
 }
 ```
@@ -266,7 +287,8 @@ the lock refuses it anyway (the stream is a locked root of the old pair). The sa
 grant root: whatever is added under it must belong to its pair.
 
 Additive changes are fine: a block can be added to an item without changing its key, stream or eventType; `alsoMatch`
-entries, profiles of new flavours and new options (with their coding) can be added.
+entries (on the code or per option), `alsoMatchCategories`, profiles of new flavours and new options (with their
+coding) can be added. Import-only entries change what HDS accepts, never what it emits or grants.
 
 ---
 
@@ -289,30 +311,51 @@ data a SMART app does not see.
 `fromFhir(resource, mapping, { item })` places one FHIR resource as content of the item the mapping belongs to.
 Anything it cannot place is **rejected, never guessed**.
 
-**Which item.** A resource matches an item by **(resourceType, code)**: any coding of `resource.code` equal (system
-and code) to the block's static code or one of its `alsoMatch` codings. A block whose code comes from a datasource
-matches by resourceType (a Condition goes to the Condition item that takes its code from a datasource). A static code
-match wins over a datasource match. A resource that matches only a `split` code imports as a fragment of that item
-(below) and only when no item matches it directly: a standalone heart-rate Observation goes to a heart-rate item when
-one is mapped. The build guarantees that a static code, an `alsoMatch` coding or a (resourceType, datasource) source
-is claimed by one active item only (`hds-fhir-js`: `matchMapping`).
+**Which item.** A resource matches an item by **(resourceType, code)**, with a **compatible category**: any coding of
+`resource.code` equal (system and code) to the block's static code or one of its `alsoMatch` codings. A block whose
+code comes from a datasource matches by resourceType and category (a Condition goes to the Condition item that takes
+its code from a datasource). A static code match wins over a datasource match. A resource that matches only a `split`
+code imports as a fragment of that item (below) and only when no item matches it directly: a standalone heart-rate
+Observation goes to `body-heart-rate`, not to the blood-pressure pulse. The build guarantees that a static code or an
+`alsoMatch` coding is claimed by one active item only, and a datasource source by one active item per category it
+accepts (`hds-fhir-js`: `matchResource`, which also says why nothing matched).
+
+- **Category.** The resource's categories are its `category` codings in the systems of the resourceType's table
+  (`fhirMapping.categories`); a coding in another system (a local category, another IG's) says nothing checkable and
+  is ignored. A resource with none matches by code alone. Otherwise one of them must be the block's `category` or one
+  of its `alsoMatchCategories`. So a Condition filed as a `health-concern` (US Core files social findings, housing or
+  education, there) does not import as a diagnosis into `condition-coded`, while an `encounter-diagnosis` does. A
+  resource that states no category cannot be told apart by it: when it fits several datasource-coded items, the
+  importer reports it as ambiguous and imports nothing.
+- **Withdrawn records** are refused: an Observation with `status` `entered-in-error` or `cancelled`, a Condition whose
+  `verificationStatus` is `refuted` or `entered-in-error`. Placing them would state as fact what the source
+  retracted. Every other status imports as it is (`preliminary`, `amended`, `provisional`, `unconfirmed`, …); a
+  Condition's `clinicalStatus` (resolved, in remission) is not carried yet.
 
 **Values.**
 - `quantity`: the `valueQuantity` must have system `http://unitsofmeasure.org` and a `code` equal to one of the
-  block's units; that unit picks the eventType (`[lb_av]` → `mass/lb`). Units are not converted: an unknown unit
-  (`g` for body weight) is rejected.
-- `coded`: the `valueCodeableConcept` codings must match exactly one option's coding; the option value is returned
-  with its type (`0.75`, not `"0.75"`). Option codings are unique within an item (a build check), so a coding maps
-  back to one option.
+  block's units; that unit picks the eventType (`[lb_av]` → `mass/lb`), and the value is stored as printed. Units are
+  **converted only through the item's declared `unitConversions`**. Those relate the item's own eventTypes, and every
+  one of them already has its UCUM unit in the block, so in practice a value in one of the block's units is taken as
+  printed in that eventType, and a unit outside them (`g` for body weight, `cm` for body height) has no declared
+  conversion and is rejected. Importing such a unit takes a new eventType variant on the item first.
+- `coded`: the `valueCodeableConcept` codings must match exactly one option, by its coding or one of its
+  `alsoMatch` codings; the option value is returned with its type (`0.75`, not `"0.75"`). Option codings and
+  `alsoMatch` codings are unique within an item (a build check), so a coding maps back to one option.
 - `components`: each component's code must match a mapped component, in its unit; an unknown component (for
-  example a mean arterial pressure in a blood-pressure panel) rejects the resource.
+  example a mean arterial pressure in a blood-pressure panel) rejects the resource. A component stated absent
+  (`dataAbsentReason`, no value) counts as missing. **Never partial content:** every mapped component whose composite
+  field is not `canBeNull` must be there, so a blood-pressure panel without its systolic or its diastolic is
+  rejected.
 - A resource with a value when the block has none, or without one when the block has one, is rejected.
 
 **Splits.** A resource matching a `split` code imports as `{ <field>: value }`, flagged with the split field: a
 fragment to merge into the parent item's event at the same time (the blood-pressure reading the pulse belongs to).
 
 **Datasource codes.** The codings become `{ label: { en: code.text or the first display }, codes: [{ system:
-<label>, code }] }` at the block's `field`; a system with no label in `fhirMapping.systems` is rejected. The eventType
+<label>, code }] }` at the block's `field`. A coding whose system has no label in `fhirMapping.systems` is dropped
+(the ICD-10-CM coding US EHRs send next to SNOMED CT), and the resource is rejected only when no coding is left. The
+eventType
 also requires each code's `hdsId` (and may carry a `description`), which FHIR does not carry: the importer completes
 the selection from datasets-service, and rejects the resource when datasets-service does not know a code.
 
@@ -324,8 +367,13 @@ that cannot be placed (a `gender` that is not an option of the item, an unreadab
 names that disagree) is reported per element, never guessed, and the other elements still import. A Patient has no
 clinical date: the importer records the facts at import time, as a profile entry is recorded.
 
-**Time.** Observation: `effectiveDateTime`. Condition: `recordedDate`, else `onsetDateTime`. A missing or unreadable
-date is rejected (a text onset such as `onsetString` included). Precision follows
+**Time.** Observation: `effectiveDateTime`, else `effectivePeriod.start`, else `effectiveInstant`. Condition:
+`onsetDateTime`, else `onsetPeriod.start`, else `recordedDate`. The event time of a `condition-coded` event is when
+the patient has had the condition from (its onset, or the date of the diagnosis when that is all the source knows),
+not when someone wrote it down, as for the "March 1999" diagnosis of [PARTIAL-DATES.md](PARTIAL-DATES.md); so the
+rendering states it as `onsetDateTime`, and the import prefers the onset. A period's end is not kept: no `clientData`
+key holds it, and the mapped items are point events. A missing or unreadable date is rejected (a text onset such as
+`onsetString` included). Precision follows
 [PARTIAL-DATES.md](PARTIAL-DATES.md): a full dateTime is the exact moment, `clientData.hdsTimePrecision: minute`; a
 truncated one (`YYYY`, `YYYY-MM`, `YYYY-MM-DD`) is the start of its period at 12:00 UTC with precision `year`, `month`
 or `day`. Export is the reverse: the date is truncated to the event's precision (`approx` gives the year and a note
@@ -354,13 +402,16 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   `coded` only on `select` (never `multi-select`), options exactly the item's options; component, split and ignore
   keys are composite fields, components and splits numeric, no field in two roles, every composite field accounted
   for; a datasource source only on a datasource field, resolving to a `codes` array in the eventType; no `value` on a
-  Condition; `alsoMatch` only with a static code.
+  Condition; `alsoMatch` only with a static code; per-option `alsoMatch` only on `coded`, keyed by option keys;
+  `alsoMatchCategories` known keys of the resourceType's table, never the block's own category.
 - **Patient elements:** the element from the allowed list (the schema's `fhirElement` enum, the checker's
   `PATIENT_ELEMENTS`); the item type the element takes, with one string eventType; no `value` on a text or date
   element; on `gender`, `coded` with exactly the item's options, each an administrative-gender code with its official
   display, each once.
-- **Uniqueness:** codings unique within an item (code and `alsoMatch`; options; code, components and splits); import
-  keys unique across active items, a Patient element included.
+- **Uniqueness:** codings unique within an item (code and `alsoMatch`; options and their `alsoMatch`; code,
+  `alsoMatch`, components and splits); import keys unique across active items (a static code or `alsoMatch` coding;
+  a datasource source per category it accepts; a Patient element). A split code is not an import key: it may be
+  another item's code, which then wins (`body-heart-rate` and the blood-pressure pulse).
 - **Scopes:** companions valid (never of a Patient element); the one-pair invariant; the lock.
 
 ---

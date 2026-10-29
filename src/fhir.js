@@ -105,6 +105,11 @@ function checkFhirMapping (key, item, itemEventTypes) {
   } else if (f.category != null) {
     fail(`resourceType "${f.resourceType}" takes no category`);
   }
+  for (const c of f.alsoMatchCategories || []) {
+    if (table == null) fail(`resourceType "${f.resourceType}" takes no category, so no "alsoMatchCategories"`);
+    if (table[c] == null) fail(`alsoMatchCategories: unknown ${f.resourceType} category "${c}" (known: ${Object.keys(table).join(', ')})`);
+    if (c === f.category) fail(`alsoMatchCategories: "${c}" is the block's own category`);
+  }
 
   const composite = item.composite;
   const mappedFields = new Set();
@@ -126,7 +131,8 @@ function checkFhirMapping (key, item, itemEventTypes) {
   };
 
   const v = f.value;
-  const ownCodings = isDatasourceCode ? [] : [f.code];
+  const ownCodings = isDatasourceCode ? [] : [f.code, ...(f.alsoMatch || [])];
+  if (v?.alsoMatch != null && v.kind !== 'coded') fail('value.alsoMatch applies to value.kind "coded" only');
   if (v != null) {
     switch (v.kind) {
       case 'quantity':
@@ -140,7 +146,11 @@ function checkFhirMapping (key, item, itemEventTypes) {
         if (item.type === 'multi-select') fail('value.kind "coded" on a multi-select is not supported: one resource with several answer codings would misstate the answer');
         if (item.type !== 'select') fail('value.kind "coded" applies to "select" items only');
         sameSet('value.options keys vs the item options', Object.keys(v.options), item.options.map((o) => String(o.value)));
-        unique('value.options', Object.values(v.options));
+        for (const k of Object.keys(v.alsoMatch || {})) {
+          if (v.options[k] == null) fail(`value.alsoMatch "${k}" is not an option of the block`);
+        }
+        // One coding, one option: an import-only coding never repeats an option coding or another alsoMatch.
+        unique('value.options and value.alsoMatch', [...Object.values(v.options), ...Object.values(v.alsoMatch || {}).flat()]);
         break;
       case 'components':
         if (composite == null) fail('value.kind "components" needs a composite item');
@@ -186,6 +196,7 @@ function checkFhirElement (item, itemEventTypes, { fail, sameSet, unique }) {
     return;
   }
   if (f.value?.kind !== 'coded') fail(`element "${f.element}" needs value.kind "coded"`);
+  if (f.value.alsoMatch != null) fail(`element "${f.element}" takes no value.alsoMatch: a Patient element imports from its own code`);
   sameSet('value.options keys vs the item options', Object.keys(f.value.options), item.options.map((o) => String(o.value)));
   unique('value.options', Object.values(f.value.options));
   for (const [option, c] of Object.entries(f.value.options)) {
@@ -324,8 +335,10 @@ function checkFhirScopes (items, { roots = streams.roots, lock = readLock() } = 
 
 /**
  * Import match keys are unique across active items: a resource matches an item by (resourceType, static code or
- * alsoMatch coding), or by (resourceType, datasource code source), and must match one item only. A Patient element
- * is claimed by one active item only, so an imported Patient places each element in one item.
+ * alsoMatch coding), or by (resourceType, category, datasource code source) for each category the block accepts (its
+ * own and its `alsoMatchCategories`), and must match one item only. A Patient element is claimed by one active item
+ * only, so an imported Patient places each element in one item. A resource that states no category can still fit two
+ * datasource-coded items of different categories; the importer reports that as ambiguous rather than guess.
  */
 function checkFhirImportKeys (items) {
   const seen = new Map();
@@ -340,7 +353,9 @@ function checkFhirImportKeys (items) {
     if (f.element != null) {
       claim(`${f.resourceType}.${f.element}`, key);
     } else if (f.code.from != null) {
-      claim(`${f.resourceType} from ${f.code.from}`, key);
+      for (const c of [f.category, ...(f.alsoMatchCategories || [])]) {
+        claim(`${f.resourceType}${c != null ? `|${c}` : ''} from ${f.code.from}`, key);
+      }
     } else {
       for (const c of [f.code, ...(f.alsoMatch || [])]) claim(`${f.resourceType} ${c.system}|${c.code}`, key);
     }

@@ -10,6 +10,7 @@
   ],
   "Observation|vital-signs": [
     "body-blood-pressure",
+    "body-heart-rate",
     "body-weight"
   ],
   "Patient": [

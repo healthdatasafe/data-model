@@ -470,6 +470,10 @@ Commonly-cited scales / terminologies for mapping new items:
   physical functioning T-score), `32622-6` (does not exist), `82589-3` (highest level of education).
 
 ### Terminologies (codes to include in item references)
+
+In `references`, each system's codes are a list, even a single code (`snomed: ["27113001"]`); the schema refuses a
+bare string, so readers handle one shape.
+
 - **SNOMED CT** — https://bioportal.bioontology.org/ontologies/SNOMEDCT
 - **LOINC** — https://loinc.org/
 - **ICD-10 / ICD-11** — WHO

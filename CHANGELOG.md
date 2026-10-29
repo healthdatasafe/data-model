@@ -38,6 +38,26 @@
   2.0.1 and round-trips through import (hds-fhir-js).
 - Fixed: AGENTS.md pointed authors at the never-implemented `hl7fhir:` block (B-2026-10-28-24); DESIGN-NOTES marks it
   superseded. Removed the unread `definitions/hl7-defaults/category.yaml`.
+- Import-only additions from the plan 115 client import spike: a per-option `alsoMatch` on `coded` values (codings
+  accepted for an option on import, never emitted; unique across the item's options and their `alsoMatch`, never on
+  a Patient element) and `alsoMatchCategories` on a mapping (further categories of the same table a resource may
+  carry and still import). Import matching is category-aware; a datasource source's import key is per category it
+  accepts. `alsoMatch` LOINC 55284-4 on `body-blood-pressure`; a `body-heart-rate` block (LOINC 8867-4, `/min`, US
+  Core heart rate and the FHIR heart-rate profile; new grant root, locked); on `lifestyle-tobacco-smoking`, the US
+  Core answers 449868002, 428041000124106, 428071000124103 and 428061000124105 as `alsoMatch` of `current`, and
+  `alsoMatchCategories: [survey]`; on `condition-coded`, `alsoMatchCategories: [encounter-diagnosis]`.
+- FHIR-MAPPING.md § Import: withdrawn records refused, a panel without a required component refused, codings without
+  a datasource label dropped while one remains, Observation and Condition time choices (a Condition's event time is
+  its onset), units converted only through the item's declared `unitConversions`.
+
+### Changed: `references` codes are always a list (B2)
+- `references.<system>` must be an array of non-empty strings, even for one code; the schema refuses a bare string.
+  Every item was normalised (`snomed`, `loinc`, `icf`, `icd10`). A reader that compared `references.loinc` to a string
+  must read a list.
+
+### Fixed: `symptom-pain-severity` no longer cites LOINC 72514-3 (B1)
+- 72514-3 is a 0 to 10 numeric pain score; the item stores five verbal levels as a ratio. Removed, with a YAML note on
+  how the two relate.
 - **Patient from the profile items** (plan 115 D14): a third block form, `{ resourceType: Patient, element, value? }`
   (`defs.json` `fhirElement`), for one element of the Patient, which is assembled from the latest event of each
   contributing item. Elements: `name.given`, `name.family`, `gender` (`coded`, administrative-gender codes with their

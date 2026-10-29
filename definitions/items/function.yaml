@@ -37,9 +37,9 @@ function-mobility:
         fr: Incapable
   repeatable: unlimited
   references:
-    icf: d450
-    snomed: "301438001"
-    loinc: "63800-5"
+    icf: ["d450"]
+    snomed: ["301438001"]
+    loinc: ["63800-5"]
 
 function-self-care:
   version: v1
@@ -76,8 +76,8 @@ function-self-care:
   repeatable: unlimited
   references:
     icf: ["d510", "d540"]
-    snomed: "228151002" # Personal care disability (finding) — was invalid "284774004"
-    loinc: "63801-3"
+    snomed: ["228151002"] # Personal care disability (finding) — was invalid "284774004"
+    loinc: ["63801-3"]
 
 function-usual-activities:
   version: v1
@@ -114,5 +114,5 @@ function-usual-activities:
   repeatable: unlimited
   references:
     icf: ["d630", "d640", "d845", "d859", "d920"]
-    snomed: "413156007"
-    loinc: "63802-1"
+    snomed: ["413156007"]
+    loinc: ["63802-1"]

@@ -24,7 +24,7 @@ lifestyle-tobacco-smoking:
       label: { en: Current smoker, fr: Fume actuellement }
   repeatable: any
   references:
-    snomed: "365981007"
+    snomed: ["365981007"]
   devNotes: >-
     Coded status, not a severity ratio: never / former / current is the shape SNOMED
     and FHIR use for smoking status. It is a COARSENING of the US Core Smoking
@@ -43,6 +43,8 @@ lifestyle-tobacco-smoking:
   fhir:
     resourceType: Observation
     category: social-history
+    # Import only: sources on older US Core (Synthea 2019) file smoking status under survey.
+    alsoMatchCategories: [survey]
     code: { system: http://loinc.org, code: 72166-2, display: Tobacco smoking status }
     value:
       kind: coded
@@ -50,6 +52,16 @@ lifestyle-tobacco-smoking:
         never: { system: http://snomed.info/sct, code: "266919005", display: Never smoked tobacco }
         former: { system: http://snomed.info/sct, code: "8517006", display: Ex-smoker }
         current: { system: http://snomed.info/sct, code: "77176002", display: Smoker }
+      # Import only: the US Core Smoking Status answers finer than `current`. Each is a child of
+      # 77176002 Smoker, so each truly means a current smoker; the frequency and amount they add are
+      # not stored (v1 records the status only). 428071000124103 and 428061000124105 are in the US
+      # edition of SNOMED CT (module 731000124108), not the International one.
+      alsoMatch:
+        current:
+          - { system: http://snomed.info/sct, code: "449868002", display: Smokes tobacco daily }
+          - { system: http://snomed.info/sct, code: "428041000124106", display: Occasional tobacco smoker }
+          - { system: http://snomed.info/sct, code: "428071000124103", display: Heavy tobacco smoker }
+          - { system: http://snomed.info/sct, code: "428061000124105", display: Light tobacco smoker }
     profiles:
       us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-smokingstatus
       ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-tobaccouse-uv-ips
@@ -74,7 +86,7 @@ lifestyle-tobacco-ecigarette:
       label: { en: Current user, fr: Vapote actuellement }
   repeatable: any
   references:
-    snomed: "722499006"
+    snomed: ["722499006"]
   devNotes: >-
     A sibling item rather than an option on lifestyle-tobacco-smoking: vaping and
     smoking co-occur, so one exclusive select could not record both, and an
@@ -100,7 +112,7 @@ lifestyle-tobacco-smokeless:
       label: { en: Current user, fr: Consomme actuellement }
   repeatable: any
   references:
-    snomed: "713914004"
+    snomed: ["713914004"]
   devNotes: >-
     SNOMED carries no equally direct never/former pair for smokeless tobacco, so
     those two export as the item code plus the status value.
@@ -129,7 +141,7 @@ lifestyle-alcohol-frequency:
       label: { en: 4 or more times a week, fr: 4 fois par semaine ou plus }
   repeatable: any
   references:
-    snomed: "228273003"
+    snomed: ["228273003"]
   devNotes: >-
     AUDIT-C question 1, storing the screener's own coded bands. It selects five of
     the nine bands lifestyle/frequency-band-v1 offers; the loader validates that
@@ -155,7 +167,7 @@ lifestyle-alcohol-typical-quantity:
       suffix: { en: g, fr: g }
   repeatable: any
   references:
-    snomed: "896810008"
+    snomed: ["896810008"]
   devNotes: >-
     Grams of ethanol, not standard drinks: a standard drink is 8 g in the UK (one
     unit), 10 g in Australia and France, and 14 g in the US, so storing drinks makes
@@ -195,7 +207,7 @@ lifestyle-alcohol-binge-frequency:
       label: { en: Daily or almost daily, fr: Tous les jours ou presque }
   repeatable: any
   references:
-    snomed: "228326007"
+    snomed: ["228326007"]
   devNotes: >-
     AUDIT-C question 3. It selects a different five bands from the same
     lifestyle/frequency-band-v1 than question 1 does; `streamId` is what
@@ -229,7 +241,7 @@ lifestyle-diet-pattern:
       label: { en: Other, fr: Autre }
   repeatable: any
   references:
-    snomed: "364828006"
+    snomed: ["364828006"]
   devNotes: >-
     Mutually exclusive overall pattern; additive avoidances are recorded separately,
     since a vegetarian who is also gluten-free needs both. Intake frequency is
@@ -266,7 +278,7 @@ lifestyle-diet-restriction:
       label: { en: Other, fr: Autre }
   repeatable: any
   references:
-    snomed: "364828006"
+    snomed: ["364828006"]
   devNotes: >-
     Each event is a complete dated snapshot of the restrictions in force, the same
     convention as fertility/tracking-method-v1: a restriction that ends simply does

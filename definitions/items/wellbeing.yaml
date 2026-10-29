@@ -242,7 +242,7 @@ wellbeing-mental-distress-anxiety:
   repeatable: unlimited
   references:
     snomed: ["48694002"]
-    loinc: "69737-5"
+    loinc: ["69737-5"]
 
 wellbeing-mental-distress-depression:
   version: v1
@@ -278,8 +278,8 @@ wellbeing-mental-distress-depression:
         fr: Extrêmement déprimé
   repeatable: unlimited
   references:
-    snomed: "366979004"
-    loinc: "75275-8"
+    snomed: ["366979004"]
+    loinc: ["75275-8"]
 
 # Stress — the third dimension of the validated DASS-21 (Depression/Anxiety/Stress)
 # triad, completing the mental-distress domain alongside -anxiety and -depression.
@@ -464,7 +464,7 @@ wellbeing-general-health:
   references:
     # Findings per answer; SNOMED CT has none for "very good".
     snomed: ["135816001", "135815002", "135817005", "135818000"]
-    loinc: "61577-3"
+    loinc: ["61577-3"]
   fhir:
     resourceType: Observation
     category: survey

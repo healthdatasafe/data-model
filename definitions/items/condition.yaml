@@ -14,6 +14,9 @@ condition-coded:
   fhir:
     resourceType: Condition
     category: problem-list-item
+    # Import only: an encounter diagnosis is a clinician's diagnosis too, what this item holds. A
+    # health concern (often a social finding: housing, education) is not, and does not import here.
+    alsoMatchCategories: [encounter-diagnosis]
     code: { from: datasource, field: condition }
     profiles:
       us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-problems-health-concerns

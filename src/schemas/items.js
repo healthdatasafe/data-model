@@ -128,7 +128,13 @@ const defsSchema = {
           then: {
             properties: {
               kind: {},
-              options: { type: 'object', minProperties: 1, additionalProperties: { $ref: 'defs.json#/definitions/fhirCoding' } }
+              options: { type: 'object', minProperties: 1, additionalProperties: { $ref: 'defs.json#/definitions/fhirCoding' } },
+              // option value → extra codings accepted for that option on import only, never emitted
+              alsoMatch: {
+                type: 'object',
+                minProperties: 1,
+                additionalProperties: { type: 'array', minItems: 1, items: { $ref: 'defs.json#/definitions/fhirCoding' } }
+              }
             },
             required: ['options'],
             additionalProperties: false
@@ -163,6 +169,8 @@ const defsSchema = {
         resourceType: { enum: ['Observation', 'Condition'] },
         // Required or refused per resourceType, from the category table in definitions/fhir/mapping.yaml.
         category: { type: 'string', minLength: 1 },
+        // Further categories of the same table a resource may carry and still import here (import only).
+        alsoMatchCategories: { type: 'array', minItems: 1, uniqueItems: true, items: { type: 'string', minLength: 1 } },
         code: { $ref: 'defs.json#/definitions/fhirCode' },
         // Extra codes accepted on import only, never emitted (static code only).
         alsoMatch: { type: 'array', minItems: 1, items: { $ref: 'defs.json#/definitions/fhirCoding' } },
@@ -265,16 +273,16 @@ const itemSchema = {
       type: 'string',
       nullable: true
     },
-    // Codes for the item's concept, per code system (snomed, loinc, icf, icd10, …):
-    // one code or a list of codes.
+    // Codes for the item's concept, per code system (snomed, loinc, icf, icd10, …): always a list,
+    // even of one code, so a reader never has to handle two shapes (until 3.29 a single code could be a
+    // bare string, and some items used each form).
     references: {
       type: 'object',
       nullable: false,
       additionalProperties: {
-        anyOf: [
-          { type: 'string' },
-          { type: 'array', items: { type: 'string' } }
-        ]
+        type: 'array',
+        minItems: 1,
+        items: { type: 'string', minLength: 1 }
       }
     },
     // Population reference interval for a measured value (e.g. WHO-2021 semen

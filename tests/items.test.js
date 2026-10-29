@@ -63,11 +63,25 @@ describe('[ITMK] item properties (B-2026-10-05-12)', () => {
       /Item "test-item" has unknown properties: refrences/);
   });
 
-  it('[ITMK-2] accepts references as a code or a list of codes, and referenceRange', () => {
-    checkItem({ ...base, references: { snomed: '1', loinc: ['2', '3'] } });
+  it('[ITMK-2] accepts references as lists of codes only, and referenceRange', () => {
+    checkItem({ ...base, references: { snomed: ['1'], loinc: ['2', '3'], icf: ['d450'] } });
     checkItem({ ...base, referenceRange: null });
     checkItem({ ...base, referenceRange: { source: 'WHO-2021', lowerLimit: 0.3, upperLimit: null, units: 'ratio', population: 'p' } });
     assert.throws(() => checkItem({ ...base, references: { snomed: 1 } }));
+    // one code is still a list: a bare string, an empty list or an empty code is refused
+    assert.throws(() => checkItem({ ...base, references: { snomed: '1' } }), /must be array/);
+    assert.throws(() => checkItem({ ...base, references: { loinc: [] } }), /fewer than 1 items/);
+    assert.throws(() => checkItem({ ...base, references: { loinc: [''] } }), /fewer than 1 characters/);
+  });
+
+  it('[ITMK-2b] every item lists its references as arrays (B2), and symptom-pain-severity no longer cites the 0-10 score 72514-3 (B1)', () => {
+    const { itemsById } = require('../src/items');
+    for (const [key, item] of Object.entries(itemsById)) {
+      for (const [system, codes] of Object.entries(item.references || {})) {
+        assert.ok(Array.isArray(codes), `${key} references.${system} is not an array`);
+      }
+    }
+    assert.ok(!itemsById['symptom-pain-severity'].references.loinc.includes('72514-3'));
   });
 
   it('[ITMK-3] a schema error reads as text, not [object Object]', () => {

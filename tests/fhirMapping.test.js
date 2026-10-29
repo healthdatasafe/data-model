@@ -8,7 +8,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
   const { checkItem, toBePublished: schemasToBePublished } = require('../src/schemas/items');
   const { checkFhirMapping, checkFhirScopes, computeFhirScopes, readLock, mergeLock, fhirMapping, UNMAPPED, PATIENT_ELEMENTS } = require('../src/fhir');
 
-  const MAPPED = ['body-weight', 'body-blood-pressure', 'lifestyle-tobacco-smoking', 'condition-coded', 'wellbeing-general-health'];
+  const MAPPED = ['body-weight', 'body-blood-pressure', 'body-heart-rate', 'lifestyle-tobacco-smoking', 'condition-coded', 'wellbeing-general-health'];
   const item = (k) => structuredClone(itemsById[k]);
   const eventTypesOf = (it) => it.variations?.eventType ? it.variations.eventType.options.map((o) => o.value) : [it.eventType];
   const check = (it, key = 'x') => checkFhirMapping(key, it, eventTypesOf(it));
@@ -50,6 +50,29 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         assert.strictEqual(itemsById[k].fhir, undefined, `${k} is mapped`);
       }
       assert.deepStrictEqual(Object.fromEntries(Object.entries(itemsById['profile-sex'].fhir.value.options).map(([k, c]) => [k, c.code])), { male: 'male', female: 'female' });
+    });
+
+    it('[FHIR-ITEM-5] import-only codings: 55284-4 on blood pressure, the finer US Core smoking answers on `current`, survey and encounter-diagnosis categories', () => {
+      const bp = itemsById['body-blood-pressure'].fhir;
+      assert.deepStrictEqual(bp.alsoMatch, [{ system: 'http://loinc.org', code: '55284-4', display: 'Blood pressure systolic and diastolic' }]);
+      const smoke = itemsById['lifestyle-tobacco-smoking'].fhir;
+      assert.deepStrictEqual(Object.keys(smoke.value.alsoMatch), ['current']);
+      assert.deepStrictEqual(smoke.value.alsoMatch.current.map((c) => [c.code, c.display]), [
+        ['449868002', 'Smokes tobacco daily'],
+        ['428041000124106', 'Occasional tobacco smoker'],
+        ['428071000124103', 'Heavy tobacco smoker'],
+        ['428061000124105', 'Light tobacco smoker']
+      ]);
+      assert.deepStrictEqual(smoke.alsoMatchCategories, ['survey']);
+      assert.deepStrictEqual(itemsById['condition-coded'].fhir.alsoMatchCategories, ['encounter-diagnosis']);
+    });
+
+    it('[FHIR-ITEM-6] body-heart-rate: 8867-4 in /min, the same code the blood-pressure split renders the pulse with', () => {
+      const hr = itemsById['body-heart-rate'].fhir;
+      assert.deepStrictEqual(hr.code, { system: 'http://loinc.org', code: '8867-4', display: 'Heart rate' });
+      assert.deepStrictEqual(hr.value, { kind: 'quantity', units: { 'frequency/bpm': '/min' } });
+      assert.deepStrictEqual(hr.code, itemsById['body-blood-pressure'].fhir.split.rate.code);
+      assert.deepStrictEqual(hr.profiles, itemsById['body-blood-pressure'].fhir.split.rate.profiles);
     });
   });
 
@@ -186,7 +209,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       c.fhir.category = 'problem-list-item';
       assert.throws(() => check(c), /unknown Observation category/);
       const d = item('condition-coded');
-      d.fhir.category = 'encounter-diagnosis';
+      d.fhir.category = 'health-concern';
       check(d);
       d.fhir.category = 'vital-signs';
       assert.throws(() => check(d), /unknown Condition category/);
@@ -287,6 +310,57 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       e.options.push({ value: 'not-stated', label: { en: 'Not stated' } });
       e.fhir.value.options['not-stated'] = { system: 'http://hl7.org/fhir/administrative-gender', code: 'unknown', display: 'Unknown' };
       check(e);
+      const f = item('profile-sex');
+      f.fhir.value.alsoMatch = { female: [{ system: 'http://hl7.org/fhir/administrative-gender', code: 'other', display: 'Other' }] };
+      checkItem(f, 'sex');
+      assert.throws(() => check(f), /takes no value.alsoMatch/);
+    });
+
+    it('[FHIR-MAP-13] value.alsoMatch: per option, keys are options, codings unique across options and alsoMatch, coded only', () => {
+      const ok = item('lifestyle-tobacco-smoking');
+      check(ok);
+      const a = item('lifestyle-tobacco-smoking');
+      a.fhir.value.alsoMatch.sometimes = [coding('1', 'http://snomed.info/sct')];
+      assert.throws(() => check(a), /value.alsoMatch "sometimes" is not an option of the block/);
+      const b = item('lifestyle-tobacco-smoking');
+      b.fhir.value.alsoMatch.former = [b.fhir.value.options.never];
+      assert.throws(() => check(b), /value.options and value.alsoMatch: the coding http:\/\/snomed.info\/sct\|266919005 appears more than once/);
+      const c = item('lifestyle-tobacco-smoking');
+      c.fhir.value.alsoMatch.former = [c.fhir.value.alsoMatch.current[0]];
+      assert.throws(() => check(c), /appears more than once/);
+      const d = item('body-weight');
+      d.fhir.value.alsoMatch = { 'mass/kg': [coding('1')] };
+      assert.throws(() => checkItem(d, 'w'), /additional properties/);
+      const e = item('lifestyle-tobacco-smoking');
+      e.fhir.value.alsoMatch.current = [];
+      assert.throws(() => checkItem(e, 's'), /fewer than 1 items/);
+      const g = item('lifestyle-tobacco-smoking');
+      delete g.fhir.value.alsoMatch.current[0].display;
+      assert.throws(() => checkItem(g, 's'), /display/);
+    });
+
+    it('[FHIR-MAP-14] alsoMatchCategories: known keys of the resourceType table, never the block\'s own, refused without a table', () => {
+      const a = item('lifestyle-tobacco-smoking');
+      a.fhir.alsoMatchCategories = ['surveys'];
+      assert.throws(() => check(a), /alsoMatchCategories: unknown Observation category "surveys"/);
+      const b = item('lifestyle-tobacco-smoking');
+      b.fhir.alsoMatchCategories = ['social-history'];
+      assert.throws(() => check(b), /"social-history" is the block's own category/);
+      const c = item('condition-coded');
+      c.fhir.alsoMatchCategories = ['survey'];
+      assert.throws(() => check(c), /unknown Condition category "survey"/);
+      const d = item('lifestyle-tobacco-smoking');
+      d.fhir.alsoMatchCategories = ['survey', 'survey'];
+      assert.throws(() => checkItem(d, 's'), /duplicate items/);
+      const e = item('profile-name');
+      e.fhir.alsoMatchCategories = ['survey'];
+      assert.throws(() => checkItem(e, 'n'), /additional properties/);
+    });
+
+    it('[FHIR-MAP-15] the resource code\'s alsoMatch never repeats a component or split code', () => {
+      const a = item('body-blood-pressure');
+      a.fhir.alsoMatch.push(a.fhir.split.rate.code);
+      assert.throws(() => check(a), /code, components and split codes: the coding http:\/\/loinc.org\|8867-4 appears more than once/);
     });
   });
 
@@ -371,12 +445,23 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       run({ a: it_('body-a', obs('vital-signs', 'same')), b: it_('body-b', obs('vital-signs', 'same'), { deprecated: true }) });
     });
 
+    it('[FHIR-SCOPE-13] datasource import keys are per category the block accepts; a split code is no import key', () => {
+      const { checkFhirImportKeys } = require('../src/fhir');
+      const ds = (category, also) => ({ resourceType: 'Condition', category, ...(also ? { alsoMatchCategories: also } : {}), code: { from: 'datasource', field: 'x' }, profiles: {} });
+      checkFhirImportKeys({ a: { fhir: ds('problem-list-item') }, b: { fhir: ds('health-concern') } });
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: ds('problem-list-item') }, b: { fhir: ds('problem-list-item') } }), /Condition\|problem-list-item from datasource is claimed by both "a" and "b"/);
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: ds('problem-list-item', ['encounter-diagnosis']) }, b: { fhir: ds('encounter-diagnosis') } }), /Condition\|encounter-diagnosis from datasource is claimed by both/);
+      // the heart-rate item claims 8867-4; the blood-pressure split renders with it and still loads
+      assert.strictEqual(itemsById['body-heart-rate'].fhir.code.code, itemsById['body-blood-pressure'].fhir.split.rate.code.code);
+      checkFhirImportKeys(itemsById);
+    });
+
     it('[FHIR-SCOPE-11] the model\'s table, every grant root in the committed lock (run npm run fhir:lock)', () => {
       assert.deepStrictEqual(fhirScopes, {
         'Condition|problem-list-item': ['condition'],
         'Observation|social-history': ['lifestyle-tobacco-smoking'],
         'Observation|survey': ['wellbeing-general-health'],
-        'Observation|vital-signs': ['body-blood-pressure', 'body-weight'],
+        'Observation|vital-signs': ['body-blood-pressure', 'body-heart-rate', 'body-weight'],
         Patient: ['profile-address', 'profile-date-of-birth', 'profile-name', 'profile-sex']
       });
       assert.deepStrictEqual(mergeLock(readLock(), fhirScopes), readLock(), 'a grant root is missing from definitions/fhir/scopes.lock.json');
