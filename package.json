@@ -1,6 +1,6 @@
 {
   "name": "@hds/data-model",
-  "version": "3.30.0",
+  "version": "3.31.0",
   "description": "HDS data model",
   "engines": {
     "node": ">=24"
@@ -9,6 +9,7 @@
     "setup": "./scripts/setup.sh",
     "lint": "eslint .",
     "build": "node src/build.js",
+    "fhir:lock": "node scripts/fhir-lock.js",
     "deploy": "bash scripts/deploy.sh",
     "lint:fix": "eslint . --fix",
     "lint:change": "eslint $(git diff --name-only HEAD | grep -E '\\.(js|jsx)$' | xargs)",

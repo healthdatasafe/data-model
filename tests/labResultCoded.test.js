@@ -154,7 +154,7 @@ describe('[LABC] Coded lab results', () => {
       assert.ok(valid('20447-9') && !valid('20447-8'), 'the check itself');
       // Asserted by plan 44 (before LOINC verification, 3.23.0) and unknown to LOINC 2.83: to be corrected, never
       // extended. A new invalid code fails here.
-      const KNOWN_INVALID = ['32622-6', '63800-5', '63801-3', '63802-1', '77564-4'];
+      const KNOWN_INVALID = ['32622-6', '63800-5', '63801-3', '63802-1'];
       const bad = asserted().filter(({ code }) => !valid(code) && !KNOWN_INVALID.includes(code));
       assert.deepStrictEqual(bad, [], 'invalid LOINC codes');
     });

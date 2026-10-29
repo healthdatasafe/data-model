@@ -26,7 +26,22 @@ body-weight:
   reminder:
     cooldown: P1D
   references:
-    snomed: "27113001"
+    snomed: ["27113001"]
+  fhir:
+    resourceType: Observation
+    category: vital-signs
+    code: { system: http://loinc.org, code: 29463-7, display: Body weight }
+    # Import only: EHRs often send the "measured" variant.
+    alsoMatch:
+      - { system: http://loinc.org, code: 3141-9, display: Body weight Measured }
+    value:
+      kind: quantity
+      units:
+        mass/kg: kg
+        mass/lb: "[lb_av]"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-weight
+      ips: http://hl7.org/fhir/StructureDefinition/bodyweight
 body-blood-pressure:
   version: v1
   label:
@@ -59,6 +74,29 @@ body-blood-pressure:
   references:
     snomed: ["75367002", "271649006", "271650006"]
     loinc: ["85354-9", "8480-6", "8462-4"]
+  fhir:
+    resourceType: Observation
+    category: vital-signs
+    code: { system: http://loinc.org, code: 85354-9, display: Blood pressure panel with all children optional }
+    # Import only: older sources (Synthea 2019, the SMART sandbox data) code every panel 55284-4, which
+    # LOINC now marks DISCOURAGED in favour of 85354-9. Same two components.
+    alsoMatch:
+      - { system: http://loinc.org, code: 55284-4, display: Blood pressure systolic and diastolic }
+    value:
+      kind: components
+      components:
+        systolic: { code: { system: http://loinc.org, code: 8480-6, display: Systolic blood pressure }, unit: "mm[Hg]" }
+        diastolic: { code: { system: http://loinc.org, code: 8462-4, display: Diastolic blood pressure }, unit: "mm[Hg]" }
+    split:
+      rate:
+        code: { system: http://loinc.org, code: 8867-4, display: Heart rate }
+        unit: /min
+        profiles:
+          us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-heart-rate
+          ips: http://hl7.org/fhir/StructureDefinition/heartrate
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-blood-pressure
+      ips: http://hl7.org/fhir/StructureDefinition/bp
 body-temperature-basal:
   version: v1
   label:
@@ -72,7 +110,7 @@ body-temperature-basal:
   type: number
   repeatable: unlimited
   references:
-    snomed: "300076005"
+    snomed: ["300076005"]
   devNotes: >-
     Used for fertility charting (coverline and thermal shift). See
     `body-temperature-basal-disturbance` for flagging a reading as unreliable.
@@ -139,11 +177,24 @@ body-heart-rate:
   type: number
   repeatable: unlimited
   references:
-    snomed: "364075005"
-    loinc: "8867-4"
+    snomed: ["364075005"]
+    loinc: ["8867-4"]
   devNotes: >-
     The pulse taken with a blood pressure reading stays in `body-blood-pressure` (`rate`);
     this item is a heart rate recorded on its own.
+  # The same code as the blood-pressure `split.rate`, which renders the pulse of a reading. On import a
+  # standalone 8867-4 matches this item directly, and a direct match wins over a split match.
+  fhir:
+    resourceType: Observation
+    category: vital-signs
+    code: { system: http://loinc.org, code: 8867-4, display: Heart rate }
+    value:
+      kind: quantity
+      units:
+        frequency/bpm: /min
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-heart-rate
+      ips: http://hl7.org/fhir/StructureDefinition/heartrate
 body-oxygen-saturation:
   version: v1
   label:
@@ -159,7 +210,7 @@ body-oxygen-saturation:
   number:
     display: { multiplier: 100, suffix: { en: "%", fr: "%" } }
   references:
-    snomed: "431314004"
+    snomed: ["431314004"]
     loinc: ["2708-6", "59408-5"]
   devNotes: >-
     Stored as a proportion (0.97 for 97 %). LOINC codes as the FHIR vital-signs profile pairs them:
@@ -177,8 +228,8 @@ body-temperature:
   type: number
   repeatable: unlimited
   references:
-    snomed: "386725007"
-    loinc: "8310-5"
+    snomed: ["386725007"]
+    loinc: ["8310-5"]
   devNotes: >-
     Any measured body temperature except the basal fertility reading, which stays
     `body-temperature-basal`. A grant on `body-temperature` also covers the basal child.
@@ -208,7 +259,7 @@ body-height:
             fr: Pieds
   repeatable: unlimited
   references:
-    snomed: "1153637007"
+    snomed: ["1153637007"]
 
 body-semen-concentration:
   version: v1
@@ -235,7 +286,7 @@ body-semen-concentration:
   # LOINC mapping (commonly cited 32623-1) also pending separate verification.
   referenceRange: null
   references:
-    snomed: "713521005"
+    snomed: ["713521005"]
   devNotes: >-
     Stored on `concentration/megacount-ml` (10⁶/mL).
 body-semen-motility-progressive:
@@ -273,7 +324,7 @@ body-semen-motility-total:
   type: number
   repeatable: any
   references:
-    snomed: "252048002"
+    snomed: ["252048002"]
   referenceRange:
     source: WHO-2021
     lowerLimit: 0.42
@@ -348,7 +399,7 @@ body-semen-tmc:
     units: M#/ejaculate
     population: clinical-consensus
   references:
-    snomed: "167806003"
+    snomed: ["167806003"]
   devNotes: >-
     Clinically derived as concentration × volume × progressive-motility fraction, but stored as
     a measured value on `count/mega` (10⁶ sperm) because labs report it directly. Reference:
@@ -373,7 +424,7 @@ body-semen-morphology-normal:
     units: ratio
     population: recently-fertile-men
   references:
-    snomed: "250500000"
+    snomed: ["250500000"]
   devNotes: >-
     Kruger strict criteria. Stored on `ratio/proportion` as 0..1. Reference: WHO 2021, lower
     limit 0.04.

@@ -16,3 +16,5 @@ children:
     name: Stress severity
   - id: wellbeing-self-rated-health
     name: Self-rated health
+  - id: wellbeing-general-health
+    name: General health

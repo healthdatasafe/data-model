@@ -1,0 +1,49 @@
+# Pack-level FHIR mapping tables (plan 115). Published as `pack.fhirMapping`; read by the
+# build to validate every item's `fhir:` block. See documentation/FHIR-MAPPING.md.
+#
+# This file is the ONE place these tables live: hds-fhir-js and any second implementer read
+# them from the pack. Entries are additive; a published category or system label is never
+# renamed or removed.
+
+# Version of the `fhir:` block format and of this table. A consumer that does not know a
+# formatVersion should not render the blocks; within a version it skips any block whose
+# resourceType, value kind or code source it does not know.
+formatVersion: 1
+
+fhirVersion: 4.0.1
+
+# Rendering flavour → the implementation guide (package#version) its profiles come from.
+flavours:
+  us: hl7.fhir.us.core#6.1.0
+  ips: hl7.fhir.uv.ips#2.0.1
+  ch: ch.fhir.ig.ch-core#6.0.0
+
+# Category keys per resourceType. A block on one of these resourceTypes must carry a
+# `category` from its table; a resourceType absent from this table (Patient) takes no category.
+# The key is the SMART scope category (`patient/Observation.rs?category=<key>`). The scope
+# key in pack.fhirScopes is `ResourceType|category` for a resourceType with a table, and the
+# bare resourceType otherwise (`Patient`, granted for `patient/Patient.rs`).
+categories:
+  Observation:
+    vital-signs: { system: http://terminology.hl7.org/CodeSystem/observation-category, code: vital-signs, display: Vital Signs }
+    social-history: { system: http://terminology.hl7.org/CodeSystem/observation-category, code: social-history, display: Social History }
+    survey: { system: http://terminology.hl7.org/CodeSystem/observation-category, code: survey, display: Survey }
+    laboratory: { system: http://terminology.hl7.org/CodeSystem/observation-category, code: laboratory, display: Laboratory }
+    exam: { system: http://terminology.hl7.org/CodeSystem/observation-category, code: exam, display: Exam }
+    imaging: { system: http://terminology.hl7.org/CodeSystem/observation-category, code: imaging, display: Imaging }
+    procedure: { system: http://terminology.hl7.org/CodeSystem/observation-category, code: procedure, display: Procedure }
+    therapy: { system: http://terminology.hl7.org/CodeSystem/observation-category, code: therapy, display: Therapy }
+    activity: { system: http://terminology.hl7.org/CodeSystem/observation-category, code: activity, display: Activity }
+  Condition:
+    problem-list-item: { system: http://terminology.hl7.org/CodeSystem/condition-category, code: problem-list-item, display: Problem List Item }
+    encounter-diagnosis: { system: http://terminology.hl7.org/CodeSystem/condition-category, code: encounter-diagnosis, display: Encounter Diagnosis }
+    health-concern: { system: http://hl7.org/fhir/us/core/CodeSystem/condition-category, code: health-concern, display: Health Concern }
+
+# Code-system label used in datasets-service content (`codes[].system`) → canonical URI.
+# One label per URI, so an imported coding maps back to exactly one label.
+systems:
+  SNOMED-CT: http://snomed.info/sct
+  ICD-10: http://hl7.org/fhir/sid/icd-10
+  LOINC: http://loinc.org
+  ATC: http://www.whocc.no/atc
+  RxNorm: http://www.nlm.nih.gov/research/umls/rxnorm

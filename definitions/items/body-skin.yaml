@@ -19,7 +19,7 @@ body-skin-acne:
   type: checkbox
   repeatable: P1D
   references:
-    snomed: "11381005"
+    snomed: ["11381005"]
 
 body-skin-dry:
   version: v1
@@ -34,7 +34,7 @@ body-skin-dry:
   type: checkbox
   repeatable: P1D
   references:
-    snomed: "52475004"
+    snomed: ["52475004"]
 
 body-skin-oily:
   version: v1
@@ -49,7 +49,7 @@ body-skin-oily:
   type: checkbox
   repeatable: P1D
   references:
-    snomed: "42273000"
+    snomed: ["42273000"]
 
 body-skin-glowing:
   version: v1
@@ -64,4 +64,4 @@ body-skin-glowing:
   type: checkbox
   repeatable: P1D
   references:
-    snomed: "225544001"
+    snomed: ["225544001"]

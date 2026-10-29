@@ -1,5 +1,105 @@
 # Changelog
 
+## [3.31.0] - 2026-10-29
+
+The FHIR mapping block (plan 115, SMART on FHIR). Fable-reviewed twice before release: the branch at `c1520f4`
+("ship after fixes": lock blind to item-less streams, `reviewed` not bound to a pair, unconstrained category keys),
+then the fixes ("ship as is"). Additive for readers except `references` (always a list, below).
+
+### Fixed
+- A string `select` item whose eventType has no `enum` now fails the build with a clear message instead of crashing
+  on `.find` (the check compared with `null` only and passed the JSON as a second `Error` argument).
+
+### Added: `fhir:` mapping block on items (plan 115, SMART on FHIR)
+
+- New optional item property `fhir` (schema in `src/schemas/items.js`, `defs.json` `fhirBlock`), bidirectional: it
+  says how an item's events render as FHIR R4 and how a FHIR resource imports back. A mapping has `resourceType`
+  (Observation, Condition), `category`, `code` (a static coding with a required `display`, or `{ from: datasource,
+  field }` for codes a datasets-service selection stored in the content), optional `alsoMatch` (codes accepted on
+  import only), optional `value` (`quantity`, `coded` or `components`, the schema discriminating by kind), optional
+  `split` (extra resources from numeric composite fields, inheriting the parent's resourceType and category),
+  optional `ignore` (composite fields not rendered) and `profiles` per flavour (us, ips, ch; an absent flavour renders
+  the base resource). Or `{ companionOf: <item key> }` for a qualifier item that rides under its parent's SMART scope.
+  Documented in `documentation/FHIR-MAPPING.md`, rewritten as an authoring guide (fields, kinds, split and nullable
+  fields, profiles and IG versions, categories, companions, permanence, forward compatibility, import semantics and
+  provenance keys, code verification).
+- New `definitions/fhir/mapping.yaml`, published as **`pack.fhirMapping`**: `formatVersion` 1, `fhirVersion` 4.0.1,
+  the IG of each flavour (US Core 6.1.0, IPS 2.0.1, CH Core 6.0.0), the category table per resourceType (the one place
+  the build reads it) and the datasets-service system label → URI table.
+- New **`pack.fhirScopes`**: the SMART scope grant table (`"ResourceType|category"` → minimal grant roots: the own
+  stream of each mapped item, companions riding under their parent item's stream), computed by the build. Every item
+  counts for the one-pair invariant: an unmapped active item as `(unmapped)`, a deprecated item with its mapping or as
+  unmapped, a companion as its parent's pair. (Maximal homogeneous subtree roots until 2026-10-29, review F5: a
+  stream added next to a mapped item later would have joined grants already issued.)
+- New **`definitions/fhir/scopes.lock.json`** (format 2) and `npm run fhir:lock` (adds, never removes): every stream a
+  published grant reaches, `{ pair, parent, items }`, append-only, plus a hand-written `reviewed` list. The build
+  fails when a locked stream is removed, re-parented or holds another pair in its subtree, when an item on it is
+  removed or moved (deprecate instead), and when a new item, companion or stream (added, or moved there, with or
+  without items) appears on or under it without a `reviewed` entry under that locked stream (`reviewed: { items:
+  { "<key>": { under, why } }, streams: { "<id>": { under, why } } }`, `why` = "YYYY-MM-DD <why>"; an
+  acknowledgement holds under its own locked stream only). Tests fail when the lock is not up to date and when a
+  published grant root is not in the lock under its pair (also checked on `dist/pack.json`). FHIR-MAPPING.md §
+  Permanence describes how to rename a mapped item's key.
+- Build checks (`src/fhir.js`): category per resourceType; the block agrees with its item (`quantity` on numeric
+  `number` items with every eventType mapped, `coded` on `select` only and refused on `multi-select`, every composite
+  field mapped or ignored, components and splits numeric and disjoint, a datasource source only on a datasource field
+  holding `codes`, no `value` on a Condition); codings unique within an item; two eventTypes of one `quantity` block
+  never share a UCUM unit, annotations such as `{beats}` aside; import match keys unique across active items; the
+  one-pair invariant; companions valid; the lock; category keys lowercase letters, digits and dashes, and one coding
+  per category within a resourceType.
+- Blocks on `body-weight` (with `alsoMatch` LOINC 3141-9), `body-blood-pressure`, `lifestyle-tobacco-smoking`,
+  `condition-coded` and the new `wellbeing-general-health`. Rendered output validates against US Core 6.1.0 and IPS
+  2.0.1 and round-trips through import (hds-fhir-js).
+- Fixed: AGENTS.md pointed authors at the never-implemented `hl7fhir:` block (B-2026-10-28-24); DESIGN-NOTES marks it
+  superseded. Removed the unread `definitions/hl7-defaults/category.yaml`.
+- Import-only additions from the plan 115 client import spike: a per-option `alsoMatch` on `coded` values (codings
+  accepted for an option on import, never emitted; unique across the item's options and their `alsoMatch`, never on
+  a Patient element) and `alsoMatchCategories` on a mapping (further categories of the same table a resource may
+  carry and still import). Import matching is category-aware; a datasource source's import key is per category it
+  accepts. `alsoMatch` LOINC 55284-4 on `body-blood-pressure`; a `body-heart-rate` block (LOINC 8867-4, `/min`, US
+  Core heart rate and the FHIR heart-rate profile; new grant root, locked); on `lifestyle-tobacco-smoking`, the US
+  Core answers 449868002, 428041000124106, 428071000124103 and 428061000124105 as `alsoMatch` of `current`, and
+  `alsoMatchCategories: [survey]`; on `condition-coded`, `alsoMatchCategories: [encounter-diagnosis]`.
+- FHIR-MAPPING.md § Import: withdrawn records refused, a panel without a required component refused, codings without
+  a datasource label dropped while one remains, Observation and Condition time choices (a Condition's event time is
+  its onset), units converted only through the item's declared `unitConversions`.
+- **Patient from the profile items** (plan 115 D14): a third block form, `{ resourceType: Patient, element, value? }`
+  (`defs.json` `fhirElement`), for one element of the Patient, which is assembled from the latest event of each
+  contributing item. Elements: `name.given`, `name.family`, `gender` (`coded`, administrative-gender codes with their
+  official displays), `birthDate`, `address.country`. Blocks on `profile-name`, `profile-surname`, `profile-sex`,
+  `profile-date-of-birth` and `profile-addresscountry`; `profile-display-name`, `profile-birthcountry`,
+  `profile-ethnicity`, `profile-avatar` and `profile-reproductive-stage` stay unmapped (reasons in FHIR-MAPPING.md).
+  Build checks: the element's item type and string eventType, no `value` on a text or date element, gender codings
+  exactly the item's options, one active item per element, no companion of an element.
+- **Scope key format:** `ResourceType|category` for a resourceType with a category table, the bare resourceType
+  otherwise. `pack.fhirScopes` gains `Patient` → `profile-address`, `profile-date-of-birth`, `profile-name`,
+  `profile-sex` (locked), so `patient/Patient.rs` no longer maps to an empty grant.
+
+### Changed: `references` codes are always a list (B2)
+- `references.<system>` must be an array of non-empty strings, even for one code; the schema refuses a bare string.
+  Every item was normalised (`snomed`, `loinc`, `icf`, `icd10`). A reader that compared `references.loinc` to a string
+  must read a list.
+
+### Fixed: `symptom-pain-severity` no longer cites LOINC 72514-3 (B1)
+- 72514-3 is a 0 to 10 numeric pain score; the item stores five verbal levels as a ratio. Removed, with a YAML note on
+  how the two relate.
+- Also removed: LOINC 77564-4 (unknown to LOINC 2.83) and SNOMED 103325001 ("Patient need for", a qualifier value).
+  `references` keeps SNOMED 22253000 (Pain) and 225908003 (Pain score) and LOINC 38208-5 (Pain severity - Reported).
+
+### Added: `wellbeing-general-health`
+
+- The 5-level self-rated health question, RAND-36 item 1 wording (public domain): "In general, would you say your
+  health is:" Excellent / Very good / Good / Fair / Poor, on `ratio/proportion` at the canonical hooks, **higher is
+  better** (excellent 1.0 … poor 0.0). New stream `wellbeing-general-health` under `wellbeing`. FHIR: LOINC 61577-3
+  with the LL1012-5 answers; the SNOMED CT findings per answer (135816001, 135815002, 135817005, 135818000; none
+  exists for "very good") as per-option `alsoMatch`, accepted on import.
+
+### Changed: `wellbeing-self-rated-health` references
+
+- The 0..100 slider stays HDS-only, with no FHIR mapping (B-2026-10-28-42). Its `references` are removed: 72006-0 is
+  the VR-36 physical functioning T-score, 32622-6 does not exist in LOINC, 82589-3 is "Highest level of education";
+  no standard code fits the scale. AGENTS.md no longer lists them.
+
 ## [3.30.0] - 2026-10-29
 
 ### Lab units, second slice: SI variations and factors (site-agents#20, #21)

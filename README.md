@@ -80,6 +80,7 @@ In-depth notes on specific subdomains live in `documentation/`:
 - `DOCUMENTS.md` — medical documents: the `documents` root, the `file/xds-v1` eventType and the `type: attachments` item `document` (XDS DocumentEntry / FHIR DocumentReference metadata, site-agents#23).
 - `PROVENANCE.md` — the index of HDS `clientData` keys, and the definitions of `clientData.hdsInstrument` (the instrument a measure was taken with) and `clientData.related.<eventId>` (a link to a source event) and `clientData.sourceKey` (the identity of an imported record), with their FHIR and HealthKit mappings.
 - `PARTIAL-DATES.md` — dates known only to the month or the year, or approximately ("March 1999", "about spring 1998"): `time` at the period start at 12:00 UTC, `clientData.hdsTimePrecision` and its companions, and the FHIR mapping.
+- `FHIR-MAPPING.md`: the per-item `fhir:` block: how an item's events render as FHIR R4 and import back, the SMART scope grant table published as `pack.fhirScopes` and its lock, and how to add a mapping (plan 115, draft).
 - `CUSTOM-FIELDS-AND-SYSTEM.md`, `DESIGN-NOTES.md`, `TAGS.md`
 
 ## Item Definition Format

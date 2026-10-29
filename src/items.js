@@ -7,6 +7,7 @@ const { eventTypesById } = require('./eventTypes');
 const streams = require('./streams');
 const { checkItem } = require('./schemas/items');
 const { datasourcesById } = require('./datasources');
+const fhir = require('./fhir');
 
 const itemsById = {};
 const itemsByStreamIdTypeId = {};
@@ -17,7 +18,9 @@ module.exports = {
   findItemForEvent,
   toBePublished,
   checkItemVsEvenType,
-  checkUnitConversions
+  checkUnitConversions,
+  checkFhirMapping: fhir.checkFhirMapping,
+  fhirScopes: null
 };
 
 /**
@@ -56,6 +59,9 @@ for (const file of fs.readdirSync(streamsFilePath)) {
     }
   }
 }
+// FHIR checks that need every item: companions, the one-pair-per-granted-subtree invariant, the scope lock and the
+// import match keys. The result is the published SMART scope grant table (pack.fhirScopes).
+module.exports.fhirScopes = fhir.checkFhirScopes(itemsById);
 
 /**
  * label and description must be localized
@@ -162,6 +168,7 @@ function addItem (key, itemSrc) {
   }
 
   if (item.unitConversions) checkUnitConversions(key, item.unitConversions, itemEventTypes);
+  if (item.fhir) fhir.checkFhirMapping(key, item, itemEventTypes);
 
   // Derived, published field: the denominator for a `ratio/generic` select item.
   // That legacy Pryv type stores an object `{ value, relativeTo }`, so an item's
@@ -215,7 +222,7 @@ function toBePublished () {
     type: 'json',
     content: itemsById,
     includeInPack: 'items'
-  }];
+  }, ...fhir.toBePublished(module.exports.fhirScopes)];
 }
 
 function checkItemVsEvenType (key, item, eventType) {
@@ -268,7 +275,7 @@ function checkItemVsEvenType (key, item, eventType) {
   }
   if (eventType.type === 'string') {
     if (item.type === 'select') { // check that all options value are string
-      if (eventType.enum === null) throw new Error(`for item "${key}", as a "select" of type "string", matching eventType must have an "enum" property`, JSON.stringify({ item, eventType }));
+      if (!Array.isArray(eventType.enum)) throw new Error(`for item "${key}", as a "select" of type "string", matching eventType must have an "enum" property: ` + JSON.stringify({ item, eventType }));
       for (const option of item.options) {
         if (typeof option.value !== 'string') throw new Error(`as item "${key}" is of type "select" and matching event type is "string" all options value must be string check the following option: ` + JSON.stringify(option));
         const found = eventType.enum.find((v) => (v === option.value));

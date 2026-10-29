@@ -366,7 +366,7 @@ activity-steps:
     maxSeconds: 90000 # one day; 25 h covers the DST change. UI hint only, not validated.
   repeatable: P1D
   references:
-    loinc: "41950-7"
+    loinc: ["41950-7"]
   devNotes: >-
     HealthKit stepCount, Google Fit step_count.delta, summed over the day.
 activity-distance-walking-running:
@@ -386,7 +386,7 @@ activity-distance-walking-running:
     maxSeconds: 90000 # one day; 25 h covers the DST change. UI hint only, not validated.
   repeatable: P1D
   references:
-    loinc: "41953-1"
+    loinc: ["41953-1"]
   devNotes: >-
     HealthKit distanceWalkingRunning, summed over the day. Walking and running together because
     that is what phones and watches export; a source that counts walking only writes it here too.

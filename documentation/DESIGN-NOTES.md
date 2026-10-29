@@ -84,6 +84,9 @@ When an item uses `ratio/proportion` (or any `ratio/*` eventType) and defines di
 
 ## Example: Body Weight with FHIR Mapping
 
+> **Superseded.** The `hl7fhir:` keys below are an early sketch that the build never read and no item uses. FHIR
+> rendering is now the item's `fhir:` block, validated at build time: see [FHIR-MAPPING.md](FHIR-MAPPING.md).
+
 ```yaml
 body-weight:
   label:
