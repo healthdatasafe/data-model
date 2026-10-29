@@ -1,6 +1,6 @@
 {
-  "version": "3.29.0",
-  "publicationDate": "2026-10-28T15:18:29.504Z",
+  "version": "3.30.0",
+  "publicationDate": "2026-10-29T10:45:41.550Z",
   "streams": [
     {
       "id": "activity",
@@ -3287,16 +3287,62 @@
         "fr": "Indique la quantité d'insuline que votre corps produit lui-même."
       },
       "streamId": "body-blood-serum-c-peptide",
-      "eventType": "concentration/ug-l",
       "type": "number",
       "repeatable": "any",
-      "number": {
-        "display": {
-          "suffix": {
-            "en": "ng/mL",
-            "fr": "ng/mL"
-          }
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/ug-l",
+              "label": {
+                "en": "ng/mL",
+                "fr": "ng/mL"
+              }
+            },
+            {
+              "value": "concentration/nmol-l",
+              "label": {
+                "en": "nmol/L",
+                "fr": "nmol/L"
+              }
+            },
+            {
+              "value": "concentration/pmol-l",
+              "label": {
+                "en": "pmol/L",
+                "fr": "pmol/L"
+              }
+            }
+          ]
         }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/ug-l",
+            "to": "concentration/nmol-l",
+            "factor": 0.3311,
+            "molarMass": 3020.3,
+            "source": "Molar mass of human C-peptide (proinsulin 57-87, UniProt P01308), C129H211N35O48, 3020.3 g/mol, computed from its sequence with IUPAC standard atomic weights"
+          },
+          {
+            "from": "concentration/ug-l",
+            "to": "concentration/pmol-l",
+            "factor": 331.1,
+            "molarMass": 3020.3,
+            "source": "Molar mass of human C-peptide (proinsulin 57-87, UniProt P01308), C129H211N35O48, 3020.3 g/mol, computed from its sequence with IUPAC standard atomic weights"
+          },
+          {
+            "from": "concentration/nmol-l",
+            "to": "concentration/pmol-l",
+            "factor": 1000,
+            "source": "Exact by the definition of the units: 1 nmol = 1000 pmol (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
       },
       "references": {
         "snomed": [
@@ -3480,9 +3526,43 @@
         "fr": "Le fer circulant dans votre sang."
       },
       "streamId": "body-blood-serum-iron",
-      "eventType": "concentration/mcg-dl",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mcg-dl",
+              "label": {
+                "en": "μg/dL",
+                "fr": "μg/dL"
+              }
+            },
+            {
+              "value": "concentration/umol-l",
+              "label": {
+                "en": "μmol/L",
+                "fr": "μmol/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mcg-dl",
+            "to": "concentration/umol-l",
+            "factor": 0.1791,
+            "molarMass": 55.845,
+            "source": "Molar mass of iron, Fe, 55.845 g/mol (PubChem CID 23925; IUPAC standard atomic weights)"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "250216004"
@@ -3500,9 +3580,43 @@
         "fr": "La quantité de fer que votre sang pourrait transporter."
       },
       "streamId": "body-blood-serum-tibc",
-      "eventType": "concentration/mcg-dl",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mcg-dl",
+              "label": {
+                "en": "μg/dL",
+                "fr": "μg/dL"
+              }
+            },
+            {
+              "value": "concentration/umol-l",
+              "label": {
+                "en": "μmol/L",
+                "fr": "μmol/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mcg-dl",
+            "to": "concentration/umol-l",
+            "factor": 0.1791,
+            "molarMass": 55.845,
+            "source": "Molar mass of iron, Fe, 55.845 g/mol (PubChem CID 23925; IUPAC standard atomic weights): TIBC is expressed as the iron bound"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "359979000"
@@ -3549,9 +3663,42 @@
         "fr": "La protéine des globules rouges qui transporte l'oxygène."
       },
       "streamId": "body-blood-cbc-hemoglobin",
-      "eventType": "concentration/g-dl",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/g-dl",
+              "label": {
+                "en": "g/dL",
+                "fr": "g/dL"
+              }
+            },
+            {
+              "value": "concentration/g-l",
+              "label": {
+                "en": "g/L",
+                "fr": "g/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/g-dl",
+            "to": "concentration/g-l",
+            "factor": 10,
+            "source": "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "441689006"
@@ -3972,9 +4119,43 @@
         "fr": "Un pigment jaune que votre foie élimine de votre sang."
       },
       "streamId": "body-blood-serum-bilirubin-total",
-      "eventType": "concentration/mg-dl",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              }
+            },
+            {
+              "value": "concentration/umol-l",
+              "label": {
+                "en": "μmol/L",
+                "fr": "μmol/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-dl",
+            "to": "concentration/umol-l",
+            "factor": 17.1,
+            "molarMass": 584.67,
+            "source": "Molar mass of bilirubin, C33H36N4O6, 584.67 g/mol (PubChem CID 5280352; IUPAC standard atomic weights)"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "359986008"
@@ -4032,9 +4213,43 @@
         "fr": "Un déchet que vos reins éliminent."
       },
       "streamId": "body-blood-serum-bun",
-      "eventType": "concentration/mg-dl",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              }
+            },
+            {
+              "value": "concentration/mmol-l",
+              "label": {
+                "en": "Urea mmol/L",
+                "fr": "Urée mmol/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-dl",
+            "to": "concentration/mmol-l",
+            "factor": 0.357,
+            "molarMass": 28.014,
+            "source": "Urea, CH4N2O (PubChem CID 1176), carries two nitrogen atoms: 1 mmol of urea holds 2 × 14.007 = 28.014 mg of nitrogen (IUPAC standard atomic weights)"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "105011006"
@@ -4260,9 +4475,42 @@
         "fr": "L'ensemble des protéines de votre sang."
       },
       "streamId": "body-blood-serum-protein-total",
-      "eventType": "concentration/g-dl",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/g-dl",
+              "label": {
+                "en": "g/dL",
+                "fr": "g/dL"
+              }
+            },
+            {
+              "value": "concentration/g-l",
+              "label": {
+                "en": "g/L",
+                "fr": "g/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/g-dl",
+            "to": "concentration/g-l",
+            "factor": 10,
+            "source": "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "270992008"
@@ -4280,9 +4528,42 @@
         "fr": "La principale protéine de votre sang."
       },
       "streamId": "body-blood-serum-albumin",
-      "eventType": "concentration/g-dl",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/g-dl",
+              "label": {
+                "en": "g/dL",
+                "fr": "g/dL"
+              }
+            },
+            {
+              "value": "concentration/g-l",
+              "label": {
+                "en": "g/L",
+                "fr": "g/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/g-dl",
+            "to": "concentration/g-l",
+            "factor": 10,
+            "source": "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "104485008"
@@ -4300,9 +4581,42 @@
         "fr": "Un groupe de protéines sanguines, dont vos anticorps."
       },
       "streamId": "body-blood-serum-globulin",
-      "eventType": "concentration/g-dl",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/g-dl",
+              "label": {
+                "en": "g/dL",
+                "fr": "g/dL"
+              }
+            },
+            {
+              "value": "concentration/g-l",
+              "label": {
+                "en": "g/L",
+                "fr": "g/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/g-dl",
+            "to": "concentration/g-l",
+            "factor": 10,
+            "source": "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "270994009"
@@ -4320,9 +4634,43 @@
         "fr": "Un minéral nécessaire à votre système immunitaire et à la cicatrisation."
       },
       "streamId": "body-blood-serum-zinc",
-      "eventType": "concentration/mcg-dl",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mcg-dl",
+              "label": {
+                "en": "μg/dL",
+                "fr": "μg/dL"
+              }
+            },
+            {
+              "value": "concentration/umol-l",
+              "label": {
+                "en": "μmol/L",
+                "fr": "μmol/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mcg-dl",
+            "to": "concentration/umol-l",
+            "factor": 0.153,
+            "molarMass": 65.38,
+            "source": "Molar mass of zinc, Zn, 65.38 g/mol (PubChem CID 23994; IUPAC standard atomic weights)"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "273975003"
@@ -4340,9 +4688,43 @@
         "fr": "Un minéral dont votre corps a besoin en petite quantité."
       },
       "streamId": "body-blood-serum-copper",
-      "eventType": "concentration/mcg-dl",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mcg-dl",
+              "label": {
+                "en": "μg/dL",
+                "fr": "μg/dL"
+              }
+            },
+            {
+              "value": "concentration/umol-l",
+              "label": {
+                "en": "μmol/L",
+                "fr": "μmol/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mcg-dl",
+            "to": "concentration/umol-l",
+            "factor": 0.1574,
+            "molarMass": 63.546,
+            "source": "Molar mass of copper, Cu, 63.546 g/mol (PubChem CID 23978; IUPAC standard atomic weights)"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "85554007"
@@ -4360,9 +4742,61 @@
         "fr": "La protéine qui transporte le cuivre dans votre sang."
       },
       "streamId": "body-blood-serum-ceruloplasmin",
-      "eventType": "concentration/mg-dl",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              }
+            },
+            {
+              "value": "concentration/mg-l",
+              "label": {
+                "en": "mg/L",
+                "fr": "mg/L"
+              }
+            },
+            {
+              "value": "concentration/g-l",
+              "label": {
+                "en": "g/L",
+                "fr": "g/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-dl",
+            "to": "concentration/mg-l",
+            "factor": 10,
+            "source": "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
+          },
+          {
+            "from": "concentration/mg-dl",
+            "to": "concentration/g-l",
+            "factor": 0.01,
+            "source": "Exact by the definition of the units: 1 mg/dL = 10 mg/L = 0.01 g/L (SI Brochure, 9th edition, BIPM 2019)"
+          },
+          {
+            "from": "concentration/mg-l",
+            "to": "concentration/g-l",
+            "factor": 0.001,
+            "source": "Exact by the definition of the units: 1 mg = 0.001 g (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "270975004"
@@ -4380,9 +4814,43 @@
         "fr": "Le magnésium circulant dans votre sang."
       },
       "streamId": "body-blood-serum-magnesium",
-      "eventType": "concentration/mg-dl",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              }
+            },
+            {
+              "value": "concentration/mmol-l",
+              "label": {
+                "en": "mmol/L",
+                "fr": "mmol/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-dl",
+            "to": "concentration/mmol-l",
+            "factor": 0.4114,
+            "molarMass": 24.305,
+            "source": "Molar mass of magnesium, Mg, 24.305 g/mol (PubChem CID 5462224; IUPAC standard atomic weights)"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "63571001"
@@ -4435,9 +4903,43 @@
         "fr": "La vitamine A dans votre sang."
       },
       "streamId": "body-blood-serum-vitamin-a",
-      "eventType": "concentration/mcg-dl",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mcg-dl",
+              "label": {
+                "en": "μg/dL",
+                "fr": "μg/dL"
+              }
+            },
+            {
+              "value": "concentration/umol-l",
+              "label": {
+                "en": "μmol/L",
+                "fr": "μmol/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mcg-dl",
+            "to": "concentration/umol-l",
+            "factor": 0.03491,
+            "molarMass": 286.46,
+            "source": "Molar mass of retinol (serum vitamin A is measured as retinol), C20H30O, 286.46 g/mol (PubChem CID 445354; IUPAC standard atomic weights)"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "271243004"
@@ -4947,9 +5449,42 @@
         "fr": "Un marqueur sensible de l'inflammation dans votre corps."
       },
       "streamId": "body-blood-serum-crp-hs",
-      "eventType": "concentration/mg-l",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-l",
+              "label": {
+                "en": "mg/L",
+                "fr": "mg/L"
+              }
+            },
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-l",
+            "to": "concentration/mg-dl",
+            "factor": 0.1,
+            "source": "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "711357009"
@@ -5387,6 +5922,13 @@
                 "en": "nmol/L",
                 "fr": "nmol/L"
               }
+            },
+            {
+              "value": "concentration/ug-l",
+              "label": {
+                "en": "ng/mL",
+                "fr": "ng/mL"
+              }
             }
           ]
         }
@@ -5399,6 +5941,19 @@
             "factor": 0.03467,
             "molarMass": 288.43,
             "source": "Molar mass of testosterone, C19H28O2, 288.43 g/mol (PubChem CID 6013; IUPAC standard atomic weights)"
+          },
+          {
+            "from": "concentration/ug-l",
+            "to": "concentration/nmol-l",
+            "factor": 3.467,
+            "molarMass": 288.43,
+            "source": "Molar mass of testosterone, C19H28O2, 288.43 g/mol (PubChem CID 6013; IUPAC standard atomic weights)"
+          },
+          {
+            "from": "concentration/ng-dl",
+            "to": "concentration/ug-l",
+            "factor": 0.01,
+            "source": "Exact by the definition of the units: 1 ng/dL = 10 ng/L = 0.01 µg/L (SI Brochure, 9th edition, BIPM 2019)"
           }
         ]
       },
@@ -5781,9 +6336,43 @@
         "fr": "Une hormone qui régule le taux de calcium dans votre sang."
       },
       "streamId": "body-blood-serum-pth",
-      "eventType": "concentration/pg-ml",
       "type": "number",
       "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/pg-ml",
+              "label": {
+                "en": "pg/mL",
+                "fr": "pg/mL"
+              }
+            },
+            {
+              "value": "concentration/pmol-l",
+              "label": {
+                "en": "pmol/L",
+                "fr": "pmol/L"
+              }
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/pg-ml",
+            "to": "concentration/pmol-l",
+            "factor": 0.1061,
+            "molarMass": 9424.8,
+            "source": "Molar mass of intact human PTH (1-84; UniProt P01270, chain 32-115), C408H674N126O126S2, 9424.8 g/mol, computed from its sequence with IUPAC standard atomic weights"
+          }
+        ]
+      },
       "references": {
         "snomed": [
           "271541003"
@@ -20156,11 +20745,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-10-28T09:29:14.399Z"
+      "updatedAt": "2026-10-28T11:04:17.041Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-10-27T11:01:34.694Z"
+      "updatedAt": "2026-10-27T12:04:35.731Z"
     }
   },
   "settings": {
