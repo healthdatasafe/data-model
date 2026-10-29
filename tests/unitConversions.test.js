@@ -48,6 +48,35 @@ const SLICE = {
   'body-blood-serum-prolactin': ['ug-l', 'uiu-ml']
 };
 
+// The second slice (3.30.0, site-agents#20 remainder and #21, plan 114), same rule: the unit the item had
+// stays first.
+const SLICE_2 = {
+  'body-blood-serum-magnesium': ['mg-dl', 'mmol-l'],
+  'body-blood-serum-bilirubin-total': ['mg-dl', 'umol-l'],
+  'body-blood-serum-iron': ['mcg-dl', 'umol-l'],
+  'body-blood-serum-tibc': ['mcg-dl', 'umol-l'],
+  'body-blood-serum-zinc': ['mcg-dl', 'umol-l'],
+  'body-blood-serum-copper': ['mcg-dl', 'umol-l'],
+  'body-blood-serum-vitamin-a': ['mcg-dl', 'umol-l'],
+  'body-blood-serum-c-peptide': ['ug-l', 'nmol-l'],
+  'body-blood-cbc-hemoglobin': ['g-dl', 'g-l'],
+  'body-blood-serum-albumin': ['g-dl', 'g-l'],
+  'body-blood-serum-protein-total': ['g-dl', 'g-l'],
+  'body-blood-serum-globulin': ['g-dl', 'g-l'],
+  'body-blood-serum-crp-hs': ['mg-l', 'mg-dl'],
+  'body-blood-serum-ceruloplasmin': ['mg-dl', 'mg-l'],
+  'body-blood-serum-bun': ['mg-dl', 'mmol-l'],
+  'body-blood-serum-pth': ['pg-ml', 'pmol-l']
+};
+
+// Units appended after the first two (3.30.0): total testosterone printed in ng/mL (µg/L), C-peptide in pmol/L
+// (UK), ceruloplasmin in g/L (Europe).
+const APPENDED = {
+  'body-blood-serum-testosterone-total': ['ug-l'],
+  'body-blood-serum-c-peptide': ['pmol-l'],
+  'body-blood-serum-ceruloplasmin': ['g-l']
+};
+
 // Pairs that must never carry a factor (site-agents#21): assay- or calibrator-dependent.
 const EXCLUDED = {
   'body-blood-serum-insulin-fasting': [C('uiu-ml'), C('pmol-l')],
@@ -118,11 +147,25 @@ describe('[UCNV] lab units: SI variations and conversion factors (site-agents#20
 
   describe('[UCNV-VAR] variations', () => {
     it('[UCNV-VAR-1] each slice item offers [its previous unit, the SI unit], in that order', () => {
-      for (const [key, [was, si]] of Object.entries(SLICE)) {
+      for (const [key, [was, si]] of Object.entries({ ...SLICE, ...SLICE_2 })) {
         const item = itemsById[key];
         assert.ok(item, key);
         assert.strictEqual(item.eventType, undefined, `${key} declares variations, not eventType`);
-        assert.deepStrictEqual(eventTypesOf(item), [C(was), C(si)], key);
+        assert.deepStrictEqual(eventTypesOf(item), [C(was), C(si), ...(APPENDED[key] || []).map(C)], key);
+      }
+    });
+
+    it('[UCNV-VAR-4] every slice item publishes a factor or a not-convertible mark for each pair (AMH: no factor yet)', () => {
+      const pending = ['body-blood-serum-amh']; // BLOOD-CHEMISTRY.md § Sources: no citable primary source yet
+      for (const [key, item] of Object.keys({ ...SLICE, ...SLICE_2 }).filter((k) => !pending.includes(k)).map((k) => [k, itemsById[k]])) {
+        const types = eventTypesOf(item);
+        for (let i = 0; i < types.length; i++) {
+          for (let j = i + 1; j < types.length; j++) {
+            const marked = (item.unitConversions?.notConvertible || [])
+              .some((n) => (n.from === types[i] && n.to === types[j]) || (n.from === types[j] && n.to === types[i]));
+            assert.ok(factorFor(item, types[i], types[j]) != null || marked, `${key}: ${types[i]} ↔ ${types[j]}`);
+          }
+        }
       }
     });
 
@@ -237,6 +280,74 @@ describe('[UCNV] lab units: SI variations and conversion factors (site-agents#20
       assert.strictEqual(factorFor(glucose, C('mg-dl'), C('mmol-l')), 0.05551);
       assert.ok(Math.abs(100 * factorFor(glucose, C('mg-dl'), C('mmol-l')) - 5.551) < 1e-9);
       assert.ok(Math.abs(5.5 * factorFor(glucose, C('mmol-l'), C('mg-dl')) / 99.08 - 1) < 0.001);
+    });
+
+    it('[UCNV-FAC-8] a factor between two units of one kind is the exact ratio of their scales', () => {
+      let seen = 0;
+      for (const [key, item] of withConversions()) {
+        for (const f of item.unitConversions.factors || []) {
+          const [fromKind, fromScale] = PER_LITRE[f.from];
+          const [toKind, toScale] = PER_LITRE[f.to];
+          if (fromKind !== toKind) continue;
+          seen++;
+          assert.strictEqual(f.molarMass, undefined, `${key}: no molar mass between two ${fromKind} units`);
+          assert.ok(Math.abs(f.factor / (fromScale / toScale) - 1) < 1e-12, `${key}: ${f.from} → ${f.to} is ${fromScale / toScale}, not ${f.factor}`);
+        }
+      }
+      assert.ok(seen >= 7, 'hemoglobin, albumin, total protein, globulin, hs-CRP, ceruloplasmin, testosterone');
+    });
+
+    it('[UCNV-FAC-9] a three-unit item\'s factors agree with each other (a → c = a → b → c)', () => {
+      for (const key of Object.keys(APPENDED)) {
+        const item = itemsById[key];
+        const [a, b, c] = eventTypesOf(item);
+        const direct = factorFor(item, a, c);
+        const via = factorFor(item, a, b) * factorFor(item, b, c);
+        assert.ok(Math.abs(via / direct - 1) < 1e-3, `${key}: ${direct} vs ${via}`);
+      }
+      const t = itemsById['body-blood-serum-testosterone-total'];
+      assert.ok(Math.abs(5.0 * factorFor(t, C('ug-l'), C('nmol-l')) / 17.3 - 1) < 0.005, '5 ng/mL ≈ 17.3 nmol/L');
+      assert.ok(Math.abs(2.0 * factorFor(itemsById['body-blood-serum-c-peptide'], C('ug-l'), C('pmol-l')) / 662 - 1) < 0.005, '2 ng/mL ≈ 662 pmol/L');
+      assert.ok(Math.abs(30 * factorFor(itemsById['body-blood-serum-ceruloplasmin'], C('mg-dl'), C('g-l')) - 0.3) < 1e-12, '30 mg/dL = 0.30 g/L');
+    });
+
+    it('[UCNV-FAC-10] the second slice matches the factors a second implementer uses (site-agents#21), to 0.2 %', () => {
+      // [item, from, to, the implementer's factor from `to` back to `from`]
+      const theirs = [
+        ['body-blood-serum-bun', 'mg-dl', 'mmol-l', 2.8],
+        ['body-blood-serum-bilirubin-total', 'mg-dl', 'umol-l', 1 / 17.104],
+        ['body-blood-serum-magnesium', 'mg-dl', 'mmol-l', 2.431],
+        ['body-blood-serum-iron', 'mcg-dl', 'umol-l', 5.585],
+        ['body-blood-serum-tibc', 'mcg-dl', 'umol-l', 5.585],
+        ['body-blood-serum-pth', 'pg-ml', 'pmol-l', 9.43],
+        ['body-blood-serum-zinc', 'mcg-dl', 'umol-l', 6.54]
+      ];
+      for (const [key, from, to, back] of theirs) {
+        const got = factorFor(itemsById[key], C(to), C(from));
+        assert.ok(Math.abs(got / back - 1) < 0.002, `${key}: ${got} vs ${back}`);
+      }
+    });
+
+    it('[UCNV-FAC-11] second-slice clinical anchors', () => {
+      const anchors = [
+        ['body-blood-serum-bun', 14, 5.0],
+        ['body-blood-serum-bilirubin-total', 1.0, 17.1],
+        ['body-blood-serum-magnesium', 2.0, 0.823],
+        ['body-blood-serum-iron', 100, 17.9],
+        ['body-blood-serum-zinc', 100, 15.3],
+        ['body-blood-serum-copper', 100, 15.7],
+        ['body-blood-serum-vitamin-a', 50, 1.75],
+        ['body-blood-serum-c-peptide', 2.0, 0.662],
+        ['body-blood-serum-pth', 50, 5.3],
+        ['body-blood-cbc-hemoglobin', 13.5, 135],
+        ['body-blood-serum-crp-hs', 3, 0.3],
+        ['body-blood-serum-ceruloplasmin', 30, 300]
+      ];
+      for (const [key, conventional, si] of anchors) {
+        const [was, to] = SLICE_2[key];
+        const got = conventional * factorFor(itemsById[key], C(was), C(to));
+        assert.ok(Math.abs(got / si - 1) < 0.005, `${key}: ${conventional} → ${got}, expected about ${si}`);
+      }
     });
 
     describe('[UCNV-REJ] the loader refuses', () => {

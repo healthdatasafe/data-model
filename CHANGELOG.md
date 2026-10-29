@@ -1,5 +1,35 @@
 # Changelog
 
+## [3.30.0] - 2026-10-29
+
+### Lab units, second slice: SI variations and factors (site-agents#20, #21)
+
+The rest of what a second implementer asked for on #20 and #21, same rule as 3.21.0: the unit the item had stays
+option 1 (minor), the writer stores the printed unit, factors are read-side only.
+
+- **Two units, with a factor:** `body-blood-serum-magnesium` (mg/dL, mmol/L), `-bilirubin-total` (mg/dL, μmol/L),
+  `-iron` and `-tibc` (μg/dL, μmol/L, as iron), `-zinc`, `-copper`, `-vitamin-a` (μg/dL, μmol/L, as retinol),
+  `-c-peptide` (ng/mL, nmol/L), `-pth` (pg/mL, pmol/L), `body-blood-cbc-hemoglobin`, `-albumin`, `-protein-total`,
+  `-globulin` (g/dL, g/L), `-crp-hs` (mg/L, mg/dL), `-ceruloplasmin` (mg/dL, mg/L).
+- **Urea on `body-blood-serum-bun`** (plan 114 Q7): option "Urea mmol/L" (`concentration/mmol-l`), factor from the two
+  nitrogen atoms of urea. Urea printed in mg/dL is not BUN and has no option (it would share `concentration/mg-dl`):
+  `lab-result/coded-v1` under LOINC `3091-6` (BLOOD-CHEMISTRY.md § Units).
+- **Third options**, appended after the two (all three pairs published, `[UCNV-FAC-9]`): total testosterone
+  `concentration/ug-l` labelled ng/mL; C-peptide `concentration/pmol-l` (as UK labs print it); ceruloplasmin
+  `concentration/g-l` (as European labs print it).
+- `body-blood-serum-c-peptide` drops its item-level `number.display.suffix` (ng/mL is now its first option's label;
+  hds-lib renders the same text).
+- Sources: molar masses from PubChem formulas with IUPAC atomic weights; PTH 1-84 and C-peptide computed from their
+  UniProt sequences (P01270, P01308); same-kind pairs (g/dL ↔ g/L) exact. All agree, to 0.2 %, with the factors the
+  implementer used. Tests `[UCNV-VAR-4]`, `[UCNV-FAC-8..11]`.
+
+### Documentation
+
+- `BLOOD-CHEMISTRY.md`: `analyte.codes[]` outside LOINC uses the lab's or the writer's own code system (a URL it
+  controls, else a fixed `urn:uuid:`); urea vs urea nitrogen; ng/L ≡ pg/mL.
+- `CONDITION.md` § `codes[].hdsId`: how a writer that codes without datasets-service builds the code entry
+  (`S:SNOMED-CT/k:<sourceKey>/C:<code>`, seed key or `IHTSDO`, never the writer's name).
+
 ## [3.29.0] - 2026-10-28
 
 ### Added: the `document` item

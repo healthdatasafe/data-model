@@ -57,3 +57,29 @@ of the four `*-coded` items and is why they are `type: datasource-search` rather
 
 Verify any SNOMED CT concept seeded into datasets-service against `reference/snomed-db` before it ships —
 several plausible-looking concepts in adjacent domains have turned out inactive.
+
+### `codes[].hdsId` when a writer codes without datasets-service
+
+An importer that codes a diagnosis itself (a curated table, not a datasets-service search) still writes the `hdsId`
+datasets-service returns, so its events group with entered ones. Build it as datasets-service's `buildHDSId` does:
+`S:<system>/k:<sourceKey>/C:<code>`, with `system` `SNOMED-CT` and the code the SNOMED CT concept id. The `sourceKey`
+is the seed that holds the concept: `SNOMED-CT-HDS` for the condition and finding seeds, `SNOMED-CT-STORMM` for the
+treatment and procedure seeds. Never the writer's own name: `sourceKey` names the dataset, not who wrote the event.
+The whole code entry is the one datasets-service returns:
+
+```json
+{ "code": "129103003", "system": "SNOMED-CT", "source": { "key": "SNOMED-CT-HDS" },
+  "hdsId": "S:SNOMED-CT/k:SNOMED-CT-HDS/C:129103003" }
+```
+
+(endometriosis, in the condition seed). `system` is the short name, as datasets-service writes it in `condition/`,
+`finding/`, `treatment/`, `procedure/` and `medication/coded-v1`, not the FHIR URI (`lab-result/coded-v1` is
+different: URI systems, BLOOD-CHEMISTRY.md). The same rule applies to `treatment/coded-v1` and `procedure/coded-v1`
+(`TREATMENT-PROCEDURE.md`).
+
+**A concept in no seed.** datasets-service returns conditions, findings, treatments and procedures from the seeds only,
+so no `hdsId` exists for such a concept. Prefer adding it to the seed first (verified in `reference/snomed-db`). Where a
+writer cannot wait, the fallback is `k:IHTSDO` with `source.key` `IHTSDO`, the International Edition key datasets-service
+uses for drugs. It is a known split: once the concept joins a seed, newly entered events carry the seed's key and the
+earlier ones keep `IHTSDO`, so a reader that groups by `hdsId` sees two entries. Group SNOMED CT codes by `system` +
+`code` when that matters.
