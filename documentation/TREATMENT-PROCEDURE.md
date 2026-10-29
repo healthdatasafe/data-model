@@ -61,7 +61,7 @@ treatment-coded:
   streamId: treatment
   eventType: treatment/coded-v1
   payload:
-    regimen: { label, codes: [...] } # codes from datasets-service
+    regimen: { label, codes: [...] } # codes from datasets-service (a writer coding without it: CONDITION.md § codes[].hdsId)
     count, notes                     # same as basic
 
 procedure-basic:
