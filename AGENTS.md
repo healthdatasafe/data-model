@@ -145,7 +145,7 @@ The name is overloaded, and both meanings appear on items (plan 100, finding F2)
 
 | where | type | meaning |
 |---|---|---|
-| **`ratio/generic` event content** | **number** | the ratio **denominator**, as described above |
+| **`ratio/generic` event content** | **number** | the ratio **denominator**, as described above (derived on a select, authored on a number item) |
 | **an item's `reminder.relativeTo`** | **string** | the **item key** a reminder is anchored to, e.g. `relativeTo: fertility-cycles-start` (`src/schemas/items.js`; used in `definitions/items/fertility.yaml`) |
 
 They share no semantics whatsoever. This is not a defect on its own — the two live at different levels
@@ -159,8 +159,22 @@ stays, and this table is the mitigation.
 
 **Loader guarantees** (`src/items.js`, tests `[RGEN]`): a `ratio/generic` select must declare at least
 one option, all option values must be numbers, none may be negative, and the largest must be `> 0` (a
-zero denominator makes every stored ratio undefined). `ratioRelativeTo` is **derived, never authored**,
-so the option list stays the single source of truth and the two cannot disagree.
+zero denominator makes every stored ratio undefined). On a select `ratioRelativeTo` is **derived, never
+authored**, so the option list stays the single source of truth and the two cannot disagree.
+
+### A `number` item on `ratio/generic` authors its denominator (3.33.0)
+
+A ratio with a fixed denominator and no scale (INR: `body-blood-coagulation-inr`, `ratioRelativeTo: 1`) is
+a `type: number` item on `ratio/generic`. There are no options to derive from, so the item **authors**
+`ratioRelativeTo`, the same published field: the typed number is the numerator and the content is
+`{ value: 2.5, relativeTo: 1 }`, never a bare number. Readers take `content.value` (hds-lib `labNumberOf`,
+`eventToShortText`, `labValueToFhir` from 2.30.0; hds-forms-js 0.25.0 writes and prefills it).
+
+Loader rules (`checkRatioRelativeTo`, `[RGEN-REJ-6]`, `[RGEN-NUM-*]`): `ratioRelativeTo` is authored on
+such an item only, refused on any other (a select, a number on another eventType, a text item); it must be
+a finite number `> 0`; such an item declares `eventType`, never `variations` (a variation item has no
+`eventType`, so the plain `number` branch refuses the object eventType). A censored value keeps
+`clientData.hdsComparator` as on any lab item.
 
 **One limit the max rule implies:** the scale's top anchor must itself be a selectable option. A
 0..10 scale that offered only `0, 2, 4, 6, 8` would derive a denominator of `8`, and every stored ratio

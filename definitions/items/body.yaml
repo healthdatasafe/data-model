@@ -1573,6 +1573,27 @@ body-blood-coagulation-fibrinogen:
     snomed: ["250346004"]
     loinc: ["3255-7"]
 
+body-blood-coagulation-inr:
+  version: v1
+  label: { en: INR, fr: INR }
+  description:
+    en: How long your blood takes to clot compared with a standard, as a ratio (about 1 without blood thinners).
+    fr: Le temps de coagulation de votre sang comparé à une référence, sous forme de rapport (environ 1 sans anticoagulant).
+  streamId: body-blood-coagulation-inr
+  eventType: ratio/generic
+  type: number
+  ratioRelativeTo: 1
+  repeatable: any
+  references:
+    snomed: ["440685005"]
+    loinc: ["6301-6"]
+  devNotes: >-
+    International normalized ratio. `ratio/generic` with an authored `ratioRelativeTo: 1` (plan 114 Q8): the
+    content is `{ value: 2.5, relativeTo: 1 }`, never a bare number; a censored INR (`> 8`) keeps
+    `clientData.hdsComparator`. 6301-6 is "by Coagulation assay" and LOINC has no methodless INR code. A home or
+    point-of-care INR on capillary blood (34714-6, System Blood) is another specimen: `lab-result/coded-v1`.
+    Not convertible to the prothrombin time or Quick %.
+
 
 # ── Liver ────────────────────────────────────────────────────────────────────
 
@@ -2055,12 +2076,21 @@ body-blood-serum-haptoglobin:
       options:
         - { value: concentration/mg-dl, label: { en: "mg/dL", fr: "mg/dL" }, loinc: "4542-7" }
         - { value: concentration/g-l, label: { en: "g/L", fr: "g/L" }, loinc: "4542-7" }
+        - { value: concentration/mg-l, label: { en: "mg/L", fr: "mg/L" }, loinc: "4542-7" }
   unitConversions:
     factors:
       - from: concentration/mg-dl
         to: concentration/g-l
         factor: 0.01
         source: "Exact by the definition of the units: 1 mg/dL = 10 mg/L = 0.01 g/L (SI Brochure, 9th edition, BIPM 2019)"
+      - from: concentration/mg-l
+        to: concentration/mg-dl
+        factor: 0.1
+        source: "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
+      - from: concentration/mg-l
+        to: concentration/g-l
+        factor: 0.001
+        source: "Exact by the definition of the units: 1 g = 1000 mg (SI Brochure, 9th edition, BIPM 2019)"
   references:
     snomed: ["443308002"]
     loinc: ["4542-7"]

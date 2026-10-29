@@ -16,7 +16,8 @@ describe('[LAB27] lab analytes (site-agents#27)', () => {
     'body-blood-cbc': [CBC + 'mchc', CBC + 'mpv', CBC + 'reticulocytes', CBC + 'reticulocytes-immature-fraction',
       CBC + 'reticulocytes-hemoglobin', CBC + 'nucleated-rbc', CBC + 'neutrophils-segmented', CBC + 'neutrophils-band',
       CBC + 'myelocytes', CBC + 'metamyelocytes'],
-    'body-blood-coagulation': [COAG + 'prothrombin-time', COAG + 'prothrombin-activity', COAG + 'aptt', COAG + 'fibrinogen']
+    'body-blood-coagulation': [COAG + 'prothrombin-time', COAG + 'prothrombin-activity', COAG + 'aptt', COAG + 'fibrinogen',
+      COAG + 'inr']
   };
   const CELLS = ['lymphocytes', 'neutrophils', 'neutrophils-segmented', 'neutrophils-band', 'monocytes', 'eosinophils',
     'basophils', 'reticulocytes'];
