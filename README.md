@@ -44,6 +44,7 @@ definitions/
     body-vulva.yaml        9 / 12   bleeding, mucus, cervix, wetness items
     condition.yaml         1 / 1    coded diagnosis
     consents.yaml          1 / 1    account-level consent record (`type: system`, not user input)
+    encounter.yaml         3 / 3    care visits, practitioners, organizations
     family.yaml            1 / 1    children count
     fertility.yaml        22 / 25   cycles, hormones, tests, sexual activity
     finding.yaml           1 / 1    coded clinical finding
@@ -78,6 +79,8 @@ In-depth notes on specific subdomains live in `documentation/`:
 - `CONSENTS.md` — the account-level consent record: the non-clinical `consents` root, the `type: system` item `consent-record` and the `consent/record-v1` eventType (plan 91).
 - `SYNC-STATUS.md` — connector status: the non-clinical `sync-status` root, one `role: context` leaf per connector, the `type: system` item and the `sync-status/connector-v1` eventType, and how it differs from the writer-private `sync` watermark.
 - `DOCUMENTS.md` — medical documents: the `documents` root, the `file/xds-v1` eventType and the `type: attachments` item `document` (XDS DocumentEntry / FHIR DocumentReference metadata, site-agents#23).
+- `ENCOUNTER.md` — care visits and providers: the `encounter` root and its three leaves (one FHIR resourceType each), `encounter/visit-v1`, `provider/practitioner-v1`, `provider/organization-v1`, the Swiss identifiers (GLN, ZSR, UIDB, BER) and provider deduplication (`clientData.hdsGln`, `hdsZsr`), site-agents#24.
+- `MEDICATION.md` — coding a medication read from a document: a Swiss brand name as printed, its ATC substance code, and the `hdsId` datasets-service returns.
 - `PROVENANCE.md` — the index of HDS `clientData` keys, and the definitions of `clientData.hdsInstrument` (the instrument a measure was taken with) and `clientData.related.<eventId>` (a link to a source event) and `clientData.sourceKey` (the identity of an imported record), with their FHIR and HealthKit mappings.
 - `PARTIAL-DATES.md` — dates known only to the month or the year, or approximately ("March 1999", "about spring 1998"): `time` at the period start at 12:00 UTC, `clientData.hdsTimePrecision` and its companions, and the FHIR mapping.
 - `FHIR-MAPPING.md`: the per-item `fhir:` block: how an item's events render as FHIR R4 and import back, the SMART scope grant table published as `pack.fhirScopes` and its lock, and how to add a mapping (plan 115, draft).

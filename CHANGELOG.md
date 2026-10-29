@@ -1,5 +1,62 @@
 # Changelog
 
+## [3.34.0] - 2026-10-29
+
+Care encounters and providers (site-agents#24, plan 114 Q25-Q30, Q33, Q34), and the medication coding convention
+(Q31, Q32).
+Additive. Opus-drafted and Opus-reviewed design (proceed with changes, applied).
+
+### Added
+- **Root `encounter`** ("Care encounters and providers"): one new consent unit, covered by no existing grant. The root
+  and its child `encounter-provider` ("Care providers") hold no item; the leaves are `encounter-visit` ("Visits and
+  stays"), `encounter-provider-person` ("Doctors and therapists") and `encounter-provider-organization` ("Clinics,
+  hospitals and practices"). One FHIR resourceType per leaf (Encounter, Practitioner, Organization), so each can get
+  its own SMART scope once mapped.
+- **EventType `encounter/visit-v1`**, closed: `kind` (required: `consultation`, `hospital-stay`, `emergency`,
+  `day-case`, `teleconsultation`, `home-visit`, `other`), `specialty` (the `file/xds-v1` `practiceSetting` Coding),
+  `reason`, `notes`, `participants[] { eventId?, name?, role? }` (role `attender`, `referrer`, `consultant`,
+  `admitter`, `discharger` → FHIR participant type ATND, REF, CON, ADM, DIS), `serviceProvider { eventId?, name? }`.
+  Period from the event time and duration; status derived, never stored (an unknown end is no duration, never
+  `null`).
+- **EventTypes `provider/practitioner-v1`** (`name` required; `given` (one string as printed, split on spaces by the
+  FHIR export), `family`, `specialties[]` (at least one Coding: every specialist title as printed, in printed order;
+  FHIR PractitionerRole.specialty 0..*), `identifiers[]`, `organizations[] { eventId?, name? }`) and **`provider/organization-v1`** (`name` required; `identifiers[]`; no
+  specialty), closed. Identifiers are FHIR `{ system, value }`; the CH Core 6.0.0 systems are GLN
+  `urn:oid:2.51.1.3`, ZSR `urn:oid:2.16.756.5.30.1.123.100.2.1.1`, UIDB `urn:oid:2.16.756.5.35` and BER
+  `urn:oid:2.16.756.5.45`.
+- New event id fields carry the pattern `^[a-zA-Z0-9_-]+$` (a valid `clientData.related` path).
+- **Items** `encounter-visit` (composite `kind`, `reason`, `notes`; item-level `duration` `{ mandatory: false,
+  canBeNull: true, maxSeconds: 31536000 }`, null being an ongoing stay), `encounter-provider-person` and
+  `encounter-provider-organization` (composite `name`): `type: composite`, `repeatable: unlimited`, key = streamId.
+  Importers write the other properties; a form edit keeps them. No `fhir` block (Encounter, Practitioner and
+  Organization need a renderer first): `pack.fhirScopes` and `scopes.lock.json` are unchanged.
+- **`clientData.hdsGln`, `clientData.hdsZsr`**: a provider's GLN and ZSR as bare values, mirroring content; writers
+  look a provider up by GLN, then ZSR, then their `sourceKey` before creating one, on both provider types (a GLN can
+  name a person or an organization); a found provider that is trashed is linked to, never untrashed or updated.
+- Tests `[ENC-STR-1]`, `[ENC-ITM-1]`, `[ENC-ET-1..3]` (each under draft-04 and draft-07), `[ENC-ET-4..8]` (shared
+  shapes and the portable subset, once), `[ENC-FHIR-1..3]` (the leaf layout
+  maps without over-granting; an item on the root or a single provider item would not), `[ENC-PACK-1]`.
+
+### Changed
+- **PROVENANCE.md: an event id held in content MUST be mirrored** in `clientData.related.<eventId>`, in the same
+  write, for every typed id field (`file/xds-v1` `supersedes[]`, `authors[].eventId`, `encounterId`;
+  `encounter/visit-v1` `participants[].eventId`, `serviceProvider.eventId`; `provider/practitioner-v1`
+  `organizations[].eventId`); a key is removed when its id leaves the content on update. Indexes `hdsGln` / `hdsZsr`.
+- `file/xds-v1` descriptions of `authors[].eventId` and `encounterId` name their target types
+  (`provider/practitioner-v1` or `provider/organization-v1`; `encounter/visit-v1`). Description text only, no schema
+  change. DOCUMENTS.md likewise: an author's `name` is the name as printed, kept beside `eventId`.
+
+### Docs
+- New `documentation/ENCOUNTER.md`: layout and why, field tables with the FHIR column, `kind` → `Encounter.class`
+  (`day-case` SS in the base flavour, AMB in `ch`; `other` NullFlavor OTH), period and derived status, participant
+  roles, identifiers with their CH Core 6.0.0 sources (CDA root `1.3.88` written as `urn:oid:2.51.1.3`; an insurer's
+  provider number is not an identifier), provider deduplication, specialty vocabularies per resource, links, write
+  order and dangling ids, visibility, forms vs importers, open points.
+- New `documentation/MEDICATION.md`: a Swiss brand `drug.label` as printed with the ATC substance code; the `hdsId`
+  is always the one datasets-service returns (`S:<system>/k:<sourceKey>/C:<code>[/X<key>:<value>]*`, ATC rows from the
+  WHO seed, the route-matching row else the first); an unmatched name stays `medication-intake-basic`.
+- AGENTS.md and README index both; AGENTS.md: four non-clinical roots besides `profile`.
+
 ## [3.33.0] - 2026-10-29
 
 The INR, site-agents#27 release 2 (plan 114 Q8), and a mg/L option on haptoglobin. Additive for readers; the meaning
