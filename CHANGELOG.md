@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.36.0] - 2026-10-29
+
+### Added: `cards` documented on `settings/hds-webapp-diary` (v 2)
+
+hds-webapp's Diary lets the person compose cards (hds-webapp#66): `cards`, an array of `{ id, name, items }`, is now a
+documented key. `id` is `custom` (the card read from the v 1 custom chart) or `card-` and 8 base36 characters; `items`
+are 1 to 6 data points, item keys of this model or `<item key>#<field>` for one field of a composite item
+(`body-blood-pressure#rate`, the pulse); their order is meaningful. `cards` is the whole list. `v` notes that version 2
+introduced it. `customSeries`, `customAdded` and `customName` are marked superseded (an event with `customAdded` true
+and no `cards` key reads as the card `custom`; an empty `cards` array does not), left in place for older readers.
+The description says the event holds no observation but is personal data (item keys and card names say what the person
+tracks). Documentation only: the shape stays owned by hds-webapp (no `required`, open), no `minItems` / `maxItems`.
+`[DSET-SET-2]` validates a v 2 event with `cards` (draft-07 and draft-04). Fable-reviewed (clean with edits, applied).
+
 ## [3.35.0] - 2026-10-29
 
 ### Changed: `eventTypes-legacy.json` mirror refreshed to pryv/data-types 1.3.3
