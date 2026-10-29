@@ -131,10 +131,13 @@ whatever the old event's own `status` says, so a writer need not rewrite the old
 **No attachment.** Pryv lets an event exist before its attachment is uploaded. A reader shows a `file/xds-v1` event
 without an attachment as a failed import, never drops it silently.
 
-**Ids in content.** `supersedes[]`, `authors[].eventId` and `encounterId` are event ids. Each one is mirrored in
-`clientData.related.<eventId>: true` ([PROVENANCE.md](PROVENANCE.md)) so a cohort query finds the links; if the two
-drift, the content is authoritative. `authors[]` without an `eventId` (a name as printed) is accepted until provider
-items exist; an author entry needs at least one field.
+**Ids in content.** `supersedes[]`, `authors[].eventId` and `encounterId` are event ids. `supersedes[]` points at
+other `file/xds-v1` events, `authors[].eventId` at a provider (`provider/practitioner-v1` or
+`provider/organization-v1`), `encounterId` at a visit (`encounter/visit-v1`): see [ENCOUNTER.md](ENCOUNTER.md). Each one
+MUST be mirrored in `clientData.related.<eventId>: true` ([PROVENANCE.md](PROVENANCE.md)) so a cohort query finds the
+links; if the two drift, the content is authoritative. An author's `name` is the name as printed, kept beside
+`eventId` so a reader who cannot read the provider still sees who wrote the document; an author entry needs at least
+one field.
 
 **Visibility.** `title`, `authors[].name`, `organization` and `service` are free text and are shown to every reader of
 the stream.

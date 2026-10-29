@@ -1,0 +1,16 @@
+# One consent unit: a grant on `encounter` covers visits and providers. Neither the root nor `encounter-provider`
+# holds an item, so each leaf carries one FHIR resourceType (Encounter, Practitioner, Organization) and a SMART scope
+# can be granted per leaf. See documentation/ENCOUNTER.md.
+id: encounter
+name: Care encounters and providers
+parentId: null
+children:
+  - id: encounter-visit
+    name: Visits and stays
+  - id: encounter-provider
+    name: Care providers
+    children:
+      - id: encounter-provider-person
+        name: Doctors and therapists
+      - id: encounter-provider-organization
+        name: Clinics, hospitals and practices

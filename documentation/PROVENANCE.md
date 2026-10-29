@@ -20,6 +20,7 @@ conventions below are contracts between HDS apps, documented here so every write
 | `clientData.hdsTimePrecision`, `hdsTimeText`, `hdsTimeZone`, `hdsEndPrecision` | How much of `time` is known: partial and approximate dates ("March 1999", "about spring 1998") | [PARTIAL-DATES.md](PARTIAL-DATES.md) |
 | `clientData.hdsRefRange`, `hdsFlag`, `hdsInterpretation` | The reference range and flag a lab printed for one result, and the flag normalised | [BLOOD-CHEMISTRY.md](BLOOD-CHEMISTRY.md#the-printed-reference-range-flag-and-interpretation-of-one-result) |
 | `clientData.hdsComparator` | The value is a printed limit (`<`, `<=`, `>`, `>=`), not an exact figure | [BLOOD-CHEMISTRY.md](BLOOD-CHEMISTRY.md#a-censored-value-hdscomparator) |
+| `clientData.hdsGln`, `hdsZsr` | A provider's GLN and ZSR, bare values mirroring its content `identifiers`: the cross-writer lookup keys (GLN, then ZSR, then `sourceKey`) | [ENCOUNTER.md](ENCOUNTER.md#one-provider-one-event-clientdatahdsgln-hdszsr) |
 
 A reader ignores any `clientData` key it does not know. A new key is `hds`-prefixed and documented here (or in
 its domain document, and indexed here) before an app ships it. `related` and `sourceKey` predate the prefix
@@ -113,12 +114,20 @@ was read from.
 - **The derived event points at its source**, never the other way: a lab report does not list the values
   read from it. To find them, query events with `clientData.related.<reportId>` set.
 - **`true` is the only value.** The kind of link follows from the two events' types (a value and a
-  document: read from it; an answer and a request: answers it). A link that needs more than that gets its
+  document: read from it; an answer and a request: answers it; a procedure or a condition and the visit it
+  happened during, `related` only: [ENCOUNTER.md](ENCOUNTER.md)). A link that needs more than that gets its
   own documented key.
 - **Write the whole `related` object** when changing the set of links.
-- **An event id held in content is mirrored here.** When an eventType carries event ids in its content (a document's
-  `supersedes`, `authors[].eventId`, `encounterId`), each one is also a key of `related`, so a cohort query finds the
-  link. If the two drift, the content is authoritative.
+- **An event id held in content MUST be mirrored here.** When an eventType carries event ids in its content
+  (`file/xds-v1` `supersedes[]`, `authors[].eventId`, `encounterId`; `encounter/visit-v1` `participants[].eventId`,
+  `serviceProvider.eventId`; `provider/practitioner-v1` `organizations[].eventId`), the writer sets
+  `clientData.related.<eventId>: true` for each one, in the same create or update, so a cohort query finds the link
+  without reading content. On an update, the key of an id that left the content is removed in the same call (write
+  the whole `related` object). The content is the typed link (which field, which role); `related` is its index. If
+  the two drift, the content is authoritative and the missing or stale keys are a writer bug. A measure (a number)
+  has no place for an id: it keeps `related` only. A new eventType that carries an event id lists the field here.
+  The id fields added with the encounter types carry the pattern `^[a-zA-Z0-9_-]+$`, so each id is a valid `related`
+  path ([ENCOUNTER.md](ENCOUNTER.md#links)).
 - **The kind of link is told apart by the event types only.** That holds while each pair of types has one kind of
   link; a second kind between the same types (a document appending to, or transforming, another besides replacing
   it) needs its own documented key.

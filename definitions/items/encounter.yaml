@@ -1,0 +1,96 @@
+encounter-visit:
+  version: v1
+  label:
+    en: Care visit
+    fr: Visite de soins
+  description:
+    en: A consultation, hospital stay or other time you received care.
+    fr: Une consultation, un séjour hospitalier ou un autre moment où vous avez reçu des soins.
+  streamId: encounter-visit
+  eventType: encounter/visit-v1
+  duration:
+    mandatory: false
+    canBeNull: true # null is an ongoing stay (status in-progress); an unknown end is no duration, never null
+    maxSeconds: 31536000 # 1 year: a long stay. UI hint only, not validated.
+  type: composite
+  composite:
+    kind:
+      label: { en: Type of visit, fr: Type de visite }
+      type: select
+      options:
+        - value: consultation
+          label: { en: Consultation, fr: Consultation }
+        - value: hospital-stay
+          label: { en: Hospital stay, fr: Séjour hospitalier }
+        - value: emergency
+          label: { en: Emergency, fr: Urgence }
+        - value: day-case
+          label: { en: Day hospital, fr: Hôpital de jour }
+        - value: teleconsultation
+          label: { en: Teleconsultation, fr: Téléconsultation }
+        - value: home-visit
+          label: { en: Home visit, fr: Visite à domicile }
+        - value: other
+          label: { en: Other, fr: Autre }
+    reason:
+      label: { en: Reason, fr: Motif }
+      type: text
+      canBeNull: true
+    notes:
+      label: { en: Notes, fr: Notes }
+      type: text
+      canBeNull: true
+  repeatable: unlimited
+  devNotes: >-
+    Forms enter kind, reason and notes; importers also write specialty, participants and serviceProvider, which an
+    edit keeps. event.time is when the visit began and event.duration how long it lasted. The duration block allows
+    null because a stay can be ongoing (FHIR status in-progress); a writer that does not know the end writes no
+    duration at all, never null, or the visit would read in-progress forever. Status is derived, never stored. Typed
+    ids in content, each mirrored in clientData.related (PROVENANCE.md). No references: no SNOMED / LOINC concept is
+    the record itself. No fhir block yet (Encounter needs a renderer first). See documentation/ENCOUNTER.md.
+
+encounter-provider-person:
+  version: v1
+  label:
+    en: Doctor or therapist
+    fr: Médecin ou thérapeute
+  description:
+    en: A doctor, therapist or other person who cares for you.
+    fr: Un médecin, un thérapeute ou une autre personne qui vous soigne.
+  streamId: encounter-provider-person
+  eventType: provider/practitioner-v1
+  type: composite
+  composite:
+    name:
+      label: { en: Name, fr: Nom }
+      type: text
+  repeatable: unlimited
+  devNotes: >-
+    One event per practitioner, reused by visits (participants) and documents (authors). Forms enter the name as
+    printed; importers also write given, family, specialties, identifiers and organizations. Look a practitioner up by
+    clientData.hdsGln, then hdsZsr, then the writer's own sourceKey before creating one; typed ids mirrored in
+    clientData.related (PROVENANCE.md). No fhir block yet (Practitioner needs a renderer first). See
+    documentation/ENCOUNTER.md.
+
+encounter-provider-organization:
+  version: v1
+  label:
+    en: Clinic, hospital or practice
+    fr: Clinique, hôpital ou cabinet
+  description:
+    en: A practice, clinic, hospital or laboratory that cares for you.
+    fr: Un cabinet, une clinique, un hôpital ou un laboratoire qui vous soigne.
+  streamId: encounter-provider-organization
+  eventType: provider/organization-v1
+  type: composite
+  composite:
+    name:
+      label: { en: Name, fr: Nom }
+      type: text
+  repeatable: unlimited
+  devNotes: >-
+    One event per organization (a department is its own organization), reused by visits (serviceProvider),
+    practitioners (organizations) and documents (authors). Forms enter the name as printed; importers also write the
+    identifiers. Look an organization up by clientData.hdsGln, then hdsZsr, then the writer's own sourceKey before
+    creating one. No specialty field: Organization has none. No fhir block yet (Organization needs a renderer
+    first). See documentation/ENCOUNTER.md.
