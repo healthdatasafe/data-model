@@ -64,6 +64,8 @@ describe('[DSET] Display symbols and app settings types', () => {
         assert.ok(validate(layout), JSON.stringify(validate.errors));
         assert.ok(validate({}), 'an empty settings event is valid');
         assert.ok(validate({ ...layout, visible: ['mood'], chartView: 'all', goals: ['cycle'] }), JSON.stringify(validate.errors));
+        // v 2: the person's own cards (a composite's field as '<item key>#<field>')
+        assert.ok(validate({ ...layout, v: 2, cards: [{ id: 'custom', name: '', items: ['body-weight', 'body-blood-pressure#rate'] }] }), JSON.stringify(validate.errors));
       }
     });
   });
