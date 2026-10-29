@@ -6,7 +6,7 @@ const Ajv = require('ajv');
 describe('[FHIR] item fhir blocks (plan 115)', () => {
   const { itemsById, fhirScopes, toBePublished } = require('../src/items');
   const { checkItem, toBePublished: schemasToBePublished } = require('../src/schemas/items');
-  const { checkFhirMapping, checkFhirScopes, computeFhirScopes, readLock, emptyLock, lockEntries, mergeLock, ucumKey, fhirMapping, UNMAPPED, PATIENT_ELEMENTS } = require('../src/fhir');
+  const { checkMappingTable, checkFhirMapping, checkFhirScopes, computeFhirScopes, readLock, emptyLock, lockEntries, mergeLock, ucumKey, fhirMapping, UNMAPPED, PATIENT_ELEMENTS } = require('../src/fhir');
 
   const MAPPED = ['body-weight', 'body-blood-pressure', 'body-heart-rate', 'lifestyle-tobacco-smoking', 'condition-coded', 'wellbeing-general-health'];
   const item = (k) => structuredClone(itemsById[k]);
@@ -274,7 +274,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
     it('[FHIR-MAP-9] a datasource source on a non-datasource item is refused', () => {
       const a = item('body-weight');
       a.fhir = { resourceType: 'Observation', category: 'vital-signs', code: { from: 'datasource', field: 'x' }, profiles: {} };
-      assert.throws(() => check(a), /datasource code source needs an item with exactly one eventType|is not a content property/);
+      assert.throws(() => check(a), /datasource code source needs an item with exactly one eventType/);
       const b = item('wellbeing-general-health');
       b.fhir = { resourceType: 'Observation', category: 'survey', code: { from: 'datasource', field: 'x' }, profiles: {} };
       assert.throws(() => check(b), /is not a content property/);
@@ -373,6 +373,25 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       a.fhir.alsoMatch.push(a.fhir.split.rate.code);
       assert.throws(() => check(a), /code, components and split codes: the coding http:\/\/loinc.org\|8867-4 appears more than once/);
     });
+
+    it('[FHIR-MAP-16] category keys fit a scope key, and one coding names one category per resourceType', () => {
+      checkMappingTable(fhirMapping);
+      const withCategory = (key, c) => {
+        const t = structuredClone(fhirMapping);
+        t.categories.Observation[key] = c;
+        return t;
+      };
+      const fresh = { system: 'http://example.org/cat', code: 'x', display: 'X' };
+      checkMappingTable(withCategory('new-cat', fresh));
+      for (const bad of ['a|b', 'a b', 'Vital', '-a', '']) {
+        assert.throws(() => checkMappingTable(withCategory(bad, fresh)), /a category key is lowercase letters, digits and dashes/, bad);
+      }
+      const badType = structuredClone(fhirMapping);
+      badType.categories['observation|x'] = { a: fresh };
+      assert.throws(() => checkMappingTable(badType), /"observation\|x" is not a FHIR resourceType name/);
+      const dup = structuredClone(fhirMapping.categories.Observation['vital-signs']);
+      assert.throws(() => checkMappingTable(withCategory('vitals', dup)), /categories Observation\/vital-signs and Observation\/vitals share the coding/);
+    });
   });
 
   describe('[FHIR-SCOPE] the SMART scope grant table', () => {
@@ -435,7 +454,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
           'body-a-flag': { pair: 'Observation|vital-signs', parent: 'body-a', items: ['f'] },
           'body-b': { pair: 'Observation|survey', parent: 'body', items: ['b'] }
         },
-        reviewed: {}
+        reviewed: { items: {}, streams: {} }
       });
       run(items, lockOf(items));
       // a new grant root passes
@@ -465,17 +484,73 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const items = { a: it_('body-a', obs('vital-signs', 'a')) };
       const lock = lockOf(items);
       const flag = { ...items, f: it_('body-a-flag', { companionOf: 'a' }) };
-      assert.throws(() => run(flag, lock), /item "f" is new under the published stream "body-a-flag": every grant already issued for Observation\|vital-signs would read it\. .*"reviewed": \{ "f": "YYYY-MM-DD <why>" \}/);
+      assert.throws(() => run(flag, lock), /item "f" is new under the published stream "body-a-flag": every grant already issued for Observation\|vital-signs would read it\. .*"reviewed": \{ "items": \{ "f": \{ "under": "body-a-flag", "why": "YYYY-MM-DD <why>" \} \} \}/);
       const same = { ...items, a2: it_('body-a', obs('vital-signs', 'a2')) };
       assert.throws(() => run(same, lock), /item "a2" is new under the published stream "body-a"/, 'a new item on the locked stream itself');
-      const reviewed = { ...lock, reviewed: { f: '2026-10-29 the disturbance flag qualifies the reading' } };
-      run(flag, reviewed);
+      const ack = (why = '2026-10-29 the disturbance flag qualifies the reading', under = 'body-a-flag') => ({ ...lock, reviewed: { items: { f: { under, why } }, streams: {} } });
+      run(flag, ack());
       // fhir:lock then records it; the acknowledgement stays as the record of the review
       assert.deepStrictEqual(lockOf(flag).streams['body-a-flag'].items, ['f']);
-      assert.throws(() => run(flag, { ...lock, reviewed: { f: 'looks fine' } }), /reviewed "f" must read "YYYY-MM-DD <why>"/);
-      assert.throws(() => run(items, { ...lock, reviewed: { nope: '2026-10-29 x' } }), /reviewed item "nope" is not an item/);
+      assert.throws(() => run(flag, ack('looks fine')), /reviewed items "f": "why" must read "YYYY-MM-DD <why>"/);
+      assert.throws(() => run(items, { ...lock, reviewed: { items: { nope: { under: 'body-a', why: '2026-10-29 x' } } } }), /reviewed items "nope" is not an item/);
+      assert.throws(() => run(flag, ack(undefined, 'body-b')), /reviewed items "f": "under" must name a locked stream/);
+      // the old flat form is refused, not read as an acknowledgement
+      assert.throws(() => run(flag, { ...lock, reviewed: { f: '2026-10-29 x' } }), /"reviewed" holds "items" and "streams" only, not "f"/);
       // outside every locked stream, nothing to acknowledge
       run({ ...items, b: it_('body-b', obs('survey', 'b')) }, lock);
+    });
+
+    it('[FHIR-SCOPE-19] an acknowledgement holds under its own locked stream only', () => {
+      const items = { a: it_('body-a', obs('vital-signs', 'a')), b: it_('body-b', obs('survey', 'b')) };
+      const lock = lockOf(items);
+      const flag = { ...items, f: it_('body-a-flag', { companionOf: 'a' }) };
+      // reviewed for a reader of Observation|survey (under body-b), then placed under the vital-signs stream
+      const elsewhere = { ...lock, reviewed: { items: { f: { under: 'body-b', why: '2026-10-29 fine for survey readers' } }, streams: {} } };
+      assert.throws(() => run(flag, elsewhere), /reviewed items "f": "under" is "body-b", which is not its stream nor above it/);
+      // under an outer locked stream while a nearer one is found: not an acknowledgement for the nearer one
+      const outer = { ...lock, reviewed: { items: { f: { under: 'body-a', why: '2026-10-29 fine for vital-signs readers' } }, streams: {} } };
+      assert.throws(() => run(flag, outer), /item "f" is new under the published stream "body-a-flag"/);
+    });
+
+    it('[FHIR-SCOPE-20] a stream added or moved under a locked stream needs an acknowledgement, items or not', () => {
+      const items = { a: it_('body-a', obs('vital-signs', 'a')) };
+      const lockTree = [{ id: 'body', children: [{ id: 'body-a' }, { id: 'body-b' }] }, { id: 'mood' }];
+      const lock = lockOf(items, lockTree);
+      // a new item-less child, and a deeper one
+      const added = [{ id: 'body', children: [{ id: 'body-a', children: [{ id: 'body-a-notes' }, { id: 'body-a-ctx', children: [{ id: 'body-a-ctx-deep' }] }] }, { id: 'body-b' }] }, { id: 'mood' }];
+      assert.throws(() => run(items, lock, added), /stream "body-a-notes" is new under the published stream "body-a": every grant already issued for Observation\|vital-signs would read it\. .*"reviewed": \{ "streams": \{ "body-a-notes": \{ "under": "body-a"/);
+      // an existing item-less stream re-parented into the locked one
+      const moved = [{ id: 'body', children: [{ id: 'body-a', children: [{ id: 'body-b' }] }] }, { id: 'mood' }];
+      assert.throws(() => run(items, lock, moved), /stream "body-b" is new under the published stream "body-a"/);
+      // acknowledged under its locked stream: passes; fhir:lock then records it
+      const ack = (under) => ({ ...lock, reviewed: { items: {}, streams: { 'body-b': { under, why: '2026-10-29 empty container' } } } });
+      run(items, ack('body-a'), moved);
+      assert.deepStrictEqual(lockOf(items, moved).streams['body-b'], { pair: 'Observation|vital-signs', parent: 'body-a', items: [] });
+      assert.throws(() => run(items, { ...lock, reviewed: { items: {}, streams: { nope: { under: 'body-a', why: '2026-10-29 x' } } } }), /reviewed streams "nope" is not a stream/);
+      // acknowledging a stream does not acknowledge its children: each needs its own entry
+      const deep = [{ id: 'body', children: [{ id: 'body-a', children: [{ id: 'body-a-ctx', children: [{ id: 'body-a-ctx-deep' }] }] }, { id: 'body-b' }] }, { id: 'mood' }];
+      const ctxOnly = { ...lock, reviewed: { items: {}, streams: { 'body-a-ctx': { under: 'body-a', why: '2026-10-29 context' } } } };
+      assert.throws(() => run(items, ctxOnly, deep), /stream "body-a-ctx-deep" is new under the published stream "body-a"/);
+    });
+
+    it('[FHIR-SCOPE-22] an acknowledgement must sit on or above where its item or stream is now', () => {
+      const items = { a: it_('body-a', obs('vital-signs', 'a')) };
+      const lock = lockOf(items);
+      // written for body-a while the item sits outside every locked subtree: refused, so it never pre-approves a move
+      const stale = { ...lock, reviewed: { items: { m: { under: 'body-a', why: '2026-10-29 for later' } }, streams: {} } };
+      assert.throws(() => run({ ...items, m: it_('mood', obs('survey', 'm')) }, stale), /reviewed items "m": "under" is "body-a", which is not its stream nor above it/);
+      const streamStale = { ...lock, reviewed: { items: {}, streams: { mood: { under: 'body-a', why: '2026-10-29 for later' } } } };
+      assert.throws(() => run(items, streamStale), /reviewed streams "mood": "under" is "body-a", which is not above it/);
+    });
+
+    it('[FHIR-SCOPE-21] renaming a mapped key: the deprecated alias keeps the block (or is a companion), the new key is reviewed', () => {
+      const items = { a: it_('body-a', obs('vital-signs', 'a')) };
+      const lock = lockOf(items);
+      const ack = { ...lock, reviewed: { items: { a2: { under: 'body-a', why: '2026-10-29 rename of a' } }, streams: {} } };
+      run({ a: it_('body-a', obs('vital-signs', 'a'), { deprecated: true }), a2: it_('body-a', obs('vital-signs', 'a')) }, ack);
+      run({ a: it_('body-a', { companionOf: 'a2' }, { deprecated: true }), a2: it_('body-a', obs('vital-signs', 'a')) }, ack);
+      assert.throws(() => run({ a: it_('body-a', null, { deprecated: true }), a2: it_('body-a', obs('vital-signs', 'a')) }, ack), /spans \(unmapped\), Observation\|vital-signs/);
+      assert.throws(() => run({ a: it_('body-a', obs('vital-signs', 'a'), { deprecated: true }), a2: it_('body-a', obs('vital-signs', 'a')) }, lock), /item "a2" is new under the published stream "body-a"/);
     });
 
     it('[FHIR-SCOPE-17] an old-format lock is refused', () => {
@@ -493,7 +568,8 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
     });
 
     it('[FHIR-SCOPE-9] mergeLock adds and never removes, never rewrites a pair or parent, keeps "reviewed"', () => {
-      const lock = { formatVersion: 2, streams: { x: { pair: 'Observation|survey', parent: null, items: ['i'] } }, reviewed: { j: '2026-10-29 ok' } };
+      const reviewed = { items: { j: { under: 'x', why: '2026-10-29 ok' } }, streams: {} };
+      const lock = { formatVersion: 2, streams: { x: { pair: 'Observation|survey', parent: null, items: ['i'] } }, reviewed };
       const merged = mergeLock(lock, {
         x: { pair: 'Observation|vital-signs', parent: 'p', items: ['j'] },
         c: { pair: 'Condition|problem-list-item', parent: null, items: ['c'] }
@@ -504,7 +580,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
           c: { pair: 'Condition|problem-list-item', parent: null, items: ['c'] },
           x: { pair: 'Observation|survey', parent: null, items: ['i', 'j'] }
         },
-        reviewed: { j: '2026-10-29 ok' }
+        reviewed
       });
       assert.deepStrictEqual(mergeLock(merged, {}), merged);
     });

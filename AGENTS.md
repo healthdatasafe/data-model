@@ -326,7 +326,7 @@ data-model/
 │   ├── conversions/                       # Unit conversions (mass, length, temperature)
 │   ├── settings/settings.yaml             # HDS user-settings definitions
 │   ├── fhir/mapping.yaml                  # FHIR tables: categories per resourceType, systems, IG versions
-│   ├── fhir/scopes.lock.json              # Every published SMART grant root (npm run fhir:lock; never edited by hand)
+│   ├── fhir/scopes.lock.json              # Every stream a published SMART grant reaches (npm run fhir:lock; only "reviewed" is edited by hand)
 │   └── inputs.yaml                        # Draft input-type coercion map, NOT loaded by the build
 │
 ├── src/

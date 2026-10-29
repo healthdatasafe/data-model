@@ -30,15 +30,19 @@
 - New **`definitions/fhir/scopes.lock.json`** (format 2) and `npm run fhir:lock` (adds, never removes): every stream a
   published grant reaches, `{ pair, parent, items }`, append-only, plus a hand-written `reviewed` list. The build
   fails when a locked stream is removed, re-parented or holds another pair in its subtree, when an item on it is
-  removed or moved (deprecate instead), and when a new item or companion appears on or under it without a `reviewed`
-  entry (`"<item key>": "YYYY-MM-DD <why>"`). Tests fail when the lock is not up to date and when a published grant
-  root is not in the lock under its pair (also checked on `dist/pack.json`).
+  removed or moved (deprecate instead), and when a new item, companion or stream (added, or moved there, with or
+  without items) appears on or under it without a `reviewed` entry under that locked stream (`reviewed: { items:
+  { "<key>": { under, why } }, streams: { "<id>": { under, why } } }`, `why` = "YYYY-MM-DD <why>"; an
+  acknowledgement holds under its own locked stream only). Tests fail when the lock is not up to date and when a
+  published grant root is not in the lock under its pair (also checked on `dist/pack.json`). FHIR-MAPPING.md §
+  Permanence describes how to rename a mapped item's key.
 - Build checks (`src/fhir.js`): category per resourceType; the block agrees with its item (`quantity` on numeric
   `number` items with every eventType mapped, `coded` on `select` only and refused on `multi-select`, every composite
   field mapped or ignored, components and splits numeric and disjoint, a datasource source only on a datasource field
   holding `codes`, no `value` on a Condition); codings unique within an item; two eventTypes of one `quantity` block
   never share a UCUM unit, annotations such as `{beats}` aside; import match keys unique across active items; the
-  one-pair invariant; companions valid; the lock.
+  one-pair invariant; companions valid; the lock; category keys lowercase letters, digits and dashes, and one coding
+  per category within a resourceType.
 - Blocks on `body-weight` (with `alsoMatch` LOINC 3141-9), `body-blood-pressure`, `lifestyle-tobacco-smoking`,
   `condition-coded` and the new `wellbeing-general-health`. Rendered output validates against US Core 6.1.0 and IPS
   2.0.1 and round-trips through import (hds-fhir-js).
@@ -55,17 +59,6 @@
 - FHIR-MAPPING.md § Import: withdrawn records refused, a panel without a required component refused, codings without
   a datasource label dropped while one remains, Observation and Condition time choices (a Condition's event time is
   its onset), units converted only through the item's declared `unitConversions`.
-
-### Changed: `references` codes are always a list (B2)
-- `references.<system>` must be an array of non-empty strings, even for one code; the schema refuses a bare string.
-  Every item was normalised (`snomed`, `loinc`, `icf`, `icd10`). A reader that compared `references.loinc` to a string
-  must read a list.
-
-### Fixed: `symptom-pain-severity` no longer cites LOINC 72514-3 (B1)
-- 72514-3 is a 0 to 10 numeric pain score; the item stores five verbal levels as a ratio. Removed, with a YAML note on
-  how the two relate.
-- Also removed: LOINC 77564-4 (unknown to LOINC 2.83) and SNOMED 103325001 ("Patient need for", a qualifier value).
-  `references` keeps SNOMED 22253000 (Pain) and 225908003 (Pain score) and LOINC 38208-5 (Pain severity - Reported).
 - **Patient from the profile items** (plan 115 D14): a third block form, `{ resourceType: Patient, element, value? }`
   (`defs.json` `fhirElement`), for one element of the Patient, which is assembled from the latest event of each
   contributing item. Elements: `name.given`, `name.family`, `gender` (`coded`, administrative-gender codes with their
@@ -78,12 +71,24 @@
   otherwise. `pack.fhirScopes` gains `Patient` → `profile-address`, `profile-date-of-birth`, `profile-name`,
   `profile-sex` (locked), so `patient/Patient.rs` no longer maps to an empty grant.
 
+### Changed: `references` codes are always a list (B2)
+- `references.<system>` must be an array of non-empty strings, even for one code; the schema refuses a bare string.
+  Every item was normalised (`snomed`, `loinc`, `icf`, `icd10`). A reader that compared `references.loinc` to a string
+  must read a list.
+
+### Fixed: `symptom-pain-severity` no longer cites LOINC 72514-3 (B1)
+- 72514-3 is a 0 to 10 numeric pain score; the item stores five verbal levels as a ratio. Removed, with a YAML note on
+  how the two relate.
+- Also removed: LOINC 77564-4 (unknown to LOINC 2.83) and SNOMED 103325001 ("Patient need for", a qualifier value).
+  `references` keeps SNOMED 22253000 (Pain) and 225908003 (Pain score) and LOINC 38208-5 (Pain severity - Reported).
+
 ### Added: `wellbeing-general-health`
 
 - The 5-level self-rated health question, RAND-36 item 1 wording (public domain): "In general, would you say your
   health is:" Excellent / Very good / Good / Fair / Poor, on `ratio/proportion` at the canonical hooks, **higher is
   better** (excellent 1.0 … poor 0.0). New stream `wellbeing-general-health` under `wellbeing`. FHIR: LOINC 61577-3
-  with the LL1012-5 answers; SNOMED CT findings in `references` (none exists for "very good").
+  with the LL1012-5 answers; the SNOMED CT findings per answer (135816001, 135815002, 135817005, 135818000; none
+  exists for "very good") as per-option `alsoMatch`, accepted on import.
 
 ### Changed: `wellbeing-self-rated-health` references
 

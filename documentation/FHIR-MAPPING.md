@@ -284,7 +284,12 @@ grant reaches**: each grant root and every stream in its subtree, with its pair,
     "profile-name": { "pair": "Patient", "parent": "profile", "items": ["profile-name", "profile-surname"] }
   },
   "reviewed": {
-    "body-weight-context": "2026-11-02 a weighing condition; a reader of vital signs may see it"
+    "items": {
+      "profile-middle-name": { "under": "profile-name", "why": "2026-11-02 part of the name; a reader of Patient may see it" }
+    },
+    "streams": {
+      "profile-name-history": { "under": "profile-name", "why": "2026-11-02 earlier names; a reader of Patient may see them" }
+    }
   }
 }
 ```
@@ -293,9 +298,13 @@ The build fails when a locked stream
 - is no longer a stream, or has another parent (a published stream is never re-parented);
 - holds a pair other than its locked one in its subtree, `(unmapped)` included;
 - loses an item: removed, or moved to another stream (deprecate it instead: its events stay);
-- gains, on itself or anywhere under it, an item or companion that is not in the lock, unless **`reviewed`** names
-  it. Such an item is read by every grant already issued for that pair, so someone states, with the date, why a
-  reader of that scope may see it.
+- gains, on itself or anywhere under it, an item, a companion or a **stream** (added, or moved there from elsewhere,
+  with or without items) that is not in the lock, unless **`reviewed`** names it under that locked stream. Such an
+  item or stream is read by every grant already issued for that pair, so someone states, with the date, why a reader
+  of that scope may see it. `under` is the nearest locked stream above (or, for an item, the locked stream it sits
+  on): an acknowledgement given for one pair never covers a placement under another, and one whose `under` is not on
+  or above where the item or stream sits now fails the build (it never pre-approves a later move). Acknowledging a
+  stream does not acknowledge its children: each new stream and item needs its own entry.
 
 Each would widen, or silently break, every grant already issued for that scope. New grant roots are allowed. The
 test suite also fails when the lock is not up to date with the current table, and when a published grant root
@@ -311,6 +320,13 @@ A shipped block's **(resourceType, category) is permanent**, like an item key. C
 from one grant table entry to another: apps already granted the old scope would lose data they were promised, and
 the lock refuses it anyway (the stream is locked under the old pair). The same holds for a locked stream: whatever is
 added on it or under it must belong to its pair, and is acknowledged in `reviewed`.
+
+**Renaming a mapped item's key.** The usual pattern (the old key stays as a deprecated alias on the same `streamId`
+and eventType) needs one more thing here: the alias must still count as the stream's pair, or the stream's subtree
+gains `(unmapped)` and the invariant fails. So the deprecated alias keeps **the same `fhir` block** (import keys skip
+deprecated items, so the two blocks never clash) or becomes `{ companionOf: <new key> }`, and the new key gets a
+`reviewed.items` entry under the locked stream (it is an item the lock has not seen). The lock keeps the old key in
+the stream's `items`, which the deprecated alias satisfies.
 
 Additive changes are fine: a block can be added to an item without changing its key, stream or eventType; `alsoMatch`
 entries (on the code or per option), `alsoMatchCategories`, profiles of new flavours and new options (with their
@@ -441,8 +457,10 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
 - **Units:** two eventTypes of one `quantity` block never share a UCUM unit, annotations aside (`{beats}/min` is
   `/min`): the unit picks the eventType on import.
 - **Scopes:** companions valid (never of a Patient element); the one-pair invariant; the lock (no locked stream
-  removed, re-parented or re-paired, no locked item removed or moved, no new item under a locked stream without a
-  `reviewed` entry).
+  removed, re-parented or re-paired, no locked item removed or moved, no new item or stream under a locked stream
+  without a `reviewed` entry naming that locked stream).
+- **Category table:** category keys are lowercase letters, digits and dashes (a scope key is split on `|`); one
+  `{system, code}` names one category per resourceType.
 
 ---
 

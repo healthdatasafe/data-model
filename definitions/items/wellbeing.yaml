@@ -462,8 +462,6 @@ wellbeing-general-health:
         fr: Mauvaise
   repeatable: unlimited
   references:
-    # Findings per answer; SNOMED CT has none for "very good".
-    snomed: ["135816001", "135815002", "135817005", "135818000"]
     loinc: ["61577-3"]
   fhir:
     resourceType: Observation
@@ -478,5 +476,11 @@ wellbeing-general-health:
         "0.5": { system: http://loinc.org, code: LA8967-7, display: Good }
         "0.25": { system: http://loinc.org, code: LA8968-5, display: Fair }
         "0": { system: http://loinc.org, code: LA8969-3, display: Poor }
+      # SNOMED CT findings per answer, accepted on import only; SNOMED CT has none for "very good".
+      alsoMatch:
+        "1": [{ system: http://snomed.info/sct, code: "135816001", display: General health excellent }]
+        "0.5": [{ system: http://snomed.info/sct, code: "135815002", display: General health good }]
+        "0.25": [{ system: http://snomed.info/sct, code: "135817005", display: General health fair }]
+        "0": [{ system: http://snomed.info/sct, code: "135818000", display: General health poor }]
     profiles:
       us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-screening-assessment

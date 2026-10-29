@@ -1,7 +1,7 @@
 // Add the current SMART scope grant table to definitions/fhir/scopes.lock.json (npm run fhir:lock).
 // The lock records every stream a published grant reaches (each grant root and its subtree) with its pair, its parent
 // and its items. It never removes anything; the build fails if a locked stream is removed, re-parented, given another
-// pair, loses an item, or gains an item the "reviewed" list does not acknowledge. Run it before releasing a new
+// pair, loses an item, or gains an item or stream the "reviewed" list does not acknowledge. Run it before releasing a new
 // mapping, and commit the lock with the change.
 const fs = require('fs');
 const { itemsById, fhirScopes } = require('../src/items'); // loading runs every check, the current lock included

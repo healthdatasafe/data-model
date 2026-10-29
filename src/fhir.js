@@ -44,6 +44,7 @@ module.exports = {
   PATIENT_ELEMENTS,
   LOCK_FILE_PATH,
   LOCK_FORMAT,
+  checkMappingTable,
   checkFhirMapping,
   scopePairOf,
   ucumKey,
@@ -73,8 +74,15 @@ function checkMappingTable (t) {
     if (!/^[a-z0-9.-]+#\d+\.\d+\.\d+$/.test(ig)) fail(`flavour "${flavour}": "${ig}" is not package#version`);
   }
   for (const [resourceType, table] of Object.entries(t.categories || {})) {
+    if (!/^[A-Z][A-Za-z]*$/.test(resourceType)) fail(`categories: "${resourceType}" is not a FHIR resourceType name`);
+    const codings = new Map();
     for (const [key, c] of Object.entries(table)) {
+      // The key is the second half of a `ResourceType|category` scope key: no `|`, no space, no capital.
+      if (!/^[a-z][a-z0-9-]*$/.test(key)) fail(`category ${resourceType}/${key}: a category key is lowercase letters, digits and dashes, starting with a letter`);
       if (!/^(https?:|urn:)/.test(c.system) || !c.code || !c.display) fail(`category ${resourceType}/${key} needs a canonical system, a code and a display`);
+      const other = codings.get(c.system + '|' + c.code);
+      if (other != null) fail(`categories ${resourceType}/${other} and ${resourceType}/${key} share the coding ${c.system}|${c.code}; an imported category would map back to two keys`);
+      codings.set(c.system + '|' + c.code, key);
     }
   }
   const uris = Object.values(t.systems || {});
@@ -369,10 +377,22 @@ function checkFhirScopes (items, { roots = streams.roots, lock = readLock() } = 
  * The lock records every stream a published grant reaches (each grant root and its whole subtree) with its pair, its
  * parent and the items on it. A grant already issued must never reach more than it did, nor silently less. So the
  * build fails when a locked stream is removed, is re-parented, holds another pair in its subtree, or loses an item
- * (removed, or moved to another stream: deprecate instead), and when an item that is not in the lock appears on a
- * locked stream or under one, unless the lock's `reviewed` list acknowledges it.
+ * (removed, or moved to another stream: deprecate instead), and when a stream or an item that is not in the lock
+ * appears on a locked stream or under one, unless the lock's `reviewed` list acknowledges it under that locked stream.
  */
 function checkLock (items, lock, subtree, parentOf) {
+  for (const kind of ['items', 'streams']) {
+    for (const [id, r] of Object.entries(lock.reviewed[kind])) {
+      const at = `fhir scope lock: reviewed ${kind} "${id}"`;
+      if (kind === 'items' ? items[id] == null : !subtree.has(id)) throw new Error(`${at} is not ${kind === 'items' ? 'an item' : 'a stream'}`);
+      if (typeof r?.under !== 'string' || lock.streams[r.under] == null) throw new Error(`${at}: "under" must name a locked stream`);
+      // On or above where it sits now: an entry written for another placement never pre-approves a later move.
+      const above = kind === 'items' ? [items[id].streamId, ...ancestorsIn(parentOf, items[id].streamId)] : ancestorsIn(parentOf, id);
+      if (!above.includes(r.under)) throw new Error(`${at}: "under" is "${r.under}", which is not ${kind === 'items' ? 'its stream nor ' : ''}above it`);
+      if (typeof r.why !== 'string' || !/^\d{4}-\d{2}-\d{2} \S/.test(r.why)) throw new Error(`${at}: "why" must read "YYYY-MM-DD <why>"`);
+    }
+  }
+  const reviewedUnder = (kind, id, locked) => lock.reviewed[kind][id]?.under === locked;
   for (const [id, e] of Object.entries(lock.streams)) {
     const at = `fhir scope lock: stream "${id}", published under ${e.pair},`;
     if (!subtree.has(id)) throw new Error(`${at} is no longer a stream`);
@@ -386,16 +406,20 @@ function checkLock (items, lock, subtree, parentOf) {
       if (item.streamId !== id) throw new Error(`${at} held item "${key}", which is now on stream "${item.streamId}": its past events stay where they are`);
     }
   }
+  // A stream added or moved under a locked stream: every grant already issued reads its subtree.
+  for (const id of parentOf.keys()) {
+    if (lock.streams[id] != null) continue;
+    const locked = ancestorsIn(parentOf, id).find((s) => lock.streams[s] != null);
+    if (locked == null || reviewedUnder('streams', id, locked)) continue;
+    const pair = lock.streams[locked].pair;
+    throw new Error(`fhir scope lock: stream "${id}" is new under the published stream "${locked}": every grant already issued for ${pair} would read it. If a reader of ${pair} may see it, acknowledge it in definitions/fhir/scopes.lock.json, "reviewed": { "streams": { "${id}": { "under": "${locked}", "why": "YYYY-MM-DD <why>" } } }, then run npm run fhir:lock`);
+  }
   for (const [key, item] of Object.entries(items)) {
     if (lock.streams[item.streamId]?.items.includes(key)) continue;
     const locked = [item.streamId, ...ancestorsIn(parentOf, item.streamId)].find((s) => lock.streams[s] != null);
-    if (locked == null || lock.reviewed[key] != null) continue;
+    if (locked == null || reviewedUnder('items', key, locked)) continue;
     const pair = lock.streams[locked].pair;
-    throw new Error(`fhir scope lock: item "${key}" is new under the published stream "${locked}": every grant already issued for ${pair} would read it. If a reader of ${pair} may see it, acknowledge it in definitions/fhir/scopes.lock.json, "reviewed": { "${key}": "YYYY-MM-DD <why>" }, then run npm run fhir:lock`);
-  }
-  for (const [key, why] of Object.entries(lock.reviewed)) {
-    if (items[key] == null) throw new Error(`fhir scope lock: reviewed item "${key}" is not an item`);
-    if (typeof why !== 'string' || !/^\d{4}-\d{2}-\d{2} \S/.test(why)) throw new Error(`fhir scope lock: reviewed "${key}" must read "YYYY-MM-DD <why>"`);
+    throw new Error(`fhir scope lock: item "${key}" is new under the published stream "${locked}": every grant already issued for ${pair} would read it. If a reader of ${pair} may see it, acknowledge it in definitions/fhir/scopes.lock.json, "reviewed": { "items": { "${key}": { "under": "${locked}", "why": "YYYY-MM-DD <why>" } } }, then run npm run fhir:lock`);
   }
 }
 
@@ -435,12 +459,14 @@ function checkFhirImportKeys (items) {
 }
 
 function emptyLock () {
-  return { formatVersion: LOCK_FORMAT, streams: {}, reviewed: {} };
+  return { formatVersion: LOCK_FORMAT, streams: {}, reviewed: { items: {}, streams: {} } };
 }
 
 /**
- * The committed lock, `{ formatVersion, streams: { <streamId>: { pair, parent, items } }, reviewed: { <item key>:
- * "YYYY-MM-DD <why>" } }`: every stream a published grant reaches, ever. An absent file is an empty lock.
+ * The committed lock, `{ formatVersion, streams: { <streamId>: { pair, parent, items } }, reviewed: { items:
+ * { <item key>: { under, why } }, streams: { <streamId>: { under, why } } } }`: every stream a published grant
+ * reaches, ever, and each acknowledgement of a new item or stream under the locked stream `under`, with
+ * `why` = "YYYY-MM-DD <why>". An absent file is an empty lock.
  */
 function readLock () {
   if (!fs.existsSync(LOCK_FILE_PATH)) return emptyLock();
@@ -449,7 +475,10 @@ function readLock () {
 
 function checkedLock (lock) {
   if (lock.formatVersion !== LOCK_FORMAT) throw new Error(`definitions/fhir/scopes.lock.json: formatVersion ${lock.formatVersion}, this build reads ${LOCK_FORMAT}`);
-  return { ...emptyLock(), ...lock };
+  const reviewed = lock.reviewed ?? {};
+  const unknown = Object.keys(reviewed).filter((k) => k !== 'items' && k !== 'streams');
+  if (unknown.length > 0) throw new Error(`definitions/fhir/scopes.lock.json: "reviewed" holds "items" and "streams" only, not ${unknown.map((k) => `"${k}"`).join(', ')}`);
+  return { ...emptyLock(), ...lock, reviewed: { items: reviewed.items ?? {}, streams: reviewed.streams ?? {} } };
 }
 
 /**
@@ -485,7 +514,7 @@ function mergeLock (lock, entries) {
     const now = entries[id];
     out[id] = was == null ? now : { ...was, items: [...new Set([...was.items, ...(now?.items ?? [])])].sort() };
   }
-  return { formatVersion: LOCK_FORMAT, streams: out, reviewed: lock.reviewed ?? {} };
+  return { formatVersion: LOCK_FORMAT, streams: out, reviewed: lock.reviewed ?? emptyLock().reviewed };
 }
 
 function toBePublished (grants) {
