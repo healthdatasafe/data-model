@@ -936,6 +936,35 @@
     "parentId": null
   },
   {
+    "id": "encounter",
+    "name": "Care encounters and providers",
+    "parentId": null,
+    "children": [
+      {
+        "id": "encounter-visit",
+        "name": "Visits and stays",
+        "parentId": "encounter"
+      },
+      {
+        "id": "encounter-provider",
+        "name": "Care providers",
+        "children": [
+          {
+            "id": "encounter-provider-person",
+            "name": "Doctors and therapists",
+            "parentId": "encounter-provider"
+          },
+          {
+            "id": "encounter-provider-organization",
+            "name": "Clinics, hospitals and practices",
+            "parentId": "encounter-provider"
+          }
+        ],
+        "parentId": "encounter"
+      }
+    ]
+  },
+  {
     "id": "family",
     "name": "Family",
     "parentId": null,

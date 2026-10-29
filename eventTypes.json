@@ -5202,13 +5202,14 @@
           }
         },
         "authors": {
-          "description": "Who wrote the document: DocumentEntry.author, FHIR DocumentReference.author. eventId points at a provider event when one exists (mirrored in clientData.related); name, organization and service are free text as printed and are shown to every reader of the stream.",
+          "description": "Who wrote the document: DocumentEntry.author, FHIR DocumentReference.author. eventId points at a provider event (provider/practitioner-v1 or provider/organization-v1) when one exists (mirrored in clientData.related); name, organization and service are free text as printed, kept beside eventId, and are shown to every reader of the stream.",
           "type": "array",
           "items": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
               "eventId": {
+                "description": "Event id of the author's provider event: provider/practitioner-v1 (a person) or provider/organization-v1 (a practice, clinic, hospital or laboratory). Mirrored in clientData.related.<eventId> (documentation/PROVENANCE.md).",
                 "type": "string",
                 "minLength": 1
               },
@@ -5253,7 +5254,7 @@
           }
         },
         "encounterId": {
-          "description": "Event id of the encounter the document comes from, when one is recorded (mirrored in clientData.related).",
+          "description": "Event id of the encounter (an encounter/visit-v1 event) the document comes from, when one is recorded (mirrored in clientData.related).",
           "type": "string",
           "minLength": 1
         },
@@ -5616,6 +5617,295 @@
         "notes": {
           "description": "The comment printed with the result ('haemolysed sample').",
           "type": "string"
+        }
+      }
+    },
+    "encounter/visit-v1": {
+      "description": "A care visit or stay: a consultation, hospital stay, emergency, day case, teleconsultation or home visit. event.time is when it began, event.duration how long it lasted: no duration when the end is not known, null only while a stay is ongoing. Maps to FHIR Encounter: kind → class, specialty → serviceType, reason → reasonCode.text, participants → participant, serviceProvider → serviceProvider, the event period → period; status is derived from the duration, never stored. Every eventId in content is mirrored in clientData.related.<eventId> (documentation/PROVENANCE.md). See documentation/ENCOUNTER.md.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "description": "The kind of visit, FHIR Encounter.class (the table is in documentation/ENCOUNTER.md).",
+          "type": "string",
+          "enum": [
+            "consultation",
+            "hospital-stay",
+            "emergency",
+            "day-case",
+            "teleconsultation",
+            "home-visit",
+            "other"
+          ]
+        },
+        "specialty": {
+          "description": "The clinical specialty of the visit, from DocumentEntry.practiceSettingCode (SNOMED CT, the vocabulary of file/xds-v1 practiceSetting). FHIR Encounter.serviceType.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "system",
+            "code"
+          ],
+          "properties": {
+            "system": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+            },
+            "version": {
+              "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+              "type": "string",
+              "minLength": 1
+            },
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "display": {
+              "type": "string"
+            }
+          }
+        },
+        "reason": {
+          "description": "Why the person was seen, as said or printed. FHIR Encounter.reasonCode.text. Shown to every reader of the stream.",
+          "type": "string",
+          "minLength": 1
+        },
+        "notes": {
+          "description": "Free notes about the visit. Not exported (FHIR R4 Encounter has no note). Shown to every reader of the stream.",
+          "type": "string",
+          "minLength": 1
+        },
+        "participants": {
+          "description": "The practitioners involved, FHIR Encounter.participant: eventId points at a provider/practitioner-v1 event when one exists, name is the name as printed, kept beside it; at least one of the two. role is the FHIR participant type (v3-ParticipationType ATND, REF, CON, ADM, DIS). Each eventId is mirrored in clientData.related.<eventId> (documentation/PROVENANCE.md).",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "anyOf": [
+              {
+                "required": [
+                  "eventId"
+                ]
+              },
+              {
+                "required": [
+                  "name"
+                ]
+              }
+            ],
+            "properties": {
+              "eventId": {
+                "description": "Event id of the practitioner's provider/practitioner-v1 event.",
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "name": {
+                "description": "The name as printed. Shown to every reader of the stream.",
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "description": "What the practitioner did in this visit: attender (ATND), referrer (REF), consultant (CON), admitter (ADM), discharger (DIS).",
+                "type": "string",
+                "enum": [
+                  "attender",
+                  "referrer",
+                  "consultant",
+                  "admitter",
+                  "discharger"
+                ]
+              }
+            }
+          }
+        },
+        "serviceProvider": {
+          "description": "The organization the visit took place at, FHIR Encounter.serviceProvider: eventId points at a provider/organization-v1 event when one exists, name is the name as printed, kept beside it; at least one of the two. The eventId is mirrored in clientData.related.<eventId> (documentation/PROVENANCE.md).",
+          "type": "object",
+          "additionalProperties": false,
+          "anyOf": [
+            {
+              "required": [
+                "eventId"
+              ]
+            },
+            {
+              "required": [
+                "name"
+              ]
+            }
+          ],
+          "properties": {
+            "eventId": {
+              "description": "Event id of the organization's provider/organization-v1 event.",
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            },
+            "name": {
+              "description": "The name as printed. Shown to every reader of the stream.",
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "provider/practitioner-v1": {
+      "description": "A care practitioner: a doctor, therapist, midwife or other person who provides care. One event per practitioner, pointed at by visits (encounter/visit-v1 participants[].eventId) and documents (file/xds-v1 authors[].eventId). Maps to FHIR Practitioner, with a PractitionerRole for its specialty and organizations. Every eventId in content is mirrored in clientData.related.<eventId>, the GLN and ZSR in clientData.hdsGln and hdsZsr (documentation/PROVENANCE.md). See documentation/ENCOUNTER.md.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "The name as printed ('Dr méd. Anne Muller'). FHIR HumanName.text. Shown to every reader of the stream.",
+          "type": "string",
+          "minLength": 1
+        },
+        "given": {
+          "description": "Given name(s) as printed, one string ('Anne Marie'). FHIR HumanName.given: the export splits it on spaces.",
+          "type": "string",
+          "minLength": 1
+        },
+        "family": {
+          "description": "Family name as printed. FHIR HumanName.family; CH Core Practitioner requires it (ch-pract-1), so a practitioner without it exports with no CH Core claim.",
+          "type": "string",
+          "minLength": 1
+        },
+        "specialties": {
+          "description": "The practitioner's specialties, FHIR PractitionerRole.specialty (0..*): every specialist title as printed, in printed order. Preferably from MedReg HCProfessional.hcSpecialisation (urn:oid:2.16.756.5.30.1.127.3.5, the value set CH Core PractitionerRole binds); a DocumentEntry.practiceSettingCode (SNOMED CT) is accepted.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "system",
+              "code"
+            ],
+            "properties": {
+              "system": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+              },
+              "version": {
+                "description": "The code system version, when it matters (an edition of SNOMED CT, such as the Swiss extension).",
+                "type": "string",
+                "minLength": 1
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "display": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "identifiers": {
+          "description": "Official identifiers, FHIR Identifier {system, value}; system is a URI. CH Core Practitioner: GLN urn:oid:2.51.1.3 (at most one), ZSR urn:oid:2.16.756.5.30.1.123.100.2.1.1. Values are stored as printed and not checked here. See documentation/ENCOUNTER.md.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "system",
+              "value"
+            ],
+            "properties": {
+              "system": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "organizations": {
+          "description": "The organizations the practitioner works for, FHIR PractitionerRole.organization: eventId points at a provider/organization-v1 event when one exists, name is the name as printed, kept beside it; at least one of the two. Each eventId is mirrored in clientData.related.<eventId> (documentation/PROVENANCE.md).",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "anyOf": [
+              {
+                "required": [
+                  "eventId"
+                ]
+              },
+              {
+                "required": [
+                  "name"
+                ]
+              }
+            ],
+            "properties": {
+              "eventId": {
+                "description": "Event id of the organization's provider/organization-v1 event.",
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "name": {
+                "description": "The name as printed. Shown to every reader of the stream.",
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "provider/organization-v1": {
+      "description": "A care organization: a practice, clinic, hospital, laboratory, or one of its departments (a department is its own organization). One event per organization, pointed at by visits (encounter/visit-v1 serviceProvider.eventId), practitioners (provider/practitioner-v1 organizations[].eventId) and documents (file/xds-v1 authors[].eventId). Maps to FHIR Organization. The GLN and ZSR are mirrored in clientData.hdsGln and hdsZsr (documentation/PROVENANCE.md). See documentation/ENCOUNTER.md.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "The name as printed ('HUG, Service de cardiologie'). FHIR Organization.name. Shown to every reader of the stream.",
+          "type": "string",
+          "minLength": 1
+        },
+        "identifiers": {
+          "description": "Official identifiers, FHIR Identifier {system, value}; system is a URI. CH Core Organization, at most one each: GLN urn:oid:2.51.1.3, ZSR urn:oid:2.16.756.5.30.1.123.100.2.1.1, UIDB urn:oid:2.16.756.5.35, BER urn:oid:2.16.756.5.45. Values are stored as printed and not checked here. See documentation/ENCOUNTER.md.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "system",
+              "value"
+            ],
+            "properties": {
+              "system": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
         }
       }
     }
