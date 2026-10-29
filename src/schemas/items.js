@@ -239,10 +239,11 @@ const itemSchema = {
   properties: {
     version: { type: 'string' },
     deprecated: { type: 'boolean' },
-    // DERIVED by the loader, never authored: the denominator for a `ratio/generic`
-    // select item, equal to max(option values). Declared here because this schema is
-    // itself published and describes the items in pack.json; `addItem` throws if an
-    // author supplies it. (Plan 100, finding F1.)
+    // The denominator of a `ratio/generic` item: DERIVED by the loader on a select
+    // (max(option values)), AUTHORED on a `type: number` item (a fixed denominator,
+    // INR 1; data-model 3.33.0). Declared here because this schema is itself published
+    // and describes the items in pack.json; `addItem` throws if any other item supplies
+    // it. (Plan 100, finding F1; plan 114 Q8.)
     ratioRelativeTo: { type: 'number', exclusiveMinimum: 0 },
     label: { $ref: 'defs.json#/definitions/localized' },
     description: { $ref: 'defs.json#/definitions/localized' },

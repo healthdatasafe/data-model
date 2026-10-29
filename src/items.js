@@ -18,6 +18,7 @@ module.exports = {
   findItemForEvent,
   toBePublished,
   checkItemVsEvenType,
+  checkRatioRelativeTo,
   checkUnitConversions,
   checkLoincRefs,
   checkFhirMapping: fhir.checkFhirMapping,
@@ -118,12 +119,7 @@ function addItem (key, itemSrc) {
     }
   }
 
-  // `ratioRelativeTo` is DERIVED, never authored. Refuse an authored one rather than
-  // silently overwriting it: an author who believes they set the denominator would
-  // otherwise get no error and no effect. (Plan 100, finding F1.)
-  if (itemSrc.ratioRelativeTo !== undefined) {
-    throw new Error(`item "${key}" declares "ratioRelativeTo"; it is derived from the option list (max of option values) and must not be authored`);
-  }
+  checkRatioRelativeTo(key, itemSrc);
 
   itemsById[key] = item;
 
@@ -185,6 +181,19 @@ function addItem (key, itemSrc) {
   if (item.eventType === 'ratio/generic' && item.type === 'select') {
     item.ratioRelativeTo = Math.max(...item.options.map((o) => o.value));
   }
+}
+
+/**
+ * `ratioRelativeTo` is DERIVED on a `ratio/generic` select (max of option values) and AUTHORED on a
+ * `type: number` item on `ratio/generic` (a fixed denominator, INR 1; data-model 3.33.0, plan 114 Q8).
+ * Nobody else carries it. Refused rather than silently overwritten on a select: an author who believes
+ * they set the denominator would otherwise get no error and no effect. (Plan 100, finding F1.) The
+ * number item's value is checked in checkItemVsEvenType.
+ */
+function checkRatioRelativeTo (key, itemSrc) {
+  if (itemSrc.ratioRelativeTo === undefined) return;
+  if (itemSrc.type === 'number' && itemSrc.eventType === 'ratio/generic') return;
+  throw new Error(`item "${key}" declares "ratioRelativeTo"; only a "number" item on "ratio/generic" authors it (a select derives it from its options: max of option values)`);
 }
 
 /**
@@ -348,6 +357,15 @@ function checkItemVsEvenType (key, item, eventType) {
       const denominator = Math.max(...item.options.map((o) => o.value));
       if (!Number.isFinite(denominator) || !(denominator > 0)) {
         throw new Error(`item "${key}" uses "ratio/generic" but its largest option value is ${denominator}; the denominator would make every stored ratio undefined`);
+      }
+      return true;
+    }
+    // A `number` item has no options to derive the denominator from: it authors it (INR: 1), the typed
+    // value is the numerator, stored `{ value, relativeTo: item.ratioRelativeTo }`. Only on `eventType`:
+    // a variation item has none and fails the plain `number` branch below (the eventType is an object).
+    if (item.type === 'number') {
+      if (!(typeof item.ratioRelativeTo === 'number' && Number.isFinite(item.ratioRelativeTo) && item.ratioRelativeTo > 0)) {
+        throw new Error(`item "${key}" is a "number" on "ratio/generic" and must declare "ratioRelativeTo" > 0, the fixed denominator`);
       }
       return true;
     }

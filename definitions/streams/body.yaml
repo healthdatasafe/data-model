@@ -259,6 +259,8 @@ children:
             name: aPTT
           - id: body-blood-coagulation-fibrinogen
             name: Fibrinogen
+          - id: body-blood-coagulation-inr
+            name: INR
       # Erythrocyte specimen — distinct from serum for the same analyte
       - id: body-blood-rbc
         name: Red blood cell

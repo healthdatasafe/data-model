@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.33.0] - 2026-10-29
+
+The INR, site-agents#27 release 2 (plan 114 Q8), and a mg/L option on haptoglobin. Additive for readers; the meaning
+of the published `ratioRelativeTo` widens (derived on a select, now also authored on a number item).
+
+### Added
+- **`body-blood-coagulation-inr`** (stream under `body-blood-coagulation`): a `type: number` item on `ratio/generic`
+  with an authored `ratioRelativeTo: 1`. Content `{ value: 2.5, relativeTo: 1 }`, never a bare number; a censored
+  INR keeps `clientData.hdsComparator`. LOINC `6301-6`, SNOMED `440685005`, both verified live. A home INR on
+  capillary blood (`34714-6`) stays in `lab-result/coded-v1`. Readers need hds-lib 2.30.0 (`labNumberOf`, short text,
+  FHIR `{INR}`); writers hds-forms-js 0.25.0. An older hds-forms-js writes a bare number, which the core refuses
+  ("must be object"), so nothing wrong is stored.
+- **`body-blood-serum-haptoglobin`** gains `concentration/mg-l` as option 3 (options 1 and 2 unchanged), LOINC
+  `4542-7` like the others, factors to mg/dL (× 0.1) and g/L (× 0.001), exact. Importers print haptoglobin in mg/L.
+
+### Changed
+- **Loader:** `ratioRelativeTo` may be authored on a `type: number` item on `ratio/generic` only (finite, `> 0`,
+  required there); refused on any other item, a select included (`checkRatioRelativeTo`). Such an item declares
+  `eventType`, never `variations`. Tests `[RGEN-5]`, `[RGEN-REJ-6]` (now behavioural), `[RGEN-NUM-1..5]`; AGENTS.md
+  § ratio/generic, BLOOD-CHEMISTRY.md (units, codes), published item schema comment.
+
 ## [3.32.0] - 2026-10-29
 
 The missing lab analytes of site-agents#27, release 1 (everything but the INR, which follows in 3.33.0), the LOINC
