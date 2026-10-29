@@ -562,14 +562,33 @@ body-blood-serum-c-peptide:
     en: Shows how much insulin your body is making on its own.
     fr: Indique la quantité d'insuline que votre corps produit lui-même.
   streamId: body-blood-serum-c-peptide
-  eventType: concentration/ug-l
   type: number
   repeatable: any
-  number:
-    display:
-      suffix: { en: ng/mL, fr: ng/mL }
-  # ng/mL is numerically identical to µg/L, so the legacy concentration/ug-l is used rather
-  # than an equivalent twin. Stored and displayed values are the printed ng/mL number.
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/ug-l, label: { en: ng/mL, fr: ng/mL } }
+        - { value: concentration/nmol-l, label: { en: nmol/L, fr: nmol/L } }
+        - { value: concentration/pmol-l, label: { en: pmol/L, fr: pmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/ug-l
+        to: concentration/nmol-l
+        factor: 0.3311
+        molarMass: 3020.3
+        source: "Molar mass of human C-peptide (proinsulin 57-87, UniProt P01308), C129H211N35O48, 3020.3 g/mol, computed from its sequence with IUPAC standard atomic weights"
+      - from: concentration/ug-l
+        to: concentration/pmol-l
+        factor: 331.1
+        molarMass: 3020.3
+        source: "Molar mass of human C-peptide (proinsulin 57-87, UniProt P01308), C129H211N35O48, 3020.3 g/mol, computed from its sequence with IUPAC standard atomic weights"
+      - from: concentration/nmol-l
+        to: concentration/pmol-l
+        factor: 1000
+        source: "Exact by the definition of the units: 1 nmol = 1000 pmol (SI Brochure, 9th edition, BIPM 2019)"
+  # ng/mL ≡ µg/L, so the legacy concentration/ug-l is used rather than an equivalent twin. The
+  # option label carries "ng/mL" (an item-level number.display.suffix would also label the SI option).
   references:
     snomed: ["88705004"]
 
@@ -678,9 +697,21 @@ body-blood-serum-iron:
     en: Iron circulating in your blood.
     fr: Le fer circulant dans votre sang.
   streamId: body-blood-serum-iron
-  eventType: concentration/mcg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mcg-dl, label: { en: μg/dL, fr: μg/dL } }
+        - { value: concentration/umol-l, label: { en: μmol/L, fr: μmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mcg-dl
+        to: concentration/umol-l
+        factor: 0.1791
+        molarMass: 55.845
+        source: "Molar mass of iron, Fe, 55.845 g/mol (PubChem CID 23925; IUPAC standard atomic weights)"
   references:
     snomed: ["250216004"]
 
@@ -691,9 +722,22 @@ body-blood-serum-tibc:
     en: How much iron your blood could carry.
     fr: La quantité de fer que votre sang pourrait transporter.
   streamId: body-blood-serum-tibc
-  eventType: concentration/mcg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mcg-dl, label: { en: μg/dL, fr: μg/dL } }
+        - { value: concentration/umol-l, label: { en: μmol/L, fr: μmol/L } }
+  # TIBC is the iron the serum's transferrin can bind, expressed as iron: the factor is iron's.
+  unitConversions:
+    factors:
+      - from: concentration/mcg-dl
+        to: concentration/umol-l
+        factor: 0.1791
+        molarMass: 55.845
+        source: "Molar mass of iron, Fe, 55.845 g/mol (PubChem CID 23925; IUPAC standard atomic weights): TIBC is expressed as the iron bound"
   references:
     snomed: ["359979000"]
 
@@ -721,9 +765,20 @@ body-blood-cbc-hemoglobin:
     en: The protein in red blood cells that carries oxygen.
     fr: La protéine des globules rouges qui transporte l'oxygène.
   streamId: body-blood-cbc-hemoglobin
-  eventType: concentration/g-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/g-dl, label: { en: g/dL, fr: g/dL } }
+        - { value: concentration/g-l, label: { en: g/L, fr: g/L } }
+  unitConversions:
+    factors:
+      - from: concentration/g-dl
+        to: concentration/g-l
+        factor: 10
+        source: "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
   references:
     snomed: ["441689006"]
 
@@ -975,9 +1030,21 @@ body-blood-serum-bilirubin-total:
     en: A yellow pigment your liver clears from your blood.
     fr: Un pigment jaune que votre foie élimine de votre sang.
   streamId: body-blood-serum-bilirubin-total
-  eventType: concentration/mg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mg-dl, label: { en: mg/dL, fr: mg/dL } }
+        - { value: concentration/umol-l, label: { en: μmol/L, fr: μmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mg-dl
+        to: concentration/umol-l
+        factor: 17.10
+        molarMass: 584.67
+        source: "Molar mass of bilirubin, C33H36N4O6, 584.67 g/mol (PubChem CID 5280352; IUPAC standard atomic weights)"
   references:
     snomed: ["359986008"]
 
@@ -1018,9 +1085,24 @@ body-blood-serum-bun:
     en: A waste product your kidneys filter out.
     fr: Un déchet que vos reins éliminent.
   streamId: body-blood-serum-bun
-  eventType: concentration/mg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mg-dl, label: { en: mg/dL, fr: mg/dL } }
+        - { value: concentration/mmol-l, label: { en: Urea mmol/L, fr: Urée mmol/L } }
+  # mg/dL is urea NITROGEN (BUN); mmol/L is urea, which labs print as "urea" (one mole of urea carries
+  # two nitrogen atoms, hence the factor). Urea printed in mg/dL (mass of urea, not of its nitrogen)
+  # is NOT this item's mg/dL: it goes to lab-result/coded-v1 (BLOOD-CHEMISTRY.md § Units).
+  unitConversions:
+    factors:
+      - from: concentration/mg-dl
+        to: concentration/mmol-l
+        factor: 0.3570
+        molarMass: 28.014
+        source: "Urea, CH4N2O (PubChem CID 1176), carries two nitrogen atoms: 1 mmol of urea holds 2 × 14.007 = 28.014 mg of nitrogen (IUPAC standard atomic weights)"
   references:
     snomed: ["105011006"]
 
@@ -1151,9 +1233,20 @@ body-blood-serum-protein-total:
     en: All the protein in your blood.
     fr: L'ensemble des protéines de votre sang.
   streamId: body-blood-serum-protein-total
-  eventType: concentration/g-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/g-dl, label: { en: g/dL, fr: g/dL } }
+        - { value: concentration/g-l, label: { en: g/L, fr: g/L } }
+  unitConversions:
+    factors:
+      - from: concentration/g-dl
+        to: concentration/g-l
+        factor: 10
+        source: "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
   references:
     snomed: ["270992008"]
 
@@ -1164,9 +1257,20 @@ body-blood-serum-albumin:
     en: The main protein in your blood.
     fr: La principale protéine de votre sang.
   streamId: body-blood-serum-albumin
-  eventType: concentration/g-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/g-dl, label: { en: g/dL, fr: g/dL } }
+        - { value: concentration/g-l, label: { en: g/L, fr: g/L } }
+  unitConversions:
+    factors:
+      - from: concentration/g-dl
+        to: concentration/g-l
+        factor: 10
+        source: "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
   references:
     snomed: ["104485008"]
 
@@ -1177,9 +1281,20 @@ body-blood-serum-globulin:
     en: A group of blood proteins, including your antibodies.
     fr: Un groupe de protéines sanguines, dont vos anticorps.
   streamId: body-blood-serum-globulin
-  eventType: concentration/g-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/g-dl, label: { en: g/dL, fr: g/dL } }
+        - { value: concentration/g-l, label: { en: g/L, fr: g/L } }
+  unitConversions:
+    factors:
+      - from: concentration/g-dl
+        to: concentration/g-l
+        factor: 10
+        source: "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
   references:
     snomed: ["270994009"]
 
@@ -1192,9 +1307,21 @@ body-blood-serum-zinc:
     en: A mineral your immune system and healing need.
     fr: Un minéral nécessaire à votre système immunitaire et à la cicatrisation.
   streamId: body-blood-serum-zinc
-  eventType: concentration/mcg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mcg-dl, label: { en: μg/dL, fr: μg/dL } }
+        - { value: concentration/umol-l, label: { en: μmol/L, fr: μmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mcg-dl
+        to: concentration/umol-l
+        factor: 0.1530
+        molarMass: 65.38
+        source: "Molar mass of zinc, Zn, 65.38 g/mol (PubChem CID 23994; IUPAC standard atomic weights)"
   references:
     snomed: ["273975003"]
 
@@ -1205,9 +1332,21 @@ body-blood-serum-copper:
     en: A mineral your body needs in small amounts.
     fr: Un minéral dont votre corps a besoin en petite quantité.
   streamId: body-blood-serum-copper
-  eventType: concentration/mcg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mcg-dl, label: { en: μg/dL, fr: μg/dL } }
+        - { value: concentration/umol-l, label: { en: μmol/L, fr: μmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mcg-dl
+        to: concentration/umol-l
+        factor: 0.1574
+        molarMass: 63.546
+        source: "Molar mass of copper, Cu, 63.546 g/mol (PubChem CID 23978; IUPAC standard atomic weights)"
   references:
     snomed: ["85554007"]
 
@@ -1218,9 +1357,30 @@ body-blood-serum-ceruloplasmin:
     en: The protein that carries copper in your blood.
     fr: La protéine qui transporte le cuivre dans votre sang.
   streamId: body-blood-serum-ceruloplasmin
-  eventType: concentration/mg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mg-dl, label: { en: mg/dL, fr: mg/dL } }
+        - { value: concentration/mg-l, label: { en: mg/L, fr: mg/L } }
+        - { value: concentration/g-l, label: { en: g/L, fr: g/L } }
+  # g/L is how most European labs print it (0.20-0.60 g/L).
+  unitConversions:
+    factors:
+      - from: concentration/mg-dl
+        to: concentration/mg-l
+        factor: 10
+        source: "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
+      - from: concentration/mg-dl
+        to: concentration/g-l
+        factor: 0.01
+        source: "Exact by the definition of the units: 1 mg/dL = 10 mg/L = 0.01 g/L (SI Brochure, 9th edition, BIPM 2019)"
+      - from: concentration/mg-l
+        to: concentration/g-l
+        factor: 0.001
+        source: "Exact by the definition of the units: 1 mg = 0.001 g (SI Brochure, 9th edition, BIPM 2019)"
   references:
     snomed: ["270975004"]
 
@@ -1231,9 +1391,21 @@ body-blood-serum-magnesium:
     en: Magnesium circulating in your blood.
     fr: Le magnésium circulant dans votre sang.
   streamId: body-blood-serum-magnesium
-  eventType: concentration/mg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mg-dl, label: { en: mg/dL, fr: mg/dL } }
+        - { value: concentration/mmol-l, label: { en: mmol/L, fr: mmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mg-dl
+        to: concentration/mmol-l
+        factor: 0.4114
+        molarMass: 24.305
+        source: "Molar mass of magnesium, Mg, 24.305 g/mol (PubChem CID 5462224; IUPAC standard atomic weights)"
   references:
     snomed: ["63571001"]
 
@@ -1273,9 +1445,21 @@ body-blood-serum-vitamin-a:
     en: Vitamin A in your blood.
     fr: La vitamine A dans votre sang.
   streamId: body-blood-serum-vitamin-a
-  eventType: concentration/mcg-dl
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mcg-dl, label: { en: μg/dL, fr: μg/dL } }
+        - { value: concentration/umol-l, label: { en: μmol/L, fr: μmol/L } }
+  unitConversions:
+    factors:
+      - from: concentration/mcg-dl
+        to: concentration/umol-l
+        factor: 0.03491
+        molarMass: 286.46
+        source: "Molar mass of retinol (serum vitamin A is measured as retinol), C20H30O, 286.46 g/mol (PubChem CID 445354; IUPAC standard atomic weights)"
   references:
     snomed: ["271243004"]
 
@@ -1431,7 +1615,8 @@ body-blood-serum-homocysteine:
 # lipids, inflammation, thyroid function & antibodies, reproductive & adrenal
 # hormones). Same conventions as the #2 domain: conventional reporting units,
 # no reference ranges, no derived indices. ng/mL analytes reuse the legacy
-# concentration/ug-l (numerically identical) with a display suffix.
+# concentration/ug-l (numerically identical), labelled ng/mL (a variation option label, or a
+# display suffix on a single-unit item).
 # ─────────────────────────────────────────────────────────────────────────────
 
 # ── Lipids ───────────────────────────────────────────────────────────────────
@@ -1545,9 +1730,20 @@ body-blood-serum-crp-hs:
     en: A sensitive marker of inflammation in your body.
     fr: Un marqueur sensible de l'inflammation dans votre corps.
   streamId: body-blood-serum-crp-hs
-  eventType: concentration/mg-l
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/mg-l, label: { en: mg/L, fr: mg/L } }
+        - { value: concentration/mg-dl, label: { en: mg/dL, fr: mg/dL } }
+  unitConversions:
+    factors:
+      - from: concentration/mg-l
+        to: concentration/mg-dl
+        factor: 0.1
+        source: "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
   references:
     snomed: ["711357009"]
 
@@ -1786,6 +1982,8 @@ body-blood-serum-testosterone-total:
       options:
         - { value: concentration/ng-dl, label: { en: ng/dL, fr: ng/dL } }
         - { value: concentration/nmol-l, label: { en: nmol/L, fr: nmol/L } }
+        - { value: concentration/ug-l, label: { en: ng/mL, fr: ng/mL } }
+  # ng/mL ≡ µg/L (the legacy concentration/ug-l, not an equivalent twin), labelled as printed.
   unitConversions:
     factors:
       - from: concentration/ng-dl
@@ -1793,6 +1991,15 @@ body-blood-serum-testosterone-total:
         factor: 0.03467
         molarMass: 288.43
         source: "Molar mass of testosterone, C19H28O2, 288.43 g/mol (PubChem CID 6013; IUPAC standard atomic weights)"
+      - from: concentration/ug-l
+        to: concentration/nmol-l
+        factor: 3.467
+        molarMass: 288.43
+        source: "Molar mass of testosterone, C19H28O2, 288.43 g/mol (PubChem CID 6013; IUPAC standard atomic weights)"
+      - from: concentration/ng-dl
+        to: concentration/ug-l
+        factor: 0.01
+        source: "Exact by the definition of the units: 1 ng/dL = 10 ng/L = 0.01 µg/L (SI Brochure, 9th edition, BIPM 2019)"
   references:
     snomed: ["270973006"]
 
@@ -1979,9 +2186,22 @@ body-blood-serum-pth:
     en: A hormone that controls the calcium level in your blood.
     fr: Une hormone qui régule le taux de calcium dans votre sang.
   streamId: body-blood-serum-pth
-  eventType: concentration/pg-ml
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/pg-ml, label: { en: pg/mL, fr: pg/mL } }
+        - { value: concentration/pmol-l, label: { en: pmol/L, fr: pmol/L } }
+  # ng/L ≡ pg/mL: a PTH printed in ng/L stores its number unchanged on concentration/pg-ml.
+  unitConversions:
+    factors:
+      - from: concentration/pg-ml
+        to: concentration/pmol-l
+        factor: 0.1061
+        molarMass: 9424.8
+        source: "Molar mass of intact human PTH (1-84; UniProt P01270, chain 32-115), C408H674N126O126S2, 9424.8 g/mol, computed from its sequence with IUPAC standard atomic weights"
   references:
     snomed: ["271541003"]
 
