@@ -642,6 +642,11 @@
                 "id": "body-blood-coagulation-fibrinogen",
                 "name": "Fibrinogen",
                 "parentId": "body-blood-coagulation"
+              },
+              {
+                "id": "body-blood-coagulation-inr",
+                "name": "INR",
+                "parentId": "body-blood-coagulation"
               }
             ],
             "parentId": "body-blood"
