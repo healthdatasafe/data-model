@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.35.0] - 2026-10-29
+
+### Changed: `eventTypes-legacy.json` mirror refreshed to pryv/data-types 1.3.3
+
+Upstream commit `ace247c360` (2026-10-27, "consent/member-access-cmc and consent/member-revoke-cmc: failure.detail may
+also carry retryAfterMs … version 1.3.3"), fetched 2026-10-29 and byte-verified against
+`https://pryv.github.io/event-types/flat.json` and `api.pryv.com/event-types/flat.json` (after its redirect).
+Byte-faithful copy. 358 → 358 types, nothing added or removed. **Changed**, one optional property and its description
+only: `consent/member-access-cmc` and `consent/member-revoke-cmc` gain `failure.detail.retryAfterMs` (a number, the
+peer's Retry-After in milliseconds on a 408, 429 or 503). No `required` changed; `extras` / `classes` / `sets`
+unchanged. No `$ref`, no key shared with `eventTypes-hds.json`. Both types are platform-written; HDS writes neither.
+The draft-07 caveat of 3.19.0 (`expireAfter` on `consent/member-access-cmc`) still holds; `[ETLM-AJV-1]` passes
+unchanged. Fable-reviewed.
+
 ## [3.34.0] - 2026-10-29
 
 Care encounters and providers (site-agents#24, plan 114 Q25-Q30, Q33, Q34), and the medication coding convention

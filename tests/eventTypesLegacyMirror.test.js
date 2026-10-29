@@ -10,7 +10,7 @@ const HDS_PATH = path.join(__dirname, '../definitions/eventTypes/eventTypes-hds.
 
 // The CMC event types are owned by pryv/data-types and hardcoded as ET_* constants in @pryv/cmc.
 // The ten below are the ones HDS code writes today (hds-lib-js, doctor-dashboard, hds-webapp,
-// bridge-mira, bridge-redcap), so the mirror must keep carrying them. Dictionary 1.3.2 carries 13
+// bridge-mira, bridge-redcap), so the mirror must keep carrying them. Dictionary 1.3.3 carries 13
 // `*-cmc` types; `notification/ack-cmc`, `consent/member-access-cmc` and `consent/member-revoke-cmc`
 // are platform-written and left out. No `*-cmc` type may ever be copied into eventTypes-hds.json
 // ([ETLM-CMC-2]): src/eventTypes.js throws on a duplicate key across the two files.
@@ -80,7 +80,7 @@ describe('[ETLM] eventTypes-legacy.json upstream mirror', () => {
 
     // Upstream constructs ajv 8 (draft-07) refuses, pinned by type key + the exact ajv message (which
     // carries the JSON path), so any other non-portable construct still trips [ETLM-AJV-1]. The cores
-    // compile them ([ETLM-AJV-3]). 1.3.2 spells `expireAfter > 0` the draft-04 way
+    // compile them ([ETLM-AJV-3]). 1.3.3 spells `expireAfter > 0` the draft-04 way
     // (`exclusiveMinimum: true`), the dictionary's only such construct.
     const KNOWN_DRAFT07_INCOMPATIBLE = [
       'consent/member-access-cmc: schema is invalid: data/properties/expireAfter/exclusiveMinimum must be number'
