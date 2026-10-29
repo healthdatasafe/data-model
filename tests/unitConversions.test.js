@@ -99,7 +99,10 @@ const PER_LITRE = {
   [C('mmol-l')]: ['molar', 1e-3],
   [C('umol-l')]: ['molar', 1e-6],
   [C('nmol-l')]: ['molar', 1e-9],
-  [C('pmol-l')]: ['molar', 1e-12]
+  [C('pmol-l')]: ['molar', 1e-12],
+  [C('count-ul')]: ['count', 1e6],
+  [C('megacount-ml')]: ['count', 1e9],
+  [C('gigacount-ml')]: ['count', 1e12]
 };
 
 const withConversions = () => Object.entries(itemsById).filter(([, i]) => i.unitConversions);

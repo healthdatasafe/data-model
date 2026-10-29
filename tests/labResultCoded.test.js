@@ -8,7 +8,7 @@ const AjvDraft04 = require('ajv-draft-04');
 // item type `imported`; and the LOINC ownership checks. See documentation/BLOOD-CHEMISTRY.md.
 
 describe('[LABC] Coded lab results', () => {
-  const { itemsById, findItemForEvent, checkItemVsEvenType } = require('../src/items');
+  const { itemsById, findItemForEvent, checkItemVsEvenType, checkLoincRefs } = require('../src/items');
   const { checkItem } = require('../src/schemas/items');
   const streams = require('../src/streams');
   const { eventTypesById } = require('../src/eventTypes');
@@ -122,17 +122,17 @@ describe('[LABC] Coded lab results', () => {
   });
 
   describe('[LABC-LOINC] LOINC codes asserted by items', () => {
+    // Every code an item owns: `references.loinc` and the method codes of `references.loincMethod` (plan 114 Q21).
     const asserted = () => {
       const out = [];
       for (const [key, item] of Object.entries(itemsById)) {
         if (item.deprecated) continue;
-        const l = item.references?.loinc;
-        for (const code of (Array.isArray(l) ? l : (l != null ? [l] : []))) out.push({ key, code });
+        for (const code of [...(item.references?.loinc || []), ...(item.references?.loincMethod || [])]) out.push({ key, code });
       }
       return out;
     };
 
-    it('[LABC-LOINC-1] no LOINC code is asserted by two active items', () => {
+    it('[LABC-LOINC-1] no LOINC code is asserted by two active items, loinc and loincMethod together', () => {
       const owners = {};
       for (const { key, code } of asserted()) (owners[code] ??= []).push(key);
       const shared = Object.entries(owners).filter(([, keys]) => keys.length > 1);
@@ -152,11 +152,67 @@ describe('[LABC] Coded lab results', () => {
         return sum % 10 === 0;
       };
       assert.ok(valid('20447-9') && !valid('20447-8'), 'the check itself');
-      // Asserted by plan 44 (before LOINC verification, 3.23.0) and unknown to LOINC 2.83: to be corrected, never
-      // extended. A new invalid code fails here.
-      const KNOWN_INVALID = ['32622-6', '63800-5', '63801-3', '63802-1'];
-      const bad = asserted().filter(({ code }) => !valid(code) && !KNOWN_INVALID.includes(code));
+      // The five codes plan 44 asserted before LOINC verification were removed in 3.31.0 and 3.32.0
+      // (B-2026-10-28-41): no exception is left.
+      const options = [];
+      for (const [key, item] of Object.entries(itemsById)) {
+        for (const o of item.variations?.eventType?.options || []) if (o.loinc) options.push({ key, code: o.loinc });
+      }
+      const bad = [...asserted(), ...options].filter(({ code }) => !valid(code));
       assert.deepStrictEqual(bad, [], 'invalid LOINC codes');
+    });
+
+    describe('[LABC-LOINC-3] per-option codes and method codes (checkLoincRefs)', () => {
+      const base = () => ({
+        variations: { eventType: { options: [{ value: 'concentration/mg-dl', label: { en: 'mg/dL' } }, { value: 'concentration/mmol-l', label: { en: 'mmol/L' } }] } },
+        references: { loinc: ['2345-7', '14749-6'] }
+      });
+      const withCodes = (a, b) => { const i = base(); i.variations.eventType.options[0].loinc = a; i.variations.eventType.options[1].loinc = b; return i; };
+
+      it('[LABC-LOINC-3a] accepts one code per option, and null for a unit LOINC has no code for', () => {
+        assert.doesNotThrow(() => checkLoincRefs('x', withCodes('2345-7', '14749-6')));
+        const one = withCodes('2345-7', null); one.references.loinc = ['2345-7'];
+        assert.doesNotThrow(() => checkLoincRefs('x', one), 'pmol/L of fasting insulin has no code');
+        assert.doesNotThrow(() => checkLoincRefs('x', { variations: base().variations }), 'no LOINC at all');
+      });
+
+      it('[LABC-LOINC-3b] refuses an option code the item does not assert, and an asserted code no option stores', () => {
+        assert.throws(() => checkLoincRefs('x', withCodes('2345-7', '1558-6')), /not in references\.loinc/);
+        assert.throws(() => checkLoincRefs('x', withCodes('2345-7', '2345-7')), /14749-6 but no unit option stores it/);
+        assert.throws(() => checkLoincRefs('x', { variations: withCodes('2345-7', null).variations }), /asserts none/);
+      });
+
+      it('[LABC-LOINC-3c] never inherits: each option of an item with LOINC states its code, even for one code', () => {
+        assert.throws(() => checkLoincRefs('x', base()), /must state the code it stores/);
+        assert.throws(() => checkLoincRefs('x', { references: { loinc: ['718-7'] }, variations: base().variations }), /must state the code it stores/);
+        assert.throws(() => checkLoincRefs('x', withCodes('2345-7')), /must state/, 'a missing code is not null');
+      });
+
+      it('[LABC-LOINC-3d] refuses a code twice, a code in both lists, and two codes on a one-unit number item', () => {
+        assert.throws(() => checkLoincRefs('x', { references: { loinc: ['718-7', '718-7'] } }), /twice/);
+        assert.throws(() => checkLoincRefs('x', { references: { loinc: ['718-7'], loincMethod: ['718-7'] } }), /both/);
+        assert.throws(() => checkLoincRefs('x', { type: 'number', references: { loinc: ['2345-7', '14749-6'] } }), /one unit/);
+        assert.doesNotThrow(() => checkLoincRefs('x', { type: 'composite', references: { loinc: ['85354-9', '8480-6'] } }), 'a panel');
+      });
+
+      it('[LABC-LOINC-3e] two options share a code only if their units are of one kind', () => {
+        const KINDS = [['molar', /^concentration\/(mmol|umol|nmol|pmol)-l$/], ['units', /^concentration\/(iu-l|uiu-ml|iu-ml|u-ml)$/],
+          ['count', /^concentration\/(count-ul|count-ml|megacount-ml|gigacount-ml)$/], ['mass', /^concentration\//]];
+        const kindOf = (et) => (KINDS.find(([, re]) => re.test(et)) || [et.split('/')[0]])[0];
+        let shared = 0;
+        for (const [key, item] of Object.entries(itemsById)) {
+          const byCode = {};
+          for (const o of item.variations?.eventType?.options || []) if (o.loinc) (byCode[o.loinc] ??= new Set()).add(kindOf(o.value));
+          for (const [code, kinds] of Object.entries(byCode)) {
+            assert.strictEqual(kinds.size, 1, `${key}: ${code} is stored by options of kinds ${[...kinds]}`);
+            shared++;
+          }
+        }
+        assert.ok(shared > 60, `${shared} option codes checked`);
+        assert.strictEqual(kindOf('concentration/pmol-l'), 'molar');
+        assert.strictEqual(kindOf('concentration/uiu-ml'), 'units');
+        assert.strictEqual(kindOf('concentration/ug-l'), 'mass');
+      });
     });
   });
 

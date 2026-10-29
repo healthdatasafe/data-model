@@ -13,8 +13,9 @@ application meets in ordinary lab reports.
 body/
   body-blood-pressure          ← VITAL SIGN. A sibling, not a child (see the wart below)
   body-blood/
-    body-blood-serum/          ← serum / plasma analytes (most of the domain)
-    body-blood-cbc/            ← whole blood — complete blood count
+    body-blood-serum/          ← serum / plasma analytes (most of the domain), "Serum or plasma"
+    body-blood-cbc/            ← whole blood — complete blood count, % and absolute counts
+    body-blood-coagulation/    ← citrated plasma — PT, Quick %, aPTT, fibrinogen (3.32.0)
     body-blood-rbc/            ← erythrocyte specimen (RBC magnesium)
     body-blood-hba1c           ← whole blood, not serum — hence the direct placement
     body-blood-coded           ← results with no item of their own (lab-result/coded-v1)
@@ -53,8 +54,29 @@ SNOMED agrees — it codes the specimen as part of the procedure:
 | LH | `167381004` Urine luteinizing hormone measurement | `273969007` Serum luteinizing hormone measurement |
 | FSH | `167382006` Urine follicle stimulating hormone measurement | `273971007` Serum follicle stimulating hormone measurement |
 
-So the keys say so too: `body-urine-hormones-fsh` vs `body-blood-serum-fsh`. Every key equals its
-`streamId`, the dominant convention in this repo.
+So the keys say so too: `body-urine-hormones-fsh` vs `body-blood-serum-fsh`. Every lab item's key equals
+its `streamId`, with one exception: the absolute counts of the white-cell differential and of the
+reticulocytes (`body-blood-cbc-<cell>-count`, 3.32.0) sit on the cell's own stream (`body-blood-cbc-<cell>`),
+beside the item that stores its share as a percentage, so that one grant on the cell covers both
+(site-agents#27). The two items differ by eventType (`ratio/proportion` for the share, `megacount-ml` /
+`count-ul` for the count), so `forEvent` resolves each event to its own item; a consumer that groups by
+`streamId` must group by item key instead (`[LAB27-ITM-2]`).
+
+**Siblings that look like children.** The CBC is flat: `body-blood-cbc-reticulocytes-immature-fraction` and
+`-reticulocytes-hemoglobin` read as children of `body-blood-cbc-reticulocytes` but are its siblings, so a grant
+on the reticulocyte stream covers the reticulocyte % and count only.
+
+### Serum, plasma and whole blood
+
+Chemistry measured in plasma (heparin, EDTA) is stored on the `body-blood-serum-*` item: LOINC codes these
+analytes "Serum or Plasma", one observation for both, and the stream is labelled "Serum or plasma". Where LOINC
+names one specimen, the item follows the System LOINC gives the analyte (`body-blood-serum-acth` asserts `2141-0`,
+"in Plasma"; globulin, TSI and TRAb codes are "in Serum"). **Coagulation** is measured in citrated, platelet-poor
+plasma and has its own branch, `body-blood-coagulation` (named for the panel, like `body-blood-cbc`). **Whole
+blood** measured by a blood-gas or point-of-care analyser is a different specimen: such a result goes to
+`lab-result/coded-v1` under its own code (whole-blood sodium `2947-0`, a home INR `34714-6`, an arterial SaO2
+`2708-6`). The printed specimen ("plasma hép.") goes in the event `description`; there is no specimen key
+(site-agents#27 asked for `clientData.specimen`; declined, plan 114 Q20).
 
 **History.** These were `fertility-hormone-*` — a key prefix that matched neither the stream
 (`body-urine-*`) nor the specimen. They were **renamed** in place. Deprecate-and-twin was *not*
@@ -73,9 +95,12 @@ no value. Every analyte stores the number as the lab prints it.
 | Concern | Decision |
 |---|---|
 | **Cell counts** | `concentration/megacount-ml` (10⁶/mL) carries WBC and platelets — × 10⁹/L is × 10⁶/mL, so 3.4–10.8 and 150–400 store as printed. RBC is × 10¹²/L ≡ × 10⁹/mL, which would be 4300–4800 on that unit, so **`concentration/gigacount-ml`** exists for it: 4.3–4.8. The mixed-unit panel *mirrors the report*, which genuinely prints RBC in × 10¹²/L and WBC in × 10⁹/L. The display symbols follow the report too: `megacount-ml` shows `G/L`, `gigacount-ml` shows `T/L`. |
-| **Percentages** | Lab percentages are genuine fractions (HbA1c is the glycated fraction of total hemoglobin; hematocrit the packed-cell fraction), so they store `0..1` on `ratio/proportion` and render via `number.display.multiplier: 100`. The `0..1` bound is enforced, and fractions match Apple HealthKit's `HKUnit.percent()`. FHIR/LOINC export applies the × 100 in the mapper. |
+| **Absolute counts in /μL** | US reports print some counts as cells per μL (4500/μL for 4.5 × 10⁹/L). That is not the number `megacount-ml` stores, so **`concentration/count-ul`** (symbol `/μL`) exists for it, as option 2 of the eight `-count` items; 10⁹/L is option 1, as on WBC; the factor is × 1000, exact. `count-ml` (#/mL) would store 4 500 000. |
+| **Percentages** | Lab percentages are genuine fractions (HbA1c is the glycated fraction of total hemoglobin; hematocrit the packed-cell fraction), so they store `0..1` on `ratio/proportion` and render via `number.display.multiplier: 100`. The `0..1` bound is enforced, and fractions match Apple HealthKit's `HKUnit.percent()`. FHIR/LOINC export applies the × 100 in the mapper. **The rule: a part of a whole is `ratio/proportion`, 0..1; a ratio to a reference, which can exceed 100 %, is the legacy `ratio/percent`, stored as printed** (plan 114 Q16): Quick % (`body-blood-coagulation-prothrombin-activity`, up to about 130 %) and nucleated red cells per 100 white cells. `ratio/percent` has no symbol, so every item on it declares `number.display.suffix` (`[LAB27-PCT-1]`). |
 | **ng/mL** | Not a unit here: **1 ng/mL = 1 μg/L**, so ferritin, folate, 25-OH-D, C-peptide, AMH, thyroglobulin, progesterone, prolactin and total testosterone (its third option) use the legacy `concentration/ug-l` with the identical stored number. Adding `ng-ml` would have split one measurement across two type names. See the no-equivalent-types rule in `AGENTS.md`. Likewise **1 ng/L = 1 pg/mL**: a PTH printed in ng/L stores its number unchanged on `concentration/pg-ml`. |
-| **SI units as variations** | An analyte that labs print in two units offers both as `variations.eventType` options, conventional unit first (the unit the item had), SI unit second: `body-blood-serum-glucose-fasting` from the start; since the lab-units release (3.21.0) the lipids, calcium, creatinine, the reproductive, adrenal and thyroid hormones, vitamin D (both forms), B12 and folate (site-agents#20); since 3.30.0 magnesium, total bilirubin, iron, TIBC, zinc, copper, vitamin A, C-peptide, PTH (pmol/L), hemoglobin, albumin, total protein and globulin (g/L), hs-CRP (mg/dL), ceruloplasmin (mg/L) and urea on `body-blood-serum-bun` (below). The writer picks the option matching the **printed** unit; nothing is converted at write time. One type was added for it, `concentration/pmol-l` (no pryv type exists; it is a decade apart from `nmol-l`, so not an equivalent twin). On a `ug-l` item the option label reads **ng/mL**, how those analytes are printed; such items no longer carry an item-level `number.display.suffix`, which renderers apply whatever the unit and would put "ng/mL" on a pmol/L value (`[UCNV-VAR-3]`). A third unit is appended after the two, never inserted before them: total testosterone offers ng/dL, nmol/L, then ng/mL; C-peptide ng/mL, nmol/L, then pmol/L; ceruloplasmin mg/dL, mg/L, then g/L. |
+| **SI units as variations** | An analyte that labs print in two units offers both as `variations.eventType` options, conventional unit first (the unit the item had), SI unit second: `body-blood-serum-glucose-fasting` from the start; since the lab-units release (3.21.0) the lipids, calcium, creatinine, the reproductive, adrenal and thyroid hormones, vitamin D (both forms), B12 and folate (site-agents#20); since 3.30.0 magnesium, total bilirubin, iron, TIBC, zinc, copper, vitamin A, C-peptide, PTH (pmol/L), hemoglobin, albumin, total protein and globulin (g/L), hs-CRP (mg/dL), ceruloplasmin (mg/L) and urea on `body-blood-serum-bun` (below); the items added in 3.32.0
+are two-unit from the start, US conventional first (random glucose, direct bilirubin, phosphate, haptoglobin, IgG,
+IgA, IgM, CRP, MCHC, fibrinogen; plan 114 Q15). The writer picks the option matching the **printed** unit; nothing is converted at write time. One type was added for it, `concentration/pmol-l` (no pryv type exists; it is a decade apart from `nmol-l`, so not an equivalent twin). On a `ug-l` item the option label reads **ng/mL**, how those analytes are printed; such items no longer carry an item-level `number.display.suffix`, which renderers apply whatever the unit and would put "ng/mL" on a pmol/L value (`[UCNV-VAR-3]`). A third unit is appended after the two, never inserted before them: total testosterone offers ng/dL, nmol/L, then ng/mL; C-peptide ng/mL, nmol/L, then pmol/L; ceruloplasmin mg/dL, mg/L, then g/L. |
 | **Urea and urea nitrogen** | `body-blood-serum-bun` stores **urea nitrogen** in mg/dL (BUN, LOINC `3094-0`) and **urea** in mmol/L (option "Urea mmol/L", LOINC `22664-7`): labs that report in SI print urea, not its nitrogen, and one mole of urea carries two nitrogen atoms, so mg/dL → mmol/L is 10 / 28.014 = 0.3570. **Urea printed in mg/dL** (the mass of urea, LOINC `3091-6`, as some European labs print it) is not this item's mg/dL, which would read it 2.14 times too high, and it has no option of its own: the two would share `concentration/mg-dl`. Store it as printed in `lab-result/coded-v1` under `3091-6` with UCUM `mg/dL`; it is never converted into the item. |
 | **Endocrine reporting units (2.1.0)** | The reproductive/adrenal & thyroid extension added `concentration/ng-dl` (T3/T4, testosterone, androstenedione, 17-OHP, aldosterone), `concentration/nmol-l` (SHBG), `concentration/iu-ml` (TPO & thyroglobulin antibodies), `concentration/u-ml` (CA-125) and `rate/mm-h` (ESR). Each is a genuine scale difference from its nearest existing type (`ng-dl` ≠ `mcg-dl`/`pg-ml`/`ug-l`; `iu-ml` = 1000× `iu-l`; `u-ml` = 1000× `catalytic-activity/u-l`; `nmol-l` ≠ `umol-l`), not an equivalent twin. CA-125 is `concentration/u-ml`, **not** `catalytic-activity/u-ml`: the "U" is an arbitrary immunoassay unit, and `catalytic-activity/*` is reserved for the liver enzymes. |
 
@@ -336,8 +361,21 @@ false`): a misspelt `comparitor` fails validation instead of silently dropping i
   specimen is part of the analyte (§ Specimen is explicit in the item key).
 - **LOINC is per property.** Mass and substance concentrations of one analyte have different codes (bilirubin
   `1975-2` mass, `14631-6` substance). An item lists in `references.loinc` the code of every property its variations
-  store; until codes are per variation, a FHIR export puts no `code.coding` on an item event whose item asserts more
-  than one code.
+  store, and **every unit option of such an item states the one it stores** (`variations.eventType.options[].loinc`,
+  3.32.0), `null` for a unit LOINC has no code for (the pmol/L of fasting insulin: LOINC has no fasting code in
+  moles). Nothing is inherited: hemoglobin states `718-7` on g/dL and on g/L, so a unit added later (mmol/L) must
+  state its own code and cannot export under the mass code. A FHIR export codes an event with its option's code; an
+  item with one unit exports its single code. The loader checks that each option code is one of the item's, that
+  every code is stored by an option, and that a one-unit number item asserts one code; a test checks that two options
+  share a code only when their units are of one kind (`[LABC-LOINC-3e]`).
+- **Owned, never exported: `references.loincMethod`.** Labs often send the method-specific code ("Erythrocytes
+  [#/volume] in Blood by Automated count", `789-8`) rather than the methodless one (`26453-1`). An item lists those in
+  `references.loincMethod`: they decide that the item owns the result, and are never exported. So do codes labs send
+  for the analyte whose LOINC definition does not match the stored value (Quick % as `5894-1`, § Codes) and
+  discouraged codes still in use (LDH `2532-0`). **The exported code** (`loinc`) is the methodless one; where LOINC
+  has none, it is the code most reports use when the method does not change the number (hematocrit `4544-3`,
+  automated; PT `5902-2`; the coagulation assays), and no code at all when it does (eGFR, one code per equation; LDH,
+  one per reaction direction). One owner per code holds over both lists (`[LABC-LOINC-1]`).
 - **Stored as printed, never converted.** No variations, no factors. A reader never converts a coded value, and draws
   a series only from events with the same code and the same `unit` (hds-lib `labSeriesKey`).
 - **Reference range, flag, interpretation:** the `clientData` keys of § The printed reference range, unchanged; the
@@ -347,7 +385,10 @@ false`): a misspelt `comparitor` fails validation instead of silently dropping i
 - **Only curated codes.** A writer codes the analyte from a table it maintains, never from unrecognised text (an
   unrecognised result stays in the source document).
 - **Derived indices** printed by the lab (anion gap, corrected calcium, calculated osmolality) are stored here under
-  their own LOINC, as printed: no item owns them (plan 114 Q5). They are never computed into this stream.
+  their own LOINC, as printed: no item owns them (plan 114 Q5). They are never computed into this stream. Verified
+  codes (LOINC 2.83): corrected calcium `46099-8` (mg/dL) / `29265-6` (mmol/L), corrected for albumin; anion gap
+  `33037-3` "by calculation" (`1863-0` with potassium, `10466-1` without); calculated osmolality `18182-6` (UCUM
+  `mosm/kg`); a measured osmolality is `2692-2`; total/HDL cholesterol `9830-1`, LDL/HDL `11054-4` (UCUM `{ratio}`).
 - hds-lib `checkLabResultCoded` warns about `owned-by-item`, `no-loinc` and `invalid-loinc` (check digit).
 
 **Consent.** The coded streams sit under their specimen, so a grant on `body-blood` (or `body-urine`, or `body`)
@@ -399,7 +440,7 @@ of it:
 | Context | Where it lives |
 |---|---|
 | **Cycle day** (Day 2–5, mid-luteal, Day 21) | **Derived** from `event.time` + `fertility-cycles-start`. Storing it would duplicate state the model already holds, and duplicated state goes stale. Same argument as spotting in [`MENSTRUAL-CYCLE.md`](./MENSTRUAL-CYCLE.md). |
-| **Fasting** | Its **own item** (`body-blood-serum-glucose-fasting`). SNOMED codes fasting (`167087006`) and random (`167086002`) serum glucose as different procedures, and LOINC likewise — they are different observations, not one observation with a flag. Precedent: `body-temperature-basal` vs `body-temperature`. |
+| **Fasting** | Its **own item** (`body-blood-serum-glucose-fasting`), and an untimed glucose another (`body-blood-serum-glucose-random`, 3.32.0: any result whose report does not state fasting). SNOMED codes fasting (`167087006`) and random (`167086002`) serum glucose as different procedures, and LOINC likewise (`1558-6` vs `2345-7`) — they are different observations, not one observation with a flag. Precedent: `body-temperature-basal` vs `body-temperature`. |
 | **Time of day** (cortisol 6–9am vs 12–3pm) | `event.time` already carries it. |
 | **HRT** | `medication-intake-coded`. |
 | **Menopausal status** | **Not modelled, and not sample context** — it is durable patient state that outlives any draw. Belongs to its own plan. |
@@ -448,8 +489,14 @@ and kept, so existing events still resolve and render; new data uses `body-urine
   a different analyte with a very similar label.
 - Where no concept exists, the item carries **no** `snomed` ref and says why:
   `body-urine-hormones-e3g` (estrone-3-glucuronide has no concept), `body-urine-hormones-pdg`
-  (`89113004` is *Pregnanediol measurement* — a different substance) and `body-blood-rbc-magnesium`
-  (no erythrocyte-magnesium concept).
+  (`89113004` is *Pregnanediol measurement* — a different substance), `body-blood-rbc-magnesium`
+  (no erythrocyte-magnesium concept), and since 3.32.0 `body-blood-coagulation-prothrombin-activity`,
+  `body-blood-cbc-reticulocytes-hemoglobin`, and the segmented and band neutrophil percentages (SNOMED has
+  their counts only, on the `-count` items).
+- **A share and a count are two concepts.** The five differential percentages carry the "percent differential
+  count" procedures (`271035003` neutrophil, `271036002` lymphocyte, `271037006` monocyte, `310540006` eosinophil,
+  `271038001` basophil) since 3.32.0; the plain "count" concepts they carried before (`30630007` …) moved to the
+  absolute-count items.
 - Three references are deliberate compromises, noted on the items: `body-blood-serum-folate` uses
   `250212002` *Plasma folate* (SNOMED has no serum folate **procedure**, only findings; the two are
   reported interchangeably), `body-blood-serum-egfr` uses `80274001`, an **observable entity**
@@ -470,3 +517,21 @@ and kept, so existing events still resolve and render; new data uses `body-urine
   stay pending until someone verifies them this way. This applies to every domain, not only blood
   chemistry. The codes an item asserts also decide that it owns an analyte (§ Results with no item of their own):
   a code is asserted by one active item at most, with a valid check digit (`[LABC-LOINC-1]`, `[LABC-LOINC-2]`).
+- **The 3.32.0 pass** (site-agents#27, plan 114) asserted LOINC on every lab item that has a fitting code: the
+  methodless code per property, method codes in `loincMethod`, the code per unit option. Searched on tx.fhir.org
+  (`ValueSet/$expand` on `http://loinc.org/vs` with a name filter), each code then checked by `$lookup` for status,
+  property, system and Long Common Name against its item, and each option's code against the option's unit (mass,
+  substance, arbitrary units, count). Left without a code, each saying why in the YAML: the PdG and E3G urine items,
+  `body-semen-tmc`, the pmol/L of fasting insulin and of 1,25-(OH)₂ vitamin D. Serum bicarbonate (`1963-8`) is owned
+  by `body-blood-serum-co2` (its SNOMED concept is the bicarbonate measurement; routine analysers report one figure
+  under either name), exported as total CO2 (`2028-9`). Corrected: AMH is `38476-8` (an earlier note
+  read `38476-3`, which does not exist); the semen comments citing `32623-1` (a platelet code), `11250-3` and
+  `10210-3`. Removed (B-2026-10-28-41): the three EQ-5D dimension codes on the `function-*` items, which do not
+  exist in LOINC 2.83; LOINC has no EQ-5D-5L code. `body-oxygen-saturation` now owns `59408-5` only (plan 114 Q19).
+- **Quick %** has no LOINC code and exports none. European catalogues send it as `5894-1` "Prothrombin time (PT)
+  actual/Normal" (Austrian ELGA Laborparameter, the German MII top-300 lab set, an AP-HP TP profile), so the item
+  owns that code (`loincMethod`); but `5894-1` is a time ratio that runs the other way (a long PT is a ratio above 1
+  and a Quick below 100 %), and a reader of an export would misread the value. `6302-4` (normal/actual, the
+  prothrombin index) and `3289-6` (factor II activity) are other analytes.
+- **CRP and hs-CRP** are two items, `body-blood-serum-crp` (`1988-5`) and `body-blood-serum-crp-hs` (`30522-7`, the
+  high-sensitivity method): the printed test name or the code decides, never the value (plan 114 Q9).

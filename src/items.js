@@ -19,6 +19,7 @@ module.exports = {
   toBePublished,
   checkItemVsEvenType,
   checkUnitConversions,
+  checkLoincRefs,
   checkFhirMapping: fhir.checkFhirMapping,
   fhirScopes: null
 };
@@ -168,6 +169,7 @@ function addItem (key, itemSrc) {
   }
 
   if (item.unitConversions) checkUnitConversions(key, item.unitConversions, itemEventTypes);
+  checkLoincRefs(key, item);
   if (item.fhir) fhir.checkFhirMapping(key, item, itemEventTypes);
 
   // Derived, published field: the denominator for a `ratio/generic` select item.
@@ -212,6 +214,42 @@ function checkUnitConversions (key, unitConversions, itemEventTypes) {
     if (seen.has(pair)) throw new Error(`item "${key}" unitConversions: the pair ${pair} is declared more than once`);
     seen.add(pair);
   }
+}
+
+/**
+ * LOINC is per property: mass and moles of one analyte are two codes (site-agents#27, plan 114 Q21, Q22). An item
+ * lists them in `references.loinc`, and on an item with unit options every option states the one it stores
+ * (`variations.eventType.options[].loinc`, null when LOINC has none for that unit), so an export codes each event
+ * and a unit added later never inherits a code for another property. `references.loincMethod` holds codes that
+ * decide which item owns a coded result and are never exported. Ownership across items (one owner per code over
+ * both lists) is a test, `[LABC-LOINC-1]`.
+ */
+function checkLoincRefs (key, item) {
+  const loinc = item.references?.loinc || [];
+  const method = item.references?.loincMethod || [];
+  for (const [name, codes] of [['loinc', loinc], ['loincMethod', method]]) {
+    if (new Set(codes).size !== codes.length) throw new Error(`item "${key}" references.${name} lists a code twice: ${codes}`);
+  }
+  const both = method.filter((c) => loinc.includes(c));
+  if (both.length) throw new Error(`item "${key}" lists ${both} in both references.loinc and references.loincMethod`);
+  const options = item.variations?.eventType?.options || [];
+  if (options.length === 0) {
+    if (item.type === 'number' && loinc.length > 1) {
+      throw new Error(`item "${key}" stores one unit but asserts ${loinc.length} LOINC codes (${loinc}): an export could not tell which`);
+    }
+    return;
+  }
+  if (loinc.length === 0) {
+    const stated = options.filter((o) => o.loinc != null).map((o) => o.value);
+    if (stated.length) throw new Error(`item "${key}" options ${stated} declare a loinc but the item asserts none in references.loinc`);
+    return;
+  }
+  for (const o of options) {
+    if (o.loinc === undefined) throw new Error(`item "${key}" asserts LOINC, so option "${o.value}" must state the code it stores (options[].loinc, null for none)`);
+    if (o.loinc !== null && !loinc.includes(o.loinc)) throw new Error(`item "${key}" option "${o.value}" declares loinc "${o.loinc}", which is not in references.loinc (${loinc})`);
+  }
+  const unused = loinc.filter((c) => !options.some((o) => o.loinc === c));
+  if (unused.length) throw new Error(`item "${key}" asserts LOINC ${unused} but no unit option stores it`);
 }
 
 function toBePublished () {

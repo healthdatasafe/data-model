@@ -1,7 +1,13 @@
 # FHIR mapping (`fhir:` block on items)
 
-**Status: draft (plan 115, SMART on FHIR), on a feature branch, not published.** The shape is subject to the
-data-model review before the first release that carries it. Once published, everything below marked *permanent* is.
+**Status: published since 3.31.0 (plan 115, SMART on FHIR).** Everything below marked *permanent* is.
+
+**Lab items carry no `fhir:` block yet (3.32.0).** Their LOINC codes live in `references.loinc` and, per unit, in
+`variations.eventType.options[].loinc` (mass and moles of one analyte are two codes; `BLOOD-CHEMISTRY.md` § Codes);
+hds-lib `labLoincOf` reads them. A lab block will need a code source "from the unit option" (a static `code` is one
+coding per item), with the renderer change first, and a build check that its LOINC codings are among the item's
+`loinc` and `loincMethod` and that no import key is a code another item owns (`[LABC-LOINC-1]`), so ownership and
+the import match keys cannot disagree.
 
 An item's `fhir:` block says how its events **render as** a FHIR R4 resource and how a FHIR resource **imports
 back** into an event of that item. HDS uses it in three ways:

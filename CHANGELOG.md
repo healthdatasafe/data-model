@@ -1,5 +1,66 @@
 # Changelog
 
+## [3.32.0] - 2026-10-29
+
+The missing lab analytes of site-agents#27, release 1 (everything but the INR, which follows in 3.33.0), the LOINC
+pass over the existing lab items, and B-2026-10-28-41. Plan 114, decisions Q15-Q24. Additive for readers, except
+for corrected references: five SNOMED codes move and some LOINC codes are removed (below), so `forLoinc` and SNOMED
+lookups answer differently for those codes. Opus-reviewed before release (ship with changes, applied).
+
+### Added: 32 lab items, 25 streams
+- **Serum or plasma:** `body-blood-serum-glucose-random`, `-bilirubin-direct` ("Direct (conjugated) bilirubin"),
+  `-lipase`, `-amylase` (new "Pancreas" group), `-phosphate`, `-haptoglobin`, `-igg`, `-iga`, `-igm`, `-crp` (the
+  standard assay; `-crp-hs` stays the high-sensitivity one). Two-unit items, US conventional first, with their factors
+  (phosphate expressed as phosphorus, 30.974 g/mol).
+- **Complete blood count:** `body-blood-cbc-mchc`, `-mpv`, `-reticulocytes`, `-reticulocytes-immature-fraction`,
+  `-reticulocytes-hemoglobin`, `-nucleated-rbc` (per 100 WBC), `-neutrophils-segmented`, `-neutrophils-band`,
+  `-myelocytes`, `-metamyelocytes`.
+- **Absolute counts** `body-blood-cbc-<cell>-count` for lymphocytes, neutrophils, segmented and band neutrophils,
+  monocytes, eosinophils, basophils and reticulocytes, **on the cell's own stream** (key ≠ streamId): one grant
+  covers the share and the count. Units 10⁹/L, then /μL (reticulocytes also 10¹²/L).
+- **Coagulation**, a new branch `body-blood-coagulation`: `-prothrombin-time` (s), `-prothrombin-activity` (Quick %,
+  `ratio/percent`, no exported LOINC), `-aptt` (s), `-fibrinogen` (mg/dL, g/L).
+- **eventType `concentration/count-ul`** (counts per μL, symbol `/μL`): the US "cells/μL" figure, 1000 × the 10⁹/L
+  number. No legacy equivalent (the legacy mirror has no count-per-volume type; `count-ml` is #/mL).
+- `body-blood-serum` is labelled "Serum or plasma" (label only).
+
+### Added: per-option LOINC and method codes
+- `variations.eventType.options[].loinc`: the code an option stores, one of the item's `references.loinc`, or
+  `null` for a unit LOINC has no code for. Stated on **every** option of an item that asserts LOINC, never inherited.
+  Checked by the loader (`checkLoincRefs`): no missing option code, no option code outside the item's list, no listed
+  code without an option, at most one code on a one-unit number item. `[LABC-LOINC-3e]`: options sharing a code have
+  units of one kind.
+- `references.loincMethod`: codes that make the item the owner of a result and are never exported: method-specific
+  codes ("… by Automated count"), Quick % as labs send it (`5894-1`, a PT ratio that runs the other way), discouraged
+  or superseded codes labs still send (LDH `2532-0`, race-adjusted eGFR). `[LABC-LOINC-1]` counts both lists.
+
+### Added: LOINC on the existing lab items
+- About 100 items gain verified codes (LOINC 2.83 on tx.fhir.org: status, property, system and long name checked, and
+  each option's code against its unit): serum chemistry and hormones per property, the CBC (methodless code, method
+  codes in `loincMethod`), urine FSH, hCG, LH and seven semen items. Where LOINC has no methodless code, the item
+  exports the common method code when the method does not change the number (hematocrit `4544-3`, PT `5902-2`) and
+  none when it does (eGFR per equation, LDH per reaction direction: owned only). Serum bicarbonate `1963-8` is owned
+  by `-co2`. No code where none fits, each saying why (PdG, E3G, TMC; pmol/L of fasting insulin and 1,25-(OH)₂ D).
+- AMH is `38476-8` / `48377-6`.
+- The five differential percentages move to SNOMED "percent differential count" concepts; the plain "count" concepts
+  go to the new count items.
+
+### Fixed
+- B-2026-10-28-41: the EQ-5D dimension codes `63800-5`, `63801-3`, `63802-1` on `function-mobility`,
+  `function-self-care` and `function-usual-activities` do not exist in LOINC 2.83 and are removed (3.31.0 removed the
+  others); `KNOWN_INVALID` is empty. Same origin (plan 44, unverified): `wellbeing-mental-distress-depression` cited
+  `75275-8` ("Cognitive function [Interpretation]") and `wellbeing-mental-distress-anxiety` `69737-5` (the GAD-7
+  panel); both items are five-level answers that no questionnaire total fits, and lose the code. AGENTS.md lists the
+  PHQ-9 and GAD-7 total-score codes (44261-6, 70274-6).
+- `body-oxygen-saturation` owns `59408-5` (pulse oximetry) only; a blood-gas SaO2 (`2708-6`) is a coded result.
+- Stale LOINC comments on the semen items (`32623-1` is the platelet MPV).
+
+### Docs
+- BLOOD-CHEMISTRY.md: coagulation branch, serum or plasma vs whole blood, the count-on-the-cell's-stream exception,
+  the percentage rule (part of a whole → `ratio/proportion`; ratio to a reference → `ratio/percent`, as printed),
+  per-option and method codes, the verified codes of the derived indices, Quick % and CRP notes. AGENTS.md: LOINC in
+  three places.
+
 ## [3.31.0] - 2026-10-29
 
 The FHIR mapping block (plan 115, SMART on FHIR). Fable-reviewed twice before release: the branch at `c1520f4`
