@@ -105,7 +105,7 @@ reviewer checks the code against and what a reader falls back on.
 
 | `kind` | Item | Block fields | Renders |
 |---|---|---|---|
-| `quantity` | `number`, every eventType numeric | `units`: every eventType of the item (its unit variants) → UCUM code, none empty | `valueQuantity` (`system` UCUM, `code` = `unit`) |
+| `quantity` | `number`, every eventType numeric | `units`: every eventType of the item (its unit variants) → UCUM code, none empty, no two the same (annotations such as `{beats}` aside: they carry no meaning in UCUM) | `valueQuantity` (`system` UCUM, `code` = `unit`) |
 | `coded` | `select` | `options`: every option value → coding, each coding once; optional `alsoMatch`: option value → extra codings accepted for that option on import only | `valueCodeableConcept` (the option coding, never an `alsoMatch` one) |
 | `components` | `composite` | `components`: numeric composite field → `{ code, unit }` | `component[]`, one per field present |
 
@@ -212,8 +212,8 @@ The item's eventType is a string. A block has no `category` (Patient has none), 
 Patient profile per flavour is the renderer's (US Core `us-core-patient`, IPS `Patient-uv-ips`). An element is
 claimed by **one active item** only, so an imported Patient places each element in one item.
 
-**Pseudonymity covers the id only** (plan 115 D14). The Patient's `id` (and identifier) is always the per-grant
-alias, whatever else is shared. Demographics reach an app only when it requests `patient/Patient.rs` (or
+**Pseudonymity covers the id only** (plan 115 D14, D15). The Patient's `id` (and identifier) is the per-grant alias
+when the app asked for a pseudonym, otherwise the stable HDS user id, whatever else is shared. Demographics reach an app only when it requests `patient/Patient.rs` (or
 `patient/*.rs`) and the patient consents to the matching profile streams, like any other grant; each element is its
 own leaf stream, so the patient can share the name without the date of birth. When a flavour requires an element the
 patient did not share, the renderer states it as absent and never invents it (hds-fhir-js `patientResource`).
@@ -242,7 +242,8 @@ never granted with the Patient.
 ## SMART scopes: `pack.fhirScopes`
 
 Pryv permissions inherit down the stream tree, so a scope is granted as stream subtree roots whose whole subtree
-holds one (resourceType, category) pair. The build computes the table and publishes it:
+holds one (resourceType, category) pair. The roots are **minimal**: the own stream of each mapped item. The build
+computes the table and publishes it:
 
 ```json
 "fhirScopes": {
@@ -254,37 +255,62 @@ holds one (resourceType, category) pair. The build computes the table and publis
 
 Keys are `ResourceType|category` for a resourceType with a category table, and the **bare resourceType** for one
 without (`Patient`); values are sorted stream ids. `patient/Patient.rs` and `patient/*.rs` reach the `Patient` key;
-a scope with `?category=` never reaches a bare key. It feeds the Pryv OAuth extension's `streamGrants`
-(`hds-fhir-js`: `npm run check:pack -- --json`).
+a scope with `?category=` never reaches a bare key. It feeds the Pryv OAuth extension's `fhirScopes` option, pinned
+by version and hash (`hds-fhir-js`: `node scripts/extension-options.ts <pack>`); a hand-written table is never used
+in production.
 
 **How it is computed.**
-- Every item counts, at its `streamId`: a mapped item as its pair, a companion as its parent's pair, an **active item
-  without a block as its own `(unmapped)` pair**. A **deprecated item** counts with its mapping if it has one,
-  otherwise as unmapped: its past events still sit in its stream.
-- A stream is granted when its whole subtree holds exactly one pair and that pair is not `(unmapped)`; then none of
-  its descendants is listed. Otherwise the walk descends into its children. Streams with no item in their subtree
-  are never granted on their own (they are covered when an ancestor is granted).
+- Every item counts for the invariant, at its `streamId`: a mapped item as its pair, a companion as its parent's
+  pair, an **active item without a block as its own `(unmapped)` pair**. A **deprecated item** counts with its
+  mapping if it has one, otherwise as unmapped: its past events still sit in its stream.
+- A pair is granted on the **own stream of each mapped item** of that pair (deprecated mapped items included, for
+  their past events). A companion has no entry of its own: it sits inside its parent item's stream, which covers it.
+  A listed stream inside another listed stream of the same pair is left out. An ancestor that merely holds mapped
+  items (`body` above `body-weight`) is never granted, so a stream added next to a mapped item later never joins a
+  grant already issued.
 
 **Build failure 1, the invariant.** A stream that carries a mapped or companion item must have a subtree that holds
 one pair, `(unmapped)` included. A mapped parent with an unmapped child, or with a child of another pair, fails: its
 item could never be granted without over-granting. Fix it by mapping the child (or declaring it a companion), never
 by moving streams.
 
-**Build failure 2, the lock.** `definitions/fhir/scopes.lock.json` records every (pair, root) ever published. The
-build fails when a locked root's subtree now holds any pair other than its locked one, `(unmapped)` included, or when
-a locked root is no longer a stream: either would widen or break every grant already issued for that scope. New roots
-are allowed. The test suite also fails when a current grant root is missing from the lock, so every committed state
-has its table locked.
+**Build failure 2, the lock.** `definitions/fhir/scopes.lock.json` records, append-only, **every stream a published
+grant reaches**: each grant root and every stream in its subtree, with its pair, its parent and the items on it.
 
-- `npm run fhir:lock` adds the current table to the lock. It never removes an entry. Run it when you add or change a
-  mapping, and commit the lock with the change. Never edit the lock by hand.
+```json
+{
+  "formatVersion": 2,
+  "streams": {
+    "profile-name": { "pair": "Patient", "parent": "profile", "items": ["profile-name", "profile-surname"] }
+  },
+  "reviewed": {
+    "body-weight-context": "2026-11-02 a weighing condition; a reader of vital signs may see it"
+  }
+}
+```
+
+The build fails when a locked stream
+- is no longer a stream, or has another parent (a published stream is never re-parented);
+- holds a pair other than its locked one in its subtree, `(unmapped)` included;
+- loses an item: removed, or moved to another stream (deprecate it instead: its events stay);
+- gains, on itself or anywhere under it, an item or companion that is not in the lock, unless **`reviewed`** names
+  it. Such an item is read by every grant already issued for that pair, so someone states, with the date, why a
+  reader of that scope may see it.
+
+Each would widen, or silently break, every grant already issued for that scope. New grant roots are allowed. The
+test suite also fails when the lock is not up to date with the current table, and when a published grant root
+(`fhirScopes`, and `dist/pack.json` when built) is not in the lock under its pair.
+
+- `npm run fhir:lock` adds the current table and its items to the lock. It never removes or rewrites anything. Run it
+  when you add or change a mapping, and commit the lock with the change. `streams` is never edited by hand;
+  `reviewed` is, and only that.
 
 ### Permanence
 
 A shipped block's **(resourceType, category) is permanent**, like an item key. Changing it moves the item's stream
 from one grant table entry to another: apps already granted the old scope would lose data they were promised, and
-the lock refuses it anyway (the stream is a locked root of the old pair). The same holds for a stream that is a locked
-grant root: whatever is added under it must belong to its pair.
+the lock refuses it anyway (the stream is locked under the old pair). The same holds for a locked stream: whatever is
+added on it or under it must belong to its pair, and is acknowledged in `reviewed`.
 
 Additive changes are fine: a block can be added to an item without changing its key, stream or eventType; `alsoMatch`
 entries (on the code or per option), `alsoMatchCategories`, profiles of new flavours and new options (with their
@@ -334,7 +360,7 @@ accepts (`hds-fhir-js`: `matchResource`, which also says why nothing matched).
 
 **Values.**
 - `quantity`: the `valueQuantity` must have system `http://unitsofmeasure.org` and a `code` equal to one of the
-  block's units; that unit picks the eventType (`[lb_av]` → `mass/lb`), and the value is stored as printed. Units are
+  block's units, annotations aside (`{beats}/min` is `/min`); that unit picks the eventType (`[lb_av]` → `mass/lb`), and the value is stored as printed. Units are
   **converted only through the item's declared `unitConversions`**. Those relate the item's own eventTypes, and every
   one of them already has its UCUM unit in the block, so in practice a value in one of the block's units is taken as
   printed in that eventType, and a unit outside them (`g` for body weight, `cm` for body height) has no declared
@@ -412,7 +438,11 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   `alsoMatch`, components and splits); import keys unique across active items (a static code or `alsoMatch` coding;
   a datasource source per category it accepts; a Patient element). A split code is not an import key: it may be
   another item's code, which then wins (`body-heart-rate` and the blood-pressure pulse).
-- **Scopes:** companions valid (never of a Patient element); the one-pair invariant; the lock.
+- **Units:** two eventTypes of one `quantity` block never share a UCUM unit, annotations aside (`{beats}/min` is
+  `/min`): the unit picks the eventType on import.
+- **Scopes:** companions valid (never of a Patient element); the one-pair invariant; the lock (no locked stream
+  removed, re-parented or re-paired, no locked item removed or moved, no new item under a locked stream without a
+  `reviewed` entry).
 
 ---
 

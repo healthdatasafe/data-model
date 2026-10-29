@@ -6,7 +6,7 @@ const Ajv = require('ajv');
 describe('[FHIR] item fhir blocks (plan 115)', () => {
   const { itemsById, fhirScopes, toBePublished } = require('../src/items');
   const { checkItem, toBePublished: schemasToBePublished } = require('../src/schemas/items');
-  const { checkFhirMapping, checkFhirScopes, computeFhirScopes, readLock, mergeLock, fhirMapping, UNMAPPED, PATIENT_ELEMENTS } = require('../src/fhir');
+  const { checkFhirMapping, checkFhirScopes, computeFhirScopes, readLock, emptyLock, lockEntries, mergeLock, ucumKey, fhirMapping, UNMAPPED, PATIENT_ELEMENTS } = require('../src/fhir');
 
   const MAPPED = ['body-weight', 'body-blood-pressure', 'body-heart-rate', 'lifestyle-tobacco-smoking', 'condition-coded', 'wellbeing-general-health'];
   const item = (k) => structuredClone(itemsById[k]);
@@ -178,6 +178,17 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const c = item('wellbeing-general-health');
       c.fhir.value = { kind: 'quantity', units: { 'ratio/proportion': '1' } };
       assert.throws(() => check(c), /applies to "number" items only/);
+    });
+
+    it('[FHIR-MAP-16] two eventTypes of one quantity block never share a UCUM unit, annotations aside', () => {
+      assert.deepStrictEqual(['{beats}/min', '/min', '{score}', '1', 'kg'].map(ucumKey), ['/min', '/min', '1', '1', 'kg']);
+      const a = item('body-weight');
+      a.fhir.value.units['mass/lb'] = 'kg';
+      assert.throws(() => check(a), /eventTypes "mass\/kg" and "mass\/lb" share the UCUM unit "kg"/);
+      const b = item('body-weight');
+      b.fhir.value.units['mass/kg'] = '{net}kg';
+      b.fhir.value.units['mass/lb'] = 'kg{gross}';
+      assert.throws(() => check(b), /share the UCUM unit "kg" \(annotations aside\)/);
     });
 
     it('[FHIR-MAP-2] coded options match the item options and codings are unique within the item', () => {
@@ -371,11 +382,13 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       { id: 'body', children: [{ id: 'body-a', children: [{ id: 'body-a-flag' }] }, { id: 'body-b' }] },
       { id: 'mood' }
     ];
-    const run = (items, lock = {}) => checkFhirScopes(items, { roots: tree, lock });
+    const run = (items, lock = emptyLock(), roots = tree) => checkFhirScopes(items, { roots, lock });
+    /** The lock `npm run fhir:lock` would write for these items, from an empty one. */
+    const lockOf = (items, roots = tree) => mergeLock(emptyLock(), lockEntries(items, computeFhirScopes(items, roots).grants, roots));
 
-    it('[FHIR-SCOPE-1] grants the maximal subtree roots holding one pair', () => {
+    it('[FHIR-SCOPE-1] grants minimal roots: each mapped item\'s own stream, never an ancestor that merely holds them', () => {
       const grants = run({ a: it_('body-a', obs('vital-signs', 'a')), f: it_('body-a-flag', obs('vital-signs', 'f')), b: it_('body-b', obs('vital-signs', 'b')) });
-      assert.deepStrictEqual(grants, { 'Observation|vital-signs': ['body'] });
+      assert.deepStrictEqual(grants, { 'Observation|vital-signs': ['body-a', 'body-b'] }, 'body-a-flag is inside body-a; "body" is not granted');
     });
 
     it('[FHIR-SCOPE-2] a root that carries no item descends into its children', () => {
@@ -396,9 +409,9 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
 
     it('[FHIR-SCOPE-5] deprecated items count: with their mapping, or as unmapped', () => {
       assert.throws(() => run({ a: it_('body-a', obs('vital-signs')), old: it_('body-a', null, { deprecated: true }) }), /\(unmapped\)/);
-      // body-b carries no item, so body's whole subtree holds one pair
-      const grants = run({ a: it_('body-a', obs('vital-signs', 'a')), old: it_('body-a-flag', obs('vital-signs', 'o'), { deprecated: true }) });
-      assert.deepStrictEqual(grants, { 'Observation|vital-signs': ['body'] });
+      // a deprecated mapped item keeps its stream in the table: its past events are there
+      const grants = run({ a: it_('body-a', obs('vital-signs', 'a')), old: it_('body-b', obs('vital-signs', 'o'), { deprecated: true }) });
+      assert.deepStrictEqual(grants, { 'Observation|vital-signs': ['body-a', 'body-b'] });
     });
 
     it('[FHIR-SCOPE-6] a companion counts as its parent\'s pair', () => {
@@ -413,13 +426,60 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => run({ a: it_('body-a', obs('vital-signs')), c: it_('body-a-flag', { companionOf: 'a' }), d: it_('body-a-flag', { companionOf: 'c' }) }), /the parent must carry a mapping/);
     });
 
-    it('[FHIR-SCOPE-8] the lock: a widened root fails, a new root passes, a vanished root fails', () => {
-      const lock = { 'Observation|vital-signs': ['body-a'] };
-      assert.throws(() => run({ f: it_('body-a-flag', obs('survey', 'f')) }, { 'Observation|vital-signs': ['body-a-flag'] }), /"body-a-flag" was published as a grant root of Observation\|vital-signs; its subtree now also holds Observation\|survey/);
-      assert.throws(() => run({ a: it_('body-a', obs('vital-signs', 'a')), b: it_('body-b') }, { 'Observation|vital-signs': ['body'] }), /"body" was published .* now also holds \(unmapped\)/);
-      const grants = run({ a: it_('body-a', obs('vital-signs', 'a')), b: it_('body-b', obs('survey', 'b')) }, lock);
-      assert.deepStrictEqual(grants, { 'Observation|survey': ['body-b'], 'Observation|vital-signs': ['body-a'] });
-      assert.throws(() => run({ a: it_('body-a', obs('vital-signs')) }, { 'Observation|vital-signs': ['gone'] }), /"gone" .* is no longer a stream/);
+    it('[FHIR-SCOPE-8] the lock records every stream a grant reaches: pair, parent, items', () => {
+      const items = { a: it_('body-a', obs('vital-signs', 'a')), f: it_('body-a-flag', { companionOf: 'a' }), b: it_('body-b', obs('survey', 'b')) };
+      assert.deepStrictEqual(lockOf(items), {
+        formatVersion: 2,
+        streams: {
+          'body-a': { pair: 'Observation|vital-signs', parent: 'body', items: ['a'] },
+          'body-a-flag': { pair: 'Observation|vital-signs', parent: 'body-a', items: ['f'] },
+          'body-b': { pair: 'Observation|survey', parent: 'body', items: ['b'] }
+        },
+        reviewed: {}
+      });
+      run(items, lockOf(items));
+      // a new grant root passes
+      const more = { ...items, m: it_('mood', obs('survey', 'm')) };
+      assert.deepStrictEqual(run(more, lockOf(items)), { 'Observation|survey': ['body-b', 'mood'], 'Observation|vital-signs': ['body-a'] });
+    });
+
+    it('[FHIR-SCOPE-14] the lock fails a removed, re-parented or re-paired stream', () => {
+      const items = { a: it_('body-a', obs('vital-signs', 'a')), f: it_('body-a-flag', { companionOf: 'a' }) };
+      const lock = lockOf(items);
+      const moved = [{ id: 'body', children: [{ id: 'body-b', children: [{ id: 'body-a', children: [{ id: 'body-a-flag' }] }] }] }, { id: 'mood' }];
+      assert.throws(() => run(items, lock, moved), /stream "body-a", published under Observation\|vital-signs, was a child of "body" and is now a child of "body-b"/);
+      const gone = [{ id: 'body', children: [{ id: 'body-a' }] }, { id: 'mood' }];
+      assert.throws(() => run({ a: items.a }, lock, gone), /stream "body-a-flag", published under Observation\|vital-signs, is no longer a stream/);
+      assert.throws(() => run({ a: it_('body-a', obs('survey', 'a')), f: items.f }, lock), /stream "body-a", published under Observation\|vital-signs, now also holds Observation\|survey/);
+    });
+
+    it('[FHIR-SCOPE-15] the lock fails a removed or moved item; deprecating it passes', () => {
+      const items = { a: it_('body-a', obs('vital-signs', 'a')), f: it_('body-a-flag', { companionOf: 'a' }) };
+      const lock = lockOf(items);
+      assert.throws(() => run({ a: items.a }, lock), /stream "body-a-flag", published under Observation\|vital-signs, held item "f", which is gone: an item on a published stream is deprecated, never removed/);
+      assert.throws(() => run({ a: items.a, f: it_('body-a', { companionOf: 'a' }) }, lock), /held item "f", which is now on stream "body-a"/);
+      run({ a: items.a, f: it_('body-a-flag', { companionOf: 'a' }, { deprecated: true }) }, lock);
+    });
+
+    it('[FHIR-SCOPE-16] a new item or companion under a locked stream needs an acknowledgement in "reviewed"', () => {
+      const items = { a: it_('body-a', obs('vital-signs', 'a')) };
+      const lock = lockOf(items);
+      const flag = { ...items, f: it_('body-a-flag', { companionOf: 'a' }) };
+      assert.throws(() => run(flag, lock), /item "f" is new under the published stream "body-a-flag": every grant already issued for Observation\|vital-signs would read it\. .*"reviewed": \{ "f": "YYYY-MM-DD <why>" \}/);
+      const same = { ...items, a2: it_('body-a', obs('vital-signs', 'a2')) };
+      assert.throws(() => run(same, lock), /item "a2" is new under the published stream "body-a"/, 'a new item on the locked stream itself');
+      const reviewed = { ...lock, reviewed: { f: '2026-10-29 the disturbance flag qualifies the reading' } };
+      run(flag, reviewed);
+      // fhir:lock then records it; the acknowledgement stays as the record of the review
+      assert.deepStrictEqual(lockOf(flag).streams['body-a-flag'].items, ['f']);
+      assert.throws(() => run(flag, { ...lock, reviewed: { f: 'looks fine' } }), /reviewed "f" must read "YYYY-MM-DD <why>"/);
+      assert.throws(() => run(items, { ...lock, reviewed: { nope: '2026-10-29 x' } }), /reviewed item "nope" is not an item/);
+      // outside every locked stream, nothing to acknowledge
+      run({ ...items, b: it_('body-b', obs('survey', 'b')) }, lock);
+    });
+
+    it('[FHIR-SCOPE-17] an old-format lock is refused', () => {
+      assert.throws(() => checkFhirScopes({}, { roots: tree, lock: { 'Observation|survey': ['x'] } }), /formatVersion undefined, this build reads 2/);
     });
 
     it('[FHIR-SCOPE-12] Patient elements: a bare scope key, one active item per element, never a companion parent', () => {
@@ -432,9 +492,21 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => run({ a: it_('body-a', el('gender')), f: it_('body-a-flag') }), /spans \(unmapped\), Patient/);
     });
 
-    it('[FHIR-SCOPE-9] mergeLock adds and never removes', () => {
-      const merged = mergeLock({ 'Observation|survey': ['x'] }, { 'Observation|survey': ['y'], 'Condition|problem-list-item': ['c'] });
-      assert.deepStrictEqual(merged, { 'Condition|problem-list-item': ['c'], 'Observation|survey': ['x', 'y'] });
+    it('[FHIR-SCOPE-9] mergeLock adds and never removes, never rewrites a pair or parent, keeps "reviewed"', () => {
+      const lock = { formatVersion: 2, streams: { x: { pair: 'Observation|survey', parent: null, items: ['i'] } }, reviewed: { j: '2026-10-29 ok' } };
+      const merged = mergeLock(lock, {
+        x: { pair: 'Observation|vital-signs', parent: 'p', items: ['j'] },
+        c: { pair: 'Condition|problem-list-item', parent: null, items: ['c'] }
+      });
+      assert.deepStrictEqual(merged, {
+        formatVersion: 2,
+        streams: {
+          c: { pair: 'Condition|problem-list-item', parent: null, items: ['c'] },
+          x: { pair: 'Observation|survey', parent: null, items: ['i', 'j'] }
+        },
+        reviewed: { j: '2026-10-29 ok' }
+      });
+      assert.deepStrictEqual(mergeLock(merged, {}), merged);
     });
 
     it('[FHIR-SCOPE-10] import keys are unique across active items', () => {
@@ -456,7 +528,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       checkFhirImportKeys(itemsById);
     });
 
-    it('[FHIR-SCOPE-11] the model\'s table, every grant root in the committed lock (run npm run fhir:lock)', () => {
+    it('[FHIR-SCOPE-11] the model\'s table; the committed lock is up to date (run npm run fhir:lock)', () => {
       assert.deepStrictEqual(fhirScopes, {
         'Condition|problem-list-item': ['condition'],
         'Observation|social-history': ['lifestyle-tobacco-smoking'],
@@ -464,8 +536,20 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         'Observation|vital-signs': ['body-blood-pressure', 'body-heart-rate', 'body-weight'],
         Patient: ['profile-address', 'profile-date-of-birth', 'profile-name', 'profile-sex']
       });
-      assert.deepStrictEqual(mergeLock(readLock(), fhirScopes), readLock(), 'a grant root is missing from definitions/fhir/scopes.lock.json');
+      assert.deepStrictEqual(mergeLock(readLock(), lockEntries(itemsById, fhirScopes)), readLock(), 'definitions/fhir/scopes.lock.json is not up to date');
       assert.ok(!JSON.stringify(fhirScopes).includes(UNMAPPED));
+    });
+
+    it('[FHIR-SCOPE-18] CI: the published fhirScopes is contained in the lock, each root under its pair', () => {
+      const lock = readLock();
+      const contained = (table) => {
+        for (const [pair, roots] of Object.entries(table)) {
+          for (const root of roots) assert.strictEqual(lock.streams[root]?.pair, pair, `grant root "${root}" of ${pair} is not in the lock under that pair`);
+        }
+      };
+      contained(fhirScopes);
+      const p = path.join(__dirname, '../dist/pack.json');
+      if (fs.existsSync(p)) contained(JSON.parse(fs.readFileSync(p, 'utf-8')).fhirScopes ?? {});
     });
   });
 

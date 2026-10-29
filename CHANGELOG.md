@@ -22,17 +22,23 @@
 - New `definitions/fhir/mapping.yaml`, published as **`pack.fhirMapping`**: `formatVersion` 1, `fhirVersion` 4.0.1,
   the IG of each flavour (US Core 6.1.0, IPS 2.0.1, CH Core 6.0.0), the category table per resourceType (the one place
   the build reads it) and the datasets-service system label → URI table.
-- New **`pack.fhirScopes`**: the SMART scope grant table (`"ResourceType|category"` → maximal stream subtree roots),
-  computed by the build. Every item counts: an unmapped active item as `(unmapped)`, a deprecated item with its
-  mapping or as unmapped, a companion as its parent's pair.
-- New **`definitions/fhir/scopes.lock.json`** and `npm run fhir:lock` (adds the current table, never removes): the
-  build fails if a published grant root's subtree comes to hold another pair, `(unmapped)` included; a test fails if a
-  current root is not locked.
+- New **`pack.fhirScopes`**: the SMART scope grant table (`"ResourceType|category"` → minimal grant roots: the own
+  stream of each mapped item, companions riding under their parent item's stream), computed by the build. Every item
+  counts for the one-pair invariant: an unmapped active item as `(unmapped)`, a deprecated item with its mapping or as
+  unmapped, a companion as its parent's pair. (Maximal homogeneous subtree roots until 2026-10-29, review F5: a
+  stream added next to a mapped item later would have joined grants already issued.)
+- New **`definitions/fhir/scopes.lock.json`** (format 2) and `npm run fhir:lock` (adds, never removes): every stream a
+  published grant reaches, `{ pair, parent, items }`, append-only, plus a hand-written `reviewed` list. The build
+  fails when a locked stream is removed, re-parented or holds another pair in its subtree, when an item on it is
+  removed or moved (deprecate instead), and when a new item or companion appears on or under it without a `reviewed`
+  entry (`"<item key>": "YYYY-MM-DD <why>"`). Tests fail when the lock is not up to date and when a published grant
+  root is not in the lock under its pair (also checked on `dist/pack.json`).
 - Build checks (`src/fhir.js`): category per resourceType; the block agrees with its item (`quantity` on numeric
   `number` items with every eventType mapped, `coded` on `select` only and refused on `multi-select`, every composite
   field mapped or ignored, components and splits numeric and disjoint, a datasource source only on a datasource field
-  holding `codes`, no `value` on a Condition); codings unique within an item; import match keys unique across active
-  items; the one-pair-per-granted-subtree invariant; companions valid; the lock.
+  holding `codes`, no `value` on a Condition); codings unique within an item; two eventTypes of one `quantity` block
+  never share a UCUM unit, annotations such as `{beats}` aside; import match keys unique across active items; the
+  one-pair invariant; companions valid; the lock.
 - Blocks on `body-weight` (with `alsoMatch` LOINC 3141-9), `body-blood-pressure`, `lifestyle-tobacco-smoking`,
   `condition-coded` and the new `wellbeing-general-health`. Rendered output validates against US Core 6.1.0 and IPS
   2.0.1 and round-trips through import (hds-fhir-js).
@@ -58,6 +64,8 @@
 ### Fixed: `symptom-pain-severity` no longer cites LOINC 72514-3 (B1)
 - 72514-3 is a 0 to 10 numeric pain score; the item stores five verbal levels as a ratio. Removed, with a YAML note on
   how the two relate.
+- Also removed: LOINC 77564-4 (unknown to LOINC 2.83) and SNOMED 103325001 ("Patient need for", a qualifier value).
+  `references` keeps SNOMED 22253000 (Pain) and 225908003 (Pain score) and LOINC 38208-5 (Pain severity - Reported).
 - **Patient from the profile items** (plan 115 D14): a third block form, `{ resourceType: Patient, element, value? }`
   (`defs.json` `fhirElement`), for one element of the Patient, which is assembled from the latest event of each
   contributing item. Elements: `name.given`, `name.family`, `gender` (`coded`, administrative-gender codes with their

@@ -35,20 +35,35 @@ const PATIENT_ELEMENTS = {
 const fhirMapping = YAML.parse(fs.readFileSync(MAPPING_FILE_PATH, 'utf8'));
 checkMappingTable(fhirMapping);
 
+/** Format of definitions/fhir/scopes.lock.json this build reads and writes. */
+const LOCK_FORMAT = 2;
+
 module.exports = {
   fhirMapping,
   UNMAPPED,
   PATIENT_ELEMENTS,
   LOCK_FILE_PATH,
+  LOCK_FORMAT,
   checkFhirMapping,
   scopePairOf,
+  ucumKey,
   computeFhirScopes,
   checkFhirScopes,
   checkFhirImportKeys,
   readLock,
+  emptyLock,
+  lockEntries,
   mergeLock,
   toBePublished
 };
+
+/**
+ * A UCUM unit as compared for equality: annotations (`{beats}`) carry no meaning in UCUM, so `{beats}/min` is `/min`
+ * and an annotation alone is the unity `1`.
+ */
+function ucumKey (unit) {
+  return unit.replace(/\{[^}]*\}/g, '') || '1';
+}
 
 function checkMappingTable (t) {
   const fail = (msg) => { throw new Error(`definitions/fhir/mapping.yaml: ${msg}`); };
@@ -140,6 +155,15 @@ function checkFhirMapping (key, item, itemEventTypes) {
         sameSet('value.units keys vs the item eventTypes', Object.keys(v.units), itemEventTypes);
         for (const t of itemEventTypes) {
           if (eventTypesById(t)?.type !== 'number') fail(`value.kind "quantity": eventType "${t}" is not a number`);
+        }
+        {
+          // The unit picks the eventType on import, so two eventTypes never share one (annotations aside).
+          const byUnit = new Map();
+          for (const [t, u] of Object.entries(v.units)) {
+            const other = byUnit.get(ucumKey(u));
+            if (other != null) fail(`value.units: eventTypes "${other}" and "${t}" share the UCUM unit "${ucumKey(u)}" (annotations aside); an imported quantity would map back to two eventTypes`);
+            byUnit.set(ucumKey(u), t);
+          }
         }
         break;
       case 'coded':
@@ -236,11 +260,35 @@ function scopePairOf (key, items) {
   return f.category != null ? `${f.resourceType}|${f.category}` : f.resourceType;
 }
 
+/** Parent and descendants of every stream of a tree. */
+function streamIndex (roots) {
+  const parentOf = new Map();
+  const childrenOf = new Map();
+  const index = (node, parentId) => {
+    parentOf.set(node.id, parentId);
+    childrenOf.set(node.id, (node.children ?? []).map((c) => c.id));
+    for (const c of node.children ?? []) index(c, node.id);
+  };
+  for (const r of roots) index(r, null);
+  const ancestorsOf = (id) => {
+    const out = [];
+    for (let s = parentOf.get(id); s != null; s = parentOf.get(s)) out.push(s);
+    return out;
+  };
+  const descendantsOf = (id) => [id, ...(childrenOf.get(id) ?? []).flatMap(descendantsOf)];
+  return { parentOf, ancestorsOf, descendantsOf };
+}
+
 /**
- * The SMART scope grant table. Pryv permissions inherit down the stream tree, so a scope is granted as the maximal
- * stream subtree roots whose whole subtree holds that one pair. Every item counts: an active item without a block is
- * its own `(unmapped)` pair, and a deprecated item counts with its mapping or as unmapped, because its past events
- * still sit in its stream. Streams with no item in their subtree are never granted on their own.
+ * The SMART scope grant table. Pryv permissions inherit down the stream tree, so granting a stream grants its whole
+ * subtree. A scope is granted as **minimal roots**: the own stream of each mapped item of that pair (a companion
+ * rides under its parent item's stream, which it sits inside), never an ancestor that merely holds them, so a stream
+ * added next to a mapped item later never joins a grant already issued. A listed stream inside another listed stream
+ * of the same pair is left out. A deprecated mapped item keeps its stream in the table: its past events are there.
+ *
+ * The invariant: every stream that carries a mapped or companion item has a subtree holding that one pair. Every item
+ * counts: an active item without a block is its own `(unmapped)` pair, and a deprecated item counts with its mapping
+ * or as unmapped.
  *
  * @param {object} items item key → item
  * @param {Array} roots the stream tree (defaults to the model's)
@@ -265,21 +313,18 @@ function computeFhirScopes (items, roots = streams.roots) {
   };
   for (const r of roots) walk(r);
 
+  const { ancestorsOf } = streamIndex(roots);
   const grants = {};
-  const visit = (node) => {
-    const pairs = subtree.get(node.id);
-    if (pairs.size === 0) return;
-    if (pairs.size === 1) {
-      const [p] = pairs;
-      if (p !== UNMAPPED) (grants[p] ??= []).push(node.id);
-      return;
-    }
-    for (const c of node.children ?? []) visit(c);
-  };
-  for (const r of roots) visit(r);
-
+  for (const [key, item] of Object.entries(items)) {
+    if (item.fhir == null || item.fhir.companionOf != null) continue;
+    if (subtree.get(item.streamId)?.size !== 1) continue; // a violation, reported below
+    (grants[scopePairOf(key, items)] ??= new Set()).add(item.streamId);
+  }
   const sorted = {};
-  for (const p of Object.keys(grants).sort()) sorted[p] = grants[p].sort();
+  for (const p of Object.keys(grants).sort()) {
+    const listed = grants[p];
+    sorted[p] = [...listed].filter((s) => !ancestorsOf(s).some((a) => listed.has(a))).sort();
+  }
 
   const violations = [...carriesMapped].sort()
     .filter((s) => subtree.get(s)?.size > 1)
@@ -288,19 +333,15 @@ function computeFhirScopes (items, roots = streams.roots) {
 }
 
 /**
- * Every check that needs all items loaded: companion blocks, the one-pair-per-granted-subtree invariant, the scope
- * lock (a published grant root never widens) and the import match keys. Returns the grant table.
+ * Every check that needs all items loaded: companion blocks, the one-pair invariant, the scope lock (a published
+ * stream is never removed, re-parented, given another pair or a new item unacknowledged) and the import match keys.
+ * Returns the grant table.
  *
  * @param {object} items item key → item
  * @param {object} [opts] `{ roots, lock }` for tests; default the model's stream tree and the committed lock
  */
 function checkFhirScopes (items, { roots = streams.roots, lock = readLock() } = {}) {
-  const parentOf = new Map();
-  const index = (node, parentId) => {
-    parentOf.set(node.id, parentId);
-    for (const c of node.children ?? []) index(c, node.id);
-  };
-  for (const r of roots) index(r, null);
+  const { parentOf } = streamIndex(roots);
   const inSubtree = (id, rootId) => {
     for (let s = id; s != null; s = parentOf.get(s)) if (s === rootId) return true;
     return false;
@@ -319,18 +360,49 @@ function checkFhirScopes (items, { roots = streams.roots, lock = readLock() } = 
 
   const { grants, subtree, violations } = computeFhirScopes(items, roots);
   if (violations.length > 0) throw new Error(`fhir scope invariant:\n  ${violations.join('\n  ')}`);
-
-  for (const [pair, lockedRoots] of Object.entries(lock)) {
-    for (const root of lockedRoots) {
-      const pairs = subtree.get(root);
-      if (pairs == null) throw new Error(`fhir scope lock: "${root}" was published as a grant root of ${pair} and is no longer a stream`);
-      const other = [...pairs].filter((p) => p !== pair);
-      if (other.length > 0) throw new Error(`fhir scope lock: "${root}" was published as a grant root of ${pair}; its subtree now also holds ${other.sort().join(', ')}, which would widen every grant already issued`);
-    }
-  }
-
+  checkLock(items, checkedLock(lock), subtree, parentOf);
   checkFhirImportKeys(items);
   return grants;
+}
+
+/**
+ * The lock records every stream a published grant reaches (each grant root and its whole subtree) with its pair, its
+ * parent and the items on it. A grant already issued must never reach more than it did, nor silently less. So the
+ * build fails when a locked stream is removed, is re-parented, holds another pair in its subtree, or loses an item
+ * (removed, or moved to another stream: deprecate instead), and when an item that is not in the lock appears on a
+ * locked stream or under one, unless the lock's `reviewed` list acknowledges it.
+ */
+function checkLock (items, lock, subtree, parentOf) {
+  for (const [id, e] of Object.entries(lock.streams)) {
+    const at = `fhir scope lock: stream "${id}", published under ${e.pair},`;
+    if (!subtree.has(id)) throw new Error(`${at} is no longer a stream`);
+    const parent = parentOf.get(id) ?? null;
+    if (parent !== e.parent) throw new Error(`${at} was a child of "${e.parent}" and is now a child of "${parent}": a published stream is never re-parented`);
+    const other = [...subtree.get(id)].filter((p) => p !== e.pair);
+    if (other.length > 0) throw new Error(`${at} now also holds ${other.sort().join(', ')} in its subtree, which would widen every grant already issued`);
+    for (const key of e.items) {
+      const item = items[key];
+      if (item == null) throw new Error(`${at} held item "${key}", which is gone: an item on a published stream is deprecated, never removed`);
+      if (item.streamId !== id) throw new Error(`${at} held item "${key}", which is now on stream "${item.streamId}": its past events stay where they are`);
+    }
+  }
+  for (const [key, item] of Object.entries(items)) {
+    if (lock.streams[item.streamId]?.items.includes(key)) continue;
+    const locked = [item.streamId, ...ancestorsIn(parentOf, item.streamId)].find((s) => lock.streams[s] != null);
+    if (locked == null || lock.reviewed[key] != null) continue;
+    const pair = lock.streams[locked].pair;
+    throw new Error(`fhir scope lock: item "${key}" is new under the published stream "${locked}": every grant already issued for ${pair} would read it. If a reader of ${pair} may see it, acknowledge it in definitions/fhir/scopes.lock.json, "reviewed": { "${key}": "YYYY-MM-DD <why>" }, then run npm run fhir:lock`);
+  }
+  for (const [key, why] of Object.entries(lock.reviewed)) {
+    if (items[key] == null) throw new Error(`fhir scope lock: reviewed item "${key}" is not an item`);
+    if (typeof why !== 'string' || !/^\d{4}-\d{2}-\d{2} \S/.test(why)) throw new Error(`fhir scope lock: reviewed "${key}" must read "YYYY-MM-DD <why>"`);
+  }
+}
+
+function ancestorsIn (parentOf, id) {
+  const out = [];
+  for (let s = parentOf.get(id); s != null; s = parentOf.get(s)) out.push(s);
+  return out;
 }
 
 /**
@@ -362,19 +434,58 @@ function checkFhirImportKeys (items) {
   }
 }
 
-/** The committed lock: every (pair, root) ever published. An absent file is an empty lock. */
-function readLock () {
-  if (!fs.existsSync(LOCK_FILE_PATH)) return {};
-  return JSON.parse(fs.readFileSync(LOCK_FILE_PATH, 'utf8'));
+function emptyLock () {
+  return { formatVersion: LOCK_FORMAT, streams: {}, reviewed: {} };
 }
 
-/** Add a grant table to a lock. Never removes an entry. */
-function mergeLock (lock, grants) {
+/**
+ * The committed lock, `{ formatVersion, streams: { <streamId>: { pair, parent, items } }, reviewed: { <item key>:
+ * "YYYY-MM-DD <why>" } }`: every stream a published grant reaches, ever. An absent file is an empty lock.
+ */
+function readLock () {
+  if (!fs.existsSync(LOCK_FILE_PATH)) return emptyLock();
+  return checkedLock(JSON.parse(fs.readFileSync(LOCK_FILE_PATH, 'utf8')));
+}
+
+function checkedLock (lock) {
+  if (lock.formatVersion !== LOCK_FORMAT) throw new Error(`definitions/fhir/scopes.lock.json: formatVersion ${lock.formatVersion}, this build reads ${LOCK_FORMAT}`);
+  return { ...emptyLock(), ...lock };
+}
+
+/**
+ * What the lock records for a grant table: each grant root and every stream in its subtree, with the root's pair,
+ * the stream's parent and the items on it (sorted keys).
+ *
+ * @param {object} items item key → item
+ * @param {object} grants the grant table (`computeFhirScopes(...).grants`)
+ * @param {Array} roots the stream tree (defaults to the model's)
+ */
+function lockEntries (items, grants, roots = streams.roots) {
+  const { parentOf, descendantsOf } = streamIndex(roots);
   const out = {};
-  for (const pair of [...new Set([...Object.keys(lock), ...Object.keys(grants)])].sort()) {
-    out[pair] = [...new Set([...(lock[pair] || []), ...(grants[pair] || [])])].sort();
+  for (const [pair, grantRoots] of Object.entries(grants)) {
+    for (const root of grantRoots) {
+      for (const id of descendantsOf(root)) {
+        const on = Object.entries(items).filter(([, i]) => i.streamId === id).map(([k]) => k).sort();
+        out[id] = { pair, parent: parentOf.get(id) ?? null, items: on };
+      }
+    }
   }
   return out;
+}
+
+/**
+ * Add lock entries to a lock. Never removes a stream or an item, never rewrites a pair or a parent (the build has
+ * already refused a change), and keeps the hand-written `reviewed` list.
+ */
+function mergeLock (lock, entries) {
+  const out = {};
+  for (const id of [...new Set([...Object.keys(lock.streams), ...Object.keys(entries)])].sort()) {
+    const was = lock.streams[id];
+    const now = entries[id];
+    out[id] = was == null ? now : { ...was, items: [...new Set([...was.items, ...(now?.items ?? [])])].sort() };
+  }
+  return { formatVersion: LOCK_FORMAT, streams: out, reviewed: lock.reviewed ?? {} };
 }
 
 function toBePublished (grants) {

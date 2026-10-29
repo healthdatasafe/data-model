@@ -1,22 +1,77 @@
 {
-  "Condition|problem-list-item": [
-    "condition"
-  ],
-  "Observation|social-history": [
-    "lifestyle-tobacco-smoking"
-  ],
-  "Observation|survey": [
-    "wellbeing-general-health"
-  ],
-  "Observation|vital-signs": [
-    "body-blood-pressure",
-    "body-heart-rate",
-    "body-weight"
-  ],
-  "Patient": [
-    "profile-address",
-    "profile-date-of-birth",
-    "profile-name",
-    "profile-sex"
-  ]
+  "formatVersion": 2,
+  "streams": {
+    "body-blood-pressure": {
+      "pair": "Observation|vital-signs",
+      "parent": "body",
+      "items": [
+        "body-blood-pressure"
+      ]
+    },
+    "body-heart-rate": {
+      "pair": "Observation|vital-signs",
+      "parent": "body",
+      "items": [
+        "body-heart-rate"
+      ]
+    },
+    "body-weight": {
+      "pair": "Observation|vital-signs",
+      "parent": "body",
+      "items": [
+        "body-weight"
+      ]
+    },
+    "condition": {
+      "pair": "Condition|problem-list-item",
+      "parent": null,
+      "items": [
+        "condition-coded"
+      ]
+    },
+    "lifestyle-tobacco-smoking": {
+      "pair": "Observation|social-history",
+      "parent": "lifestyle-tobacco",
+      "items": [
+        "lifestyle-tobacco-smoking"
+      ]
+    },
+    "profile-address": {
+      "pair": "Patient",
+      "parent": "profile",
+      "items": [
+        "profile-addresscountry"
+      ]
+    },
+    "profile-date-of-birth": {
+      "pair": "Patient",
+      "parent": "profile",
+      "items": [
+        "profile-date-of-birth"
+      ]
+    },
+    "profile-name": {
+      "pair": "Patient",
+      "parent": "profile",
+      "items": [
+        "profile-name",
+        "profile-surname"
+      ]
+    },
+    "profile-sex": {
+      "pair": "Patient",
+      "parent": "profile",
+      "items": [
+        "profile-sex"
+      ]
+    },
+    "wellbeing-general-health": {
+      "pair": "Observation|survey",
+      "parent": "wellbeing",
+      "items": [
+        "wellbeing-general-health"
+      ]
+    }
+  },
+  "reviewed": {}
 }

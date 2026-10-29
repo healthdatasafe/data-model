@@ -258,9 +258,11 @@ symptom-pain-severity:
   # 0 to 10 numeric score, while this item stores five verbal levels as a ratio. A 0 to 10 score maps
   # onto these levels only through a binning rule, which this model does not define; no LOINC code
   # with exactly these five levels was found.
+  # Removed 2026-10-29 (plan 115): LOINC 77564-4, unknown to LOINC 2.83 (tx.fhir.org $lookup), and SNOMED 103325001
+  # "Patient need for (contextual qualifier) (qualifier value)", a qualifier, not a pain concept.
   references:
-    snomed: ["22253000", "225908003", "103325001"]
-    loinc: ["77564-4", "38208-5"]
+    snomed: ["22253000", "225908003"]
+    loinc: ["38208-5"]
     icd10: ["R52"]
 
 symptom-pain-headache:
