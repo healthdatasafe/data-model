@@ -1580,6 +1580,11 @@
         "id": "wellbeing-self-rated-health",
         "name": "Self-rated health",
         "parentId": "wellbeing"
+      },
+      {
+        "id": "wellbeing-general-health",
+        "name": "General health",
+        "parentId": "wellbeing"
       }
     ]
   }

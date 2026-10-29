@@ -487,7 +487,9 @@
     },
     "repeatable": "P1D",
     "references": {
-      "loinc": "41950-7"
+      "loinc": [
+        "41950-7"
+      ]
     },
     "devNotes": "HealthKit stepCount, Google Fit step_count.delta, summed over the day."
   },
@@ -511,7 +513,9 @@
     },
     "repeatable": "P1D",
     "references": {
-      "loinc": "41953-1"
+      "loinc": [
+        "41953-1"
+      ]
     },
     "devNotes": "HealthKit distanceWalkingRunning, summed over the day. Walking and running together because that is what phones and watches export; a source that counts walking only writes it here too. LOINC 41953-1 is \"Walking distance 24 hour\"; there is no walking+running code."
   },
@@ -551,7 +555,9 @@
     "type": "checkbox",
     "repeatable": "P1D",
     "references": {
-      "snomed": "11381005"
+      "snomed": [
+        "11381005"
+      ]
     }
   },
   "body-skin-dry": {
@@ -569,7 +575,9 @@
     "type": "checkbox",
     "repeatable": "P1D",
     "references": {
-      "snomed": "52475004"
+      "snomed": [
+        "52475004"
+      ]
     }
   },
   "body-skin-oily": {
@@ -587,7 +595,9 @@
     "type": "checkbox",
     "repeatable": "P1D",
     "references": {
-      "snomed": "42273000"
+      "snomed": [
+        "42273000"
+      ]
     }
   },
   "body-skin-glowing": {
@@ -605,7 +615,9 @@
     "type": "checkbox",
     "repeatable": "P1D",
     "references": {
-      "snomed": "225544001"
+      "snomed": [
+        "225544001"
+      ]
     }
   },
   "body-vulva-mucus-inspect": {
@@ -1102,7 +1114,36 @@
       "cooldown": "P1D"
     },
     "references": {
-      "snomed": "27113001"
+      "snomed": [
+        "27113001"
+      ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "vital-signs",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "29463-7",
+        "display": "Body weight"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "3141-9",
+          "display": "Body weight Measured"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "mass/kg": "kg",
+          "mass/lb": "[lb_av]"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-weight",
+        "ips": "http://hl7.org/fhir/StructureDefinition/bodyweight"
+      }
     }
   },
   "body-blood-pressure": {
@@ -1154,6 +1195,61 @@
         "8480-6",
         "8462-4"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "vital-signs",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "85354-9",
+        "display": "Blood pressure panel with all children optional"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "55284-4",
+          "display": "Blood pressure systolic and diastolic"
+        }
+      ],
+      "value": {
+        "kind": "components",
+        "components": {
+          "systolic": {
+            "code": {
+              "system": "http://loinc.org",
+              "code": "8480-6",
+              "display": "Systolic blood pressure"
+            },
+            "unit": "mm[Hg]"
+          },
+          "diastolic": {
+            "code": {
+              "system": "http://loinc.org",
+              "code": "8462-4",
+              "display": "Diastolic blood pressure"
+            },
+            "unit": "mm[Hg]"
+          }
+        }
+      },
+      "split": {
+        "rate": {
+          "code": {
+            "system": "http://loinc.org",
+            "code": "8867-4",
+            "display": "Heart rate"
+          },
+          "unit": "/min",
+          "profiles": {
+            "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-heart-rate",
+            "ips": "http://hl7.org/fhir/StructureDefinition/heartrate"
+          }
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-blood-pressure",
+        "ips": "http://hl7.org/fhir/StructureDefinition/bp"
+      }
     }
   },
   "body-temperature-basal": {
@@ -1171,7 +1267,9 @@
     "type": "number",
     "repeatable": "unlimited",
     "references": {
-      "snomed": "300076005"
+      "snomed": [
+        "300076005"
+      ]
     },
     "devNotes": "Used for fertility charting (coverline and thermal shift). See `body-temperature-basal-disturbance` for flagging a reading as unreliable."
   },
@@ -1257,10 +1355,33 @@
     "type": "number",
     "repeatable": "unlimited",
     "references": {
-      "snomed": "364075005",
-      "loinc": "8867-4"
+      "snomed": [
+        "364075005"
+      ],
+      "loinc": [
+        "8867-4"
+      ]
     },
-    "devNotes": "The pulse taken with a blood pressure reading stays in `body-blood-pressure` (`rate`); this item is a heart rate recorded on its own."
+    "devNotes": "The pulse taken with a blood pressure reading stays in `body-blood-pressure` (`rate`); this item is a heart rate recorded on its own.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "vital-signs",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "8867-4",
+        "display": "Heart rate"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "frequency/bpm": "/min"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-heart-rate",
+        "ips": "http://hl7.org/fhir/StructureDefinition/heartrate"
+      }
+    }
   },
   "body-oxygen-saturation": {
     "version": "v1",
@@ -1286,7 +1407,9 @@
       }
     },
     "references": {
-      "snomed": "431314004",
+      "snomed": [
+        "431314004"
+      ],
       "loinc": [
         "2708-6",
         "59408-5"
@@ -1309,8 +1432,12 @@
     "type": "number",
     "repeatable": "unlimited",
     "references": {
-      "snomed": "386725007",
-      "loinc": "8310-5"
+      "snomed": [
+        "386725007"
+      ],
+      "loinc": [
+        "8310-5"
+      ]
     },
     "devNotes": "Any measured body temperature except the basal fertility reading, which stays `body-temperature-basal`. A grant on `body-temperature` also covers the basal child."
   },
@@ -1352,7 +1479,9 @@
     },
     "repeatable": "unlimited",
     "references": {
-      "snomed": "1153637007"
+      "snomed": [
+        "1153637007"
+      ]
     }
   },
   "body-semen-concentration": {
@@ -1379,7 +1508,9 @@
     },
     "referenceRange": null,
     "references": {
-      "snomed": "713521005"
+      "snomed": [
+        "713521005"
+      ]
     },
     "devNotes": "Stored on `concentration/megacount-ml` (10⁶/mL)."
   },
@@ -1421,7 +1552,9 @@
     "type": "number",
     "repeatable": "any",
     "references": {
-      "snomed": "252048002"
+      "snomed": [
+        "252048002"
+      ]
     },
     "referenceRange": {
       "source": "WHO-2021",
@@ -1499,7 +1632,9 @@
       "population": "clinical-consensus"
     },
     "references": {
-      "snomed": "167806003"
+      "snomed": [
+        "167806003"
+      ]
     },
     "devNotes": "Clinically derived as concentration × volume × progressive-motility fraction, but stored as a measured value on `count/mega` (10⁶ sperm) because labs report it directly. Reference: Hamilton 2015, lower limit 9."
   },
@@ -1525,7 +1660,9 @@
       "population": "recently-fertile-men"
     },
     "references": {
-      "snomed": "250500000"
+      "snomed": [
+        "250500000"
+      ]
     },
     "devNotes": "Kruger strict criteria. Stored on `ratio/proportion` as 0..1. Reference: WHO 2021, lower limit 0.04."
   },
@@ -4895,7 +5032,22 @@
     "eventType": "condition/coded-v1",
     "type": "datasource-search",
     "datasource": "condition",
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "fhir": {
+      "resourceType": "Condition",
+      "category": "problem-list-item",
+      "alsoMatchCategories": [
+        "encounter-diagnosis"
+      ],
+      "code": {
+        "from": "datasource",
+        "field": "condition"
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-problems-health-concerns",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips"
+      }
+    }
   },
   "consent-record": {
     "version": "v1",
@@ -5917,9 +6069,15 @@
     ],
     "repeatable": "unlimited",
     "references": {
-      "icf": "d450",
-      "snomed": "301438001",
-      "loinc": "63800-5"
+      "icf": [
+        "d450"
+      ],
+      "snomed": [
+        "301438001"
+      ],
+      "loinc": [
+        "63800-5"
+      ]
     }
   },
   "function-self-care": {
@@ -5978,8 +6136,12 @@
         "d510",
         "d540"
       ],
-      "snomed": "228151002",
-      "loinc": "63801-3"
+      "snomed": [
+        "228151002"
+      ],
+      "loinc": [
+        "63801-3"
+      ]
     }
   },
   "function-usual-activities": {
@@ -6041,8 +6203,12 @@
         "d859",
         "d920"
       ],
-      "snomed": "413156007",
-      "loinc": "63802-1"
+      "snomed": [
+        "413156007"
+      ],
+      "loinc": [
+        "63802-1"
+      ]
     }
   },
   "lifestyle-tobacco-smoking": {
@@ -6083,9 +6249,71 @@
     ],
     "repeatable": "any",
     "references": {
-      "snomed": "365981007"
+      "snomed": [
+        "365981007"
+      ]
     },
-    "devNotes": "Coded status, not a severity ratio: never / former / current is the shape SNOMED and FHIR use for smoking status. It is a COARSENING of the US Core Smoking Status value set, which splits current into every-day (449868002) and some-day (428041000124106) and carries two unknown states. Note when exporting: `current` maps to 77176002, whose SNOMED FSN is \"Smoker (finding)\" but which US Core displays as \"Smoker, current status unknown\" — a US Core-aware reader will read it as unknown frequency, which is accurate here, since v1 stores no tobacco frequency at all. References 365981007 (Finding of tobacco smoking behavior) rather than the broader 365980008 (Finding of tobacco use and exposure), which also covers passive exposure. Quantity is deliberately absent from v1 — cigarettes per day does not generalise to the e-cigarette and smokeless siblings, and pack-years is derived, which this model keeps on the reader side. Adding a quantity item later is additive; shipping a wrong unit is not reversible."
+    "devNotes": "Coded status, not a severity ratio: never / former / current is the shape SNOMED and FHIR use for smoking status. It is a COARSENING of the US Core Smoking Status value set, which splits current into every-day (449868002) and some-day (428041000124106) and carries two unknown states. Note when exporting: `current` maps to 77176002, whose SNOMED FSN is \"Smoker (finding)\" but which US Core displays as \"Smoker, current status unknown\" — a US Core-aware reader will read it as unknown frequency, which is accurate here, since v1 stores no tobacco frequency at all. References 365981007 (Finding of tobacco smoking behavior) rather than the broader 365980008 (Finding of tobacco use and exposure), which also covers passive exposure. Quantity is deliberately absent from v1 — cigarettes per day does not generalise to the e-cigarette and smokeless siblings, and pack-years is derived, which this model keeps on the reader side. Adding a quantity item later is additive; shipping a wrong unit is not reversible.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "social-history",
+      "alsoMatchCategories": [
+        "survey"
+      ],
+      "code": {
+        "system": "http://loinc.org",
+        "code": "72166-2",
+        "display": "Tobacco smoking status"
+      },
+      "value": {
+        "kind": "coded",
+        "options": {
+          "never": {
+            "system": "http://snomed.info/sct",
+            "code": "266919005",
+            "display": "Never smoked tobacco"
+          },
+          "former": {
+            "system": "http://snomed.info/sct",
+            "code": "8517006",
+            "display": "Ex-smoker"
+          },
+          "current": {
+            "system": "http://snomed.info/sct",
+            "code": "77176002",
+            "display": "Smoker"
+          }
+        },
+        "alsoMatch": {
+          "current": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "449868002",
+              "display": "Smokes tobacco daily"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "428041000124106",
+              "display": "Occasional tobacco smoker"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "428071000124103",
+              "display": "Heavy tobacco smoker"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "428061000124105",
+              "display": "Light tobacco smoker"
+            }
+          ]
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-smokingstatus",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-tobaccouse-uv-ips"
+      }
+    }
   },
   "lifestyle-tobacco-ecigarette": {
     "version": "v1",
@@ -6125,7 +6353,9 @@
     ],
     "repeatable": "any",
     "references": {
-      "snomed": "722499006"
+      "snomed": [
+        "722499006"
+      ]
     },
     "devNotes": "A sibling item rather than an option on lifestyle-tobacco-smoking: vaping and smoking co-occur, so one exclusive select could not record both, and an e-cigarette may carry nicotine without tobacco."
   },
@@ -6167,7 +6397,9 @@
     ],
     "repeatable": "any",
     "references": {
-      "snomed": "713914004"
+      "snomed": [
+        "713914004"
+      ]
     },
     "devNotes": "SNOMED carries no equally direct never/former pair for smokeless tobacco, so those two export as the item code plus the status value."
   },
@@ -6223,7 +6455,9 @@
     ],
     "repeatable": "any",
     "references": {
-      "snomed": "228273003"
+      "snomed": [
+        "228273003"
+      ]
     },
     "devNotes": "AUDIT-C question 1, storing the screener's own coded bands. It selects five of the nine bands lifestyle/frequency-band-v1 offers; the loader validates that every option is in the enum and does not require the item to cover it, which is what lets one shape type serve several instruments. The AUDIT-C 0–4 item score and the 0–12 total are derived on the reader side, positionally over these options, consistent with this model's treatment of derived values."
   },
@@ -6251,7 +6485,9 @@
     },
     "repeatable": "any",
     "references": {
-      "snomed": "896810008"
+      "snomed": [
+        "896810008"
+      ]
     },
     "devNotes": "Grams of ethanol, not standard drinks: a standard drink is 8 g in the UK (one unit), 10 g in Australia and France, and 14 g in the US, so storing drinks makes cross-cohort comparison silently wrong. The app converts from the local standard drink at entry. Reuses the legacy Pryv `mass/g` rather than a new lifestyle-scoped type — a new one would be numerically identical, which is the equivalence hazard AGENTS.md forbids. `mass/g` itself declares no minimum, so the bound is declared here as the item-level `min: 0`, which the model publishes. Renderers should enforce it; hds-forms-js does not yet (`NumberInput.tsx` ignores it), so a reader should still treat a negative value as invalid. SNOMED 896810008 is \"estimated intake of ethanol in grams in 24 hours\", a daily observable; this item is per typical DRINKING day, so the mapping is close but not exact."
   },
@@ -6307,7 +6543,9 @@
     ],
     "repeatable": "any",
     "references": {
-      "snomed": "228326007"
+      "snomed": [
+        "228326007"
+      ]
     },
     "devNotes": "AUDIT-C question 3. It selects a different five bands from the same lifestyle/frequency-band-v1 than question 1 does; `streamId` is what distinguishes the two, per the storage identity rule. \"Six or more drinks\" is AUDIT-C's own wording and is kept deliberately, so this item is AUDIT-C-specific: some instruments use sex-adjusted thresholds (5+ or 4+). A form needing different wording overrides it via itemCustomizations.labels rather than forking the item."
   },
@@ -6363,7 +6601,9 @@
     ],
     "repeatable": "any",
     "references": {
-      "snomed": "364828006"
+      "snomed": [
+        "364828006"
+      ]
     },
     "devNotes": "Mutually exclusive overall pattern; additive avoidances are recorded separately, since a vegetarian who is also gluten-free needs both. Intake frequency is deliberately out of scope for v1: it is where a food-frequency questionnaire begins, and AGENTS.md §4 puts a questionnaire's identity in the form template, not in the model. Labelled \"Type d'alimentation\" in French, not \"Régime alimentaire\", which everyday French reads as a weight-loss diet."
   },
@@ -6433,7 +6673,9 @@
     ],
     "repeatable": "any",
     "references": {
-      "snomed": "364828006"
+      "snomed": [
+        "364828006"
+      ]
     },
     "devNotes": "Each event is a complete dated snapshot of the restrictions in force, the same convention as fertility/tracking-method-v1: a restriction that ends simply does not appear in the next snapshot. An empty array is meaningful and means no restriction. `nut-free` is stated as including peanuts on both labels on purpose: EU allergen labelling and French \"fruits à coque\" EXCLUDE peanuts (arachides are a separate allergen), while English \"nut-free\" is usually read to include them. For a restriction recorded by medical need that difference matters. A later split into tree-nut-free and peanut-free is additive."
   },
@@ -6884,7 +7126,11 @@
     "streamId": "profile-address",
     "eventType": "contact/country",
     "type": "text",
-    "repeatable": "once"
+    "repeatable": "once",
+    "fhir": {
+      "resourceType": "Patient",
+      "element": "address.country"
+    }
   },
   "profile-birthcountry": {
     "version": "v1",
@@ -7062,7 +7308,11 @@
     "streamId": "profile-date-of-birth",
     "eventType": "date/iso-8601",
     "type": "date",
-    "repeatable": "once"
+    "repeatable": "once",
+    "fhir": {
+      "resourceType": "Patient",
+      "element": "birthDate"
+    }
   },
   "profile-name": {
     "version": "temporary",
@@ -7077,7 +7327,11 @@
     "streamId": "profile-name",
     "eventType": "contact/name",
     "type": "text",
-    "repeatable": "once"
+    "repeatable": "once",
+    "fhir": {
+      "resourceType": "Patient",
+      "element": "name.given"
+    }
   },
   "profile-surname": {
     "version": "temporary",
@@ -7092,7 +7346,11 @@
     "streamId": "profile-name",
     "eventType": "contact/surname",
     "type": "text",
-    "repeatable": "once"
+    "repeatable": "once",
+    "fhir": {
+      "resourceType": "Patient",
+      "element": "name.family"
+    }
   },
   "profile-sex": {
     "version": "v1",
@@ -7123,7 +7381,27 @@
         }
       }
     ],
-    "repeatable": "once"
+    "repeatable": "once",
+    "devNotes": "FHIR: rendered as Patient.gender, which is administrative gender, not biological sex. It is the one core Patient element for sex (US Core requires it), and for the two options here the codes coincide. Extensions such as US Core birth sex are not rendered from this item. The eventType also admits `notSet` and `other`, which are not options of this item and are not mapped.",
+    "fhir": {
+      "resourceType": "Patient",
+      "element": "gender",
+      "value": {
+        "kind": "coded",
+        "options": {
+          "male": {
+            "system": "http://hl7.org/fhir/administrative-gender",
+            "code": "male",
+            "display": "Male"
+          },
+          "female": {
+            "system": "http://hl7.org/fhir/administrative-gender",
+            "code": "female",
+            "display": "Female"
+          }
+        }
+      }
+    }
   },
   "profile-reproductive-stage": {
     "version": "v1",
@@ -9785,15 +10063,14 @@
     "references": {
       "snomed": [
         "22253000",
-        "225908003",
-        "103325001"
+        "225908003"
       ],
       "loinc": [
-        "72514-3",
-        "77564-4",
         "38208-5"
       ],
-      "icd10": "R52"
+      "icd10": [
+        "R52"
+      ]
     }
   },
   "symptom-pain-headache": {
@@ -11177,7 +11454,9 @@
       "snomed": [
         "48694002"
       ],
-      "loinc": "69737-5"
+      "loinc": [
+        "69737-5"
+      ]
     }
   },
   "wellbeing-mental-distress-depression": {
@@ -11232,8 +11511,12 @@
     ],
     "repeatable": "unlimited",
     "references": {
-      "snomed": "366979004",
-      "loinc": "75275-8"
+      "snomed": [
+        "366979004"
+      ],
+      "loinc": [
+        "75275-8"
+      ]
     }
   },
   "wellbeing-mental-distress-stress": {
@@ -11385,13 +11668,135 @@
         }
       }
     },
+    "repeatable": "unlimited"
+  },
+  "wellbeing-general-health": {
+    "version": "v1",
+    "label": {
+      "en": "General health",
+      "fr": "Santé générale"
+    },
+    "description": {
+      "en": "In general, would you say your health is:",
+      "fr": "En général, diriez-vous que votre santé est :"
+    },
+    "streamId": "wellbeing-general-health",
+    "eventType": "ratio/proportion",
+    "type": "select",
+    "options": [
+      {
+        "value": 1,
+        "label": {
+          "en": "Excellent",
+          "fr": "Excellente"
+        }
+      },
+      {
+        "value": 0.75,
+        "label": {
+          "en": "Very good",
+          "fr": "Très bonne"
+        }
+      },
+      {
+        "value": 0.5,
+        "label": {
+          "en": "Good",
+          "fr": "Bonne"
+        }
+      },
+      {
+        "value": 0.25,
+        "label": {
+          "en": "Fair",
+          "fr": "Médiocre"
+        }
+      },
+      {
+        "value": 0,
+        "label": {
+          "en": "Poor",
+          "fr": "Mauvaise"
+        }
+      }
+    ],
     "repeatable": "unlimited",
     "references": {
       "loinc": [
-        "72006-0",
-        "32622-6",
-        "82589-3"
+        "61577-3"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "survey",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "61577-3",
+        "display": "In general, would you say your health is [PROMIS]"
+      },
+      "value": {
+        "kind": "coded",
+        "options": {
+          "0": {
+            "system": "http://loinc.org",
+            "code": "LA8969-3",
+            "display": "Poor"
+          },
+          "1": {
+            "system": "http://loinc.org",
+            "code": "LA9206-9",
+            "display": "Excellent"
+          },
+          "0.75": {
+            "system": "http://loinc.org",
+            "code": "LA13913-1",
+            "display": "Very Good"
+          },
+          "0.5": {
+            "system": "http://loinc.org",
+            "code": "LA8967-7",
+            "display": "Good"
+          },
+          "0.25": {
+            "system": "http://loinc.org",
+            "code": "LA8968-5",
+            "display": "Fair"
+          }
+        },
+        "alsoMatch": {
+          "0": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "135818000",
+              "display": "General health poor"
+            }
+          ],
+          "1": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "135816001",
+              "display": "General health excellent"
+            }
+          ],
+          "0.5": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "135815002",
+              "display": "General health good"
+            }
+          ],
+          "0.25": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "135817005",
+              "display": "General health fair"
+            }
+          ]
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-screening-assessment"
+      }
     }
   }
 }

@@ -1,9 +1,9 @@
 {
-  "commit": "a78fa75098e2b842a90257f4b4245ec825d290a3",
-  "commitShort": "a78fa75",
+  "commit": "11504b37f0c51b2b2138613f1e88719da9b20a53",
+  "commitShort": "11504b3",
   "branch": "main",
-  "buildDate": "2026-10-29T10:45:50Z",
-  "publicationDate": "2026-10-29T10:45:41.550Z",
+  "buildDate": "2026-10-29T12:02:57Z",
+  "publicationDate": "2026-10-29T12:02:48.199Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -24,6 +24,14 @@
     {
       "title": "Items dictionnary",
       "file": "items.json"
+    },
+    {
+      "title": "FHIR SMART scope grants",
+      "file": "fhir/scopes.json"
+    },
+    {
+      "title": "FHIR mapping tables",
+      "file": "fhir/mapping.json"
     },
     {
       "title": "EventTypes dictionnary",
@@ -66,5 +74,5 @@
       "file": "appStreams.json"
     }
   ],
-  "version": "3.30.0"
+  "version": "3.31.0"
 }

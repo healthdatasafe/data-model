@@ -87,6 +87,341 @@
         }
       },
       "additionalProperties": false
+    },
+    "fhirCoding": {
+      "type": "object",
+      "properties": {
+        "system": {
+          "type": "string",
+          "pattern": "^(https?:|urn:)"
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "display": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "system",
+        "code",
+        "display"
+      ],
+      "additionalProperties": false
+    },
+    "fhirCode": {
+      "if": {
+        "type": "object",
+        "required": [
+          "from"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "enum": [
+              "datasource"
+            ]
+          },
+          "field": {
+            "type": "string",
+            "pattern": "^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$"
+          }
+        },
+        "required": [
+          "from",
+          "field"
+        ],
+        "additionalProperties": false
+      },
+      "else": {
+        "$ref": "defs.json#/definitions/fhirCoding"
+      }
+    },
+    "fhirUnit": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fhirProfiles": {
+      "type": "object",
+      "properties": {
+        "us": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ips": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ch": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "fhirValue": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "quantity",
+            "coded",
+            "components"
+          ]
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "quantity"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "kind": {},
+              "units": {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": {
+                  "$ref": "defs.json#/definitions/fhirUnit"
+                }
+              }
+            },
+            "required": [
+              "units"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "coded"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "kind": {},
+              "options": {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": {
+                  "$ref": "defs.json#/definitions/fhirCoding"
+                }
+              },
+              "alsoMatch": {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "defs.json#/definitions/fhirCoding"
+                  }
+                }
+              }
+            },
+            "required": [
+              "options"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "components"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "kind": {},
+              "components": {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "$ref": "defs.json#/definitions/fhirCoding"
+                    },
+                    "unit": {
+                      "$ref": "defs.json#/definitions/fhirUnit"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "unit"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "components"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ]
+    },
+    "fhirMapping": {
+      "type": "object",
+      "properties": {
+        "resourceType": {
+          "enum": [
+            "Observation",
+            "Condition"
+          ]
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1
+        },
+        "alsoMatchCategories": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "code": {
+          "$ref": "defs.json#/definitions/fhirCode"
+        },
+        "alsoMatch": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "defs.json#/definitions/fhirCoding"
+          }
+        },
+        "value": {
+          "$ref": "defs.json#/definitions/fhirValue"
+        },
+        "split": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "$ref": "defs.json#/definitions/fhirCoding"
+              },
+              "unit": {
+                "$ref": "defs.json#/definitions/fhirUnit"
+              },
+              "profiles": {
+                "$ref": "defs.json#/definitions/fhirProfiles"
+              }
+            },
+            "required": [
+              "code",
+              "unit",
+              "profiles"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "ignore": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "profiles": {
+          "$ref": "defs.json#/definitions/fhirProfiles"
+        }
+      },
+      "required": [
+        "resourceType",
+        "code",
+        "profiles"
+      ],
+      "additionalProperties": false
+    },
+    "fhirCompanion": {
+      "type": "object",
+      "properties": {
+        "companionOf": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "companionOf"
+      ],
+      "additionalProperties": false
+    },
+    "fhirElement": {
+      "type": "object",
+      "properties": {
+        "resourceType": {
+          "enum": [
+            "Patient"
+          ]
+        },
+        "element": {
+          "enum": [
+            "name.given",
+            "name.family",
+            "gender",
+            "birthDate",
+            "address.country"
+          ]
+        },
+        "value": {
+          "$ref": "defs.json#/definitions/fhirValue"
+        }
+      },
+      "required": [
+        "resourceType",
+        "element"
+      ],
+      "additionalProperties": false
+    },
+    "fhirBlock": {
+      "if": {
+        "type": "object",
+        "required": [
+          "companionOf"
+        ]
+      },
+      "then": {
+        "$ref": "defs.json#/definitions/fhirCompanion"
+      },
+      "else": {
+        "if": {
+          "type": "object",
+          "required": [
+            "element"
+          ]
+        },
+        "then": {
+          "$ref": "defs.json#/definitions/fhirElement"
+        },
+        "else": {
+          "$ref": "defs.json#/definitions/fhirMapping"
+        }
+      }
     }
   }
 }
