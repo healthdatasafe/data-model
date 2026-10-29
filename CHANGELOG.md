@@ -38,6 +38,17 @@
   2.0.1 and round-trips through import (hds-fhir-js).
 - Fixed: AGENTS.md pointed authors at the never-implemented `hl7fhir:` block (B-2026-10-28-24); DESIGN-NOTES marks it
   superseded. Removed the unread `definitions/hl7-defaults/category.yaml`.
+- **Patient from the profile items** (plan 115 D14): a third block form, `{ resourceType: Patient, element, value? }`
+  (`defs.json` `fhirElement`), for one element of the Patient, which is assembled from the latest event of each
+  contributing item. Elements: `name.given`, `name.family`, `gender` (`coded`, administrative-gender codes with their
+  official displays), `birthDate`, `address.country`. Blocks on `profile-name`, `profile-surname`, `profile-sex`,
+  `profile-date-of-birth` and `profile-addresscountry`; `profile-display-name`, `profile-birthcountry`,
+  `profile-ethnicity`, `profile-avatar` and `profile-reproductive-stage` stay unmapped (reasons in FHIR-MAPPING.md).
+  Build checks: the element's item type and string eventType, no `value` on a text or date element, gender codings
+  exactly the item's options, one active item per element, no companion of an element.
+- **Scope key format:** `ResourceType|category` for a resourceType with a category table, the bare resourceType
+  otherwise. `pack.fhirScopes` gains `Patient` → `profile-address`, `profile-date-of-birth`, `profile-name`,
+  `profile-sex` (locked), so `patient/Patient.rs` no longer maps to an empty grant.
 
 ### Added: `wellbeing-general-health`
 

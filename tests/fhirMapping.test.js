@@ -6,7 +6,7 @@ const Ajv = require('ajv');
 describe('[FHIR] item fhir blocks (plan 115)', () => {
   const { itemsById, fhirScopes, toBePublished } = require('../src/items');
   const { checkItem, toBePublished: schemasToBePublished } = require('../src/schemas/items');
-  const { checkFhirMapping, checkFhirScopes, computeFhirScopes, readLock, mergeLock, fhirMapping, UNMAPPED } = require('../src/fhir');
+  const { checkFhirMapping, checkFhirScopes, computeFhirScopes, readLock, mergeLock, fhirMapping, UNMAPPED, PATIENT_ELEMENTS } = require('../src/fhir');
 
   const MAPPED = ['body-weight', 'body-blood-pressure', 'lifestyle-tobacco-smoking', 'condition-coded', 'wellbeing-general-health'];
   const item = (k) => structuredClone(itemsById[k]);
@@ -35,6 +35,21 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const c = itemsById['condition-coded'].fhir;
       assert.deepStrictEqual(c.code, { from: 'datasource', field: 'condition' });
       assert.strictEqual(c.value, undefined);
+    });
+
+    it('[FHIR-ITEM-4] the Patient is assembled from profile items; the other profile items stay unmapped', () => {
+      const elements = Object.fromEntries(Object.entries(itemsById).filter(([, it]) => it.fhir?.element != null).map(([k, it]) => [k, it.fhir.element]));
+      assert.deepStrictEqual(elements, {
+        'profile-addresscountry': 'address.country',
+        'profile-date-of-birth': 'birthDate',
+        'profile-name': 'name.given',
+        'profile-surname': 'name.family',
+        'profile-sex': 'gender'
+      });
+      for (const k of ['profile-birthcountry', 'profile-ethnicity', 'profile-avatar', 'profile-display-name', 'profile-reproductive-stage']) {
+        assert.strictEqual(itemsById[k].fhir, undefined, `${k} is mapped`);
+      }
+      assert.deepStrictEqual(Object.fromEntries(Object.entries(itemsById['profile-sex'].fhir.value.options).map(([k, c]) => [k, c.code])), { male: 'male', female: 'female' });
     });
   });
 
@@ -99,6 +114,23 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       checkItem(a, 't');
       a.fhir.category = 'vital-signs';
       assert.throws(() => checkItem(a, 't'), /additional properties/);
+    });
+
+    it('[FHIR-SCH-7] a Patient element block holds resourceType, element and value only; the element list is the checker\'s', () => {
+      const a = item('profile-name');
+      a.fhir.element = 'name.prefix';
+      assert.throws(() => checkItem(a, 'n'), /allowed values/);
+      const b = item('profile-name');
+      b.fhir.category = 'demographics';
+      assert.throws(() => checkItem(b, 'n'), /additional properties/);
+      const c = item('profile-name');
+      c.fhir.profiles = {};
+      assert.throws(() => checkItem(c, 'n'), /additional properties/);
+      const d = item('profile-name');
+      d.fhir.resourceType = 'Practitioner';
+      assert.throws(() => checkItem(d, 'n'), /allowed values/);
+      const [, defsSchema] = schemasToBePublished().map((f) => f.content);
+      assert.deepStrictEqual(defsSchema.definitions.fhirElement.properties.element.enum, Object.keys(PATIENT_ELEMENTS));
     });
 
     it('[FHIR-SCH-6] round trip: every published item validates against the published schema, compiled afresh', () => {
@@ -222,6 +254,40 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       b.fhir.alsoMatch = [coding('1')];
       assert.throws(() => check(b), /"alsoMatch" applies to a static code only/);
     });
+
+    it('[FHIR-MAP-11] a Patient element takes an item of its type, and the content as written unless coded', () => {
+      const a = item('profile-name');
+      a.fhir.element = 'birthDate';
+      assert.throws(() => check(a), /element "birthDate" takes a "date" item; item type is "text"/);
+      const b = item('profile-date-of-birth');
+      b.fhir.value = { kind: 'coded', options: { x: coding('x') } };
+      assert.throws(() => check(b), /takes the content as written; remove "value"/);
+      const c = item('profile-sex');
+      delete c.fhir.value;
+      assert.throws(() => check(c), /needs value.kind "coded"/);
+      const d = item('profile-ethnicity');
+      d.fhir = { resourceType: 'Patient', element: 'gender' };
+      assert.throws(() => check(d), /takes a "select" item; item type is "multi-select"/);
+    });
+
+    it('[FHIR-MAP-12] gender: one administrative-gender coding per option, with its official display', () => {
+      const a = item('profile-sex');
+      a.fhir.value.options.female = { system: 'http://hl7.org/fhir/administrative-gender', code: 'female', display: 'Woman' };
+      assert.throws(() => check(a), /option "female": .* is not a code of http:\/\/hl7.org\/fhir\/administrative-gender with its display/);
+      const b = item('profile-sex');
+      b.fhir.value.options.female = { system: 'http://snomed.info/sct', code: '248152002', display: 'Female' };
+      assert.throws(() => check(b), /is not a code of/);
+      const c = item('profile-sex');
+      c.fhir.value.options.female = c.fhir.value.options.male;
+      assert.throws(() => check(c), /appears more than once/);
+      const d = item('profile-sex');
+      delete d.fhir.value.options.female;
+      assert.throws(() => check(d), /missing \[female\]/);
+      const e = item('profile-sex');
+      e.options.push({ value: 'not-stated', label: { en: 'Not stated' } });
+      e.fhir.value.options['not-stated'] = { system: 'http://hl7.org/fhir/administrative-gender', code: 'unknown', display: 'Unknown' };
+      check(e);
+    });
   });
 
   describe('[FHIR-SCOPE] the SMART scope grant table', () => {
@@ -282,6 +348,16 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => run({ a: it_('body-a', obs('vital-signs')) }, { 'Observation|vital-signs': ['gone'] }), /"gone" .* is no longer a stream/);
     });
 
+    it('[FHIR-SCOPE-12] Patient elements: a bare scope key, one active item per element, never a companion parent', () => {
+      const el = (element) => ({ resourceType: 'Patient', element });
+      const grants = run({ a: it_('body-a', el('name.given')), f: it_('body-a-flag', el('name.family')), b: it_('body-b') });
+      assert.deepStrictEqual(grants, { Patient: ['body-a'] });
+      assert.throws(() => run({ a: it_('body-a', el('gender')), b: it_('body-b', el('gender')) }), /fhir import key Patient\.gender is claimed by both "a" and "b"/);
+      run({ a: it_('body-a', el('gender')), b: it_('body-b', el('gender'), { deprecated: true }) });
+      assert.throws(() => run({ a: it_('body-a', el('gender')), f: it_('body-a-flag', { companionOf: 'a' }) }), /the parent is a Patient element/);
+      assert.throws(() => run({ a: it_('body-a', el('gender')), f: it_('body-a-flag') }), /spans \(unmapped\), Patient/);
+    });
+
     it('[FHIR-SCOPE-9] mergeLock adds and never removes', () => {
       const merged = mergeLock({ 'Observation|survey': ['x'] }, { 'Observation|survey': ['y'], 'Condition|problem-list-item': ['c'] });
       assert.deepStrictEqual(merged, { 'Condition|problem-list-item': ['c'], 'Observation|survey': ['x', 'y'] });
@@ -300,7 +376,8 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         'Condition|problem-list-item': ['condition'],
         'Observation|social-history': ['lifestyle-tobacco-smoking'],
         'Observation|survey': ['wellbeing-general-health'],
-        'Observation|vital-signs': ['body-blood-pressure', 'body-weight']
+        'Observation|vital-signs': ['body-blood-pressure', 'body-weight'],
+        Patient: ['profile-address', 'profile-date-of-birth', 'profile-name', 'profile-sex']
       });
       assert.deepStrictEqual(mergeLock(readLock(), fhirScopes), readLock(), 'a grant root is missing from definitions/fhir/scopes.lock.json');
       assert.ok(!JSON.stringify(fhirScopes).includes(UNMAPPED));

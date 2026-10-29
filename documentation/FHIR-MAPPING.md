@@ -14,7 +14,9 @@ back** into an event of that item. HDS uses it in three ways:
    read access on streams. The build computes which streams, from the blocks, and publishes the table
    (`pack.fhirScopes`).
 
-One block serves every rendering flavour (US Core, IPS, CH); only the profile differs per flavour.
+One block serves every rendering flavour (US Core, IPS, CH); only the profile differs per flavour. Most blocks map
+one event to one resource; the Patient is the exception, assembled from several profile items
+([Patient elements](#patient-elements)).
 
 ```yaml
 body-weight:
@@ -33,8 +35,8 @@ body-weight:
       ips: http://hl7.org/fhir/StructureDefinition/bodyweight
 ```
 
-The shapes are in `src/schemas/items.js` (`defs.json`: `fhirBlock`, `fhirMapping`, `fhirCompanion`, `fhirValue`,
-`fhirCode`, `fhirCoding`, `fhirProfiles`), the rules in `src/fhir.js`, the tests in `tests/fhirMapping.test.js`.
+The shapes are in `src/schemas/items.js` (`defs.json`: `fhirBlock`, `fhirMapping`, `fhirCompanion`, `fhirElement`,
+`fhirValue`, `fhirCode`, `fhirCoding`, `fhirProfiles`), the rules in `src/fhir.js`, the tests in `tests/fhirMapping.test.js`.
 
 ---
 
@@ -60,19 +62,21 @@ Entries are additive: a published category key or system label is never renamed 
 | Observation | `vital-signs`, `social-history`, `survey`, `laboratory`, `exam`, `imaging`, `procedure`, `therapy`, `activity` (system `http://terminology.hl7.org/CodeSystem/observation-category`) | yes |
 | Condition | `problem-list-item`, `encounter-diagnosis` (system `http://terminology.hl7.org/CodeSystem/condition-category`), `health-concern` (system `http://hl7.org/fhir/us/core/CodeSystem/condition-category`) | yes |
 
-A resourceType that has a table must carry a `category` from it; a resourceType without a table takes none. Only
-these two resourceTypes exist today.
+A resourceType that has a table must carry a `category` from it; a resourceType without a table takes none (Patient).
+The SMART scope key is `ResourceType|category` for a resourceType with a table, and the bare resourceType otherwise
+(see [SMART scopes](#smart-scopes-packfhirscopes)).
 
 ---
 
 ## The block, field by field
 
-A block is either a **mapping** (below) or a **companion**, `{ companionOf: <item key> }` (see
-[Qualifiers](#qualifiers-companionof)).
+A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }` (see
+[Qualifiers](#qualifiers-companionof)), or a **Patient element**, `{ resourceType: Patient, element }` (see
+[Patient elements](#patient-elements)).
 
 | Field | Required | Meaning |
 |---|---|---|
-| `resourceType` | yes | `Observation` or `Condition`. *Permanent.* |
+| `resourceType` | yes | `Observation` or `Condition` (`Patient` is an [element block](#patient-elements)). *Permanent.* |
 | `category` | per resourceType (table above) | Category key. *Permanent.* |
 | `code` | yes | The resource code: a **static coding** `{ system, code, display }`, or a **source** `{ from: datasource, field: <dotted path> }` (below). |
 | `alsoMatch` | no | Extra codings accepted **on import only**, never emitted. Static code only. |
@@ -152,6 +156,65 @@ body-temperature-basal-disturbance:
 - **Meaning:** a grant on the parent's scope also exposes the companion's raw events through Pryv, to the SMART app
   holding the token. That is acceptable for qualifiers of the same observation, and only for them: a companion must
   be something a reader of the parent's scope may see.
+- A Patient element is not a mapping in this sense: a companion of it is refused.
+
+### Patient elements
+
+The Patient is not one event: it is assembled from the **latest event of each profile item that contributes an
+element**. Each such item declares the one element it contributes:
+
+```yaml
+profile-sex:
+  # …
+  fhir:
+    resourceType: Patient
+    element: gender
+    value:
+      kind: coded
+      options:
+        male: { system: http://hl7.org/fhir/administrative-gender, code: male, display: Male }
+        female: { system: http://hl7.org/fhir/administrative-gender, code: female, display: Female }
+profile-date-of-birth:
+  # …
+  fhir: { resourceType: Patient, element: birthDate }
+```
+
+| `element` | Item | `value` | Renders |
+|---|---|---|---|
+| `name.given` | `text` | none: the content as written | `name[0].given[0]` |
+| `name.family` | `text` | none | `name[0].family` |
+| `gender` | `select` | `coded`: every option → an `http://hl7.org/fhir/administrative-gender` coding (`male`, `female`, `other`, `unknown`) with its official display, each coding once | `gender` (the code) |
+| `birthDate` | `date` | none | `birthDate` |
+| `address.country` | `text` | none | `address[0]` = `{ use: home, country }` |
+
+The item's eventType is a string. A block has no `category` (Patient has none), no `code` and no `profiles`: the
+Patient profile per flavour is the renderer's (US Core `us-core-patient`, IPS `Patient-uv-ips`). An element is
+claimed by **one active item** only, so an imported Patient places each element in one item.
+
+**Pseudonymity covers the id only** (plan 115 D14). The Patient's `id` (and identifier) is always the per-grant
+alias, whatever else is shared. Demographics reach an app only when it requests `patient/Patient.rs` (or
+`patient/*.rs`) and the patient consents to the matching profile streams, like any other grant; each element is its
+own leaf stream, so the patient can share the name without the date of birth. When a flavour requires an element the
+patient did not share, the renderer states it as absent and never invents it (hds-fhir-js `patientResource`).
+
+**What the profile items mean in FHIR.**
+- `profile-name` (first name) and `profile-surname` are `name.given` and `name.family` of one name, with no `use`
+  (HDS does not know whether it is the official one).
+- `profile-sex` records biological sex; `Patient.gender` is administrative gender. It is the one core Patient
+  element for sex (US Core requires it), and for the two options the item has, the codes coincide. The eventType also
+  admits `notSet` and `other`, which are not options of the item: an event carrying them is refused by the renderer.
+- `profile-date-of-birth` stores the date **in its content** (`"1990-04-12"`), not in `time` (which is when it was
+  recorded), so `clientData.hdsTimePrecision` does not apply to it: the content carries its own precision, and a FHIR
+  `date` takes `YYYY`, `YYYY-MM` or `YYYY-MM-DD` as written. A full dateTime in the content keeps its date as
+  written, with no zone shift.
+- `profile-addresscountry` is "the country you live in": a home address with a country only. The content is free
+  text, which `Address.country` admits.
+
+**Left unmapped,** each for a reason: `profile-display-name` (a UI preference, often a nickname, not a legal name);
+`profile-birthcountry` (no core element, only the `patient-birthPlace` extension); `profile-ethnicity` (US Core race
+and ethnicity extensions, a multi-select needing its own design); `profile-avatar` (`Patient.photo` is an attachment,
+not supported yet); `profile-reproductive-stage` (health data, not demographics). They are leaf streams, so they are
+never granted with the Patient.
 
 ---
 
@@ -163,11 +226,14 @@ holds one (resourceType, category) pair. The build computes the table and publis
 ```json
 "fhirScopes": {
   "Condition|problem-list-item": ["condition"],
-  "Observation|vital-signs": ["body-blood-pressure", "body-weight"]
+  "Observation|vital-signs": ["body-blood-pressure", "body-weight"],
+  "Patient": ["profile-address", "profile-date-of-birth", "profile-name", "profile-sex"]
 }
 ```
 
-Keys are `ResourceType|category`; values are sorted stream ids. It feeds the Pryv OAuth extension's `streamGrants`
+Keys are `ResourceType|category` for a resourceType with a category table, and the **bare resourceType** for one
+without (`Patient`); values are sorted stream ids. `patient/Patient.rs` and `patient/*.rs` reach the `Patient` key;
+a scope with `?category=` never reaches a bare key. It feeds the Pryv OAuth extension's `streamGrants`
 (`hds-fhir-js`: `npm run check:pack -- --json`).
 
 **How it is computed.**
@@ -208,9 +274,11 @@ entries, profiles of new flavours and new options (with their coding) can be add
 
 A consumer **skips a block whose resourceType, value kind or code source it does not know** (a newer pack than the
 consumer), and a companion block: `toFhir` renders nothing for it rather than throwing. `fromFhir` refuses such a
-block with an explicit error. hds-fhir-js also skips a block whose category it does not know.
+block with an explicit error. hds-fhir-js also skips a block whose category it does not know, and a Patient element
+block whose element (or value) it does not know: the Patient is assembled without it.
 
-So a new value kind, a new code source or a new resourceType **needs a renderer change first**: implement and validate
+So a new value kind, a new code source, a new resourceType or a new Patient element **needs a renderer change
+first**: implement and validate
 it in hds-fhir-js, release that, then add the first block that uses it here. A block the deployed renderer skips is
 data a SMART app does not see.
 
@@ -248,11 +316,22 @@ fragment to merge into the parent item's event at the same time (the blood-press
 also requires each code's `hdsId` (and may carry a `description`), which FHIR does not carry: the importer completes
 the selection from datasets-service, and rejects the resource when datasets-service does not know a code.
 
+**Patient.** A Patient imports into the profile items, one content per contributing item whose element it carries
+(hds-fhir-js `patientFromFhir`). The name is the `official` one, else `usual`, else one without `use` (names with a
+period end are past); given names are joined with a space, and a name with `text` only is not split. The country is
+the `home` address's, else an address without `use`. `gender` `unknown` states nothing and is skipped. An element
+that cannot be placed (a `gender` that is not an option of the item, an unreadable `birthDate`, two current official
+names that disagree) is reported per element, never guessed, and the other elements still import. A Patient has no
+clinical date: the importer records the facts at import time, as a profile entry is recorded.
+
 **Time.** Observation: `effectiveDateTime`. Condition: `recordedDate`, else `onsetDateTime`. A missing or unreadable
 date is rejected (a text onset such as `onsetString` included). Precision follows
 [PARTIAL-DATES.md](PARTIAL-DATES.md): a full dateTime is the exact moment, `clientData.hdsTimePrecision: minute`; a
 truncated one (`YYYY`, `YYYY-MM`, `YYYY-MM-DD`) is the start of its period at 12:00 UTC with precision `year`, `month`
-or `day`.
+or `day`. Export is the reverse: the date is truncated to the event's precision (`approx` gives the year and a note
+with `hdsTimeText`). A vital sign known only to the month or the year cannot be exported, since FHIR requires a
+vital sign's date to the day (vs-1), and is refused rather than padded to a day; so is a US Core screening answer
+(us-core-1).
 
 **Provenance and idempotency** belong to the importing bridge, with the `clientData` keys of
 [PROVENANCE.md](PROVENANCE.md):
@@ -276,9 +355,13 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   keys are composite fields, components and splits numeric, no field in two roles, every composite field accounted
   for; a datasource source only on a datasource field, resolving to a `codes` array in the eventType; no `value` on a
   Condition; `alsoMatch` only with a static code.
+- **Patient elements:** the element from the allowed list (the schema's `fhirElement` enum, the checker's
+  `PATIENT_ELEMENTS`); the item type the element takes, with one string eventType; no `value` on a text or date
+  element; on `gender`, `coded` with exactly the item's options, each an administrative-gender code with its official
+  display, each once.
 - **Uniqueness:** codings unique within an item (code and `alsoMatch`; options; code, components and splits); import
-  keys unique across active items.
-- **Scopes:** companions valid; the one-pair invariant; the lock.
+  keys unique across active items, a Patient element included.
+- **Scopes:** companions valid (never of a Patient element); the one-pair invariant; the lock.
 
 ---
 

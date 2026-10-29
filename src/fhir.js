@@ -16,12 +16,29 @@ const LOCK_FILE_PATH = path.join(__dirname, '../definitions/fhir/scopes.lock.jso
 /** Scope pair of an item that has no mapping: its events would be readable through a grant but never rendered. */
 const UNMAPPED = '(unmapped)';
 
+/**
+ * The Patient elements an item may contribute (`fhir: { resourceType: Patient, element }`): the item type each needs
+ * and, for a coded element, the code system its option codings come from, code → official display. Text and date
+ * elements take the content as written. Additive, like the `fhirElement` enum in src/schemas/items.js.
+ */
+const PATIENT_ELEMENTS = {
+  'name.given': { itemType: 'text' },
+  'name.family': { itemType: 'text' },
+  gender: {
+    itemType: 'select',
+    codes: { system: 'http://hl7.org/fhir/administrative-gender', displays: { male: 'Male', female: 'Female', other: 'Other', unknown: 'Unknown' } }
+  },
+  birthDate: { itemType: 'date' },
+  'address.country': { itemType: 'text' }
+};
+
 const fhirMapping = YAML.parse(fs.readFileSync(MAPPING_FILE_PATH, 'utf8'));
 checkMappingTable(fhirMapping);
 
 module.exports = {
   fhirMapping,
   UNMAPPED,
+  PATIENT_ELEMENTS,
   LOCK_FILE_PATH,
   checkFhirMapping,
   scopePairOf,
@@ -74,6 +91,11 @@ function checkFhirMapping (key, item, itemEventTypes) {
       seen.add(k);
     }
   };
+
+  if (f.element != null) {
+    checkFhirElement(item, itemEventTypes, { fail, sameSet, unique });
+    return;
+  }
 
   // category, per resourceType, from the one table
   const table = fhirMapping.categories[f.resourceType];
@@ -147,6 +169,32 @@ function checkFhirMapping (key, item, itemEventTypes) {
   }
 }
 
+/**
+ * A Patient element block: the element takes an item of its type whose one eventType is a string, the content as
+ * written for a text or date element, and for a coded element (gender) one coding per item option, each a code of
+ * the element's code system with its official display.
+ */
+function checkFhirElement (item, itemEventTypes, { fail, sameSet, unique }) {
+  const f = item.fhir;
+  const spec = PATIENT_ELEMENTS[f.element];
+  if (spec == null) fail(`unknown Patient element "${f.element}"`);
+  if (item.type !== spec.itemType) fail(`element "${f.element}" takes a "${spec.itemType}" item; item type is "${item.type}"`);
+  if (itemEventTypes.length !== 1) fail(`element "${f.element}" needs an item with exactly one eventType`);
+  if (eventTypesById(itemEventTypes[0])?.type !== 'string') fail(`element "${f.element}": eventType "${itemEventTypes[0]}" is not a string`);
+  if (spec.codes == null) {
+    if (f.value != null) fail(`element "${f.element}" takes the content as written; remove "value"`);
+    return;
+  }
+  if (f.value?.kind !== 'coded') fail(`element "${f.element}" needs value.kind "coded"`);
+  sameSet('value.options keys vs the item options', Object.keys(f.value.options), item.options.map((o) => String(o.value)));
+  unique('value.options', Object.values(f.value.options));
+  for (const [option, c] of Object.entries(f.value.options)) {
+    if (c.system !== spec.codes.system || spec.codes.displays[c.code] !== c.display) {
+      fail(`option "${option}": ${c.system}|${c.code} "${c.display}" is not a code of ${spec.codes.system} with its display`);
+    }
+  }
+}
+
 /** A `code: { from: datasource, field }` must name a datasets-service selection (`{ label, codes[] }`) in the content. */
 function checkDatasourceField (item, field, itemEventTypes, fail) {
   if (itemEventTypes.length !== 1) fail('a datasource code source needs an item with exactly one eventType');
@@ -166,7 +214,10 @@ function checkDatasourceField (item, field, itemEventTypes, fail) {
   }
 }
 
-/** The SMART scope pair (`ResourceType|category`) an item's events fall under, or `(unmapped)`. */
+/**
+ * The SMART scope key an item's events fall under, or `(unmapped)`: `ResourceType|category` for a resourceType with
+ * a category table, the bare resourceType otherwise (`Patient`).
+ */
 function scopePairOf (key, items) {
   let f = items[key]?.fhir;
   if (f?.companionOf != null) f = items[f.companionOf]?.fhir;
@@ -251,6 +302,7 @@ function checkFhirScopes (items, { roots = streams.roots, lock = readLock() } = 
     const fail = (msg) => { throw new Error(`item "${key}" fhir.companionOf "${parentKey}": ${msg}`); };
     if (parent == null) fail('no such item');
     if (parent.fhir == null || parent.fhir.companionOf != null) fail('the parent must carry a mapping');
+    if (parent.fhir.element != null) fail('the parent is a Patient element; a companion qualifies a resource mapping');
     if (!inSubtree(item.streamId, parent.streamId)) fail(`stream "${item.streamId}" is not inside the parent's stream subtree "${parent.streamId}"`);
   }
 
@@ -272,7 +324,8 @@ function checkFhirScopes (items, { roots = streams.roots, lock = readLock() } = 
 
 /**
  * Import match keys are unique across active items: a resource matches an item by (resourceType, static code or
- * alsoMatch coding), or by (resourceType, datasource code source), and must match one item only.
+ * alsoMatch coding), or by (resourceType, datasource code source), and must match one item only. A Patient element
+ * is claimed by one active item only, so an imported Patient places each element in one item.
  */
 function checkFhirImportKeys (items) {
   const seen = new Map();
@@ -284,7 +337,9 @@ function checkFhirImportKeys (items) {
   for (const [key, item] of Object.entries(items)) {
     const f = item.fhir;
     if (item.deprecated || f == null || f.companionOf != null) continue;
-    if (f.code.from != null) {
+    if (f.element != null) {
+      claim(`${f.resourceType}.${f.element}`, key);
+    } else if (f.code.from != null) {
       claim(`${f.resourceType} from ${f.code.from}`, key);
     } else {
       for (const c of [f.code, ...(f.alsoMatch || [])]) claim(`${f.resourceType} ${c.system}|${c.code}`, key);

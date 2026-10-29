@@ -199,10 +199,27 @@ const defsSchema = {
       required: ['companionOf'],
       additionalProperties: false
     },
+    // One element of a resource that is assembled from several items rather than rendered per event: the
+    // Patient, from the latest event of each profile item that contributes an element. Which elements exist and
+    // which value each takes is checked in src/fhir.js (PATIENT_ELEMENTS).
+    fhirElement: {
+      type: 'object',
+      properties: {
+        resourceType: { enum: ['Patient'] },
+        element: { enum: ['name.given', 'name.family', 'gender', 'birthDate', 'address.country'] },
+        value: { $ref: 'defs.json#/definitions/fhirValue' }
+      },
+      required: ['resourceType', 'element'],
+      additionalProperties: false
+    },
     fhirBlock: {
       if: { type: 'object', required: ['companionOf'] },
       then: { $ref: 'defs.json#/definitions/fhirCompanion' },
-      else: { $ref: 'defs.json#/definitions/fhirMapping' }
+      else: {
+        if: { type: 'object', required: ['element'] },
+        then: { $ref: 'defs.json#/definitions/fhirElement' },
+        else: { $ref: 'defs.json#/definitions/fhirMapping' }
+      }
     }
   }
 };
@@ -392,8 +409,9 @@ const itemSchema = {
       },
       additionalProperties: false
     },
-    // How the item's events render as FHIR R4 and import back (plan 115; consumed by hds-fhir-js): either a
-    // mapping, or `{ companionOf: <item key> }` for a qualifier that rides under its parent's SMART scope.
+    // How the item's events render as FHIR R4 and import back (plan 115; consumed by hds-fhir-js): a mapping,
+    // `{ companionOf: <item key> }` for a qualifier that rides under its parent's SMART scope, or
+    // `{ resourceType: Patient, element }` for one element of the assembled Patient resource.
     // Shapes in defs.json (`fhirBlock`); semantic rules, the stream-scope invariant and the scope lock are
     // checked in src/fhir.js. See documentation/FHIR-MAPPING.md.
     fhir: { $ref: 'defs.json#/definitions/fhirBlock' }

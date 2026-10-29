@@ -10,6 +10,7 @@ profile-addresscountry:
   eventType: contact/country
   type: text
   repeatable: once
+  fhir: { resourceType: Patient, element: address.country }
 profile-birthcountry:
   version: v1
   label:
@@ -114,6 +115,7 @@ profile-date-of-birth:
   eventType: date/iso-8601
   type: date
   repeatable: once
+  fhir: { resourceType: Patient, element: birthDate }
 profile-name:
   version: temporary
   label:
@@ -126,6 +128,7 @@ profile-name:
   eventType: contact/name
   type: text
   repeatable: once
+  fhir: { resourceType: Patient, element: name.given }
 profile-surname:
   version: temporary
   label:
@@ -138,6 +141,7 @@ profile-surname:
   eventType: contact/surname
   type: text
   repeatable: once
+  fhir: { resourceType: Patient, element: name.family }
 profile-sex:
   version: v1
   label:
@@ -159,6 +163,20 @@ profile-sex:
         en: "Female"
         fr: "Féminin"
   repeatable: once
+  devNotes: >-
+    FHIR: rendered as Patient.gender, which is administrative gender, not biological sex.
+    It is the one core Patient element for sex (US Core requires it), and for the two
+    options here the codes coincide. Extensions such as US Core birth sex are not
+    rendered from this item. The eventType also admits `notSet` and `other`, which are
+    not options of this item and are not mapped.
+  fhir:
+    resourceType: Patient
+    element: gender
+    value:
+      kind: coded
+      options:
+        male: { system: http://hl7.org/fhir/administrative-gender, code: male, display: Male }
+        female: { system: http://hl7.org/fhir/administrative-gender, code: female, display: Female }
 profile-reproductive-stage:
   version: v1
   label:

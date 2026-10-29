@@ -11,5 +11,11 @@
   "Observation|vital-signs": [
     "body-blood-pressure",
     "body-weight"
+  ],
+  "Patient": [
+    "profile-address",
+    "profile-date-of-birth",
+    "profile-name",
+    "profile-sex"
   ]
 }

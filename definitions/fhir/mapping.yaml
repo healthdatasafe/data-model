@@ -19,8 +19,10 @@ flavours:
   ch: ch.fhir.ig.ch-core#6.0.0
 
 # Category keys per resourceType. A block on one of these resourceTypes must carry a
-# `category` from its table; a resourceType absent from this table takes no category.
-# The key is the SMART scope category (`patient/Observation.rs?category=<key>`).
+# `category` from its table; a resourceType absent from this table (Patient) takes no category.
+# The key is the SMART scope category (`patient/Observation.rs?category=<key>`). The scope
+# key in pack.fhirScopes is `ResourceType|category` for a resourceType with a table, and the
+# bare resourceType otherwise (`Patient`, granted for `patient/Patient.rs`).
 categories:
   Observation:
     vital-signs: { system: http://terminology.hl7.org/CodeSystem/observation-category, code: vital-signs, display: Vital Signs }
