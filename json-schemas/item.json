@@ -178,6 +178,11 @@
                   },
                   "label": {
                     "$ref": "defs.json#/definitions/localized"
+                  },
+                  "loinc": {
+                    "type": "string",
+                    "minLength": 1,
+                    "nullable": true
                   }
                 },
                 "required": [

@@ -92,11 +92,16 @@
         "children": [
           {
             "id": "body-blood-serum",
-            "name": "Serum",
+            "name": "Serum or plasma",
             "children": [
               {
                 "id": "body-blood-serum-glucose-fasting",
                 "name": "Fasting glucose",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-glucose-random",
+                "name": "Glucose (random)",
                 "parentId": "body-blood-serum"
               },
               {
@@ -185,8 +190,23 @@
                 "parentId": "body-blood-serum"
               },
               {
+                "id": "body-blood-serum-bilirubin-direct",
+                "name": "Direct bilirubin",
+                "parentId": "body-blood-serum"
+              },
+              {
                 "id": "body-blood-serum-bile-acids",
                 "name": "Bile acids",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-lipase",
+                "name": "Lipase",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-amylase",
+                "name": "Amylase",
                 "parentId": "body-blood-serum"
               },
               {
@@ -230,6 +250,11 @@
                 "parentId": "body-blood-serum"
               },
               {
+                "id": "body-blood-serum-phosphate",
+                "name": "Phosphate",
+                "parentId": "body-blood-serum"
+              },
+              {
                 "id": "body-blood-serum-protein-total",
                 "name": "Total protein",
                 "parentId": "body-blood-serum"
@@ -242,6 +267,26 @@
               {
                 "id": "body-blood-serum-globulin",
                 "name": "Globulin",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-haptoglobin",
+                "name": "Haptoglobin",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-igg",
+                "name": "IgG",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-iga",
+                "name": "IgA",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-igm",
+                "name": "IgM",
                 "parentId": "body-blood-serum"
               },
               {
@@ -327,6 +372,11 @@
               {
                 "id": "body-blood-serum-triglycerides",
                 "name": "Triglycerides",
+                "parentId": "body-blood-serum"
+              },
+              {
+                "id": "body-blood-serum-crp",
+                "name": "CRP",
                 "parentId": "body-blood-serum"
               },
               {
@@ -515,6 +565,83 @@
                 "id": "body-blood-cbc-basophils",
                 "name": "Basophils",
                 "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-mchc",
+                "name": "MCHC",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-mpv",
+                "name": "MPV",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-reticulocytes",
+                "name": "Reticulocytes",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-reticulocytes-immature-fraction",
+                "name": "Immature reticulocyte fraction",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-reticulocytes-hemoglobin",
+                "name": "Reticulocyte hemoglobin",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-nucleated-rbc",
+                "name": "Nucleated red blood cells",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-neutrophils-segmented",
+                "name": "Segmented neutrophils",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-neutrophils-band",
+                "name": "Band neutrophils",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-myelocytes",
+                "name": "Myelocytes",
+                "parentId": "body-blood-cbc"
+              },
+              {
+                "id": "body-blood-cbc-metamyelocytes",
+                "name": "Metamyelocytes",
+                "parentId": "body-blood-cbc"
+              }
+            ],
+            "parentId": "body-blood"
+          },
+          {
+            "id": "body-blood-coagulation",
+            "name": "Coagulation",
+            "children": [
+              {
+                "id": "body-blood-coagulation-prothrombin-time",
+                "name": "Prothrombin time",
+                "parentId": "body-blood-coagulation"
+              },
+              {
+                "id": "body-blood-coagulation-prothrombin-activity",
+                "name": "Prothrombin activity (Quick)",
+                "parentId": "body-blood-coagulation"
+              },
+              {
+                "id": "body-blood-coagulation-aptt",
+                "name": "aPTT",
+                "parentId": "body-blood-coagulation"
+              },
+              {
+                "id": "body-blood-coagulation-fibrinogen",
+                "name": "Fibrinogen",
+                "parentId": "body-blood-coagulation"
               }
             ],
             "parentId": "body-blood"

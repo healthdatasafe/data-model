@@ -1,6 +1,6 @@
 {
-  "version": "3.31.0",
-  "publicationDate": "2026-10-29T12:02:48.199Z",
+  "version": "3.32.0",
+  "publicationDate": "2026-10-29T14:52:12.951Z",
   "streams": [
     {
       "id": "activity",
@@ -95,11 +95,16 @@
           "children": [
             {
               "id": "body-blood-serum",
-              "name": "Serum",
+              "name": "Serum or plasma",
               "children": [
                 {
                   "id": "body-blood-serum-glucose-fasting",
                   "name": "Fasting glucose",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-glucose-random",
+                  "name": "Glucose (random)",
                   "parentId": "body-blood-serum"
                 },
                 {
@@ -188,8 +193,23 @@
                   "parentId": "body-blood-serum"
                 },
                 {
+                  "id": "body-blood-serum-bilirubin-direct",
+                  "name": "Direct bilirubin",
+                  "parentId": "body-blood-serum"
+                },
+                {
                   "id": "body-blood-serum-bile-acids",
                   "name": "Bile acids",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-lipase",
+                  "name": "Lipase",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-amylase",
+                  "name": "Amylase",
                   "parentId": "body-blood-serum"
                 },
                 {
@@ -233,6 +253,11 @@
                   "parentId": "body-blood-serum"
                 },
                 {
+                  "id": "body-blood-serum-phosphate",
+                  "name": "Phosphate",
+                  "parentId": "body-blood-serum"
+                },
+                {
                   "id": "body-blood-serum-protein-total",
                   "name": "Total protein",
                   "parentId": "body-blood-serum"
@@ -245,6 +270,26 @@
                 {
                   "id": "body-blood-serum-globulin",
                   "name": "Globulin",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-haptoglobin",
+                  "name": "Haptoglobin",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-igg",
+                  "name": "IgG",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-iga",
+                  "name": "IgA",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-igm",
+                  "name": "IgM",
                   "parentId": "body-blood-serum"
                 },
                 {
@@ -330,6 +375,11 @@
                 {
                   "id": "body-blood-serum-triglycerides",
                   "name": "Triglycerides",
+                  "parentId": "body-blood-serum"
+                },
+                {
+                  "id": "body-blood-serum-crp",
+                  "name": "CRP",
                   "parentId": "body-blood-serum"
                 },
                 {
@@ -518,6 +568,83 @@
                   "id": "body-blood-cbc-basophils",
                   "name": "Basophils",
                   "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-mchc",
+                  "name": "MCHC",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-mpv",
+                  "name": "MPV",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-reticulocytes",
+                  "name": "Reticulocytes",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-reticulocytes-immature-fraction",
+                  "name": "Immature reticulocyte fraction",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-reticulocytes-hemoglobin",
+                  "name": "Reticulocyte hemoglobin",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-nucleated-rbc",
+                  "name": "Nucleated red blood cells",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-neutrophils-segmented",
+                  "name": "Segmented neutrophils",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-neutrophils-band",
+                  "name": "Band neutrophils",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-myelocytes",
+                  "name": "Myelocytes",
+                  "parentId": "body-blood-cbc"
+                },
+                {
+                  "id": "body-blood-cbc-metamyelocytes",
+                  "name": "Metamyelocytes",
+                  "parentId": "body-blood-cbc"
+                }
+              ],
+              "parentId": "body-blood"
+            },
+            {
+              "id": "body-blood-coagulation",
+              "name": "Coagulation",
+              "children": [
+                {
+                  "id": "body-blood-coagulation-prothrombin-time",
+                  "name": "Prothrombin time",
+                  "parentId": "body-blood-coagulation"
+                },
+                {
+                  "id": "body-blood-coagulation-prothrombin-activity",
+                  "name": "Prothrombin activity (Quick)",
+                  "parentId": "body-blood-coagulation"
+                },
+                {
+                  "id": "body-blood-coagulation-aptt",
+                  "name": "aPTT",
+                  "parentId": "body-blood-coagulation"
+                },
+                {
+                  "id": "body-blood-coagulation-fibrinogen",
+                  "name": "Fibrinogen",
+                  "parentId": "body-blood-coagulation"
                 }
               ],
               "parentId": "body-blood"
@@ -3005,11 +3132,10 @@
           "431314004"
         ],
         "loinc": [
-          "2708-6",
           "59408-5"
         ]
       },
-      "devNotes": "Stored as a proportion (0.97 for 97 %). LOINC codes as the FHIR vital-signs profile pairs them: 2708-6 first (the profile's primary oxygen-saturation code), then 59408-5 (by pulse oximetry)."
+      "devNotes": "Stored as a proportion (0.97 for 97 %). The item owns LOINC 59408-5 (by pulse oximetry) only (plan 114 Q19): 2708-6, \"Oxygen saturation in Arterial blood\", is a blood-gas SaO2, which goes to `lab-result/coded-v1` under 2708-6. The FHIR vital-signs profile requires 2708-6 beside 59408-5 on an exported SpO2: a future `fhir:` block for this item needs an emit-only coding for it, which the block format does not have yet (`alsoMatch` is import-only, and would import a blood-gas SaO2 here)."
     },
     "body-temperature": {
       "version": "v1",
@@ -3104,6 +3230,9 @@
       "references": {
         "snomed": [
           "713521005"
+        ],
+        "loinc": [
+          "9780-8"
         ]
       },
       "devNotes": "Stored on `concentration/megacount-ml` (10⁶/mL)."
@@ -3129,7 +3258,12 @@
         "units": "ratio",
         "population": "recently-fertile-men"
       },
-      "devNotes": "Progressive motility (PR): moving in a straight line or a large circle, regardless of speed. Distinct from total motility (PR+NP). It is the multiplier in the Total Motile Count derivation (concentration × volume × this). Reference: WHO 2021, lower limit 0.30."
+      "devNotes": "Progressive motility (PR): moving in a straight line or a large circle, regardless of speed. Distinct from total motility (PR+NP). It is the multiplier in the Total Motile Count derivation (concentration × volume × this). Reference: WHO 2021, lower limit 0.30.",
+      "references": {
+        "loinc": [
+          "14194-5"
+        ]
+      }
     },
     "body-semen-motility-total": {
       "version": "v1",
@@ -3148,6 +3282,9 @@
       "references": {
         "snomed": [
           "252048002"
+        ],
+        "loinc": [
+          "6800-7"
         ]
       },
       "referenceRange": {
@@ -3180,7 +3317,12 @@
         "units": "ratio",
         "population": "recently-fertile-men"
       },
-      "devNotes": "Measured by eosin-nigrosin staining or the hypo-osmotic swelling test. Distinct from motility: a spermatozoon can be alive but immotile. WHO 2021 makes this a mandatory test when total motility is below the reference limit, because it discriminates asthenozoospermia (low motility, mostly live) from necrozoospermia (low motility, mostly dead). Reference: WHO 2021, lower limit 0.54."
+      "devNotes": "Measured by eosin-nigrosin staining or the hypo-osmotic swelling test. Distinct from motility: a spermatozoon can be alive but immotile. WHO 2021 makes this a mandatory test when total motility is below the reference limit, because it discriminates asthenozoospermia (low motility, mostly live) from necrozoospermia (low motility, mostly dead). Reference: WHO 2021, lower limit 0.54.",
+      "references": {
+        "loinc": [
+          "10613-8"
+        ]
+      }
     },
     "body-semen-volume": {
       "version": "v1",
@@ -3202,6 +3344,11 @@
         "upperLimit": null,
         "units": "ml",
         "population": "recently-fertile-men"
+      },
+      "references": {
+        "loinc": [
+          "3160-9"
+        ]
       }
     },
     "body-semen-tmc": {
@@ -3230,7 +3377,7 @@
           "167806003"
         ]
       },
-      "devNotes": "Clinically derived as concentration × volume × progressive-motility fraction, but stored as a measured value on `count/mega` (10⁶ sperm) because labs report it directly. Reference: Hamilton 2015, lower limit 9."
+      "devNotes": "Clinically derived as concentration × volume × progressive-motility fraction, but stored as a measured value on `count/mega` (10⁶ sperm) because labs report it directly. Reference: Hamilton 2015, lower limit 9. No LOINC: 107482-2 counts all motile spermatozoa and 81319-6 the progressive ones by automated count only; labs compute TMC either way, so neither is asserted."
     },
     "body-semen-morphology-normal": {
       "version": "v1",
@@ -3256,6 +3403,9 @@
       "references": {
         "snomed": [
           "250500000"
+        ],
+        "loinc": [
+          "10622-9"
         ]
       },
       "devNotes": "Kruger strict criteria. Stored on `ratio/proportion` as 0..1. Reference: WHO 2021, lower limit 0.04."
@@ -3281,7 +3431,12 @@
         "units": "ratio",
         "population": "clinical-consensus"
       },
-      "devNotes": "DNA Fragmentation Index (DFI). Stored on `ratio/proportion` as 0..1. Reference: Agarwal 2017, upper limit 0.30."
+      "devNotes": "DNA Fragmentation Index (DFI). Stored on `ratio/proportion` as 0..1. Reference: Agarwal 2017, upper limit 0.30. LOINC has one code, 104620-0 \"by Flow cytometry\" (SCSA, flow TUNEL): a method code, so it decides ownership and is never exported. A DFI measured by microscopy (SCD, slide TUNEL) has no code.",
+      "references": {
+        "loincMethod": [
+          "104620-0"
+        ]
+      }
     },
     "body-blood-serum-glucose-fasting": {
       "version": "v1",
@@ -3305,6 +3460,7 @@
           "options": [
             {
               "value": "concentration/mg-dl",
+              "loinc": "1558-6",
               "label": {
                 "en": "mg/dL",
                 "fr": "mg/dL"
@@ -3312,6 +3468,7 @@
             },
             {
               "value": "concentration/mmol-l",
+              "loinc": "14771-0",
               "label": {
                 "en": "mmol/L",
                 "fr": "mmol/L"
@@ -3334,8 +3491,73 @@
       "references": {
         "snomed": [
           "167087006"
+        ],
+        "loinc": [
+          "1558-6",
+          "14771-0"
         ]
       }
+    },
+    "body-blood-serum-glucose-random": {
+      "version": "v1",
+      "label": {
+        "en": "Glucose (random)",
+        "fr": "Glycémie (non à jeun)"
+      },
+      "description": {
+        "en": "Blood sugar, measured at any time of day.",
+        "fr": "Taux de sucre dans le sang, mesuré à n'importe quel moment."
+      },
+      "streamId": "body-blood-serum-glucose-random",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              },
+              "loinc": "2345-7"
+            },
+            {
+              "value": "concentration/mmol-l",
+              "label": {
+                "en": "mmol/L",
+                "fr": "mmol/L"
+              },
+              "loinc": "14749-6"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-dl",
+            "to": "concentration/mmol-l",
+            "factor": 0.05551,
+            "molarMass": 180.16,
+            "source": "Molar mass of glucose, C6H12O6, 180.16 g/mol (PubChem CID 5793; IUPAC standard atomic weights)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "167086002"
+        ],
+        "loinc": [
+          "2345-7",
+          "14749-6"
+        ]
+      },
+      "devNotes": "Untimed glucose: any result whose report does not state fasting. A fasting result goes to `body-blood-serum-glucose-fasting`; SNOMED and LOINC code the two as different observations."
     },
     "body-blood-serum-insulin-fasting": {
       "version": "v1",
@@ -3362,14 +3584,16 @@
               "label": {
                 "en": "μIU/mL",
                 "fr": "μIU/mL"
-              }
+              },
+              "loinc": "27873-9"
             },
             {
               "value": "concentration/pmol-l",
               "label": {
                 "en": "pmol/L",
                 "fr": "pmol/L"
-              }
+              },
+              "loinc": null
             }
           ]
         }
@@ -3386,8 +3610,12 @@
       "references": {
         "snomed": [
           "16890009"
+        ],
+        "loinc": [
+          "27873-9"
         ]
-      }
+      },
+      "devNotes": "The pmol/L option has no LOINC: LOINC 2.83 has no fasting insulin [Moles/volume] code, and 14796-7 is untimed."
     },
     "body-blood-hba1c": {
       "version": "v1",
@@ -3415,6 +3643,9 @@
       "references": {
         "snomed": [
           "43396009"
+        ],
+        "loinc": [
+          "4548-4"
         ]
       }
     },
@@ -3443,21 +3674,24 @@
               "label": {
                 "en": "ng/mL",
                 "fr": "ng/mL"
-              }
+              },
+              "loinc": "1986-9"
             },
             {
               "value": "concentration/nmol-l",
               "label": {
                 "en": "nmol/L",
                 "fr": "nmol/L"
-              }
+              },
+              "loinc": "14633-2"
             },
             {
               "value": "concentration/pmol-l",
               "label": {
                 "en": "pmol/L",
                 "fr": "pmol/L"
-              }
+              },
+              "loinc": "14633-2"
             }
           ]
         }
@@ -3489,6 +3723,10 @@
       "references": {
         "snomed": [
           "88705004"
+        ],
+        "loinc": [
+          "1986-9",
+          "14633-2"
         ]
       }
     },
@@ -3509,6 +3747,9 @@
       "references": {
         "snomed": [
           "273971007"
+        ],
+        "loinc": [
+          "15067-2"
         ]
       }
     },
@@ -3529,6 +3770,9 @@
       "references": {
         "snomed": [
           "273969007"
+        ],
+        "loinc": [
+          "10501-5"
         ]
       }
     },
@@ -3557,14 +3801,16 @@
               "label": {
                 "en": "pg/mL",
                 "fr": "pg/mL"
-              }
+              },
+              "loinc": "2243-4"
             },
             {
               "value": "concentration/pmol-l",
               "label": {
                 "en": "pmol/L",
                 "fr": "pmol/L"
-              }
+              },
+              "loinc": "14715-7"
             }
           ]
         }
@@ -3583,6 +3829,10 @@
       "references": {
         "snomed": [
           "166448005"
+        ],
+        "loinc": [
+          "2243-4",
+          "14715-7"
         ]
       }
     },
@@ -3611,14 +3861,16 @@
               "label": {
                 "en": "ng/mL",
                 "fr": "ng/mL"
-              }
+              },
+              "loinc": "38476-8"
             },
             {
               "value": "concentration/pmol-l",
               "label": {
                 "en": "pmol/L",
                 "fr": "pmol/L"
-              }
+              },
+              "loinc": "48377-6"
             }
           ]
         }
@@ -3626,6 +3878,10 @@
       "references": {
         "snomed": [
           "711358004"
+        ],
+        "loinc": [
+          "38476-8",
+          "48377-6"
         ]
       }
     },
@@ -3654,6 +3910,9 @@
       "references": {
         "snomed": [
           "269821003"
+        ],
+        "loinc": [
+          "2276-4"
         ]
       }
     },
@@ -3682,14 +3941,16 @@
               "label": {
                 "en": "μg/dL",
                 "fr": "μg/dL"
-              }
+              },
+              "loinc": "2498-4"
             },
             {
               "value": "concentration/umol-l",
               "label": {
                 "en": "μmol/L",
                 "fr": "μmol/L"
-              }
+              },
+              "loinc": "14798-3"
             }
           ]
         }
@@ -3708,6 +3969,10 @@
       "references": {
         "snomed": [
           "250216004"
+        ],
+        "loinc": [
+          "2498-4",
+          "14798-3"
         ]
       }
     },
@@ -3736,14 +4001,16 @@
               "label": {
                 "en": "μg/dL",
                 "fr": "μg/dL"
-              }
+              },
+              "loinc": "2500-7"
             },
             {
               "value": "concentration/umol-l",
               "label": {
                 "en": "μmol/L",
                 "fr": "μmol/L"
-              }
+              },
+              "loinc": "14800-7"
             }
           ]
         }
@@ -3762,6 +4029,10 @@
       "references": {
         "snomed": [
           "359979000"
+        ],
+        "loinc": [
+          "2500-7",
+          "14800-7"
         ]
       }
     },
@@ -3791,6 +4062,9 @@
       "references": {
         "snomed": [
           "165730006"
+        ],
+        "loinc": [
+          "2502-3"
         ]
       }
     },
@@ -3819,14 +4093,16 @@
               "label": {
                 "en": "g/dL",
                 "fr": "g/dL"
-              }
+              },
+              "loinc": "718-7"
             },
             {
               "value": "concentration/g-l",
               "label": {
                 "en": "g/L",
                 "fr": "g/L"
-              }
+              },
+              "loinc": "718-7"
             }
           ]
         }
@@ -3844,6 +4120,9 @@
       "references": {
         "snomed": [
           "441689006"
+        ],
+        "loinc": [
+          "718-7"
         ]
       }
     },
@@ -3873,8 +4152,15 @@
       "references": {
         "snomed": [
           "28317006"
+        ],
+        "loinc": [
+          "4544-3"
+        ],
+        "loincMethod": [
+          "20570-8"
         ]
-      }
+      },
+      "devNotes": "LOINC has no methodless hematocrit code. The item exports the automated-count code, which most reports use, and owns the calculated one: the method does not change the number."
     },
     "body-blood-cbc-rbc": {
       "version": "v1",
@@ -3893,6 +4179,12 @@
       "references": {
         "snomed": [
           "14089001"
+        ],
+        "loinc": [
+          "26453-1"
+        ],
+        "loincMethod": [
+          "789-8"
         ]
       }
     },
@@ -3913,6 +4205,12 @@
       "references": {
         "snomed": [
           "767002"
+        ],
+        "loinc": [
+          "26464-8"
+        ],
+        "loincMethod": [
+          "6690-2"
         ]
       }
     },
@@ -3933,6 +4231,12 @@
       "references": {
         "snomed": [
           "61928009"
+        ],
+        "loinc": [
+          "26515-7"
+        ],
+        "loincMethod": [
+          "777-3"
         ]
       }
     },
@@ -3953,6 +4257,12 @@
       "references": {
         "snomed": [
           "104133003"
+        ],
+        "loinc": [
+          "30428-7"
+        ],
+        "loincMethod": [
+          "787-2"
         ]
       }
     },
@@ -3973,6 +4283,12 @@
       "references": {
         "snomed": [
           "54706004"
+        ],
+        "loinc": [
+          "28539-5"
+        ],
+        "loincMethod": [
+          "785-6"
         ]
       }
     },
@@ -4002,6 +4318,12 @@
       "references": {
         "snomed": [
           "66842004"
+        ],
+        "loinc": [
+          "30385-9"
+        ],
+        "loincMethod": [
+          "788-0"
         ]
       }
     },
@@ -4030,7 +4352,13 @@
       },
       "references": {
         "snomed": [
-          "30630007"
+          "271035003"
+        ],
+        "loinc": [
+          "26511-6"
+        ],
+        "loincMethod": [
+          "770-8"
         ]
       }
     },
@@ -4059,7 +4387,13 @@
       },
       "references": {
         "snomed": [
-          "74765001"
+          "271036002"
+        ],
+        "loinc": [
+          "26478-8"
+        ],
+        "loincMethod": [
+          "736-9"
         ]
       }
     },
@@ -4088,7 +4422,13 @@
       },
       "references": {
         "snomed": [
-          "67776007"
+          "271037006"
+        ],
+        "loinc": [
+          "26485-3"
+        ],
+        "loincMethod": [
+          "5905-5"
         ]
       }
     },
@@ -4117,7 +4457,13 @@
       },
       "references": {
         "snomed": [
-          "71960002"
+          "310540006"
+        ],
+        "loinc": [
+          "26450-7"
+        ],
+        "loincMethod": [
+          "713-8"
         ]
       }
     },
@@ -4146,7 +4492,1021 @@
       },
       "references": {
         "snomed": [
+          "271038001"
+        ],
+        "loinc": [
+          "30180-4"
+        ],
+        "loincMethod": [
+          "706-2"
+        ]
+      }
+    },
+    "body-blood-cbc-mchc": {
+      "version": "v1",
+      "label": {
+        "en": "MCHC",
+        "fr": "CCMH"
+      },
+      "description": {
+        "en": "How concentrated the oxygen-carrying protein is in your red blood cells.",
+        "fr": "La concentration de la protéine transportant l'oxygène dans vos globules rouges."
+      },
+      "streamId": "body-blood-cbc-mchc",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/g-dl",
+              "label": {
+                "en": "g/dL",
+                "fr": "g/dL"
+              },
+              "loinc": "28540-3"
+            },
+            {
+              "value": "concentration/g-l",
+              "label": {
+                "en": "g/L",
+                "fr": "g/L"
+              },
+              "loinc": "28540-3"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/g-dl",
+            "to": "concentration/g-l",
+            "factor": 10,
+            "source": "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "37254006"
+        ],
+        "loinc": [
+          "28540-3"
+        ],
+        "loincMethod": [
+          "786-4"
+        ]
+      }
+    },
+    "body-blood-cbc-mpv": {
+      "version": "v1",
+      "label": {
+        "en": "MPV",
+        "fr": "VPM"
+      },
+      "description": {
+        "en": "The average size of your platelets.",
+        "fr": "La taille moyenne de vos plaquettes."
+      },
+      "streamId": "body-blood-cbc-mpv",
+      "eventType": "volume/fl",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "75672003"
+        ],
+        "loinc": [
+          "28542-9"
+        ],
+        "loincMethod": [
+          "32623-1"
+        ]
+      }
+    },
+    "body-blood-cbc-reticulocytes": {
+      "version": "v1",
+      "label": {
+        "en": "Reticulocytes",
+        "fr": "Réticulocytes"
+      },
+      "description": {
+        "en": "The share of your red blood cells that are young.",
+        "fr": "La part de vos globules rouges qui sont jeunes."
+      },
+      "streamId": "body-blood-cbc-reticulocytes",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "313639004"
+        ],
+        "loinc": [
+          "4679-7"
+        ],
+        "loincMethod": [
+          "17849-1"
+        ]
+      }
+    },
+    "body-blood-cbc-reticulocytes-immature-fraction": {
+      "version": "v1",
+      "label": {
+        "en": "Immature reticulocyte fraction (IRF)",
+        "fr": "Fraction de réticulocytes immatures (IRF)"
+      },
+      "description": {
+        "en": "The share of your young red blood cells that are the youngest.",
+        "fr": "La part de vos jeunes globules rouges qui sont les plus immatures."
+      },
+      "streamId": "body-blood-cbc-reticulocytes-immature-fraction",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "413042008"
+        ],
+        "loinc": [
+          "33516-6"
+        ]
+      },
+      "devNotes": "A share of the reticulocytes, not of the red blood cells. LOINC 71693-6 is the immature platelet fraction, another analyte."
+    },
+    "body-blood-cbc-reticulocytes-hemoglobin": {
+      "version": "v1",
+      "label": {
+        "en": "Reticulocyte hemoglobin",
+        "fr": "Hémoglobine réticulocytaire"
+      },
+      "description": {
+        "en": "How much oxygen-carrying protein your young red blood cells hold.",
+        "fr": "La quantité de protéine transportant l'oxygène dans vos jeunes globules rouges."
+      },
+      "streamId": "body-blood-cbc-reticulocytes-hemoglobin",
+      "eventType": "mass/pg",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "loinc": [
+          "42810-2"
+        ],
+        "loincMethod": [
+          "71694-4"
+        ]
+      },
+      "devNotes": "Ret-He / CHr. No SNOMED reference: SNOMED CT has no concept for it."
+    },
+    "body-blood-cbc-nucleated-rbc": {
+      "version": "v1",
+      "label": {
+        "en": "Nucleated red blood cells",
+        "fr": "Érythroblastes circulants"
+      },
+      "description": {
+        "en": "Immature red blood cells found in your blood.",
+        "fr": "Des globules rouges immatures présents dans votre sang."
+      },
+      "streamId": "body-blood-cbc-nucleated-rbc",
+      "eventType": "ratio/percent",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "suffix": {
+            "en": "/100 WBC",
+            "fr": "/100 leucocytes"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "165426009"
+        ],
+        "loinc": [
+          "19048-8"
+        ],
+        "loincMethod": [
+          "58413-6",
+          "18309-5"
+        ]
+      },
+      "devNotes": "Per 100 white blood cells, stored as printed: not a part of a whole and above 100 in some newborns, so `ratio/percent`, not `ratio/proportion` (plan 114 Q16). The absolute count is not an item: `lab-result/coded-v1` under LOINC 30392-5 meanwhile."
+    },
+    "body-blood-cbc-neutrophils-segmented": {
+      "version": "v1",
+      "label": {
+        "en": "Segmented neutrophils",
+        "fr": "Neutrophiles segmentés"
+      },
+      "description": {
+        "en": "The share of your white blood cells that are mature neutrophils.",
+        "fr": "La part de vos globules blancs qui sont des neutrophiles matures."
+      },
+      "streamId": "body-blood-cbc-neutrophils-segmented",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "loinc": [
+          "26505-8"
+        ],
+        "loincMethod": [
+          "32200-8",
+          "769-0"
+        ]
+      },
+      "devNotes": "No SNOMED reference: SNOMED CT has a segmented-neutrophil count (104096007, on the count item) but no percentage concept."
+    },
+    "body-blood-cbc-neutrophils-band": {
+      "version": "v1",
+      "label": {
+        "en": "Band neutrophils",
+        "fr": "Neutrophiles non segmentés"
+      },
+      "description": {
+        "en": "The share of your white blood cells that are young neutrophils.",
+        "fr": "La part de vos globules blancs qui sont de jeunes neutrophiles."
+      },
+      "streamId": "body-blood-cbc-neutrophils-band",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "loinc": [
+          "26508-2"
+        ],
+        "loincMethod": [
+          "764-1"
+        ]
+      },
+      "devNotes": "No SNOMED reference: SNOMED CT has a band-neutrophil count (25340006, on the count item) but no percentage concept."
+    },
+    "body-blood-cbc-myelocytes": {
+      "version": "v1",
+      "label": {
+        "en": "Myelocytes",
+        "fr": "Myélocytes"
+      },
+      "description": {
+        "en": "The share of your white blood cells that are very immature cells from the bone marrow.",
+        "fr": "La part de vos globules blancs qui sont des cellules très immatures venues de la moelle osseuse."
+      },
+      "streamId": "body-blood-cbc-myelocytes",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "313696009"
+        ],
+        "loinc": [
+          "26498-6"
+        ],
+        "loincMethod": [
+          "749-2"
+        ]
+      },
+      "devNotes": "The absolute count is not an item: `lab-result/coded-v1` under LOINC 30446-9 meanwhile."
+    },
+    "body-blood-cbc-metamyelocytes": {
+      "version": "v1",
+      "label": {
+        "en": "Metamyelocytes",
+        "fr": "Métamyélocytes"
+      },
+      "description": {
+        "en": "The share of your white blood cells that are immature neutrophils from the bone marrow.",
+        "fr": "La part de vos globules blancs qui sont des neutrophiles immatures venus de la moelle osseuse."
+      },
+      "streamId": "body-blood-cbc-metamyelocytes",
+      "eventType": "ratio/proportion",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "multiplier": 100,
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "snomed": [
+          "271039009"
+        ],
+        "loinc": [
+          "28541-1"
+        ],
+        "loincMethod": [
+          "740-1"
+        ]
+      },
+      "devNotes": "The absolute count is not an item: `lab-result/coded-v1` under LOINC 30433-7 meanwhile."
+    },
+    "body-blood-cbc-lymphocytes-count": {
+      "version": "v1",
+      "label": {
+        "en": "Lymphocytes (count)",
+        "fr": "Lymphocytes (valeur absolue)"
+      },
+      "description": {
+        "en": "How many lymphocytes are in your blood.",
+        "fr": "Le nombre de lymphocytes dans votre sang."
+      },
+      "streamId": "body-blood-cbc-lymphocytes",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/megacount-ml",
+              "label": {
+                "en": "10⁹/L",
+                "fr": "10⁹/L"
+              },
+              "loinc": "26474-7"
+            },
+            {
+              "value": "concentration/count-ul",
+              "label": {
+                "en": "/μL",
+                "fr": "/μL"
+              },
+              "loinc": "26474-7"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/megacount-ml",
+            "to": "concentration/count-ul",
+            "factor": 1000,
+            "source": "Exact by the definition of the units: 10⁶/mL = 10⁹/L = 10³/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "74765001"
+        ],
+        "loinc": [
+          "26474-7"
+        ],
+        "loincMethod": [
+          "731-0"
+        ]
+      },
+      "devNotes": "The absolute count, on the same stream as the share of white blood cells, so one grant covers both (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US \"cells/μL\" figure, 1000 times the number (4.5 × 10⁹/L is 4500/μL)."
+    },
+    "body-blood-cbc-neutrophils-count": {
+      "version": "v1",
+      "label": {
+        "en": "Neutrophils (count)",
+        "fr": "Neutrophiles (valeur absolue)"
+      },
+      "description": {
+        "en": "How many neutrophils are in your blood.",
+        "fr": "Le nombre de neutrophiles dans votre sang."
+      },
+      "streamId": "body-blood-cbc-neutrophils",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/megacount-ml",
+              "label": {
+                "en": "10⁹/L",
+                "fr": "10⁹/L"
+              },
+              "loinc": "26499-4"
+            },
+            {
+              "value": "concentration/count-ul",
+              "label": {
+                "en": "/μL",
+                "fr": "/μL"
+              },
+              "loinc": "26499-4"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/megacount-ml",
+            "to": "concentration/count-ul",
+            "factor": 1000,
+            "source": "Exact by the definition of the units: 10⁶/mL = 10⁹/L = 10³/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "30630007"
+        ],
+        "loinc": [
+          "26499-4"
+        ],
+        "loincMethod": [
+          "751-8"
+        ]
+      },
+      "devNotes": "The absolute count, on the same stream as the share of white blood cells, so one grant covers both (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US \"cells/μL\" figure, 1000 times the number (4.5 × 10⁹/L is 4500/μL)."
+    },
+    "body-blood-cbc-neutrophils-segmented-count": {
+      "version": "v1",
+      "label": {
+        "en": "Segmented neutrophils (count)",
+        "fr": "Neutrophiles segmentés (valeur absolue)"
+      },
+      "description": {
+        "en": "How many segmented neutrophils are in your blood.",
+        "fr": "Le nombre de neutrophiles segmentés dans votre sang."
+      },
+      "streamId": "body-blood-cbc-neutrophils-segmented",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/megacount-ml",
+              "label": {
+                "en": "10⁹/L",
+                "fr": "10⁹/L"
+              },
+              "loinc": "30451-9"
+            },
+            {
+              "value": "concentration/count-ul",
+              "label": {
+                "en": "/μL",
+                "fr": "/μL"
+              },
+              "loinc": "30451-9"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/megacount-ml",
+            "to": "concentration/count-ul",
+            "factor": 1000,
+            "source": "Exact by the definition of the units: 10⁶/mL = 10⁹/L = 10³/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "104096007"
+        ],
+        "loinc": [
+          "30451-9"
+        ],
+        "loincMethod": [
+          "768-2"
+        ]
+      },
+      "devNotes": "The absolute count, on the same stream as the share of white blood cells, so one grant covers both (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US \"cells/μL\" figure, 1000 times the number (4.5 × 10⁹/L is 4500/μL)."
+    },
+    "body-blood-cbc-neutrophils-band-count": {
+      "version": "v1",
+      "label": {
+        "en": "Band neutrophils (count)",
+        "fr": "Neutrophiles non segmentés (valeur absolue)"
+      },
+      "description": {
+        "en": "How many band neutrophils are in your blood.",
+        "fr": "Le nombre de neutrophiles non segmentés dans votre sang."
+      },
+      "streamId": "body-blood-cbc-neutrophils-band",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/megacount-ml",
+              "label": {
+                "en": "10⁹/L",
+                "fr": "10⁹/L"
+              },
+              "loinc": "26507-4"
+            },
+            {
+              "value": "concentration/count-ul",
+              "label": {
+                "en": "/μL",
+                "fr": "/μL"
+              },
+              "loinc": "26507-4"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/megacount-ml",
+            "to": "concentration/count-ul",
+            "factor": 1000,
+            "source": "Exact by the definition of the units: 10⁶/mL = 10⁹/L = 10³/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "25340006"
+        ],
+        "loinc": [
+          "26507-4"
+        ],
+        "loincMethod": [
+          "763-3"
+        ]
+      },
+      "devNotes": "The absolute count, on the same stream as the share of white blood cells, so one grant covers both (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US \"cells/μL\" figure, 1000 times the number (4.5 × 10⁹/L is 4500/μL)."
+    },
+    "body-blood-cbc-monocytes-count": {
+      "version": "v1",
+      "label": {
+        "en": "Monocytes (count)",
+        "fr": "Monocytes (valeur absolue)"
+      },
+      "description": {
+        "en": "How many monocytes are in your blood.",
+        "fr": "Le nombre de monocytes dans votre sang."
+      },
+      "streamId": "body-blood-cbc-monocytes",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/megacount-ml",
+              "label": {
+                "en": "10⁹/L",
+                "fr": "10⁹/L"
+              },
+              "loinc": "26484-6"
+            },
+            {
+              "value": "concentration/count-ul",
+              "label": {
+                "en": "/μL",
+                "fr": "/μL"
+              },
+              "loinc": "26484-6"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/megacount-ml",
+            "to": "concentration/count-ul",
+            "factor": 1000,
+            "source": "Exact by the definition of the units: 10⁶/mL = 10⁹/L = 10³/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "67776007"
+        ],
+        "loinc": [
+          "26484-6"
+        ],
+        "loincMethod": [
+          "742-7"
+        ]
+      },
+      "devNotes": "The absolute count, on the same stream as the share of white blood cells, so one grant covers both (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US \"cells/μL\" figure, 1000 times the number (4.5 × 10⁹/L is 4500/μL)."
+    },
+    "body-blood-cbc-eosinophils-count": {
+      "version": "v1",
+      "label": {
+        "en": "Eosinophils (count)",
+        "fr": "Éosinophiles (valeur absolue)"
+      },
+      "description": {
+        "en": "How many eosinophils are in your blood.",
+        "fr": "Le nombre d'éosinophiles dans votre sang."
+      },
+      "streamId": "body-blood-cbc-eosinophils",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/megacount-ml",
+              "label": {
+                "en": "10⁹/L",
+                "fr": "10⁹/L"
+              },
+              "loinc": "26449-9"
+            },
+            {
+              "value": "concentration/count-ul",
+              "label": {
+                "en": "/μL",
+                "fr": "/μL"
+              },
+              "loinc": "26449-9"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/megacount-ml",
+            "to": "concentration/count-ul",
+            "factor": 1000,
+            "source": "Exact by the definition of the units: 10⁶/mL = 10⁹/L = 10³/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "71960002"
+        ],
+        "loinc": [
+          "26449-9"
+        ],
+        "loincMethod": [
+          "711-2"
+        ]
+      },
+      "devNotes": "The absolute count, on the same stream as the share of white blood cells, so one grant covers both (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US \"cells/μL\" figure, 1000 times the number (4.5 × 10⁹/L is 4500/μL)."
+    },
+    "body-blood-cbc-basophils-count": {
+      "version": "v1",
+      "label": {
+        "en": "Basophils (count)",
+        "fr": "Basophiles (valeur absolue)"
+      },
+      "description": {
+        "en": "How many basophils are in your blood.",
+        "fr": "Le nombre de basophiles dans votre sang."
+      },
+      "streamId": "body-blood-cbc-basophils",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/megacount-ml",
+              "label": {
+                "en": "10⁹/L",
+                "fr": "10⁹/L"
+              },
+              "loinc": "26444-0"
+            },
+            {
+              "value": "concentration/count-ul",
+              "label": {
+                "en": "/μL",
+                "fr": "/μL"
+              },
+              "loinc": "26444-0"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/megacount-ml",
+            "to": "concentration/count-ul",
+            "factor": 1000,
+            "source": "Exact by the definition of the units: 10⁶/mL = 10⁹/L = 10³/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
           "42351005"
+        ],
+        "loinc": [
+          "26444-0"
+        ],
+        "loincMethod": [
+          "704-7"
+        ]
+      },
+      "devNotes": "The absolute count, on the same stream as the share of white blood cells, so one grant covers both (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US \"cells/μL\" figure, 1000 times the number (4.5 × 10⁹/L is 4500/μL)."
+    },
+    "body-blood-cbc-reticulocytes-count": {
+      "version": "v1",
+      "label": {
+        "en": "Reticulocytes (count)",
+        "fr": "Réticulocytes (valeur absolue)"
+      },
+      "description": {
+        "en": "How many reticulocytes are in your blood.",
+        "fr": "Le nombre de réticulocytes dans votre sang."
+      },
+      "streamId": "body-blood-cbc-reticulocytes",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/megacount-ml",
+              "label": {
+                "en": "10⁹/L",
+                "fr": "10⁹/L"
+              },
+              "loinc": "14196-0"
+            },
+            {
+              "value": "concentration/count-ul",
+              "label": {
+                "en": "/μL",
+                "fr": "/μL"
+              },
+              "loinc": "14196-0"
+            },
+            {
+              "value": "concentration/gigacount-ml",
+              "label": {
+                "en": "10¹²/L",
+                "fr": "10¹²/L"
+              },
+              "loinc": "14196-0"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/megacount-ml",
+            "to": "concentration/count-ul",
+            "factor": 1000,
+            "source": "Exact by the definition of the units: 10⁶/mL = 10⁹/L = 10³/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
+          },
+          {
+            "from": "concentration/megacount-ml",
+            "to": "concentration/gigacount-ml",
+            "factor": 0.001,
+            "source": "Exact by the definition of the units: 10⁶/mL = 10⁻³ × 10⁹/mL (SI Brochure, 9th edition, BIPM 2019)"
+          },
+          {
+            "from": "concentration/count-ul",
+            "to": "concentration/gigacount-ml",
+            "factor": 0.000001,
+            "source": "Exact by the definition of the units: 1/μL = 10³/mL = 10⁻⁶ × 10⁹/mL (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "45995003"
+        ],
+        "loinc": [
+          "14196-0"
+        ],
+        "loincMethod": [
+          "60474-4"
+        ]
+      },
+      "devNotes": "The absolute count, on the same stream as the reticulocytes' share of red blood cells, so one grant covers both (site-agents#27). Option 1 is 10⁹/L, as the white-cell counts (option 1 is permanent, so it follows its siblings, not the US-first rule); option 2 is \"cells/μL\", 1000 times that number (50 × 10⁹/L is 50 000/μL); option 3 is 10¹²/L, the US \"× 10⁶/μL\" (0.05)."
+    },
+    "body-blood-coagulation-prothrombin-time": {
+      "version": "v1",
+      "label": {
+        "en": "Prothrombin time (PT)",
+        "fr": "Temps de Quick (TQ)"
+      },
+      "description": {
+        "en": "How long your blood takes to clot, in seconds.",
+        "fr": "Le temps que met votre sang à coaguler, en secondes."
+      },
+      "streamId": "body-blood-coagulation-prothrombin-time",
+      "eventType": "time/s",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "396451008"
+        ],
+        "loinc": [
+          "5902-2"
+        ],
+        "loincMethod": [
+          "42638-7"
+        ]
+      },
+      "devNotes": "In seconds. The same test printed as a percentage of normal (Quick, TP) is `body-blood-coagulation-prothrombin-activity`, and as a ratio the INR: neither converts to seconds, since the relation depends on the reagent (plan 114 Q17)."
+    },
+    "body-blood-coagulation-prothrombin-activity": {
+      "version": "v1",
+      "label": {
+        "en": "Prothrombin activity (Quick)",
+        "fr": "Taux de prothrombine (TP)"
+      },
+      "description": {
+        "en": "How well your blood clots, as a percentage of normal.",
+        "fr": "La capacité de votre sang à coaguler, en pourcentage de la normale."
+      },
+      "streamId": "body-blood-coagulation-prothrombin-activity",
+      "eventType": "ratio/percent",
+      "type": "number",
+      "repeatable": "any",
+      "number": {
+        "display": {
+          "suffix": {
+            "en": "%",
+            "fr": "%"
+          }
+        }
+      },
+      "references": {
+        "loincMethod": [
+          "5894-1"
+        ]
+      },
+      "devNotes": "Quick %, stored as printed: it exceeds 100 % (anticoagulant reversal, up to about 130 %), so `ratio/percent`, not `ratio/proportion` (plan 114 Q16). Owned, never exported: European catalogues send Quick % as LOINC 5894-1 (ELGA Laborparameter, the German MII top-300 lab set, an AP-HP TP profile), so a result coded that way lands here; but 5894-1 is \"PT actual/Normal\", a time ratio that runs the other way (a long PT is a ratio above 1 and a Quick below 100 %), so a reader of an export would misread the value. LOINC has no Quick % code. 6302-4 (normal/actual, the prothrombin index) and 3289-6 (factor II activity) are other analytes. No SNOMED reference: SNOMED CT has no prothrombin-activity concept."
+    },
+    "body-blood-coagulation-aptt": {
+      "version": "v1",
+      "label": {
+        "en": "aPTT",
+        "fr": "TCA"
+      },
+      "description": {
+        "en": "A clotting time that checks part of your clotting system.",
+        "fr": "Un temps de coagulation qui teste une partie de votre système de coagulation."
+      },
+      "streamId": "body-blood-coagulation-aptt",
+      "eventType": "time/s",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "42525009"
+        ],
+        "loinc": [
+          "14979-9"
+        ]
+      },
+      "devNotes": "In seconds. The aPTT ratio (patient / control) is not an item: `lab-result/coded-v1` meanwhile."
+    },
+    "body-blood-coagulation-fibrinogen": {
+      "version": "v1",
+      "label": {
+        "en": "Fibrinogen",
+        "fr": "Fibrinogène"
+      },
+      "description": {
+        "en": "A protein your blood needs to form clots.",
+        "fr": "Une protéine dont votre sang a besoin pour former des caillots."
+      },
+      "streamId": "body-blood-coagulation-fibrinogen",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              },
+              "loinc": "3255-7"
+            },
+            {
+              "value": "concentration/g-l",
+              "label": {
+                "en": "g/L",
+                "fr": "g/L"
+              },
+              "loinc": "3255-7"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-dl",
+            "to": "concentration/g-l",
+            "factor": 0.01,
+            "source": "Exact by the definition of the units: 1 mg/dL = 10 mg/L = 0.01 g/L (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "250346004"
+        ],
+        "loinc": [
+          "3255-7"
         ]
       }
     },
@@ -4167,6 +5527,9 @@
       "references": {
         "snomed": [
           "34608000"
+        ],
+        "loinc": [
+          "1742-6"
         ]
       }
     },
@@ -4187,6 +5550,9 @@
       "references": {
         "snomed": [
           "250641004"
+        ],
+        "loinc": [
+          "1920-8"
         ]
       }
     },
@@ -4207,6 +5573,9 @@
       "references": {
         "snomed": [
           "313849004"
+        ],
+        "loinc": [
+          "2324-2"
         ]
       }
     },
@@ -4227,6 +5596,9 @@
       "references": {
         "snomed": [
           "271234008"
+        ],
+        "loinc": [
+          "6768-6"
         ]
       }
     },
@@ -4247,8 +5619,14 @@
       "references": {
         "snomed": [
           "313854008"
+        ],
+        "loincMethod": [
+          "14804-9",
+          "14805-6",
+          "2532-0"
         ]
-      }
+      },
+      "devNotes": "No exported LOINC: the methodless 2532-0 is DISCOURAGED in LOINC 2.83, which keeps one code per reaction direction (lactate to pyruvate, pyruvate to lactate), and the two directions give different numbers. The item owns all three, so a result a lab still sends as 2532-0 lands here."
     },
     "body-blood-serum-bilirubin-total": {
       "version": "v1",
@@ -4275,14 +5653,16 @@
               "label": {
                 "en": "mg/dL",
                 "fr": "mg/dL"
-              }
+              },
+              "loinc": "1975-2"
             },
             {
               "value": "concentration/umol-l",
               "label": {
                 "en": "μmol/L",
                 "fr": "μmol/L"
-              }
+              },
+              "loinc": "14631-6"
             }
           ]
         }
@@ -4301,8 +5681,73 @@
       "references": {
         "snomed": [
           "359986008"
+        ],
+        "loinc": [
+          "1975-2",
+          "14631-6"
         ]
       }
+    },
+    "body-blood-serum-bilirubin-direct": {
+      "version": "v1",
+      "label": {
+        "en": "Direct (conjugated) bilirubin",
+        "fr": "Bilirubine directe (conjuguée)"
+      },
+      "description": {
+        "en": "The part of bilirubin your liver has already processed.",
+        "fr": "La part de la bilirubine que votre foie a déjà transformée."
+      },
+      "streamId": "body-blood-serum-bilirubin-direct",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              },
+              "loinc": "1968-7"
+            },
+            {
+              "value": "concentration/umol-l",
+              "label": {
+                "en": "μmol/L",
+                "fr": "μmol/L"
+              },
+              "loinc": "14629-0"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-dl",
+            "to": "concentration/umol-l",
+            "factor": 17.1,
+            "molarMass": 584.67,
+            "source": "Molar mass of bilirubin, C33H36N4O6, 584.67 g/mol (PubChem CID 5280352; IUPAC standard atomic weights)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "39748002"
+        ],
+        "loinc": [
+          "1968-7",
+          "14629-0"
+        ]
+      },
+      "devNotes": "The diazo direct fraction, which routine labs report even when they print \"conjuguée\" (plan 114 Q18). A conjugated-specific method (LOINC 15152-2) is another analyte: it goes to `lab-result/coded-v1`."
     },
     "body-blood-serum-bile-acids": {
       "version": "v1",
@@ -4321,8 +5766,58 @@
       "references": {
         "snomed": [
           "313455004"
+        ],
+        "loinc": [
+          "14628-2"
         ]
       }
+    },
+    "body-blood-serum-lipase": {
+      "version": "v1",
+      "label": {
+        "en": "Lipase",
+        "fr": "Lipase"
+      },
+      "description": {
+        "en": "An enzyme from your pancreas that digests fat.",
+        "fr": "Une enzyme du pancréas qui digère les graisses."
+      },
+      "streamId": "body-blood-serum-lipase",
+      "eventType": "catalytic-activity/u-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "271232007"
+        ],
+        "loinc": [
+          "3040-3"
+        ]
+      }
+    },
+    "body-blood-serum-amylase": {
+      "version": "v1",
+      "label": {
+        "en": "Amylase",
+        "fr": "Amylase"
+      },
+      "description": {
+        "en": "An enzyme that digests starch.",
+        "fr": "Une enzyme qui digère l'amidon."
+      },
+      "streamId": "body-blood-serum-amylase",
+      "eventType": "catalytic-activity/u-l",
+      "type": "number",
+      "repeatable": "any",
+      "references": {
+        "snomed": [
+          "64435009"
+        ],
+        "loinc": [
+          "1798-8"
+        ]
+      },
+      "devNotes": "Total amylase. Pancreatic amylase is another analyte, not asked for: `lab-result/coded-v1` meanwhile."
     },
     "body-blood-serum-tsh": {
       "version": "v1",
@@ -4341,6 +5836,9 @@
       "references": {
         "snomed": [
           "61167004"
+        ],
+        "loinc": [
+          "3016-3"
         ]
       }
     },
@@ -4369,14 +5867,16 @@
               "label": {
                 "en": "mg/dL",
                 "fr": "mg/dL"
-              }
+              },
+              "loinc": "3094-0"
             },
             {
               "value": "concentration/mmol-l",
               "label": {
                 "en": "Urea mmol/L",
                 "fr": "Urée mmol/L"
-              }
+              },
+              "loinc": "22664-7"
             }
           ]
         }
@@ -4395,6 +5895,10 @@
       "references": {
         "snomed": [
           "105011006"
+        ],
+        "loinc": [
+          "3094-0",
+          "22664-7"
         ]
       }
     },
@@ -4423,14 +5927,16 @@
               "label": {
                 "en": "mg/dL",
                 "fr": "mg/dL"
-              }
+              },
+              "loinc": "2160-0"
             },
             {
               "value": "concentration/umol-l",
               "label": {
                 "en": "μmol/L",
                 "fr": "μmol/L"
-              }
+              },
+              "loinc": "14682-9"
             }
           ]
         }
@@ -4449,6 +5955,10 @@
       "references": {
         "snomed": [
           "113075003"
+        ],
+        "loinc": [
+          "2160-0",
+          "14682-9"
         ]
       }
     },
@@ -4469,8 +5979,18 @@
       "references": {
         "snomed": [
           "80274001"
+        ],
+        "loincMethod": [
+          "98979-8",
+          "62238-1",
+          "77147-7",
+          "88293-6",
+          "88294-4",
+          "48643-1",
+          "48642-3"
         ]
-      }
+      },
+      "devNotes": "LOINC codes eGFR per equation, and the equation changes the number, so the item exports no code and owns the creatinine-based ones (CKD-EPI 2021, CKD-EPI 2009, MDRD, and the race-adjusted CKD-EPI and MDRD codes labs still send). Cystatin-C-based results go to `lab-result/coded-v1`."
     },
     "body-blood-serum-sodium": {
       "version": "v1",
@@ -4489,6 +6009,9 @@
       "references": {
         "snomed": [
           "104934005"
+        ],
+        "loinc": [
+          "2951-2"
         ]
       }
     },
@@ -4509,6 +6032,9 @@
       "references": {
         "snomed": [
           "271236005"
+        ],
+        "loinc": [
+          "2823-3"
         ]
       }
     },
@@ -4529,6 +6055,9 @@
       "references": {
         "snomed": [
           "271238006"
+        ],
+        "loinc": [
+          "2075-0"
         ]
       }
     },
@@ -4549,8 +6078,15 @@
       "references": {
         "snomed": [
           "271239003"
+        ],
+        "loinc": [
+          "2028-9"
+        ],
+        "loincMethod": [
+          "1963-8"
         ]
-      }
+      },
+      "devNotes": "Exports total CO2 (LOINC 2028-9). Serum bicarbonate (1963-8, \"Bicarbonates\" on French reports) is the same analyser measurement under another LOINC component, and the item's SNOMED concept is the bicarbonate measurement: the item owns it, so one series does not split by the lab's wording. A blood-gas bicarbonate is another specimen and goes to `lab-result/coded-v1`."
     },
     "body-blood-serum-calcium": {
       "version": "v1",
@@ -4577,14 +6113,16 @@
               "label": {
                 "en": "mg/dL",
                 "fr": "mg/dL"
-              }
+              },
+              "loinc": "17861-6"
             },
             {
               "value": "concentration/mmol-l",
               "label": {
                 "en": "mmol/L",
                 "fr": "mmol/L"
-              }
+              },
+              "loinc": "2000-8"
             }
           ]
         }
@@ -4603,6 +6141,70 @@
       "references": {
         "snomed": [
           "271240001"
+        ],
+        "loinc": [
+          "17861-6",
+          "2000-8"
+        ]
+      }
+    },
+    "body-blood-serum-phosphate": {
+      "version": "v1",
+      "label": {
+        "en": "Phosphate (phosphorus)",
+        "fr": "Phosphate (phosphore)"
+      },
+      "description": {
+        "en": "A mineral that works with calcium in your bones.",
+        "fr": "Un minéral qui agit avec le calcium dans vos os."
+      },
+      "streamId": "body-blood-serum-phosphate",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              },
+              "loinc": "2777-1"
+            },
+            {
+              "value": "concentration/mmol-l",
+              "label": {
+                "en": "mmol/L",
+                "fr": "mmol/L"
+              },
+              "loinc": "14879-1"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-dl",
+            "to": "concentration/mmol-l",
+            "factor": 0.3229,
+            "molarMass": 30.974,
+            "source": "Molar mass of phosphorus, P, 30.974 g/mol (PubChem CID 5462309; IUPAC standard atomic weights): serum inorganic phosphate is expressed as phosphorus"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "271241002"
+        ],
+        "loinc": [
+          "2777-1",
+          "14879-1"
         ]
       }
     },
@@ -4631,14 +6233,16 @@
               "label": {
                 "en": "g/dL",
                 "fr": "g/dL"
-              }
+              },
+              "loinc": "2885-2"
             },
             {
               "value": "concentration/g-l",
               "label": {
                 "en": "g/L",
                 "fr": "g/L"
-              }
+              },
+              "loinc": "2885-2"
             }
           ]
         }
@@ -4656,6 +6260,9 @@
       "references": {
         "snomed": [
           "270992008"
+        ],
+        "loinc": [
+          "2885-2"
         ]
       }
     },
@@ -4684,14 +6291,16 @@
               "label": {
                 "en": "g/dL",
                 "fr": "g/dL"
-              }
+              },
+              "loinc": "1751-7"
             },
             {
               "value": "concentration/g-l",
               "label": {
                 "en": "g/L",
                 "fr": "g/L"
-              }
+              },
+              "loinc": "1751-7"
             }
           ]
         }
@@ -4709,6 +6318,9 @@
       "references": {
         "snomed": [
           "104485008"
+        ],
+        "loinc": [
+          "1751-7"
         ]
       }
     },
@@ -4737,14 +6349,16 @@
               "label": {
                 "en": "g/dL",
                 "fr": "g/dL"
-              }
+              },
+              "loinc": "2336-6"
             },
             {
               "value": "concentration/g-l",
               "label": {
                 "en": "g/L",
                 "fr": "g/L"
-              }
+              },
+              "loinc": "2336-6"
             }
           ]
         }
@@ -4762,6 +6376,244 @@
       "references": {
         "snomed": [
           "270994009"
+        ],
+        "loinc": [
+          "2336-6"
+        ],
+        "loincMethod": [
+          "10834-0"
+        ]
+      }
+    },
+    "body-blood-serum-haptoglobin": {
+      "version": "v1",
+      "label": {
+        "en": "Haptoglobin",
+        "fr": "Haptoglobine"
+      },
+      "description": {
+        "en": "A protein that collects the hemoglobin of broken red blood cells.",
+        "fr": "Une protéine qui capte l'hémoglobine des globules rouges détruits."
+      },
+      "streamId": "body-blood-serum-haptoglobin",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              },
+              "loinc": "4542-7"
+            },
+            {
+              "value": "concentration/g-l",
+              "label": {
+                "en": "g/L",
+                "fr": "g/L"
+              },
+              "loinc": "4542-7"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-dl",
+            "to": "concentration/g-l",
+            "factor": 0.01,
+            "source": "Exact by the definition of the units: 1 mg/dL = 10 mg/L = 0.01 g/L (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "443308002"
+        ],
+        "loinc": [
+          "4542-7"
+        ]
+      }
+    },
+    "body-blood-serum-igg": {
+      "version": "v1",
+      "label": {
+        "en": "IgG",
+        "fr": "IgG"
+      },
+      "description": {
+        "en": "The most common type of antibody in your blood.",
+        "fr": "Le type d'anticorps le plus courant dans votre sang."
+      },
+      "streamId": "body-blood-serum-igg",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              },
+              "loinc": "2465-3"
+            },
+            {
+              "value": "concentration/g-l",
+              "label": {
+                "en": "g/L",
+                "fr": "g/L"
+              },
+              "loinc": "2465-3"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-dl",
+            "to": "concentration/g-l",
+            "factor": 0.01,
+            "source": "Exact by the definition of the units: 1 mg/dL = 10 mg/L = 0.01 g/L (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "45293001"
+        ],
+        "loinc": [
+          "2465-3"
+        ]
+      }
+    },
+    "body-blood-serum-iga": {
+      "version": "v1",
+      "label": {
+        "en": "IgA",
+        "fr": "IgA"
+      },
+      "description": {
+        "en": "Antibodies that protect your airways and gut.",
+        "fr": "Des anticorps qui protègent vos voies respiratoires et votre intestin."
+      },
+      "streamId": "body-blood-serum-iga",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              },
+              "loinc": "2458-8"
+            },
+            {
+              "value": "concentration/g-l",
+              "label": {
+                "en": "g/L",
+                "fr": "g/L"
+              },
+              "loinc": "2458-8"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-dl",
+            "to": "concentration/g-l",
+            "factor": 0.01,
+            "source": "Exact by the definition of the units: 1 mg/dL = 10 mg/L = 0.01 g/L (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "31651002"
+        ],
+        "loinc": [
+          "2458-8"
+        ]
+      }
+    },
+    "body-blood-serum-igm": {
+      "version": "v1",
+      "label": {
+        "en": "IgM",
+        "fr": "IgM"
+      },
+      "description": {
+        "en": "The first antibodies your body makes against an infection.",
+        "fr": "Les premiers anticorps que votre corps produit contre une infection."
+      },
+      "streamId": "body-blood-serum-igm",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              },
+              "loinc": "2472-9"
+            },
+            {
+              "value": "concentration/g-l",
+              "label": {
+                "en": "g/L",
+                "fr": "g/L"
+              },
+              "loinc": "2472-9"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-dl",
+            "to": "concentration/g-l",
+            "factor": 0.01,
+            "source": "Exact by the definition of the units: 1 mg/dL = 10 mg/L = 0.01 g/L (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "45764000"
+        ],
+        "loinc": [
+          "2472-9"
         ]
       }
     },
@@ -4790,14 +6642,16 @@
               "label": {
                 "en": "μg/dL",
                 "fr": "μg/dL"
-              }
+              },
+              "loinc": "5763-8"
             },
             {
               "value": "concentration/umol-l",
               "label": {
                 "en": "μmol/L",
                 "fr": "μmol/L"
-              }
+              },
+              "loinc": "14955-9"
             }
           ]
         }
@@ -4816,6 +6670,10 @@
       "references": {
         "snomed": [
           "273975003"
+        ],
+        "loinc": [
+          "5763-8",
+          "14955-9"
         ]
       }
     },
@@ -4844,14 +6702,16 @@
               "label": {
                 "en": "μg/dL",
                 "fr": "μg/dL"
-              }
+              },
+              "loinc": "5631-7"
             },
             {
               "value": "concentration/umol-l",
               "label": {
                 "en": "μmol/L",
                 "fr": "μmol/L"
-              }
+              },
+              "loinc": "14665-4"
             }
           ]
         }
@@ -4870,6 +6730,10 @@
       "references": {
         "snomed": [
           "85554007"
+        ],
+        "loinc": [
+          "5631-7",
+          "14665-4"
         ]
       }
     },
@@ -4898,21 +6762,24 @@
               "label": {
                 "en": "mg/dL",
                 "fr": "mg/dL"
-              }
+              },
+              "loinc": "2064-4"
             },
             {
               "value": "concentration/mg-l",
               "label": {
                 "en": "mg/L",
                 "fr": "mg/L"
-              }
+              },
+              "loinc": "2064-4"
             },
             {
               "value": "concentration/g-l",
               "label": {
                 "en": "g/L",
                 "fr": "g/L"
-              }
+              },
+              "loinc": "2064-4"
             }
           ]
         }
@@ -4942,6 +6809,9 @@
       "references": {
         "snomed": [
           "270975004"
+        ],
+        "loinc": [
+          "2064-4"
         ]
       }
     },
@@ -4970,14 +6840,16 @@
               "label": {
                 "en": "mg/dL",
                 "fr": "mg/dL"
-              }
+              },
+              "loinc": "19123-9"
             },
             {
               "value": "concentration/mmol-l",
               "label": {
                 "en": "mmol/L",
                 "fr": "mmol/L"
-              }
+              },
+              "loinc": "2601-3"
             }
           ]
         }
@@ -4996,6 +6868,10 @@
       "references": {
         "snomed": [
           "63571001"
+        ],
+        "loinc": [
+          "19123-9",
+          "2601-3"
         ]
       }
     },
@@ -5012,7 +6888,12 @@
       "streamId": "body-blood-rbc-magnesium",
       "eventType": "concentration/mg-dl",
       "type": "number",
-      "repeatable": "any"
+      "repeatable": "any",
+      "references": {
+        "loinc": [
+          "26746-8"
+        ]
+      }
     },
     "body-blood-serum-selenium": {
       "version": "v1",
@@ -5031,6 +6912,9 @@
       "references": {
         "snomed": [
           "166759002"
+        ],
+        "loinc": [
+          "5724-0"
         ]
       }
     },
@@ -5059,14 +6943,16 @@
               "label": {
                 "en": "μg/dL",
                 "fr": "μg/dL"
-              }
+              },
+              "loinc": "2923-1"
             },
             {
               "value": "concentration/umol-l",
               "label": {
                 "en": "μmol/L",
                 "fr": "μmol/L"
-              }
+              },
+              "loinc": "14905-4"
             }
           ]
         }
@@ -5085,6 +6971,10 @@
       "references": {
         "snomed": [
           "271243004"
+        ],
+        "loinc": [
+          "2923-1",
+          "14905-4"
         ]
       }
     },
@@ -5113,14 +7003,16 @@
               "label": {
                 "en": "ng/mL",
                 "fr": "ng/mL"
-              }
+              },
+              "loinc": "62292-8"
             },
             {
               "value": "concentration/nmol-l",
               "label": {
                 "en": "nmol/L",
                 "fr": "nmol/L"
-              }
+              },
+              "loinc": "68438-1"
             }
           ]
         }
@@ -5139,6 +7031,10 @@
       "references": {
         "snomed": [
           "12199005"
+        ],
+        "loinc": [
+          "62292-8",
+          "68438-1"
         ]
       }
     },
@@ -5167,14 +7063,16 @@
               "label": {
                 "en": "pg/mL",
                 "fr": "pg/mL"
-              }
+              },
+              "loinc": "62290-2"
             },
             {
               "value": "concentration/pmol-l",
               "label": {
                 "en": "pmol/L",
                 "fr": "pmol/L"
-              }
+              },
+              "loinc": null
             }
           ]
         }
@@ -5193,8 +7091,12 @@
       "references": {
         "snomed": [
           "82457009"
+        ],
+        "loinc": [
+          "62290-2"
         ]
-      }
+      },
+      "devNotes": "The pmol/L option has no LOINC: LOINC 2.83 has 1,25-dihydroxyvitamin D [Moles/volume] for D3 only (calcitriol, 14566-4), not for the D2 + D3 total the mass code 62290-2 measures."
     },
     "body-blood-serum-vitamin-b12": {
       "version": "v1",
@@ -5221,14 +7123,16 @@
               "label": {
                 "en": "pg/mL",
                 "fr": "pg/mL"
-              }
+              },
+              "loinc": "2132-9"
             },
             {
               "value": "concentration/pmol-l",
               "label": {
                 "en": "pmol/L",
                 "fr": "pmol/L"
-              }
+              },
+              "loinc": "14685-2"
             }
           ]
         }
@@ -5247,6 +7151,10 @@
       "references": {
         "snomed": [
           "271216009"
+        ],
+        "loinc": [
+          "2132-9",
+          "14685-2"
         ]
       }
     },
@@ -5275,14 +7183,16 @@
               "label": {
                 "en": "ng/mL",
                 "fr": "ng/mL"
-              }
+              },
+              "loinc": "2284-8"
             },
             {
               "value": "concentration/nmol-l",
               "label": {
                 "en": "nmol/L",
                 "fr": "nmol/L"
-              }
+              },
+              "loinc": "14732-2"
             }
           ]
         }
@@ -5301,6 +7211,10 @@
       "references": {
         "snomed": [
           "250212002"
+        ],
+        "loinc": [
+          "2284-8",
+          "14732-2"
         ]
       }
     },
@@ -5321,6 +7235,9 @@
       "references": {
         "snomed": [
           "11829003"
+        ],
+        "loinc": [
+          "30552-4"
         ]
       }
     },
@@ -5341,6 +7258,9 @@
       "references": {
         "snomed": [
           "270988001"
+        ],
+        "loinc": [
+          "1903-4"
         ]
       }
     },
@@ -5361,6 +7281,9 @@
       "references": {
         "snomed": [
           "104733005"
+        ],
+        "loinc": [
+          "13965-9"
         ]
       }
     },
@@ -5389,14 +7312,16 @@
               "label": {
                 "en": "mg/dL",
                 "fr": "mg/dL"
-              }
+              },
+              "loinc": "2093-3"
             },
             {
               "value": "concentration/mmol-l",
               "label": {
                 "en": "mmol/L",
                 "fr": "mmol/L"
-              }
+              },
+              "loinc": "14647-2"
             }
           ]
         }
@@ -5415,6 +7340,10 @@
       "references": {
         "snomed": [
           "412808005"
+        ],
+        "loinc": [
+          "2093-3",
+          "14647-2"
         ]
       }
     },
@@ -5443,14 +7372,16 @@
               "label": {
                 "en": "mg/dL",
                 "fr": "mg/dL"
-              }
+              },
+              "loinc": "2085-9"
             },
             {
               "value": "concentration/mmol-l",
               "label": {
                 "en": "mmol/L",
                 "fr": "mmol/L"
-              }
+              },
+              "loinc": "14646-4"
             }
           ]
         }
@@ -5469,6 +7400,10 @@
       "references": {
         "snomed": [
           "166832000"
+        ],
+        "loinc": [
+          "2085-9",
+          "14646-4"
         ]
       }
     },
@@ -5497,14 +7432,16 @@
               "label": {
                 "en": "mg/dL",
                 "fr": "mg/dL"
-              }
+              },
+              "loinc": "2089-1"
             },
             {
               "value": "concentration/mmol-l",
               "label": {
                 "en": "mmol/L",
                 "fr": "mmol/L"
-              }
+              },
+              "loinc": "22748-8"
             }
           ]
         }
@@ -5523,6 +7460,15 @@
       "references": {
         "snomed": [
           "166833005"
+        ],
+        "loinc": [
+          "2089-1",
+          "22748-8"
+        ],
+        "loincMethod": [
+          "13457-7",
+          "18262-6",
+          "39469-2"
         ]
       }
     },
@@ -5551,14 +7497,16 @@
               "label": {
                 "en": "mg/dL",
                 "fr": "mg/dL"
-              }
+              },
+              "loinc": "2571-8"
             },
             {
               "value": "concentration/mmol-l",
               "label": {
                 "en": "mmol/L",
                 "fr": "mmol/L"
-              }
+              },
+              "loinc": "14927-8"
             }
           ]
         }
@@ -5577,8 +7525,71 @@
       "references": {
         "snomed": [
           "271245006"
+        ],
+        "loinc": [
+          "2571-8",
+          "14927-8"
         ]
       }
+    },
+    "body-blood-serum-crp": {
+      "version": "v1",
+      "label": {
+        "en": "CRP",
+        "fr": "CRP"
+      },
+      "description": {
+        "en": "A marker of inflammation in your body.",
+        "fr": "Un marqueur de l'inflammation dans votre corps."
+      },
+      "streamId": "body-blood-serum-crp",
+      "type": "number",
+      "repeatable": "any",
+      "variations": {
+        "eventType": {
+          "label": {
+            "en": "Unit",
+            "fr": "Unité"
+          },
+          "options": [
+            {
+              "value": "concentration/mg-l",
+              "label": {
+                "en": "mg/L",
+                "fr": "mg/L"
+              },
+              "loinc": "1988-5"
+            },
+            {
+              "value": "concentration/mg-dl",
+              "label": {
+                "en": "mg/dL",
+                "fr": "mg/dL"
+              },
+              "loinc": "1988-5"
+            }
+          ]
+        }
+      },
+      "unitConversions": {
+        "factors": [
+          {
+            "from": "concentration/mg-l",
+            "to": "concentration/mg-dl",
+            "factor": 0.1,
+            "source": "Exact by the definition of the units: 1 dL = 0.1 L (SI Brochure, 9th edition, BIPM 2019)"
+          }
+        ]
+      },
+      "references": {
+        "snomed": [
+          "55235003"
+        ],
+        "loinc": [
+          "1988-5"
+        ]
+      },
+      "devNotes": "The standard CRP assay (LOINC 1988-5). The high-sensitivity assay is `body-blood-serum-crp-hs` (30522-7): the printed test name or the code decides which item, never the value."
     },
     "body-blood-serum-crp-hs": {
       "version": "v1",
@@ -5605,14 +7616,16 @@
               "label": {
                 "en": "mg/L",
                 "fr": "mg/L"
-              }
+              },
+              "loinc": "30522-7"
             },
             {
               "value": "concentration/mg-dl",
               "label": {
                 "en": "mg/dL",
                 "fr": "mg/dL"
-              }
+              },
+              "loinc": "30522-7"
             }
           ]
         }
@@ -5630,6 +7643,9 @@
       "references": {
         "snomed": [
           "711357009"
+        ],
+        "loinc": [
+          "30522-7"
         ]
       }
     },
@@ -5650,6 +7666,12 @@
       "references": {
         "snomed": [
           "416838001"
+        ],
+        "loinc": [
+          "30341-2"
+        ],
+        "loincMethod": [
+          "4537-7"
         ]
       }
     },
@@ -5678,14 +7700,16 @@
               "label": {
                 "en": "ng/dL",
                 "fr": "ng/dL"
-              }
+              },
+              "loinc": "3024-7"
             },
             {
               "value": "concentration/pmol-l",
               "label": {
                 "en": "pmol/L",
                 "fr": "pmol/L"
-              }
+              },
+              "loinc": "14920-3"
             }
           ]
         }
@@ -5704,6 +7728,10 @@
       "references": {
         "snomed": [
           "313837000"
+        ],
+        "loinc": [
+          "3024-7",
+          "14920-3"
         ]
       }
     },
@@ -5732,14 +7760,16 @@
               "label": {
                 "en": "pg/mL",
                 "fr": "pg/mL"
-              }
+              },
+              "loinc": "3051-0"
             },
             {
               "value": "concentration/pmol-l",
               "label": {
                 "en": "pmol/L",
                 "fr": "pmol/L"
-              }
+              },
+              "loinc": "14928-6"
             }
           ]
         }
@@ -5758,6 +7788,10 @@
       "references": {
         "snomed": [
           "313836009"
+        ],
+        "loinc": [
+          "3051-0",
+          "14928-6"
         ]
       }
     },
@@ -5786,14 +7820,16 @@
               "label": {
                 "en": "ng/dL",
                 "fr": "ng/dL"
-              }
+              },
+              "loinc": "3053-6"
             },
             {
               "value": "concentration/nmol-l",
               "label": {
                 "en": "nmol/L",
                 "fr": "nmol/L"
-              }
+              },
+              "loinc": "14930-2"
             }
           ]
         }
@@ -5812,6 +7848,10 @@
       "references": {
         "snomed": [
           "250668004"
+        ],
+        "loinc": [
+          "3053-6",
+          "14930-2"
         ]
       }
     },
@@ -5840,14 +7880,16 @@
               "label": {
                 "en": "ng/dL",
                 "fr": "ng/dL"
-              }
+              },
+              "loinc": "3052-8"
             },
             {
               "value": "concentration/nmol-l",
               "label": {
                 "en": "nmol/L",
                 "fr": "nmol/L"
-              }
+              },
+              "loinc": "14929-4"
             }
           ]
         }
@@ -5866,6 +7908,10 @@
       "references": {
         "snomed": [
           "51583006"
+        ],
+        "loinc": [
+          "3052-8",
+          "14929-4"
         ]
       }
     },
@@ -5886,6 +7932,9 @@
       "references": {
         "snomed": [
           "27115008"
+        ],
+        "loinc": [
+          "8099-4"
         ]
       }
     },
@@ -5906,6 +7955,9 @@
       "references": {
         "snomed": [
           "17164004"
+        ],
+        "loinc": [
+          "8098-6"
         ]
       }
     },
@@ -5934,6 +7986,9 @@
       "references": {
         "snomed": [
           "39966003"
+        ],
+        "loinc": [
+          "3013-0"
         ]
       }
     },
@@ -5954,6 +8009,9 @@
       "references": {
         "snomed": [
           "104972000"
+        ],
+        "loinc": [
+          "30567-2"
         ]
       }
     },
@@ -5974,6 +8032,9 @@
       "references": {
         "snomed": [
           "54495009"
+        ],
+        "loinc": [
+          "5385-0"
         ]
       }
     },
@@ -6002,14 +8063,16 @@
               "label": {
                 "en": "ng/mL",
                 "fr": "ng/mL"
-              }
+              },
+              "loinc": "2839-9"
             },
             {
               "value": "concentration/nmol-l",
               "label": {
                 "en": "nmol/L",
                 "fr": "nmol/L"
-              }
+              },
+              "loinc": "14890-8"
             }
           ]
         }
@@ -6028,6 +8091,10 @@
       "references": {
         "snomed": [
           "270972001"
+        ],
+        "loinc": [
+          "2839-9",
+          "14890-8"
         ]
       }
     },
@@ -6056,21 +8123,24 @@
               "label": {
                 "en": "ng/dL",
                 "fr": "ng/dL"
-              }
+              },
+              "loinc": "2986-8"
             },
             {
               "value": "concentration/nmol-l",
               "label": {
                 "en": "nmol/L",
                 "fr": "nmol/L"
-              }
+              },
+              "loinc": "14913-8"
             },
             {
               "value": "concentration/ug-l",
               "label": {
                 "en": "ng/mL",
                 "fr": "ng/mL"
-              }
+              },
+              "loinc": "2986-8"
             }
           ]
         }
@@ -6102,6 +8172,10 @@
       "references": {
         "snomed": [
           "270973006"
+        ],
+        "loinc": [
+          "2986-8",
+          "14913-8"
         ]
       }
     },
@@ -6130,14 +8204,16 @@
               "label": {
                 "en": "pg/mL",
                 "fr": "pg/mL"
-              }
+              },
+              "loinc": "2991-8"
             },
             {
               "value": "concentration/pmol-l",
               "label": {
                 "en": "pmol/L",
                 "fr": "pmol/L"
-              }
+              },
+              "loinc": "14914-6"
             }
           ]
         }
@@ -6156,6 +8232,10 @@
       "references": {
         "snomed": [
           "20436004"
+        ],
+        "loinc": [
+          "2991-8",
+          "14914-6"
         ]
       }
     },
@@ -6176,6 +8256,9 @@
       "references": {
         "snomed": [
           "166585000"
+        ],
+        "loinc": [
+          "13967-5"
         ]
       }
     },
@@ -6204,14 +8287,16 @@
               "label": {
                 "en": "μg/dL",
                 "fr": "μg/dL"
-              }
+              },
+              "loinc": "2191-5"
             },
             {
               "value": "concentration/umol-l",
               "label": {
                 "en": "μmol/L",
                 "fr": "μmol/L"
-              }
+              },
+              "loinc": "14688-6"
             }
           ]
         }
@@ -6230,6 +8315,10 @@
       "references": {
         "snomed": [
           "395134004"
+        ],
+        "loinc": [
+          "2191-5",
+          "14688-6"
         ]
       }
     },
@@ -6258,14 +8347,16 @@
               "label": {
                 "en": "ng/dL",
                 "fr": "ng/dL"
-              }
+              },
+              "loinc": "1854-9"
             },
             {
               "value": "concentration/nmol-l",
               "label": {
                 "en": "nmol/L",
                 "fr": "nmol/L"
-              }
+              },
+              "loinc": "14603-5"
             }
           ]
         }
@@ -6284,6 +8375,10 @@
       "references": {
         "snomed": [
           "271224004"
+        ],
+        "loinc": [
+          "1854-9",
+          "14603-5"
         ]
       }
     },
@@ -6312,14 +8407,16 @@
               "label": {
                 "en": "ng/dL",
                 "fr": "ng/dL"
-              }
+              },
+              "loinc": "1668-3"
             },
             {
               "value": "concentration/nmol-l",
               "label": {
                 "en": "nmol/L",
                 "fr": "nmol/L"
-              }
+              },
+              "loinc": "14569-8"
             }
           ]
         }
@@ -6338,6 +8435,10 @@
       "references": {
         "snomed": [
           "41668001"
+        ],
+        "loinc": [
+          "1668-3",
+          "14569-8"
         ]
       }
     },
@@ -6366,14 +8467,16 @@
               "label": {
                 "en": "ng/mL",
                 "fr": "ng/mL"
-              }
+              },
+              "loinc": "2842-3"
             },
             {
               "value": "concentration/uiu-ml",
               "label": {
                 "en": "mIU/L",
                 "fr": "mIU/L"
-              }
+              },
+              "loinc": "15081-3"
             }
           ]
         }
@@ -6390,6 +8493,10 @@
       "references": {
         "snomed": [
           "313442000"
+        ],
+        "loinc": [
+          "2842-3",
+          "15081-3"
         ]
       }
     },
@@ -6418,14 +8525,16 @@
               "label": {
                 "en": "μg/dL",
                 "fr": "μg/dL"
-              }
+              },
+              "loinc": "2143-6"
             },
             {
               "value": "concentration/nmol-l",
               "label": {
                 "en": "nmol/L",
                 "fr": "nmol/L"
-              }
+              },
+              "loinc": "14675-3"
             }
           ]
         }
@@ -6444,6 +8553,10 @@
       "references": {
         "snomed": [
           "271535005"
+        ],
+        "loinc": [
+          "2143-6",
+          "14675-3"
         ]
       }
     },
@@ -6464,6 +8577,9 @@
       "references": {
         "snomed": [
           "80529009"
+        ],
+        "loinc": [
+          "10334-1"
         ]
       }
     },
@@ -6492,14 +8608,16 @@
               "label": {
                 "en": "pg/mL",
                 "fr": "pg/mL"
-              }
+              },
+              "loinc": "2731-8"
             },
             {
               "value": "concentration/pmol-l",
               "label": {
                 "en": "pmol/L",
                 "fr": "pmol/L"
-              }
+              },
+              "loinc": "14866-8"
             }
           ]
         }
@@ -6518,6 +8636,10 @@
       "references": {
         "snomed": [
           "271541003"
+        ],
+        "loinc": [
+          "2731-8",
+          "14866-8"
         ]
       }
     },
@@ -6538,6 +8660,9 @@
       "references": {
         "snomed": [
           "49466006"
+        ],
+        "loinc": [
+          "2141-0"
         ]
       }
     },
@@ -6558,6 +8683,9 @@
       "references": {
         "snomed": [
           "42379004"
+        ],
+        "loinc": [
+          "1763-2"
         ]
       }
     },
@@ -7419,6 +9547,9 @@
       "references": {
         "snomed": [
           "167382006"
+        ],
+        "loinc": [
+          "25639-6"
         ]
       }
     },
@@ -7439,6 +9570,9 @@
       "references": {
         "snomed": [
           "67900009"
+        ],
+        "loinc": [
+          "25372-4"
         ]
       }
     },
@@ -7497,6 +9631,9 @@
       "references": {
         "snomed": [
           "167381004"
+        ],
+        "loinc": [
+          "15079-7"
         ]
       }
     },
@@ -7668,9 +9805,6 @@
         ],
         "snomed": [
           "301438001"
-        ],
-        "loinc": [
-          "63800-5"
         ]
       }
     },
@@ -7732,9 +9866,6 @@
         ],
         "snomed": [
           "228151002"
-        ],
-        "loinc": [
-          "63801-3"
         ]
       }
     },
@@ -7799,9 +9930,6 @@
         ],
         "snomed": [
           "413156007"
-        ],
-        "loinc": [
-          "63802-1"
         ]
       }
     },
@@ -13047,9 +15175,6 @@
       "references": {
         "snomed": [
           "48694002"
-        ],
-        "loinc": [
-          "69737-5"
         ]
       }
     },
@@ -13107,9 +15232,6 @@
       "references": {
         "snomed": [
           "366979004"
-        ],
-        "loinc": [
-          "75275-8"
         ]
       }
     },
@@ -17640,6 +19762,11 @@
         "type": "number",
         "minimum": 0
       },
+      "concentration/count-ul": {
+        "description": "Counts per microliter (#/μL)",
+        "type": "number",
+        "minimum": 0
+      },
       "concentration/megacount-ml": {
         "description": "Megacounts per milliliter (10⁶ counts/mL)",
         "type": "number",
@@ -20929,6 +23056,13 @@
         },
         "symbol": "#/mL"
       },
+      "concentration/count-ul": {
+        "name": {
+          "en": "Counts per microliter",
+          "fr": "Nombre par microlitre"
+        },
+        "symbol": "/μL"
+      },
       "concentration/megacount-ml": {
         "name": {
           "en": "Megacounts per milliliter",
@@ -21259,11 +23393,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-10-28T11:25:53.157Z"
+      "updatedAt": "2026-10-28T11:04:17.041Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-10-27T15:19:26.263Z"
+      "updatedAt": "2026-10-27T12:04:35.731Z"
     }
   },
   "settings": {

@@ -4140,6 +4140,11 @@
       "type": "number",
       "minimum": 0
     },
+    "concentration/count-ul": {
+      "description": "Counts per microliter (#/μL)",
+      "type": "number",
+      "minimum": 0
+    },
     "concentration/megacount-ml": {
       "description": "Megacounts per milliliter (10⁶ counts/mL)",
       "type": "number",
@@ -7428,6 +7433,13 @@
         "fr": "Nombre par millilitre"
       },
       "symbol": "#/mL"
+    },
+    "concentration/count-ul": {
+      "name": {
+        "en": "Counts per microliter",
+        "fr": "Nombre par microlitre"
+      },
+      "symbol": "/μL"
     },
     "concentration/megacount-ml": {
       "name": {
