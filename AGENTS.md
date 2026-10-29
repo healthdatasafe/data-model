@@ -452,8 +452,8 @@ Commonly-cited scales / terminologies for mapping new items:
 ### Mental health / distress
 - **Kessler K6 / K10** — 6/10 items, combined psychological distress.
 - **HADS** — 14 items, split anxiety (7) + depression (7).
-- **PHQ-2 / PHQ-9** — depression (LOINC 75275-8 for PHQ-9 total).
-- **GAD-2 / GAD-7** — anxiety (LOINC 69737-5 for GAD-7 total).
+- **PHQ-2 / PHQ-9** — depression (LOINC 44261-6 for the PHQ-9 total score; 75275-8, once listed here, is "Cognitive function [Interpretation]").
+- **GAD-2 / GAD-7** — anxiety (LOINC 70274-6 for the GAD-7 total score; 69737-5 is the GAD-7 panel).
 - **WHO-5** — positive wellbeing.
 - **DASS-21** — depression / anxiety / stress.
 - **Apple HealthKit `HKStateOfMind`** (iOS 17+) — valence + 38 emotion labels.
@@ -473,6 +473,17 @@ Commonly-cited scales / terminologies for mapping new items:
 
 In `references`, each system's codes are a list, even a single code (`snomed: ["27113001"]`); the schema refuses a
 bare string, so readers handle one shape.
+
+**LOINC, three places (3.32.0).** `references.loinc` lists the exported code of every property the item stores
+(mass and moles of one analyte are two codes): the methodless code, else the code most reports use when the method
+does not change the number. On an item with unit options and LOINC, **every** option states in `loinc` the code it
+stores, `null` when LOINC has none for that unit: never inherited, so a unit added later cannot export under another
+property's code. The loader refuses a missing option code, an option code the item does not list, a listed code no
+option stores, and two codes on a one-unit number item. `references.loincMethod` lists codes that make the item the
+owner of a result coded that way and are never exported: method-specific codes ("… by Automated count"), codes whose
+LOINC definition does not match the stored value (Quick % as 5894-1), discouraged codes labs still send. A code has
+one owner across both lists. Verify every code on tx.fhir.org before asserting it (`documentation/BLOOD-CHEMISTRY.md`
+§ Codes), including its property against the option's unit.
 
 - **SNOMED CT** — https://bioportal.bioontology.org/ontologies/SNOMEDCT
 - **LOINC** — https://loinc.org/

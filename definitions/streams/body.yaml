@@ -17,11 +17,13 @@ children:
     name: Blood
     children:
       - id: body-blood-serum
-        name: Serum
+        name: Serum or plasma
         children:
           # Metabolic
           - id: body-blood-serum-glucose-fasting
             name: Fasting glucose
+          - id: body-blood-serum-glucose-random
+            name: Glucose (random)
           - id: body-blood-serum-insulin-fasting
             name: Fasting insulin
           - id: body-blood-serum-c-peptide
@@ -60,8 +62,15 @@ children:
             name: LDH
           - id: body-blood-serum-bilirubin-total
             name: Total bilirubin
+          - id: body-blood-serum-bilirubin-direct
+            name: Direct bilirubin
           - id: body-blood-serum-bile-acids
             name: Bile acids
+          # Pancreas
+          - id: body-blood-serum-lipase
+            name: Lipase
+          - id: body-blood-serum-amylase
+            name: Amylase
           # Renal & electrolytes
           - id: body-blood-serum-bun
             name: Blood urea nitrogen
@@ -79,6 +88,8 @@ children:
             name: CO2
           - id: body-blood-serum-calcium
             name: Calcium
+          - id: body-blood-serum-phosphate
+            name: Phosphate
           # Protein
           - id: body-blood-serum-protein-total
             name: Total protein
@@ -86,6 +97,14 @@ children:
             name: Albumin
           - id: body-blood-serum-globulin
             name: Globulin
+          - id: body-blood-serum-haptoglobin
+            name: Haptoglobin
+          - id: body-blood-serum-igg
+            name: IgG
+          - id: body-blood-serum-iga
+            name: IgA
+          - id: body-blood-serum-igm
+            name: IgM
           # Minerals
           - id: body-blood-serum-zinc
             name: Zinc
@@ -125,6 +144,8 @@ children:
           - id: body-blood-serum-triglycerides
             name: Triglycerides
           # Inflammation
+          - id: body-blood-serum-crp
+            name: CRP
           - id: body-blood-serum-crp-hs
             name: hs-CRP
           # Thyroid — function & antibodies
@@ -203,6 +224,41 @@ children:
             name: Eosinophils
           - id: body-blood-cbc-basophils
             name: Basophils
+          # Flat like the rest: -reticulocytes-immature-fraction and -reticulocytes-hemoglobin look like
+          # children of -reticulocytes but are siblings, so a grant on the reticulocyte stream covers
+          # neither. The absolute counts (*-count items) sit on the cell's own stream and add none.
+          - id: body-blood-cbc-mchc
+            name: MCHC
+          - id: body-blood-cbc-mpv
+            name: MPV
+          - id: body-blood-cbc-reticulocytes
+            name: Reticulocytes
+          - id: body-blood-cbc-reticulocytes-immature-fraction
+            name: Immature reticulocyte fraction
+          - id: body-blood-cbc-reticulocytes-hemoglobin
+            name: Reticulocyte hemoglobin
+          - id: body-blood-cbc-nucleated-rbc
+            name: Nucleated red blood cells
+          - id: body-blood-cbc-neutrophils-segmented
+            name: Segmented neutrophils
+          - id: body-blood-cbc-neutrophils-band
+            name: Band neutrophils
+          - id: body-blood-cbc-myelocytes
+            name: Myelocytes
+          - id: body-blood-cbc-metamyelocytes
+            name: Metamyelocytes
+      # Citrated plasma — coagulation. Named for the panel, like body-blood-cbc (plan 114 Q23).
+      - id: body-blood-coagulation
+        name: Coagulation
+        children:
+          - id: body-blood-coagulation-prothrombin-time
+            name: Prothrombin time
+          - id: body-blood-coagulation-prothrombin-activity
+            name: Prothrombin activity (Quick)
+          - id: body-blood-coagulation-aptt
+            name: aPTT
+          - id: body-blood-coagulation-fibrinogen
+            name: Fibrinogen
       # Erythrocyte specimen — distinct from serum for the same analyte
       - id: body-blood-rbc
         name: Red blood cell

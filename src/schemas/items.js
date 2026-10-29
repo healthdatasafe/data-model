@@ -275,7 +275,9 @@ const itemSchema = {
     },
     // Codes for the item's concept, per code system (snomed, loinc, icf, icd10, …): always a list,
     // even of one code, so a reader never has to handle two shapes (until 3.29 a single code could be a
-    // bare string, and some items used each form).
+    // bare string, and some items used each form). `loincMethod` lists LOINC codes that decide ownership and are
+    // never exported: method-specific codes ("… by Automated count") of the same observation, and codes labs send
+    // for the analyte whose LOINC definition does not match the stored scale (Quick % as 5894-1).
     references: {
       type: 'object',
       nullable: false,
@@ -360,7 +362,11 @@ const itemSchema = {
                 nullable: false,
                 properties: {
                   value: { type: 'string' },
-                  label: { $ref: 'defs.json#/definitions/localized' }
+                  label: { $ref: 'defs.json#/definitions/localized' },
+                  // The LOINC code of what this option stores (mass and moles of one analyte are two codes):
+                  // one of the item's `references.loinc`, or null for a unit LOINC has no code for. Stated on every
+                  // option of an item that asserts LOINC, never inherited. Rules in src/items.js (checkLoincRefs).
+                  loinc: { type: 'string', minLength: 1, nullable: true }
                 },
                 required: ['value', 'label'],
                 additionalProperties: false

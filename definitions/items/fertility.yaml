@@ -538,6 +538,7 @@ body-urine-hormones-fsh:
     relativeDays: [2, 3, 4]
   references:
     snomed: ["167382006"]
+    loinc: ["25639-6"]
 body-urine-hormones-hcg:
   version: v2
   label:
@@ -554,6 +555,7 @@ body-urine-hormones-hcg:
   # concept (167391005 is a 24-hour assay, a different procedure).
   references:
     snomed: ["67900009"]
+    loinc: ["25372-4"]
 body-urine-hormones-pdg:
   version: v2
   label:
@@ -598,6 +600,7 @@ body-urine-hormones-lh:
     relativeDays: [2, 3, 4]
   references:
     snomed: ["167381004"]
+    loinc: ["15079-7"]
 # The FSH/hCG/PdG/E3G rename aliases (fertility-hormone-{fsh,hcg,pdg,e3g}) were removed
 # in Plan 83 Phase 6 once bridge-mira and doctor-dashboard migrated to the
 # body-urine-hormones-* keys — the rename kept the same streamId, so no data moved and

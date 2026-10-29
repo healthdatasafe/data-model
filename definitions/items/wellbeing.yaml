@@ -242,7 +242,8 @@ wellbeing-mental-distress-anxiety:
   repeatable: unlimited
   references:
     snomed: ["48694002"]
-    loinc: ["69737-5"]
+  # No LOINC (B-2026-10-28-41): 69737-5, asserted until 3.32.0, is the GAD-7 panel, and the GAD-7 total (70274-6)
+  # is a 0-21 score, not this five-level answer.
 
 wellbeing-mental-distress-depression:
   version: v1
@@ -279,7 +280,8 @@ wellbeing-mental-distress-depression:
   repeatable: unlimited
   references:
     snomed: ["366979004"]
-    loinc: ["75275-8"]
+  # No LOINC (B-2026-10-28-41): 75275-8, asserted until 3.32.0, is "Cognitive function [Interpretation]". The
+  # PHQ-9 total (44261-6) is a 0-27 score, not this five-level answer.
 
 # Stress — the third dimension of the validated DASS-21 (Depression/Anxiety/Stress)
 # triad, completing the mental-distress domain alongside -anxiety and -depression.
