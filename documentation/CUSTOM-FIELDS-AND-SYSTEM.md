@@ -236,8 +236,41 @@ adds is a structured, timestamped record on both accounts.
 
 Implementation: `hds-lib` `cmcDataExport` (`requestDataExport`, `fulfillDataExportRequest`,
 `listDataExportRequests`); doctor-dashboard shows the queue per patient, hds-webapp lets the
-patient send a request and see its status. Other `hds.kind` values may follow the same pattern;
-none is defined today.
+patient send a request and see its status. The document kinds below follow the same pattern.
+
+### Documents in a conversation: `notification/alert-cmc` kinds *(3.37.0)*
+
+A person shares one document with a contact, takes it back, or a contact sends one (Route B). The
+document itself is read through the data grant by its event id; the alert only tells the other side.
+Streams and rules: [DOCUMENTS.md](DOCUMENTS.md#sharing-one-document-the-document-shares-root-3370).
+
+Written by the sender on its own `<scope>:collectors:<peerSlug>` stream; the plugin delivers it.
+
+```json
+{
+  "level": "info",
+  "title": { "en": "Document shared" },
+  "body": { "en": "A document was shared with you in this conversation." },
+  "code": "hds-document-shared",
+  "hds": { "kind": "document-shared", "eventId": "<the document's event id>" }
+}
+```
+
+- `level: 'info'`, and a **fixed** localised `title` and `body` per kind (the plugin requires both),
+  **never the document's title**: the alert stays in the receiver's account through any take-back.
+- `code: 'hds-<kind>'` is a secondary marker; `hds.kind` is the discriminator. No `ackRequired`.
+
+| `hds.kind` | Direction | `hds` fields | Meaning |
+|---|---|---|---|
+| `document-shared` | person → contact | `eventId` | One document is now readable by the contact (a share child was added to it). |
+| `document-unshared` | person → contact | `eventId` | Taken back. |
+| `document-sent` | contact → person | `eventId` | The id returned by the contact's create in the person's account (Route B). |
+
+**Reading.** The receiver keys bubbles by `(kind, eventId)`, so a duplicate (two devices) shows once;
+between `document-shared` and `document-unshared` of one `eventId` the later event `time` wins. On
+`document-unshared`, a 403 or a missing event, the reader shows "no longer available" and drops any
+cached file. On `document-sent` the person's app moves the event to `documents` (DOCUMENTS.md) and
+refuses what is not a `file/xds-v1` document.
 
 ### `consent/scope-update-cmc` with a `content.hds` block *(patient → connection)*: what changed, and why
 
@@ -301,8 +334,9 @@ outcome as those functions do.
   object), never also in `hds.message`; `hds.message` carries the notice only where pryv has no field for
   it (a self-initiated update, an acceptance). `hds.asked` is not text: it lists streams, and a reader names
   them from the model, so it never repeats `reason`.
-- A field for a conversation's documents is not part of the convention (it waits for the documents
-  stream design).
+- No field is added for a conversation's documents. A `document-shares` child appears in
+  `newPermissions` (and `removed` / `added`) like any stream; the model does not know it, so a reader
+  labels it from its `clientData.hdsDocumentShare.direction` (DOCUMENTS.md), never from its name.
 
 **Read-only fallback, time-boxed.** An early hds-webapp prototype wrote `removed`, `added`, `asked` and
 `message` at the top level of the content, on events written before 2026-10-26 on the demo platform. No

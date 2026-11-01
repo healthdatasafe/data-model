@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.37.0] - 2026-11-01
+
+### Added: sharing one document in a conversation (`document-shares`)
+
+- **Root `document-shares`** ("Shared documents"), covered by no existing grant and never granted as a whole. Its
+  children are created by the person's app, one per relationship and direction: id `share-` + 12 lowercase base36,
+  name = the id, `clientData.hdsDocumentShare = { relationship, direction: 'shared' | 'received' }`. A child is granted
+  to one contact, `read` (documents the person shares) or `create-only` (documents the contact may send). A shared
+  document stays one event on `documents` with the share id added to its `streamIds`; a received one is moved to
+  `['documents']` on receipt. No item anywhere in the subtree. Readers label a child from `direction` (labels EN / FR /
+  ES in DOCUMENTS.md), never from its name. Revoke and restore cleanup documented.
+- **`notification/alert-cmc` kinds** `document-shared`, `document-unshared`, `document-sent` (`hds.eventId`; fixed
+  title and body, never the document's title; `code: 'hds-<kind>'`) in CUSTOM-FIELDS-AND-SYSTEM.md.
+- **`clientData.hdsDocumentShare`** indexed in PROVENANCE.md; AGENTS.md non-clinical roots four → five.
+- Tests `[DSHR-STR-1]`, `[DSHR-STR-2]`.
+
+No eventType, item or settings key; no `fhir:lock` change. Fable-reviewed (blocking on the first draft, then clean
+with edits, applied).
+
 ## [3.36.0] - 2026-10-29
 
 ### Added: `cards` documented on `settings/hds-webapp-diary` (v 2)

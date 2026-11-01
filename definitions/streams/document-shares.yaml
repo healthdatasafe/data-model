@@ -1,0 +1,6 @@
+# Per-relationship share children, created by the person's app (`share-` + 12 lowercase base36, name = id), each
+# granted to one contact: `read` (documents the person shares) or `create-only` (documents the contact may send).
+# Never granted as a whole; no item anywhere in the subtree. See documentation/DOCUMENTS.md.
+id: document-shares
+name: Shared documents
+parentId: null
