@@ -931,6 +931,11 @@
     "parentId": null
   },
   {
+    "id": "document-shares",
+    "name": "Shared documents",
+    "parentId": null
+  },
+  {
     "id": "documents",
     "name": "Medical documents",
     "parentId": null

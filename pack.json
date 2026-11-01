@@ -1,6 +1,6 @@
 {
-  "version": "3.36.0",
-  "publicationDate": "2026-10-29T18:30:53.850Z",
+  "version": "3.37.0",
+  "publicationDate": "2026-11-01T16:13:40.400Z",
   "streams": [
     {
       "id": "activity",
@@ -931,6 +931,11 @@
     {
       "id": "consents",
       "name": "Privacy and consents",
+      "parentId": null
+    },
+    {
+      "id": "document-shares",
+      "name": "Shared documents",
       "parentId": null
     },
     {
