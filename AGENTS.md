@@ -37,13 +37,15 @@ The same eventType is reused by many items. Adding a new eventType is rare and n
 
 `body-*`, `symptom-*`, `wellbeing-*`, `activity-*`, `fertility-*`, `nutrition-*`, `lifestyle-*`, `medication-*`, `profile-*`, `family-*`. Mirrors body systems / function domains, close to SNOMED CT and ICF categorisations.
 
-**Four non-clinical roots besides `profile`: `sync-status` (3.13.0), `consents` (plan 91), `documents` (3.25.0) and `encounter` (3.34.0).** `sync-status` holds a connector's user-visible status — one `type: system` item, `sync-status`, and one `role: context` leaf per connector (`sync-status-mira`, …). Partner-named *streams* are accepted there because the leaves are D3 context markers, not vocabulary; partner-named *item keys* stay forbidden (§1). See [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
+**Five non-clinical roots besides `profile`: `sync-status` (3.13.0), `consents` (plan 91), `documents` (3.25.0), `encounter` (3.34.0) and `document-shares` (3.37.0).** `sync-status` holds a connector's user-visible status — one `type: system` item, `sync-status`, and one `role: context` leaf per connector (`sync-status-mira`, …). Partner-named *streams* are accepted there because the leaves are D3 context markers, not vocabulary; partner-named *item keys* stay forbidden (§1). See [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
 
 `consents` holds the account-level consent record: one `type: system` item, `consent-record`, append-only, written by the account app with the personal token and requested by no app. See [`documentation/CONSENTS.md`](documentation/CONSENTS.md).
 
 `documents` holds medical documents on `file/xds-v1`; its `type: attachments` item is `document` (3.29.0; DOCUMENTS.md). A document's kind and theme are its class and type codes, never a child of a clinical root (such a child would be covered by every grant on that root). See [`documentation/DOCUMENTS.md`](documentation/DOCUMENTS.md).
 
 `encounter` holds care visits and the providers involved: one consent unit whose root and `encounter-provider` hold no item, with three leaves, `encounter-visit` (`encounter/visit-v1`), `encounter-provider-person` (`provider/practitioner-v1`) and `encounter-provider-organization` (`provider/organization-v1`), each a `composite` item. One FHIR resourceType per leaf, so each can later get its own SMART scope. Event ids in content are mirrored in `clientData.related` (a MUST, PROVENANCE.md); providers are deduplicated by `clientData.hdsGln` / `hdsZsr`. See [`documentation/ENCOUNTER.md`](documentation/ENCOUNTER.md).
+
+`document-shares` holds per-relationship share children that the person's app creates (`share-` + 12 base36, name = id, `clientData.hdsDocumentShare`), each granted to one contact: `read` for the documents the person shares, `create-only` for the documents the contact may send. The root is never granted as a whole, and **no item sits anywhere in the subtree** (a first): a shared document stays on `documents` and resolves through that stream id. See [`documentation/DOCUMENTS.md`](documentation/DOCUMENTS.md).
 
 **Do not create questionnaire-branded streams** (e.g. `questionnaire-eq5d5l`). Each data point lands in its clinical-domain stream; the questionnaire's identity lives in the *form template* (a `CollectorRequest` constructed via [hds-lib-js](https://github.com/healthdatasafe/hds-lib-js)'s `appTemplates.CollectorRequest` / `CollectorSection`), not in `data-model`.
 
@@ -376,7 +378,7 @@ data-model/
 │   ├── PROVENANCE.md                      # clientData keys: hdsInstrument, related.<eventId>, sourceKey; index of the others
 │   ├── PARTIAL-DATES.md                   # Partial / approximate dates: hdsTimePrecision, time at period start 12:00 UTC
 │   ├── CONSENTS.md                        # Account-level consent record: consents root, `type: system` item
-│   ├── DOCUMENTS.md                       # Medical documents: documents root, `type: attachments` item, file/xds-v1
+│   ├── DOCUMENTS.md                       # Medical documents: documents root, `type: attachments` item, file/xds-v1; document-shares
 │   ├── ENCOUNTER.md                       # Care visits and providers: encounter root, encounter/visit-v1, provider/*-v1, identifiers
 │   └── MEDICATION.md                      # Coding a medication read from a document: Swiss brand label, ATC hdsId
 │

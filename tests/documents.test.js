@@ -74,6 +74,26 @@ describe('[DOCS] Medical documents and read markers', () => {
     });
   });
 
+  // One document shared with one contact (3.37.0): share children are created by the person's app, so the model
+  // carries the root only, and no item anywhere under it.
+  describe('[DSHR-STR] document-shares', () => {
+    it('[DSHR-STR-1] document-shares is a root with no children', () => {
+      const root = streams.streamsById['document-shares'];
+      assert.ok(root, 'document-shares must exist');
+      assert.strictEqual(root.parentId, null);
+      assert.strictEqual(root.name, 'Shared documents');
+      assert.ok(streams.roots.find((r) => r.id === 'document-shares'));
+      assert.ok(!root.children || root.children.length === 0);
+    });
+
+    it('[DSHR-STR-2] no item on document-shares, and a shared document still resolves on documents', () => {
+      const on = Object.entries(itemsById).filter(([, i]) => i.streamId === 'document-shares').map(([k]) => k);
+      assert.deepStrictEqual(on, [], 'no item on document-shares');
+      assert.strictEqual(findItemForEvent('file/xds-v1', 'document-shares'), null);
+      assert.strictEqual(findItemForEvent('file/xds-v1', 'documents'), itemsById.document);
+    });
+  });
+
   for (const [flavour, make] of [
     ['draft-04 (the cores)', () => new AjvDraft04({ strict: false, allErrors: true, coerceTypes: false, validateFormats: true, logger: false })],
     ['draft-07', () => new Ajv({ strict: false, allErrors: true, coerceTypes: false, logger: false })]

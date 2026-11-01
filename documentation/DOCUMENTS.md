@@ -140,11 +140,67 @@ links; if the two drift, the content is authoritative. An author's `name` is the
 one field.
 
 **Visibility.** `title`, `authors[].name`, `organization` and `service` are free text and are shown to every reader of
-the stream.
+the stream, and to the contact a document is shared with.
 
 **Validation.** The cores do not validate HDS types (an HDS type is unknown to them, so content validation is
 skipped), and no core code reads `attachmentRequired`. Like every HDS schema it is advisory there; a writer
 validates against the pack.
+
+## Sharing one document: the `document-shares` root (3.37.0)
+
+A person shares one document with one contact, and lets a contact send documents, through a child of a separate root.
+The document stays one event in `documents`, never copied.
+
+| | |
+|---|---|
+| Stream | `document-shares` ("Shared documents"), a root; its children are created by the person's app |
+| Item | none, anywhere in the subtree: `itemsDefs.forEvent` resolves a document through its `documents` stream id |
+| Stream key | `clientData.hdsDocumentShare` on each child ([PROVENANCE.md](PROVENANCE.md)) |
+| Alerts | `document-shared`, `document-unshared`, `document-sent` ([CUSTOM-FIELDS-AND-SYSTEM.md](CUSTOM-FIELDS-AND-SYSTEM.md#documents-in-a-conversation-notificationalert-cmc-kinds-3370)) |
+
+**Why a separate root.** Children of `documents` would show every vault reader whom the person shares with (every
+reader of a stream sees its children's names and `clientData`), and would inherit every grant on `documents`.
+`:_cmc:` subtrees are forbidden for reading.
+
+**One child per relationship and direction, created by the person's app.**
+
+- `id` = `share-` + 12 lowercase base36 characters (the platform takes `^[a-z0-9-]{1,100}$` at creation): random,
+  never derived from a name, never reused across relationships, even with the same contact.
+- `name` = the id itself. Pryv refuses two siblings with the same name, and the name must carry nothing.
+- `clientData.hdsDocumentShare = { relationship: <CMC relationship id>, direction: 'shared' | 'received' }`. Only the
+  contact granted that child reads it, and the relationship is its own.
+- The person's app creates the root (with its model name) before the first grant, as for `documents` and `consents`.
+
+**Never granted as a whole.** A child is granted to one contact, by `consent/scope-update-cmc`:
+
+- `direction: 'shared'`, level `read`: the documents the person shares with that contact.
+- `direction: 'received'`, level `create-only`: the documents that contact may send (Route B).
+
+**A shared document** has `streamIds = ['documents', <one or more share-… ids>]`. Sharing adds a share id, taking it
+back removes it (`events.update` replaces the whole list: write, re-read, check). Readers of `documents` see those
+ids; they are opaque, so they learn how many shares exist, not with whom.
+
+**A received document: replace, don't add.** The platform refuses an event to a reader when any of its streams is
+`create-only` for that reader, so a document left in the receive child could never be shared back to its sender. On
+receipt the person's app sets `streamIds = ['documents']` in one `events.update` (after checking it is a `file/xds-v1`
+event with its attachment). The receive child holds nothing processed.
+
+**Labels.** Readers never show a share child's name. They label it from `direction`, from the viewer's side:
+
+| `direction` | Viewer | en | fr | es |
+|---|---|---|---|---|
+| `shared` | the person | Shared documents | Documents partagés | Documentos compartidos |
+| `shared` | the contact | Documents shared with you | Documents partagés avec vous | Documentos compartidos con usted |
+| `received` | the person | Received documents | Documents reçus | Documentos recibidos |
+| `received` | the contact | Documents you send | Documents que vous envoyez | Documentos que usted envía |
+
+**When a relationship ends.** On a full revoke the person's app first processes the receive child (every event on it
+gets `streamIds = ['documents']`), then deletes both children with `mergeEventsWithParent: false`; shared documents
+keep `documents`. A restore recreates streams with their ids and `clientData` and keeps `streamIds`, but not accesses:
+the person's app deletes a share child whose relationship no longer exists.
+
+**Already sharing everything.** A contact that reads `documents`, a parent or `*` already reads every document: the
+app sends only the alert, and offers no take-back.
 
 ## Open points
 
@@ -153,7 +209,13 @@ validates against the pack.
 - Writer-side enforcement of `attachmentRequired` in hds-lib is optional and not done.
 - Per-kind child streams (to share only lab reports, for example) are not modelled. They can be added later as
   children of `documents` without breaking a grant on the root, but a grant on a child sees only the documents filed
-  under it after the split: earlier ones would need re-filing, account by account.
+  under it after the split: earlier ones would need re-filing, account by account. One document is shared through
+  `document-shares` (above), not through a child of `documents`.
+- A document a contact sends is written by the contact (Route B): the contact cannot correct or retract one sent to the
+  wrong person, and the platform bounds neither its type nor its size. Delivery by the platform, attachment included,
+  is asked of Pryv; its event type will be the platform's.
+- A superseded document: a share does not follow the new version. Whether marking the old one `superseded` should
+  tell the contact that a newer one exists is open.
 - Not modelled yet, both minor to add: XDS `uniqueId` / FHIR `masterIdentifier` (to recognise a document already
   imported from the EPR) and `serviceStartTime` / `serviceStopTime` (`context.period`).
 - `status` may gain `entered-in-error` (FHIR has it, XDS does not) if a need appears.
