@@ -193,7 +193,7 @@ The operator's dashboard reads `app-system-in`, joins the ack to the alert by `a
 
 ---
 
-## CMC system messages carrying an HDS payload: data-export requests, documents, reminders, scope updates
+## CMC system messages carrying an HDS payload: data-export requests, documents, reminders, scope requests and updates
 
 The CMC plugin (open-pryv.io `components/cmc`) forwards only its own event types between a
 patient and a doctor; a type HDS would define here would never be delivered. HDS therefore rides
@@ -327,6 +327,83 @@ The person's app never writes this kind. A reader keeps only alerts carrying `co
 (stamped by the plugin on delivery); an alert without `from` on a stream is the writer's own copy,
 which only the contact's app reads back (to show when it last reminded the person of an item).
 
+### `consent/scope-request-cmc` with a `content.hds` block *(connection → person)*: the updated data set *(3.41.0)*
+
+A person who accepted an invitation keeps a frozen copy of the data set (the FormSpec): hds-lib copies the
+invite's `hdsFormSpec` onto her `consent/accept-cmc` event and her app reads only that copy. When the
+connection (a doctor) changes the data set, the new version reaches her **inside a scope request**, and her
+acceptance replaces her copy. Every change is confirmed by the person, including one that stays within
+what she already shares.
+
+The platform delivers the request's whole content (plus `from`); its validator checks `newPermissions`,
+`expires` and `message` and lets other keys through (open-pryv.io `components/cmc/src/validators.ts`,
+`validateSystemScopeRequest`). The mirrored schema declares no `additionalProperties`, and `[ETLM-CMC-5]`
+keeps it that way.
+
+```json
+{
+  "newPermissions": [{ "streamId": "body-weight", "level": "read" }, { "streamId": "body-temperature", "level": "read" }],
+  "message": { "en": "Your data set was updated: Body temperature was added.", "fr": "…" },
+  "hds": {
+    "formSpec": { "version": 1, "title": { "en": "Cycle follow-up" }, "description": { "en": "…" }, "permissions": [], "sections": [] },
+    "formSpecHash": "sha256:<64 hex>"
+  }
+}
+```
+
+| `hds` field | Type | Meaning |
+|---|---|---|
+| `formSpec` | object | The data set as it stands once the person accepts: always a complete hds-lib `FormSpec` (`version: 1` is its shape version), the same shape as the invite's `hdsFormSpec`. Never carries `openLink`; may carry `source` (the public template it was imported from). |
+| `formSpecHash` | string, `sha256:<hex>` | The writer's hds-lib `formSpecFingerprint(formSpec)` (computed without `source` and `openLink`), so the connection matches a person's version without recomputing it. Present whenever `formSpec` is. A reader never checks it. |
+
+**Who can write it.** `@pryv/cmc` (3.22.0) `proposeScopeUpdate` writes a fixed content (`newPermissions`,
+`message`, `expires`), so the `hds` block comes from an hds-lib helper (to be added in `cmcScope`) that
+writes the event with `events.create` and waits for delivery as `proposeScopeUpdate` does. Written by the
+connection on its own `<scope>:collectors:<personSlug>` stream; the plugin delivers it to the person's
+`<scope>:collectors:<connectionSlug>` stream.
+
+**Rules.**
+
+- **The permissions are authoritative; `formSpec` is what the app shows.** `newPermissions` is the full set
+  the grant will hold (pryv's rule). The writer makes it cover every permission the data set needs
+  (`deriveCmcPermissions(formSpec)`); it may be wider: narrowing the grant to the data set is the
+  connection's choice, never automatic. A data set with no permissions derives to `hds-noop`, so
+  `newPermissions` then carries `hds-noop` (the schema requires at least one entry). A reader never derives
+  the grant from `formSpec.permissions` and does not check the cover: the grant is what the platform
+  applied, and items it does not cover stay in the person's form and are simply not read by the connection.
+- **A change within the grant is a request too**, with `newPermissions` equal to the current grant. The
+  platform applies an unchanged set like any other (the grant does not change) and records the answer.
+- **No capability in a copy.** `openLink` holds the permanent link's capability URL: the writer removes it
+  from every FormSpec sent to a person, here and in the invite's `hdsFormSpec`.
+- **Requests go out in order, and lapse.** The platform knows nothing of superseded requests: an older
+  request still unanswered and unexpired can be accepted later and sets the grant to its older set. So the
+  writer sends a new request on a relationship only once the previous one is delivered (`remoteEventId`
+  recorded on its trigger) or has failed, so that delivery order is send order on both accounts, and it
+  sets `expires` (hds-lib default: 30 days).
+- **One current request per relationship.** When several unanswered, unexpired requests on one collectors
+  stream carry `hds.formSpec`, only the latest (event `time`) is current; the others are superseded. The
+  person's app does not offer to answer them and leaves them unanswered (a refusal would be a write on her
+  behalf); the connection's app does not count them as pending. Each request carries a full set, so a
+  narrowing followed by a widening ends on the widening.
+- The words for the person go in pryv's `message`; the `hds` block carries no text.
+- Every field is optional for a reader, which ignores keys it does not know; new keys are added here first.
+  `formSpec` is always complete: a later diff form would use another key, never this one.
+
+**Reading (person).** The person's copy of the request carries `from`, then `status` and `responseEventId`
+once answered. An expired request is shown as lapsed and cannot be answered (the platform refuses it,
+`cmc-scope-request-expired`). On acceptance, once the platform reports the grant applied (`applied: true` or
+`status: 'completed'` on her `consent/scope-update-cmc`), the app replaces `hdsFormSpec` on her
+`consent/accept-cmc` event of that relationship with `hds.formSpec`. On a refusal, an expiry or a request
+without `hds.formSpec`, her copy stays as it is. Item keys inside `formSpec` are checked as for the
+invite's snapshot (hds-lib `validateFormSpecItemKeys`: unknown, deprecated, system).
+
+**Reading (connection).** The connection's own copy of the request has no `from` and carries the platform's
+`remoteEventId` and `status`. The answer names the person's copy, not the connection's: the delivered
+`consent/scope-update-cmc` carries `scopeRequestEventId` = the id of the person's copy, which is the
+`remoteEventId` on the connection's request; the connection joins the two on that id. The version a person
+holds is the `formSpecHash` of the request carrying `hds.formSpec` whose acceptance is the most recent (by
+the `time` of the delivered `consent/scope-update-cmc`), else the fingerprint of the invite's snapshot.
+
 ### `consent/scope-update-cmc` with a `content.hds` block *(patient → connection)*: what changed, and why
 
 When a person stops sharing one type of data with a connection, shares it again, or answers the
@@ -362,7 +439,7 @@ the words for the connection go in pryv's own `reason`, see the rules):
 }
 ```
 
-**Who can write it.** `@pryv/cmc` (3.21.1) `acceptScopeUpdate` and `refuseScopeUpdate` write a fixed
+**Who can write it.** `@pryv/cmc` (3.22.0) `acceptScopeUpdate` and `refuseScopeUpdate` write a fixed
 content, `{ scopeRequestEventId, accept }` plus an optional `reason` on a refusal, and take no other field.
 An `hds` block can therefore only come from a helper that writes the `consent/scope-update-cmc` event with
 `events.create` itself (an hds-lib helper, so every HDS app writes the same content) and then waits for the

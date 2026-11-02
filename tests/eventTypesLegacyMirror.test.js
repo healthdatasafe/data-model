@@ -187,6 +187,35 @@ describe('[ETLM] eventTypes-legacy.json upstream mirror', () => {
         }
       }
     });
+
+    it('[ETLM-CMC-5] consent/scope-request-cmc still accepts the content.hds data-set update', () => {
+      // A connection's data-set update rides `hds.formSpec` / `hds.formSpecHash` on pryv's scope
+      // request (documentation/CUSTOM-FIELDS-AND-SYSTEM.md). Same check as [ETLM-CMC-4].
+      const schema = legacy.types['consent/scope-request-cmc'];
+      assert.ok(schema, 'consent/scope-request-cmc should exist');
+      const draft04 = new AjvDraft04({ strict: false, allErrors: true, logger: false });
+      addFormats(draft04);
+      const validators = [
+        new Ajv({ strict: false, allErrors: true, logger: false }).compile(schema),
+        draft04.compile(schema)
+      ];
+      const request = {
+        newPermissions: [{ streamId: 'body-weight', level: 'read' }],
+        message: { en: 'Your data set was updated.' },
+        hds: {
+          formSpec: { version: 1, title: { en: 'Follow-up' }, description: { en: 'Weekly weight.' }, permissions: [{ streamId: 'body-weight', level: 'read' }], sections: [] },
+          formSpecHash: 'sha256:' + '0'.repeat(64)
+        }
+      };
+      for (const validate of validators) {
+        assert.ok(
+          validate(request),
+          'a data-set update no longer validates against consent/scope-request-cmc: ' +
+            JSON.stringify(validate.errors) +
+            '\nRe-check documentation/CUSTOM-FIELDS-AND-SYSTEM.md before taking this mirror.'
+        );
+      }
+    });
   });
 
   describe('[ETLM-INLINE] inlined shapes stay in step with the type they copy', () => {

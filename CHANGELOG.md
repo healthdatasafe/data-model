@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.41.0] - 2026-11-02
+
+### Added: `content.hds` on `consent/scope-request-cmc` (a connection's updated data set, confirmed by the person)
+
+- **`hds.formSpec`** (a complete FormSpec, never `openLink`) and **`hds.formSpecHash`** (the writer's
+  `formSpecFingerprint`) on pryv's scope request, in CUSTOM-FIELDS-AND-SYSTEM.md. The person's acceptance
+  replaces the data-set copy on her `consent/accept-cmc` event; a change within the grant is sent too, with an
+  unchanged permission set. Writer rules: `newPermissions` covers `deriveCmcPermissions(formSpec)`, requests go
+  out one at a time per relationship and carry `expires`; the latest unanswered one is current, older ones are
+  left unanswered. The connection derives each person's version from her latest accepted request.
+- Test `[ETLM-CMC-5]`: pryv's mirrored schema still accepts the block.
+
+No eventType, item, stream or settings key; no `fhir:lock` change. Fable-reviewed (ship with edits, applied).
+
 ## [3.40.0] - 2026-11-02
 
 ### Added: `notification/alert-cmc` kind `item-reminder` (a contact reminds the person of one item)
