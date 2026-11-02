@@ -20,6 +20,28 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.strictEqual(itemsById['wellbeing-self-rated-health'].fhir, undefined);
     });
 
+    it('[FHIR-ITEM-7] lab: one LOINC code per unit when mass and moles differ, else a static code; lab profiles; no block on a stream shared with an unmapped item', () => {
+      const g = itemsById['body-blood-serum-glucose-fasting'].fhir;
+      assert.deepStrictEqual(g.code, {
+        from: 'eventType',
+        codings: {
+          'concentration/mg-dl': { system: 'http://loinc.org', code: '1558-6', display: 'Fasting glucose [Mass/volume] in Serum or Plasma' },
+          'concentration/mmol-l': { system: 'http://loinc.org', code: '14771-0', display: 'Fasting glucose [Moles/volume] in Serum or Plasma' }
+        }
+      });
+      assert.deepStrictEqual(g.value.units, { 'concentration/mg-dl': 'mg/dL', 'concentration/mmol-l': 'mmol/L' });
+      assert.deepStrictEqual(g.profiles, {
+        us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab',
+        ips: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips'
+      });
+      assert.deepStrictEqual(itemsById['body-blood-serum-ferritin'].fhir.code, { system: 'http://loinc.org', code: '2276-4', display: 'Ferritin [Mass/volume] in Serum or Plasma' });
+      // CA-125 is an arbitrary-unit property: UCUM U is the catalytic enzyme unit.
+      assert.deepStrictEqual(itemsById['body-blood-serum-ca-125'].fhir.value.units, { 'concentration/u-ml': "[arb'U]/mL" });
+      for (const k of ['body-blood-cbc-basophils', 'body-blood-cbc-basophils-count', 'body-urine-hormones-lh', 'body-blood-hba1c', 'body-blood-serum-c-peptide', 'body-blood-serum-insulin-fasting']) {
+        assert.strictEqual(itemsById[k].fhir, undefined, k);
+      }
+    });
+
     it('[FHIR-ITEM-2] wellbeing-general-health: 5 levels, higher is better, LOINC answers on every option', () => {
       const gh = itemsById['wellbeing-general-health'];
       assert.strictEqual(gh.eventType, 'ratio/proportion');
@@ -122,13 +144,30 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => checkItem(e, 'w'), /fewer than 1 characters/);
     });
 
-    it('[FHIR-SCH-4] a code source is `{ from: datasource, field }` and nothing else', () => {
+    it('[FHIR-SCH-4] a code source is `{ from: datasource, field }` or `{ from: eventType, codings }` and nothing else', () => {
       const a = item('condition-coded');
       a.fhir.code.from = 'content';
       assert.throws(() => checkItem(a, 'c'), /allowed values/);
       const b = item('condition-coded');
       b.fhir.code.display = 'x';
       assert.throws(() => checkItem(b, 'c'), /additional properties/);
+      const g = () => item('body-blood-serum-glucose-fasting');
+      checkItem(g(), 'g');
+      const c = g();
+      c.fhir.code.field = 'x';
+      assert.throws(() => checkItem(c, 'g'), /additional properties/);
+      const d = g();
+      delete d.fhir.code.codings;
+      assert.throws(() => checkItem(d, 'g'), /must have required property 'codings'/);
+      const e = g();
+      delete e.fhir.code.codings['concentration/mmol-l'];
+      assert.throws(() => checkItem(e, 'g'), /fewer than 2 properties/);
+      const f = g();
+      f.fhir.code.codings['concentration/mg-dl'] = { system: 'LOINC', code: '1558-6', display: 'x' };
+      assert.throws(() => checkItem(f, 'g'), /must match pattern/);
+      const h = item('condition-coded');
+      h.fhir.code = { from: 'datasource', codings: {} };
+      assert.throws(() => checkItem(h, 'c'), /must have required property 'field'/);
     });
 
     it('[FHIR-SCH-5] a companion block holds companionOf only', () => {
@@ -280,13 +319,61 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => check(b), /is not a content property/);
     });
 
-    it('[FHIR-MAP-10] alsoMatch: static code only, and not a repeat of the code', () => {
+    it('[FHIR-MAP-10] alsoMatch: static or eventType code only, and not a repeat of the code', () => {
       const a = item('body-weight');
       a.fhir.alsoMatch.push(a.fhir.code);
       assert.throws(() => check(a), /appears more than once/);
       const b = item('condition-coded');
       b.fhir.alsoMatch = [coding('1')];
-      assert.throws(() => check(b), /"alsoMatch" applies to a static code only/);
+      assert.throws(() => check(b), /"alsoMatch" applies to a static or eventType code only/);
+    });
+
+    it('[FHIR-MAP-17] eventType code source: one coding per item eventType, never twice, each the LOINC code its unit option stores', () => {
+      const g = () => item('body-blood-serum-glucose-fasting');
+      check(g());
+      const a = g();
+      delete a.fhir.code.codings['concentration/mmol-l'];
+      assert.throws(() => check(a), /code.codings keys vs the item eventTypes must match exactly; missing \[concentration\/mmol-l\]/);
+      const b = g();
+      b.fhir.code.codings['concentration/mmol-l'] = b.fhir.code.codings['concentration/mg-dl'];
+      assert.throws(() => check(b), /code.codings and alsoMatch: the coding http:\/\/loinc.org\|1558-6 appears more than once/);
+      const c = g();
+      c.fhir.code.codings['concentration/mmol-l'] = coding('2345-7');
+      assert.throws(() => check(c), /code.codings "concentration\/mmol-l": http:\/\/loinc.org\|2345-7 is not the LOINC code its unit option stores \(14771-0\)/);
+      const d = g();
+      d.fhir.alsoMatch = { 'concentration/mg-dl': [d.fhir.code.codings['concentration/mmol-l']] };
+      assert.throws(() => check(d), /appears more than once/);
+    });
+
+    it('[FHIR-MAP-19] alsoMatch is a list with a static code, keyed by the item eventType it names with an eventType code', () => {
+      const ldl = item('body-blood-serum-cholesterol-ldl');
+      assert.deepStrictEqual(Object.fromEntries(Object.entries(ldl.fhir.alsoMatch).map(([t, cs]) => [t, cs.map((c) => c.code)])),
+        { 'concentration/mg-dl': ['13457-7', '18262-6'], 'concentration/mmol-l': ['39469-2'] });
+      check(ldl);
+      checkItem(ldl, 'ldl');
+      const a = item('body-blood-serum-cholesterol-ldl');
+      a.fhir.alsoMatch = Object.values(a.fhir.alsoMatch).flat();
+      assert.throws(() => check(a), /with an eventType code, "alsoMatch" is keyed by eventType/);
+      const b = item('body-blood-serum-cholesterol-ldl');
+      b.fhir.alsoMatch['concentration/ug-l'] = [coding('1')];
+      assert.throws(() => check(b), /alsoMatch "concentration\/ug-l" is not one of the item eventTypes/);
+      const c = item('body-weight');
+      c.fhir.alsoMatch = { 'mass/kg': c.fhir.alsoMatch };
+      assert.throws(() => check(c), /"alsoMatch" keyed by eventType applies to an eventType code only/);
+      const e = item('body-blood-serum-cholesterol-ldl');
+      e.fhir.alsoMatch['concentration/mg-dl'] = [];
+      assert.throws(() => checkItem(e, 'ldl'), /fewer than 1 items/);
+    });
+
+    it('[FHIR-MAP-18] a static LOINC code must be the code every unit option stores', () => {
+      const a = item('body-blood-serum-glucose-fasting');
+      a.fhir.code = a.fhir.code.codings['concentration/mg-dl'];
+      assert.throws(() => check(a), /code 1558-6 is a static code, but eventType concentration\/mmol-l stores 14771-0: use a code from eventType/);
+      const b = item('body-blood-serum-ferritin');
+      b.fhir.code = coding('2345-7');
+      assert.throws(() => check(b), /code 2345-7 is a static code, but eventType concentration\/ug-l stores 2276-4/);
+      // An item that asserts no LOINC is not held to it: the vital signs carry their codes in the block only.
+      check(item('body-heart-rate'));
     });
 
     it('[FHIR-MAP-11] a Patient element takes an item of its type, and the content as written unless coded', () => {
@@ -604,9 +691,23 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       checkFhirImportKeys(itemsById);
     });
 
+    it('[FHIR-SCOPE-19] eventType codes are import keys; a LOINC import key is never a code another item owns ([LABC-LOINC-1])', () => {
+      const { checkFhirImportKeys } = require('../src/fhir');
+      const lab = (codes) => ({ resourceType: 'Observation', category: 'laboratory', code: { from: 'eventType', codings: Object.fromEntries(codes.map((c, i) => [`t${i}`, coding(c)])) }, profiles: {} });
+      checkFhirImportKeys({ a: { fhir: lab(['1', '2']), references: { loinc: ['1', '2'] } }, b: { fhir: lab(['3', '4']) } });
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: lab(['1', '2']) }, b: { fhir: lab(['2', '3']) } }), /Observation http:\/\/loinc.org\|2 is claimed by both "a" and "b"/);
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: lab(['1', '2']) }, b: { references: { loincMethod: ['2'] } } }), /http:\/\/loinc.org\|2 of "a" is a LOINC code item "b" owns/);
+      const also = { ...lab(['1', '2']), alsoMatch: [coding('9')] };
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: also }, b: { references: { loinc: ['9'] } } }), /http:\/\/loinc.org\|9 of "a" is a LOINC code item "b" owns/);
+      checkFhirImportKeys({ a: { fhir: also }, b: { references: { loinc: ['9'] }, deprecated: true } });
+    });
+
     it('[FHIR-SCOPE-11] the model\'s table; the committed lock is up to date (run npm run fhir:lock)', () => {
+      const lab = Object.entries(itemsById).filter(([, i]) => i.fhir?.category === 'laboratory').map(([, i]) => i.streamId).sort();
+      assert.strictEqual(lab.length, 92);
       assert.deepStrictEqual(fhirScopes, {
         'Condition|problem-list-item': ['condition'],
+        'Observation|laboratory': lab,
         'Observation|social-history': ['lifestyle-tobacco-smoking'],
         'Observation|survey': ['wellbeing-general-health'],
         'Observation|vital-signs': ['body-blood-pressure', 'body-heart-rate', 'body-weight'],

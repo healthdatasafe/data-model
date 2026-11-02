@@ -118,6 +118,16 @@ npm run setup    # Install dependencies
 npm run build    # Generate dist/pack.json (served at model.datasafe.dev)
 ```
 
+## LOINC notice
+
+The pack carries LOINC codes and their long common names (`references.loinc`, `references.loincMethod`, unit options,
+`fhir:` blocks). The LOINC licence (§10) requires this notice wherever the pack is distributed; the build also
+publishes it as `LOINC_NOTICE.txt` and on the landing page:
+
+> This material contains content from LOINC (http://loinc.org). LOINC is copyright © Regenstrief Institute, Inc. and
+> the Logical Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under the license at
+> http://loinc.org/license. LOINC® is a registered United States trademark of Regenstrief Institute, Inc.
+
 ## Deploy
 
 Published via GitHub Pages — `npm run deploy` builds and pushes to the `gh-pages` branch.

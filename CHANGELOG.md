@@ -1,5 +1,33 @@
 # Changelog
 
+## [3.39.0] - 2026-11-02
+
+### Added: FHIR blocks on 92 lab items (`Observation|laboratory`)
+
+- **Code source `{ from: eventType, codings }`**: one coding per eventType of the item, for an analyte whose mass and
+  moles are two LOINC codes (35 items, fasting glucose 1558-6 / 14771-0 among them); the 57 others take a static code
+  (one code for every unit). `alsoMatch` (import only) carries each item's `references.loincMethod`; with an
+  eventType code it is keyed by the eventType each code names (`{ <eventType>: [codings] }`), so a mass code never
+  imports a moles quantity (LDL: 13457-7, 18262-6 under mg/dL, 39469-2 under mmol/L). Every code checked ACTIVE in
+  LOINC 2.83 (loinc-db), display = its long common name; units in UCUM (`[arb'U]/mL` for CA-125, an arbitrary-unit
+  property).
+- **Profiles** US Core `us-core-observation-lab` (6.1.0), IPS `Observation-results-laboratory-pathology-uv-ips` (2.0.1).
+- **New SMART scope key `Observation|laboratory`**, 92 grant roots (each item's own stream), recorded in the lock.
+  One grant reaches every mapped lab item, urine hCG and the semen analysis included (decided 2026-11-02; narrowed per
+  stream on the consent screen).
+- **LOINC notice** (licence §10) in README, on the landing page and as `LOINC_NOTICE.txt`.
+- **Build checks `[LABC-LOINC-1]`**: on an item asserting `references.loinc`, an eventType coding is the code its unit
+  option stores and a static LOINC code is stored by every unit option; a LOINC import key is never a code another
+  active item owns.
+- **Not mapped yet**, listed in FHIR-MAPPING.md: the `ratio/proportion` percentages, the absolute CBC counts and urine
+  LH (their stream also holds an unmapped item), C-peptide and total testosterone, fasting insulin and
+  1,25-dihydroxyvitamin D, INR, items without LOINC, the `lab-result/coded-v1` items.
+- Tests `[FHIR-ITEM-7]`, `[FHIR-SCH-4]` (extended), `[FHIR-MAP-17]`, `[FHIR-MAP-18]`, `[FHIR-MAP-19]`,
+  `[FHIR-SCOPE-19]`. Fable-reviewed (ship with edits; edits applied, including the keyed `alsoMatch`).
+
+Needs hds-fhir-js with the eventType code source and the lab clientData keys (comparator, reference range,
+interpretation) before a consumer serves these scopes.
+
 ## [3.38.0] - 2026-11-02
 
 ### Added: the HDS support channel (plan 117)

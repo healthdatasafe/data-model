@@ -539,6 +539,17 @@ body-urine-hormones-fsh:
   references:
     snomed: ["167382006"]
     loinc: ["25639-6"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 25639-6, display: "Follitropin [Units/volume] in Urine by 2nd IRP" }
+    value:
+      kind: quantity
+      units:
+        concentration/iu-l: "[IU]/L"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 body-urine-hormones-hcg:
   version: v2
   label:
@@ -556,6 +567,17 @@ body-urine-hormones-hcg:
   references:
     snomed: ["67900009"]
     loinc: ["25372-4"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 25372-4, display: "Choriogonadotropin [Units/volume] in Urine" }
+    value:
+      kind: quantity
+      units:
+        concentration/iu-l: "[IU]/L"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 body-urine-hormones-pdg:
   version: v2
   label:
