@@ -1,6 +1,6 @@
 {
-  "version": "3.37.0",
-  "publicationDate": "2026-11-01T16:13:40.400Z",
+  "version": "3.38.0",
+  "publicationDate": "2026-11-02T10:56:29.047Z",
   "streams": [
     {
       "id": "activity",
@@ -1136,6 +1136,19 @@
           "parentId": "function"
         }
       ]
+    },
+    {
+      "id": "hds-support",
+      "name": "Health Data Safe support (holds no data)",
+      "parentId": null,
+      "label": {
+        "en": "Health Data Safe support (holds no data)",
+        "fr": "Assistance Health Data Safe (ne contient aucune donnée)"
+      },
+      "description": {
+        "en": "Lets the Health Data Safe team exchange messages with you. It holds none of your data.",
+        "fr": "Permet à l'équipe Health Data Safe d'échanger des messages avec vous. Ne contient aucune de vos données."
+      }
     },
     {
       "id": "lifestyle",
@@ -20978,6 +20991,94 @@
           }
         }
       },
+      "support/conversation-v1": {
+        "description": "State of one support conversation, kept on the support group's account: one event per conversation, updated in place by the support service and the team's members; times are Unix seconds. Holds no health data, no message text and no email address. See documentation/SUPPORT.md.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "userSlug",
+          "status"
+        ],
+        "properties": {
+          "userSlug": {
+            "description": "The person's counterparty slug (<username>--<host-slug>, as @pryv/cmc counterpartySlug builds it): the last segment of the conversation's thread stream on the group account. Identifies the conversation.",
+            "type": "string",
+            "maxLength": 320,
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*--[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "status": {
+            "description": "new: the person wrote and no one on the team has it (the thread's first message, or a message after a close); open: the team is handling it; closed: closed by the team.",
+            "type": "string",
+            "enum": [
+              "new",
+              "open",
+              "closed"
+            ]
+          },
+          "claimedBy": {
+            "description": "The team member who took the conversation (advisory, not an access control). Absent when no one has it.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "membershipAccessId",
+              "username",
+              "host",
+              "at"
+            ],
+            "properties": {
+              "membershipAccessId": {
+                "description": "The id of the member's membership access on the group account.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "username": {
+                "description": "The member's own account username.",
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{0,99}$"
+              },
+              "host": {
+                "description": "The host of the member's own account.",
+                "type": "string",
+                "maxLength": 253,
+                "pattern": "^[a-z0-9]([a-z0-9.-]*[a-z0-9])?(:[0-9]{1,5})?$"
+              },
+              "displayName": {
+                "description": "The member's display name, in the form the person's byline takes it (at most 40 characters, no colon, no newline); readers fall back to username.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40,
+                "pattern": "^[^:\\n]+$"
+              },
+              "at": {
+                "description": "When the member took it.",
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          },
+          "notify": {
+            "description": "The person asked to be told by email when the team answers; written by the support service only. Waiting while sentAt is absent. The address itself is never here: only the support service holds it.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "consentAt"
+            ],
+            "properties": {
+              "consentAt": {
+                "description": "When the person consented to the email.",
+                "type": "number",
+                "minimum": 0
+              },
+              "sentAt": {
+                "description": "When the notification was sent.",
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      },
       "file/xds-v1": {
         "description": "A medical document (lab report, letter, prescription, imaging or procedure report, administrative document) as one or more Pryv attachments, with the IHE XDS / CH:EPR DocumentEntry metadata as validated content, so HDS can publish it as a FHIR DocumentReference or an XDS DocumentEntry without reading clientData. Codings follow FHIR Coding: system is a URI (http://snomed.info/sct, http://loinc.org). class and type take their codes from the CH:EPR value sets http://fhir.ch/ig/ch-term/ValueSet/DocumentEntry.classCode and .typeCode. The attachment's own integrity is its sha256; the XDS SHA-1 hash and the confidentiality code are not stored, because they are set at publication. See documentation/DOCUMENTS.md.",
         "type": "object",
@@ -23941,11 +24042,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-10-28T09:29:14.399Z"
+      "updatedAt": "2026-10-28T11:04:17.041Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-10-27T11:01:34.694Z"
+      "updatedAt": "2026-10-27T12:04:35.731Z"
     }
   },
   "settings": {

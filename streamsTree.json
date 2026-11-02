@@ -1135,6 +1135,19 @@
     ]
   },
   {
+    "id": "hds-support",
+    "name": "Health Data Safe support (holds no data)",
+    "parentId": null,
+    "label": {
+      "en": "Health Data Safe support (holds no data)",
+      "fr": "Assistance Health Data Safe (ne contient aucune donnée)"
+    },
+    "description": {
+      "en": "Lets the Health Data Safe team exchange messages with you. It holds none of your data.",
+      "fr": "Permet à l'équipe Health Data Safe d'échanger des messages avec vous. Ne contient aucune de vos données."
+    }
+  },
+  {
     "id": "lifestyle",
     "name": "Lifestyle",
     "parentId": null,
