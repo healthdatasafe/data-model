@@ -70,6 +70,13 @@ const versionContent = {
 };
 fs.writeFileSync(versionFilePath, JSON.stringify(versionContent, null, 2), 'utf-8');
 
+// -- LOINC notice: the pack carries LOINC codes and their long common names (references, fhir blocks), so the
+// licence's §10 notice is published with it, verbatim, on the landing page and as a text file.
+const LOINC_NOTICE = 'This material contains content from LOINC (http://loinc.org). LOINC is copyright © Regenstrief Institute, Inc. ' +
+  'and the Logical Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under the license at ' +
+  'http://loinc.org/license. LOINC® is a registered United States trademark of Regenstrief Institute, Inc.';
+fs.writeFileSync(path.resolve(basePath, 'LOINC_NOTICE.txt'), LOINC_NOTICE + '\n', 'utf-8');
+
 // -- index.html — small landing page that redirects to the React browser.
 // The previous static items / streams tables have been replaced by
 // `app-data-model-browser` (https://model-browser.datasafe.dev/), which loads
@@ -92,6 +99,7 @@ const redirectHtml = `<!DOCTYPE html>
     <h1>HDS Data Model</h1>
     <p>The data-model browser has moved to <a href="${BROWSER_URL}">${BROWSER_URL}</a>.</p>
     <p>If you are not redirected automatically, click the link above.</p>
+    <p><small>${LOINC_NOTICE}</small></p>
   </body>
 </html>
 `;

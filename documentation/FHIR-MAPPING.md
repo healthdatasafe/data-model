@@ -2,12 +2,22 @@
 
 **Status: published since 3.31.0 (plan 115, SMART on FHIR).** Everything below marked *permanent* is.
 
-**Lab items carry no `fhir:` block yet (3.32.0).** Their LOINC codes live in `references.loinc` and, per unit, in
-`variations.eventType.options[].loinc` (mass and moles of one analyte are two codes; `BLOOD-CHEMISTRY.md` § Codes);
-hds-lib `labLoincOf` reads them. A lab block will need a code source "from the unit option" (a static `code` is one
-coding per item), with the renderer change first, and a build check that its LOINC codings are among the item's
-`loinc` and `loincMethod` and that no import key is a code another item owns (`[LABC-LOINC-1]`), so ownership and
-the import match keys cannot disagree.
+**Lab items (3.39.0):** 92 numeric lab items carry an `Observation|laboratory` block. Where mass and moles of one
+analyte are two LOINC codes (`BLOOD-CHEMISTRY.md` § Codes), the code comes from the eventType
+(`code: { from: eventType, codings }`, below); otherwise it is static. The build holds each block to the item's
+`references.loinc` and `variations.eventType.options[].loinc`, and no import key may be a code another item owns
+(`[LABC-LOINC-1]`), so ownership and the import match keys cannot disagree. The method-specific codes
+(`references.loincMethod`) are the block's `alsoMatch`. **Reach of the grant (decided 2026-11-02):** FHIR has no
+category finer than `laboratory`, so `patient/Observation.rs?category=laboratory` reaches every mapped lab item, the
+lipid panel as much as urine hCG (a pregnancy test), the semen analysis and the reproductive hormones; the patient
+narrows it per stream on the consent screen, as for vital signs. A lab event's printed range, flag and comparator
+(`hdsRefRange`, `hdsInterpretation`, `hdsFlag`, `hdsComparator`) render as `referenceRange`, `interpretation` and the
+Quantity `comparator` (BLOOD-CHEMISTRY.md § Cross-system). **Not mapped yet:** the `ratio/proportion` percentages
+(HbA1c, hematocrit, the CBC differential, semen motility, …: the export multiplies by 100, which no value kind does
+yet), the absolute CBC counts and urine LH (their stream also holds one of those, or the legacy urine LH typed mg/L,
+so a grant would over-grant), C-peptide and total testosterone (two of three units share a code), fasting insulin and
+1,25-dihydroxyvitamin D (a unit LOINC has no code for), INR (`ratio/generic`), the items without LOINC, and the
+`lab-result/coded-v1` items.
 
 An item's `fhir:` block says how its events **render as** a FHIR R4 resource and how a FHIR resource **imports
 back** into an event of that item. HDS uses it in three ways:
@@ -85,8 +95,8 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 | `resourceType` | yes | `Observation` or `Condition` (`Patient` is an [element block](#patient-elements)). *Permanent.* |
 | `category` | per resourceType (table above) | Category key. *Permanent.* |
 | `alsoMatchCategories` | no | Further category keys of the same table that a resource may carry and still import into this item, **on import only**, never emitted (smoking status filed under `survey` by older sources). Never the block's own category. |
-| `code` | yes | The resource code: a **static coding** `{ system, code, display }`, or a **source** `{ from: datasource, field: <dotted path> }` (below). |
-| `alsoMatch` | no | Extra codings accepted **on import only**, never emitted. Static code only. |
+| `code` | yes | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }` or `{ from: eventType, codings }` (below). |
+| `alsoMatch` | no | Extra codings accepted **on import only**, never emitted. With a static code, a list; with an eventType code, keyed by the eventType each names (`{ concentration/mg-dl: [codings] }`). Never with a datasource code. |
 | `value` | no | FHIR `value[x]`, by `kind` (below). Absent on a Condition, which has no `value[x]`. |
 | `split` | no | Extra resources, one per numeric composite field (below). |
 | `ignore` | no | Composite fields deliberately left out of the FHIR rendering. |
@@ -96,7 +106,7 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 non-empty `code` and a `display`. The display is the code system's official display, copied exactly: it is what a
 reviewer checks the code against and what a reader falls back on.
 
-### `code`: static or from a datasource
+### `code`: static, from a datasource or from the eventType
 
 - **Static:** `code: { system: http://loinc.org, code: 72166-2, display: Tobacco smoking status }`. Every event of the
   item has this code.
@@ -106,12 +116,31 @@ reviewer checks the code against and what a reader falls back on.
   `fhirMapping.systems`; `code.text` is `label.en`. The field must be a content property of the item's eventType that
   holds a `codes` array, and must be the item's datasource field (the item is `datasource-search`, or the field is a
   `datasource-search` field of its composite).
+- **From the eventType:** the code depends on the unit, because a measure in mass and in moles is two LOINC codes:
+  ```yaml
+  code:
+    from: eventType
+    codings:
+      concentration/mg-dl: { system: http://loinc.org, code: 1558-6, display: "Fasting glucose [Mass/volume] in Serum or Plasma" }
+      concentration/mmol-l: { system: http://loinc.org, code: 14771-0, display: "Fasting glucose [Moles/volume] in Serum or Plasma" }
+  ```
+  Every eventType of the item, each with its own coding (at least two; one code for every unit is a static code). On
+  an item that asserts LOINC, each coding is the code its unit option stores (`options[].loinc`). On import, the
+  matched coding names the eventType and only that eventType's unit is accepted: a mass code with a moles unit is
+  refused, never converted; a resource carrying two of the codes is refused. `alsoMatch` is keyed by eventType here,
+  so an import-only code names its eventType the same way (LDL: `13457-7` "by calculation" is a mass code and imports
+  into `concentration/mg-dl` only):
+  ```yaml
+  alsoMatch:
+    concentration/mg-dl:
+      - { system: http://loinc.org, code: 13457-7, display: "Cholesterol in LDL [Mass/volume] in Serum or Plasma by calculation" }
+  ```
 
 ### Value kinds
 
 | `kind` | Item | Block fields | Renders |
 |---|---|---|---|
-| `quantity` | `number`, every eventType numeric | `units`: every eventType of the item (its unit variants) → UCUM code, none empty, no two the same (annotations such as `{beats}` aside: they carry no meaning in UCUM) | `valueQuantity` (`system` UCUM, `code` = `unit`) |
+| `quantity` | `number`, every eventType numeric | `units`: every eventType of the item (its unit variants) → UCUM code, none empty, no two the same (annotations such as `{beats}` aside: they carry no meaning in UCUM) | `valueQuantity` (`system` UCUM, `code` = `unit`); a lab event's `hdsComparator` as its `comparator`, `hdsRefRange` as `referenceRange` (limits in the same unit), `hdsInterpretation` and `hdsFlag` as `interpretation`, and back on import (BLOOD-CHEMISTRY.md § Cross-system) |
 | `coded` | `select` | `options`: every option value → coding, each coding once; optional `alsoMatch`: option value → extra codings accepted for that option on import only | `valueCodeableConcept` (the option coding, never an `alsoMatch` one) |
 | `components` | `composite` | `components`: numeric composite field → `{ code, unit }` | `component[]`, one per field present |
 
@@ -338,6 +367,19 @@ Additive changes are fine: a block can be added to an item without changing its 
 entries (on the code or per option), `alsoMatchCategories`, profiles of new flavours and new options (with their
 coding) can be added. Import-only entries change what HDS accepts, never what it emits or grants.
 
+**A unit added to an item with a block** takes its unit in `value.units` and, on an item that asserts LOINC, a code
+the build accepts, so plan for it before adding the variation:
+
+- **Static code:** a new unit of the same property (`ng/mL` beside `ug/L`) stores the same code; nothing else changes.
+  A new unit of **another property** (moles beside mass) stores another code, so the block switches to
+  `code: { from: eventType, codings }`. The codes it emits for the existing units stay the same, and the import keys
+  only grow, so the switch is additive.
+- **eventType source:** the new unit gets its coding beside the others.
+- **A unit LOINC has no code for** (`options[].loinc: null`, as fasting insulin in pmol/L) cannot join a block: a
+  coding cannot be null, and an event in that unit would have no code to render. Keep that result on
+  `lab-result/coded-v1` with its UCUM unit until LOINC has a code, or until a nullable coding exists (a renderer change
+  first, then a schema change).
+
 ---
 
 ## Forward compatibility
@@ -360,7 +402,7 @@ data a SMART app does not see.
 Anything it cannot place is **rejected, never guessed**.
 
 **Which item.** A resource matches an item by **(resourceType, code)**, with a **compatible category**: any coding of
-`resource.code` equal (system and code) to the block's static code or one of its `alsoMatch` codings. A block whose
+`resource.code` equal (system and code) to the block's static code, an eventType's code or one of its `alsoMatch` codings. A block whose
 code comes from a datasource matches by resourceType and category (a Condition goes to the Condition item that takes
 its code from a datasource). A static code match wins over a datasource match. A resource that matches only a `split`
 code imports as a fragment of that item (below) and only when no item matches it directly: a standalone heart-rate
@@ -450,14 +492,18 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   `coded` only on `select` (never `multi-select`), options exactly the item's options; component, split and ignore
   keys are composite fields, components and splits numeric, no field in two roles, every composite field accounted
   for; a datasource source only on a datasource field, resolving to a `codes` array in the eventType; no `value` on a
-  Condition; `alsoMatch` only with a static code; per-option `alsoMatch` only on `coded`, keyed by option keys;
-  `alsoMatchCategories` known keys of the resourceType's table, never the block's own category.
+  Condition; `alsoMatch` only with a static code (a list) or an eventType code (keyed by the item's eventTypes); an
+  eventType source covers exactly the item's eventTypes; per-option `alsoMatch` only on `coded`, keyed by option keys; `alsoMatchCategories` known keys of the
+  resourceType's table, never the block's own category.
+- **LOINC (`[LABC-LOINC-1]`):** on an item that asserts `references.loinc`, an eventType coding is the code its unit
+  option stores, and a static LOINC code is the code every unit option stores; a LOINC import key (code, eventType
+  coding, `alsoMatch`) is never a code another active item owns (`references.loinc` or `references.loincMethod`).
 - **Patient elements:** the element from the allowed list (the schema's `fhirElement` enum, the checker's
   `PATIENT_ELEMENTS`); the item type the element takes, with one string eventType; no `value` on a text or date
   element; on `gender`, `coded` with exactly the item's options, each an administrative-gender code with its official
   display, each once.
 - **Uniqueness:** codings unique within an item (code and `alsoMatch`; options and their `alsoMatch`; code,
-  `alsoMatch`, components and splits); import keys unique across active items (a static code or `alsoMatch` coding;
+  `alsoMatch`, components and splits); import keys unique across active items (a static code, eventType coding or `alsoMatch` coding;
   a datasource source per category it accepts; a Patient element). A split code is not an import key: it may be
   another item's code, which then wins (`body-heart-rate` and the blood-pressure pulse).
 - **Units:** two eventTypes of one `quantity` block never share a UCUM unit, annotations aside (`{beats}/min` is

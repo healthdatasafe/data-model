@@ -136,14 +136,27 @@ function checkFhirMapping (key, item, itemEventTypes) {
 
   const composite = item.composite;
   const mappedFields = new Set();
-  const isDatasourceCode = f.code.from != null;
+  const isDatasourceCode = f.code.from === 'datasource';
+  const codeCodings = f.code.from === 'eventType' ? Object.values(f.code.codings) : isDatasourceCode ? [] : [f.code];
+  const alsoMatchCodings = alsoMatchCodingsOf(f);
   if (isDatasourceCode) {
     checkDatasourceField(item, f.code.field, itemEventTypes, fail);
-    if (f.alsoMatch != null) fail('"alsoMatch" applies to a static code only');
+    if (f.alsoMatch != null) fail('"alsoMatch" applies to a static or eventType code only');
     mappedFields.add(f.code.field.split('.')[0]);
+  } else if (f.code.from === 'eventType') {
+    // Each eventType renders its own code, and an imported code names one eventType back; so does an import-only
+    // code, keyed by the eventType it names (a mass code never imports a moles quantity).
+    sameSet('code.codings keys vs the item eventTypes', Object.keys(f.code.codings), itemEventTypes);
+    if (Array.isArray(f.alsoMatch)) fail('with an eventType code, "alsoMatch" is keyed by eventType: { <eventType>: [codings] }');
+    for (const t of Object.keys(f.alsoMatch || {})) {
+      if (!itemEventTypes.includes(t)) fail(`alsoMatch "${t}" is not one of the item eventTypes (${itemEventTypes.join(', ')})`);
+    }
+    unique('code.codings and alsoMatch', [...codeCodings, ...alsoMatchCodings]);
   } else {
-    unique('code and alsoMatch', [f.code, ...(f.alsoMatch || [])]);
+    if (f.alsoMatch != null && !Array.isArray(f.alsoMatch)) fail('"alsoMatch" keyed by eventType applies to an eventType code only; a static code takes a list');
+    unique('code and alsoMatch', [f.code, ...alsoMatchCodings]);
   }
+  checkLoincAgreement(item, f, itemEventTypes, fail);
 
   if (f.resourceType === 'Condition' && f.value != null) fail('a Condition has no value[x]; remove "value"');
 
@@ -154,7 +167,7 @@ function checkFhirMapping (key, item, itemEventTypes) {
   };
 
   const v = f.value;
-  const ownCodings = isDatasourceCode ? [] : [f.code, ...(f.alsoMatch || [])];
+  const ownCodings = [...codeCodings, ...alsoMatchCodings];
   if (v?.alsoMatch != null && v.kind !== 'coded') fail('value.alsoMatch applies to value.kind "coded" only');
   if (v != null) {
     switch (v.kind) {
@@ -235,6 +248,37 @@ function checkFhirElement (item, itemEventTypes, { fail, sameSet, unique }) {
     if (c.system !== spec.codes.system || spec.codes.displays[c.code] !== c.display) {
       fail(`option "${option}": ${c.system}|${c.code} "${c.display}" is not a code of ${spec.codes.system} with its display`);
     }
+  }
+}
+
+const LOINC_SYSTEM = 'http://loinc.org';
+
+/** Every `alsoMatch` coding of a block: the list of a static code, or all lists of an eventType code. */
+function alsoMatchCodingsOf (f) {
+  if (f.alsoMatch == null) return [];
+  return Array.isArray(f.alsoMatch) ? f.alsoMatch : Object.values(f.alsoMatch).flat();
+}
+
+/**
+ * `[LABC-LOINC-1]`, the block side: on an item that asserts LOINC codes (`references.loinc`), the block's LOINC
+ * codings agree with them, so ownership and the import match keys cannot disagree. Each eventType renders the code its
+ * unit option stores (`variations.eventType.options[].loinc`; on an item without unit options, its one code), and a
+ * static code is stored by every unit option. An `alsoMatch` code may be one no item owns (a discouraged panel code);
+ * that no other item owns a block's LOINC import key is checked with every item loaded (checkFhirImportKeys).
+ */
+function checkLoincAgreement (item, f, itemEventTypes, fail) {
+  const loinc = item.references?.loinc || [];
+  if (loinc.length === 0) return;
+  const options = item.variations?.eventType?.options || [];
+  const storedBy = (t) => options.length > 0 ? options.find((o) => o.value === t)?.loinc ?? null : loinc[0];
+  const isLoinc = (c) => c.system === LOINC_SYSTEM;
+  if (f.code.from === 'eventType') {
+    for (const [t, c] of Object.entries(f.code.codings)) {
+      if (!isLoinc(c) || c.code !== storedBy(t)) fail(`code.codings "${t}": ${c.system}|${c.code} is not the LOINC code its unit option stores (${storedBy(t)})`);
+    }
+  } else if (f.code.from == null && isLoinc(f.code)) {
+    const other = itemEventTypes.filter((t) => storedBy(t) !== f.code.code);
+    if (other.length > 0) fail(`code ${f.code.code} is a static code, but eventType ${other.join(', ')} stores ${other.map(storedBy).join(', ')}: use a code from eventType`);
   }
 }
 
@@ -430,11 +474,13 @@ function ancestorsIn (parentOf, id) {
 }
 
 /**
- * Import match keys are unique across active items: a resource matches an item by (resourceType, static code or
- * alsoMatch coding), or by (resourceType, category, datasource code source) for each category the block accepts (its
- * own and its `alsoMatchCategories`), and must match one item only. A Patient element is claimed by one active item
- * only, so an imported Patient places each element in one item. A resource that states no category can still fit two
- * datasource-coded items of different categories; the importer reports that as ambiguous rather than guess.
+ * Import match keys are unique across active items: a resource matches an item by (resourceType, static code, an
+ * eventType's code or alsoMatch coding), or by (resourceType, category, datasource code source) for each category the
+ * block accepts (its own and its `alsoMatchCategories`), and must match one item only. A LOINC import key is never a
+ * code another active item owns (`references.loinc` or `references.loincMethod`, `[LABC-LOINC-1]`). A Patient element
+ * is claimed by one active item only, so an imported Patient places each element in one item. A resource that states
+ * no category can still fit two datasource-coded items of different categories; the importer reports that as
+ * ambiguous rather than guess.
  */
 function checkFhirImportKeys (items) {
   const seen = new Map();
@@ -443,17 +489,31 @@ function checkFhirImportKeys (items) {
     if (other != null && other !== key) throw new Error(`fhir import key ${k} is claimed by both "${other}" and "${key}"; an imported resource would match two items`);
     seen.set(k, key);
   };
+  const owner = new Map();
+  for (const [key, item] of Object.entries(items)) {
+    if (item.deprecated) continue;
+    for (const c of [...(item.references?.loinc || []), ...(item.references?.loincMethod || [])]) {
+      if (owner.has(c) && owner.get(c) !== key) throw new Error(`LOINC ${c} is owned by both "${owner.get(c)}" and "${key}" (references.loinc or loincMethod); one code has one owner`);
+      owner.set(c, key);
+    }
+  }
+  const claimCoding = (f, c, key) => {
+    const o = c.system === LOINC_SYSTEM ? owner.get(c.code) : undefined;
+    if (o != null && o !== key) throw new Error(`fhir import key ${f.resourceType} ${c.system}|${c.code} of "${key}" is a LOINC code item "${o}" owns`);
+    claim(`${f.resourceType} ${c.system}|${c.code}`, key);
+  };
   for (const [key, item] of Object.entries(items)) {
     const f = item.fhir;
     if (item.deprecated || f == null || f.companionOf != null) continue;
     if (f.element != null) {
       claim(`${f.resourceType}.${f.element}`, key);
-    } else if (f.code.from != null) {
+    } else if (f.code.from === 'datasource') {
       for (const c of [f.category, ...(f.alsoMatchCategories || [])]) {
         claim(`${f.resourceType}${c != null ? `|${c}` : ''} from ${f.code.from}`, key);
       }
     } else {
-      for (const c of [f.code, ...(f.alsoMatch || [])]) claim(`${f.resourceType} ${c.system}|${c.code}`, key);
+      const own = f.code.from === 'eventType' ? Object.values(f.code.codings) : [f.code];
+      for (const c of [...own, ...alsoMatchCodingsOf(f)]) claimCoding(f, c, key);
     }
   }
 }

@@ -76,18 +76,33 @@ const defsSchema = {
       required: ['system', 'code', 'display'],
       additionalProperties: false
     },
-    // The resource's code: a static coding, or a source `{ from: datasource, field }` naming the dotted
-    // path in the event content where a datasets-service selection stored its `codes[]`.
+    // The resource's code: a static coding, a source `{ from: datasource, field }` naming the dotted
+    // path in the event content where a datasets-service selection stored its `codes[]`, or
+    // `{ from: eventType, codings }`, one coding per eventType of the item (a lab analyte measured in mass
+    // or in moles has two LOINC codes).
     fhirCode: {
       if: { type: 'object', required: ['from'] },
       then: {
         type: 'object',
-        properties: {
-          from: { enum: ['datasource'] },
-          field: { type: 'string', pattern: '^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$' }
+        properties: { from: { enum: ['datasource', 'eventType'] } },
+        required: ['from'],
+        if: { properties: { from: { const: 'eventType' } } },
+        then: {
+          properties: {
+            from: true,
+            codings: { type: 'object', minProperties: 2, additionalProperties: { $ref: 'defs.json#/definitions/fhirCoding' } }
+          },
+          required: ['codings'],
+          additionalProperties: false
         },
-        required: ['from', 'field'],
-        additionalProperties: false
+        else: {
+          properties: {
+            from: true,
+            field: { type: 'string', pattern: '^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$' }
+          },
+          required: ['field'],
+          additionalProperties: false
+        }
       },
       else: { $ref: 'defs.json#/definitions/fhirCoding' }
     },
@@ -172,8 +187,17 @@ const defsSchema = {
         // Further categories of the same table a resource may carry and still import here (import only).
         alsoMatchCategories: { type: 'array', minItems: 1, uniqueItems: true, items: { type: 'string', minLength: 1 } },
         code: { $ref: 'defs.json#/definitions/fhirCode' },
-        // Extra codes accepted on import only, never emitted (static code only).
-        alsoMatch: { type: 'array', minItems: 1, items: { $ref: 'defs.json#/definitions/fhirCoding' } },
+        // Extra codes accepted on import only, never emitted: a list with a static code; with an eventType
+        // code, keyed by the eventType each code names (a mass code never imports a moles quantity).
+        alsoMatch: {
+          if: { type: 'array' },
+          then: { type: 'array', minItems: 1, items: { $ref: 'defs.json#/definitions/fhirCoding' } },
+          else: {
+            type: 'object',
+            minProperties: 1,
+            additionalProperties: { type: 'array', minItems: 1, items: { $ref: 'defs.json#/definitions/fhirCoding' } }
+          }
+        },
         value: { $ref: 'defs.json#/definitions/fhirValue' },
         // Extra resources, one per numeric composite field, inheriting the parent's resourceType and
         // category (e.g. the heart rate of a blood-pressure event).

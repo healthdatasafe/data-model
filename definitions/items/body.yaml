@@ -294,6 +294,17 @@ body-semen-concentration:
     loinc: ["9780-8"]
   devNotes: >-
     Stored on `concentration/megacount-ml` (10⁶/mL).
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 9780-8, display: "Spermatozoa [#/volume] in Semen" }
+    value:
+      kind: quantity
+      units:
+        concentration/megacount-ml: "10*6/mL"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 body-semen-motility-progressive:
   version: v1
   label:
@@ -390,6 +401,17 @@ body-semen-volume:
     population: recently-fertile-men
   references:
     loinc: ["3160-9"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 3160-9, display: "Volume of Semen" }
+    value:
+      kind: quantity
+      units:
+        volume/ml: mL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 body-semen-tmc:
   version: v1
   label:
@@ -523,6 +545,22 @@ body-blood-serum-glucose-fasting:
   references:
     snomed: ["167087006"]
     loinc: ["1558-6", "14771-0"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mg-dl: { system: http://loinc.org, code: 1558-6, display: "Fasting glucose [Mass/volume] in Serum or Plasma" }
+        concentration/mmol-l: { system: http://loinc.org, code: 14771-0, display: "Fasting glucose [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-glucose-random:
   version: v1
@@ -552,6 +590,22 @@ body-blood-serum-glucose-random:
   devNotes: >-
     Untimed glucose: any result whose report does not state fasting. A fasting result goes to
     `body-blood-serum-glucose-fasting`; SNOMED and LOINC code the two as different observations.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mg-dl: { system: http://loinc.org, code: 2345-7, display: "Glucose [Mass/volume] in Serum or Plasma" }
+        concentration/mmol-l: { system: http://loinc.org, code: 14749-6, display: "Glucose [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-insulin-fasting:
   version: v1
@@ -663,6 +717,17 @@ body-blood-serum-fsh:
   references:
     snomed: ["273971007"]
     loinc: ["15067-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 15067-2, display: "Follitropin [Units/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/iu-l: "[IU]/L"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-lh:
   version: v1
@@ -679,6 +744,17 @@ body-blood-serum-lh:
   references:
     snomed: ["273969007"]
     loinc: ["10501-5"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 10501-5, display: "Lutropin [Units/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/iu-l: "[IU]/L"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-estradiol:
   version: v1
@@ -707,6 +783,22 @@ body-blood-serum-estradiol:
   references:
     snomed: ["166448005"]
     loinc: ["2243-4", "14715-7"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/pg-ml: { system: http://loinc.org, code: 2243-4, display: "Estradiol (E2) [Mass/volume] in Serum or Plasma" }
+        concentration/pmol-l: { system: http://loinc.org, code: 14715-7, display: "Estradiol (E2) [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/pg-ml: pg/mL
+        concentration/pmol-l: pmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-amh:
   version: v1
@@ -730,6 +822,22 @@ body-blood-serum-amh:
   references:
     snomed: ["711358004"]
     loinc: ["38476-8", "48377-6"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/ug-l: { system: http://loinc.org, code: 38476-8, display: "Mullerian inhibiting substance [Mass/volume] in Serum or Plasma" }
+        concentration/pmol-l: { system: http://loinc.org, code: 48377-6, display: "Mullerian inhibiting substance [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ug-l: ug/L
+        concentration/pmol-l: pmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ── Iron studies ─────────────────────────────────────────────────────────────
 
@@ -750,6 +858,17 @@ body-blood-serum-ferritin:
   references:
     snomed: ["269821003"]
     loinc: ["2276-4"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2276-4, display: "Ferritin [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ug-l: ug/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-iron:
   version: v1
@@ -776,6 +895,22 @@ body-blood-serum-iron:
   references:
     snomed: ["250216004"]
     loinc: ["2498-4", "14798-3"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mcg-dl: { system: http://loinc.org, code: 2498-4, display: "Iron [Mass/volume] in Serum or Plasma" }
+        concentration/umol-l: { system: http://loinc.org, code: 14798-3, display: "Iron [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mcg-dl: ug/dL
+        concentration/umol-l: umol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-tibc:
   version: v1
@@ -803,6 +938,22 @@ body-blood-serum-tibc:
   references:
     snomed: ["359979000"]
     loinc: ["2500-7", "14800-7"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mcg-dl: { system: http://loinc.org, code: 2500-7, display: "Iron binding capacity [Mass/volume] in Serum or Plasma" }
+        concentration/umol-l: { system: http://loinc.org, code: 14800-7, display: "Iron binding capacity [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mcg-dl: ug/dL
+        concentration/umol-l: umol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-transferrin-saturation:
   version: v1
@@ -846,6 +997,18 @@ body-blood-cbc-hemoglobin:
   references:
     snomed: ["441689006"]
     loinc: ["718-7"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 718-7, display: "Hemoglobin [Mass/volume] in Blood" }
+    value:
+      kind: quantity
+      units:
+        concentration/g-dl: g/dL
+        concentration/g-l: g/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-hematocrit:
   version: v1
@@ -883,6 +1046,20 @@ body-blood-cbc-rbc:
     snomed: ["14089001"]
     loinc: ["26453-1"]
     loincMethod: ["789-8"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26453-1, display: "Erythrocytes [#/volume] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 789-8, display: "Erythrocytes [#/volume] in Blood by Automated count" }
+    value:
+      kind: quantity
+      units:
+        concentration/gigacount-ml: "10*9/mL"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-wbc:
   version: v1
@@ -898,6 +1075,20 @@ body-blood-cbc-wbc:
     snomed: ["767002"]
     loinc: ["26464-8"]
     loincMethod: ["6690-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26464-8, display: "Leukocytes [#/volume] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 6690-2, display: "Leukocytes [#/volume] in Blood by Automated count" }
+    value:
+      kind: quantity
+      units:
+        concentration/megacount-ml: "10*6/mL"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-platelets:
   version: v1
@@ -913,6 +1104,20 @@ body-blood-cbc-platelets:
     snomed: ["61928009"]
     loinc: ["26515-7"]
     loincMethod: ["777-3"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26515-7, display: "Platelets [#/volume] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 777-3, display: "Platelets [#/volume] in Blood by Automated count" }
+    value:
+      kind: quantity
+      units:
+        concentration/megacount-ml: "10*6/mL"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-mcv:
   version: v1
@@ -928,6 +1133,20 @@ body-blood-cbc-mcv:
     snomed: ["104133003"]
     loinc: ["30428-7"]
     loincMethod: ["787-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 30428-7, display: "MCV [Entitic mean volume] in Red Blood Cells" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 787-2, display: "MCV [Entitic mean volume] in Red Blood Cells by Automated count" }
+    value:
+      kind: quantity
+      units:
+        volume/fl: fL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-mch:
   version: v1
@@ -943,6 +1162,20 @@ body-blood-cbc-mch:
     snomed: ["54706004"]
     loinc: ["28539-5"]
     loincMethod: ["785-6"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 28539-5, display: "MCH [Entitic mass]" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 785-6, display: "MCH [Entitic mass] by Automated count" }
+    value:
+      kind: quantity
+      units:
+        mass/pg: pg
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-rdw:
   version: v1
@@ -1073,6 +1306,21 @@ body-blood-cbc-mchc:
     snomed: ["37254006"]
     loinc: ["28540-3"]
     loincMethod: ["786-4"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 28540-3, display: "MCHC [Entitic Mass/volume] in Red Blood Cells" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 786-4, display: "MCHC [Entitic Mass/volume] in Red Blood Cells by Automated count" }
+    value:
+      kind: quantity
+      units:
+        concentration/g-dl: g/dL
+        concentration/g-l: g/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-mpv:
   version: v1
@@ -1088,6 +1336,20 @@ body-blood-cbc-mpv:
     snomed: ["75672003"]
     loinc: ["28542-9"]
     loincMethod: ["32623-1"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 28542-9, display: "Platelet [Entitic mean volume] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 32623-1, display: "Platelet [Entitic mean volume] in Blood by Automated count" }
+    value:
+      kind: quantity
+      units:
+        volume/fl: fL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-reticulocytes:
   version: v1
@@ -1140,6 +1402,20 @@ body-blood-cbc-reticulocytes-hemoglobin:
     loincMethod: ["71694-4"]
   devNotes: >-
     Ret-He / CHr. No SNOMED reference: SNOMED CT has no concept for it.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 42810-2, display: "Hemoglobin [Entitic mass] in Reticulocytes" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 71694-4, display: "Hemoglobin [Entitic mass] in Reticulocytes by Automated count" }
+    value:
+      kind: quantity
+      units:
+        mass/pg: pg
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-nucleated-rbc:
   version: v1
@@ -1161,6 +1437,21 @@ body-blood-cbc-nucleated-rbc:
     Per 100 white blood cells, stored as printed: not a part of a whole and above 100 in some newborns,
     so `ratio/percent`, not `ratio/proportion` (plan 114 Q16). The absolute count is not an item:
     `lab-result/coded-v1` under LOINC 30392-5 meanwhile.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 19048-8, display: "Nucleated erythrocytes/Leukocytes [Ratio] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 58413-6, display: "Nucleated erythrocytes/Leukocytes [Ratio] in Blood by Automated count" }
+      - { system: http://loinc.org, code: 18309-5, display: "Nucleated erythrocytes/Leukocytes [Ratio] in Blood by Manual count" }
+    value:
+      kind: quantity
+      units:
+        ratio/percent: "%"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-neutrophils-segmented:
   version: v1
@@ -1508,6 +1799,20 @@ body-blood-coagulation-prothrombin-time:
     In seconds. The same test printed as a percentage of normal (Quick, TP) is
     `body-blood-coagulation-prothrombin-activity`, and as a ratio the INR: neither converts to seconds,
     since the relation depends on the reagent (plan 114 Q17).
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 5902-2, display: "Prothrombin time (PT)" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 42638-7, display: "Prothrombin time (PT) in Platelet poor plasma by Coagulation assay" }
+    value:
+      kind: quantity
+      units:
+        time/s: s
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-coagulation-prothrombin-activity:
   version: v1
@@ -1547,6 +1852,17 @@ body-blood-coagulation-aptt:
     loinc: ["14979-9"]
   devNotes: >-
     In seconds. The aPTT ratio (patient / control) is not an item: `lab-result/coded-v1` meanwhile.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 14979-9, display: "aPTT in Platelet poor plasma by Coagulation assay" }
+    value:
+      kind: quantity
+      units:
+        time/s: s
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-coagulation-fibrinogen:
   version: v1
@@ -1572,6 +1888,18 @@ body-blood-coagulation-fibrinogen:
   references:
     snomed: ["250346004"]
     loinc: ["3255-7"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 3255-7, display: "Fibrinogen [Mass/volume] in Platelet poor plasma by Coagulation assay" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/g-l: g/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-coagulation-inr:
   version: v1
@@ -1612,6 +1940,17 @@ body-blood-serum-alt:
   references:
     snomed: ["34608000"]
     loinc: ["1742-6"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 1742-6, display: "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        catalytic-activity/u-l: U/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-ast:
   version: v1
@@ -1626,6 +1965,17 @@ body-blood-serum-ast:
   references:
     snomed: ["250641004"]
     loinc: ["1920-8"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 1920-8, display: "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        catalytic-activity/u-l: U/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-ggt:
   version: v1
@@ -1640,6 +1990,17 @@ body-blood-serum-ggt:
   references:
     snomed: ["313849004"]
     loinc: ["2324-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2324-2, display: "Gamma glutamyl transferase [Enzymatic activity/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        catalytic-activity/u-l: U/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-alp:
   version: v1
@@ -1654,6 +2015,17 @@ body-blood-serum-alp:
   references:
     snomed: ["271234008"]
     loinc: ["6768-6"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 6768-6, display: "Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        catalytic-activity/u-l: U/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-ldh:
   version: v1
@@ -1698,6 +2070,22 @@ body-blood-serum-bilirubin-total:
   references:
     snomed: ["359986008"]
     loinc: ["1975-2", "14631-6"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mg-dl: { system: http://loinc.org, code: 1975-2, display: "Bilirubin.total [Mass/volume] in Serum or Plasma" }
+        concentration/umol-l: { system: http://loinc.org, code: 14631-6, display: "Bilirubin.total [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/umol-l: umol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-bilirubin-direct:
   version: v1
@@ -1727,6 +2115,22 @@ body-blood-serum-bilirubin-direct:
   devNotes: >-
     The diazo direct fraction, which routine labs report even when they print "conjuguée" (plan 114 Q18).
     A conjugated-specific method (LOINC 15152-2) is another analyte: it goes to `lab-result/coded-v1`.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mg-dl: { system: http://loinc.org, code: 1968-7, display: "Bilirubin.direct [Mass/volume] in Serum or Plasma" }
+        concentration/umol-l: { system: http://loinc.org, code: 14629-0, display: "Bilirubin.direct [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/umol-l: umol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-bile-acids:
   version: v1
@@ -1741,6 +2145,17 @@ body-blood-serum-bile-acids:
   references:
     snomed: ["313455004"]
     loinc: ["14628-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 14628-2, display: "Bile acid [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/umol-l: umol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ── Pancreas ─────────────────────────────────────────────────────────────────
 
@@ -1757,6 +2172,17 @@ body-blood-serum-lipase:
   references:
     snomed: ["271232007"]
     loinc: ["3040-3"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 3040-3, display: "Lipase [Enzymatic activity/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        catalytic-activity/u-l: U/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-amylase:
   version: v1
@@ -1773,6 +2199,17 @@ body-blood-serum-amylase:
     loinc: ["1798-8"]
   devNotes: >-
     Total amylase. Pancreatic amylase is another analyte, not asked for: `lab-result/coded-v1` meanwhile.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 1798-8, display: "Amylase [Enzymatic activity/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        catalytic-activity/u-l: U/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 
 # ── Thyroid ──────────────────────────────────────────────────────────────────
@@ -1790,6 +2227,17 @@ body-blood-serum-tsh:
   references:
     snomed: ["61167004"]
     loinc: ["3016-3"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 3016-3, display: "Thyrotropin [Units/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/uiu-ml: "u[IU]/mL"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ── Renal & electrolytes ─────────────────────────────────────────────────────
 
@@ -1821,6 +2269,23 @@ body-blood-serum-bun:
   references:
     snomed: ["105011006"]
     loinc: ["3094-0", "22664-7"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    # Two LOINC components, as labs print them: the mmol/L export reads "Urea", not "Urea nitrogen" (see above).
+    code:
+      from: eventType
+      codings:
+        concentration/mg-dl: { system: http://loinc.org, code: 3094-0, display: "Urea nitrogen [Mass/volume] in Serum or Plasma" }
+        concentration/mmol-l: { system: http://loinc.org, code: 22664-7, display: "Urea [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-creatinine:
   version: v1
@@ -1847,6 +2312,22 @@ body-blood-serum-creatinine:
   references:
     snomed: ["113075003"]
     loinc: ["2160-0", "14682-9"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mg-dl: { system: http://loinc.org, code: 2160-0, display: "Creatinine [Mass/volume] in Serum or Plasma" }
+        concentration/umol-l: { system: http://loinc.org, code: 14682-9, display: "Creatinine [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/umol-l: umol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-egfr:
   version: v1
@@ -1882,6 +2363,17 @@ body-blood-serum-sodium:
   references:
     snomed: ["104934005"]
     loinc: ["2951-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2951-2, display: "Sodium [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-potassium:
   version: v1
@@ -1896,6 +2388,17 @@ body-blood-serum-potassium:
   references:
     snomed: ["271236005"]
     loinc: ["2823-3"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2823-3, display: "Potassium [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-chloride:
   version: v1
@@ -1910,6 +2413,17 @@ body-blood-serum-chloride:
   references:
     snomed: ["271238006"]
     loinc: ["2075-0"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2075-0, display: "Chloride [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-co2:
   version: v1
@@ -1930,6 +2444,20 @@ body-blood-serum-co2:
     same analyser measurement under another LOINC component, and the item's SNOMED concept is the
     bicarbonate measurement: the item owns it, so one series does not split by the lab's wording. A
     blood-gas bicarbonate is another specimen and goes to `lab-result/coded-v1`.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2028-9, display: "Carbon dioxide, total [Moles/volume] in Serum or Plasma" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 1963-8, display: "Bicarbonate [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-calcium:
   version: v1
@@ -1956,6 +2484,22 @@ body-blood-serum-calcium:
   references:
     snomed: ["271240001"]
     loinc: ["17861-6", "2000-8"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mg-dl: { system: http://loinc.org, code: 17861-6, display: "Calcium [Mass/volume] in Serum or Plasma" }
+        concentration/mmol-l: { system: http://loinc.org, code: 2000-8, display: "Calcium [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-phosphate:
   version: v1
@@ -1982,6 +2526,22 @@ body-blood-serum-phosphate:
   references:
     snomed: ["271241002"]
     loinc: ["2777-1", "14879-1"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mg-dl: { system: http://loinc.org, code: 2777-1, display: "Phosphate [Mass/volume] in Serum or Plasma" }
+        concentration/mmol-l: { system: http://loinc.org, code: 14879-1, display: "Phosphate [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ── Protein ──────────────────────────────────────────────────────────────────
 
@@ -2009,6 +2569,18 @@ body-blood-serum-protein-total:
   references:
     snomed: ["270992008"]
     loinc: ["2885-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2885-2, display: "Protein [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/g-dl: g/dL
+        concentration/g-l: g/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-albumin:
   version: v1
@@ -2034,6 +2606,18 @@ body-blood-serum-albumin:
   references:
     snomed: ["104485008"]
     loinc: ["1751-7"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 1751-7, display: "Albumin [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/g-dl: g/dL
+        concentration/g-l: g/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-globulin:
   version: v1
@@ -2060,6 +2644,21 @@ body-blood-serum-globulin:
     snomed: ["270994009"]
     loinc: ["2336-6"]
     loincMethod: ["10834-0"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2336-6, display: "Globulin [Mass/volume] in Serum" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 10834-0, display: "Globulin [Mass/volume] in Serum by calculation" }
+    value:
+      kind: quantity
+      units:
+        concentration/g-dl: g/dL
+        concentration/g-l: g/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-haptoglobin:
   version: v1
@@ -2094,6 +2693,19 @@ body-blood-serum-haptoglobin:
   references:
     snomed: ["443308002"]
     loinc: ["4542-7"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 4542-7, display: "Haptoglobin [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/g-l: g/L
+        concentration/mg-l: mg/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-igg:
   version: v1
@@ -2119,6 +2731,18 @@ body-blood-serum-igg:
   references:
     snomed: ["45293001"]
     loinc: ["2465-3"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2465-3, display: "IgG [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/g-l: g/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-iga:
   version: v1
@@ -2144,6 +2768,18 @@ body-blood-serum-iga:
   references:
     snomed: ["31651002"]
     loinc: ["2458-8"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2458-8, display: "IgA [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/g-l: g/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-igm:
   version: v1
@@ -2169,6 +2805,18 @@ body-blood-serum-igm:
   references:
     snomed: ["45764000"]
     loinc: ["2472-9"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2472-9, display: "IgM [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/g-l: g/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 
 # ── Minerals ─────────────────────────────────────────────────────────────────
@@ -2198,6 +2846,22 @@ body-blood-serum-zinc:
   references:
     snomed: ["273975003"]
     loinc: ["5763-8", "14955-9"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mcg-dl: { system: http://loinc.org, code: 5763-8, display: "Zinc [Mass/volume] in Serum or Plasma" }
+        concentration/umol-l: { system: http://loinc.org, code: 14955-9, display: "Zinc [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mcg-dl: ug/dL
+        concentration/umol-l: umol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-copper:
   version: v1
@@ -2224,6 +2888,22 @@ body-blood-serum-copper:
   references:
     snomed: ["85554007"]
     loinc: ["5631-7", "14665-4"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mcg-dl: { system: http://loinc.org, code: 5631-7, display: "Copper [Mass/volume] in Serum or Plasma" }
+        concentration/umol-l: { system: http://loinc.org, code: 14665-4, display: "Copper [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mcg-dl: ug/dL
+        concentration/umol-l: umol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-ceruloplasmin:
   version: v1
@@ -2259,6 +2939,19 @@ body-blood-serum-ceruloplasmin:
   references:
     snomed: ["270975004"]
     loinc: ["2064-4"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2064-4, display: "Ceruloplasmin [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/mg-l: mg/L
+        concentration/g-l: g/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-magnesium:
   version: v1
@@ -2285,6 +2978,22 @@ body-blood-serum-magnesium:
   references:
     snomed: ["63571001"]
     loinc: ["19123-9", "2601-3"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mg-dl: { system: http://loinc.org, code: 19123-9, display: "Magnesium [Mass/volume] in Serum or Plasma" }
+        concentration/mmol-l: { system: http://loinc.org, code: 2601-3, display: "Magnesium [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-rbc-magnesium:
   version: v1
@@ -2301,6 +3010,17 @@ body-blood-rbc-magnesium:
   # No SNOMED reference: no concept exists for erythrocyte magnesium measurement.
   references:
     loinc: ["26746-8"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26746-8, display: "Magnesium [Mass/volume] in Red Blood Cells" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-selenium:
   version: v1
@@ -2315,6 +3035,17 @@ body-blood-serum-selenium:
   references:
     snomed: ["166759002"]
     loinc: ["5724-0"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 5724-0, display: "Selenium [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ug-l: ug/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ── Vitamins ─────────────────────────────────────────────────────────────────
 
@@ -2343,6 +3074,22 @@ body-blood-serum-vitamin-a:
   references:
     snomed: ["271243004"]
     loinc: ["2923-1", "14905-4"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mcg-dl: { system: http://loinc.org, code: 2923-1, display: "Retinol [Mass/volume] in Serum or Plasma" }
+        concentration/umol-l: { system: http://loinc.org, code: 14905-4, display: "Retinol [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mcg-dl: ug/dL
+        concentration/umol-l: umol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-vitamin-d-25oh:
   version: v1
@@ -2371,6 +3118,22 @@ body-blood-serum-vitamin-d-25oh:
   references:
     snomed: ["12199005"]
     loinc: ["62292-8", "68438-1"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/ug-l: { system: http://loinc.org, code: 62292-8, display: "25-Hydroxyvitamin D3+25-Hydroxyvitamin D2 [Mass/volume] in Serum or Plasma" }
+        concentration/nmol-l: { system: http://loinc.org, code: 68438-1, display: "25-Hydroxyvitamin D3+25-Hydroxyvitamin D2 [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ug-l: ug/L
+        concentration/nmol-l: nmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-vitamin-d-125oh:
   version: v1
@@ -2426,6 +3189,22 @@ body-blood-serum-vitamin-b12:
   references:
     snomed: ["271216009"]
     loinc: ["2132-9", "14685-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/pg-ml: { system: http://loinc.org, code: 2132-9, display: "Cobalamin (Vitamin B12) [Mass/volume] in Serum or Plasma" }
+        concentration/pmol-l: { system: http://loinc.org, code: 14685-2, display: "Cobalamin (Vitamin B12) [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/pg-ml: pg/mL
+        concentration/pmol-l: pmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-folate:
   version: v1
@@ -2456,6 +3235,22 @@ body-blood-serum-folate:
   references:
     snomed: ["250212002"]
     loinc: ["2284-8", "14732-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/ug-l: { system: http://loinc.org, code: 2284-8, display: "Folate [Mass/volume] in Serum or Plasma" }
+        concentration/nmol-l: { system: http://loinc.org, code: 14732-2, display: "Folate [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ug-l: ug/L
+        concentration/nmol-l: nmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-vitamin-b6:
   version: v1
@@ -2470,6 +3265,17 @@ body-blood-serum-vitamin-b6:
   references:
     snomed: ["11829003"]
     loinc: ["30552-4"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 30552-4, display: "Pyridoxal phosphate [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ug-l: ug/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-vitamin-c:
   version: v1
@@ -2484,6 +3290,17 @@ body-blood-serum-vitamin-c:
   references:
     snomed: ["270988001"]
     loinc: ["1903-4"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 1903-4, display: "Ascorbate [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ── Methylation ──────────────────────────────────────────────────────────────
 
@@ -2500,6 +3317,17 @@ body-blood-serum-homocysteine:
   references:
     snomed: ["104733005"]
     loinc: ["13965-9"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 13965-9, display: "Homocysteine [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/umol-l: umol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Plan 83 follow-up — 28 analytes requested in site-agents#5 (fertility workup:
@@ -2537,6 +3365,22 @@ body-blood-serum-cholesterol-total:
   references:
     snomed: ["412808005"]
     loinc: ["2093-3", "14647-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mg-dl: { system: http://loinc.org, code: 2093-3, display: "Cholesterol [Mass/volume] in Serum or Plasma" }
+        concentration/mmol-l: { system: http://loinc.org, code: 14647-2, display: "Cholesterol [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-cholesterol-hdl:
   version: v1
@@ -2563,6 +3407,22 @@ body-blood-serum-cholesterol-hdl:
   references:
     snomed: ["166832000"]
     loinc: ["2085-9", "14646-4"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mg-dl: { system: http://loinc.org, code: 2085-9, display: "Cholesterol in HDL [Mass/volume] in Serum or Plasma" }
+        concentration/mmol-l: { system: http://loinc.org, code: 14646-4, display: "Cholesterol in HDL [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-cholesterol-ldl:
   version: v1
@@ -2590,6 +3450,29 @@ body-blood-serum-cholesterol-ldl:
     snomed: ["166833005"]
     loinc: ["2089-1", "22748-8"]
     loincMethod: ["13457-7", "18262-6", "39469-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mg-dl: { system: http://loinc.org, code: 2089-1, display: "Cholesterol in LDL [Mass/volume] in Serum or Plasma" }
+        concentration/mmol-l: { system: http://loinc.org, code: 22748-8, display: "Cholesterol in LDL [Moles/volume] in Serum or Plasma" }
+    # Import only: the method-specific codes the item owns (references.loincMethod), by the eventType each names.
+    alsoMatch:
+      concentration/mg-dl:
+        - { system: http://loinc.org, code: 13457-7, display: "Cholesterol in LDL [Mass/volume] in Serum or Plasma by calculation" }
+        - { system: http://loinc.org, code: 18262-6, display: "Cholesterol in LDL [Mass/volume] in Serum or Plasma by Direct assay" }
+      concentration/mmol-l:
+        - { system: http://loinc.org, code: 39469-2, display: "Cholesterol in LDL [Moles/volume] in Serum or Plasma by calculation" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-triglycerides:
   version: v1
@@ -2616,6 +3499,22 @@ body-blood-serum-triglycerides:
   references:
     snomed: ["271245006"]
     loinc: ["2571-8", "14927-8"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mg-dl: { system: http://loinc.org, code: 2571-8, display: "Triglyceride [Mass/volume] in Serum or Plasma" }
+        concentration/mmol-l: { system: http://loinc.org, code: 14927-8, display: "Triglyceride [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-dl: mg/dL
+        concentration/mmol-l: mmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ── Inflammation ─────────────────────────────────────────────────────────────
 
@@ -2646,6 +3545,18 @@ body-blood-serum-crp:
   devNotes: >-
     The standard CRP assay (LOINC 1988-5). The high-sensitivity assay is `body-blood-serum-crp-hs` (30522-7):
     the printed test name or the code decides which item, never the value.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 1988-5, display: "C reactive protein [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-l: mg/L
+        concentration/mg-dl: mg/dL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-crp-hs:
   version: v1
@@ -2671,6 +3582,18 @@ body-blood-serum-crp-hs:
   references:
     snomed: ["711357009"]
     loinc: ["30522-7"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 30522-7, display: "C reactive protein [Mass/volume] in Serum or Plasma by High sensitivity method" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-l: mg/L
+        concentration/mg-dl: mg/dL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-esr:
   version: v1
@@ -2687,6 +3610,20 @@ body-blood-esr:
     snomed: ["416838001"]
     loinc: ["30341-2"]
     loincMethod: ["4537-7"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 30341-2, display: "Erythrocyte [Sedimentation Rate] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 4537-7, display: "Erythrocyte [Sedimentation Rate] in Blood by Westergren method" }
+    value:
+      kind: quantity
+      units:
+        rate/mm-h: mm/h
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ── Thyroid — function & antibodies ──────────────────────────────────────────
 
@@ -2715,6 +3652,22 @@ body-blood-serum-free-t4:
   references:
     snomed: ["313837000"]
     loinc: ["3024-7", "14920-3"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/ng-dl: { system: http://loinc.org, code: 3024-7, display: "Thyroxine (T4) free [Mass/volume] in Serum or Plasma" }
+        concentration/pmol-l: { system: http://loinc.org, code: 14920-3, display: "Thyroxine (T4) free [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ng-dl: ng/dL
+        concentration/pmol-l: pmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-free-t3:
   version: v1
@@ -2741,6 +3694,22 @@ body-blood-serum-free-t3:
   references:
     snomed: ["313836009"]
     loinc: ["3051-0", "14928-6"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/pg-ml: { system: http://loinc.org, code: 3051-0, display: "Triiodothyronine (T3) Free [Mass/volume] in Serum or Plasma" }
+        concentration/pmol-l: { system: http://loinc.org, code: 14928-6, display: "Triiodothyronine (T3) Free [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/pg-ml: pg/mL
+        concentration/pmol-l: pmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-total-t3:
   version: v1
@@ -2767,6 +3736,22 @@ body-blood-serum-total-t3:
   references:
     snomed: ["250668004"]
     loinc: ["3053-6", "14930-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/ng-dl: { system: http://loinc.org, code: 3053-6, display: "Triiodothyronine (T3) [Mass/volume] in Serum or Plasma" }
+        concentration/nmol-l: { system: http://loinc.org, code: 14930-2, display: "Triiodothyronine (T3) [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ng-dl: ng/dL
+        concentration/nmol-l: nmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-reverse-t3:
   version: v1
@@ -2793,6 +3778,22 @@ body-blood-serum-reverse-t3:
   references:
     snomed: ["51583006"]
     loinc: ["3052-8", "14929-4"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/ng-dl: { system: http://loinc.org, code: 3052-8, display: "Triiodothyronine (T3).reverse [Mass/volume] in Serum or Plasma" }
+        concentration/nmol-l: { system: http://loinc.org, code: 14929-4, display: "Triiodothyronine (T3).reverse [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ng-dl: ng/dL
+        concentration/nmol-l: nmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-tpo-antibodies:
   version: v1
@@ -2810,6 +3811,17 @@ body-blood-serum-tpo-antibodies:
   references:
     snomed: ["27115008"]
     loinc: ["8099-4"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 8099-4, display: "Thyroperoxidase Ab [Units/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/iu-ml: "[IU]/mL"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-thyroglobulin-antibodies:
   version: v1
@@ -2824,6 +3836,17 @@ body-blood-serum-thyroglobulin-antibodies:
   references:
     snomed: ["17164004"]
     loinc: ["8098-6"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 8098-6, display: "Thyroglobulin Ab [Units/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/iu-ml: "[IU]/mL"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-thyroglobulin:
   version: v1
@@ -2842,6 +3865,17 @@ body-blood-serum-thyroglobulin:
   references:
     snomed: ["39966003"]
     loinc: ["3013-0"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 3013-0, display: "Thyroglobulin [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ug-l: ug/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-tsi:
   version: v1
@@ -2859,6 +3893,17 @@ body-blood-serum-tsi:
   references:
     snomed: ["104972000"]
     loinc: ["30567-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 30567-2, display: "Thyroid stimulating immunoglobulins [Units/volume] in Serum" }
+    value:
+      kind: quantity
+      units:
+        concentration/iu-l: "[IU]/L"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-trab:
   version: v1
@@ -2873,6 +3918,17 @@ body-blood-serum-trab:
   references:
     snomed: ["54495009"]
     loinc: ["5385-0"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 5385-0, display: "Thyrotropin receptor Ab [Units/volume] in Serum" }
+    value:
+      kind: quantity
+      units:
+        concentration/iu-l: "[IU]/L"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ── Hormones — reproductive & adrenal (extended) ─────────────────────────────
 
@@ -2903,6 +3959,22 @@ body-blood-serum-progesterone:
   references:
     snomed: ["270972001"]
     loinc: ["2839-9", "14890-8"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/ug-l: { system: http://loinc.org, code: 2839-9, display: "Progesterone [Mass/volume] in Serum or Plasma" }
+        concentration/nmol-l: { system: http://loinc.org, code: 14890-8, display: "Progesterone [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ug-l: ug/L
+        concentration/nmol-l: nmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-testosterone-total:
   version: v1
@@ -2966,6 +4038,22 @@ body-blood-serum-testosterone-free:
   references:
     snomed: ["20436004"]
     loinc: ["2991-8", "14914-6"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/pg-ml: { system: http://loinc.org, code: 2991-8, display: "Testosterone Free [Mass/volume] in Serum or Plasma" }
+        concentration/pmol-l: { system: http://loinc.org, code: 14914-6, display: "Testosterone Free [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/pg-ml: pg/mL
+        concentration/pmol-l: pmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-shbg:
   version: v1
@@ -2980,6 +4068,17 @@ body-blood-serum-shbg:
   references:
     snomed: ["166585000"]
     loinc: ["13967-5"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 13967-5, display: "Sex hormone binding globulin [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/nmol-l: nmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-dhea-s:
   version: v1
@@ -3006,6 +4105,22 @@ body-blood-serum-dhea-s:
   references:
     snomed: ["395134004"]
     loinc: ["2191-5", "14688-6"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mcg-dl: { system: http://loinc.org, code: 2191-5, display: "Dehydroepiandrosterone sulfate (DHEA-S) [Mass/volume] in Serum or Plasma" }
+        concentration/umol-l: { system: http://loinc.org, code: 14688-6, display: "Dehydroepiandrosterone sulfate (DHEA-S) [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mcg-dl: ug/dL
+        concentration/umol-l: umol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-androstenedione:
   version: v1
@@ -3032,6 +4147,22 @@ body-blood-serum-androstenedione:
   references:
     snomed: ["271224004"]
     loinc: ["1854-9", "14603-5"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/ng-dl: { system: http://loinc.org, code: 1854-9, display: "Androstenedione [Mass/volume] in Serum or Plasma" }
+        concentration/nmol-l: { system: http://loinc.org, code: 14603-5, display: "Androstenedione [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ng-dl: ng/dL
+        concentration/nmol-l: nmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-17-oh-progesterone:
   version: v1
@@ -3058,6 +4189,22 @@ body-blood-serum-17-oh-progesterone:
   references:
     snomed: ["41668001"]
     loinc: ["1668-3", "14569-8"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/ng-dl: { system: http://loinc.org, code: 1668-3, display: "17-Hydroxyprogesterone [Mass/volume] in Serum or Plasma" }
+        concentration/nmol-l: { system: http://loinc.org, code: 14569-8, display: "17-Hydroxyprogesterone [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ng-dl: ng/dL
+        concentration/nmol-l: nmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-prolactin:
   version: v1
@@ -3084,6 +4231,22 @@ body-blood-serum-prolactin:
   references:
     snomed: ["313442000"]
     loinc: ["2842-3", "15081-3"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/ug-l: { system: http://loinc.org, code: 2842-3, display: "Prolactin [Mass/volume] in Serum or Plasma" }
+        concentration/uiu-ml: { system: http://loinc.org, code: 15081-3, display: "Prolactin [Units/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ug-l: ug/L
+        concentration/uiu-ml: "u[IU]/mL"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-cortisol:
   version: v1
@@ -3110,6 +4273,22 @@ body-blood-serum-cortisol:
   references:
     snomed: ["271535005"]
     loinc: ["2143-6", "14675-3"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/mcg-dl: { system: http://loinc.org, code: 2143-6, display: "Cortisol [Mass/volume] in Serum or Plasma" }
+        concentration/nmol-l: { system: http://loinc.org, code: 14675-3, display: "Cortisol [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/mcg-dl: ug/dL
+        concentration/nmol-l: nmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-ca-125:
   version: v1
@@ -3124,6 +4303,17 @@ body-blood-serum-ca-125:
   references:
     snomed: ["80529009"]
     loinc: ["10334-1"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 10334-1, display: "Cancer Ag 125 [Units/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/u-ml: "[arb'U]/mL"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-pth:
   version: v1
@@ -3151,6 +4341,22 @@ body-blood-serum-pth:
   references:
     snomed: ["271541003"]
     loinc: ["2731-8", "14866-8"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/pg-ml: { system: http://loinc.org, code: 2731-8, display: "Parathyrin.intact [Mass/volume] in Serum or Plasma" }
+        concentration/pmol-l: { system: http://loinc.org, code: 14866-8, display: "Parathyrin.intact [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/pg-ml: pg/mL
+        concentration/pmol-l: pmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-acth:
   version: v1
@@ -3165,6 +4371,17 @@ body-blood-serum-acth:
   references:
     snomed: ["49466006"]
     loinc: ["2141-0"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2141-0, display: "Corticotropin [Mass/volume] in Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/pg-ml: pg/mL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-aldosterone:
   version: v1
@@ -3179,6 +4396,17 @@ body-blood-serum-aldosterone:
   references:
     snomed: ["42379004"]
     loinc: ["1763-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 1763-2, display: "Aldosterone [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ng-dl: ng/dL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ── Results with no item of their own (lab-result/coded-v1) ──────────────────
 # Written by importers, never entered in a form (type: imported). The analyte is coded per event,
