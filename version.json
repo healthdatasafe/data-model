@@ -1,9 +1,9 @@
 {
-  "commit": "6ebc46f5144f592135596f7fcb5eb6e05cbba6ab",
-  "commitShort": "6ebc46f",
+  "commit": "72557a5e26155f3680040df676c2ab8a188b7bda",
+  "commitShort": "72557a5",
   "branch": "main",
-  "buildDate": "2026-11-02T13:13:37Z",
-  "publicationDate": "2026-11-02T13:13:23.490Z",
+  "buildDate": "2026-11-02T16:17:12Z",
+  "publicationDate": "2026-11-02T16:17:02.193Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -74,5 +74,5 @@
       "file": "appStreams.json"
     }
   ],
-  "version": "3.40.0"
+  "version": "3.41.0"
 }
