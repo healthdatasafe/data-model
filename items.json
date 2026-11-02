@@ -1514,7 +1514,26 @@
         "9780-8"
       ]
     },
-    "devNotes": "Stored on `concentration/megacount-ml` (10⁶/mL)."
+    "devNotes": "Stored on `concentration/megacount-ml` (10⁶/mL).",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "9780-8",
+        "display": "Spermatozoa [#/volume] in Semen"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/megacount-ml": "10*6/mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-semen-motility-progressive": {
     "version": "v1",
@@ -1628,6 +1647,25 @@
       "loinc": [
         "3160-9"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "3160-9",
+        "display": "Volume of Semen"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "volume/ml": "mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-semen-tmc": {
@@ -1775,6 +1813,36 @@
         "1558-6",
         "14771-0"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "1558-6",
+            "display": "Fasting glucose [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/mmol-l": {
+            "system": "http://loinc.org",
+            "code": "14771-0",
+            "display": "Fasting glucose [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-glucose-random": {
@@ -1836,7 +1904,37 @@
         "14749-6"
       ]
     },
-    "devNotes": "Untimed glucose: any result whose report does not state fasting. A fasting result goes to `body-blood-serum-glucose-fasting`; SNOMED and LOINC code the two as different observations."
+    "devNotes": "Untimed glucose: any result whose report does not state fasting. A fasting result goes to `body-blood-serum-glucose-fasting`; SNOMED and LOINC code the two as different observations.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "2345-7",
+            "display": "Glucose [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/mmol-l": {
+            "system": "http://loinc.org",
+            "code": "14749-6",
+            "display": "Glucose [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-blood-serum-insulin-fasting": {
     "version": "v1",
@@ -2030,6 +2128,25 @@
       "loinc": [
         "15067-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "15067-2",
+        "display": "Follitropin [Units/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/iu-l": "[IU]/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-lh": {
@@ -2053,6 +2170,25 @@
       "loinc": [
         "10501-5"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "10501-5",
+        "display": "Lutropin [Units/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/iu-l": "[IU]/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-estradiol": {
@@ -2113,6 +2249,36 @@
         "2243-4",
         "14715-7"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/pg-ml": {
+            "system": "http://loinc.org",
+            "code": "2243-4",
+            "display": "Estradiol (E2) [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/pmol-l": {
+            "system": "http://loinc.org",
+            "code": "14715-7",
+            "display": "Estradiol (E2) [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/pg-ml": "pg/mL",
+          "concentration/pmol-l": "pmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-amh": {
@@ -2162,6 +2328,36 @@
         "38476-8",
         "48377-6"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/ug-l": {
+            "system": "http://loinc.org",
+            "code": "38476-8",
+            "display": "Mullerian inhibiting substance [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/pmol-l": {
+            "system": "http://loinc.org",
+            "code": "48377-6",
+            "display": "Mullerian inhibiting substance [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ug-l": "ug/L",
+          "concentration/pmol-l": "pmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-ferritin": {
@@ -2193,6 +2389,25 @@
       "loinc": [
         "2276-4"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2276-4",
+        "display": "Ferritin [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ug-l": "ug/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-iron": {
@@ -2253,6 +2468,36 @@
         "2498-4",
         "14798-3"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mcg-dl": {
+            "system": "http://loinc.org",
+            "code": "2498-4",
+            "display": "Iron [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/umol-l": {
+            "system": "http://loinc.org",
+            "code": "14798-3",
+            "display": "Iron [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mcg-dl": "ug/dL",
+          "concentration/umol-l": "umol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-tibc": {
@@ -2313,6 +2558,36 @@
         "2500-7",
         "14800-7"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mcg-dl": {
+            "system": "http://loinc.org",
+            "code": "2500-7",
+            "display": "Iron binding capacity [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/umol-l": {
+            "system": "http://loinc.org",
+            "code": "14800-7",
+            "display": "Iron binding capacity [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mcg-dl": "ug/dL",
+          "concentration/umol-l": "umol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-transferrin-saturation": {
@@ -2403,6 +2678,26 @@
       "loinc": [
         "718-7"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "718-7",
+        "display": "Hemoglobin [Mass/volume] in Blood"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/g-dl": "g/dL",
+          "concentration/g-l": "g/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-cbc-hematocrit": {
@@ -2465,6 +2760,32 @@
       "loincMethod": [
         "789-8"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "26453-1",
+        "display": "Erythrocytes [#/volume] in Blood"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "789-8",
+          "display": "Erythrocytes [#/volume] in Blood by Automated count"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/gigacount-ml": "10*9/mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-cbc-wbc": {
@@ -2491,6 +2812,32 @@
       "loincMethod": [
         "6690-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "26464-8",
+        "display": "Leukocytes [#/volume] in Blood"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "6690-2",
+          "display": "Leukocytes [#/volume] in Blood by Automated count"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/megacount-ml": "10*6/mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-cbc-platelets": {
@@ -2517,6 +2864,32 @@
       "loincMethod": [
         "777-3"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "26515-7",
+        "display": "Platelets [#/volume] in Blood"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "777-3",
+          "display": "Platelets [#/volume] in Blood by Automated count"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/megacount-ml": "10*6/mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-cbc-mcv": {
@@ -2543,6 +2916,32 @@
       "loincMethod": [
         "787-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "30428-7",
+        "display": "MCV [Entitic mean volume] in Red Blood Cells"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "787-2",
+          "display": "MCV [Entitic mean volume] in Red Blood Cells by Automated count"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "volume/fl": "fL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-cbc-mch": {
@@ -2569,6 +2968,32 @@
       "loincMethod": [
         "785-6"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "28539-5",
+        "display": "MCH [Entitic mass]"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "785-6",
+          "display": "MCH [Entitic mass] by Automated count"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "mass/pg": "pg"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-cbc-rdw": {
@@ -2840,6 +3265,33 @@
       "loincMethod": [
         "786-4"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "28540-3",
+        "display": "MCHC [Entitic Mass/volume] in Red Blood Cells"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "786-4",
+          "display": "MCHC [Entitic Mass/volume] in Red Blood Cells by Automated count"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/g-dl": "g/dL",
+          "concentration/g-l": "g/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-cbc-mpv": {
@@ -2866,6 +3318,32 @@
       "loincMethod": [
         "32623-1"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "28542-9",
+        "display": "Platelet [Entitic mean volume] in Blood"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "32623-1",
+          "display": "Platelet [Entitic mean volume] in Blood by Automated count"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "volume/fl": "fL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-cbc-reticulocytes": {
@@ -2958,7 +3436,33 @@
         "71694-4"
       ]
     },
-    "devNotes": "Ret-He / CHr. No SNOMED reference: SNOMED CT has no concept for it."
+    "devNotes": "Ret-He / CHr. No SNOMED reference: SNOMED CT has no concept for it.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "42810-2",
+        "display": "Hemoglobin [Entitic mass] in Reticulocytes"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "71694-4",
+          "display": "Hemoglobin [Entitic mass] in Reticulocytes by Automated count"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "mass/pg": "pg"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-blood-cbc-nucleated-rbc": {
     "version": "v1",
@@ -2994,7 +3498,38 @@
         "18309-5"
       ]
     },
-    "devNotes": "Per 100 white blood cells, stored as printed: not a part of a whole and above 100 in some newborns, so `ratio/percent`, not `ratio/proportion` (plan 114 Q16). The absolute count is not an item: `lab-result/coded-v1` under LOINC 30392-5 meanwhile."
+    "devNotes": "Per 100 white blood cells, stored as printed: not a part of a whole and above 100 in some newborns, so `ratio/percent`, not `ratio/proportion` (plan 114 Q16). The absolute count is not an item: `lab-result/coded-v1` under LOINC 30392-5 meanwhile.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "19048-8",
+        "display": "Nucleated erythrocytes/Leukocytes [Ratio] in Blood"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "58413-6",
+          "display": "Nucleated erythrocytes/Leukocytes [Ratio] in Blood by Automated count"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "18309-5",
+          "display": "Nucleated erythrocytes/Leukocytes [Ratio] in Blood by Manual count"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "ratio/percent": "%"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-blood-cbc-neutrophils-segmented": {
     "version": "v1",
@@ -3676,7 +4211,33 @@
         "42638-7"
       ]
     },
-    "devNotes": "In seconds. The same test printed as a percentage of normal (Quick, TP) is `body-blood-coagulation-prothrombin-activity`, and as a ratio the INR: neither converts to seconds, since the relation depends on the reagent (plan 114 Q17)."
+    "devNotes": "In seconds. The same test printed as a percentage of normal (Quick, TP) is `body-blood-coagulation-prothrombin-activity`, and as a ratio the INR: neither converts to seconds, since the relation depends on the reagent (plan 114 Q17).",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "5902-2",
+        "display": "Prothrombin time (PT)"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "42638-7",
+          "display": "Prothrombin time (PT) in Platelet poor plasma by Coagulation assay"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "time/s": "s"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-blood-coagulation-prothrombin-activity": {
     "version": "v1",
@@ -3729,7 +4290,26 @@
         "14979-9"
       ]
     },
-    "devNotes": "In seconds. The aPTT ratio (patient / control) is not an item: `lab-result/coded-v1` meanwhile."
+    "devNotes": "In seconds. The aPTT ratio (patient / control) is not an item: `lab-result/coded-v1` meanwhile.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "14979-9",
+        "display": "aPTT in Platelet poor plasma by Coagulation assay"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "time/s": "s"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-blood-coagulation-fibrinogen": {
     "version": "v1",
@@ -3787,6 +4367,26 @@
       "loinc": [
         "3255-7"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "3255-7",
+        "display": "Fibrinogen [Mass/volume] in Platelet poor plasma by Coagulation assay"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/g-l": "g/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-coagulation-inr": {
@@ -3835,6 +4435,25 @@
       "loinc": [
         "1742-6"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "1742-6",
+        "display": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "catalytic-activity/u-l": "U/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-ast": {
@@ -3858,6 +4477,25 @@
       "loinc": [
         "1920-8"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "1920-8",
+        "display": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "catalytic-activity/u-l": "U/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-ggt": {
@@ -3881,6 +4519,25 @@
       "loinc": [
         "2324-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2324-2",
+        "display": "Gamma glutamyl transferase [Enzymatic activity/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "catalytic-activity/u-l": "U/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-alp": {
@@ -3904,6 +4561,25 @@
       "loinc": [
         "6768-6"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "6768-6",
+        "display": "Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "catalytic-activity/u-l": "U/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-ldh": {
@@ -3990,6 +4666,36 @@
         "1975-2",
         "14631-6"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "1975-2",
+            "display": "Bilirubin.total [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/umol-l": {
+            "system": "http://loinc.org",
+            "code": "14631-6",
+            "display": "Bilirubin.total [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/umol-l": "umol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-bilirubin-direct": {
@@ -4051,7 +4757,37 @@
         "14629-0"
       ]
     },
-    "devNotes": "The diazo direct fraction, which routine labs report even when they print \"conjuguée\" (plan 114 Q18). A conjugated-specific method (LOINC 15152-2) is another analyte: it goes to `lab-result/coded-v1`."
+    "devNotes": "The diazo direct fraction, which routine labs report even when they print \"conjuguée\" (plan 114 Q18). A conjugated-specific method (LOINC 15152-2) is another analyte: it goes to `lab-result/coded-v1`.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "1968-7",
+            "display": "Bilirubin.direct [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/umol-l": {
+            "system": "http://loinc.org",
+            "code": "14629-0",
+            "display": "Bilirubin.direct [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/umol-l": "umol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-blood-serum-bile-acids": {
     "version": "v1",
@@ -4074,6 +4810,25 @@
       "loinc": [
         "14628-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "14628-2",
+        "display": "Bile acid [Moles/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/umol-l": "umol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-lipase": {
@@ -4097,6 +4852,25 @@
       "loinc": [
         "3040-3"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "3040-3",
+        "display": "Lipase [Enzymatic activity/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "catalytic-activity/u-l": "U/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-amylase": {
@@ -4121,7 +4895,26 @@
         "1798-8"
       ]
     },
-    "devNotes": "Total amylase. Pancreatic amylase is another analyte, not asked for: `lab-result/coded-v1` meanwhile."
+    "devNotes": "Total amylase. Pancreatic amylase is another analyte, not asked for: `lab-result/coded-v1` meanwhile.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "1798-8",
+        "display": "Amylase [Enzymatic activity/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "catalytic-activity/u-l": "U/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-blood-serum-tsh": {
     "version": "v1",
@@ -4144,6 +4937,25 @@
       "loinc": [
         "3016-3"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "3016-3",
+        "display": "Thyrotropin [Units/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/uiu-ml": "u[IU]/mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-bun": {
@@ -4204,6 +5016,36 @@
         "3094-0",
         "22664-7"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "3094-0",
+            "display": "Urea nitrogen [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/mmol-l": {
+            "system": "http://loinc.org",
+            "code": "22664-7",
+            "display": "Urea [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-creatinine": {
@@ -4264,6 +5106,36 @@
         "2160-0",
         "14682-9"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "2160-0",
+            "display": "Creatinine [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/umol-l": {
+            "system": "http://loinc.org",
+            "code": "14682-9",
+            "display": "Creatinine [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/umol-l": "umol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-egfr": {
@@ -4317,6 +5189,25 @@
       "loinc": [
         "2951-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2951-2",
+        "display": "Sodium [Moles/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-potassium": {
@@ -4340,6 +5231,25 @@
       "loinc": [
         "2823-3"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2823-3",
+        "display": "Potassium [Moles/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-chloride": {
@@ -4363,6 +5273,25 @@
       "loinc": [
         "2075-0"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2075-0",
+        "display": "Chloride [Moles/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-co2": {
@@ -4390,7 +5319,33 @@
         "1963-8"
       ]
     },
-    "devNotes": "Exports total CO2 (LOINC 2028-9). Serum bicarbonate (1963-8, \"Bicarbonates\" on French reports) is the same analyser measurement under another LOINC component, and the item's SNOMED concept is the bicarbonate measurement: the item owns it, so one series does not split by the lab's wording. A blood-gas bicarbonate is another specimen and goes to `lab-result/coded-v1`."
+    "devNotes": "Exports total CO2 (LOINC 2028-9). Serum bicarbonate (1963-8, \"Bicarbonates\" on French reports) is the same analyser measurement under another LOINC component, and the item's SNOMED concept is the bicarbonate measurement: the item owns it, so one series does not split by the lab's wording. A blood-gas bicarbonate is another specimen and goes to `lab-result/coded-v1`.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2028-9",
+        "display": "Carbon dioxide, total [Moles/volume] in Serum or Plasma"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "1963-8",
+          "display": "Bicarbonate [Moles/volume] in Serum or Plasma"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-blood-serum-calcium": {
     "version": "v1",
@@ -4450,6 +5405,36 @@
         "17861-6",
         "2000-8"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "17861-6",
+            "display": "Calcium [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/mmol-l": {
+            "system": "http://loinc.org",
+            "code": "2000-8",
+            "display": "Calcium [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-phosphate": {
@@ -4510,6 +5495,36 @@
         "2777-1",
         "14879-1"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "2777-1",
+            "display": "Phosphate [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/mmol-l": {
+            "system": "http://loinc.org",
+            "code": "14879-1",
+            "display": "Phosphate [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-protein-total": {
@@ -4568,6 +5583,26 @@
       "loinc": [
         "2885-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2885-2",
+        "display": "Protein [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/g-dl": "g/dL",
+          "concentration/g-l": "g/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-albumin": {
@@ -4626,6 +5661,26 @@
       "loinc": [
         "1751-7"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "1751-7",
+        "display": "Albumin [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/g-dl": "g/dL",
+          "concentration/g-l": "g/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-globulin": {
@@ -4687,6 +5742,33 @@
       "loincMethod": [
         "10834-0"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2336-6",
+        "display": "Globulin [Mass/volume] in Serum"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "10834-0",
+          "display": "Globulin [Mass/volume] in Serum by calculation"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/g-dl": "g/dL",
+          "concentration/g-l": "g/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-haptoglobin": {
@@ -4765,6 +5847,27 @@
       "loinc": [
         "4542-7"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "4542-7",
+        "display": "Haptoglobin [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/g-l": "g/L",
+          "concentration/mg-l": "mg/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-igg": {
@@ -4823,6 +5926,26 @@
       "loinc": [
         "2465-3"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2465-3",
+        "display": "IgG [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/g-l": "g/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-iga": {
@@ -4881,6 +6004,26 @@
       "loinc": [
         "2458-8"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2458-8",
+        "display": "IgA [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/g-l": "g/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-igm": {
@@ -4939,6 +6082,26 @@
       "loinc": [
         "2472-9"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2472-9",
+        "display": "IgM [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/g-l": "g/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-zinc": {
@@ -4999,6 +6162,36 @@
         "5763-8",
         "14955-9"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mcg-dl": {
+            "system": "http://loinc.org",
+            "code": "5763-8",
+            "display": "Zinc [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/umol-l": {
+            "system": "http://loinc.org",
+            "code": "14955-9",
+            "display": "Zinc [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mcg-dl": "ug/dL",
+          "concentration/umol-l": "umol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-copper": {
@@ -5059,6 +6252,36 @@
         "5631-7",
         "14665-4"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mcg-dl": {
+            "system": "http://loinc.org",
+            "code": "5631-7",
+            "display": "Copper [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/umol-l": {
+            "system": "http://loinc.org",
+            "code": "14665-4",
+            "display": "Copper [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mcg-dl": "ug/dL",
+          "concentration/umol-l": "umol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-ceruloplasmin": {
@@ -5137,6 +6360,27 @@
       "loinc": [
         "2064-4"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2064-4",
+        "display": "Ceruloplasmin [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/mg-l": "mg/L",
+          "concentration/g-l": "g/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-magnesium": {
@@ -5197,6 +6441,36 @@
         "19123-9",
         "2601-3"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "19123-9",
+            "display": "Magnesium [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/mmol-l": {
+            "system": "http://loinc.org",
+            "code": "2601-3",
+            "display": "Magnesium [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-rbc-magnesium": {
@@ -5217,6 +6491,25 @@
       "loinc": [
         "26746-8"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "26746-8",
+        "display": "Magnesium [Mass/volume] in Red Blood Cells"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-selenium": {
@@ -5240,6 +6533,25 @@
       "loinc": [
         "5724-0"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "5724-0",
+        "display": "Selenium [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ug-l": "ug/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-vitamin-a": {
@@ -5300,6 +6612,36 @@
         "2923-1",
         "14905-4"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mcg-dl": {
+            "system": "http://loinc.org",
+            "code": "2923-1",
+            "display": "Retinol [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/umol-l": {
+            "system": "http://loinc.org",
+            "code": "14905-4",
+            "display": "Retinol [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mcg-dl": "ug/dL",
+          "concentration/umol-l": "umol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-vitamin-d-25oh": {
@@ -5360,6 +6702,36 @@
         "62292-8",
         "68438-1"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/ug-l": {
+            "system": "http://loinc.org",
+            "code": "62292-8",
+            "display": "25-Hydroxyvitamin D3+25-Hydroxyvitamin D2 [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/nmol-l": {
+            "system": "http://loinc.org",
+            "code": "68438-1",
+            "display": "25-Hydroxyvitamin D3+25-Hydroxyvitamin D2 [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ug-l": "ug/L",
+          "concentration/nmol-l": "nmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-vitamin-d-125oh": {
@@ -5480,6 +6852,36 @@
         "2132-9",
         "14685-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/pg-ml": {
+            "system": "http://loinc.org",
+            "code": "2132-9",
+            "display": "Cobalamin (Vitamin B12) [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/pmol-l": {
+            "system": "http://loinc.org",
+            "code": "14685-2",
+            "display": "Cobalamin (Vitamin B12) [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/pg-ml": "pg/mL",
+          "concentration/pmol-l": "pmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-folate": {
@@ -5540,6 +6942,36 @@
         "2284-8",
         "14732-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/ug-l": {
+            "system": "http://loinc.org",
+            "code": "2284-8",
+            "display": "Folate [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/nmol-l": {
+            "system": "http://loinc.org",
+            "code": "14732-2",
+            "display": "Folate [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ug-l": "ug/L",
+          "concentration/nmol-l": "nmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-vitamin-b6": {
@@ -5563,6 +6995,25 @@
       "loinc": [
         "30552-4"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "30552-4",
+        "display": "Pyridoxal phosphate [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ug-l": "ug/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-vitamin-c": {
@@ -5586,6 +7037,25 @@
       "loinc": [
         "1903-4"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "1903-4",
+        "display": "Ascorbate [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-homocysteine": {
@@ -5609,6 +7079,25 @@
       "loinc": [
         "13965-9"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "13965-9",
+        "display": "Homocysteine [Moles/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/umol-l": "umol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-cholesterol-total": {
@@ -5669,6 +7158,36 @@
         "2093-3",
         "14647-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "2093-3",
+            "display": "Cholesterol [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/mmol-l": {
+            "system": "http://loinc.org",
+            "code": "14647-2",
+            "display": "Cholesterol [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-cholesterol-hdl": {
@@ -5729,6 +7248,36 @@
         "2085-9",
         "14646-4"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "2085-9",
+            "display": "Cholesterol in HDL [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/mmol-l": {
+            "system": "http://loinc.org",
+            "code": "14646-4",
+            "display": "Cholesterol in HDL [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-cholesterol-ldl": {
@@ -5794,6 +7343,57 @@
         "18262-6",
         "39469-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "2089-1",
+            "display": "Cholesterol in LDL [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/mmol-l": {
+            "system": "http://loinc.org",
+            "code": "22748-8",
+            "display": "Cholesterol in LDL [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "alsoMatch": {
+        "concentration/mg-dl": [
+          {
+            "system": "http://loinc.org",
+            "code": "13457-7",
+            "display": "Cholesterol in LDL [Mass/volume] in Serum or Plasma by calculation"
+          },
+          {
+            "system": "http://loinc.org",
+            "code": "18262-6",
+            "display": "Cholesterol in LDL [Mass/volume] in Serum or Plasma by Direct assay"
+          }
+        ],
+        "concentration/mmol-l": [
+          {
+            "system": "http://loinc.org",
+            "code": "39469-2",
+            "display": "Cholesterol in LDL [Moles/volume] in Serum or Plasma by calculation"
+          }
+        ]
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-triglycerides": {
@@ -5854,6 +7454,36 @@
         "2571-8",
         "14927-8"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "2571-8",
+            "display": "Triglyceride [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/mmol-l": {
+            "system": "http://loinc.org",
+            "code": "14927-8",
+            "display": "Triglyceride [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-crp": {
@@ -5913,7 +7543,27 @@
         "1988-5"
       ]
     },
-    "devNotes": "The standard CRP assay (LOINC 1988-5). The high-sensitivity assay is `body-blood-serum-crp-hs` (30522-7): the printed test name or the code decides which item, never the value."
+    "devNotes": "The standard CRP assay (LOINC 1988-5). The high-sensitivity assay is `body-blood-serum-crp-hs` (30522-7): the printed test name or the code decides which item, never the value.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "1988-5",
+        "display": "C reactive protein [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-l": "mg/L",
+          "concentration/mg-dl": "mg/dL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-blood-serum-crp-hs": {
     "version": "v1",
@@ -5971,6 +7621,26 @@
       "loinc": [
         "30522-7"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "30522-7",
+        "display": "C reactive protein [Mass/volume] in Serum or Plasma by High sensitivity method"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-l": "mg/L",
+          "concentration/mg-dl": "mg/dL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-esr": {
@@ -5997,6 +7667,32 @@
       "loincMethod": [
         "4537-7"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "30341-2",
+        "display": "Erythrocyte [Sedimentation Rate] in Blood"
+      },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "4537-7",
+          "display": "Erythrocyte [Sedimentation Rate] in Blood by Westergren method"
+        }
+      ],
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "rate/mm-h": "mm/h"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-free-t4": {
@@ -6057,6 +7753,36 @@
         "3024-7",
         "14920-3"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/ng-dl": {
+            "system": "http://loinc.org",
+            "code": "3024-7",
+            "display": "Thyroxine (T4) free [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/pmol-l": {
+            "system": "http://loinc.org",
+            "code": "14920-3",
+            "display": "Thyroxine (T4) free [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ng-dl": "ng/dL",
+          "concentration/pmol-l": "pmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-free-t3": {
@@ -6117,6 +7843,36 @@
         "3051-0",
         "14928-6"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/pg-ml": {
+            "system": "http://loinc.org",
+            "code": "3051-0",
+            "display": "Triiodothyronine (T3) Free [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/pmol-l": {
+            "system": "http://loinc.org",
+            "code": "14928-6",
+            "display": "Triiodothyronine (T3) Free [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/pg-ml": "pg/mL",
+          "concentration/pmol-l": "pmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-total-t3": {
@@ -6177,6 +7933,36 @@
         "3053-6",
         "14930-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/ng-dl": {
+            "system": "http://loinc.org",
+            "code": "3053-6",
+            "display": "Triiodothyronine (T3) [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/nmol-l": {
+            "system": "http://loinc.org",
+            "code": "14930-2",
+            "display": "Triiodothyronine (T3) [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ng-dl": "ng/dL",
+          "concentration/nmol-l": "nmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-reverse-t3": {
@@ -6237,6 +8023,36 @@
         "3052-8",
         "14929-4"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/ng-dl": {
+            "system": "http://loinc.org",
+            "code": "3052-8",
+            "display": "Triiodothyronine (T3).reverse [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/nmol-l": {
+            "system": "http://loinc.org",
+            "code": "14929-4",
+            "display": "Triiodothyronine (T3).reverse [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ng-dl": "ng/dL",
+          "concentration/nmol-l": "nmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-tpo-antibodies": {
@@ -6260,6 +8076,25 @@
       "loinc": [
         "8099-4"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "8099-4",
+        "display": "Thyroperoxidase Ab [Units/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/iu-ml": "[IU]/mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-thyroglobulin-antibodies": {
@@ -6283,6 +8118,25 @@
       "loinc": [
         "8098-6"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "8098-6",
+        "display": "Thyroglobulin Ab [Units/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/iu-ml": "[IU]/mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-thyroglobulin": {
@@ -6314,6 +8168,25 @@
       "loinc": [
         "3013-0"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "3013-0",
+        "display": "Thyroglobulin [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ug-l": "ug/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-tsi": {
@@ -6337,6 +8210,25 @@
       "loinc": [
         "30567-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "30567-2",
+        "display": "Thyroid stimulating immunoglobulins [Units/volume] in Serum"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/iu-l": "[IU]/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-trab": {
@@ -6360,6 +8252,25 @@
       "loinc": [
         "5385-0"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "5385-0",
+        "display": "Thyrotropin receptor Ab [Units/volume] in Serum"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/iu-l": "[IU]/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-progesterone": {
@@ -6420,6 +8331,36 @@
         "2839-9",
         "14890-8"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/ug-l": {
+            "system": "http://loinc.org",
+            "code": "2839-9",
+            "display": "Progesterone [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/nmol-l": {
+            "system": "http://loinc.org",
+            "code": "14890-8",
+            "display": "Progesterone [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ug-l": "ug/L",
+          "concentration/nmol-l": "nmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-testosterone-total": {
@@ -6561,6 +8502,36 @@
         "2991-8",
         "14914-6"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/pg-ml": {
+            "system": "http://loinc.org",
+            "code": "2991-8",
+            "display": "Testosterone Free [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/pmol-l": {
+            "system": "http://loinc.org",
+            "code": "14914-6",
+            "display": "Testosterone Free [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/pg-ml": "pg/mL",
+          "concentration/pmol-l": "pmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-shbg": {
@@ -6584,6 +8555,25 @@
       "loinc": [
         "13967-5"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "13967-5",
+        "display": "Sex hormone binding globulin [Moles/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/nmol-l": "nmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-dhea-s": {
@@ -6644,6 +8634,36 @@
         "2191-5",
         "14688-6"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mcg-dl": {
+            "system": "http://loinc.org",
+            "code": "2191-5",
+            "display": "Dehydroepiandrosterone sulfate (DHEA-S) [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/umol-l": {
+            "system": "http://loinc.org",
+            "code": "14688-6",
+            "display": "Dehydroepiandrosterone sulfate (DHEA-S) [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mcg-dl": "ug/dL",
+          "concentration/umol-l": "umol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-androstenedione": {
@@ -6704,6 +8724,36 @@
         "1854-9",
         "14603-5"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/ng-dl": {
+            "system": "http://loinc.org",
+            "code": "1854-9",
+            "display": "Androstenedione [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/nmol-l": {
+            "system": "http://loinc.org",
+            "code": "14603-5",
+            "display": "Androstenedione [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ng-dl": "ng/dL",
+          "concentration/nmol-l": "nmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-17-oh-progesterone": {
@@ -6764,6 +8814,36 @@
         "1668-3",
         "14569-8"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/ng-dl": {
+            "system": "http://loinc.org",
+            "code": "1668-3",
+            "display": "17-Hydroxyprogesterone [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/nmol-l": {
+            "system": "http://loinc.org",
+            "code": "14569-8",
+            "display": "17-Hydroxyprogesterone [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ng-dl": "ng/dL",
+          "concentration/nmol-l": "nmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-prolactin": {
@@ -6822,6 +8902,36 @@
         "2842-3",
         "15081-3"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/ug-l": {
+            "system": "http://loinc.org",
+            "code": "2842-3",
+            "display": "Prolactin [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/uiu-ml": {
+            "system": "http://loinc.org",
+            "code": "15081-3",
+            "display": "Prolactin [Units/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ug-l": "ug/L",
+          "concentration/uiu-ml": "u[IU]/mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-cortisol": {
@@ -6882,6 +8992,36 @@
         "2143-6",
         "14675-3"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mcg-dl": {
+            "system": "http://loinc.org",
+            "code": "2143-6",
+            "display": "Cortisol [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/nmol-l": {
+            "system": "http://loinc.org",
+            "code": "14675-3",
+            "display": "Cortisol [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mcg-dl": "ug/dL",
+          "concentration/nmol-l": "nmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-ca-125": {
@@ -6905,6 +9045,25 @@
       "loinc": [
         "10334-1"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "10334-1",
+        "display": "Cancer Ag 125 [Units/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/u-ml": "[arb'U]/mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-pth": {
@@ -6965,6 +9124,36 @@
         "2731-8",
         "14866-8"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/pg-ml": {
+            "system": "http://loinc.org",
+            "code": "2731-8",
+            "display": "Parathyrin.intact [Mass/volume] in Serum or Plasma"
+          },
+          "concentration/pmol-l": {
+            "system": "http://loinc.org",
+            "code": "14866-8",
+            "display": "Parathyrin.intact [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/pg-ml": "pg/mL",
+          "concentration/pmol-l": "pmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-acth": {
@@ -6988,6 +9177,25 @@
       "loinc": [
         "2141-0"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2141-0",
+        "display": "Corticotropin [Mass/volume] in Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/pg-ml": "pg/mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-serum-aldosterone": {
@@ -7011,6 +9219,25 @@
       "loinc": [
         "1763-2"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "1763-2",
+        "display": "Aldosterone [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ng-dl": "ng/dL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-blood-coded": {
@@ -8022,6 +10249,25 @@
       "loinc": [
         "25639-6"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "25639-6",
+        "display": "Follitropin [Units/volume] in Urine by 2nd IRP"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/iu-l": "[IU]/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-urine-hormones-hcg": {
@@ -8045,6 +10291,25 @@
       "loinc": [
         "25372-4"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "25372-4",
+        "display": "Choriogonadotropin [Units/volume] in Urine"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/iu-l": "[IU]/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "body-urine-hormones-pdg": {
