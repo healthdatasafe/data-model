@@ -4,7 +4,7 @@ This file orients future agents (Claude or others) working on the `data-model` r
 
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
-- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md`, `DOCUMENTS.md`, `ENCOUNTER.md`, `MEDICATION.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
+- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md`, `DOCUMENTS.md`, `ENCOUNTER.md`, `MEDICATION.md`, `SUPPORT.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
 - `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `sourceKey`, `hdsBasis`, …): read it before adding one. New keys are `hds`-prefixed.
 - `documentation/PARTIAL-DATES.md` — partial and approximate dates (`hdsTimePrecision`): cross-domain, applies to any event whose date is known only to the month or the year.
 
@@ -37,7 +37,7 @@ The same eventType is reused by many items. Adding a new eventType is rare and n
 
 `body-*`, `symptom-*`, `wellbeing-*`, `activity-*`, `fertility-*`, `nutrition-*`, `lifestyle-*`, `medication-*`, `profile-*`, `family-*`. Mirrors body systems / function domains, close to SNOMED CT and ICF categorisations.
 
-**Five non-clinical roots besides `profile`: `sync-status` (3.13.0), `consents` (plan 91), `documents` (3.25.0), `encounter` (3.34.0) and `document-shares` (3.37.0).** `sync-status` holds a connector's user-visible status — one `type: system` item, `sync-status`, and one `role: context` leaf per connector (`sync-status-mira`, …). Partner-named *streams* are accepted there because the leaves are D3 context markers, not vocabulary; partner-named *item keys* stay forbidden (§1). See [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
+**Six non-clinical roots besides `profile`: `sync-status` (3.13.0), `consents` (plan 91), `documents` (3.25.0), `encounter` (3.34.0), `document-shares` (3.37.0) and `hds-support` (3.38.0).** `sync-status` holds a connector's user-visible status — one `type: system` item, `sync-status`, and one `role: context` leaf per connector (`sync-status-mira`, …). Partner-named *streams* are accepted there because the leaves are D3 context markers, not vocabulary; partner-named *item keys* stay forbidden (§1). See [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
 
 `consents` holds the account-level consent record: one `type: system` item, `consent-record`, append-only, written by the account app with the personal token and requested by no app. See [`documentation/CONSENTS.md`](documentation/CONSENTS.md).
 
@@ -46,6 +46,10 @@ The same eventType is reused by many items. Adding a new eventType is rare and n
 `encounter` holds care visits and the providers involved: one consent unit whose root and `encounter-provider` hold no item, with three leaves, `encounter-visit` (`encounter/visit-v1`), `encounter-provider-person` (`provider/practitioner-v1`) and `encounter-provider-organization` (`provider/organization-v1`), each a `composite` item. One FHIR resourceType per leaf, so each can later get its own SMART scope. Event ids in content are mirrored in `clientData.related` (a MUST, PROVENANCE.md); providers are deduplicated by `clientData.hdsGln` / `hdsZsr`. See [`documentation/ENCOUNTER.md`](documentation/ENCOUNTER.md).
 
 `document-shares` holds per-relationship share children that the person's app creates (`share-` + 12 base36, name = id, `clientData.hdsDocumentShare`), each granted to one contact: `read` for the documents the person shares, `create-only` for the documents the contact may send. The root is never granted as a whole, and **no item sits anywhere in the subtree** (a first): a shared document stays on `documents` and resolves through that stream id. See [`documentation/DOCUMENTS.md`](documentation/DOCUMENTS.md).
+
+`hds-support` is a consent anchor and holds nothing, ever: no item, no child, no event. The HDS support invite requests `read` on it because a CMC invite needs one permission and the relationship is messages only, so whatever were written there, the support group would read. It is the first stream with localised `label` / `description` for consent screens. The conversation state lives on the group's account as `support/conversation-v1`, which holds no email address (the support service keeps it).
+
+**Stream schema** (`src/streams.js`): `id` and `name` are required; `role: context` marks a context leaf; `label` and `description` are optional, and when present each is an object with non-empty `en` and `fr` strings, with `label.en` equal to `name` (`checkLocalisedNames`, test `[SUPP-STR-3]`). See [`documentation/SUPPORT.md`](documentation/SUPPORT.md).
 
 **Do not create questionnaire-branded streams** (e.g. `questionnaire-eq5d5l`). Each data point lands in its clinical-domain stream; the questionnaire's identity lives in the *form template* (a `CollectorRequest` constructed via [hds-lib-js](https://github.com/healthdatasafe/hds-lib-js)'s `appTemplates.CollectorRequest` / `CollectorSection`), not in `data-model`.
 
@@ -380,7 +384,8 @@ data-model/
 │   ├── CONSENTS.md                        # Account-level consent record: consents root, `type: system` item
 │   ├── DOCUMENTS.md                       # Medical documents: documents root, `type: attachments` item, file/xds-v1; document-shares
 │   ├── ENCOUNTER.md                       # Care visits and providers: encounter root, encounter/visit-v1, provider/*-v1, identifiers
-│   └── MEDICATION.md                      # Coding a medication read from a document: Swiss brand label, ATC hdsId
+│   ├── MEDICATION.md                      # Coding a medication read from a document: Swiss brand label, ATC hdsId
+│   └── SUPPORT.md                         # HDS support channel: hds-support anchor root, support/conversation-v1, retention
 │
 ├── scripts/                               # setup / deploy shell scripts
 ├── tests/                                 # Vitest test suite

@@ -21,6 +21,7 @@ conventions below are contracts between HDS apps, documented here so every write
 | `clientData.hdsRefRange`, `hdsFlag`, `hdsInterpretation` | The reference range and flag a lab printed for one result, and the flag normalised | [BLOOD-CHEMISTRY.md](BLOOD-CHEMISTRY.md#the-printed-reference-range-flag-and-interpretation-of-one-result) |
 | `clientData.hdsComparator` | The value is a printed limit (`<`, `<=`, `>`, `>=`), not an exact figure | [BLOOD-CHEMISTRY.md](BLOOD-CHEMISTRY.md#a-censored-value-hdscomparator) |
 | `clientData.hdsDocumentShare` | A share child's relationship and direction (stream clientData); visible to the contact granted the child | [DOCUMENTS.md](DOCUMENTS.md#sharing-one-document-the-document-shares-root-3370) |
+| `clientData.hdsSupport` | Which team member a support line comes from, on the group's copy of a support chat event; written by the support service, never forwarded to the person | [SUPPORT.md](SUPPORT.md#which-member-wrote-a-line-clientdatahdssupport) |
 | `clientData.hdsGln`, `hdsZsr` | A provider's GLN and ZSR, bare values mirroring its content `identifiers`: the cross-writer lookup keys (GLN, then ZSR, then `sourceKey`) | [ENCOUNTER.md](ENCOUNTER.md#one-provider-one-event-clientdatahdsgln-hdszsr) |
 
 A reader ignores any `clientData` key it does not know. A new key is `hds`-prefixed and documented here (or in
