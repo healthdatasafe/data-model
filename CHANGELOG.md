@@ -1,5 +1,41 @@
 # Changelog
 
+## [3.38.0] - 2026-11-02
+
+### Added: the HDS support channel (plan 117)
+
+- **Root `hds-support`** ("Health Data Safe support (holds no data)") on the person's account: the consent anchor the
+  HDS support invite requests `read` on, because a CMC invite needs one permission and the relationship is messages
+  only. No item, no child, no event, ever (whatever were written there, the support group would read). A root, so it
+  is covered by no existing grant and its own grant covers nothing else; never under `:_cmc:` (a grant there reaches
+  the person's other chats). Brand-named because it names the one relationship the person sees in their tree; the
+  type below is generic. First stream with localised `label` / `description` for consent screens; hds-lib's
+  `permissionView` still shows `name` until it reads them.
+- **Stream schema check** (`src/streams.js`, `checkLocalisedNames`): `label` and `description` are optional; when
+  present, each is an object with non-empty `en` and `fr` strings, and `label.en` equals `name`. The build fails
+  otherwise. Documented in AGENTS.md.
+- **EventType `support/conversation-v1`**: the state of one support conversation, one event per conversation on the
+  group's `:_cmc:apps:hds-support:team:state`, written by the team's members and the support service. Closed object;
+  required `userSlug` (the person's `cmc.counterpartySlug`, `^[a-z0-9]+(-[a-z0-9]+)*--[a-z0-9]+(-[a-z0-9]+)*$`, at
+  most 320 characters) and `status` (`new`, `open`, `closed`); optional
+  `claimedBy { membershipAccessId, username, host, displayName?, at }` (advisory; `displayName` at most 40
+  characters, no colon, no newline, as the widget's byline parse requires) and `notify { consentAt, sentAt? }`
+  (written by the service only; waiting while `sentAt` is absent). **No email address and no `locale`:** the address
+  lives only in the support service's outbox (30-day expiry), and nothing writes the person's language in v1 (the
+  "joined" line is bilingual; the field can be added later as a minor). Not a CMC type, so never delivered off the
+  group account. Named as a record (`<family>/<name>-v1`, like `sync-status/connector-v1`), not `settings/`, the
+  plan's provisional name: it is per conversation and written by several parties.
+- **`documentation/SUPPORT.md`**: what lives where (anchor, both copies of the chat, the state, the address in the
+  service), why a brand-named root, the rules (the first message writes `status: 'new'`; a message after a close sets
+  `new` and removes `claimedBy`; one event per `userSlug`; whole-content updates; only the service writes `notify`),
+  retention (the address removed on send or after 30 days; the group's copy of the thread, its stream and the state
+  removed when the relationship ends, on the person's `consent/revoke-cmc` or the team's "close + revoke"), and
+  `clientData.hdsSupport` (which member wrote a line), indexed in PROVENANCE.md.
+- AGENTS.md non-clinical roots five → six; README. Tests `[SUPP-STR-1..3]`, `[SUPP-ET-1..5]` (draft-04 and draft-07),
+  `[SUPP-PACK-1]`.
+
+No item or settings key; no `fhir:lock` change. Fable-reviewed (ship with changes, applied).
+
 ## [3.37.0] - 2026-11-01
 
 ### Added: sharing one document in a conversation (`document-shares`)

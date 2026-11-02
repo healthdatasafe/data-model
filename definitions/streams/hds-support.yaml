@@ -1,0 +1,14 @@
+# Consent anchor of the HDS support channel, on the person's account: the target of the support invite's one
+# `read` permission (CMC refuses an empty permission list; the relationship is messages only). Holds no event and no
+# child, ever: whatever were written here, the support group would read. No item. See documentation/SUPPORT.md.
+# `label` / `description` are the localised names for consent screens (the first stream to carry them; `name` stays
+# the English name the stream is created with).
+id: hds-support
+name: Health Data Safe support (holds no data)
+parentId: null
+label:
+  en: Health Data Safe support (holds no data)
+  fr: Assistance Health Data Safe (ne contient aucune donnée)
+description:
+  en: Lets the Health Data Safe team exchange messages with you. It holds none of your data.
+  fr: Permet à l'équipe Health Data Safe d'échanger des messages avec vous. Ne contient aucune de vos données.

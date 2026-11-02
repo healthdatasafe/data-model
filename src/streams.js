@@ -12,6 +12,7 @@ module.exports = {
   getRootOfById,
   getAncestorsById,
   isDescendantOf,
+  checkLocalisedNames,
   toBePublished
 };
 
@@ -75,12 +76,35 @@ function indexStreams (stream, parentId) {
   if (stream.parentId && parentId !== null) {
     console.log(`${stream.id} does not need parentId : ${stream.parentId}`);
   }
+  checkLocalisedNames(stream);
   stream.parentId = parentId;
   streamsById[stream.id] = stream;
   if (stream.children) {
     for (const child of stream.children) {
       indexStreams(child, stream.id);
     }
+  }
+}
+
+/**
+ * Optional localised names of a stream, for consent screens (3.38.0): `label` and `description`, when present, are
+ * `{ en, fr }` objects of non-empty strings, and `label.en` is the stream's `name` (the name it is created with).
+ */
+function checkLocalisedNames (stream) {
+  for (const key of ['label', 'description']) {
+    if (stream[key] === undefined) continue;
+    const text = stream[key];
+    if (text === null || typeof text !== 'object' || Array.isArray(text)) {
+      throw new Error(`stream ${stream.id}: ${key} must be an object { en, fr }`);
+    }
+    for (const lang of ['en', 'fr']) {
+      if (typeof text[lang] !== 'string' || text[lang].length === 0) {
+        throw new Error(`stream ${stream.id}: ${key}.${lang} must be a non-empty string`);
+      }
+    }
+  }
+  if (stream.label !== undefined && stream.label.en !== stream.name) {
+    throw new Error(`stream ${stream.id}: label.en must equal name`);
   }
 }
 
