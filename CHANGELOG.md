@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.41.1] - 2026-11-02
+
+### Changed: when a data-set request is superseded (`consent/scope-request-cmc` `content.hds`)
+
+- An unanswered request carrying `hds.formSpec` is superseded as soon as a later one carries `hds.formSpec`,
+  whether that later request is answered, expired or still open. 3.41.0 said "the latest unanswered one is current",
+  so once the latest was answered an older one became current again, and accepting it would have brought back an
+  older data set and grant (found by a live run on demo). A request without `hds.formSpec` neither supersedes nor is
+  superseded; a connection's own request whose delivery failed does not supersede.
+
+Documentation only. Fable-reviewed (ship with edits, applied).
+
 ## [3.41.0] - 2026-11-02
 
 ### Added: `content.hds` on `consent/scope-request-cmc` (a connection's updated data set, confirmed by the person)

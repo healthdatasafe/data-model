@@ -380,11 +380,15 @@ connection on its own `<scope>:collectors:<personSlug>` stream; the plugin deliv
   writer sends a new request on a relationship only once the previous one is delivered (`remoteEventId`
   recorded on its trigger) or has failed, so that delivery order is send order on both accounts, and it
   sets `expires` (hds-lib default: 30 days).
-- **One current request per relationship.** When several unanswered, unexpired requests on one collectors
-  stream carry `hds.formSpec`, only the latest (event `time`) is current; the others are superseded. The
-  person's app does not offer to answer them and leaves them unanswered (a refusal would be a write on her
-  behalf); the connection's app does not count them as pending. Each request carries a full set, so a
-  narrowing followed by a widening ends on the widening.
+- **One current request per relationship.** An unanswered request carrying `hds.formSpec` is superseded
+  as soon as a later request (event `time`) on the same collectors stream carries one, whether that later
+  request is answered, expired or still open: accepting the older one would bring back an older data set and
+  grant. Only the latest request carrying `hds.formSpec` can be current. A request without `hds.formSpec`
+  neither supersedes nor is superseded; the platform alone governs it. The person's app does not offer to
+  answer a superseded request and leaves it unanswered (a refusal would be a write on her behalf); the
+  connection's app does not count it as pending (a request of the connection's own whose delivery failed
+  never reached the person and does not supersede; one still in flight does). Each request carries a full
+  set, so a narrowing followed by a widening ends on the widening.
 - The words for the person go in pryv's `message`; the `hds` block carries no text.
 - Every field is optional for a reader, which ignores keys it does not know; new keys are added here first.
   `formSpec` is always complete: a later diff form would use another key, never this one.
