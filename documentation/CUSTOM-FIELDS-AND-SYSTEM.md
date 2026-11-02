@@ -193,7 +193,7 @@ The operator's dashboard reads `app-system-in`, joins the ack to the alert by `a
 
 ---
 
-## CMC system messages carrying an HDS payload: data-export requests, scope updates
+## CMC system messages carrying an HDS payload: data-export requests, documents, reminders, scope updates
 
 The CMC plugin (open-pryv.io `components/cmc`) forwards only its own event types between a
 patient and a doctor; a type HDS would define here would never be delivered. HDS therefore rides
@@ -271,6 +271,61 @@ between `document-shared` and `document-unshared` of one `eventId` the later eve
 `document-unshared`, a 403 or a missing event, the reader shows "no longer available" and drops any
 cached file. On `document-sent` the person's app moves the event to `documents` (DOCUMENTS.md) and
 refuses what is not a `file/xds-v1` document.
+
+### Reminding a person about one item: `notification/alert-cmc` kind `item-reminder` *(3.40.0)*
+
+A contact (a doctor) asks the person to fill in one item of the data set they share: an item of a
+recurring section that is due or overdue, or of a permanent section still missing. That is all it
+does: nothing stores a reminder state, the request's sections do not change, and the item's own
+`reminder` definition is not touched.
+
+Three things share the word: the item's `reminder` field (`definitions/items/*.yaml`) is the
+person's schedule, hds-lib `computeReminders` derives a status from it, and this kind is one message
+a contact sends about one item. None feeds another; the contact's app may *use* the status to decide
+when to send.
+
+Written by the contact on its own `<scope>:collectors:<personSlug>` stream; the plugin delivers it to
+the person's `<scope>:collectors:<contactSlug>` stream.
+
+```json
+{
+  "level": "info",
+  "title": { "en": "Reminder" },
+  "body": { "en": "Your contact asks you to fill in an entry." },
+  "code": "hds-item-reminder",
+  "hds": { "kind": "item-reminder", "itemKey": "body-weight" }
+}
+```
+
+| `hds.kind` | Direction | `hds` fields | Meaning |
+|---|---|---|---|
+| `item-reminder` | contact → person | `itemKey` | The contact asks the person to fill in this item. |
+
+- `itemKey` is the key of one item of the model (`items.json`). A reminder about several items is
+  one alert per item.
+- **Writer rule.** `itemKey` names an item of a section of the request the stream belongs to, and
+  one a person can enter (`isEnterable`: not `system`, `imported` or `attachments`). A contact never
+  reminds about an item outside its request: asking for more goes through
+  `consent/scope-request-cmc`.
+- `level: 'info'`, a **fixed** localised `title` and `body`, and `code: 'hds-item-reminder'`, as for
+  the document kinds. The item is named by the reader from its model (the item's `label` for
+  `itemKey`), never from text carried in the event. No `ackRequired`: the answer is the entry
+  itself, which the contact sees through its grant.
+
+**Reading.** The person's app shows each reminder as a bubble in the conversation, in time order,
+naming the item. The bubble offers to open the item's form **only while** the grant of the
+relationship whose collectors stream carries the alert (the one the reader also takes the item's
+section from; another grant of the same contact that covers the stream may serve as a fallback)
+covers the stream the entry would be written to: the section's `itemCustomizations[itemKey].context`
+stream when the request sets one, else the item's `streamId` (on that stream, a parent of it, or
+`*`). The grant is read at display time, never from the alert. An `itemKey` the reader's model does
+not know (a newer model), or a known one that is not enterable, shows the bubble without the action.
+A deprecated key still resolves (`forKey` returns it, same `streamId:eventType` as its replacement),
+so the form opens; the contact writes the key as it stands in its request.
+
+The person's app never writes this kind. A reader keeps only alerts carrying `content.from`
+(stamped by the plugin on delivery); an alert without `from` on a stream is the writer's own copy,
+which only the contact's app reads back (to show when it last reminded the person of an item).
 
 ### `consent/scope-update-cmc` with a `content.hds` block *(patient → connection)*: what changed, and why
 

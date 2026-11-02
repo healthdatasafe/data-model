@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.40.0] - 2026-11-02
+
+### Added: `notification/alert-cmc` kind `item-reminder` (a contact reminds the person of one item)
+
+- **`hds.kind = 'item-reminder'`**, `hds.itemKey` (one item per alert), contact → person, written on the contact's
+  collectors stream; fixed localised title and body, `code: 'hds-item-reminder'`, no `ackRequired`, in
+  CUSTOM-FIELDS-AND-SYSTEM.md. The writer names only an enterable item of its own request. The reader keeps alerts
+  carrying `from`, names the item from its model, and offers its form only while that relationship's grant covers the
+  stream the entry would be written to (the section's `context` stream, else the item's). No reminder state; the
+  item's `reminder` definition is unchanged.
+
+No eventType, item, stream or settings key; no `fhir:lock` change. Fable-reviewed (ship with edits, applied).
+
 ## [3.39.0] - 2026-11-02
 
 ### Added: FHIR blocks on 92 lab items (`Observation|laboratory`)
