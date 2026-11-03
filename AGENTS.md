@@ -6,6 +6,7 @@ Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
 - `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md`, `DOCUMENTS.md`, `ENCOUNTER.md`, `MEDICATION.md`, `SUPPORT.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
 - `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `sourceKey`, `hdsBasis`, …): read it before adding one. New keys are `hds`-prefixed.
+- `documentation/APP-DESCRIPTION.md` — how HDS apps name the app holding an access: the `hdsApp` pointer, the `hds-app-manifest` (schema `json-schemas/hds-app-manifest.json`), the catalogue's vouching and the trust rule.
 - `documentation/PARTIAL-DATES.md` — partial and approximate dates (`hdsTimePrecision`): cross-domain, applies to any event whose date is known only to the month or the year.
 
 ---

@@ -643,6 +643,9 @@ const ajv = new Ajv({
 });
 const validateItem = ajv.getSchema('https://model.datasafe.dev/json-schemas/item.json');
 
+// for the other schemas that $ref defs.json (appManifest.js)
+module.exports.defsSchema = defsSchema;
+
 function checkItem (item, key = 'item') {
   const unknown = Object.keys(item).filter((p) => !knownItemProperties.has(p));
   if (unknown.length > 0) {

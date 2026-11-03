@@ -8,6 +8,7 @@ const BROWSER_URL = 'https://model-browser.datasafe.dev/';
 
 const sources = [
   require('./schemas/items').toBePublished,
+  require('./schemas/appManifest').toBePublished,
   require('./streams').toBePublished,
   require('./items').toBePublished,
   require('./eventTypes').toBePublished,
