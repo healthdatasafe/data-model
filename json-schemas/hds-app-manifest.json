@@ -1,0 +1,94 @@
+{
+  "$id": "https://model.datasafe.dev/json-schemas/hds-app-manifest.json",
+  "title": "HDS app manifest",
+  "type": "object",
+  "required": [
+    "format",
+    "formatVersion",
+    "appCode",
+    "name"
+  ],
+  "properties": {
+    "format": {
+      "const": "hds-app-manifest"
+    },
+    "formatVersion": {
+      "const": 1
+    },
+    "appCode": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "name": {
+      "$ref": "defs.json#/definitions/localized"
+    },
+    "description": {
+      "$ref": "defs.json#/definitions/localized"
+    },
+    "icon": {
+      "type": "string",
+      "pattern": "^https://[^/?#@\\s]+([/?#]|$)",
+      "maxLength": 2048
+    },
+    "provider": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "defs.json#/definitions/localized"
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https://[^/?#@\\s]+([/?#]|$)",
+          "maxLength": 2048
+        }
+      }
+    },
+    "open": {
+      "type": "object",
+      "properties": {
+        "web": {
+          "type": "string",
+          "pattern": "^https://[^/?#@\\s]+([/?#]|$)",
+          "maxLength": 2048
+        },
+        "ios": {
+          "type": "string",
+          "pattern": "^https://[^/?#@\\s]+([/?#]|$)",
+          "maxLength": 2048
+        },
+        "android": {
+          "type": "string",
+          "pattern": "^https://[^/?#@\\s]+([/?#]|$)",
+          "maxLength": 2048
+        }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "required": [
+        "en"
+      ],
+      "properties": {
+        "en": {
+          "type": "string",
+          "pattern": "^https://[^/?#@\\s]+([/?#]|$)",
+          "maxLength": 2048
+        }
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^https://[^/?#@\\s]+([/?#]|$)",
+        "maxLength": 2048
+      }
+    },
+    "support": {
+      "type": "string",
+      "pattern": "^https://[^/?#@\\s]+([/?#]|$)",
+      "maxLength": 2048
+    }
+  }
+}

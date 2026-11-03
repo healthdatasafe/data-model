@@ -1,9 +1,9 @@
 {
-  "commit": "8d528166d3b50d5551646f829e807e78d4ed3885",
-  "commitShort": "8d52816",
+  "commit": "55ad29b6a1f772226e0b6287c5a8d10bbd5e1281",
+  "commitShort": "55ad29b",
   "branch": "main",
-  "buildDate": "2026-11-02T16:39:53Z",
-  "publicationDate": "2026-11-02T16:39:36.521Z",
+  "buildDate": "2026-11-03T16:00:49Z",
+  "publicationDate": "2026-11-03T16:00:38.263Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -16,6 +16,10 @@
     {
       "title": "Json Schema Defs",
       "file": "json-schemas/defs.json"
+    },
+    {
+      "title": "Json Schema App manifest",
+      "file": "json-schemas/hds-app-manifest.json"
     },
     {
       "title": "Streams Tree",
@@ -74,5 +78,5 @@
       "file": "appStreams.json"
     }
   ],
-  "version": "3.41.1"
+  "version": "3.42.0"
 }
