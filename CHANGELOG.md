@@ -1,5 +1,25 @@
 # Changelog
 
+## [3.42.0] - 2026-11-03
+
+### Added: app description, `hdsApp` and the `hds-app-manifest` (APP-DESCRIPTION.md)
+
+- **`hdsApp = { manifest }`**: a pointer to the manifest of the app that holds an access, as `clientData.hdsApp` on a
+  plain app access, or `requesterMeta.hdsApp` in a CMC invite, which the person's app mirrors as `content.hdsApp` on
+  her `consent/accept-cmc` event (read through `clientData.cmc.acceptEventId`, as `hdsFormSpec`). Pointer only;
+  fixed at consent. The first access-level key in PROVENANCE.md's index.
+- **The manifest** (`format: "hds-app-manifest"`, `formatVersion: 1`), served by the app with CORS: `appCode`,
+  localized `name` and `description`, `icon`, `provider`, `open` (web, ios, android), `privacy`, `support`; https
+  only; an RFC 7591 mapping. JSON Schema published with the pack: `json-schemas/hds-app-manifest.json`
+  (`$ref` to `defs.json#/definitions/localized`).
+- **The rule every HDS app names an app by**, first match wins: `vouched` (a catalogue `partnerApps[]` entry by id /
+  `appCode`, bound to its `counterparty` for CMC), `registered` (an OAuth client's registration), `unvouched` (a
+  manifest only: the raw id first on the consent screen, "not listed by Health Data Safe · host"), `none`. The
+  catalogue's new optional `manifest` and `counterparty` fields are defined there.
+- Tests `[APPM-1..5]` (the published schema also compiles under Ajv strict mode).
+
+No eventType, item, stream or settings key; no `fhir:lock` change.
+
 ## [3.41.1] - 2026-11-02
 
 ### Changed: when a data-set request is superseded (`consent/scope-request-cmc` `content.hds`)
