@@ -139,6 +139,17 @@
         "no-periods"
       ]
     },
+    "fertility/ttc-duration-v1": {
+      "description": "Recalled time trying to conceive, as a band, or a reported break. A reported summary, not a computed duration.",
+      "type": "string",
+      "enum": [
+        "less-than-6-months",
+        "6-12-months",
+        "1-2-years",
+        "more-than-2-years",
+        "on-break"
+      ]
+    },
     "fertility/tracking-method-v1": {
       "description": "Fertility-awareness charting methods or devices in use. Determines how the person's cycle observations should be interpreted. Array: several methods run concurrently (a method plus a monitor plus BBT). Each event is a complete dated snapshot of the methods active at that time — a method that stops simply does not appear in the next snapshot.",
       "type": "array",

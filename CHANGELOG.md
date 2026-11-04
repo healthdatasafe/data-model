@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.45.0] - 2026-11-04
+
+Fertility-intake asks, the last two (site-agents#38, #40 part 2). Additive. Diff Fable-reviewed before release.
+
+### Added
+- **Item `fertility-ttc-duration`** ("Time trying to conceive"), stream `fertility-ttc-duration` under `fertility`, a
+  sibling of `fertility-ttc-tta` (a grant on one never covers the other): the recalled time trying, as a band
+  (`less-than-6-months`, `6-12-months`, `1-2-years`, `more-than-2-years`) or `on-break` ("Currently taking a break"), one event per
+  answer dated when reported. The intention stays on `fertility-ttc-tta` (a devNotes line now points to the new
+  item). SNOMED `169449001`; no `fhir` block (a band would need a range value).
+- **EventType `fertility/ttc-duration-v1`**, a string enum of those five values.
+- Tests `[FIN-TTC-1..3]`; `[FIN-AJV]` covers the new eventType.
+
+### Docs
+- MENSTRUAL-CYCLE.md § Recalled summaries: the dating rule for every recalled summary (dated when reported, never
+  back-dated, never `approx` for the answer's vagueness), regularity under it, and § Time trying to conceive (with
+  the reader rule at the 12-month edge).
+- BLOOD-CHEMISTRY.md § Sample context (site-agents#40 part 2): a cycle-day window reported without a date writes no
+  cycle event, stays app-level, and a cycle day is derived only from a recorded `fertility-cycles-start`.
+- AGENTS.md counts.
+
 ## [3.44.0] - 2026-11-04
 
 Fertility-intake asks (site-agents#39, #40 part 1). Additive. Diff Fable-reviewed before release.
