@@ -110,6 +110,11 @@
                 "parentId": "body-blood-serum"
               },
               {
+                "id": "body-blood-serum-insulin",
+                "name": "Insulin (untimed)",
+                "parentId": "body-blood-serum"
+              },
+              {
                 "id": "body-blood-serum-c-peptide",
                 "name": "C-peptide",
                 "parentId": "body-blood-serum"
@@ -1048,6 +1053,11 @@
           {
             "id": "fertility-cycles-average-luteal-phase",
             "name": "Average Luteal Phase Length",
+            "parentId": "fertility-cycles"
+          },
+          {
+            "id": "fertility-cycles-regularity",
+            "name": "Cycle regularity",
             "parentId": "fertility-cycles"
           }
         ],

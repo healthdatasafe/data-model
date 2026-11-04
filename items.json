@@ -1992,7 +1992,96 @@
         "27873-9"
       ]
     },
-    "devNotes": "The pmol/L option has no LOINC: LOINC 2.83 has no fasting insulin [Moles/volume] code, and 14796-7 is untimed."
+    "devNotes": "The pmol/L option has no LOINC: LOINC 2.83 has no fasting insulin [Moles/volume] code, and 14796-7 is untimed (it belongs to body-blood-serum-insulin)."
+  },
+  "body-blood-serum-insulin": {
+    "version": "v1",
+    "label": {
+      "en": "Insulin (untimed)",
+      "fr": "Insuline (jeûne non précisé)"
+    },
+    "description": {
+      "en": "The hormone that moves sugar into your cells, measured at any time of day.",
+      "fr": "L'hormone qui fait entrer le sucre dans vos cellules, mesurée à n'importe quel moment."
+    },
+    "streamId": "body-blood-serum-insulin",
+    "type": "number",
+    "repeatable": "any",
+    "variations": {
+      "eventType": {
+        "label": {
+          "en": "Unit",
+          "fr": "Unité"
+        },
+        "options": [
+          {
+            "value": "concentration/uiu-ml",
+            "label": {
+              "en": "μIU/mL",
+              "fr": "μIU/mL"
+            },
+            "loinc": "20448-7"
+          },
+          {
+            "value": "concentration/pmol-l",
+            "label": {
+              "en": "pmol/L",
+              "fr": "pmol/L"
+            },
+            "loinc": "14796-7"
+          }
+        ]
+      }
+    },
+    "unitConversions": {
+      "notConvertible": [
+        {
+          "from": "concentration/uiu-ml",
+          "to": "concentration/pmol-l",
+          "reason": "Insulin units are defined by an international standard, and the factor to pmol/L depends on how the assay is calibrated (6.0 and 6.945 are both in use). Stored as printed, never compared across units."
+        }
+      ]
+    },
+    "references": {
+      "snomed": [
+        "16890009"
+      ],
+      "loinc": [
+        "20448-7",
+        "14796-7"
+      ]
+    },
+    "devNotes": "Untimed insulin: any result whose report does not state fasting (site-agents#40). A fasting result goes to `body-blood-serum-insulin-fasting`; LOINC codes the two as different observations. SNOMED has no fasting-specific insulin concept, so both items reference 16890009 Insulin measurement. Mapped to FHIR, unlike the fasting twin, whose pmol/L option has no LOINC code.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/uiu-ml": {
+            "system": "http://loinc.org",
+            "code": "20448-7",
+            "display": "Insulin [Units/volume] in Serum or Plasma"
+          },
+          "concentration/pmol-l": {
+            "system": "http://loinc.org",
+            "code": "14796-7",
+            "display": "Insulin [Moles/volume] in Serum or Plasma"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/uiu-ml": "u[IU]/mL",
+          "concentration/pmol-l": "pmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-blood-hba1c": {
     "version": "v1",
@@ -9593,6 +9682,50 @@
     "eventType": "time/d",
     "type": "number",
     "repeatable": "once"
+  },
+  "fertility-cycles-regularity": {
+    "version": "v1",
+    "label": {
+      "en": "Cycle regularity",
+      "fr": "Régularité des cycles"
+    },
+    "description": {
+      "en": "Whether your menstrual cycles are generally regular.",
+      "fr": "Si vos cycles menstruels sont généralement réguliers."
+    },
+    "streamId": "fertility-cycles-regularity",
+    "eventType": "fertility/cycle-regularity-v1",
+    "type": "select",
+    "options": [
+      {
+        "value": "regular",
+        "label": {
+          "en": "Regular",
+          "fr": "Réguliers"
+        }
+      },
+      {
+        "value": "irregular",
+        "label": {
+          "en": "Irregular",
+          "fr": "Irréguliers"
+        }
+      },
+      {
+        "value": "no-periods",
+        "label": {
+          "en": "No current periods",
+          "fr": "Pas de règles actuellement"
+        }
+      }
+    ],
+    "repeatable": "any",
+    "references": {
+      "snomed": [
+        "364307006"
+      ]
+    },
+    "devNotes": "A recalled summary of the cycles in the person's own words, beside the fertility-cycles-average-* family (site-agents#39): one event per answer, `time` at the date it is given (MENSTRUAL-CYCLE.md § Cycle regularity). For a person who charts, regularity can be derived from fertility-cycles-start; this item is for the answer given without a chart, and a reader prefers the derived value when both exist. \"Not sure\" is no answer and is not recorded. `no-periods` is what the person reports, never a diagnosis: do not derive amenorrhoea (a condition-coded entry) or a profile-reproductive-stage from it. SNOMED 364307006 is the observable \"Regularity of menstrual cycle\"; the option findings, for export, are 302757007 Regular periods and 80182007 Irregular periods; `no-periods` has no code short of 14302001 Amenorrhea, a clinical judgement the person has not stated, so it stays uncoded. That is why the item has no fhir block: a coded block must map every option. Never add one by coding `no-periods` as 14302001."
   },
   "fertility-cycles-ovulation": {
     "version": "v1",

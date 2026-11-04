@@ -3249,6 +3249,15 @@
         "lactating"
       ]
     },
+    "fertility/cycle-regularity-v1": {
+      "description": "Self-reported regularity of the menstrual cycles: regular, irregular, or no current periods. A reported summary, not a diagnosis.",
+      "type": "string",
+      "enum": [
+        "regular",
+        "irregular",
+        "no-periods"
+      ]
+    },
     "fertility/tracking-method-v1": {
       "description": "Fertility-awareness charting methods or devices in use. Determines how the person's cycle observations should be interpreted. Array: several methods run concurrently (a method plus a monitor plus BBT). Each event is a complete dated snapshot of the methods active at that time — a method that stops simply does not appear in the next snapshot.",
       "type": "array",
