@@ -1,0 +1,17 @@
+# Genetic test results: a special category of data (GDPR art. 9, HIPAA, US state genetic privacy laws), consented on
+# its own. `explicitGrantOnly` marks the root: an access covers it only when it names `genetics` (or a child)
+# explicitly, never through `*` or a grant on another root. The root holds no item, so later siblings of
+# `genetics-variant` (pharmacogenomic diplotypes, karyotypes) are additive. See documentation/GENETICS.md.
+id: genetics
+name: Genetic test results
+parentId: null
+explicitGrantOnly: true
+label:
+  en: Genetic test results
+  fr: Résultats de tests génétiques
+description:
+  en: Results of genetic tests, such as the gene variants a laboratory tested.
+  fr: Résultats de tests génétiques, comme les variants de gènes testés par un laboratoire.
+children:
+  - id: genetics-variant
+    name: Tested gene variants

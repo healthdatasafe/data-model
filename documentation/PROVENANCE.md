@@ -123,7 +123,8 @@ was read from.
 - **Write the whole `related` object** when changing the set of links.
 - **An event id held in content MUST be mirrored here.** When an eventType carries event ids in its content
   (`file/xds-v1` `supersedes[]`, `authors[].eventId`, `encounterId`; `encounter/visit-v1` `participants[].eventId`,
-  `serviceProvider.eventId`; `provider/practitioner-v1` `organizations[].eventId`), the writer sets
+  `serviceProvider.eventId`; `provider/practitioner-v1` `organizations[].eventId`; `genetic-variant/coded-v1`
+  `laboratory.eventId`), the writer sets
   `clientData.related.<eventId>: true` for each one, in the same create or update, so a cohort query finds the link
   without reading content. On an update, the key of an id that left the content is removed in the same call (write
   the whole `related` object). The content is the typed link (which field, which role); `related` is its index. If

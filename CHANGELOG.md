@@ -1,5 +1,41 @@
 # Changelog
 
+## [3.43.0] - 2026-11-04
+
+Genetic test results on their own root (site-agents#37). Additive. Design Fable-reviewed and approved 2026-11-03;
+diff Fable-reviewed before release.
+
+### Added
+- **Root `genetics`** ("Genetic test results"), with consent-screen `label` / `description` (en, fr). A special
+  category of data (GDPR art. 9, HIPAA): no grant on another root reaches it (an access already minted with `*`
+  does, and is swept before the first write). The root holds no item; its leaf
+  `genetics-variant` ("Tested gene variants") does. Pharmacogenomic diplotypes and karyotypes are later, additive
+  siblings.
+- **Stream marker `explicitGrantOnly: true`**, on `genetics` (the first): an access covers the root only when it names
+  it or a child, never through `*` or a grant on another root. Root only, boolean, checked in `src/streams.js`
+  (`checkExplicitGrantOnly`); published as written in `pack.streams`. Consumers enforce it: a `*` consent request is
+  expanded into the model roots minus the marked ones (Pryv refuses `level: 'none'` in a consent offer), a
+  `level: 'none'` mask is added on directly minted accesses. **Data-model only declares it: no importer writes genetic
+  data before the consumers honour it.**
+- **EventType `genetic-variant/coded-v1`**, closed: `gene { label, codes[] }` (HGNC, required), `variant { label,
+  codes[]? }` (HGVS, dbSNP, ClinVar), `result` (required: `present`, `absent`, `indeterminate`, `no-call`, LOINC
+  69548-6 / LL1971-2), `zygosity` (`homozygous`, `heterozygous`, `hemizygous`, `homoplasmic`, `heteroplasmic`, LOINC
+  53034-5 / LL381-5; advisory with `present` only), `resultText`, `method`, `laboratory { eventId?, name? }` (the
+  `encounter/visit-v1` `serviceProvider` shape), `notes`. Codings are the `lab-result/coded-v1` `valueCodes` Coding.
+  Every LOINC code verified against LOINC 2.83; 81252-9 is TRIAL.
+- **Item `genetics-variant`**: `type: imported`, `repeatable: unlimited`, key = streamId, en/fr/es, no `fhir` block
+  (`pack.fhirScopes` and `scopes.lock.json` unchanged), one event per tested variant at the collection date.
+- Tests `[GEN-STR-1..3]`, `[GEN-ITM-1]`, `[GEN-ET-1..2]` (each under draft-04 and draft-07), `[GEN-ET-3..5]`,
+  `[GEN-FHIR-1]`, `[GEN-PACK-1]`; `[LABC-ITM-1]` now counts `genetics-variant` among the imported items.
+
+### Docs
+- New `documentation/GENETICS.md`: why a root of its own, the marker and what each consumer must do, the field table
+  with the Genomics Reporting IG LOINC codes, the answer tables, code systems, an example, compound heterozygosity out
+  of scope, and the rule for a later `fhir` block (never under `Observation|laboratory`; `computeFhirScopes` keeps
+  marked roots out of any grant that does not name them).
+- PROVENANCE.md: `laboratory.eventId` joins the event ids mirrored in `clientData.related`.
+- README index; AGENTS.md: the `genetics` root, and the item, stream and eventType counts brought up to date.
+
 ## [3.42.0] - 2026-11-03
 
 ### Added: app description, `hdsApp` and the `hds-app-manifest` (APP-DESCRIPTION.md)
