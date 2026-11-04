@@ -13,6 +13,7 @@ module.exports = {
   getAncestorsById,
   isDescendantOf,
   checkLocalisedNames,
+  checkExplicitGrantOnly,
   toBePublished
 };
 
@@ -77,6 +78,7 @@ function indexStreams (stream, parentId) {
     console.log(`${stream.id} does not need parentId : ${stream.parentId}`);
   }
   checkLocalisedNames(stream);
+  checkExplicitGrantOnly(stream, parentId);
   stream.parentId = parentId;
   streamsById[stream.id] = stream;
   if (stream.children) {
@@ -105,6 +107,20 @@ function checkLocalisedNames (stream) {
   }
   if (stream.label !== undefined && stream.label.en !== stream.name) {
     throw new Error(`stream ${stream.id}: label.en must equal name`);
+  }
+}
+
+/**
+ * Optional `explicitGrantOnly` (3.43.0): a root an access covers only when it names it (or a child) explicitly, never
+ * through `*` or a grant on another root. Root only, boolean. See documentation/GENETICS.md.
+ */
+function checkExplicitGrantOnly (stream, parentId) {
+  if (stream.explicitGrantOnly === undefined) return;
+  if (typeof stream.explicitGrantOnly !== 'boolean') {
+    throw new Error(`stream ${stream.id}: explicitGrantOnly must be a boolean`);
+  }
+  if (parentId !== null) {
+    throw new Error(`stream ${stream.id}: explicitGrantOnly is allowed on a root only`);
   }
 }
 

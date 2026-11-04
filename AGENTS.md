@@ -36,7 +36,7 @@ The same eventType is reused by many items. Adding a new eventType is rare and n
 
 ### 4. Streams are a clinical-domain tree
 
-`body-*`, `symptom-*`, `wellbeing-*`, `activity-*`, `fertility-*`, `nutrition-*`, `lifestyle-*`, `medication-*`, `profile-*`, `family-*`. Mirrors body systems / function domains, close to SNOMED CT and ICF categorisations.
+`body-*`, `symptom-*`, `wellbeing-*`, `activity-*`, `fertility-*`, `nutrition-*`, `lifestyle-*`, `medication-*`, `profile-*`, `family-*`, `genetics-*`. Mirrors body systems / function domains, close to SNOMED CT and ICF categorisations.
 
 **Six non-clinical roots besides `profile`: `sync-status` (3.13.0), `consents` (plan 91), `documents` (3.25.0), `encounter` (3.34.0), `document-shares` (3.37.0) and `hds-support` (3.38.0).** `sync-status` holds a connector's user-visible status — one `type: system` item, `sync-status`, and one `role: context` leaf per connector (`sync-status-mira`, …). Partner-named *streams* are accepted there because the leaves are D3 context markers, not vocabulary; partner-named *item keys* stay forbidden (§1). See [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
 
@@ -50,7 +50,9 @@ The same eventType is reused by many items. Adding a new eventType is rare and n
 
 `hds-support` is a consent anchor and holds nothing, ever: no item, no child, no event. The HDS support invite requests `read` on it because a CMC invite needs one permission and the relationship is messages only, so whatever were written there, the support group would read. It is the first stream with localised `label` / `description` for consent screens. The conversation state lives on the group's account as `support/conversation-v1`, which holds no email address (the support service keeps it).
 
-**Stream schema** (`src/streams.js`): `id` and `name` are required; `role: context` marks a context leaf; `label` and `description` are optional, and when present each is an object with non-empty `en` and `fr` strings, with `label.en` equal to `name` (`checkLocalisedNames`, test `[SUPP-STR-3]`). See [`documentation/SUPPORT.md`](documentation/SUPPORT.md).
+**One special-category root: `genetics` (3.43.0)**, the first root with **`explicitGrantOnly: true`** (root only, boolean, checked by `src/streams.js`): an access covers it only when it names `genetics` or a child, never through `*` or a grant on another root. Consumers enforce it (a `*` consent request is expanded into the model roots minus the marked ones; a `level: none` mask only on directly minted accesses). The root holds no item; its leaf `genetics-variant` carries the `type: imported` item `genetics-variant` on `genetic-variant/coded-v1`. No `fhir` block, so no SMART scope reaches it. See [`documentation/GENETICS.md`](documentation/GENETICS.md).
+
+**Stream schema** (`src/streams.js`): `id` and `name` are required; `role: context` marks a context leaf; `label` and `description` are optional, and when present each is an object with non-empty `en` and `fr` strings, with `label.en` equal to `name` (`checkLocalisedNames`, test `[SUPP-STR-3]`); `explicitGrantOnly` is optional, a boolean, allowed on a root only (`checkExplicitGrantOnly`, test `[GEN-STR-3]`). See [`documentation/SUPPORT.md`](documentation/SUPPORT.md).
 
 **Do not create questionnaire-branded streams** (e.g. `questionnaire-eq5d5l`). Each data point lands in its clinical-domain stream; the questionnaire's identity lives in the *form template* (a `CollectorRequest` constructed via [hds-lib-js](https://github.com/healthdatasafe/hds-lib-js)'s `appTemplates.CollectorRequest` / `CollectorSection`), not in `data-model`.
 
@@ -336,10 +338,10 @@ data-model/
 ├── package.json, eslint.config.mjs, etc.
 │
 ├── definitions/                           # THE SOURCE OF TRUTH
-│   ├── items/*.yaml                       # Health data point definitions (309 items, 244 active, 20 YAML files)
-│   ├── streams/*.yaml                     # Clinical-domain tree (17 top-level roots, 296 streams in all)
+│   ├── items/*.yaml                       # Health data point definitions (348 items, 283 active, 23 YAML files)
+│   ├── streams/*.yaml                     # Clinical-domain tree (22 top-level roots, 332 streams in all)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (77)
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (83)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)
@@ -386,6 +388,7 @@ data-model/
 │   ├── DOCUMENTS.md                       # Medical documents: documents root, `type: attachments` item, file/xds-v1; document-shares
 │   ├── ENCOUNTER.md                       # Care visits and providers: encounter root, encounter/visit-v1, provider/*-v1, identifiers
 │   ├── MEDICATION.md                      # Coding a medication read from a document: Swiss brand label, ATC hdsId
+│   ├── GENETICS.md                        # Genetic test results: genetics root, explicitGrantOnly, genetic-variant/coded-v1
 │   └── SUPPORT.md                         # HDS support channel: hds-support anchor root, support/conversation-v1, retention
 │
 ├── scripts/                               # setup / deploy shell scripts
