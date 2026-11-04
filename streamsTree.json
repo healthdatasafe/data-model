@@ -1074,6 +1074,11 @@
         "parentId": "fertility"
       },
       {
+        "id": "fertility-ttc-duration",
+        "name": "Time trying to conceive",
+        "parentId": "fertility"
+      },
+      {
         "id": "fertility-sexual-activity",
         "name": "Sexual Activity",
         "parentId": "fertility"
