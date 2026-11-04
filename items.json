@@ -10669,6 +10669,24 @@
       ]
     }
   },
+  "genetics-variant": {
+    "version": "v1",
+    "type": "imported",
+    "label": {
+      "en": "Tested gene variant",
+      "fr": "Variant génétique testé",
+      "es": "Variante genética analizada"
+    },
+    "description": {
+      "en": "The result of a genetic test for one gene variant, as the laboratory reported it.",
+      "fr": "Le résultat d'un test génétique pour un variant d'un gène, tel que le laboratoire l'a rapporté.",
+      "es": "El resultado de una prueba genética para una variante de un gen, tal como lo informó el laboratorio."
+    },
+    "streamId": "genetics-variant",
+    "eventType": "genetic-variant/coded-v1",
+    "repeatable": "unlimited",
+    "devNotes": "Written by importers from a genetic test report, never entered in a form. One event per tested variant;\nevent `time` = the sample collection date, no duration.\nA panel of several variants is several events. Writes wait for the consumers to honour the root's\n`explicitGrantOnly` marker (documentation/GENETICS.md § Before the first write)."
+  },
   "lifestyle-tobacco-smoking": {
     "version": "v1",
     "label": {

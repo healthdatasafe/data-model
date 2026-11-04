@@ -1135,6 +1135,27 @@
     ]
   },
   {
+    "id": "genetics",
+    "name": "Genetic test results",
+    "parentId": null,
+    "explicitGrantOnly": true,
+    "label": {
+      "en": "Genetic test results",
+      "fr": "Résultats de tests génétiques"
+    },
+    "description": {
+      "en": "Results of genetic tests, such as the gene variants a laboratory tested.",
+      "fr": "Résultats de tests génétiques, comme les variants de gènes testés par un laboratoire."
+    },
+    "children": [
+      {
+        "id": "genetics-variant",
+        "name": "Tested gene variants",
+        "parentId": "genetics"
+      }
+    ]
+  },
+  {
     "id": "hds-support",
     "name": "Health Data Safe support (holds no data)",
     "parentId": null,

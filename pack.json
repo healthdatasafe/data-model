@@ -1,6 +1,6 @@
 {
-  "version": "3.42.0",
-  "publicationDate": "2026-11-03T16:00:38.263Z",
+  "version": "3.43.0",
+  "publicationDate": "2026-11-04T07:20:45.247Z",
   "streams": [
     {
       "id": "activity",
@@ -1134,6 +1134,27 @@
           "id": "function-usual-activities",
           "name": "Usual activities",
           "parentId": "function"
+        }
+      ]
+    },
+    {
+      "id": "genetics",
+      "name": "Genetic test results",
+      "parentId": null,
+      "explicitGrantOnly": true,
+      "label": {
+        "en": "Genetic test results",
+        "fr": "Résultats de tests génétiques"
+      },
+      "description": {
+        "en": "Results of genetic tests, such as the gene variants a laboratory tested.",
+        "fr": "Résultats de tests génétiques, comme les variants de gènes testés par un laboratoire."
+      },
+      "children": [
+        {
+          "id": "genetics-variant",
+          "name": "Tested gene variants",
+          "parentId": "genetics"
         }
       ]
     },
@@ -12441,6 +12462,24 @@
           "413156007"
         ]
       }
+    },
+    "genetics-variant": {
+      "version": "v1",
+      "type": "imported",
+      "label": {
+        "en": "Tested gene variant",
+        "fr": "Variant génétique testé",
+        "es": "Variante genética analizada"
+      },
+      "description": {
+        "en": "The result of a genetic test for one gene variant, as the laboratory reported it.",
+        "fr": "Le résultat d'un test génétique pour un variant d'un gène, tel que le laboratoire l'a rapporté.",
+        "es": "El resultado de una prueba genética para una variante de un gen, tal como lo informó el laboratorio."
+      },
+      "streamId": "genetics-variant",
+      "eventType": "genetic-variant/coded-v1",
+      "repeatable": "unlimited",
+      "devNotes": "Written by importers from a genetic test report, never entered in a form. One event per tested variant;\nevent `time` = the sample collection date, no duration.\nA panel of several variants is several events. Writes wait for the consumers to honour the root's\n`explicitGrantOnly` marker (documentation/GENETICS.md § Before the first write)."
     },
     "lifestyle-tobacco-smoking": {
       "version": "v1",
@@ -23960,6 +23999,176 @@
           }
         }
       },
+      "genetic-variant/coded-v1": {
+        "description": "The result of a genetic test for one variant of one gene, as the laboratory reported it: one event per tested variant, event.time the sample collection date. 'gene' and 'variant' are coded (HGNC; HGVS, dbSNP, ClinVar) with the labels as printed; 'result' is whether the variant was found, 'zygosity' its allelic state when printed. Lives under the 'genetics' root, which only an explicit grant covers. Maps to the HL7 Genomics Reporting variant Observation: gene → 48018-6, variant → 81252-9 / 48004-6, result → 69548-6, zygosity → 53034-5. The laboratory eventId is mirrored in clientData.related.<eventId> (documentation/PROVENANCE.md). See documentation/GENETICS.md.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "gene",
+          "variant",
+          "result"
+        ],
+        "properties": {
+          "gene": {
+            "description": "The gene studied (LOINC 48018-6): the symbol as printed, and its HGNC code (system http://www.genenames.org/geneId, code 'HGNC:7436', display the approved symbol).",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "codes"
+            ],
+            "properties": {
+              "label": {
+                "description": "The gene symbol as printed ('MTHFR').",
+                "type": "string",
+                "minLength": 1
+              },
+              "codes": {
+                "description": "FHIR Codings of the gene: the HGNC entry.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "system",
+                    "code"
+                  ],
+                  "properties": {
+                    "system": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+                    },
+                    "version": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "display": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "variant": {
+            "description": "The variant tested (LOINC 81252-9, DNA change 48004-6): the lab's label as printed, and its codes when known: HGVS (system http://varnomen.hgvs.org, the c. string with its transcript, 'NM_005957.5:c.665C>T'), dbSNP (http://www.ncbi.nlm.nih.gov/projects/SNP, 'rs1801133'), ClinVar (http://www.ncbi.nlm.nih.gov/clinvar).",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label"
+            ],
+            "properties": {
+              "label": {
+                "description": "The variant as the lab printed it ('C677T').",
+                "type": "string",
+                "minLength": 1
+              },
+              "codes": {
+                "description": "FHIR Codings of the variant: HGVS, dbSNP and/or ClinVar.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "system",
+                    "code"
+                  ],
+                  "properties": {
+                    "system": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
+                    },
+                    "version": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "display": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "result": {
+            "description": "Whether the variant was found, LOINC 69548-6 answer list LL1971-2: present LA9633-4, absent LA9634-2, indeterminate LA11884-6, no-call LA18198-4. A variant reported as detected with no zygosity printed is 'present' alone.",
+            "type": "string",
+            "enum": [
+              "present",
+              "absent",
+              "indeterminate",
+              "no-call"
+            ]
+          },
+          "zygosity": {
+            "description": "The allelic state as printed, LOINC 53034-5 answer list LL381-5: homozygous LA6705-3, heterozygous LA6706-1, hemizygous LA6707-9, homoplasmic LA6704-6, heteroplasmic LA6703-8. Meaningful with 'present' only (advisory, not enforced).",
+            "type": "string",
+            "enum": [
+              "homozygous",
+              "heterozygous",
+              "hemizygous",
+              "homoplasmic",
+              "heteroplasmic"
+            ]
+          },
+          "resultText": {
+            "description": "The result exactly as printed ('C677T homozygote', 'non détecté').",
+            "type": "string",
+            "minLength": 1
+          },
+          "method": {
+            "description": "The test method or panel as printed ('PCR', 'Thrombophilia panel').",
+            "type": "string",
+            "minLength": 1
+          },
+          "laboratory": {
+            "description": "The laboratory that performed the test: eventId points at a provider/organization-v1 event when one exists, name is the name as printed, kept beside it; at least one of the two. The eventId is mirrored in clientData.related.<eventId> (documentation/PROVENANCE.md).",
+            "type": "object",
+            "additionalProperties": false,
+            "anyOf": [
+              {
+                "required": [
+                  "eventId"
+                ]
+              },
+              {
+                "required": [
+                  "name"
+                ]
+              }
+            ],
+            "properties": {
+              "eventId": {
+                "description": "Event id of the laboratory's provider/organization-v1 event.",
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "name": {
+                "description": "The name as printed. Shown to every reader of the stream.",
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "notes": {
+            "description": "The comment printed with the result (an interpretation, a limitation of the test).",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
       "encounter/visit-v1": {
         "description": "A care visit or stay: a consultation, hospital stay, emergency, day case, teleconsultation or home visit. event.time is when it began, event.duration how long it lasted: no duration when the end is not known, null only while a stay is ongoing. Maps to FHIR Encounter: kind → class, specialty → serviceType, reason → reasonCode.text, participants → participant, serviceProvider → serviceProvider, the event period → period; status is derived from the duration, never stored. Every eventId in content is mirrored in clientData.related.<eventId> (documentation/PROVENANCE.md). See documentation/ENCOUNTER.md.",
         "type": "object",
@@ -26401,11 +26610,11 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-10-28T09:29:14.399Z"
+      "updatedAt": "2026-11-02T11:09:26.205Z"
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-10-27T11:01:34.694Z"
+      "updatedAt": "2026-11-02T11:09:26.205Z"
     }
   },
   "settings": {
