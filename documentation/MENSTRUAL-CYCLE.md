@@ -201,12 +201,18 @@ written before 3.24.0 by Cycle Intelligence (demo accounts only) may be LH peaks
 **Not a fertility statement.** Both are chart notation the person or her method records. HDS apps show them as
 recorded; they do not derive fertile or infertile days from them.
 
-## Cycle regularity, as reported (3.44.0)
+## Recalled summaries
+
+An intake asks for summaries a person recalls rather than charts: the `fertility-cycles-average-*` items, cycle
+regularity (3.44.0) and time trying to conceive (3.45.0). **A recalled summary is dated when it is reported** (one
+event per answer, `time` at the date the answer is given), never back-dated to the period it summarises. It never
+carries `hdsTimePrecision: approx` to express the answer's vagueness: when present, `hdsTimePrecision` describes the
+report date, as on any event ([PARTIAL-DATES.md](PARTIAL-DATES.md)).
+
+### Cycle regularity, as reported (3.44.0)
 
 `fertility-cycles-regularity` is the person's own answer to "are your cycles generally regular?", a recalled summary
-beside the `fertility-cycles-average-*` items (site-agents#39). `select` on `fertility/cycle-regularity-v1`, one event
-per answer, `time` at the date the answer is given. The same rule holds for the `fertility-cycles-average-*` items:
-a recalled summary is dated when it is reported, not at the cycles it summarises.
+beside the `fertility-cycles-average-*` items (site-agents#39). `select` on `fertility/cycle-regularity-v1`.
 
 | Value | Label (en) | Label (fr) | SNOMED CT (export) |
 |---|---|---|---|
@@ -220,6 +226,34 @@ a `condition-coded` entry or a `profile-reproductive-stage` from it, which is al
 who charts has her regularity in her `fertility-cycles-start` events; a reader that has both prefers the derived one.
 The item has no `fhir` block, because a coded block must map every option and `no-periods` is deliberately uncoded.
 Never add one by coding `no-periods` as `14302001`. (No LOINC question code fits either, searched 2026-11-04.)
+
+### Time trying to conceive (3.45.0)
+
+`fertility-ttc-duration` is how long the person has been trying to conceive, as she recalls it (site-agents#38).
+`select` on `fertility/ttc-duration-v1`, stream `fertility-ttc-duration`, a sibling of `fertility-ttc-tta` under
+`fertility` so a grant on the intention never covers the duration, or the reverse.
+
+| Value | Label (en) | Label (fr) |
+|---|---|---|
+| `less-than-6-months` | Less than 6 months | Moins de 6 mois |
+| `6-12-months` | 6 to 12 months | 6 à 12 mois |
+| `1-2-years` | 1 to 2 years | 1 à 2 ans |
+| `more-than-2-years` | More than 2 years | Plus de 2 ans |
+| `on-break` | Currently taking a break | En pause actuellement |
+
+**Bands, not months.** The question is asked in bands, and their edges are the anchors a fertility evaluation is timed
+by (12 months of trying, or 6 months from age 35). A number of months would invent precision from a band. At the
+edge, a reader treats `1-2-years` and `more-than-2-years` as "12 months reached", and `6-12-months` as not
+established: the bands are as the clinic asks them, and the model does not resolve their edge.
+**`on-break`** is a reported status and states no duration. **The intention stays on `fertility-ttc-tta`**: an intake
+writes the current intention there, dated the intake, for the four bands, and nothing there for `on-break`
+(`fertility-ttc-tta` is a `ratio/generic` scale, so a break cannot be one of its rungs). The time trying is **not**
+written as a back-dated `fertility-ttc-tta` event with `hdsTimePrecision: approx`: "more than 2 years" has no date to
+approximate, and that would rewrite the intention timeline readers already use.
+
+SNOMED `169449001` Trying to conceive (finding). LOINC `64632-3` (PhenX, TRIAL) asks the same question as a number of
+months, so it is not this item's code. No `fhir` block: a band would need `Observation.valueRange`, which the fhir
+checker has no value kind for yet.
 
 ## Coverline (3.24.0)
 

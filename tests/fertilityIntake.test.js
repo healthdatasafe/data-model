@@ -3,10 +3,10 @@ const Ajv = require('ajv');
 const AjvDraft04 = require('ajv-draft-04');
 const addFormats = require('ajv-formats');
 
-// Fertility-intake asks of 3.44.0: the self-reported cycle regularity (site-agents#39) and the untimed
-// insulin twin of the fasting item (site-agents#40 part 1).
+// Fertility-intake asks: the self-reported cycle regularity (site-agents#39) and the untimed insulin twin of the
+// fasting item (site-agents#40 part 1) in 3.44.0; the recalled time trying to conceive (site-agents#38) in 3.45.0.
 
-describe('[FIN] Fertility-intake items (3.44.0)', () => {
+describe('[FIN] Fertility-intake items (3.44.0, 3.45.0)', () => {
   const { itemsById, findItemForEvent } = require('../src/items');
   const streams = require('../src/streams');
   const { eventTypesById } = require('../src/eventTypes');
@@ -71,6 +71,32 @@ describe('[FIN] Fertility-intake items (3.44.0)', () => {
     });
   });
 
+  describe('[FIN-TTC] fertility-ttc-duration (site-agents#38, 3.45.0)', () => {
+    const item = itemsById['fertility-ttc-duration'];
+
+    it('[FIN-TTC-1] a select on its own enum, a sibling of fertility-ttc-tta', () => {
+      assert.strictEqual(item.type, 'select');
+      assert.strictEqual(item.eventType, 'fertility/ttc-duration-v1');
+      assert.strictEqual(findItemForEvent(item.eventType, item.streamId), item);
+      assert.strictEqual(streams.streamsById[item.streamId].parentId, 'fertility');
+      assert.ok(!streams.isDescendantOf('fertility-ttc-duration', 'fertility-ttc-tta'), 'a grant on the intention must not cover the duration');
+      assert.ok(!streams.isDescendantOf('fertility-ttc-tta', 'fertility-ttc-duration'));
+    });
+
+    it('[FIN-TTC-2] bands and a break, exactly the eventType enum', () => {
+      const values = item.options.map((o) => o.value);
+      assert.deepStrictEqual(values, ['less-than-6-months', '6-12-months', '1-2-years', 'more-than-2-years', 'on-break']);
+      assert.deepStrictEqual(eventTypesById(item.eventType).enum, values);
+      assert.ok(item.label.fr && item.description.fr && item.options.every((o) => o.label.fr));
+    });
+
+    it('[FIN-TTC-3] one dated event per answer, no fhir block, the intention item unchanged', () => {
+      assert.strictEqual(item.repeatable, 'any');
+      assert.strictEqual(item.fhir, undefined);
+      assert.strictEqual(itemsById['fertility-ttc-tta'].eventType, 'ratio/generic');
+    });
+  });
+
   describe('[FIN-AJV] contents validate under both validators', () => {
     const validators = {
       'draft-07': new Ajv({ strict: false, allErrors: true, logger: false }),
@@ -85,6 +111,9 @@ describe('[FIN] Fertility-intake items (3.44.0)', () => {
         const validate = ajv.compile(eventTypesById('fertility/cycle-regularity-v1'));
         for (const v of ['regular', 'irregular', 'no-periods']) assert.ok(validate(v), v);
         for (const v of ['not-sure', '', null, ['regular'], 1]) assert.ok(!validate(v), JSON.stringify(v));
+        const ttc = ajv.compile(eventTypesById('fertility/ttc-duration-v1'));
+        for (const v of ['less-than-6-months', 'on-break']) assert.ok(ttc(v), v);
+        for (const v of [6, '6 months', null, ['on-break']]) assert.ok(!ttc(v), JSON.stringify(v));
       });
     }
   });

@@ -310,6 +310,45 @@ fertility-ttc-tta:
         en: "TTC - \"Seriously trying.\" Intentional intercourse every cycle. Would pursue any and all fertility treatments or procedures if needed."
         fr: "TTC — « Sérieusement en essai ». Rapports intentionnels à chaque cycle. Envisagerait tous les traitements ou interventions de fertilité."
   repeatable: P1D
+  devNotes: >-
+    A recalled time trying lives on fertility-ttc-duration (3.45.0), never as a back-dated event here; an
+    intake writes the current intention here, dated the intake (MENSTRUAL-CYCLE.md § Time trying to
+    conceive).
+fertility-ttc-duration:
+  version: v1
+  label:
+    en: Time trying to conceive
+    fr: Durée des essais de conception
+  description:
+    en: How long you have been trying to conceive, as you recall it.
+    fr: Depuis combien de temps vous essayez de concevoir, selon votre souvenir.
+  streamId: fertility-ttc-duration
+  eventType: fertility/ttc-duration-v1
+  type: select
+  options:
+    - value: less-than-6-months
+      label: { en: Less than 6 months, fr: Moins de 6 mois }
+    - value: 6-12-months
+      label: { en: 6 to 12 months, fr: 6 à 12 mois }
+    - value: 1-2-years
+      label: { en: 1 to 2 years, fr: 1 à 2 ans }
+    - value: more-than-2-years
+      label: { en: More than 2 years, fr: Plus de 2 ans }
+    - value: on-break
+      label: { en: Currently taking a break, fr: En pause actuellement }
+  repeatable: any
+  references:
+    snomed: ["169449001"]
+  devNotes: >-
+    A recalled summary (site-agents#38), like fertility-cycles-regularity: one event per answer, `time`
+    at the date it is given (MENSTRUAL-CYCLE.md § Recalled summaries), never back-dated to a start of
+    trying, which a band does not give. Bands, not months: the edges are the guideline anchors (6, 12,
+    24 months), and a number would invent precision. `on-break` is a reported status that states no
+    duration. The intention stays on fertility-ttc-tta, a sibling stream so a grant on one never covers
+    the other: an intake writes the current intention there for the four bands, and nothing there for
+    `on-break`. SNOMED 169449001 Trying to conceive (finding). LOINC 64632-3 (PhenX, TRIAL) asks the
+    same question as a number of months, so it is not this item's code; no fhir block (a band needs a
+    range value, which the fhir checker has no kind for).
 fertility-sexual-activity:
   version: v1
   label:

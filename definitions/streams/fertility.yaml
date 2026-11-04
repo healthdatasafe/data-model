@@ -35,6 +35,8 @@ children:
     name: Trainings
   - id: fertility-ttc-tta
     name: Trying to conceive / Avoiding pregnancy
+  - id: fertility-ttc-duration
+    name: Time trying to conceive
   - id: fertility-sexual-activity
     name: Sexual Activity
   - id: fertility-genital-contact
