@@ -382,6 +382,18 @@ the build accepts, so plan for it before adding the variation:
 
 ---
 
+## Medications: no block yet
+
+The medication items carry no `fhir` block: the block schema allows `Observation|Condition` only, and hds-fhir-js
+renders them as `unsupported`. The target mapping (one intake → MedicationAdministration, a period of use →
+MedicationStatement, a prescription → MedicationRequest, the regimen → `Dosage` / `Timing.repeat`) is in
+[`MEDICATION.md`](MEDICATION.md#fhir-and-healthkit). One unit note for the exporter: the regimen's `periodUnit`
+(`frequency.periodUnit`) and `bounds.durationUnit` use `h d wk mo y`; FHIR UnitsOfTime is `s min h d wk mo a`, so
+**`y` exports as `a`** (UCUM annum), and the other units map as they are. Enum labels and codes come from the pack's
+`vocabularies` (MEDICATION.md § Vocabularies).
+
+---
+
 ## Forward compatibility
 
 A consumer **skips a block whose resourceType, value kind or code source it does not know** (a newer pack than the

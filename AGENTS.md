@@ -338,16 +338,17 @@ data-model/
 ├── package.json, eslint.config.mjs, etc.
 │
 ├── definitions/                           # THE SOURCE OF TRUTH
-│   ├── items/*.yaml                       # Health data point definitions (351 items, 286 active, 23 YAML files)
+│   ├── items/*.yaml                       # Health data point definitions (352 items, 287 active, 23 YAML files)
 │   ├── streams/*.yaml                     # Clinical-domain tree (22 top-level roots, 335 streams in all)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (85)
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (86)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)
 │   │   └── mood/                          # 5D vector converter (5 methods)
 │   ├── appStreams.yaml                    # App-contextual sub-streams (notes, chat)
 │   ├── datasources/                       # External data source references
+│   ├── vocabularies/*.yaml                # Labels + FHIR/SNOMED codes of eventType enum values (pack.vocabularies, 3.46.0)
 │   ├── conversions/                       # Unit conversions (mass, length, temperature)
 │   ├── settings/settings.yaml             # HDS user-settings definitions
 │   ├── fhir/mapping.yaml                  # FHIR tables: categories per resourceType, systems, IG versions
@@ -362,6 +363,8 @@ data-model/
 │   ├── appStreams.js                      # App-stream loader
 │   ├── converters.js                      # Converter loader
 │   ├── datasources.js                     # Datasource loader
+│   ├── vocabularies.js                    # Vocabulary loader: pins each vocabulary to the enums it binds
+│   ├── schemas/vocabularies.js            # AJV JSON Schema for a vocabulary (published json-schemas/vocabulary.json)
 │   ├── conversions.js                     # Unit conversion loader
 │   ├── settings.js                        # Settings loader
 │   ├── build.js                           # Pack generation (writes dist/pack.json)
@@ -387,12 +390,12 @@ data-model/
 │   ├── CONSENTS.md                        # Account-level consent record: consents root, `type: system` item
 │   ├── DOCUMENTS.md                       # Medical documents: documents root, `type: attachments` item, file/xds-v1; document-shares
 │   ├── ENCOUNTER.md                       # Care visits and providers: encounter root, encounter/visit-v1, provider/*-v1, identifiers
-│   ├── MEDICATION.md                      # Coding a medication read from a document: Swiss brand label, ATC hdsId
+│   ├── MEDICATION.md                      # Intake vs period, regimen timing, skipped / stopped, typed prescription, vocabularies, coding (Swiss brand label, ATC hdsId)
 │   ├── GENETICS.md                        # Genetic test results: genetics root, explicitGrantOnly, genetic-variant/coded-v1
 │   └── SUPPORT.md                         # HDS support channel: hds-support anchor root, support/conversation-v1, retention
 │
 ├── scripts/                               # setup / deploy shell scripts
-├── tests/                                 # Vitest test suite
+├── tests/                                 # Mocha test suite
 └── dist/                                  # Generated pack.json + gh-pages clone (git-managed)
 ```
 

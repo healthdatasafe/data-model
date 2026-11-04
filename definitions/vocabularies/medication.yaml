@@ -1,0 +1,80 @@
+# Labels and code mappings of the medication enums (DM-4, 3.46.0; documentation/MEDICATION.md § Vocabularies).
+# The eventType enum is the contract: the loader (src/vocabularies.js) checks that each vocabulary's values equal,
+# in order, the enum of every field it binds. `fhir` is the FHIR code of the bound element (a code with a required
+# binding, written with no system); `snomed` is a SNOMED CT SCTID, verified active on the International 20260201
+# release. A value may carry neither (uncoded).
+
+medication-when:
+  fhirElement: Timing.repeat.when
+  binds:
+    - { eventType: medication/basic, path: intake.when }
+    - { eventType: medication/coded-v1, path: intake.when }
+    - { eventType: medication/prescription-v1, path: posology.when }
+    - { eventType: medication/prescription-basic-v1, path: posology.when }
+  values:
+    waking: { label: { en: On waking, fr: Au réveil }, fhir: WAKE }
+    morning: { label: { en: In the morning, fr: Le matin }, fhir: MORN }
+    noon: { label: { en: At noon, fr: À midi }, fhir: NOON }
+    afternoon: { label: { en: In the afternoon, fr: L'après-midi }, fhir: AFT }
+    evening: { label: { en: In the evening, fr: Le soir }, fhir: EVE }
+    night: { label: { en: At night, fr: La nuit }, fhir: NIGHT }
+    bedtime: { label: { en: At bedtime, fr: Au coucher }, fhir: HS }
+    meal: { label: { en: With a meal, fr: Pendant un repas }, fhir: C }
+    before-meal: { label: { en: Before a meal, fr: Avant un repas }, fhir: AC }
+    after-meal: { label: { en: After a meal, fr: Après un repas }, fhir: PC }
+    breakfast: { label: { en: With breakfast, fr: Au petit-déjeuner }, fhir: CM }
+    before-breakfast: { label: { en: Before breakfast, fr: Avant le petit-déjeuner }, fhir: ACM }
+    after-breakfast: { label: { en: After breakfast, fr: Après le petit-déjeuner }, fhir: PCM }
+    lunch: { label: { en: With lunch, fr: Au repas de midi }, fhir: CD }
+    before-lunch: { label: { en: Before lunch, fr: Avant le repas de midi }, fhir: ACD }
+    after-lunch: { label: { en: After lunch, fr: Après le repas de midi }, fhir: PCD }
+    dinner: { label: { en: With dinner, fr: Au repas du soir }, fhir: CV }
+    before-dinner: { label: { en: Before dinner, fr: Avant le repas du soir }, fhir: ACV }
+    after-dinner: { label: { en: After dinner, fr: Après le repas du soir }, fhir: PCV }
+
+medication-intake-status:
+  fhirElement: MedicationAdministration.status
+  binds:
+    - { eventType: medication/basic, path: status }
+    - { eventType: medication/coded-v1, path: status }
+  values:
+    taken: { label: { en: Taken, fr: Pris }, fhir: completed }
+    skipped: { label: { en: Skipped, fr: Non pris }, fhir: not-done, snomed: '1269470004' } # Individual dose of drug or medicament not taken (Missed dose)
+
+medication-skip-reason:
+  fhirElement: MedicationAdministration.statusReason
+  binds:
+    - { eventType: medication/basic, path: skipReason }
+    - { eventType: medication/coded-v1, path: skipReason }
+  values:
+    forgot: { label: { en: Forgot, fr: Oubli }, snomed: '1303576005' } # Forgets to take medication (finding)
+    side-effects: { label: { en: Side effects, fr: Effets indésirables }, snomed: '182897004' } # Drug declined by patient - side effects
+    not-needed: { label: { en: Not needed, fr: Pas nécessaire } }
+    unavailable: { label: { en: Ran out, fr: Plus de médicament }, snomed: '242990004' } # Drug not available for administration
+    declined: { label: { en: Chose not to, fr: Choix de ne pas le prendre }, snomed: '182895007' } # Drug declined by patient
+    advised: { label: { en: Told to skip it by a carer, fr: Sur avis d'un soignant } }
+    other: { label: { en: Other, fr: Autre } }
+
+medication-stop-reason:
+  fhirElement: MedicationStatement.statusReason, MedicationRequest.statusReason
+  binds:
+    - { eventType: medication/basic, path: stopReason }
+    - { eventType: medication/coded-v1, path: stopReason }
+    - { eventType: medication/prescription-v1, path: stopReason }
+    - { eventType: medication/prescription-basic-v1, path: stopReason }
+  values:
+    medical-advice: { label: { en: On medical advice, fr: Sur avis médical }, snomed: '182840001' } # Drug treatment stopped - medical advice
+    side-effects: { label: { en: Side effects, fr: Effets indésirables }, snomed: '395009001' } # Medication stopped - side effect
+    ineffective: { label: { en: Not working, fr: Inefficace }, snomed: '395007004' } # Medication stopped - ineffective
+    own-choice: { label: { en: Own choice, fr: Choix personnel } }
+    other: { label: { en: Other, fr: Autre } }
+
+medication-prescription-status:
+  fhirElement: MedicationRequest.status
+  binds:
+    - { eventType: medication/prescription-v1, path: status }
+    - { eventType: medication/prescription-basic-v1, path: status }
+  values:
+    active: { label: { en: Active, fr: En cours }, fhir: active }
+    stopped: { label: { en: Stopped, fr: Arrêtée }, fhir: stopped }
+    completed: { label: { en: Completed, fr: Terminée }, fhir: completed }
