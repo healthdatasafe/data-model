@@ -18,3 +18,4 @@ medication:
     - doseUnit
     - codes
     - hdsId
+    - product

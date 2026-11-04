@@ -489,6 +489,45 @@
                 }
               }
             },
+            "ingredient": {
+              "description": "Ingredient(s) as datasets-service gives them, lower case, parts joined by ' / ' (e.g. 'amoxicillin / clavulanate'); null when the source has none. Informative: the codes are authoritative.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "description": "Strength as datasets-service gives it (e.g. '500 MG', '500 MG / 125 MG', '10 MG/ML'); null when unknown. Informative.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "doseForm": {
+              "description": "Dose form as datasets-service gives it (e.g. 'Oral Tablet'); null when unknown. Informative.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "route": {
+              "description": "Route as datasets-service gives it, null when unknown: a free string, the service's vocabulary (today within intake.route, which it may grow past). The intake's own route is intake.route.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "doseUnit": {
+              "description": "Dose unit datasets-service suggests for an intake (an HDS eventType reference such as 'dose/tablet'), null when unknown: a free string, today within intake.doseUnit. The intake's own unit is intake.doseUnit.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hdsId": {
+              "description": "HDS identifier of the picked search result, as datasets-service returns it (the hdsId of its primary code). Never constructed.",
+              "type": "string"
+            },
             "codes": {
               "description": "Coding identifiers across systems. A single drug may have codes in RxNorm (prescribing), SNOMED-CT (clinical), and ATC (classification). At least one: a medication with no code is medication/basic.",
               "type": "array",
@@ -505,7 +544,7 @@
                     "type": "string"
                   },
                   "system": {
-                    "description": "Coding system: RxNorm, SNOMED-CT, ATC",
+                    "description": "Coding system: RxNorm, SNOMED-CT, ATC. National product and pack systems are reserved (MEDICATION.md): Swissmedic, CIS (product level), GTIN, CIP13 (pack level).",
                     "type": "string"
                   },
                   "source": {
@@ -524,6 +563,82 @@
                 }
               },
               "minItems": 1
+            },
+            "product": {
+              "description": "The national product the medicine was picked as (plan 120), as datasets-service returns it for a brand-name search: product level, never a pack. It adds the national product code and the name as on the box; 'label' (the drug's) stays the name the person knows and 'codes' the coded medicine (ATC / RxNorm / SNOMED-CT). Absent when the medicine was not picked as a product.",
+              "type": "object",
+              "required": [
+                "name",
+                "label",
+                "country",
+                "system",
+                "code",
+                "hdsId"
+              ],
+              "properties": {
+                "name": {
+                  "description": "Name as on the box, in the source language (e.g. 'Metfin 500, Filmtabletten', 'DOLIPRANE 500 mg, comprimé')",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "description": "Display name (brand + strength + dose form), keyed by the language it is in (de, fr, it, en today), e.g. { fr: 'Doliprane 500 mg, comprimé' }. May have no 'en': not a localizable text.",
+                  "type": "object",
+                  "minProperties": 1,
+                  "properties": {
+                    "de": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "fr": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "it": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "en": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "brand": {
+                  "description": "Brand without strength or form (e.g. 'Dafalgan')",
+                  "type": "string"
+                },
+                "strength": {
+                  "description": "Label strength as displayed (e.g. '500 mg', '500/125 mg'); null when the source does not give one",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "country": {
+                  "description": "Country of the product, ISO 3166-1 alpha-2 (CH, FR)",
+                  "type": "string",
+                  "pattern": "^[A-Z]{2}$"
+                },
+                "system": {
+                  "description": "Product-level national code system: Swissmedic (CH, authorisation no. 5 digits + sequence 2 digits) or CIS (FR, BDPM). Pack-level codes (GTIN, CIP13) never go here.",
+                  "type": "string",
+                  "enum": [
+                    "Swissmedic",
+                    "CIS"
+                  ]
+                },
+                "code": {
+                  "description": "Product code in 'system' (e.g. '5535101', '63368332')",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "hdsId": {
+                  "description": "HDS identifier as returned by datasets-service: S:Swissmedic/k:Swissmedic/C:<code> or S:CIS/k:ANSM/C:<code>",
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
             }
           }
         },
@@ -786,6 +901,45 @@
                 }
               }
             },
+            "ingredient": {
+              "description": "Ingredient(s) as datasets-service gives them, lower case, parts joined by ' / ' (e.g. 'amoxicillin / clavulanate'); null when the source has none. Informative: the codes are authoritative.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "description": "Strength as datasets-service gives it (e.g. '500 MG', '500 MG / 125 MG', '10 MG/ML'); null when unknown. Informative.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "doseForm": {
+              "description": "Dose form as datasets-service gives it (e.g. 'Oral Tablet'); null when unknown. Informative.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "route": {
+              "description": "Route as datasets-service gives it, null when unknown: a free string, the service's vocabulary (today within intake.route, which it may grow past). The intake's own route is intake.route.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "doseUnit": {
+              "description": "Dose unit datasets-service suggests for an intake (an HDS eventType reference such as 'dose/tablet'), null when unknown: a free string, today within intake.doseUnit. The intake's own unit is intake.doseUnit.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hdsId": {
+              "description": "HDS identifier of the picked search result, as datasets-service returns it (the hdsId of its primary code). Never constructed.",
+              "type": "string"
+            },
             "codes": {
               "description": "Coding identifiers across systems. At least one: a prescription with no code is medication/prescription-basic-v1.",
               "type": "array",
@@ -801,7 +955,8 @@
                     "type": "string"
                   },
                   "system": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Coding system: RxNorm, SNOMED-CT, ATC. National product and pack systems are reserved (MEDICATION.md): Swissmedic, CIS (product level), GTIN, CIP13 (pack level)."
                   },
                   "source": {
                     "type": "object",
@@ -817,6 +972,82 @@
                 }
               },
               "minItems": 1
+            },
+            "product": {
+              "description": "The national product the medicine was picked as (plan 120), as datasets-service returns it for a brand-name search: product level, never a pack. It adds the national product code and the name as on the box; 'label' (the drug's) stays the name the person knows and 'codes' the coded medicine (ATC / RxNorm / SNOMED-CT). Absent when the medicine was not picked as a product.",
+              "type": "object",
+              "required": [
+                "name",
+                "label",
+                "country",
+                "system",
+                "code",
+                "hdsId"
+              ],
+              "properties": {
+                "name": {
+                  "description": "Name as on the box, in the source language (e.g. 'Metfin 500, Filmtabletten', 'DOLIPRANE 500 mg, comprimé')",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "description": "Display name (brand + strength + dose form), keyed by the language it is in (de, fr, it, en today), e.g. { fr: 'Doliprane 500 mg, comprimé' }. May have no 'en': not a localizable text.",
+                  "type": "object",
+                  "minProperties": 1,
+                  "properties": {
+                    "de": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "fr": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "it": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "en": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "brand": {
+                  "description": "Brand without strength or form (e.g. 'Dafalgan')",
+                  "type": "string"
+                },
+                "strength": {
+                  "description": "Label strength as displayed (e.g. '500 mg', '500/125 mg'); null when the source does not give one",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "country": {
+                  "description": "Country of the product, ISO 3166-1 alpha-2 (CH, FR)",
+                  "type": "string",
+                  "pattern": "^[A-Z]{2}$"
+                },
+                "system": {
+                  "description": "Product-level national code system: Swissmedic (CH, authorisation no. 5 digits + sequence 2 digits) or CIS (FR, BDPM). Pack-level codes (GTIN, CIP13) never go here.",
+                  "type": "string",
+                  "enum": [
+                    "Swissmedic",
+                    "CIS"
+                  ]
+                },
+                "code": {
+                  "description": "Product code in 'system' (e.g. '5535101', '63368332')",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "hdsId": {
+                  "description": "HDS identifier as returned by datasets-service: S:Swissmedic/k:Swissmedic/C:<code> or S:CIS/k:ANSM/C:<code>",
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
             }
           }
         },

@@ -114,6 +114,17 @@ medication no code was found for is a `-basic` event, never a coded event with `
 3.46.0 with `codes: []` stay readable (readers render the drug by its label); hds-mcp-js, which validates, refuses to
 update one until it is migrated to the `-basic` type.
 
+## The `drug` object as the search stores it (3.47.0)
+
+The medication search copies these fields of the picked datasets-service result into `drug`
+(`datasources/medications.yaml` `valueFields`); they were stored before 3.47.0 and are now declared, on both coded
+types (test `[MED-DRUG-1]`): `label`, `description`, `ingredient`, `strength`, `doseForm`, `route`, `doseUnit`, `codes`,
+`hdsId`, and `product` for a pick made as a product. `ingredient`, `strength`, `doseForm`, `route` and `doseUnit` are
+**informative copies, string or null** as the service gives them: not normalised (`route` and `doseUnit` are free strings: the service's vocabulary, today within `intake.route` /
+`intake.doseUnit`, which may grow past them with a data load and no pack release; an enum here would make such picks
+invalid under every older pack), so a reader that needs the regimen reads `intake`, and one that needs the
+medicine reads `codes`. `hdsId` is the result's own id (its primary code's). A writer without the search may omit them.
+
 ## Vocabularies
 
 The labels and code mappings of the enum values are in the pack's **`vocabularies`** section
@@ -171,7 +182,7 @@ release 20260201.
 - **`drug.label` is the name as printed** ("Dafalgan 1 g"), the same text in every language the writer sets. A brand
   name is not translated, and the substance name is not substituted for it.
 - **`drug.codes[]` carries the ATC code of the substance** (`N02BE01`, paracetamol, for "Dafalgan 1 g"). Add the
-  RxNorm code too when RxNorm has the product. A product code may come with the product (below, reserved).
+  RxNorm code too when RxNorm has the product. A product picked through the search adds `drug.product` (below).
 - **A name the importer cannot match stays `medication-intake-basic`** (or `medication-prescription-basic`), with the
   name as printed. Never a coded event with a code that was guessed or built.
 
@@ -205,12 +216,65 @@ The code entry is the one datasets-service returns, with the short system name, 
 { "code": "N02BE01", "system": "ATC", "source": { "key": "WHO" }, "hdsId": "<as returned by the service>" }
 ```
 
-## Reserved for products and national codes (3.46.0)
+## National products: `drug.product` (3.47.0)
 
-Brand and product names (plan 120) land in a later, additive pass. Two things are **reserved now** so that pass and
-this one cannot collide; neither is in a schema yet.
+Brand and product names (plan 120). datasets-service holds the national products of Switzerland (Swissmedic) and
+France (BDPM): a search for a brand ("Dafalgan", "Doliprane") returns the product's **coded medicine** (ATC / RxNorm /
+SNOMED CT codes, as for any pick) under the brand's name, plus the product it was found as. The medication search (`datasources/medications.yaml`)
+copies that product into the event as **`drug.product`**, next to `drug.codes`, on `medication/coded-v1` and
+`medication/prescription-v1` (the same schema on both, test `[MED-PRD-1]`). It is never a top-level property, which a
+search form would show as a field. Absent when the medicine was not picked as a product.
 
-**Code-system names** for `codes[].system` (a free string, so no schema change), with their level:
+```json
+{
+  "drug": {
+    "label": { "en": "Metfin 500 mg, Filmtablette", "de": "Metfin 500 mg, Filmtablette" },
+    "description": { "en": "metformin hydrochloride 500 MG Oral Tablet" },
+    "codes": [
+      { "code": "861007", "system": "RxNorm", "source": { "key": "NLM" }, "hdsId": "S:RxNorm/k:NLM/C:861007" },
+      { "code": "A10BA02", "system": "ATC", "source": { "key": "WHO" }, "hdsId": "<as returned by the service>" }
+    ],
+    "product": {
+      "name": "Metfin 500, Filmtabletten",
+      "label": { "de": "Metfin 500 mg, Filmtablette" },
+      "brand": "Metfin",
+      "strength": "500 mg",
+      "country": "CH",
+      "system": "Swissmedic",
+      "code": "5535101",
+      "hdsId": "S:Swissmedic/k:Swissmedic/C:5535101"
+    }
+  }
+}
+```
+
+| Field | Required | Content |
+|---|---|---|
+| `name` | yes | the name as on the box, in the source language |
+| `label` | yes | the display name (brand + strength + dose form), keyed by the language it is in (`de`, `fr`, `it`, `en` today): `{ "fr": … }`. Not a localizable text: it may have no `en`, so it is read as it is, never through `localizeText` |
+| `brand` | no | the brand alone ("Metfin") |
+| `strength` | no | the label strength as displayed ("500 mg", "500/125 mg"), or null |
+| `country` | yes | ISO 3166-1 alpha-2 |
+| `system` | yes | a **product-level** system: `Swissmedic` or `CIS` (a schema enum: a pack-level system is refused) |
+| `code` | yes | the product code in `system` |
+| `hdsId` | yes | as returned by datasets-service, never constructed |
+
+**`drug.label` keeps one meaning: the name the person knows the medicine by.** For a pick made as a product it is the
+brand display name, the same text under `en` and the product's language ("Metfin 500 mg, Filmtablette"), and the coded
+medicine's own name is in `drug.description`; for a pick made as a generic it is the generic's name; for an importer it
+is the name as printed (§ A Swiss brand name). So every reader keeps showing `drug.label`. **`drug.product` is the only
+sign that a national product was picked**: it adds the national code and the box name (`name`), and repeats the display
+name in `label` with its language key, so the product object stands on its own. Analytics and FHIR use `drug.codes`,
+which keeps `minItems: 1`: a product never replaces the coded medicine.
+
+**A brand name written without the search** (an importer, a typed name) is unchanged: `drug.label` is the name as
+printed and the codes are the substance's (§ A Swiss brand name). Such a writer sets `drug.product` only from a product
+datasets-service returned.
+
+**Code systems**, with their level. `codes[].system` stays a free string; `drug.product.system` takes the product
+level only, as an enum. **A new product system (or country) ships in data-model first**; datasets-service returns it
+only once consumers have the pack that lists it, because an event whose `product.system` is outside the enum is invalid
+under every older pack (hds-mcp-js and any client validate against their pinned pack).
 
 | `system` | Country | Level | Code | `hdsId` |
 |---|---|---|---|---|
@@ -219,9 +283,6 @@ this one cannot collide; neither is in a schema yet.
 | `GTIN` | CH | pack | GTIN-13 of one pack | (not returned by datasets-service yet) |
 | `CIP13` | FR | pack | CIP13 of one pack | (not returned by datasets-service yet) |
 
-**`drug.product`**, inside `drug` (never a top-level property, which a search form would show as a field), with the
-shape datasets-service returns for a brand hit, so the search copies it as it copies `drug`:
-`{ name, label: { <lang>: string }, brand, strength, country, system, code, hdsId }`: `name` as on the box, `label`
-keyed by the language the name is in, `country` ISO 3166-1 alpha-2, `system` a **product-level** system (`Swissmedic`,
-`CIS`) with its `code` and `hdsId`. Pack-level codes are not part of it. `drug.codes[]` keeps the coded medicine
-(ATC / RxNorm / SNOMED CT), so `minItems: 1` holds.
+Packs are not part of `drug.product`: a pack would be its own additive field when datasets-service returns packs.
+FHIR: the product maps to a second `coding` of the medication concept and its name to `CodeableConcept.text`; the
+national system URIs are left to the exporter work (FHIR-MAPPING.md § Medications: no block yet).

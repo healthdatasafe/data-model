@@ -1,5 +1,28 @@
 # Changelog
 
+## [3.47.0] - 2026-11-04
+
+National products: a medicine picked as a brand keeps the product (plan 120 P3). Additive. Needs 3.46.0 published
+first (its hds-forms-js 0.29.0 condition applies).
+
+### Added
+- **`drug.product`** on `medication/coded-v1` and `medication/prescription-v1` (one schema, test `[MED-PRD-1]`), the
+  shape reserved in 3.46.0 and returned by datasets-service for a brand hit: `name` (as on the box), `label` (keyed by
+  its language, at least one of `de` / `fr` / `it` / `en`), `brand`, `strength` (string or null), `country` (ISO
+  3166-1 alpha-2), `system` (`Swissmedic` | `CIS`, product level only: `GTIN` / `CIP13` are refused), `code`,
+  `hdsId`. Required: `name`, `label`, `country`, `system`, `code`, `hdsId`. `drug.codes` keeps the coded medicine
+  (`minItems: 1` unchanged).
+- The medication datasource copies `product` from the search result (`valueFields`), so `DatasetSearch` stores it
+  inside `drug` with no client change; pickers, short text and dashboards keep showing `drug.label`, which is the brand.
+- **The `drug` fields the search stores are declared** (both coded types, test `[MED-DRUG-1]`): `ingredient`,
+  `strength`, `doseForm`, `route`, `doseUnit` (string or null, informative copies from datasets-service, not
+  normalised) and `hdsId` (string). Stored since the search began; consumers already read them (hds-webapp
+  `drug.ingredient`, `drug.strength`). Every `drug` a search has stored still validates.
+- MEDICATION.md § National products: `drug.label` keeps one meaning, the name the person knows (for a product pick, the
+  brand display name under `en` and its language, as datasets-service returns it; the coded medicine's name in
+  `drug.description`), so every reader is right with no change; `drug.product` is the only sign a product was picked.
+  The code-system table, and the rule that a new product system ships in data-model before datasets-service returns it.
+
 ## [3.46.0] - 2026-11-04
 
 Medication model pass DM-4 (B-2026-10-26-20). Additive, plus one contract tightening. Design and diff Fable-reviewed

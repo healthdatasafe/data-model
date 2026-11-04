@@ -278,3 +278,127 @@ describe('[MED] Medication model pass (DM-4, 3.46.0)', () => {
     }
   });
 });
+
+// Plan 120 P3 (3.47.0): the national product a coded medicine was picked as, `drug.product`, reserved in 3.46.0
+// (MEDICATION.md § National products). Shape = the datasets-service `/medication` brand hit.
+describe('[MED-PRD] drug.product (plan 120, 3.47.0)', () => {
+  const { datasourcesById } = require('../src/datasources');
+  const CODED = ['medication/coded-v1', 'medication/prescription-v1'];
+  const productOf = (type) => eventTypesById(type).properties.drug.properties.product;
+  const metfin = {
+    name: 'Metfin 500, Filmtabletten',
+    label: { de: 'Metfin 500 mg, Filmtablette' },
+    brand: 'Metfin',
+    strength: '500 mg',
+    country: 'CH',
+    system: 'Swissmedic',
+    code: '5535101',
+    hdsId: 'S:Swissmedic/k:Swissmedic/C:5535101'
+  };
+  const doliprane = {
+    name: 'DOLIPRANE 500 mg, comprimé',
+    label: { fr: 'Doliprane 500 mg, comprimé' },
+    brand: 'Doliprane',
+    strength: '500 mg',
+    country: 'FR',
+    system: 'CIS',
+    code: '63368332',
+    hdsId: 'S:CIS/k:ANSM/C:63368332'
+  };
+  const withProduct = (product) => ({ drug: { ...drug, product } });
+
+  it('[MED-PRD-1] the same product schema on both coded types, never a top-level property', () => {
+    assert.ok(productOf('medication/coded-v1'));
+    assert.deepStrictEqual(productOf('medication/prescription-v1'), productOf('medication/coded-v1'));
+    for (const type of [...CODED, ...INTAKE_TYPES, ...RX_TYPES]) {
+      assert.strictEqual(eventTypesById(type).properties.product, undefined, `${type} top-level product`);
+    }
+  });
+
+  it('[MED-PRD-2] the medication search copies product into drug', () => {
+    assert.ok(datasourcesById.medication.valueFields.includes('product'));
+  });
+
+  for (const [flavour, ajv] of Object.entries({
+    'draft-07': new Ajv({ strict: false, allErrors: true, logger: false }),
+    'draft-04': (() => {
+      const a = new AjvDraft04({ strict: false, allErrors: true, coerceTypes: false, validateFormats: true, logger: false });
+      addFormats(a);
+      return a;
+    })()
+  })) {
+    it(`[MED-PRD-3-${flavour}] product contents`, () => {
+      for (const type of CODED) {
+        const v = ajv.compile(eventTypesById(type));
+        const ok = (content, msg) => assert.ok(v(content), `${type} ${msg}: ${JSON.stringify(v.errors)}`);
+        const ko = (content, msg) => assert.ok(!v(content), `${type} ${msg}`);
+        ok(withProduct(metfin), 'CH product');
+        ok(withProduct(doliprane), 'FR product');
+        ok(withProduct({ ...metfin, strength: null }), 'no strength');
+        const { brand, strength, ...minimal } = metfin;
+        ok(withProduct(minimal), 'without brand and strength');
+        ok({ drug }, 'no product (pre-3.47.0 shape)');
+        for (const key of ['name', 'label', 'country', 'system', 'code', 'hdsId']) {
+          const { [key]: _, ...missing } = metfin;
+          ko(withProduct(missing), `without ${key}`);
+        }
+        ko(withProduct({ ...metfin, label: {} }), 'empty label');
+        ko(withProduct({ ...metfin, label: 'Metfin 500 mg' }), 'label as a bare string');
+        ko(withProduct({ ...metfin, label: { de: '' } }), 'empty label text');
+        ko(withProduct({ ...metfin, country: 'ch' }), 'lower-case country');
+        ko(withProduct({ ...metfin, country: 'CHE' }), 'alpha-3 country');
+        ko(withProduct({ ...metfin, system: 'GTIN', code: '7680553510013' }), 'a pack-level system');
+        ko(withProduct({ ...metfin, system: 'CIP13' }), 'CIP13 is a pack');
+        ko(withProduct({ ...metfin, code: '' }), 'empty code');
+        ko({ drug: { label: { en: 'Metfin' }, codes: [], product: metfin } }, 'a product does not replace codes (minItems 1)');
+      }
+    });
+  }
+});
+
+// 3.47.0: the fields the medication search copies into `drug` (valueFields) are declared, as given by datasets-service.
+describe('[MED-DRUG] the drug object as the search stores it (3.47.0)', () => {
+  const { datasourcesById } = require('../src/datasources');
+  const drugOf = (type) => eventTypesById(type).properties.drug.properties;
+  // A real /medication result (datasets-service plan 120 P2, brand hit) with nulls where the source has none
+  const picked = {
+    label: { en: 'Metfin 500 mg, Filmtablette', de: 'Metfin 500 mg, Filmtablette' },
+    description: { en: 'metformin hydrochloride 500 MG Oral Tablet' },
+    ingredient: 'metformin hydrochloride',
+    strength: '500 MG',
+    doseForm: 'Oral Tablet',
+    route: 'oral',
+    doseUnit: 'dose/tablet',
+    codes: [{ code: '861007', system: 'RxNorm', source: { key: 'NLM' }, hdsId: 'S:RxNorm/k:NLM/C:861007' }],
+    hdsId: 'S:RxNorm/k:NLM/C:861007',
+    product: { name: 'Metfin 500, Filmtabletten', label: { de: 'Metfin 500 mg, Filmtablette' }, brand: 'Metfin', strength: '500 mg', country: 'CH', system: 'Swissmedic', code: '5535101', hdsId: 'S:Swissmedic/k:Swissmedic/C:5535101' }
+  };
+
+  it('[MED-DRUG-1] every valueField of the medication search is declared in drug, on both coded types', () => {
+    for (const type of ['medication/coded-v1', 'medication/prescription-v1']) {
+      const declared = Object.keys(drugOf(type));
+      for (const f of datasourcesById.medication.valueFields) assert.ok(declared.includes(f), `${type}: drug.${f}`);
+    }
+    assert.deepStrictEqual(stripDescriptions(drugOf('medication/prescription-v1')), stripDescriptions(drugOf('medication/coded-v1')));
+  });
+
+  for (const [flavour, ajv] of Object.entries({
+    'draft-07': new Ajv({ strict: false, allErrors: true, logger: false }),
+    'draft-04': (() => {
+      const a = new AjvDraft04({ strict: false, allErrors: true, coerceTypes: false, validateFormats: true, logger: false });
+      addFormats(a);
+      return a;
+    })()
+  })) {
+    it(`[MED-DRUG-2-${flavour}] a stored pick validates, with the nulls the service returns`, () => {
+      for (const type of ['medication/coded-v1', 'medication/prescription-v1']) {
+        const v = ajv.compile(eventTypesById(type));
+        const ok = (drug, msg) => assert.ok(v({ drug }), `${type} ${msg}: ${JSON.stringify(v.errors)}`);
+        ok(picked, 'brand hit');
+        ok({ ...picked, product: undefined, ingredient: null, strength: null, doseForm: null, route: null, doseUnit: null }, 'generic with nulls');
+        ok({ ...picked, route: 'intrathecal' }, 'a route the service may add, outside the intake enum');
+        assert.ok(!v({ drug: { ...picked, strength: 500 } }), `${type} strength as a number`);
+      }
+    });
+  }
+});
