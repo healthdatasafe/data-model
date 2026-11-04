@@ -29,6 +29,8 @@ children:
         name: Average Peak Day
       - id: fertility-cycles-average-luteal-phase
         name: Average Luteal Phase Length
+      - id: fertility-cycles-regularity
+        name: Cycle regularity
   - id: fertility-trainings
     name: Trainings
   - id: fertility-ttc-tta

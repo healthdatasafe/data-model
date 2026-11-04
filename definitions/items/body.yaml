@@ -635,7 +635,52 @@ body-blood-serum-insulin-fasting:
     loinc: ["27873-9"]
   devNotes: >-
     The pmol/L option has no LOINC: LOINC 2.83 has no fasting insulin [Moles/volume] code, and 14796-7 is
-    untimed.
+    untimed (it belongs to body-blood-serum-insulin).
+
+body-blood-serum-insulin:
+  version: v1
+  label: { en: Insulin (untimed), fr: Insuline (jeûne non précisé) }
+  description:
+    en: The hormone that moves sugar into your cells, measured at any time of day.
+    fr: L'hormone qui fait entrer le sucre dans vos cellules, mesurée à n'importe quel moment.
+  streamId: body-blood-serum-insulin
+  type: number
+  repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/uiu-ml, label: { en: μIU/mL, fr: μIU/mL }, loinc: "20448-7" }
+        - { value: concentration/pmol-l, label: { en: pmol/L, fr: pmol/L }, loinc: "14796-7" }
+  unitConversions:
+    notConvertible:
+      - from: concentration/uiu-ml
+        to: concentration/pmol-l
+        reason: "Insulin units are defined by an international standard, and the factor to pmol/L depends on how the assay is calibrated (6.0 and 6.945 are both in use). Stored as printed, never compared across units."
+  references:
+    snomed: ["16890009"]
+    loinc: ["20448-7", "14796-7"]
+  devNotes: >-
+    Untimed insulin: any result whose report does not state fasting (site-agents#40). A fasting result goes
+    to `body-blood-serum-insulin-fasting`; LOINC codes the two as different observations. SNOMED has no
+    fasting-specific insulin concept, so both items reference 16890009 Insulin measurement. Mapped to FHIR,
+    unlike the fasting twin, whose pmol/L option has no LOINC code.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/uiu-ml: { system: http://loinc.org, code: 20448-7, display: "Insulin [Units/volume] in Serum or Plasma" }
+        concentration/pmol-l: { system: http://loinc.org, code: 14796-7, display: "Insulin [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/uiu-ml: "u[IU]/mL"
+        concentration/pmol-l: pmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-hba1c:
   version: v1

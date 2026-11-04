@@ -414,6 +414,13 @@
         "body-blood-serum-igm"
       ]
     },
+    "body-blood-serum-insulin": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-serum",
+      "items": [
+        "body-blood-serum-insulin"
+      ]
+    },
     "body-blood-serum-iron": {
       "pair": "Observation|laboratory",
       "parent": "body-blood-serum",

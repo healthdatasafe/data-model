@@ -55,6 +55,40 @@ fertility-cycles-average-luteal-phase:
   eventType: time/d
   type: number
   repeatable: once
+fertility-cycles-regularity:
+  version: v1
+  label:
+    en: Cycle regularity
+    fr: Régularité des cycles
+  description:
+    en: Whether your menstrual cycles are generally regular.
+    fr: Si vos cycles menstruels sont généralement réguliers.
+  streamId: fertility-cycles-regularity
+  eventType: fertility/cycle-regularity-v1
+  type: select
+  options:
+    - value: regular
+      label: { en: Regular, fr: Réguliers }
+    - value: irregular
+      label: { en: Irregular, fr: Irréguliers }
+    - value: no-periods
+      label: { en: No current periods, fr: Pas de règles actuellement }
+  repeatable: any
+  references:
+    snomed: ["364307006"]
+  devNotes: >-
+    A recalled summary of the cycles in the person's own words, beside the
+    fertility-cycles-average-* family (site-agents#39): one event per answer, `time` at the date it
+    is given (MENSTRUAL-CYCLE.md § Cycle regularity). For a person who charts, regularity can be derived
+    from fertility-cycles-start; this item is for the answer given without a chart, and a reader
+    prefers the derived value when both exist. "Not sure" is no answer and is not recorded.
+    `no-periods` is what the person reports, never a diagnosis: do not derive amenorrhoea (a
+    condition-coded entry) or a profile-reproductive-stage from it. SNOMED 364307006 is the
+    observable "Regularity of menstrual cycle"; the option findings, for export, are 302757007
+    Regular periods and 80182007 Irregular periods; `no-periods` has no code short of
+    14302001 Amenorrhea, a clinical judgement the person has not stated, so it stays uncoded. That
+    is why the item has no fhir block: a coded block must map every option. Never add one by coding
+    `no-periods` as 14302001.
 fertility-cycles-ovulation:
   version: v1
   label:

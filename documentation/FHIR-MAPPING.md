@@ -2,7 +2,7 @@
 
 **Status: published since 3.31.0 (plan 115, SMART on FHIR).** Everything below marked *permanent* is.
 
-**Lab items (3.39.0):** 92 numeric lab items carry an `Observation|laboratory` block. Where mass and moles of one
+**Lab items (3.39.0; 3.44.0 adds untimed insulin):** 93 numeric lab items carry an `Observation|laboratory` block. Where mass and moles of one
 analyte are two LOINC codes (`BLOOD-CHEMISTRY.md` § Codes), the code comes from the eventType
 (`code: { from: eventType, codings }`, below); otherwise it is static. The build holds each block to the item's
 `references.loinc` and `variations.eventType.options[].loinc`, and no import key may be a code another item owns

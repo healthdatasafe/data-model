@@ -364,7 +364,7 @@ false`): a misspelt `comparitor` fails validation instead of silently dropping i
   `1975-2` mass, `14631-6` substance). An item lists in `references.loinc` the code of every property its variations
   store, and **every unit option of such an item states the one it stores** (`variations.eventType.options[].loinc`,
   3.32.0), `null` for a unit LOINC has no code for (the pmol/L of fasting insulin: LOINC has no fasting code in
-  moles). Nothing is inherited: hemoglobin states `718-7` on g/dL and on g/L, so a unit added later (mmol/L) must
+  moles; the untimed `body-blood-serum-insulin` has `14796-7`). Nothing is inherited: hemoglobin states `718-7` on g/dL and on g/L, so a unit added later (mmol/L) must
   state its own code and cannot export under the mass code. A FHIR export codes an event with its option's code; an
   item with one unit exports its single code. The loader checks that each option code is one of the item's, that
   every code is stored by an option, and that a one-unit number item asserts one code; a test checks that two options
@@ -441,7 +441,7 @@ of it:
 | Context | Where it lives |
 |---|---|
 | **Cycle day** (Day 2–5, mid-luteal, Day 21) | **Derived** from `event.time` + `fertility-cycles-start`. Storing it would duplicate state the model already holds, and duplicated state goes stale. Same argument as spotting in [`MENSTRUAL-CYCLE.md`](./MENSTRUAL-CYCLE.md). |
-| **Fasting** | Its **own item** (`body-blood-serum-glucose-fasting`), and an untimed glucose another (`body-blood-serum-glucose-random`, 3.32.0: any result whose report does not state fasting). SNOMED codes fasting (`167087006`) and random (`167086002`) serum glucose as different procedures, and LOINC likewise (`1558-6` vs `2345-7`) — they are different observations, not one observation with a flag. Precedent: `body-temperature-basal` vs `body-temperature`. |
+| **Fasting** | Its **own item** (`body-blood-serum-glucose-fasting`), and an untimed glucose another (`body-blood-serum-glucose-random`, 3.32.0: any result whose report does not state fasting). SNOMED codes fasting (`167087006`) and random (`167086002`) serum glucose as different procedures, and LOINC likewise (`1558-6` vs `2345-7`) — they are different observations, not one observation with a flag. Precedent: `body-temperature-basal` vs `body-temperature`.<br><br>Insulin has the same pair since 3.44.0 (`body-blood-serum-insulin-fasting`, `body-blood-serum-insulin`, site-agents#40): LOINC codes fasting (`27873-9`) and untimed (`20448-7`, `14796-7`) insulin apart; SNOMED has one insulin measurement (`16890009`) for both. |
 | **Time of day** (cortisol 6–9am vs 12–3pm) | `event.time` already carries it. |
 | **HRT** | `medication-intake-coded`. |
 | **Menopausal status** | **Not modelled, and not sample context** — it is durable patient state that outlives any draw. Belongs to its own plan. |
