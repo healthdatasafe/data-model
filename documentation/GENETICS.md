@@ -55,6 +55,17 @@ Enforcement also covers **accesses that already exist with `streamId: '*'`** (an
 before 3.43.0): they reach `genetics` the moment the stream is created, and expanding new requests does nothing for
 them. They are re-minted, or given the `level: 'none'` mask, before the first write.
 
+**Shipped 2026-11-04**, after which the root `description` carries the consent-screen promise (3.43.1): hds-lib 2.39.0
+(marker accessors, `none` masks read as not shared, CMC `*` scopes leave marked roots out), hds-mcp-js 0.8.0 (`connect`
+without roots expands into the model roots minus the marked ones), hds-webapp re-pinned, and the account app's
+consent screen (app-web-user-account `maskExplicitGrantOnly`): any app access granting `*` there gets the mask, so a
+third-party `*` request cannot reach the root either. The existing `*` accesses on the production cores were masked
+(4 on ch1, none on us1; no account had a `genetics` stream). Demo, a throwaway platform, was not swept: its older
+test accesses with `*` stay unmasked. A mask **added later**
+(`accesses.update`) takes no `defaultName`, so the stream is not created; a sign-in request cannot carry one, because
+the sign-in check requires a `defaultName`, which creates the masked stream. Still to honour the marker when built:
+the plan-115 SMART `patient/*` translation (no `fhir` block, so no SMART scope reaches the root today).
+
 ## `genetic-variant/coded-v1`
 
 Closed, portable subset (no `const`, `if`, `not` or `$ref`). Item `genetics-variant`, `type: imported`: written by
