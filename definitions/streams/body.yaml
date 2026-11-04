@@ -26,6 +26,8 @@ children:
             name: Glucose (random)
           - id: body-blood-serum-insulin-fasting
             name: Fasting insulin
+          - id: body-blood-serum-insulin
+            name: Insulin (untimed)
           - id: body-blood-serum-c-peptide
             name: C-peptide
           # Hormones — reproductive & adrenal

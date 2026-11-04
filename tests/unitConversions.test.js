@@ -80,6 +80,7 @@ const APPENDED = {
 // Pairs that must never carry a factor (site-agents#21): assay- or calibrator-dependent.
 const EXCLUDED = {
   'body-blood-serum-insulin-fasting': [C('uiu-ml'), C('pmol-l')],
+  'body-blood-serum-insulin': [C('uiu-ml'), C('pmol-l')],
   'body-blood-serum-prolactin': [C('ug-l'), C('uiu-ml')]
 };
 

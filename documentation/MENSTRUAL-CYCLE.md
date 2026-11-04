@@ -201,6 +201,26 @@ written before 3.24.0 by Cycle Intelligence (demo accounts only) may be LH peaks
 **Not a fertility statement.** Both are chart notation the person or her method records. HDS apps show them as
 recorded; they do not derive fertile or infertile days from them.
 
+## Cycle regularity, as reported (3.44.0)
+
+`fertility-cycles-regularity` is the person's own answer to "are your cycles generally regular?", a recalled summary
+beside the `fertility-cycles-average-*` items (site-agents#39). `select` on `fertility/cycle-regularity-v1`, one event
+per answer, `time` at the date the answer is given. The same rule holds for the `fertility-cycles-average-*` items:
+a recalled summary is dated when it is reported, not at the cycles it summarises.
+
+| Value | Label (en) | Label (fr) | SNOMED CT (export) |
+|---|---|---|---|
+| `regular` | Regular | Réguliers | `302757007` Regular periods (finding) |
+| `irregular` | Irregular | Irréguliers | `80182007` Irregular periods (finding) |
+| `no-periods` | No current periods | Pas de règles actuellement | none |
+
+The item references the observable `364307006` Regularity of menstrual cycle. "Not sure" is no answer: nothing is
+written. `no-periods` stays what the person reports: no reader derives amenorrhoea (`14302001`, a clinical judgement),
+a `condition-coded` entry or a `profile-reproductive-stage` from it, which is also why it exports uncoded. A person
+who charts has her regularity in her `fertility-cycles-start` events; a reader that has both prefers the derived one.
+The item has no `fhir` block, because a coded block must map every option and `no-periods` is deliberately uncoded.
+Never add one by coding `no-periods` as `14302001`. (No LOINC question code fits either, searched 2026-11-04.)
+
 ## Coverline (3.24.0)
 
 `fertility-cycles-coverline` is the basal-temperature coverline of one cycle, `temperature/c` (°C), one event per

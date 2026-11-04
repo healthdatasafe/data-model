@@ -1,5 +1,28 @@
 # Changelog
 
+## [3.44.0] - 2026-11-04
+
+Fertility-intake asks (site-agents#39, #40 part 1). Additive. Diff Fable-reviewed before release.
+
+### Added
+- **Item `fertility-cycles-regularity`** ("Cycle regularity"), stream `fertility-cycles-regularity` under
+  `fertility-cycles`, beside the recalled averages: the person's own answer, `regular`, `irregular` or `no-periods`
+  ("No current periods"), one event per answer at the date it is given. "Not sure" is not recorded; `no-periods` is
+  reported, never a diagnosis or a reproductive stage. SNOMED `364307006`; option findings in MENSTRUAL-CYCLE.md.
+- **EventType `fertility/cycle-regularity-v1`**, a string enum of those three values.
+- **Item `body-blood-serum-insulin`** ("Insulin (untimed)"), stream `body-blood-serum-insulin` beside the fasting item:
+  the untimed twin of `body-blood-serum-insulin-fasting`, for any result whose report does not state fasting. Same
+  units (µIU/mL, pmol/L), not convertible between them. LOINC `20448-7` / `14796-7` (verified on tx.fhir.org, LOINC
+  2.83, ACTIVE), SNOMED `16890009`. Mapped to FHIR (`Observation|laboratory`, `scopes.lock.json` grows by its
+  stream); the fasting twin stays unmapped (its pmol/L has no LOINC code).
+- Tests `[FIN-REG-1..3]`, `[FIN-INS-1..5]`, `[FIN-AJV]` (draft-04 and draft-07); `[UCNV]` excludes the new pair;
+  `[FHIR-SCOPE-11]` counts 93 lab items. `fertility-cycles-regularity` has no `fhir` block: a coded block maps every
+  option, and `no-periods` stays uncoded.
+
+### Docs
+- MENSTRUAL-CYCLE.md § Cycle regularity, as reported (and the dating rule for recalled summaries); BLOOD-CHEMISTRY.md:
+  the insulin pair; FHIR-MAPPING.md lab count; AGENTS.md counts.
+
 ## [3.43.1] - 2026-11-04
 
 ### Changed

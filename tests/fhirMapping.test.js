@@ -704,7 +704,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
 
     it('[FHIR-SCOPE-11] the model\'s table; the committed lock is up to date (run npm run fhir:lock)', () => {
       const lab = Object.entries(itemsById).filter(([, i]) => i.fhir?.category === 'laboratory').map(([, i]) => i.streamId).sort();
-      assert.strictEqual(lab.length, 92);
+      assert.strictEqual(lab.length, 93);
       assert.deepStrictEqual(fhirScopes, {
         'Condition|problem-list-item': ['condition'],
         'Observation|laboratory': lab,
