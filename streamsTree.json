@@ -1144,8 +1144,8 @@
       "fr": "Résultats de tests génétiques"
     },
     "description": {
-      "en": "Results of genetic tests, such as the gene variants a laboratory tested.",
-      "fr": "Résultats de tests génétiques, comme les variants de gènes testés par un laboratoire."
+      "en": "Results of genetic tests, such as the gene variants a laboratory tested. Never included when you share all your data: shared only when you name them.",
+      "fr": "Résultats de tests génétiques, comme les variants de gènes testés par un laboratoire. Jamais inclus quand vous partagez toutes vos données : partagés seulement si vous les nommez."
     },
     "children": [
       {
