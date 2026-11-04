@@ -9,9 +9,11 @@ const BROWSER_URL = 'https://model-browser.datasafe.dev/';
 const sources = [
   require('./schemas/items').toBePublished,
   require('./schemas/appManifest').toBePublished,
+  require('./schemas/vocabularies').toBePublished,
   require('./streams').toBePublished,
   require('./items').toBePublished,
   require('./eventTypes').toBePublished,
+  require('./vocabularies').toBePublished,
   require('./datasources').toBePublished,
   require('./conversions').toBePublished,
   require('./converters').toBePublished,

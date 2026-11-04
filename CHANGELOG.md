@@ -1,5 +1,59 @@
 # Changelog
 
+## [3.46.0] - 2026-11-04
+
+Medication model pass DM-4 (B-2026-10-26-20). Additive, plus one contract tightening. Design and diff Fable-reviewed
+2026-11-04.
+
+**Consumers:** load this pack only with hds-forms-js 0.29.0 or later. Earlier hds-forms-js versions render every new
+top-level property of a coded medication (`status`, `skipReason`, `stopReason`) as a raw companion select in
+`DatasetSearch` forms. Re-pin doctor-dashboard, hds-mcp-js and the apps after hds-forms-js 0.29.0, and write
+`status: skipped` only once every reader counts it (a reader that does not would count a skipped dose as taken).
+
+### Added
+- **Timing on the shared regimen** (`intake` on `medication/basic` and `medication/coded-v1`, `posology` on the two
+  prescription types; one shape, test `[MED-TIM-1]`): `timeOfDay` (local clock times `HH:MM`, FHIR
+  `Timing.repeat.timeOfDay`), `when` (19 values mapped 1:1 to FHIR EventTiming: `waking` … `after-dinner`) and
+  `bounds` (the planned course: `duration` + `durationUnit`, or `start` / `end` dates; FHIR `repeat.bounds[x]`).
+  `timeOfDay` and `when` are exclusive (FHIR tim-10); `duration` and `durationUnit` go together, never with `end`.
+- **One intake: `status`** (`taken` | `skipped`; absent = taken) **and `skipReason`** (`forgot`, `side-effects`,
+  `not-needed`, `unavailable`, `declined`, `advised`, `other`; only with `skipped`), top level on both intake types.
+  Readers ship first: old readers count a skipped dose as taken.
+- **`stopReason`** (`medical-advice`, `side-effects`, `ineffective`, `own-choice`, `other`) on an ended intake period
+  and on a stopped prescription.
+- **Prescription `status`** (`active`, `stopped`, `completed`; absent = not stated, not active), **`statusChanged`**
+  (a date, needs `status`) and `stopReason` (only with `stopped`) on `medication/prescription-v1` and the new type.
+- **Item `medication-prescription-basic`** on the new **eventType `medication/prescription-basic-v1`** (`name`, the
+  same `posology` and status fields): a prescription entered by its name, no code found. Stream
+  `medication-prescription`, beside the coded twin.
+- **Pack section `vocabularies`** (`definitions/vocabularies/*.yaml`, `vocabularies.json`, schema
+  `json-schemas/vocabulary.json`; `src/vocabularies.js`, `src/schemas/vocabularies.js`): EN/FR labels and FHIR /
+  SNOMED CT codes of enum values. Five medication vocabularies: `medication-when`, `medication-intake-status`,
+  `medication-skip-reason`, `medication-stop-reason`, `medication-prescription-status`. Each lists the fields it
+  binds, and the loader refuses one whose values differ from a bound enum. SNOMED CT, verified active on the
+  International release 20260201: 1269470004 (missed dose), 1303576005, 182897004, 242990004, 182895007 (skip),
+  182840001, 395009001, 395007004 (stop).
+- `medication-intake-basic` (v3 → v4): `doseUnit` option `mass/g`, which the eventType already allowed.
+- Tests `[MED-TIM-*]`, `[MED-ST-*]`, `[MED-STOP-*]`, `[MED-RXB-*]`, `[MED-CODES-1]`, `[MED-VOC-*]`, `[MED-LBL-*]`,
+  `[MED-COMPAT]`, each schema case under draft-04 and draft-07.
+
+### Changed (contract)
+- **`drug.codes` has `minItems: 1`** on `medication/coded-v1` and `medication/prescription-v1` (B-2026-10-26-20). A
+  medication with no code is a `-basic` event, never `codes: []`. Only clients that validate are bound (hds-mcp-js);
+  its `updateEvent` validates the whole content, so an agent editing any field of a stored `codes: []` event fails
+  until that event is migrated to the `-basic` type. The only known writer was an unmerged sandbox branch.
+
+### Changed
+- `medication-intake-basic` composite labels (`name`, `intake`, `doseValue`, `doseUnit`, `route`) localized (en, fr).
+- Descriptions of the three medication eventTypes and of `intake`: one intake vs a period of use, and on one intake
+  only `doseValue`, `doseUnit`, `route` are meaningful.
+
+### Docs
+- MEDICATION.md: one intake or a period, the regimen and its timing, skipped, stopped (the period and the order),
+  the typed prescription, `codes` minItems, vocabularies, FHIR and HealthKit mapping, and the names reserved for the
+  product pass (`drug.product`; code systems `Swissmedic`, `CIS` product level, `GTIN`, `CIP13` pack level).
+- FHIR-MAPPING.md § Medications: no block yet, `y` → UCUM `a`. AGENTS.md, README counts and layout.
+
 ## [3.45.0] - 2026-11-04
 
 Fertility-intake asks, the last two (site-agents#38, #40 part 2). Additive. Diff Fable-reviewed before release.

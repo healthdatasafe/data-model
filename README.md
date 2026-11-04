@@ -50,7 +50,7 @@ definitions/
     finding.yaml           1 / 1    coded clinical finding
     function.yaml          3 / 3    mobility, self-care, usual activities (ICF/EQ-5D)
     lifestyle.yaml         8 / 8    tobacco, alcohol, diet
-    medication.yaml        3 / 3    basic, coded, prescription
+    medication.yaml        4 / 4    intake basic and coded, prescription coded and basic
     nutrition.yaml         1 / 1    appetite
     procedure.yaml         2 / 2    basic (free-text), coded (SNOMED-CT search)
     profile.yaml          10 / 10   display name, DOB, sex, address, reproductive stage
@@ -65,6 +65,7 @@ definitions/
     cervical-fluid/  9D vector model for mucus observation methods
     mood/            5D vector model for mood states
   datasources/     External data source definitions
+  vocabularies/    Labels and code mappings of eventType enum values (pack.vocabularies; medication.yaml)
 ```
 
 ## Subdomain documentation
@@ -82,7 +83,7 @@ In-depth notes on specific subdomains live in `documentation/`:
 - `ENCOUNTER.md` — care visits and providers: the `encounter` root and its three leaves (one FHIR resourceType each), `encounter/visit-v1`, `provider/practitioner-v1`, `provider/organization-v1`, the Swiss identifiers (GLN, ZSR, UIDB, BER) and provider deduplication (`clientData.hdsGln`, `hdsZsr`), site-agents#24.
 - `SUPPORT.md` — the HDS support channel (plan 117): the `hds-support` root on the person's account (a consent anchor that holds no data), the `support/conversation-v1` state on the support group's account, and retention (the notification address, kept by the support service only; the group's copy of the chat, removed when the relationship ends).
 - `GENETICS.md` — genetic test results: the `genetics` root and its `explicitGrantOnly` marker (covered only by an access that names it, site-agents#37), the `type: imported` item `genetics-variant` and `genetic-variant/coded-v1` (gene, variant, result, zygosity; HGNC, HGVS, dbSNP, ClinVar; LOINC answer codes), and what consumers must enforce before the first write.
-- `MEDICATION.md` — coding a medication read from a document: a Swiss brand name as printed, its ATC substance code, and the `hdsId` datasets-service returns.
+- `MEDICATION.md` — intake vs period, regimen timing, skipped and stopped, the typed prescription, the medication vocabularies, and coding a medication read from a document (a Swiss brand name as printed, its ATC substance code, the `hdsId` datasets-service returns).
 - `PROVENANCE.md` — the index of HDS `clientData` keys, and the definitions of `clientData.hdsInstrument` (the instrument a measure was taken with) and `clientData.related.<eventId>` (a link to a source event) and `clientData.sourceKey` (the identity of an imported record), with their FHIR and HealthKit mappings.
 - `PARTIAL-DATES.md` — dates known only to the month or the year, or approximately ("March 1999", "about spring 1998"): `time` at the period start at 12:00 UTC, `clientData.hdsTimePrecision` and its companions, and the FHIR mapping.
 - `FHIR-MAPPING.md`: the per-item `fhir:` block: how an item's events render as FHIR R4 and import back, the SMART scope grant table published as `pack.fhirScopes` and its lock, and how to add a mapping (plan 115, draft).
