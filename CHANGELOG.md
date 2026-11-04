@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.43.1] - 2026-11-04
+
+### Changed
+- **Root `genetics` `description`** (en, fr) carries the consent-screen promise dropped from 3.43.0: never part of a
+  sharing of all the data, only of a sharing that names it. True now that the HDS consumers honour
+  `explicitGrantOnly` (hds-lib 2.39.0, hds-mcp-js 0.8.0, the account app's consent screen) and the production `*`
+  accesses are masked (site-agents#37). GENETICS.md records what shipped.
+
 ## [3.43.0] - 2026-11-04
 
 Genetic test results on their own root (site-agents#37). Additive. Design Fable-reviewed and approved 2026-11-03;
