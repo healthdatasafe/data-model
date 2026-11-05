@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+Dev dependencies only, pack content unchanged: minimatch 11.0.4 and glob 14 via `overrides` (Dependabot #81,
+GHSA-g3hv-75wg-m249, GHSA-3g3m-2fjr-6pw4); `npm audit`: 0. The deploy guard needs a version bump after this, which
+the next release carries. minimatch 11 has no `makeRe`, so enabling `import-x/no-internal-modules` would break lint.
+
 ## [3.47.0] - 2026-11-04
 
 National products: a medicine picked as a brand keeps the product (plan 120 P3). Additive. Needs 3.46.0 published
