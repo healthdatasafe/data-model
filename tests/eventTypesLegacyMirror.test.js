@@ -36,7 +36,10 @@ describe('[ETLM] eventTypes-legacy.json upstream mirror', () => {
     hds = JSON.parse(fs.readFileSync(HDS_PATH, 'utf-8'));
   });
 
-  describe('[ETLM-AJV] every schema compiles, under both validator flavours', () => {
+  describe('[ETLM-AJV] every schema compiles, under both validator flavours', function () {
+    // Compiling every schema takes about 0.6 s per test when idle and went past mocha's 2 s default
+    // on a busy machine (B-2026-11-02-8).
+    this.timeout(15000);
     // A schema that does not compile makes its event type unwritable wherever it IS compiled,
     // because the compile throws and the caller reports a content-format error. Dictionary 1.1.0
     // shipped four such schemas (numset/*, audiogram/data, clinical/fhir, contact/facebook) for
