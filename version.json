@@ -1,9 +1,9 @@
 {
-  "commit": "731a9fcef6faae00858ad7ce96c009486f1c6f61",
-  "commitShort": "731a9fc",
+  "commit": "57eba2db02d1401c6cf91a5d082637c2f793652b",
+  "commitShort": "57eba2d",
   "branch": "main",
-  "buildDate": "2026-11-04T13:51:06Z",
-  "publicationDate": "2026-11-04T13:50:55.319Z",
+  "buildDate": "2026-11-05T07:15:52Z",
+  "publicationDate": "2026-11-05T07:15:41.203Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -20,6 +20,10 @@
     {
       "title": "Json Schema App manifest",
       "file": "json-schemas/hds-app-manifest.json"
+    },
+    {
+      "title": "Json Schema Vocabulary",
+      "file": "json-schemas/vocabulary.json"
     },
     {
       "title": "Streams Tree",
@@ -40,6 +44,10 @@
     {
       "title": "EventTypes dictionnary",
       "file": "eventTypes.json"
+    },
+    {
+      "title": "Vocabularies dictionnary",
+      "file": "vocabularies.json"
     },
     {
       "title": "Datasources dictionnary",
@@ -78,5 +86,5 @@
       "file": "appStreams.json"
     }
   ],
-  "version": "3.45.0"
+  "version": "3.46.0"
 }
