@@ -18,6 +18,17 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
+# Refuse a HEAD behind origin/main: a stale checkout would roll the deploy back (B-2026-11-06-2).
+git fetch -q origin main
+read -r AHEAD BEHIND <<< "$(git rev-list --left-right --count HEAD...origin/main)"
+if [ "$BEHIND" != "0" ]; then
+  echo "ERROR: HEAD is $BEHIND commit(s) behind origin/main. Run: git pull --ff-only origin main"
+  exit 1
+fi
+if [ "$AHEAD" != "0" ]; then
+  echo "WARNING: HEAD is $AHEAD commit(s) ahead of origin/main (not pushed)."
+fi
+
 if [ ! -d dist/.git ]; then
   echo "ERROR: dist/ is not a gh-pages checkout. Run 'npm run setup' first."
   exit 1
