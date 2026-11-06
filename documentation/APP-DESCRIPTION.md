@@ -42,6 +42,26 @@ for a data set (`hdsFormSpec`, [CUSTOM-FIELDS-AND-SYSTEM.md](CUSTOM-FIELDS-AND-S
 Nothing is written to the access after the fact (an `accesses.update` on a counterparty access sends the peer a
 scope update).
 
+## CMC app codes
+
+- **An implementer uses its own app code**, the `appCode` of its manifest, as its CMC `appCode`
+  (`requesterMeta.appId`, scope `:_cmc:apps:<appCode>`). `hds-collector` is Health Data Safe's own (the practitioner
+  dashboard); an implementer never sends under it, since a catalogue entry cannot vouch for an app code several
+  requesters share.
+- **One app code carries any number of relationships.** The platform names a relationship by its per-request scope
+  (`:_cmc:apps:<appCode>:<sub>`, e.g. one `<sub>` per data set or study), never by its app code. An account may hold
+  several app codes (`manage` on each `:_cmc:apps:<appCode>` in its access).
+- **A data set is a relationship whose invite carries a form spec** (`hdsFormSpec`,
+  [CUSTOM-FIELDS-AND-SYSTEM.md](CUSTOM-FIELDS-AND-SYSTEM.md)), whatever its app code. Two exceptions: an older
+  `hds-collector` accept without a mirrored spec is read as a data set; an HDS bridge's grant (`hds-bridge-*`) never
+  is.
+- **Every person's app that accepts an invite must mirror** `hdsFormSpec` and `hdsApp` onto her `consent/accept-cmc`
+  event (`hdsApp` as above, `hdsFormSpec` as in CUSTOM-FIELDS-AND-SYSTEM.md), an account app's accept page included:
+  the platform copies neither, and an accept without the spec is not read as a data set.
+- **A reader never relies on `clientData.cmc.appCode` alone**: the platform copies `requesterMeta.appId` to it
+  unchecked. Only the counterparty, which the requester's core stamps, binds a CMC relationship to an app (§ The
+  catalogue vouches).
+
 ## The manifest (`format: "hds-app-manifest"`)
 
 Served by the app, publicly, as JSON, **with `Access-Control-Allow-Origin: *`** (HDS apps read it from the
@@ -88,7 +108,10 @@ The operator's catalogue (`apps/list.json`, `partnerApps[]`) vouches for an app.
 - `manifest`: the exact manifest URL it vouches for;
 - `counterparty` (`grant: "cmc"`): the implementer's account, `{ "host": "…" }` or `{ "username": "…", "host": "…" }`.
   The platform binds a CMC relationship to its counterparty (the requester's core stamps it, and the accept is
-  delivered there), so a vouched CMC display also requires `clientData.cmc.counterparty` to match;
+  delivered there), so a vouched CMC display also requires `clientData.cmc.counterparty` to match. **An entry
+  without `counterparty` never vouches for a CMC relationship** (its app code is a claim, § CMC app codes): an
+  implementer used by many accounts (a practitioner app) has no one counterparty, so its relationships are
+  `unvouched`, named from its manifest;
 - the fields to show (`name`, `description`, `icon`, `urls`, `provider`), which override the manifest's.
 
 **When vouching, the operator copies name, description and icon into the entry.** A vouched app is then never
@@ -101,7 +124,7 @@ First match wins.
 
 | Trust | When | Shown |
 |---|---|---|
-| `vouched` | A catalogue entry matches by `id` / `appCode` (for CMC with `counterparty`, the counterparty matches too), whatever the pointer | The entry's fields, gaps from the manifest as above; icon; Open links |
+| `vouched` | A catalogue entry matches by `id` / `appCode`, and for CMC the entry has a `counterparty` that matches, whatever the pointer | The entry's fields, gaps from the manifest as above; icon; Open links |
 | `registered` | An OAuth client's operator-curated registration | Its `client_name`, `logo_uri`, `client_uri` |
 | `unvouched` | A readable manifest, no entry, no registration | **Before consent** (the consent screen): the raw id as the heading, then "calls itself “name” · not listed by Health Data Safe · `host`". **After consent** (lists of connections and apps): the manifest's name, with "not listed by Health Data Safe · `host`". Never its icon (initials); never framed; each Open link with its host |
 | `none` | Nothing readable | The raw id, access name or counterparty username |
@@ -111,7 +134,8 @@ First match wins.
 
 **Residual risk.** `requestingAppId` is self-asserted: an app can copy a vouched app's id and pointer and get its
 display. It cannot change the words or the Open links, which lead to the real app. CMC relationships are bound by
-`counterparty`; for plain accesses the bound path is an OAuth registration.
+`counterparty`, and only an entry that names one vouches for them; for plain accesses the bound path is an OAuth
+registration.
 
 ## Reading a manifest
 
