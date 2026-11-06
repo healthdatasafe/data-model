@@ -1,6 +1,19 @@
 # Changelog
 
-## [Unreleased]
+## [3.47.1] - 2026-11-06
+
+Documentation and dev dependencies; pack content unchanged.
+
+### Documentation
+- **APP-DESCRIPTION.md § CMC app codes** (2026-11-06): an implementer sends CMC requests under its own app code
+  (`hds-collector` is Health Data Safe's); one app code carries any number of relationships (named by their
+  per-request scope); a data set is a relationship whose invite carries a form spec, whatever its app code (older
+  `hds-collector` accepts kept, bridges never); every person's app that accepts must mirror `hdsFormSpec` and
+  `hdsApp` (the HDS account app's accept page complies in a later release); a reader never relies on the app code on
+  her grant alone.
+- **A catalogue entry without `counterparty` no longer vouches for a CMC relationship** (§ The catalogue vouches,
+  § The rule): it vouched by app code alone, which any requester can claim. A practitioner app used by many accounts
+  is `unvouched`, named from its manifest. hds-lib `vouchingEntry` follows.
 
 Dev dependencies only, pack content unchanged: minimatch 11.0.4 and glob 14 via `overrides` (Dependabot #81,
 GHSA-g3hv-75wg-m249, GHSA-3g3m-2fjr-6pw4); `npm audit`: 0. The deploy guard needs a version bump after this, which
