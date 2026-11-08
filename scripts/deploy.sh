@@ -253,4 +253,6 @@ for attempt in $(seq 1 12); do
   echo "  live=${live:-none} (want $COMMIT_SHORT) ($attempt/12) — waiting..."
   sleep 15
 done
-echo "WARNING: live commit did not match $COMMIT_SHORT within timeout — model.datasafe.dev may still be propagating; re-check version.json before relying on it."
+echo "ERROR: live commit did not match $COMMIT_SHORT within timeout — the push went through, model.datasafe.dev does not serve it (B-2026-11-06-12)." >&2
+echo "       Re-check https://model.datasafe.dev/version.json; if a Pages run failed: gh run list --repo $REPO_SLUG --workflow pages-build-deployment" >&2
+exit 1
