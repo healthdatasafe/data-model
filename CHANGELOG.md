@@ -1,6 +1,17 @@
 # Changelog
 
-## [Unreleased]
+## [3.47.2] - 2026-11-08
+
+Documentation and the deploy script; pack content unchanged.
+
+### Documentation
+- **APP-DESCRIPTION.md § The requester behind a relationship** (2026-11-08, B-2026-11-02-15): when the naming rule
+  gives `none` (a practitioner's or a bridge's invite), the relationship is named after the requester: before consent
+  by the invite's `requesterMeta.displayName`, and afterwards by `content.requesterName`, which the person's app
+  mirrors onto her `consent/accept-cmc` event at accept, only for an invite with no `hdsApp` at all (control and
+  format characters replaced, at most 100 code points); with several relationships, the most recent accept carrying
+  one wins; else the counterparty username. Self-given: it never vouches, a name from the rule or the operator wins
+  over it, and a reader shows the username alongside it. § CMC app codes and § The pointer cross-reference it.
 
 ### Fixed
 
