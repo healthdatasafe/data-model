@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- **A deploy that never goes live now fails** (2026-11-08, B-2026-11-06-12): `scripts/deploy.sh` already polled the
+  Pages build and the live `version.json`, but when model.datasafe.dev still did not serve the pushed commit after
+  the wait it printed a WARNING and exited 0. It now prints an ERROR with the re-check command and exits 1.
+
 ## [3.47.1] - 2026-11-06
 
 Documentation and dev dependencies; pack content unchanged.
