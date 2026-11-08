@@ -17,7 +17,8 @@ None of this changes an item, a stream or an eventType. The manifest's JSON Sche
 ```
 
 - **A pointer only.** Nothing displayable is stored next to it, so the app can change its words, logo or links
-  without new accesses, and no self-asserted name is kept on the access.
+  without new accesses, and no self-asserted name is kept on the access. (A requester with no pointer keeps its own
+  name on the person's accept event instead, § The requester behind a relationship.)
 - `manifest` is an absolute `https:` URL with no credentials and no fragment, compared after `new URL(x).href`.
   Anything else, the pointer is ignored. The path is the app's choice.
 - **No version or hash.** The pointer is fixed when the person consents; a new manifest URL needs a new consent.
@@ -57,7 +58,8 @@ scope update).
   is.
 - **Every person's app that accepts an invite must mirror** `hdsFormSpec` and `hdsApp` onto her `consent/accept-cmc`
   event (`hdsApp` as above, `hdsFormSpec` as in CUSTOM-FIELDS-AND-SYSTEM.md), an account app's accept page included:
-  the platform copies neither, and an accept without the spec is not read as a data set.
+  the platform copies neither, and an accept without the spec is not read as a data set. An invite with no `hdsApp`
+  also gets `requesterName` (§ The requester behind a relationship).
 - **A reader never relies on `clientData.cmc.appCode` alone**: the platform copies `requesterMeta.appId` to it
   unchecked. Only the counterparty, which the requester's core stamps, binds a CMC relationship to an app (§ The
   catalogue vouches).
@@ -136,6 +138,28 @@ First match wins.
 display. It cannot change the words or the Open links, which lead to the real app. CMC relationships are bound by
 `counterparty`, and only an entry that names one vouches for them; for plain accesses the bound path is an OAuth
 registration.
+
+## The requester behind a relationship
+
+The rule names apps. When it gives `none` (no catalogue entry, no registration, no manifest: a practitioner's
+invite, sent with Health Data Safe's own `hds-collector`, typically, or a bridge's), the relationship is named after
+the requester who sent it:
+
+- **before consent**, by the invite's `requesterMeta.displayName` (read through the capability), else the
+  counterparty username;
+- **at accept**, the person's app mirrors that name as `content.requesterName` on her `consent/accept-cmc` event, only
+  when the invite carries no `hdsApp` at all, valid or not (an invite that points at a manifest is an app, named by
+  the rule, and no self-asserted app name is kept). Control and format characters (bidi overrides, zero-width
+  characters) become spaces, runs of whitespace one space, and the result is trimmed; an empty name or one over 100
+  code points is not written;
+- **afterwards**, a reader names the relationship by `content.requesterName` on its accept event (through
+  `clientData.cmc.acceptEventId`), cleaned the same way, else by the counterparty username. When one counterparty
+  holds several relationships, the name on the most recent accept carrying one (`acceptedAt`) names them all.
+
+The name is self-given, exactly as trustworthy as the invite screen that showed it before consent: it never vouches
+for anything, a name the rule or the operator gives (a vouched app, Health Data Safe's support account) wins over it,
+and a reader never shows it as the only identity: where the requester is described (a contact's details), the
+counterparty username is shown alongside. Relationships accepted before an app mirrored it keep the username.
 
 ## Reading a manifest
 
