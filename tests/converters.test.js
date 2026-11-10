@@ -288,4 +288,24 @@ describe('[CNVX] Converters build output', () => {
       assert.strictEqual(new Set(stops.map(s => s.color)).size, stops.length, 'colours are distinct');
     });
   });
+
+  describe('[CNVR] updatedAt is reproducible (B-2026-10-28-43)', () => {
+    const { execFileSync } = require('child_process');
+    const git = (args) => execFileSync('git', args, { cwd: path.resolve(__dirname, '..'), encoding: 'utf-8' }).trim();
+
+    it('[CNVR1] a committed, unchanged converter version carries its last commit date, not its mtime', function () {
+      const file = 'definitions/converters/cervical-fluid/converter/v0.yaml';
+      let committed;
+      try {
+        if (git(['status', '--porcelain', '--', file]) !== '') this.skip();
+        committed = git(['log', '-1', '--format=%cI', '--', file]);
+      } catch (e) {
+        if (e.code === 'ENOENT' || e.status != null) this.skip();
+        throw e;
+      }
+      if (committed === '') this.skip();
+      const index = JSON.parse(fs.readFileSync(path.join(distConverters, 'cervical-fluid/index.json'), 'utf-8'));
+      assert.strictEqual(index.versions.v0.updatedAt, new Date(committed).toISOString());
+    });
+  });
 });
