@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { execFileSync } = require('child_process');
 const YAML = require('yaml');
 
 const defsDir = path.resolve(__dirname, '../definitions/converters');
@@ -8,23 +9,39 @@ const defsDir = path.resolve(__dirname, '../definitions/converters');
 const NO_TEMPERATURE_RULE = 'none';
 
 /**
- * Last modification time of a definition file, as an ISO string.
+ * Last change of a definition file, as an ISO string.
  *
  * These timestamps used to be `new Date()` taken at build time, which meant every single build
  * rewrote dist/pack.json even when no definition had changed — real changes were then hard to see
  * in a diff, and no two builds of the same source agreed. Deriving them from the source files
  * makes a rebuild of unchanged definitions byte-identical.
  *
- * Caveat: mtime is checkout time on a fresh clone, so it is stable *within* a working tree rather
- * than globally reproducible. That is enough for the purpose here (a quiet diff); making it
- * clone-independent would mean reading git commit dates during the build.
+ * The date is the commit date of the last commit touching the file, so two checkouts of the same
+ * commit build the same pack (B-2026-10-28-43; the file mtime used before is checkout time on a
+ * fresh clone). A file with uncommitted changes, or no git at all, falls back to its mtime: the
+ * build of a working tree still shows what is being edited.
  */
 function fileUpdatedAt (filePath) {
-  return fs.statSync(filePath).mtime.toISOString();
+  return new Date(fileTime(filePath)).toISOString();
+}
+
+/** Last change of a file in milliseconds: its last commit if it is committed and clean, else its mtime. */
+function fileTime (filePath) {
+  try {
+    const opts = { cwd: path.dirname(filePath), encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] };
+    const dirty = execFileSync('git', ['status', '--porcelain', '--', filePath], opts).trim();
+    if (dirty === '') {
+      const committed = execFileSync('git', ['log', '-1', '--format=%cI', '--', filePath], opts).trim();
+      if (committed !== '') return new Date(committed).getTime();
+    }
+  } catch {
+    // no git, or not a repository: fall back to the mtime
+  }
+  return fs.statSync(filePath).mtime.getTime();
 }
 
 /**
- * Newest mtime across several files, as an ISO string.
+ * Newest change across several files, as an ISO string.
  *
  * Falls back to `fallbackPath` when the list is empty: `Math.max()` of nothing is -Infinity, and
  * `new Date(-Infinity).toISOString()` throws RangeError. An item directory carrying neither a
@@ -33,7 +50,7 @@ function fileUpdatedAt (filePath) {
  */
 function newestUpdatedAt (filePaths, fallbackPath) {
   if (filePaths.length === 0) return fileUpdatedAt(fallbackPath);
-  const times = filePaths.map(p => fs.statSync(p).mtime.getTime());
+  const times = filePaths.map(fileTime);
   return new Date(Math.max(...times)).toISOString();
 }
 

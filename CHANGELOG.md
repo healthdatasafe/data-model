@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.47.3] - 2026-11-10
+
+Build script only; definitions unchanged.
+
+### Fixed
+- **Converter `updatedAt` is reproducible** (2026-11-10, B-2026-10-28-43): `dist/converters/pack.json` and each
+  `dist/converters/<item>/index.json` took a converter's `updatedAt` from its source files' mtime, which is checkout
+  time on a fresh clone, so two checkouts of the same commit published different timestamps. It is now the commit date
+  of the last commit touching the file (the newest across an item's files, as before); a file with uncommitted changes,
+  or a build with no git, still uses its mtime. This publish moves every converter's `updatedAt` once, to its commit
+  date; no consumer reads it. Only `publicationDate` still changes from one build to the next.
+
 ## [3.47.2] - 2026-11-08
 
 Documentation and the deploy script; pack content unchanged.
