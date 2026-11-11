@@ -74,6 +74,22 @@ A `{ type: "range", from, to }` variant is reserved for a future additive extens
 
 **`subField`** is optional and exists for the qualifier-capture case (trimester, severity bucket, etc.). When present, the patient's answer entry stores the chosen value under `qualifier`. Sub-field types: `select-segmented` (with `options`), `text`, or `number`.
 
+##### Who asked — `requester` *(3.49.0)*
+
+```yaml
+content:
+  requester:
+    relationship: "cmh3x1k2a0001ab12cd34ef56"   # base id of the access the person granted the requester
+  questions: { ... }
+```
+
+A questionnaire bundled in a collector request is written into the person's account **by the person's own app**, right after she accepts (`Questionnaire.writeBundled`), so the event's `createdBy` is her own access and says nothing about who asked. That app therefore records the requester:
+
+- **`requester.relationship`** is the CMC relationship: the base id (`pryv.utils.parseAccessRef(id).base`, without its serial) of the access she granted the requester at accept (the accept result's `dataGrantAccessId`), the same value document shares store (`hdsDocumentShare.relationship`, DOCUMENTS.md). It survives scope updates (a new serial, same base) and tells several data sets of one counterparty apart. It is an id in her own account, meaningful there only.
+- **It is an instantiation fact, never a template fact.** It is set from the accept result and never copied from the offer: a requester could otherwise name another contact as the one asking. hds-lib drops it from any `Questionnaire` content and sets it only in `makeRequestEvent` / `writeBundled`.
+- **Reading it:** when `parseAccessRef(createdBy).base` is one of her relationships' access base (a request a requester wrote itself through its grant), that relationship asked, and the content field is not needed. Otherwise, `requester.relationship`. Absent on requests written before 3.49.0: the app shows no requester for those.
+- An object, so a later version can add, say, the requester's data set or counterparty without a breaking change.
+
 #### `questionnaire/answer-v1` *(patient → doctor)*
 
 Written by the patient as one event per filling instance.
@@ -155,6 +171,7 @@ Patient edits to a previous answer **create a new `questionnaire/answer-v1` even
 | HDS | FHIR |
 |---|---|
 | `questionnaire/request-v1` | `Questionnaire` (per-patient instantiation; FHIR's `Questionnaire.item[].linkId` ≈ HDS's question key) |
+| `requester.relationship` on a request | `Task.requester` (a `Task` with `focus` = the `Questionnaire`, `for` = the patient), resolved to a `Practitioner` / `Organization` through the contact. Not `QuestionnaireResponse.author` (the person, on the answer) nor `Questionnaire.publisher` |
 | `questionnaire/answer-v1` | `QuestionnaireResponse` (with `answer.reference` to typed records and `answer.dataAbsentReason` for the negative statuses) |
 | `references[]` on an `answered` entry | `QuestionnaireResponse.item.answer.valueReference` |
 | `qualifier` on an `answered` entry | `QuestionnaireResponse.item.answer.value*` (qualifier-specific type) |

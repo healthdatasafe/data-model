@@ -2521,6 +2521,22 @@
           "description": "Optional reference to a saved hds-lib appTemplates Questionnaire definition that this request was generated from",
           "type": "string"
         },
+        "requester": {
+          "description": "Who asked, from the person's side. Written by the person's app when it materializes a questionnaire bundled in an accepted request, from the accept result, never copied from the offer. Absent on requests written before data-model 3.49.0. When the event's createdBy is a relationship's own access, that relationship is the requester and this field is not needed. See documentation/QUESTIONNAIRE.md § Who asked.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "relationship"
+          ],
+          "properties": {
+            "relationship": {
+              "description": "The CMC relationship: the base id (pryv.utils.parseAccessRef(id).base, without its serial) of the access the person granted the requester at accept, as hds-lib cmcDocuments.relationshipIdOf returns it and as document shares store it (hdsDocumentShare.relationship). An id in the person's own account, meaningful there only.",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        },
         "questions": {
           "description": "Map of questionKey → question definition. Keys must respect the Pryv content-query path grammar [a-zA-Z0-9_-]+ — no colons, dots, or array indices.",
           "type": "object",
