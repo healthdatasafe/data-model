@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.49.0] - 2026-11-11
+
+Who asked for a questionnaire (B-2026-10-27-35). Additive: one optional key on an existing eventType.
+
+### Added
+- **`questionnaire/request-v1` `requester: { relationship }`** (QUESTIONNAIRE.md § Who asked): the base id of the
+  access the person granted the requester at accept, written by her app when it materializes a bundled questionnaire,
+  from the accept result, never from the offer. An object (`additionalProperties: false`, `relationship` 1..128
+  characters) so it can grow without a breaking change. Readers first use `createdBy` when it is a relationship's own
+  access. FHIR: `Task.requester`. Reviewed before publishing (Fable): an object rather than a bare string, an
+  instantiation fact that hds-lib never carries over from template content.
+
 ## [3.48.0] - 2026-11-11
 
 FHIR mapping, plan 115 phase 1 slice 1: the US Core vital signs and the lab percentages. Additive: new blocks, a new

@@ -183,6 +183,16 @@ describe('[QSTX] questionnaire request/answer event pair (Plan 71)', () => {
       r.questions['weight-week'].scope = { type: 'latest', withinDays: 0 };
       assert.strictEqual(validateRequest(r), false);
     });
+
+    it('[QST-REQ-16] requester: an object with the relationship, nothing else (3.49.0)', () => {
+      const r = validRequest();
+      r.requester = { relationship: 'cmh3x1k2a0001ab12cd34ef56' };
+      assert.strictEqual(validateRequest(r), true, JSON.stringify(validateRequest.errors));
+      for (const bad of ['cmh3x1k2a0001ab12cd34ef56', {}, { relationship: '' }, { relationship: 'x'.repeat(129) }, { relationship: 'a', name: 'Dr A' }]) {
+        r.requester = bad;
+        assert.strictEqual(validateRequest(r), false, JSON.stringify(bad));
+      }
+    });
   });
 
   describe('[QST-ANS] answer schema validation', () => {
