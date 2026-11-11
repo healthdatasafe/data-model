@@ -216,8 +216,22 @@ body-oxygen-saturation:
     Stored as a proportion (0.97 for 97 %). The item owns LOINC 59408-5 (by pulse oximetry) only (plan 114
     Q19): 2708-6, "Oxygen saturation in Arterial blood", is a blood-gas SaO2, which goes to
     `lab-result/coded-v1` under 2708-6. The FHIR vital-signs profile requires 2708-6 beside 59408-5 on an
-    exported SpO2: a future `fhir:` block for this item needs an emit-only coding for it, which the block
-    format does not have yet (`alsoMatch` is import-only, and would import a blood-gas SaO2 here).
+    exported SpO2, so the block emits it (`alsoEmit`) without importing it: a resource coded 2708-6 alone is
+    not a pulse oximetry and does not match this item.
+  # LOINC 59408-5 and 2708-6 verified ACTIVE in loinc-db (LOINC 2.83), 2026-11-11.
+  fhir:
+    resourceType: Observation
+    category: vital-signs
+    code: { system: http://loinc.org, code: 59408-5, display: Oxygen saturation in Arterial blood by Pulse oximetry }
+    alsoEmit:
+      - { system: http://loinc.org, code: 2708-6, display: Oxygen saturation in Arterial blood }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-pulse-oximetry
+      ips: http://hl7.org/fhir/StructureDefinition/oxygensat
 body-temperature:
   version: v1
   label:
@@ -263,6 +277,24 @@ body-height:
   repeatable: unlimited
   references:
     snomed: ["1153637007"]
+  # The body height profiles take the length in cm or [in_i] only (ValueSet ucum-bodylength, required): metres render
+  # in centimetres and feet in inches, exact by definition, and come back divided. LOINC 8302-2 and 3137-7 verified
+  # ACTIVE in loinc-db (LOINC 2.83), 2026-11-11.
+  fhir:
+    resourceType: Observation
+    category: vital-signs
+    code: { system: http://loinc.org, code: 8302-2, display: Body height }
+    # Import only: the "measured" variant, as for body weight.
+    alsoMatch:
+      - { system: http://loinc.org, code: 3137-7, display: Body height Measured }
+    value:
+      kind: scaled-quantity
+      units:
+        length/m: { unit: cm, factor: 100 }
+        length/ft: { unit: "[in_i]", factor: 12 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-height
+      ips: http://hl7.org/fhir/StructureDefinition/bodyheight
 
 body-semen-concentration:
   version: v1
@@ -706,6 +738,17 @@ body-blood-hba1c:
   references:
     snomed: ["43396009"]
     loinc: ["4548-4"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 4548-4, display: "Hemoglobin A1c/Hemoglobin.total in Blood" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-c-peptide:
   version: v1
@@ -1015,6 +1058,17 @@ body-blood-serum-transferrin-saturation:
   references:
     snomed: ["165730006"]
     loinc: ["2502-3"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2502-3, display: "Iron saturation [Mass Fraction] in Serum or Plasma" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ── Complete blood count (whole blood) ───────────────────────────────────────
 
@@ -1074,6 +1128,20 @@ body-blood-cbc-hematocrit:
   devNotes: >-
     LOINC has no methodless hematocrit code. The item exports the automated-count code, which most reports
     use, and owns the calculated one: the method does not change the number.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 4544-3, display: "Hematocrit [Volume Fraction] of Blood by Automated count" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 20570-8, display: "Hematocrit [Volume Fraction] of Blood by calculation" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-rbc:
   version: v1
@@ -1238,6 +1306,20 @@ body-blood-cbc-rdw:
     snomed: ["66842004"]
     loinc: ["30385-9"]
     loincMethod: ["788-0"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 30385-9, display: "Erythrocyte [DistWidth] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 788-0, display: "Erythrocyte [DistWidth] in Blood by Automated count" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-neutrophils:
   version: v1
@@ -1554,6 +1636,20 @@ body-blood-cbc-myelocytes:
     loincMethod: ["749-2"]
   devNotes: >-
     The absolute count is not an item: `lab-result/coded-v1` under LOINC 30446-9 meanwhile.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26498-6, display: "Myelocytes/Leukocytes in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 749-2, display: "Myelocytes/Leukocytes in Blood by Manual count" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-metamyelocytes:
   version: v1
@@ -1573,6 +1669,20 @@ body-blood-cbc-metamyelocytes:
     loincMethod: ["740-1"]
   devNotes: >-
     The absolute count is not an item: `lab-result/coded-v1` under LOINC 30433-7 meanwhile.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 28541-1, display: "Metamyelocytes/Leukocytes in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 740-1, display: "Metamyelocytes/Leukocytes in Blood by Manual count" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-lymphocytes-count:
   version: v1

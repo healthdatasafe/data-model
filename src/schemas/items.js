@@ -123,7 +123,7 @@ const defsSchema = {
     fhirValue: {
       type: 'object',
       properties: {
-        kind: { enum: ['quantity', 'coded', 'components'] }
+        kind: { enum: ['quantity', 'scaled-quantity', 'coded', 'components'] }
       },
       required: ['kind'],
       allOf: [
@@ -133,6 +133,29 @@ const defsSchema = {
             properties: {
               kind: {},
               units: { type: 'object', minProperties: 1, additionalProperties: { $ref: 'defs.json#/definitions/fhirUnit' } }
+            },
+            required: ['units'],
+            additionalProperties: false
+          }
+        },
+        { // scaled-quantity: eventType → UCUM unit and the factor from the stored number to the rendered one (a
+          // proportion 0.07 renders as 7 %, factor 100); renders valueQuantity, divides by the factor on import.
+          // Its own kind, not a field of `quantity`: a renderer that does not know it skips the block instead of
+          // emitting the stored number in the rendered unit.
+          if: { properties: { kind: { const: 'scaled-quantity' } } },
+          then: {
+            properties: {
+              kind: {},
+              units: {
+                type: 'object',
+                minProperties: 1,
+                additionalProperties: {
+                  type: 'object',
+                  properties: { unit: { $ref: 'defs.json#/definitions/fhirUnit' }, factor: { type: 'number', exclusiveMinimum: 0 } },
+                  required: ['unit', 'factor'],
+                  additionalProperties: false
+                }
+              }
             },
             required: ['units'],
             additionalProperties: false
@@ -198,6 +221,9 @@ const defsSchema = {
             additionalProperties: { type: 'array', minItems: 1, items: { $ref: 'defs.json#/definitions/fhirCoding' } }
           }
         },
+        // Extra codings emitted after a static code, never an import key (export only): the second code a profile
+        // requires (US Core pulse oximetry: 2708-6 beside 59408-5).
+        alsoEmit: { type: 'array', minItems: 1, items: { $ref: 'defs.json#/definitions/fhirCoding' } },
         value: { $ref: 'defs.json#/definitions/fhirValue' },
         // Extra resources, one per numeric composite field, inheriting the parent's resourceType and
         // category (e.g. the heart rate of a blood-pressure event).

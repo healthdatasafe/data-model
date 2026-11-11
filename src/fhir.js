@@ -139,6 +139,8 @@ function checkFhirMapping (key, item, itemEventTypes) {
   const isDatasourceCode = f.code.from === 'datasource';
   const codeCodings = f.code.from === 'eventType' ? Object.values(f.code.codings) : isDatasourceCode ? [] : [f.code];
   const alsoMatchCodings = alsoMatchCodingsOf(f);
+  const alsoEmitCodings = f.alsoEmit || [];
+  if (f.alsoEmit != null && f.code.from != null) fail('"alsoEmit" applies to a static code only');
   if (isDatasourceCode) {
     checkDatasourceField(item, f.code.field, itemEventTypes, fail);
     if (f.alsoMatch != null) fail('"alsoMatch" applies to a static or eventType code only');
@@ -154,7 +156,7 @@ function checkFhirMapping (key, item, itemEventTypes) {
     unique('code.codings and alsoMatch', [...codeCodings, ...alsoMatchCodings]);
   } else {
     if (f.alsoMatch != null && !Array.isArray(f.alsoMatch)) fail('"alsoMatch" keyed by eventType applies to an eventType code only; a static code takes a list');
-    unique('code and alsoMatch', [f.code, ...alsoMatchCodings]);
+    unique('code, alsoMatch and alsoEmit', [f.code, ...alsoMatchCodings, ...alsoEmitCodings]);
   }
   checkLoincAgreement(item, f, itemEventTypes, fail);
 
@@ -167,26 +169,32 @@ function checkFhirMapping (key, item, itemEventTypes) {
   };
 
   const v = f.value;
-  const ownCodings = [...codeCodings, ...alsoMatchCodings];
+  const ownCodings = [...codeCodings, ...alsoMatchCodings, ...alsoEmitCodings];
   if (v?.alsoMatch != null && v.kind !== 'coded') fail('value.alsoMatch applies to value.kind "coded" only');
   if (v != null) {
     switch (v.kind) {
       case 'quantity':
-        if (item.type !== 'number') fail('value.kind "quantity" applies to "number" items only');
+      case 'scaled-quantity': {
+        if (item.type !== 'number') fail(`value.kind "${v.kind}" applies to "number" items only`);
         sameSet('value.units keys vs the item eventTypes', Object.keys(v.units), itemEventTypes);
         for (const t of itemEventTypes) {
-          if (eventTypesById(t)?.type !== 'number') fail(`value.kind "quantity": eventType "${t}" is not a number`);
+          if (eventTypesById(t)?.type !== 'number') fail(`value.kind "${v.kind}": eventType "${t}" is not a number`);
         }
-        {
-          // The unit picks the eventType on import, so two eventTypes never share one (annotations aside).
-          const byUnit = new Map();
-          for (const [t, u] of Object.entries(v.units)) {
-            const other = byUnit.get(ucumKey(u));
-            if (other != null) fail(`value.units: eventTypes "${other}" and "${t}" share the UCUM unit "${ucumKey(u)}" (annotations aside); an imported quantity would map back to two eventTypes`);
-            byUnit.set(ucumKey(u), t);
+        // eventType → { unit, factor }; a plain quantity renders the stored number as it is.
+        const scaled = Object.entries(v.units).map(([t, u]) => v.kind === 'quantity' ? [t, u, 1] : [t, u.unit, u.factor]);
+        // The unit picks the eventType on import, so two eventTypes never share one (annotations aside).
+        const byUnit = new Map();
+        for (const [t, u, factor] of scaled) {
+          const other = byUnit.get(ucumKey(u));
+          if (other != null) fail(`value.units: eventTypes "${other}" and "${t}" share the UCUM unit "${ucumKey(u)}" (annotations aside); an imported quantity would map back to two eventTypes`);
+          byUnit.set(ucumKey(u), t);
+          // A proportion stores 0..1: as a percentage it is 100 times the stored number, never the number itself.
+          if (t === 'ratio/proportion' && ucumKey(u) === '%' && factor !== 100) {
+            fail(`value.units "${t}": a proportion (0..1) renders in % with value.kind "scaled-quantity" and factor 100, not ${v.kind === 'quantity' ? 'as stored' : `factor ${factor}`}`);
           }
         }
         break;
+      }
       case 'coded':
         if (item.type === 'multi-select') fail('value.kind "coded" on a multi-select is not supported: one resource with several answer codings would misstate the answer');
         if (item.type !== 'select') fail('value.kind "coded" applies to "select" items only');
@@ -214,6 +222,8 @@ function checkFhirMapping (key, item, itemEventTypes) {
     mappedFields.add(k);
   }
   unique('code, components and split codes', [...ownCodings, ...Object.values(f.split || {}).map((s) => s.code)]);
+  // A renderer that predates alsoEmit leaves it out and claims a profile the resource misses; only a kind it skips is safe.
+  if (f.alsoEmit != null && v?.kind !== 'scaled-quantity') fail('"alsoEmit" needs a value kind the deployed renderers skip (scaled-quantity) until every deployed hds-fhir-js knows alsoEmit; see FHIR-MAPPING.md § Forward compatibility');
 
   for (const k of f.ignore || []) {
     if (composite?.[k] == null) fail(`ignore "${k}" is not a composite field`);
@@ -514,6 +524,18 @@ function checkFhirImportKeys (items) {
     } else {
       const own = f.code.from === 'eventType' ? Object.values(f.code.codings) : [f.code];
       for (const c of [...own, ...alsoMatchCodingsOf(f)]) claimCoding(f, c, key);
+    }
+  }
+  // An emitted-only coding (`alsoEmit`) is never an import key, and never a code that would make the rendered resource
+  // match another item on its way back: no item's import key, no LOINC code another item owns.
+  for (const [key, item] of Object.entries(items)) {
+    const f = item.fhir;
+    if (item.deprecated || f?.alsoEmit == null) continue;
+    for (const c of f.alsoEmit) {
+      const k = `${f.resourceType} ${c.system}|${c.code}`;
+      if (seen.has(k)) throw new Error(`fhir alsoEmit ${k} of "${key}" is an import key of "${seen.get(k)}"; the rendered resource would import back into it`);
+      const o = c.system === LOINC_SYSTEM ? owner.get(c.code) : undefined;
+      if (o != null && o !== key) throw new Error(`fhir alsoEmit ${k} of "${key}" is a LOINC code item "${o}" owns`);
     }
   }
 }

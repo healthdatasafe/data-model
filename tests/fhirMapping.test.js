@@ -37,9 +37,36 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.deepStrictEqual(itemsById['body-blood-serum-ferritin'].fhir.code, { system: 'http://loinc.org', code: '2276-4', display: 'Ferritin [Mass/volume] in Serum or Plasma' });
       // CA-125 is an arbitrary-unit property: UCUM U is the catalytic enzyme unit.
       assert.deepStrictEqual(itemsById['body-blood-serum-ca-125'].fhir.value.units, { 'concentration/u-ml': "[arb'U]/mL" });
-      for (const k of ['body-blood-cbc-basophils', 'body-blood-cbc-basophils-count', 'body-urine-hormones-lh', 'body-blood-hba1c', 'body-blood-serum-c-peptide', 'body-blood-serum-insulin-fasting']) {
+      for (const k of ['body-blood-cbc-basophils', 'body-blood-cbc-basophils-count', 'body-urine-hormones-lh', 'body-blood-serum-c-peptide', 'body-blood-serum-insulin-fasting']) {
         assert.strictEqual(itemsById[k].fhir, undefined, k);
       }
+    });
+
+    it('[FHIR-ITEM-8] proportions render in % with factor 100: SpO2 emits 2708-6 beside 59408-5; the lab percentages on their own stream', () => {
+      const percent = { kind: 'scaled-quantity', units: { 'ratio/proportion': { unit: '%', factor: 100 } } };
+      const spo2 = itemsById['body-oxygen-saturation'].fhir;
+      assert.deepStrictEqual(spo2.code, { system: 'http://loinc.org', code: '59408-5', display: 'Oxygen saturation in Arterial blood by Pulse oximetry' });
+      assert.deepStrictEqual(spo2.alsoEmit, [{ system: 'http://loinc.org', code: '2708-6', display: 'Oxygen saturation in Arterial blood' }]);
+      assert.strictEqual(spo2.alsoMatch, undefined, '2708-6 alone is a blood-gas SaO2, never imported here');
+      assert.deepStrictEqual(spo2.value, percent);
+      assert.strictEqual(spo2.profiles.us, 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-pulse-oximetry');
+      const lab = { 'body-blood-hba1c': '4548-4', 'body-blood-serum-transferrin-saturation': '2502-3', 'body-blood-cbc-hematocrit': '4544-3', 'body-blood-cbc-rdw': '30385-9', 'body-blood-cbc-myelocytes': '26498-6', 'body-blood-cbc-metamyelocytes': '28541-1' };
+      for (const [k, code] of Object.entries(lab)) {
+        const f = itemsById[k].fhir;
+        assert.deepStrictEqual([f.category, f.code.code, f.value], ['laboratory', code, percent], k);
+      }
+      // A differential percentage whose stream also holds its absolute count stays unmapped with the count.
+      for (const k of ['body-blood-cbc-neutrophils', 'body-blood-cbc-lymphocytes', 'body-blood-cbc-reticulocytes']) assert.strictEqual(itemsById[k].fhir, undefined, k);
+    });
+
+    it('[FHIR-ITEM-9] body height: 8302-2, metres in cm and feet in inches (the profiles take cm or [in_i] only); body temperature stays unmapped', () => {
+      const h = itemsById['body-height'].fhir;
+      assert.deepStrictEqual(h.code, { system: 'http://loinc.org', code: '8302-2', display: 'Body height' });
+      assert.deepStrictEqual(h.alsoMatch, [{ system: 'http://loinc.org', code: '3137-7', display: 'Body height Measured' }]);
+      assert.deepStrictEqual(h.value, { kind: 'scaled-quantity', units: { 'length/m': { unit: 'cm', factor: 100 }, 'length/ft': { unit: '[in_i]', factor: 12 } } });
+      assert.deepStrictEqual(h.profiles, { us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-height', ips: 'http://hl7.org/fhir/StructureDefinition/bodyheight' });
+      // Its stream holds the basal temperature (fertility charting) and its disturbance flag, both unmapped.
+      assert.strictEqual(itemsById['body-temperature'].fhir, undefined);
     });
 
     it('[FHIR-ITEM-2] wellbeing-general-health: 5 levels, higher is better, LOINC answers on every option', () => {
@@ -142,6 +169,34 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const e = item('body-weight');
       e.fhir.value.units['mass/kg'] = '';
       assert.throws(() => checkItem(e, 'w'), /fewer than 1 characters/);
+    });
+
+    it('[FHIR-SCH-8] scaled-quantity: each eventType takes a UCUM unit and a positive factor, nothing else; alsoEmit is a list of codings', () => {
+      const s = () => item('body-blood-hba1c');
+      checkItem(s(), 'a');
+      const a = s();
+      a.fhir.value.units['ratio/proportion'] = '%';
+      assert.throws(() => checkItem(a, 'a'), /must be object/);
+      const b = s();
+      delete b.fhir.value.units['ratio/proportion'].factor;
+      assert.throws(() => checkItem(b, 'a'), /must have required property 'factor'/);
+      const c = s();
+      c.fhir.value.units['ratio/proportion'].factor = 0;
+      assert.throws(() => checkItem(c, 'a'), /must be > 0/);
+      const d = s();
+      d.fhir.value.units['ratio/proportion'].offset = 1;
+      assert.throws(() => checkItem(d, 'a'), /additional properties/);
+      const e = s();
+      e.fhir.value.scale = 100;
+      assert.throws(() => checkItem(e, 'a'), /additional properties/);
+      const f = item('body-weight');
+      f.fhir.value.units['mass/kg'] = { unit: 'kg', factor: 1 };
+      assert.throws(() => checkItem(f, 'w'), /must be string/);
+      const g = item('body-oxygen-saturation');
+      g.fhir.alsoEmit = [];
+      assert.throws(() => checkItem(g, 'o'), /fewer than 1 items/);
+      g.fhir.alsoEmit = [{ system: 'http://loinc.org', code: '2708-6' }];
+      assert.throws(() => checkItem(g, 'o'), /display/);
     });
 
     it('[FHIR-SCH-4] a code source is `{ from: datasource, field }` or `{ from: eventType, codings }` and nothing else', () => {
@@ -363,6 +418,50 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const e = item('body-blood-serum-cholesterol-ldl');
       e.fhir.alsoMatch['concentration/mg-dl'] = [];
       assert.throws(() => checkItem(e, 'ldl'), /fewer than 1 items/);
+    });
+
+    it('[FHIR-MAP-20] scaled-quantity: units cover the item eventTypes, distinct; a proportion in % is factor 100 and never a plain quantity', () => {
+      check(item('body-height'));
+      const a = item('body-height');
+      delete a.fhir.value.units['length/ft'];
+      assert.throws(() => check(a), /missing \[length\/ft\]/);
+      const b = item('body-height');
+      b.fhir.value.units['length/ft'].unit = 'cm';
+      assert.throws(() => check(b), /eventTypes "length\/m" and "length\/ft" share the UCUM unit "cm"/);
+      const c = item('wellbeing-general-health');
+      c.fhir.value = { kind: 'scaled-quantity', units: { 'ratio/proportion': { unit: '%', factor: 100 } } };
+      assert.throws(() => check(c), /value.kind "scaled-quantity" applies to "number" items only/);
+      const d = item('body-blood-hba1c');
+      d.fhir.value = { kind: 'quantity', units: { 'ratio/proportion': '%' } };
+      assert.throws(() => check(d), /a proportion \(0..1\) renders in % with value.kind "scaled-quantity" and factor 100, not as stored/);
+      const e = item('body-blood-hba1c');
+      e.fhir.value.units['ratio/proportion'].factor = 10;
+      assert.throws(() => check(e), /factor 100, not factor 10/);
+      // A proportion as the dimensionless 1, or a ratio/percent stored as printed, stays a plain quantity.
+      const f = item('body-blood-hba1c');
+      f.fhir.value = { kind: 'quantity', units: { 'ratio/proportion': '1' } };
+      check(f);
+      check(item('body-blood-cbc-nucleated-rbc'));
+    });
+
+    it('[FHIR-MAP-21] alsoEmit: with a static code only, never a repeat of the code, an alsoMatch, a component or a split code', () => {
+      check(item('body-oxygen-saturation'));
+      const a = item('body-oxygen-saturation');
+      a.fhir.alsoEmit.push(a.fhir.code);
+      assert.throws(() => check(a), /code, alsoMatch and alsoEmit: the coding http:\/\/loinc.org\|59408-5 appears more than once/);
+      const b = item('body-height');
+      b.fhir.alsoEmit = [b.fhir.alsoMatch[0]];
+      assert.throws(() => check(b), /appears more than once/);
+      const c = item('body-blood-serum-glucose-fasting');
+      c.fhir.alsoEmit = [coding('9')];
+      assert.throws(() => check(c), /"alsoEmit" applies to a static code only/);
+      const d = item('body-blood-pressure');
+      d.fhir.alsoEmit = [d.fhir.split.rate.code];
+      assert.throws(() => check(d), /code, components and split codes: the coding http:\/\/loinc.org\|8867-4 appears more than once/);
+      // A plain quantity block would be half-rendered by a renderer that predates alsoEmit.
+      const e = item('body-heart-rate');
+      e.fhir.alsoEmit = [coding('9')];
+      assert.throws(() => check(e), /"alsoEmit" needs a value kind the deployed renderers skip \(scaled-quantity\)/);
     });
 
     it('[FHIR-MAP-18] a static LOINC code must be the code every unit option stores', () => {
@@ -702,15 +801,30 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       checkFhirImportKeys({ a: { fhir: also }, b: { references: { loinc: ['9'] }, deprecated: true } });
     });
 
+    it('[FHIR-SCOPE-23] an alsoEmit coding is no import key, and never one of another item nor a LOINC code another item owns', () => {
+      const { checkFhirImportKeys } = require('../src/fhir');
+      const emits = (code, also) => ({ ...obs('vital-signs', code), alsoEmit: [coding(also)] });
+      // Not an import key: another item may not claim it either, but two items may emit the same one.
+      checkFhirImportKeys({ a: { fhir: emits('1', '9') }, b: { fhir: emits('2', '9') } });
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: emits('1', '9') }, b: { fhir: obs('vital-signs', '9') } }), /alsoEmit Observation http:\/\/loinc.org\|9 of "a" is an import key of "b"/);
+      const withAlso = { ...obs('vital-signs', '2'), alsoMatch: [coding('9')] };
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: emits('1', '9') }, b: { fhir: withAlso } }), /is an import key of "b"/);
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: emits('1', '9') }, b: { references: { loinc: ['9'] } } }), /alsoEmit Observation http:\/\/loinc.org\|9 of "a" is a LOINC code item "b" owns/);
+      checkFhirImportKeys({ a: { fhir: emits('1', '9'), references: { loinc: ['9'] } } });
+      checkFhirImportKeys({ a: { fhir: emits('1', '9') }, b: { fhir: obs('vital-signs', '9'), deprecated: true } });
+      // The model: 2708-6 (a blood-gas SaO2) is emitted by SpO2 and claimed by no item.
+      assert.ok(Object.values(itemsById).every((i) => !(i.references?.loinc || []).includes('2708-6')));
+    });
+
     it('[FHIR-SCOPE-11] the model\'s table; the committed lock is up to date (run npm run fhir:lock)', () => {
       const lab = Object.entries(itemsById).filter(([, i]) => i.fhir?.category === 'laboratory').map(([, i]) => i.streamId).sort();
-      assert.strictEqual(lab.length, 93);
+      assert.strictEqual(lab.length, 99);
       assert.deepStrictEqual(fhirScopes, {
         'Condition|problem-list-item': ['condition'],
         'Observation|laboratory': lab,
         'Observation|social-history': ['lifestyle-tobacco-smoking'],
         'Observation|survey': ['wellbeing-general-health'],
-        'Observation|vital-signs': ['body-blood-pressure', 'body-heart-rate', 'body-weight'],
+        'Observation|vital-signs': ['body-blood-pressure', 'body-heart-rate', 'body-height', 'body-oxygen-saturation', 'body-weight'],
         Patient: ['profile-address', 'profile-date-of-birth', 'profile-name', 'profile-sex']
       });
       assert.deepStrictEqual(mergeLock(readLock(), lockEntries(itemsById, fhirScopes)), readLock(), 'definitions/fhir/scopes.lock.json is not up to date');
