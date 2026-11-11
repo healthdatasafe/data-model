@@ -222,6 +222,8 @@ function checkFhirMapping (key, item, itemEventTypes) {
     mappedFields.add(k);
   }
   unique('code, components and split codes', [...ownCodings, ...Object.values(f.split || {}).map((s) => s.code)]);
+  // A renderer that predates alsoEmit leaves it out and claims a profile the resource misses; only a kind it skips is safe.
+  if (f.alsoEmit != null && v?.kind !== 'scaled-quantity') fail('"alsoEmit" needs a value kind the deployed renderers skip (scaled-quantity) until every deployed hds-fhir-js knows alsoEmit; see FHIR-MAPPING.md § Forward compatibility');
 
   for (const k of f.ignore || []) {
     if (composite?.[k] == null) fail(`ignore "${k}" is not a composite field`);

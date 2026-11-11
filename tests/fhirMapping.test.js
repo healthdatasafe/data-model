@@ -458,6 +458,10 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const d = item('body-blood-pressure');
       d.fhir.alsoEmit = [d.fhir.split.rate.code];
       assert.throws(() => check(d), /code, components and split codes: the coding http:\/\/loinc.org\|8867-4 appears more than once/);
+      // A plain quantity block would be half-rendered by a renderer that predates alsoEmit.
+      const e = item('body-heart-rate');
+      e.fhir.alsoEmit = [coding('9')];
+      assert.throws(() => check(e), /"alsoEmit" needs a value kind the deployed renderers skip \(scaled-quantity\)/);
     });
 
     it('[FHIR-MAP-18] a static LOINC code must be the code every unit option stores', () => {

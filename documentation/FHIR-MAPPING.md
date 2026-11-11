@@ -160,7 +160,9 @@ answers. A multi-select mapping needs its own design.
 **`scaled-quantity`** is for an item that stores a number in another unit than the one FHIR needs, by an exact factor:
 a proportion stored `0..1` that FHIR states in `%` (factor 100), a height stored in metres or feet that the body height
 profiles take in `cm` or `[in_i]` only (factors 100 and 12). The factor is a definition of the units, never a
-measured conversion (that stays the item's `unitConversions`).
+measured conversion (that stays the item's `unitConversions`). Only a multiplicative factor belongs here: an offset
+or any other conversion (a temperature in °F to `Cel`) is a new value kind, never a field of `scaled-quantity`, since
+a renderer that does not know the field would emit the unconverted number.
 
 ```yaml
 body-blood-hba1c:
@@ -441,7 +443,12 @@ field (`alsoMatch`, `alsoMatchCategories`: an older importer accepts less), and 
 emits is a new kind rather than a field (`scaled-quantity`). `alsoEmit` is the exception, and holds only as long as the
 blocks that use it also use a kind an older renderer skips: today one block (`body-oxygen-saturation`, a
 `scaled-quantity`). An older renderer that rendered a block with `alsoEmit` would leave the coding out and claim a
-profile the resource does not meet; before a `quantity` block uses `alsoEmit`, the deployed renderer must know it.
+profile the resource does not meet, so **the build refuses `alsoEmit` on any other value kind**. The rule lifts once
+every deployed hds-fhir-js knows `alsoEmit` (the release that adds `scaled-quantity`).
+
+From that release on, hds-fhir-js also skips a block carrying a top-level field it does not know, so a later field that
+changes what a block emits is skipped by the renderers that predate it rather than half-rendered. The cost: an
+import-only field added later also needs the renderer to ship first, which is the order above anyway.
 
 ---
 
@@ -577,7 +584,8 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
 1. **Check the renderer knows the resourceType, value kind and code source** (hds-fhir-js). If not, that comes first
    (see [Forward compatibility](#forward-compatibility)).
 2. **Pick the codes and verify every one**, with its official display:
-   - LOINC, on the HL7 terminology server:
+   - LOINC, against a local database built from the LOINC release (the HDS team keeps one with a `verify` CLI, as for
+     SNOMED below: exists, `ACTIVE`, meaning, MapTo replacement). Without one, on the HL7 terminology server:
      ```sh
      curl -s -H 'Accept: application/fhir+json' \
        'https://tx.fhir.org/r4/CodeSystem/$lookup?system=http://loinc.org&code=61577-3'

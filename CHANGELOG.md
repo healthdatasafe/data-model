@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.48.0] - 2026-11-11
 
 FHIR mapping, plan 115 phase 1 slice 1: the US Core vital signs and the lab percentages. Additive: new blocks, a new
 value kind and a new block field; no item, stream or eventType changes. Needs hds-fhir-js with `scaled-quantity` and
@@ -13,7 +13,8 @@ value kind and a new block field; no item, stream or eventType changes. Needs hd
   it skips the block instead of stating `0.07 %` for `7 %`. The build refuses a `ratio/proportion` eventType rendered
   in `%` with any other factor, a plain `quantity` included.
 - **Block field `alsoEmit`**: codings emitted after a static code, never an import key, never another item's import
-  key or owned LOINC code.
+  key or owned LOINC code. The build refuses it on any value kind but `scaled-quantity` (a kind older renderers skip)
+  until every deployed hds-fhir-js knows it.
 - **Vital signs:** `body-height` (LOINC 8302-2, import also 3137-7; metres render in `cm`, feet in `[in_i]`, the only
   units the body height profiles take) and `body-oxygen-saturation` (59408-5, emitting 2708-6 as US Core pulse
   oximetry and the base oxygen saturation profile require; a resource coded 2708-6 alone, a blood-gas SaO2, still does
@@ -22,7 +23,7 @@ value kind and a new block field; no item, stream or eventType changes. Needs hd
   (2502-3), `body-blood-cbc-hematocrit` (4544-3, import also 20570-8), `body-blood-cbc-rdw` (30385-9, import also
   788-0), `body-blood-cbc-myelocytes` (26498-6, import also 749-2), `body-blood-cbc-metamyelocytes` (28541-1, import
   also 740-1). Each on its own stream, so the laboratory grant reaches nothing else. Every code verified ACTIVE in the
-  LOINC 2.83 release (loinc-db).
+  LOINC 2.83 release.
 - `definitions/fhir/scopes.lock.json`: the eight new grant roots.
 
 ### Not mapped, on purpose
