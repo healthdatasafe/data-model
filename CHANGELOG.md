@@ -1,5 +1,36 @@
 # Changelog
 
+## [Unreleased]
+
+FHIR mapping, plan 115 phase 1 slice 1: the US Core vital signs and the lab percentages. Additive: new blocks, a new
+value kind and a new block field; no item, stream or eventType changes. Needs hds-fhir-js with `scaled-quantity` and
+`alsoEmit` deployed first (FHIR-MAPPING.md § Forward compatibility): an older renderer skips these blocks.
+
+### Added
+- **Value kind `scaled-quantity`** (FHIR-MAPPING.md § Value kinds): each eventType renders in a UCUM `unit` at the
+  stored number × `factor`, and imports back divided by it (reference range limits included). A proportion stored
+  `0..1` renders in `%` with factor 100. Its own kind rather than a `quantity` field, so a renderer that does not know
+  it skips the block instead of stating `0.07 %` for `7 %`. The build refuses a `ratio/proportion` eventType rendered
+  in `%` with any other factor, a plain `quantity` included.
+- **Block field `alsoEmit`**: codings emitted after a static code, never an import key, never another item's import
+  key or owned LOINC code.
+- **Vital signs:** `body-height` (LOINC 8302-2, import also 3137-7; metres render in `cm`, feet in `[in_i]`, the only
+  units the body height profiles take) and `body-oxygen-saturation` (59408-5, emitting 2708-6 as US Core pulse
+  oximetry and the base oxygen saturation profile require; a resource coded 2708-6 alone, a blood-gas SaO2, still does
+  not import here). `Observation|vital-signs` now grants `body-height` and `body-oxygen-saturation` too.
+- **Lab percentages** (`Observation|laboratory`, `%`): `body-blood-hba1c` (4548-4), `body-blood-serum-transferrin-saturation`
+  (2502-3), `body-blood-cbc-hematocrit` (4544-3, import also 20570-8), `body-blood-cbc-rdw` (30385-9, import also
+  788-0), `body-blood-cbc-myelocytes` (26498-6, import also 749-2), `body-blood-cbc-metamyelocytes` (28541-1, import
+  also 740-1). Each on its own stream, so the laboratory grant reaches nothing else. Every code verified ACTIVE in the
+  LOINC 2.83 release (loinc-db).
+- `definitions/fhir/scopes.lock.json`: the eight new grant roots.
+
+### Not mapped, on purpose
+- `body-temperature`: its stream holds the basal temperature and its disturbance flag, unmapped; mapping it is a
+  decision on what a vital-signs reader may see (FHIR-MAPPING.md, top).
+- The differential percentages that share their stream with the absolute count (neutrophils, lymphocytes, monocytes,
+  eosinophils, basophils, segmented and band neutrophils, reticulocytes): mapped together with the count, later.
+
 ## [3.47.3] - 2026-11-10
 
 Build script only; definitions unchanged.

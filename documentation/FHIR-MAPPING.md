@@ -2,7 +2,7 @@
 
 **Status: published since 3.31.0 (plan 115, SMART on FHIR).** Everything below marked *permanent* is.
 
-**Lab items (3.39.0; 3.44.0 adds untimed insulin):** 93 numeric lab items carry an `Observation|laboratory` block. Where mass and moles of one
+**Lab items (3.39.0; 3.44.0 adds untimed insulin; Unreleased adds six percentages):** 99 numeric lab items carry an `Observation|laboratory` block. Where mass and moles of one
 analyte are two LOINC codes (`BLOOD-CHEMISTRY.md` § Codes), the code comes from the eventType
 (`code: { from: eventType, codings }`, below); otherwise it is static. The build holds each block to the item's
 `references.loinc` and `variations.eventType.options[].loinc`, and no import key may be a code another item owns
@@ -12,12 +12,19 @@ category finer than `laboratory`, so `patient/Observation.rs?category=laboratory
 lipid panel as much as urine hCG (a pregnancy test), the semen analysis and the reproductive hormones; the patient
 narrows it per stream on the consent screen, as for vital signs. A lab event's printed range, flag and comparator
 (`hdsRefRange`, `hdsInterpretation`, `hdsFlag`, `hdsComparator`) render as `referenceRange`, `interpretation` and the
-Quantity `comparator` (BLOOD-CHEMISTRY.md § Cross-system). **Not mapped yet:** the `ratio/proportion` percentages
-(HbA1c, hematocrit, the CBC differential, semen motility, …: the export multiplies by 100, which no value kind does
-yet), the absolute CBC counts and urine LH (their stream also holds one of those, or the legacy urine LH typed mg/L,
-so a grant would over-grant), C-peptide and total testosterone (two of three units share a code), fasting insulin and
-1,25-dihydroxyvitamin D (a unit LOINC has no code for), INR (`ratio/generic`), the items without LOINC, and the
-`lab-result/coded-v1` items.
+Quantity `comparator` (BLOOD-CHEMISTRY.md § Cross-system). The `ratio/proportion` percentages render in `%` through
+the `scaled-quantity` kind (factor 100): HbA1c, transferrin saturation, hematocrit, RDW, myelocytes and metamyelocytes.
+**Not mapped yet:** the differential percentages that share their stream with the absolute count (neutrophils,
+segmented and band neutrophils, lymphocytes, monocytes, eosinophils, basophils, reticulocytes: percentage and count
+are mapped together or not at all, or a grant would over-grant), urine LH (its stream holds the legacy urine LH typed
+mg/L), the immature reticulocyte fraction and the semen percentages (motility, vitality, morphology; not reviewed
+yet), C-peptide and total testosterone (two of three units share a code), fasting insulin and 1,25-dihydroxyvitamin D
+(a unit LOINC has no code for), INR (`ratio/generic`), the items without LOINC, and the `lab-result/coded-v1` items.
+
+**Vital signs:** body weight, blood pressure (with its pulse as a split), heart rate, body height and oxygen saturation
+(SpO2) carry an `Observation|vital-signs` block. **Body temperature is not mapped yet:** its stream holds the basal
+body temperature (fertility charting) and that reading's disturbance flag, both unmapped, so a grant on it would
+over-grant; mapping it means deciding whether a reader of vital signs may see the basal readings and their flags.
 
 An item's `fhir:` block says how its events **render as** a FHIR R4 resource and how a FHIR resource **imports
 back** into an event of that item. HDS uses it in three ways:
@@ -97,6 +104,7 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 | `alsoMatchCategories` | no | Further category keys of the same table that a resource may carry and still import into this item, **on import only**, never emitted (smoking status filed under `survey` by older sources). Never the block's own category. |
 | `code` | yes | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }` or `{ from: eventType, codings }` (below). |
 | `alsoMatch` | no | Extra codings accepted **on import only**, never emitted. With a static code, a list; with an eventType code, keyed by the eventType each names (`{ concentration/mg-dl: [codings] }`). Never with a datasource code. |
+| `alsoEmit` | no | Extra codings **emitted only**, after the static code in `code.coding`, never an import key: the second code a profile requires (US Core pulse oximetry wants 2708-6 beside 59408-5). A list, with a static code only. A resource that carries an `alsoEmit` coding without the code does not match the item. |
 | `value` | no | FHIR `value[x]`, by `kind` (below). Absent on a Condition, which has no `value[x]`. |
 | `split` | no | Extra resources, one per numeric composite field (below). |
 | `ignore` | no | Composite fields deliberately left out of the FHIR rendering. |
@@ -141,12 +149,34 @@ reviewer checks the code against and what a reader falls back on.
 | `kind` | Item | Block fields | Renders |
 |---|---|---|---|
 | `quantity` | `number`, every eventType numeric | `units`: every eventType of the item (its unit variants) → UCUM code, none empty, no two the same (annotations such as `{beats}` aside: they carry no meaning in UCUM) | `valueQuantity` (`system` UCUM, `code` = `unit`); a lab event's `hdsComparator` as its `comparator`, `hdsRefRange` as `referenceRange` (limits in the same unit), `hdsInterpretation` and `hdsFlag` as `interpretation`, and back on import (BLOOD-CHEMISTRY.md § Cross-system) |
+| `scaled-quantity` | `number`, every eventType numeric | `units`: every eventType of the item → `{ unit, factor }`: the UCUM code it renders in and the factor from the stored number to the rendered one (`factor > 0`); units distinct as for `quantity` | `valueQuantity` of the stored number × `factor` in `unit`; the lab extras as for `quantity`, the range limits × `factor` too. On import the value and the limits are divided by `factor` |
 | `coded` | `select` | `options`: every option value → coding, each coding once; optional `alsoMatch`: option value → extra codings accepted for that option on import only | `valueCodeableConcept` (the option coding, never an `alsoMatch` one) |
 | `components` | `composite` | `components`: numeric composite field → `{ code, unit }` | `component[]`, one per field present |
 
 The schema discriminates by kind: a kind's fields are refused on another kind. `coded` is refused on a
 `multi-select`: one resource with several answer codings would state one answer with several codes, not several
 answers. A multi-select mapping needs its own design.
+
+**`scaled-quantity`** is for an item that stores a number in another unit than the one FHIR needs, by an exact factor:
+a proportion stored `0..1` that FHIR states in `%` (factor 100), a height stored in metres or feet that the body height
+profiles take in `cm` or `[in_i]` only (factors 100 and 12). The factor is a definition of the units, never a
+measured conversion (that stays the item's `unitConversions`).
+
+```yaml
+body-blood-hba1c:
+  fhir:
+    # …
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }   # 0.057 renders as 5.7 %, 5.7 % imports as 0.057
+```
+
+The product and the quotient are rounded to 15 significant digits, so a binary rounding artefact never reaches
+either side (`0.07 × 100` is `7`, not `7.000000000000001`). It is a kind of its own, not a field of `quantity`, for
+[forward compatibility](#forward-compatibility): a renderer that does not know it skips the block, where a renderer
+that ignored an unknown `quantity` field would state `0.057 %` for `5.7 %`. For the same reason the build refuses a
+`ratio/proportion` eventType rendered in `%` with any factor other than 100, a plain `quantity` included.
 
 **Option keys** are the option value as a string, as JavaScript prints it: `never`, `0.75`, and `1` for `1.0`, `0` for
 `0.0`. Quote them in YAML (`"1": …`).
@@ -283,7 +313,7 @@ computes the table and publishes it:
 ```json
 "fhirScopes": {
   "Condition|problem-list-item": ["condition"],
-  "Observation|vital-signs": ["body-blood-pressure", "body-heart-rate", "body-weight"],
+  "Observation|vital-signs": ["body-blood-pressure", "body-heart-rate", "body-height", "body-oxygen-saturation", "body-weight"],
   "Patient": ["profile-address", "profile-date-of-birth", "profile-name", "profile-sex"]
 }
 ```
@@ -406,6 +436,13 @@ first**: implement and validate
 it in hds-fhir-js, release that, then add the first block that uses it here. A block the deployed renderer skips is
 data a SMART app does not see.
 
+**A new field is not skipped:** a consumer that does not know a field ignores it. That is harmless for an import-only
+field (`alsoMatch`, `alsoMatchCategories`: an older importer accepts less), and it is why a change of what a block
+emits is a new kind rather than a field (`scaled-quantity`). `alsoEmit` is the exception, and holds only as long as the
+blocks that use it also use a kind an older renderer skips: today one block (`body-oxygen-saturation`, a
+`scaled-quantity`). An older renderer that rendered a block with `alsoEmit` would leave the coding out and claim a
+profile the resource does not meet; before a `quantity` block uses `alsoEmit`, the deployed renderer must know it.
+
 ---
 
 ## Import
@@ -439,8 +476,11 @@ accepts (`hds-fhir-js`: `matchResource`, which also says why nothing matched).
   block's units, annotations aside (`{beats}/min` is `/min`); that unit picks the eventType (`[lb_av]` → `mass/lb`), and the value is stored as printed. Units are
   **converted only through the item's declared `unitConversions`**. Those relate the item's own eventTypes, and every
   one of them already has its UCUM unit in the block, so in practice a value in one of the block's units is taken as
-  printed in that eventType, and a unit outside them (`g` for body weight, `cm` for body height) has no declared
+  printed in that eventType, and a unit outside them (`g` for body weight, `[ft_i]` for body height) has no declared
   conversion and is rejected. Importing such a unit takes a new eventType variant on the item first.
+- `scaled-quantity`: as `quantity`, against each eventType's `unit`, then the value is divided by that eventType's
+  `factor` (`97 %` → `0.97` on `ratio/proportion`, `175 cm` → `1.75` on `length/m`); so are the reference range limits.
+  The stored unit itself (`m` for body height) is not one of the block's units and is rejected, like any other.
 - `coded`: the `valueCodeableConcept` codings must match exactly one option, by its coding or one of its
   `alsoMatch` codings; the option value is returned with its type (`0.75`, not `"0.75"`). Option codings and
   `alsoMatch` codings are unique within an item (a build check), so a coding maps back to one option.
@@ -500,7 +540,9 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
 - **Schema:** shapes per kind and per code source; canonical system URIs; `display` required; units non-empty;
   profiles are strings.
 - **Category:** required and known for the resourceType, refused on a resourceType without a table.
-- **Agreement with the item:** `quantity` only on `number` items, units exactly the item's eventTypes, each numeric;
+- **Agreement with the item:** `quantity` and `scaled-quantity` only on `number` items, units exactly the item's
+  eventTypes, each numeric; a `ratio/proportion` eventType rendered in `%` has factor 100 (so never a plain
+  `quantity`); `alsoEmit` only with a static code;
   `coded` only on `select` (never `multi-select`), options exactly the item's options; component, split and ignore
   keys are composite fields, components and splits numeric, no field in two roles, every composite field accounted
   for; a datasource source only on a datasource field, resolving to a `codes` array in the eventType; no `value` on a
@@ -514,10 +556,12 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   `PATIENT_ELEMENTS`); the item type the element takes, with one string eventType; no `value` on a text or date
   element; on `gender`, `coded` with exactly the item's options, each an administrative-gender code with its official
   display, each once.
-- **Uniqueness:** codings unique within an item (code and `alsoMatch`; options and their `alsoMatch`; code,
-  `alsoMatch`, components and splits); import keys unique across active items (a static code, eventType coding or `alsoMatch` coding;
-  a datasource source per category it accepts; a Patient element). A split code is not an import key: it may be
-  another item's code, which then wins (`body-heart-rate` and the blood-pressure pulse).
+- **Uniqueness:** codings unique within an item (code, `alsoMatch` and `alsoEmit`; options and their `alsoMatch`;
+  code, `alsoMatch`, `alsoEmit`, components and splits); import keys unique across active items (a static code,
+  eventType coding or `alsoMatch` coding; a datasource source per category it accepts; a Patient element). A split
+  code is not an import key: it may be another item's code, which then wins (`body-heart-rate` and the blood-pressure
+  pulse). An `alsoEmit` coding is not an import key either, and is never another active item's import key or a LOINC
+  code another item owns: the rendered resource would import back into that item.
 - **Units:** two eventTypes of one `quantity` block never share a UCUM unit, annotations aside (`{beats}/min` is
   `/min`): the unit picks the eventType on import.
 - **Scopes:** companions valid (never of a Patient element); the one-pair invariant; the lock (no locked stream

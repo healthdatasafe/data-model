@@ -1,6 +1,13 @@
 {
   "formatVersion": 2,
   "streams": {
+    "body-blood-cbc-hematocrit": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-cbc",
+      "items": [
+        "body-blood-cbc-hematocrit"
+      ]
+    },
     "body-blood-cbc-hemoglobin": {
       "pair": "Observation|laboratory",
       "parent": "body-blood-cbc",
@@ -29,11 +36,25 @@
         "body-blood-cbc-mcv"
       ]
     },
+    "body-blood-cbc-metamyelocytes": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-cbc",
+      "items": [
+        "body-blood-cbc-metamyelocytes"
+      ]
+    },
     "body-blood-cbc-mpv": {
       "pair": "Observation|laboratory",
       "parent": "body-blood-cbc",
       "items": [
         "body-blood-cbc-mpv"
+      ]
+    },
+    "body-blood-cbc-myelocytes": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-cbc",
+      "items": [
+        "body-blood-cbc-myelocytes"
       ]
     },
     "body-blood-cbc-nucleated-rbc": {
@@ -55,6 +76,13 @@
       "parent": "body-blood-cbc",
       "items": [
         "body-blood-cbc-rbc"
+      ]
+    },
+    "body-blood-cbc-rdw": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-cbc",
+      "items": [
+        "body-blood-cbc-rdw"
       ]
     },
     "body-blood-cbc-reticulocytes-hemoglobin": {
@@ -97,6 +125,13 @@
       "parent": "body-blood",
       "items": [
         "body-blood-esr"
+      ]
+    },
+    "body-blood-hba1c": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood",
+      "items": [
+        "body-blood-hba1c"
       ]
     },
     "body-blood-pressure": {
@@ -568,6 +603,13 @@
         "body-blood-serum-trab"
       ]
     },
+    "body-blood-serum-transferrin-saturation": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-serum",
+      "items": [
+        "body-blood-serum-transferrin-saturation"
+      ]
+    },
     "body-blood-serum-triglycerides": {
       "pair": "Observation|laboratory",
       "parent": "body-blood-serum",
@@ -636,6 +678,20 @@
       "parent": "body",
       "items": [
         "body-heart-rate"
+      ]
+    },
+    "body-height": {
+      "pair": "Observation|vital-signs",
+      "parent": "body",
+      "items": [
+        "body-height"
+      ]
+    },
+    "body-oxygen-saturation": {
+      "pair": "Observation|vital-signs",
+      "parent": "body",
+      "items": [
+        "body-oxygen-saturation"
       ]
     },
     "body-semen-concentration": {
