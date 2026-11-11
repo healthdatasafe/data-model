@@ -3,20 +3,25 @@
     "condition"
   ],
   "Observation|laboratory": [
+    "body-blood-cbc-hematocrit",
     "body-blood-cbc-hemoglobin",
     "body-blood-cbc-mch",
     "body-blood-cbc-mchc",
     "body-blood-cbc-mcv",
+    "body-blood-cbc-metamyelocytes",
     "body-blood-cbc-mpv",
+    "body-blood-cbc-myelocytes",
     "body-blood-cbc-nucleated-rbc",
     "body-blood-cbc-platelets",
     "body-blood-cbc-rbc",
+    "body-blood-cbc-rdw",
     "body-blood-cbc-reticulocytes-hemoglobin",
     "body-blood-cbc-wbc",
     "body-blood-coagulation-aptt",
     "body-blood-coagulation-fibrinogen",
     "body-blood-coagulation-prothrombin-time",
     "body-blood-esr",
+    "body-blood-hba1c",
     "body-blood-rbc-magnesium",
     "body-blood-serum-17-oh-progesterone",
     "body-blood-serum-acth",
@@ -83,6 +88,7 @@
     "body-blood-serum-total-t3",
     "body-blood-serum-tpo-antibodies",
     "body-blood-serum-trab",
+    "body-blood-serum-transferrin-saturation",
     "body-blood-serum-triglycerides",
     "body-blood-serum-tsh",
     "body-blood-serum-tsi",
@@ -106,6 +112,8 @@
   "Observation|vital-signs": [
     "body-blood-pressure",
     "body-heart-rate",
+    "body-height",
+    "body-oxygen-saturation",
     "body-weight"
   ],
   "Patient": [
