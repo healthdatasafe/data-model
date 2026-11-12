@@ -100,8 +100,11 @@
     "body-blood-serum-zinc",
     "body-semen-concentration",
     "body-semen-volume",
+    "body-urine-hormones-e3g",
     "body-urine-hormones-fsh",
-    "body-urine-hormones-hcg"
+    "body-urine-hormones-hcg",
+    "body-urine-hormones-lh",
+    "body-urine-hormones-pdg"
   ],
   "Observation|social-history": [
     "lifestyle-tobacco-smoking"

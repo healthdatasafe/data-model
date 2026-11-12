@@ -10727,7 +10727,7 @@
     }
   },
   "body-urine-hormones-pdg": {
-    "version": "v2",
+    "version": "v3",
     "label": {
       "en": "PdG (urine)",
       "fr": "PdG (urine)"
@@ -10737,9 +10737,36 @@
       "fr": "Un dérivé de la progestérone dans vos urines, indiquant que l'ovulation a eu lieu."
     },
     "streamId": "body-urine-hormones-pdg",
-    "eventType": "concentration/iu-l",
+    "eventType": "concentration/mg-l",
     "type": "number",
-    "repeatable": "any"
+    "repeatable": "any",
+    "number": {
+      "display": {
+        "suffix": {
+          "en": "μg/mL",
+          "fr": "μg/mL"
+        }
+      }
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "https://hds.ngo/fhir/CodeSystem/item",
+        "code": "body-urine-hormones-pdg",
+        "display": "PdG (urine)"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-l": "ug/mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-urine-hormones-e3g": {
     "version": "v2",
@@ -10754,7 +10781,26 @@
     "streamId": "body-urine-hormones-e3g",
     "eventType": "concentration/ug-l",
     "type": "number",
-    "repeatable": "any"
+    "repeatable": "any",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "https://hds.ngo/fhir/CodeSystem/item",
+        "code": "body-urine-hormones-e3g",
+        "display": "E3G (urine)"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ug-l": "ng/mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-urine-hormones-lh": {
     "version": "v2",
@@ -10785,6 +10831,25 @@
       "loinc": [
         "15079-7"
       ]
+    },
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "15079-7",
+        "display": "Lutropin [Units/volume] in Urine"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/iu-l": "[IU]/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
     }
   },
   "fertility-hormone-lh": {
@@ -10802,7 +10867,62 @@
     "eventType": "concentration/mg-l",
     "type": "number",
     "repeatable": "any",
-    "devNotes": "B-2026-07-15-1. Do not use for new data."
+    "devNotes": "B-2026-07-15-1. Do not use for new data.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "15079-7",
+        "display": "Lutropin [Units/volume] in Urine"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-l": "[IU]/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
+  },
+  "fertility-hormone-pdg": {
+    "version": "v1",
+    "deprecated": true,
+    "label": {
+      "en": "PdG (urine, legacy)",
+      "fr": "PdG (urine, ancien)"
+    },
+    "description": {
+      "en": "Deprecated: use body-urine-hormones-pdg. This item was typed IU/L in error; PdG is reported in μg/mL.",
+      "fr": "Obsolète : utilisez body-urine-hormones-pdg. Cet item était typé IU/L par erreur ; le PdG se mesure en μg/mL."
+    },
+    "streamId": "body-urine-hormones-pdg",
+    "eventType": "concentration/iu-l",
+    "type": "number",
+    "repeatable": "any",
+    "devNotes": "Retyped in data-model 4.0.0, see CHANGELOG. Do not use for new data.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "https://hds.ngo/fhir/CodeSystem/item",
+        "code": "body-urine-hormones-pdg",
+        "display": "PdG (urine)"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/iu-l": "ug/mL"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "fertility-test-opk": {
     "version": "v1",
