@@ -708,6 +708,13 @@
         "body-semen-volume"
       ]
     },
+    "body-urine-hormones-e3g": {
+      "pair": "Observation|laboratory",
+      "parent": "body-urine-hormones",
+      "items": [
+        "body-urine-hormones-e3g"
+      ]
+    },
     "body-urine-hormones-fsh": {
       "pair": "Observation|laboratory",
       "parent": "body-urine-hormones",
@@ -720,6 +727,22 @@
       "parent": "body-urine-hormones",
       "items": [
         "body-urine-hormones-hcg"
+      ]
+    },
+    "body-urine-hormones-lh": {
+      "pair": "Observation|laboratory",
+      "parent": "body-urine-hormones",
+      "items": [
+        "body-urine-hormones-lh",
+        "fertility-hormone-lh"
+      ]
+    },
+    "body-urine-hormones-pdg": {
+      "pair": "Observation|laboratory",
+      "parent": "body-urine-hormones",
+      "items": [
+        "body-urine-hormones-pdg",
+        "fertility-hormone-pdg"
       ]
     },
     "body-weight": {

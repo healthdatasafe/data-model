@@ -652,7 +652,7 @@ body-urine-hormones-hcg:
       us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
       ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 body-urine-hormones-pdg:
-  version: v2
+  version: v3
   label:
     en: PdG (urine)
     fr: PdG (urine)
@@ -660,11 +660,33 @@ body-urine-hormones-pdg:
     en: A progesterone by-product in your urine, showing ovulation has happened.
     fr: Un dérivé de la progestérone dans vos urines, indiquant que l'ovulation a eu lieu.
   streamId: body-urine-hormones-pdg
-  eventType: concentration/iu-l
+  eventType: concentration/mg-l
   type: number
   repeatable: any
+  # PdG is printed in μg/mL by every home analyser (Mira, Inito, Proov); 1 μg/mL = 1 mg/L, so the
+  # number stores as printed on the legacy concentration/mg-l (AGENTS.md no-equivalent-types rule)
+  # and the suffix shows the reporting unit, as ferritin shows ng/mL on concentration/ug-l.
+  number:
+    display:
+      suffix: { en: μg/mL, fr: μg/mL }
   # No SNOMED reference: pregnanediol-3-glucuronide has no concept. 89113004 is
   # "Pregnanediol measurement" — a different substance, so it is not used here.
+  # No LOINC either (2833-2 "Pregnanediol [Mass/volume] in Urine" is the aglycone, another
+  # substance), so the fhir block's code is the HDS item coding (FHIR-MAPPING.md § code).
+  # v3, data-model 4.0.0: typed concentration/iu-l until then, although PdG has no international
+  # unit. Events written before 4.0.0 carry iu-l and resolve to the deprecated
+  # fertility-hormone-pdg below.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: https://hds.ngo/fhir/CodeSystem/item, code: body-urine-hormones-pdg, display: "PdG (urine)" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-l: ug/mL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 body-urine-hormones-e3g:
   version: v2
   label:
@@ -677,7 +699,21 @@ body-urine-hormones-e3g:
   eventType: concentration/ug-l
   type: number
   repeatable: any
-  # No SNOMED reference: estrone-3-glucuronide measurement has no concept.
+  # No SNOMED reference: estrone-3-glucuronide measurement has no concept. No LOINC either
+  # (2259-0 "Estrone (E1) [Mass/volume] in Urine" is the aglycone, another substance), so the fhir
+  # block's code is the HDS item coding (FHIR-MAPPING.md § code). Mira reports E3G in ng/mL;
+  # 1 ng/mL = 1 μg/L, so the stored number is right on concentration/ug-l and renders in ng/mL.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: https://hds.ngo/fhir/CodeSystem/item, code: body-urine-hormones-e3g, display: "E3G (urine)" }
+    value:
+      kind: quantity
+      units:
+        concentration/ug-l: ng/mL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 body-urine-hormones-lh:
   version: v2
   label:
@@ -696,12 +732,26 @@ body-urine-hormones-lh:
   references:
     snomed: ["167381004"]
     loinc: ["15079-7"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 15079-7, display: "Lutropin [Units/volume] in Urine" }
+    value:
+      kind: quantity
+      units:
+        concentration/iu-l: "[IU]/L"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 # The FSH/hCG/PdG/E3G rename aliases (fertility-hormone-{fsh,hcg,pdg,e3g}) were removed
 # in Plan 83 Phase 6 once bridge-mira and doctor-dashboard migrated to the
 # body-urine-hormones-* keys — the rename kept the same streamId, so no data moved and
 # nothing orphaned. `fertility-hormone-lh` below is NOT one of those aliases: it is the
 # permanent home of historical LH events written on concentration/mg-l (before the unit
 # was corrected to iu-l). forEvent resolves those legacy events to it, so it must stay.
+# `fertility-hormone-pdg` came back in 4.0.0 with the same role for the PdG events written
+# on concentration/iu-l (before the unit was corrected to mg-l, shown μg/mL): same streamId and
+# eventType as the alias removed in 2.3.0, so it resolves exactly the events that alias once did.
 fertility-hormone-lh:
   version: v1
   deprecated: true
@@ -722,7 +772,55 @@ fertility-hormone-lh:
   # data lives in users' own accounts, so there is nothing for HDS to migrate.
   # This is the only urine hormone that could be deprecated rather than renamed — the loader
   # rejects two items sharing a streamId:eventType pair, and the others keep their eventType.
+  # The fhir block is body-urine-hormones-lh's: the numbers are IU/L, so the stored eventType
+  # concentration/mg-l renders as [IU]/L. A deprecated item is never an import key, so the two
+  # blocks on 15079-7 never clash (FHIR-MAPPING.md § Import).
   devNotes: "B-2026-07-15-1. Do not use for new data."
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 15079-7, display: "Lutropin [Units/volume] in Urine" }
+    value:
+      kind: quantity
+      units:
+        concentration/mg-l: "[IU]/L"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
+fertility-hormone-pdg:
+  version: v1
+  deprecated: true
+  label:
+    en: PdG (urine, legacy)
+    fr: PdG (urine, ancien)
+  description:
+    en: "Deprecated: use body-urine-hormones-pdg. This item was typed IU/L in error; PdG is reported in μg/mL."
+    fr: "Obsolète : utilisez body-urine-hormones-pdg. Cet item était typé IU/L par erreur ; le PdG se mesure en μg/mL."
+  streamId: body-urine-hormones-pdg
+  eventType: concentration/iu-l
+  type: number
+  repeatable: any
+  # Kept so existing events (stored with type concentration/iu-l) still resolve and render.
+  # The stored numbers are μg/mL: bridge-mira writes Mira's value verbatim and Mira reports PdG
+  # in μg/mL (1 to 22); PdG has no international unit, so only the type label was wrong. Same
+  # situation as fertility-hormone-lh (B-2026-07-15-1): the item cannot be retyped in place,
+  # stored events carry the old type and the data lives in users' own accounts. The key is the
+  # Plan 83 rename alias removed in 2.3.0, back with the same streamId:eventType pair, now as the
+  # legacy home of those events rather than an alias of the active item.
+  # The fhir block is body-urine-hormones-pdg's: the numbers are μg/mL, so the stored eventType
+  # concentration/iu-l renders as ug/mL.
+  devNotes: "Retyped in data-model 4.0.0, see CHANGELOG. Do not use for new data."
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: https://hds.ngo/fhir/CodeSystem/item, code: body-urine-hormones-pdg, display: "PdG (urine)" }
+    value:
+      kind: quantity
+      units:
+        concentration/iu-l: ug/mL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 fertility-test-opk:
   version: v1
   label:

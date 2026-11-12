@@ -2,9 +2,15 @@
 
 **Status: published since 3.31.0 (plan 115, SMART on FHIR).** Everything below marked *permanent* is.
 
-**Lab items (3.39.0; 3.44.0 adds untimed insulin; Unreleased adds six percentages):** 99 numeric lab items carry an `Observation|laboratory` block. Where mass and moles of one
+**Lab items (3.39.0; 3.44.0 adds untimed insulin; 3.48.0 adds six percentages; 4.0.0 adds urine LH, E3G and PdG):** 102 numeric lab items carry an `Observation|laboratory` block, plus the two legacy
+urine-hormone items (`fertility-hormone-lh`, `fertility-hormone-pdg`) that keep their replacement's block for their
+past events. Where mass and moles of one
 analyte are two LOINC codes (`BLOOD-CHEMISTRY.md` § Codes), the code comes from the eventType
-(`code: { from: eventType, codings }`, below); otherwise it is static. The build holds each block to the item's
+(`code: { from: eventType, codings }`, below); otherwise it is static. **Urine E3G and PdG have no LOINC and no SNOMED
+code** (the glucuronides; 2259-0 and 2833-2 are the aglycones, other substances), so their static code is the HDS item
+coding, `https://hds.ngo/fhir/CodeSystem/item` with the item key, the same coding the generic rendering uses; US Core
+binds a lab `code` to LOINC extensibly, so a local code is permitted where LOINC has none. If LOINC codes them one day,
+the LOINC code becomes the block's `code` and the item coding its `alsoMatch`. The build holds each block to the item's
 `references.loinc` and `variations.eventType.options[].loinc`, and no import key may be a code another item owns
 (`[LABC-LOINC-1]`), so ownership and the import match keys cannot disagree. The method-specific codes
 (`references.loincMethod`) are the block's `alsoMatch`. **Reach of the grant (decided 2026-11-02):** FHIR has no
@@ -16,10 +22,12 @@ Quantity `comparator` (BLOOD-CHEMISTRY.md § Cross-system). The `ratio/proportio
 the `scaled-quantity` kind (factor 100): HbA1c, transferrin saturation, hematocrit, RDW, myelocytes and metamyelocytes.
 **Not mapped yet:** the differential percentages that share their stream with the absolute count (neutrophils,
 segmented and band neutrophils, lymphocytes, monocytes, eosinophils, basophils, reticulocytes: percentage and count
-are mapped together or not at all, or a grant would over-grant), urine LH (its stream holds the legacy urine LH typed
-mg/L), the immature reticulocyte fraction and the semen percentages (motility, vitality, morphology; not reviewed
+are mapped together or not at all, or a grant would over-grant), the immature reticulocyte fraction and the semen
+percentages (motility, vitality, morphology; not reviewed
 yet), C-peptide and total testosterone (two of three units share a code), fasting insulin and 1,25-dihydroxyvitamin D
-(a unit LOINC has no code for), INR (`ratio/generic`), the items without LOINC, and the `lab-result/coded-v1` items.
+(a unit LOINC has no code for), INR (`ratio/generic`), the other items without LOINC (E3G and PdG carry the HDS item
+coding, above), and the `lab-result/coded-v1` items. Urine LH was unmapped until 4.0.0 because its stream holds the
+legacy urine LH typed mg/L: that item now carries the same block, rendering its IU/L numbers in `[IU]/L`.
 
 **Vital signs:** body weight, blood pressure (with its pulse as a split), heart rate, body height and oxygen saturation
 (SpO2) carry an `Observation|vital-signs` block. **Body temperature is not mapped yet:** its stream holds the basal
@@ -117,7 +125,10 @@ reviewer checks the code against and what a reader falls back on.
 ### `code`: static, from a datasource or from the eventType
 
 - **Static:** `code: { system: http://loinc.org, code: 72166-2, display: Tobacco smoking status }`. Every event of the
-  item has this code.
+  item has this code. When no LOINC or SNOMED CT code exists for the analyte, the static code is the **HDS item
+  coding**: `{ system: https://hds.ngo/fhir/CodeSystem/item, code: <item key>, display: <English label> }`, the coding
+  the generic rendering gives an unmapped item, here with a real UCUM unit, the category and the lab profiles (urine
+  E3G and PdG, 4.0.0). It is a code like any other for the import keys and the lock.
 - **From a datasource:** `code: { from: datasource, field: condition }`. The code is the selection a person made in a
   `datasource-search` field: the content at `field` (a dotted path) is a datasets-service selection
   `{ label, codes[] }`, and every entry of `codes[]` becomes a coding, its `system` label translated through
@@ -464,7 +475,10 @@ its code from a datasource). A static code match wins over a datasource match. A
 code imports as a fragment of that item (below) and only when no item matches it directly: a standalone heart-rate
 Observation goes to `body-heart-rate`, not to the blood-pressure pulse. The build guarantees that a static code or an
 `alsoMatch` coding is claimed by one active item only, and a datasource source by one active item per category it
-accepts (`hds-fhir-js`: `matchResource`, which also says why nothing matched).
+accepts (`hds-fhir-js`: `matchResource`, which also says why nothing matched). **Deprecated items are not import
+keys:** the importer matches against active items only, so a legacy item that keeps its replacement's block for its
+past events (`fertility-hormone-lh`, `fertility-hormone-pdg`) never makes a code match two items, and an imported
+resource always lands on the active item, in its current eventType.
 
 - **Category.** The resource's categories are its `category` codings in the systems of the resourceType's table
   (`fhirMapping.categories`); a coding in another system (a local category, another IG's) says nothing checkable and

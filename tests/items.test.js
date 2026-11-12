@@ -271,16 +271,18 @@ describe('[ITMA] Urine hormone key rename (Plan 83)', () => {
   // The FSH/hCG/PdG/E3G items were renamed to body-urine-hormones-*. The old keys were kept as
   // deprecated aliases through the migration window (Phase 5) and removed in Phase 6 once every
   // consumer moved. The rename never changed streamId+eventType, so no stored event referenced the
-  // item key — removing the aliases orphans nothing.
+  // item key. Removing the aliases orphans nothing. PdG: the active item moved to mg-l in 4.0.0
+  // and the old key came back as the legacy home of the iu-l events ([ITMA-5]), not as an alias.
   const RENAMED = [
     ['fertility-hormone-fsh', 'body-urine-hormones-fsh', 'concentration/iu-l'],
     ['fertility-hormone-hcg', 'body-urine-hormones-hcg', 'concentration/iu-l'],
-    ['fertility-hormone-pdg', 'body-urine-hormones-pdg', 'concentration/iu-l'],
+    ['fertility-hormone-pdg', 'body-urine-hormones-pdg', 'concentration/mg-l'],
     ['fertility-hormone-e3g', 'body-urine-hormones-e3g', 'concentration/ug-l']
   ];
 
-  it('[ITMA-1] the old alias keys are gone', () => {
+  it('[ITMA-1] the old alias keys are gone (PdG excepted: a legacy item since 4.0.0)', () => {
     for (const [oldKey] of RENAMED) {
+      if (oldKey === 'fertility-hormone-pdg') continue;
       assert.ok(!itemsById[oldKey], `${oldKey} should have been removed in Phase 6`);
     }
   });
@@ -309,6 +311,23 @@ describe('[ITMA] Urine hormone key rename (Plan 83)', () => {
     assert.equal(itemsById['fertility-hormone-lh'].deprecated, true);
     const lhNew = findItemForEvent('concentration/iu-l', 'body-urine-hormones-lh');
     assert.strictEqual(lhNew, itemsById['body-urine-hormones-lh']);
+  });
+
+  it('[ITMA-5] fertility-hormone-pdg is the legacy home of the IU/L PdG events; the active item stores mg/L shown μg/mL (4.0.0)', () => {
+    // PdG has no international unit, the stored numbers are μg/mL (= mg/L; no new eventType, the
+    // legacy twin wins). Same pattern as LH: the pair differs, so the old events keep resolving to
+    // the deprecated item.
+    const legacy = itemsById['fertility-hormone-pdg'];
+    assert.equal(legacy.deprecated, true);
+    assert.equal(legacy.streamId, 'body-urine-hormones-pdg');
+    assert.equal(legacy.eventType, 'concentration/iu-l');
+    assert.strictEqual(findItemForEvent('concentration/iu-l', 'body-urine-hormones-pdg'), legacy);
+    const active = itemsById['body-urine-hormones-pdg'];
+    assert.ok(!active.deprecated);
+    assert.equal(active.version, 'v3');
+    assert.equal(active.eventType, 'concentration/mg-l');
+    assert.deepStrictEqual(active.number.display.suffix, { en: 'μg/mL', fr: 'μg/mL' });
+    assert.strictEqual(findItemForEvent('concentration/mg-l', 'body-urine-hormones-pdg'), active);
   });
 });
 
