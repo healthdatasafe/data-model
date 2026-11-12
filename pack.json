@@ -1,6 +1,6 @@
 {
-  "version": "3.49.0",
-  "publicationDate": "2026-11-11T16:24:12.634Z",
+  "version": "3.49.1",
+  "publicationDate": "2026-11-12T12:20:53.951Z",
   "streams": [
     {
       "id": "activity",
@@ -18644,8 +18644,8 @@
         "fr": "Auto-évaluation de la santé"
       },
       "description": {
-        "en": "Your overall health today.",
-        "fr": "Votre état de santé global aujourd'hui."
+        "en": "How you rate your health overall.",
+        "fr": "Comment vous évaluez votre santé dans l'ensemble."
       },
       "streamId": "wellbeing-self-rated-health",
       "eventType": "ratio/proportion",
@@ -18665,22 +18665,22 @@
         "labels": {
           "0": {
             "label": {
-              "en": "Worst health",
-              "fr": "Pire santé"
+              "en": "Very poor",
+              "fr": "Très mauvaise"
             },
             "description": {
-              "en": "The worst health you can imagine",
-              "fr": "La pire santé que vous puissiez imaginer"
+              "en": "Very poor health",
+              "fr": "Santé très mauvaise"
             }
           },
           "1": {
             "label": {
-              "en": "Best health",
-              "fr": "Meilleure santé"
+              "en": "Excellent",
+              "fr": "Excellente"
             },
             "description": {
-              "en": "The best health you can imagine",
-              "fr": "La meilleure santé que vous puissiez imaginer"
+              "en": "Excellent health",
+              "fr": "Santé excellente"
             }
           }
         }
