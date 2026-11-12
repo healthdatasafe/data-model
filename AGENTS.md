@@ -74,7 +74,7 @@ This is not about questionnaires. It is about sources / methods of observation c
 
 **An item's `description` is user-facing UI text, not a spec note.** It is rendered directly under the field label in every consuming app, to a patient or a clinician — not to the person maintaining this repo. Keep it to **one short sentence**.
 
-- ✅ `Your overall health today.` (`wellbeing-self-rated-health`)
+- ✅ `How you rate your health overall.` (`wellbeing-self-rated-health`)
 - ✅ `Iron stored in your body.` — plain, one line, tells the user what they're recording
 - ❌ `Fraction of spermatozoa with normal morphology (Kruger strict criteria). Stored as a 0..1 ratio.` (`body-semen-morphology-normal` — long, clinical, and leaks storage detail into the UI)
 

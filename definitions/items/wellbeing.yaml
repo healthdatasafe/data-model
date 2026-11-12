@@ -375,7 +375,9 @@ wellbeing-mental-distress-stress-presence:
 # Two capture formats, two items: this continuous 0..100 VAS (stored 0..1 at step
 # 0.01), and the 5-level categorical question (SF-1 / RAND-36 item 1 / PROMIS
 # Global01 / NHIS SRH) as `wellbeing-general-health` below. The VAS stays HDS-only:
-# no FHIR mapping (licensing of the EQ VAS anchors: B-2026-10-28-42).
+# no FHIR mapping. Its wording is generic, not the EuroQol EQ VAS text ("the best /
+# worst health you can imagine", "your health today"): that text is licensed and
+# belongs in a form template's itemCustomizations (B-2026-10-28-42).
 
 wellbeing-self-rated-health:
   version: v1
@@ -383,8 +385,8 @@ wellbeing-self-rated-health:
     en: Self-rated health
     fr: Auto-évaluation de la santé
   description:
-    en: Your overall health today.
-    fr: Votre état de santé global aujourd'hui.
+    en: How you rate your health overall.
+    fr: Comment vous évaluez votre santé dans l'ensemble.
   streamId: wellbeing-self-rated-health
   eventType: ratio/proportion
   type: slider
@@ -402,18 +404,18 @@ wellbeing-self-rated-health:
     labels:
       0:
         label:
-          en: Worst health
-          fr: Pire santé
+          en: Very poor
+          fr: Très mauvaise
         description:
-          en: The worst health you can imagine
-          fr: La pire santé que vous puissiez imaginer
+          en: Very poor health
+          fr: Santé très mauvaise
       1:
         label:
-          en: Best health
-          fr: Meilleure santé
+          en: Excellent
+          fr: Excellente
         description:
-          en: The best health you can imagine
-          fr: La meilleure santé que vous puissiez imaginer
+          en: Excellent health
+          fr: Santé excellente
   repeatable: unlimited
   # No `references`: no standard code fits this 0..100 scale. The SNOMED ids once
   # listed ("425058002", "104346004") are not valid SCTIDs, and the LOINC codes were

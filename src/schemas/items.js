@@ -570,7 +570,7 @@ const itemSchema = {
       // transferrin saturation and the WBC differential are genuine fractions, so they
       // store 0..1 on `ratio/proportion` and render as `42%` via multiplier: 100.
       // Without this, a clinician-facing value would sit at rest in an alien scale.
-      // Precedent: `wellbeing-self-rated-health` does the same for a slider (EQ VAS).
+      // Precedent: `wellbeing-self-rated-health` does the same for a slider (self-rated health, 0..100).
       if: {
         properties: {
           type: { const: 'number' }
