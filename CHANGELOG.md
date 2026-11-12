@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.49.1] - 2026-11-12
+
+Display text only; stored values, key, stream and eventType unchanged.
+
+### Fixed
+- B-2026-10-28-42: `wellbeing-self-rated-health` no longer reproduces the EuroQol EQ VAS wording, which is
+  licensed. Description "How you rate your health overall." (was "Your overall health today."), anchors
+  "Very poor" / "Excellent" (were "The worst / best health you can imagine"); FR to match. A form that needs the
+  EQ VAS text carries it in its `itemCustomizations` (the doctor-dashboard `eq5d5l` preset does). Reviewed before
+  publishing (Fable).
+
 ## [3.49.0] - 2026-11-11
 
 Who asked for a questionnaire (B-2026-10-27-35). Additive: one optional key on an existing eventType.
