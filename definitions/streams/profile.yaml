@@ -22,3 +22,5 @@ children:
     name: Sex
   - id: profile-reproductive-stage
     name: Reproductive stage
+  - id: profile-preferences
+    name: Account preferences

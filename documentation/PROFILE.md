@@ -51,6 +51,15 @@ Both use `contact/country`, and they are different facts: where the person lives
 born. Birth country is fixed; address country is `once` only because the model keeps the current value
 rather than a relocation history. A study needing residency history should not read this item.
 
+## Account preferences: `profile-preferences`
+
+hds-lib `HDSProfile` keeps the account-level preferences (`settings/preferred-locales`, `settings/timezone`,
+`settings/date-format`, `settings/unit-system`) on the stream `profile-preferences`, under `profile`. They are
+settings, not items, so the stream carries **no item**. It is declared here (3.50.0, B-2026-11-12-3) so that a
+grant on it places it under `profile`: consent provisioning creates only the streams the model knows, and
+otherwise the core created it from the permission's `defaultName` at the root of the account (a practitioner's
+invite asks `read` on it for the patient's time zone, doctor-dashboard `withPatientTimeZonePermission`).
+
 ## Known gap
 
 The stream `profile-location` is declared in `definitions/streams/profile.yaml` but carries **no item**
@@ -62,7 +71,9 @@ Removing a published stream is a published-surface change, so it is recorded her
 Most items here are **directly identifying** (`profile-name`, `profile-surname`, `profile-date-of-birth`,
 `profile-avatar`) or **GDPR Article 9 special-category** (`profile-ethnicity`, collected for
 health-equity monitoring; `profile-reproductive-stage`, which is health data). The country items and
-`profile-display-name` are neither on their own, though they are identifying in combination.
+`profile-display-name` are neither on their own, though they are identifying in combination. The account
+preferences on `profile-preferences` (language, time zone, formats) are neither identifying nor Article 9, but a
+read grant on the `profile` root reaches them too.
 
 Leaf streams exist per fact precisely so an authorization can grant a display name without granting
 ethnicity or date of birth. Do not widen a request to the `profile` root when a leaf will do.

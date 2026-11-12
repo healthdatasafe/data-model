@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.50.0] - 2026-11-12
+
+One stream added under `profile`; no item, eventType or existing stream changed.
+
+### Added
+- **Stream `profile-preferences`** ("Account preferences"), child of `profile` (PROFILE.md § Account preferences):
+  where hds-lib `HDSProfile` already keeps the account's `settings/*` events. Declaring it lets consent
+  provisioning (hds-lib `appTemplates.offerStreamsToCreate`, used by hds-webapp and the account app) create it
+  under `profile` when a grant names it, instead of the core creating it at the account's root from the
+  permission's `defaultName` (B-2026-11-12-3: every practitioner invite asks `read` on it since doctor-dashboard
+  #43). No item: these are settings. Reviewed before publishing (Fable).
+
 ## [3.49.2] - 2026-11-12
 
 Display order only; method ids, models, stored values, keys, streams and eventTypes unchanged.
