@@ -37,9 +37,40 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.deepStrictEqual(itemsById['body-blood-serum-ferritin'].fhir.code, { system: 'http://loinc.org', code: '2276-4', display: 'Ferritin [Mass/volume] in Serum or Plasma' });
       // CA-125 is an arbitrary-unit property: UCUM U is the catalytic enzyme unit.
       assert.deepStrictEqual(itemsById['body-blood-serum-ca-125'].fhir.value.units, { 'concentration/u-ml': "[arb'U]/mL" });
-      for (const k of ['body-blood-cbc-basophils', 'body-blood-cbc-basophils-count', 'body-urine-hormones-lh', 'body-blood-serum-c-peptide', 'body-blood-serum-insulin-fasting']) {
+      for (const k of ['body-blood-cbc-basophils', 'body-blood-cbc-basophils-count', 'body-blood-serum-c-peptide', 'body-blood-serum-insulin-fasting']) {
         assert.strictEqual(itemsById[k].fhir, undefined, k);
       }
+    });
+
+    it('[FHIR-ITEM-10] urine hormones (4.0.0): LH on 15079-7 with its legacy item, E3G and PdG on the HDS item coding, each legacy item rendering in the true unit', () => {
+      const lab = {
+        us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab',
+        ips: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips'
+      };
+      const lhCode = { system: 'http://loinc.org', code: '15079-7', display: 'Lutropin [Units/volume] in Urine' };
+      const lh = itemsById['body-urine-hormones-lh'].fhir;
+      assert.deepStrictEqual(lh, { resourceType: 'Observation', category: 'laboratory', code: lhCode, value: { kind: 'quantity', units: { 'concentration/iu-l': '[IU]/L' } }, profiles: lab });
+      // The legacy LH item (mg-l, B-2026-07-15-1) holds IU/L numbers: same block, its own eventType rendering in [IU]/L.
+      const lhLegacy = itemsById['fertility-hormone-lh'];
+      assert.strictEqual(lhLegacy.deprecated, true);
+      assert.deepStrictEqual(lhLegacy.fhir, { ...lh, value: { kind: 'quantity', units: { 'concentration/mg-l': '[IU]/L' } } });
+      // No LOINC or SNOMED for the glucuronides: the code is the item's own coding, the unit is UCUM.
+      const hds = (key, display) => ({ system: 'https://hds.ngo/fhir/CodeSystem/item', code: key, display });
+      const e3g = itemsById['body-urine-hormones-e3g'].fhir;
+      assert.deepStrictEqual(e3g, { resourceType: 'Observation', category: 'laboratory', code: hds('body-urine-hormones-e3g', 'E3G (urine)'), value: { kind: 'quantity', units: { 'concentration/ug-l': 'ng/mL' } }, profiles: lab });
+      const pdg = itemsById['body-urine-hormones-pdg'].fhir;
+      // μg/mL stores on the legacy mg-l (the same quantity), so the block's UCUM unit is ug/mL on concentration/mg-l.
+      assert.deepStrictEqual(pdg, { resourceType: 'Observation', category: 'laboratory', code: hds('body-urine-hormones-pdg', 'PdG (urine)'), value: { kind: 'quantity', units: { 'concentration/mg-l': 'ug/mL' } }, profiles: lab });
+      // The legacy PdG item (iu-l) holds μg/mL numbers: same block, rendering in ug/mL.
+      const pdgLegacy = itemsById['fertility-hormone-pdg'];
+      assert.strictEqual(pdgLegacy.deprecated, true);
+      assert.deepStrictEqual(pdgLegacy.fhir, { ...pdg, value: { kind: 'quantity', units: { 'concentration/iu-l': 'ug/mL' } } });
+      for (const k of ['body-urine-hormones-lh', 'body-urine-hormones-e3g', 'body-urine-hormones-pdg']) {
+        assert.ok(fhirScopes['Observation|laboratory'].includes(k), `${k} is a laboratory grant root`);
+      }
+      // E3G and PdG stay without LOINC: the HDS coding is not a LOINC claim.
+      assert.strictEqual(itemsById['body-urine-hormones-e3g'].references?.loinc, undefined);
+      assert.strictEqual(itemsById['body-urine-hormones-pdg'].references?.loinc, undefined);
     });
 
     it('[FHIR-ITEM-8] proportions render in % with factor 100: SpO2 emits 2708-6 beside 59408-5; the lab percentages on their own stream', () => {
@@ -817,8 +848,11 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
     });
 
     it('[FHIR-SCOPE-11] the model\'s table; the committed lock is up to date (run npm run fhir:lock)', () => {
-      const lab = Object.entries(itemsById).filter(([, i]) => i.fhir?.category === 'laboratory').map(([, i]) => i.streamId).sort();
-      assert.strictEqual(lab.length, 99);
+      const labBlocks = Object.entries(itemsById).filter(([, i]) => i.fhir?.category === 'laboratory');
+      // 102 active items, plus the two legacy urine-hormone items (LH, PdG) whose stream is their replacement's.
+      assert.strictEqual(labBlocks.length, 104);
+      const lab = [...new Set(labBlocks.map(([, i]) => i.streamId))].sort();
+      assert.strictEqual(lab.length, 102);
       assert.deepStrictEqual(fhirScopes, {
         'Condition|problem-list-item': ['condition'],
         'Observation|laboratory': lab,

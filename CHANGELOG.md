@@ -1,5 +1,47 @@
 # Changelog
 
+## [4.0.0] - 2026-11-12
+
+FHIR mapping, plan 115 phase 1 slice 2 (the fertility volume), and the PdG unit defect it uncovered. **Breaking:**
+an existing item changes eventType (`body-urine-hormones-pdg`, below); its legacy item is re-added for the events
+already stored. Five `fhir` blocks. Needs the deployed hds-fhir-js only for what it already renders (`quantity`,
+static codes). Consumers: re-pin bridge-mira, hds-webapp and doctor-dashboard (an old bridge keeps writing PdG on
+`concentration/iu-l`, which now resolves to the legacy item). No eventType added: μg/mL stores on the legacy
+`concentration/mg-l` (1 μg/mL = 1 mg/L, AGENTS.md no-equivalent-types rule), shown with a display suffix.
+
+### Changed (breaking)
+- **`body-urine-hormones-pdg`** (v3) eventType `concentration/iu-l` → `concentration/mg-l`, shown μg/mL
+  (`number.display.suffix`, as ferritin shows ng/mL on `concentration/ug-l`). PdG has no international unit; Mira,
+  Inito and Proov report it in μg/mL, and every event written since the Plan 83 rename carried IU/L while the webapp
+  showed "IU/L". New events store the same number on the right type; events already stored as `iu-l` resolve to the
+  deprecated `fertility-hormone-pdg` (below). Consumers that pin the eventType or the item version re-pin.
+
+### Added
+- **`fertility-hormone-pdg`** (deprecated), stream `body-urine-hormones-pdg`, `concentration/iu-l`: the legacy home of
+  the PdG events written before this release, the LH pattern of B-2026-07-15-1. PdG has no international unit; the
+  stored numbers are Mira's μg/mL values (1 to 22) labelled IU/L, so only the type label was wrong, and an event
+  cannot be retyped in place. The key is the Plan 83 rename alias removed in 2.3.0, back with the same
+  streamId:eventType pair, so `findItemForEvent` resolves exactly the events that alias once did.
+- **`fhir` blocks** (`Observation|laboratory`, US Core `us-core-observation-lab`, IPS
+  `Observation-results-laboratory-pathology-uv-ips`), FHIR-MAPPING.md § Lab items:
+  - `body-urine-hormones-lh`: LOINC 15079-7 "Lutropin [Units/volume] in Urine" (ACTIVE, LOINC 2.83), `[IU]/L`.
+    `fertility-hormone-lh` (deprecated, `concentration/mg-l`, numbers in IU/L) carries the same block with
+    `units: { concentration/mg-l: "[IU]/L" }`, so its 264 legacy events render in the true unit; without it the
+    stream spanned `(unmapped)` and LH could not be granted.
+  - `body-urine-hormones-e3g`: no LOINC or SNOMED code for estrone-3-glucuronide (2259-0 is estrone itself), so the
+    static code is the **HDS item coding** `https://hds.ngo/fhir/CodeSystem/item` / `body-urine-hormones-e3g` /
+    "E3G (urine)", the coding the generic rendering already used, now with `ng/mL` (stored `concentration/ug-l`,
+    1 ng/mL = 1 μg/L), the category and the lab profiles. US Core binds a lab `code` to LOINC extensibly.
+  - `body-urine-hormones-pdg`: same shape, `body-urine-hormones-pdg` / "PdG (urine)", `ug/mL` on
+    `concentration/mg-l` (the same quantity); `fertility-hormone-pdg` carries the same block with
+    `units: { concentration/iu-l: "ug/mL" }`.
+- **Grant roots** `body-urine-hormones-e3g`, `body-urine-hormones-lh` (items `body-urine-hormones-lh`,
+  `fertility-hormone-lh`), `body-urine-hormones-pdg` (items `body-urine-hormones-pdg`, `fertility-hormone-pdg`) under
+  `Observation|laboratory` (102 roots), recorded in the lock. No `reviewed` entry: none of these streams was locked.
+- FHIR-MAPPING.md: the HDS item coding as a static code (§ code), deprecated items are never import keys (§ Import).
+- Tests `[ITMA-5]`, `[FHIR-ITEM-10]`; `[ITMA-1]`, `[ITMA-2]`, `[FHIR-ITEM-7]`, `[FHIR-SCOPE-11]` updated. Reviewed
+  before publishing (Fable): no new eventType, major version.
+
 ## [3.50.0] - 2026-11-12
 
 One stream added under `profile`; no item, eventType or existing stream changed.

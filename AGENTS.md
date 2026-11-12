@@ -258,7 +258,7 @@ Conventions, equivalences and rationale live **here in `AGENTS.md`**; per-domain
 
 **When the equivalent twin is a legacy type, the legacy type wins** — it mirrors Pryv's catalog and is what non-HDS consumers already speak. Do not add an HDS-flavoured spelling of a unit Pryv already defines.
 
-**History.** `concentration/mg-ml` (≡ `g-l`) and `concentration/mcg-ml` (≡ `mg-l`) were HDS-added alongside their legacy twins and **removed 2026-07-15** once this rule landed — both were referenced by zero itemDefs and zero consumers, so removal was clean. Had any itemDef used them, the itemDef would have been deprecated onto the legacy type and the eventType removal tracked as a separate issue instead.
+**History.** `concentration/mg-ml` (≡ `g-l`) and `concentration/mcg-ml` (≡ `mg-l`) were HDS-added alongside their legacy twins and **removed 2026-07-15** once this rule landed — both were referenced by zero itemDefs and zero consumers, so removal was clean. Had any itemDef used them, the itemDef would have been deprecated onto the legacy type and the eventType removal tracked as a separate issue instead. Applied 2026-11-12: `body-urine-hormones-pdg` left `iu-l` for `mg-l` with `display.suffix` μg/mL, not a new type.
 
 ### When adding a new **stream**
 
