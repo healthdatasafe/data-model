@@ -1347,6 +1347,11 @@
         "id": "profile-reproductive-stage",
         "name": "Reproductive stage",
         "parentId": "profile"
+      },
+      {
+        "id": "profile-preferences",
+        "name": "Account preferences",
+        "parentId": "profile"
       }
     ]
   },

@@ -1,6 +1,6 @@
 {
-  "version": "3.49.2",
-  "publicationDate": "2026-11-12T15:54:32.131Z",
+  "version": "3.50.0",
+  "publicationDate": "2026-11-12T18:38:50.143Z",
   "streams": [
     {
       "id": "activity",
@@ -1349,6 +1349,11 @@
         {
           "id": "profile-reproductive-stage",
           "name": "Reproductive stage",
+          "parentId": "profile"
+        },
+        {
+          "id": "profile-preferences",
+          "name": "Account preferences",
           "parentId": "profile"
         }
       ]
