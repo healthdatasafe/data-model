@@ -77,6 +77,11 @@ describe('[CNVX] Converters build output', () => {
       assert.strictEqual(new Set(orders).size, orders.length, 'method orders are distinct');
     });
 
+    it('[CNVC12] pickers list Creighton, Sensiplan, then Billings (3.49.2)', () => {
+      const sorted = pack.methods.slice().sort((a, b) => (a.order ?? 999) - (b.order ?? 999)).map(m => m.methodId);
+      assert.deepStrictEqual(sorted.slice(0, 4), ['creighton', 'sensiplan', 'billings', 'marquette']);
+    });
+
     // The coverline rule each method charts the basal temperature by (3.24.0). Rule ids are those of
     // model-cervical-fluid references/rules/coverline-rules.json; `none` = the method draws no coverline.
     const RULE_IDS = ['sympto-thermal', 'sensiplan', 'manual'];

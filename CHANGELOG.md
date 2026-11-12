@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.49.2] - 2026-11-12
+
+Display order only; method ids, models, stored values, keys, streams and eventTypes unchanged.
+
+### Changed
+- `cervical-fluid` converter: Billings `order` 10 → 35, between Sensiplan 30 and Marquette 40. hds-lib sorts the
+  methods by `order`, so method pickers read Creighton, Sensiplan, Billings, Marquette… (`pack.methods` itself stays
+  in directory order). `billings/v0.json` stays a byte copy of model-cervical-fluid 1.2.2, which carries the same
+  change. Test CNVC12 pins the first four. Reviewed before publishing (Fable).
+
 ## [3.49.1] - 2026-11-12
 
 Display text only; stored values, key, stream and eventType unchanged.
