@@ -1,6 +1,6 @@
 {
-  "version": "3.49.1",
-  "publicationDate": "2026-11-12T12:20:53.951Z",
+  "version": "3.49.2",
+  "publicationDate": "2026-11-12T15:54:32.131Z",
   "streams": [
     {
       "id": "activity",
@@ -28627,7 +28627,7 @@
   "converters": {
     "cervical-fluid": {
       "latestVersion": "v0",
-      "updatedAt": "2026-10-28T09:29:08.000Z"
+      "updatedAt": "2026-11-12T15:50:18.000Z"
     },
     "mood": {
       "latestVersion": "v0",
