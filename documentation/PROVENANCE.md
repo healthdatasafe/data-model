@@ -13,7 +13,7 @@ conventions below are contracts between HDS apps, documented here so every write
 | Key | Meaning | Defined in |
 |---|---|---|
 | `clientData.hdsInstrument` | The instrument a measure was taken with | this page |
-| `clientData.related.<eventId>` | A link to another event this one derives from or answers | this page; first used by [QUESTIONNAIRE.md](QUESTIONNAIRE.md) |
+| `clientData.related.<eventId>` | A link to another event this one derives from or answers (an entry typed in answer to a connection's request: [below](#an-entry-typed-in-answer-to-a-connections-request)) | this page; first used by [QUESTIONNAIRE.md](QUESTIONNAIRE.md) |
 | `clientData.hdsBasis` | Where a cycle value comes from: on the four cycle boundaries, `'predicted'` or `'confirmed'` by its source; on `fertility-cycles-coverline`, `'auto'` (computed by the method's rule) or `'manual'` (drawn or moved by the person) | [MENSTRUAL-CYCLE.md](MENSTRUAL-CYCLE.md) |
 | `clientData.hdsCustomField`, `clientData.hdsSystemFeature` | Custom-field and system-stream declarations | [CUSTOM-FIELDS-AND-SYSTEM.md](CUSTOM-FIELDS-AND-SYSTEM.md) |
 | `clientData.sourceKey` | The stable identity of an imported record in its source, for re-runs and removal | this page |
@@ -142,6 +142,33 @@ was read from.
 
 **Cross-system.** FHIR `Observation.derivedFrom` (a reference to the `DocumentReference`, `Observation` or
 `QuestionnaireResponse` it was derived from); for a questionnaire answer, the reference to the request.
+
+### An entry typed in answer to a connection's request
+
+When the person types an entry because a connection (a doctor, a carer, a study) asked for it, the app that saves it
+points at the request, so the conversation with that connection can show what she filled in for it, and nothing of
+her everyday logging.
+
+| She filled in | `related.<eventId>` points at |
+|---|---|
+| an item of a data set's one-off section (a FormSpec `permanent` section), from that connection's tasks | her accept event of that data set (`consent/accept-cmc`, the relationship's accept event id) |
+| the item a connection's reminder asks for, from the reminder ("Fill in") | the reminder (`notification/alert-cmc`) on her collectors stream of that relationship |
+
+- **Written by the app the person types it in**, at create, with any other `related` keys of the entry; when she
+  changes an existing entry from the task or the reminder instead, the same update adds the key to the entry's
+  `related` object, written whole. When the relationship's accept event is not known, no key is written. An app
+  that updates the entry later keeps the key. An entry recorded otherwise (her daily logging, a recurring section, a
+  device, an import) carries no such key, even when the item is one the connection reads.
+- **Not retroactive.** Entries saved before an app wrote the key are not marked, and no app adds one from a guess.
+- **The kind of link follows from the types**, as above: an entry and a `consent/accept-cmc` or a
+  `notification/alert-cmc` event: answers it.
+- **Visible to everyone who can read the entry**, like every `clientData` key: another reader sees that it points at
+  some event, by its id, usually cannot read that event (it sits on the person's own CMC streams), and can tell that
+  entries carrying the same id belong together. It carries no name and says nothing about who asked.
+- **A reader finds the answers to one connection** among the entries it reads, by the keys of that relationship's
+  accept events and reminders (ids in the person's account, not the connection's own copies), or with `events.get`
+  `clientData: [{ "path": "related.<eventId>", "eq": true }]`, one call per id. The accept event keeps its id when the
+  person accepts an updated data set (its copy of the data set is updated in place), so the link holds.
 
 ---
 
