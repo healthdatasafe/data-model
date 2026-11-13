@@ -1,6 +1,6 @@
 {
-  "version": "4.0.2",
-  "publicationDate": "2026-11-13T10:38:37.478Z",
+  "version": "4.1.0",
+  "publicationDate": "2026-11-13T11:10:08.350Z",
   "streams": [
     {
       "id": "activity",
@@ -11428,6 +11428,11 @@
       },
       "streamId": "condition",
       "eventType": "condition/coded-v1",
+      "duration": {
+        "mandatory": false,
+        "canBeNull": false,
+        "maxSeconds": 3153600000
+      },
       "type": "datasource-search",
       "datasource": "condition",
       "repeatable": "unlimited",
@@ -11445,7 +11450,8 @@
           "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-problems-health-concerns",
           "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips"
         }
-      }
+      },
+      "devNotes": "event.time is the onset (or the diagnosis date when that is all the source knows). Optional content.status is the FHIR clinicalStatus code (active, recurrence, relapse, inactive, remission, resolved); absent = not stated. An abated condition carries event.duration, time + duration being the abatement, and then status must be inactive, remission or resolved (FHIR con-4). No abatement is no duration key: never 0, never null. 0 is a real value (abated within the onset's own period) and needs an abated status like any duration. Partial onset and abatement dates follow PARTIAL-DATES.md (hdsTimePrecision, hdsEndPrecision). content.verificationStatus is reserved for the FHIR verification status (not stored yet). See documentation/CONDITION.md."
     },
     "consent-record": {
       "version": "v1",
@@ -24083,6 +24089,18 @@
                 }
               }
             }
+          },
+          "status": {
+            "description": "Condition.clinicalStatus code (FHIR condition-clinical); absent = not stated. With a duration (abated): inactive, remission or resolved.",
+            "type": "string",
+            "enum": [
+              "active",
+              "recurrence",
+              "relapse",
+              "inactive",
+              "remission",
+              "resolved"
+            ]
           },
           "notes": {
             "type": "string"
