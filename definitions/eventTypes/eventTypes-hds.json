@@ -1811,6 +1811,18 @@
             }
           }
         },
+        "status": {
+          "description": "Condition.clinicalStatus code (FHIR condition-clinical); absent = not stated. With a duration (abated): inactive, remission or resolved.",
+          "type": "string",
+          "enum": [
+            "active",
+            "recurrence",
+            "relapse",
+            "inactive",
+            "remission",
+            "resolved"
+          ]
+        },
         "notes": {
           "type": "string"
         }

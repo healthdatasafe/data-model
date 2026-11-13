@@ -34,20 +34,50 @@ And against `symptom-*`, which records what the patient **reports** rather than 
 established. Pelvic pain is a symptom; endometriosis is a condition. Both can be recorded, and for the
 same person they usually both are.
 
-## `repeatable: unlimited`, and the absence of a status field
+## `repeatable: unlimited`, status and abatement
 
 The item is `unlimited`, so a person can carry many conditions and record each as its own event.
 
-There is **no status field** on `condition/coded-v1` today — no active / resolved / in-remission, and no
-equivalent of FHIR `Condition.clinicalStatus`. Be careful about how much intent to read into that: it
-does not appear to have been decided either way. The nearest precedent is plan 71, which rejected
-per-domain *assertion* eventTypes, putting explicit-no / unknown / declined semantics on
-`questionnaire/answer-v1` instead. That is a related but different question: resolution status is a
-positive clinical attribute, not a negative or qualified assertion.
+Since 4.1.0 (plan 115 GAP H-6) a condition can say whether it is still there, and when it stopped:
 
-So if a deployment needs standalone resolution status, treat it as an open design question and take it to
-a plan, per `AGENTS.md` §4 — do not add a status property to the published type on the assumption that
-its absence was an oversight, nor on the assumption that it was settled.
+| What | Where | Values |
+|---|---|---|
+| Clinical status | `content.status` (optional) | `active`, `recurrence`, `relapse`, `inactive`, `remission`, `resolved`: the FHIR `Condition.clinicalStatus` codes (`condition-clinical`). Absent: not stated. |
+| Abatement | `event.duration` (optional, never `null`) | `time + duration` is when the condition abated. Absent: the abatement is not known. |
+
+The two go together under FHIR's con-4 rule: **a condition with a duration has status `inactive`, `remission` or
+`resolved`.** A duration with no status, or with `active`, `recurrence` or `relapse`, is a contradiction: the FHIR
+rendering refuses the event rather than emit it, and the importer refuses the resource.
+
+`event.time` stays the onset (or the diagnosis date when that is all the source knows, FHIR-MAPPING.md § Time). An
+absent duration never means "ongoing": whether the condition is still there is said by `status`, and a writer that
+does not know the abatement writes no duration at all. This is the opposite of the encounter and medication items,
+where `duration: null` is an ongoing period: a condition is an assertion about the patient, not a period of care, and
+the status carries that meaning on its own. Partial dates follow [PARTIAL-DATES.md](PARTIAL-DATES.md): the onset's
+precision is `clientData.hdsTimePrecision`; the abatement's, when different, `clientData.hdsEndPrecision`, with the
+end anchored at 12:00 UTC on the last day of its period ("resolved in March 2001" is `time + duration` =
+2001-03-31T12:00:00Z, `hdsEndPrecision: month`).
+
+**No abatement is no `duration` key: never `0`, never `null`.** `duration: 0` is a real value here, an abatement within
+the onset's own period ("diagnosed and resolved on 6 April 2016", or an onset known to the day and an abatement that
+same day), and like any duration it needs an abated status. Writers that use `0` or `null` for "no duration" elsewhere
+(a form's duration input, a diary that reads `0` as ongoing) must leave the key out on this item: the FHIR rendering
+refuses a `duration: 0` whose status is `active`, as it refuses any other duration without an abated status.
+
+### The second status: `verificationStatus`
+
+FHIR's `Condition.verificationStatus` (`condition-ver-status`: `unconfirmed`, `provisional`, `differential`,
+`confirmed`, `refuted`, `entered-in-error`) is **not stored yet**. The key is reserved: when it is added it will be
+`content.verificationStatus`, with those codes, next to `status`, so nothing else should be written there in the
+meantime. Current import behaviour (FHIR-MAPPING.md § Import): `refuted` and `entered-in-error` are refused (the
+source withdrew the diagnosis); `confirmed`, `provisional`, `differential` and `unconfirmed` import, and the qualifier
+is lost, so an imported event states the diagnosis without saying how sure the source was.
+
+The 4.1.0 addition is additive: events written before it carry neither key and read as "status not stated, abatement
+unknown", which is what they were. Until 4.1.0 this page said the absence of a status was an open question (the plan
+71 precedent, rejecting per-domain assertion types, is a different one: a status is a positive clinical attribute,
+not a negative or qualified assertion). It is settled now, by mapping the FHIR element as it is rather than inventing
+an HDS vocabulary.
 
 ## Encoding
 

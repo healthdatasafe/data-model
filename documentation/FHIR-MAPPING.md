@@ -489,8 +489,14 @@ resource always lands on the active item, in its current eventType.
   importer reports it as ambiguous and imports nothing.
 - **Withdrawn records** are refused: an Observation with `status` `entered-in-error` or `cancelled`, a Condition whose
   `verificationStatus` is `refuted` or `entered-in-error`. Placing them would state as fact what the source
-  retracted. Every other status imports as it is (`preliminary`, `amended`, `provisional`, `unconfirmed`, …); a
-  Condition's `clinicalStatus` (resolved, in remission) is not carried yet.
+  retracted. Every other status imports as it is (`preliminary`, `amended`, `provisional`, `unconfirmed`, …).
+- **A Condition's `clinicalStatus`** (4.1.0, CONDITION.md § status and abatement) imports as `content.status` when its
+  coding in `http://terminology.hl7.org/CodeSystem/condition-clinical` is one of the six codes (`active`, `recurrence`,
+  `relapse`, `inactive`, `remission`, `resolved`); another code or no coding leaves `status` out, the resource still
+  imports. Its abatement imports as `event.duration` (below, Time). An abatement whose status is not `inactive`,
+  `remission` or `resolved` (none, or an active-family code) contradicts FHIR's own rule (con-4) and is refused: the
+  importer never guesses which of the two is wrong. Export is the reverse: `content.status` renders as
+  `clinicalStatus`, no status renders none.
 
 **Values.**
 - `quantity`: the `valueQuantity` must have system `http://unitsofmeasure.org` and a `code` equal to one of the
@@ -534,15 +540,26 @@ clinical date: the importer records the facts at import time, as a profile entry
 `onsetDateTime`, else `onsetPeriod.start`, else `recordedDate`. The event time of a `condition-coded` event is when
 the patient has had the condition from (its onset, or the date of the diagnosis when that is all the source knows),
 not when someone wrote it down, as for the "March 1999" diagnosis of [PARTIAL-DATES.md](PARTIAL-DATES.md); so the
-rendering states it as `onsetDateTime`, and the import prefers the onset. A period's end is not kept: no `clientData`
-key holds it, and the mapped items are point events. A missing or unreadable date is rejected (a text onset such as
-`onsetString` included). Precision follows
+rendering states it as `onsetDateTime`, and the import prefers the onset. An `onsetPeriod`'s end is not kept (the
+onset is a moment). An Observation's `effectivePeriod.end` is not kept either: the mapped Observation items are point
+events. A missing or unreadable date is rejected (a text onset such as `onsetString` included). Precision follows
 [PARTIAL-DATES.md](PARTIAL-DATES.md): a full dateTime is the exact moment, `clientData.hdsTimePrecision: minute`; a
 truncated one (`YYYY`, `YYYY-MM`, `YYYY-MM-DD`) is the start of its period at 12:00 UTC with precision `year`, `month`
 or `day`. Export is the reverse: the date is truncated to the event's precision (`approx` gives the year and a note
 with `hdsTimeText`). A vital sign known only to the month or the year cannot be exported, since FHIR requires a
 vital sign's date to the day (vs-1), and is refused rather than padded to a day; so is a US Core screening answer
 (us-core-1).
+
+**Abatement** (4.1.0, `condition-coded` only). `abatementDateTime`, else `abatementPeriod.end`, becomes
+`event.duration` = abatement − `time`, in seconds; a truncated abatement is anchored at 12:00 UTC on the **last** day
+of its period (PARTIAL-DATES.md § Spans), and `clientData.hdsEndPrecision` is written when that precision differs from
+the onset's. An abatement whose period lies wholly before the onset's is refused (periods, not noon anchors: a
+date-only onset is its whole day; a zoneless end date gets 14 h of slack against a zoned onset instant, since a local
+date can lag it by that much); an end within the onset's period, or an onset within the end's ("onset
+2016-04-06T21:45, abated 2016-04-06"), is a span within one period, `duration: 0`. `abatementAge`, `abatementString`, `abatementRange` and
+`abatementBoolean` are not dates: the status is kept and the abatement dropped (no duration). Export: `time + duration`
+as `abatementDateTime`, truncated to `hdsEndPrecision`, else to `hdsTimePrecision`; a duration on an event whose status
+is not `inactive`, `remission` or `resolved` is refused (con-4), never rendered.
 
 **Provenance and idempotency** belong to the importing bridge, with the `clientData` keys of
 [PROVENANCE.md](PROVENANCE.md):

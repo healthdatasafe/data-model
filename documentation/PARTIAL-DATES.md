@@ -62,7 +62,7 @@ so `duration` = end − `time`.
 is `hdsEndPrecision: "approx"` with `hdsTimeText: "1997 – about 2000"`.
 
 A span within one period ("all of March 1999" at `day` precision, starting and ending the same day) has
-`duration: 0`; a point event has `duration: null`, so the two stay distinct. A span that is still running
+`duration: 0`; a point event has no duration, so the two stay distinct. A span that is still running
 (`duration: null` on a period item) is unchanged by this page.
 
 ## Rules
@@ -89,7 +89,9 @@ A span within one period ("all of March 1999" at `day` precision, starting and e
 | `year` | `YYYY` | `startDate` (the precision is lost) |
 | `approx` | `hdsTimeText` as a string where the element allows one (`Condition.onsetString`, R4 `Procedure.performedString`); otherwise `YYYY` of `time`, with `hdsTimeText` as a note (`dateTime` has no approximate form) | `startDate` (the precision is lost) |
 | span | `Period.start` / `Period.end`, each truncated to its own precision | `startDate` / `endDate` |
+| span of an abated condition (`condition-coded`, 4.1.0) | `Condition.onsetDateTime` = `time`, `Condition.abatementDateTime` = `time + duration`, each truncated to its own precision (`hdsEndPrecision`, else the start's) | n/a |
 
 FHIR import is the reverse: a truncated `dateTime` sets the start of its period at 12:00 UTC and the matching
-precision; a full `dateTime` sets `minute`. FHIR's offset is not a zone, so a round trip through FHIR keeps
-the moment and loses `hdsTimeZone`.
+precision; a full `dateTime` sets `minute`; a truncated end (`abatementDateTime`) is anchored at 12:00 UTC on the last
+day of its period, as "Spans" says, and sets `hdsEndPrecision` when it differs from the start's. FHIR's offset is not
+a zone, so a round trip through FHIR keeps the moment and loses `hdsTimeZone`.
