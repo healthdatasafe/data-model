@@ -1,6 +1,6 @@
 {
-  "version": "4.0.1",
-  "publicationDate": "2026-11-13T09:13:38.097Z",
+  "version": "4.0.2",
+  "publicationDate": "2026-11-13T10:38:37.478Z",
   "streams": [
     {
       "id": "activity",
@@ -28759,7 +28759,7 @@
     },
     "mood": {
       "latestVersion": "v0",
-      "updatedAt": "2026-10-27T11:01:29.000Z"
+      "updatedAt": "2026-11-13T09:47:38.000Z"
     }
   },
   "settings": {
