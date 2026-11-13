@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.0.1] - 2026-11-13
+
+Documentation; pack content unchanged.
+
+### Documentation
+- **PROVENANCE.md § An entry typed in answer to a connection's request** (plan 124 2.1, Fable-reviewed): an entry the
+  person types for a connection points at the request with `clientData.related.<eventId>: true`: her
+  `consent/accept-cmc` event of the data set for a one-off (`permanent`) section filled from that connection's tasks,
+  the `notification/alert-cmc` reminder for a reminder's "Fill in". Written at create, or added by the update when she
+  changes an existing entry from the task or the reminder; none when the accept event is not known; not retroactive;
+  recurring logging, devices and imports carry none. Visible to every reader of the entry (an id, entries sharing it
+  grouped, no name). Found per id with `clientData: [{ "path": "related.<eventId>", "eq": true }]`. The index row
+  points at it.
+
 ## [4.0.0] - 2026-11-12
 
 FHIR mapping, plan 115 phase 1 slice 2 (the fertility volume), and the PdG unit defect it uncovered. **Breaking:**
