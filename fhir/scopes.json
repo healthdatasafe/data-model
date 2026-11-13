@@ -2,6 +2,9 @@
   "Condition|problem-list-item": [
     "condition"
   ],
+  "DocumentReference|clinical-note": [
+    "documents"
+  ],
   "Observation|laboratory": [
     "body-blood-cbc-hematocrit",
     "body-blood-cbc-hemoglobin",

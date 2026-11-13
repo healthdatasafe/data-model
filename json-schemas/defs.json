@@ -124,49 +124,100 @@
           "from": {
             "enum": [
               "datasource",
-              "eventType"
+              "eventType",
+              "content"
             ]
           }
         },
         "required": [
           "from"
         ],
-        "if": {
-          "properties": {
-            "from": {
-              "const": "eventType"
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "from": {
+                  "const": "eventType"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "from": true,
+                "codings": {
+                  "type": "object",
+                  "minProperties": 2,
+                  "additionalProperties": {
+                    "$ref": "defs.json#/definitions/fhirCoding"
+                  }
+                }
+              },
+              "required": [
+                "codings"
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "from": {
+                  "const": "datasource"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "from": true,
+                "field": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$"
+                }
+              },
+              "required": [
+                "field"
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "from": {
+                  "const": "content"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "from": true,
+                "field": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$"
+                },
+                "translate": {
+                  "type": "object",
+                  "minProperties": 1,
+                  "propertyNames": {
+                    "pattern": "^(https?:|urn:)[^|]+\\|.+$"
+                  },
+                  "additionalProperties": {
+                    "$ref": "defs.json#/definitions/fhirCoding"
+                  }
+                },
+                "unknown": {
+                  "$ref": "defs.json#/definitions/fhirCoding"
+                }
+              },
+              "required": [
+                "field",
+                "translate",
+                "unknown"
+              ],
+              "additionalProperties": false
             }
           }
-        },
-        "then": {
-          "properties": {
-            "from": true,
-            "codings": {
-              "type": "object",
-              "minProperties": 2,
-              "additionalProperties": {
-                "$ref": "defs.json#/definitions/fhirCoding"
-              }
-            }
-          },
-          "required": [
-            "codings"
-          ],
-          "additionalProperties": false
-        },
-        "else": {
-          "properties": {
-            "from": true,
-            "field": {
-              "type": "string",
-              "pattern": "^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$"
-            }
-          },
-          "required": [
-            "field"
-          ],
-          "additionalProperties": false
-        }
+        ]
       },
       "else": {
         "$ref": "defs.json#/definitions/fhirCoding"
@@ -356,7 +407,8 @@
         "resourceType": {
           "enum": [
             "Observation",
-            "Condition"
+            "Condition",
+            "DocumentReference"
           ]
         },
         "category": {

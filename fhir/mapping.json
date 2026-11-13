@@ -70,6 +70,13 @@
         "code": "health-concern",
         "display": "Health Concern"
       }
+    },
+    "DocumentReference": {
+      "clinical-note": {
+        "system": "http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category",
+        "code": "clinical-note",
+        "display": "Clinical Note"
+      }
     }
   },
   "systems": {
