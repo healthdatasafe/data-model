@@ -1,5 +1,29 @@
 # Changelog
 
+## [4.1.0] - 2026-11-13
+
+Additive, plan 115 GAP H-6: an imported FHIR Condition keeps its clinical status and its abatement. No key, stream,
+eventType id or `fhir` block changes; the FHIR scope table and lock are unchanged. Needs hds-fhir-js 0.4.0 to render
+and import the new fields (an older hds-fhir-js ignores them).
+
+### Added
+- **`condition/coded-v1` `status`** (optional): the FHIR `Condition.clinicalStatus` code, `active`, `recurrence`,
+  `relapse`, `inactive`, `remission` or `resolved`; absent = not stated. Not required: every event written so far is
+  still valid.
+- **`condition-coded` `duration` block** (`mandatory: false`, `canBeNull: false`, 100 years as the UI hint):
+  `time + duration` is the abatement. No duration = abatement unknown, never "ongoing" (the status says that), so
+  `null` is not allowed, unlike the encounter and medication items, and `0` is a real value (abated within the onset's
+  period), never "no duration". `content.verificationStatus` is reserved for the FHIR verification status (not stored
+  yet; CONDITION.md). Rule (FHIR con-4): a duration requires status
+  `inactive`, `remission` or `resolved`; hds-fhir-js refuses the event on export and the resource on import otherwise.
+  A partial abatement date follows PARTIAL-DATES.md: anchored at 12:00 UTC on the last day of its period,
+  `clientData.hdsEndPrecision` when its precision differs from the onset's.
+
+### Documentation
+- CONDITION.md § status and abatement replaces the "no status field, undecided" section; FHIR-MAPPING.md § Import
+  (clinicalStatus, Abatement); PARTIAL-DATES.md cross-system table (the abated condition row, the end anchor on
+  import).
+
 ## [4.0.2] - 2026-11-13
 
 Display colours only; keys, stops and stored values unchanged.
