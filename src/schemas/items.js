@@ -77,32 +77,60 @@ const defsSchema = {
       additionalProperties: false
     },
     // The resource's code: a static coding, a source `{ from: datasource, field }` naming the dotted
-    // path in the event content where a datasets-service selection stored its `codes[]`, or
+    // path in the event content where a datasets-service selection stored its `codes[]`,
     // `{ from: eventType, codings }`, one coding per eventType of the item (a lab analyte measured in mass
-    // or in moles has two LOINC codes).
+    // or in moles has two LOINC codes), or `{ from: content, field, translate, unknown }`: the FHIR codings
+    // the content holds at `field` (a document's XDS typeCode), led by the coding `translate` gives for the
+    // first of them the table knows (`"<system>|<code>"` → coding, the terminology the resource's binding
+    // requires), else by `unknown`.
     fhirCode: {
       if: { type: 'object', required: ['from'] },
       then: {
         type: 'object',
-        properties: { from: { enum: ['datasource', 'eventType'] } },
+        properties: { from: { enum: ['datasource', 'eventType', 'content'] } },
         required: ['from'],
-        if: { properties: { from: { const: 'eventType' } } },
-        then: {
-          properties: {
-            from: true,
-            codings: { type: 'object', minProperties: 2, additionalProperties: { $ref: 'defs.json#/definitions/fhirCoding' } }
+        allOf: [
+          {
+            if: { properties: { from: { const: 'eventType' } } },
+            then: {
+              properties: {
+                from: true,
+                codings: { type: 'object', minProperties: 2, additionalProperties: { $ref: 'defs.json#/definitions/fhirCoding' } }
+              },
+              required: ['codings'],
+              additionalProperties: false
+            }
           },
-          required: ['codings'],
-          additionalProperties: false
-        },
-        else: {
-          properties: {
-            from: true,
-            field: { type: 'string', pattern: '^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$' }
+          {
+            if: { properties: { from: { const: 'datasource' } } },
+            then: {
+              properties: {
+                from: true,
+                field: { type: 'string', pattern: '^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$' }
+              },
+              required: ['field'],
+              additionalProperties: false
+            }
           },
-          required: ['field'],
-          additionalProperties: false
-        }
+          {
+            if: { properties: { from: { const: 'content' } } },
+            then: {
+              properties: {
+                from: true,
+                field: { type: 'string', pattern: '^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$' },
+                translate: {
+                  type: 'object',
+                  minProperties: 1,
+                  propertyNames: { pattern: '^(https?:|urn:)[^|]+\\|.+$' },
+                  additionalProperties: { $ref: 'defs.json#/definitions/fhirCoding' }
+                },
+                unknown: { $ref: 'defs.json#/definitions/fhirCoding' }
+              },
+              required: ['field', 'translate', 'unknown'],
+              additionalProperties: false
+            }
+          }
+        ]
       },
       else: { $ref: 'defs.json#/definitions/fhirCoding' }
     },
@@ -204,7 +232,7 @@ const defsSchema = {
     fhirMapping: {
       type: 'object',
       properties: {
-        resourceType: { enum: ['Observation', 'Condition'] },
+        resourceType: { enum: ['Observation', 'Condition', 'DocumentReference'] },
         // Required or refused per resourceType, from the category table in definitions/fhir/mapping.yaml.
         category: { type: 'string', minLength: 1 },
         // Further categories of the same table a resource may carry and still import here (import only).

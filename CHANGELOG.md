@@ -1,5 +1,34 @@
 # Changelog
 
+## [4.2.0] - 2026-11-13
+
+Additive, plan 115 GAP H-8 (documents through SMART on FHIR). One `fhir` block, one new scope key, one new category
+table and one new code source; no key, stream or eventType changes. Needs hds-fhir-js 0.5.0 to render (an older
+renderer skips the block: unknown resourceType, so a SMART app sees no document until the facade is updated).
+
+### Added
+- **`document` `fhir` block:** `DocumentReference`, category `clinical-note`, `code: { from: content, field: type,
+  translate, unknown }`, profile US Core `us-core-documentreference` (IPS has no DocumentReference profile). `translate`
+  leads `DocumentReference.type` with the LOINC document type US Core's required binding wants, for the four CH:EPR
+  typeCodes HDS's writers use (Laboratory report 11502-2, Consult Note 11488-4, Prescription for Medication 57833-6,
+  Diagnostic imaging study 18748-4; verified ACTIVE, `SCALE_TYP` Doc in the local LOINC release); any other type, the
+  "other documents" Record artifact included, leads with v3 NullFlavor `UNK`. The content codings follow as written.
+  DOCUMENTS.md § FHIR; FHIR-MAPPING.md § DocumentReference.
+- **Scope key `DocumentReference|clinical-note`** → `documents` in `pack.fhirScopes`; the lock gains the root. A grant
+  on it is a grant on every document, as a grant on the root is. The consent-screen label is hds-fhir-js's.
+- **Category table `DocumentReference`:** `clinical-note` (`us-core-documentreference-category`), the one key of the
+  US Core value set; the document's own XDS class renders as a second `category` coding.
+- **Code source `{ from: content, field, translate, unknown }`** (schema `fhirCode`; `checkContentField`): the FHIR
+  codings the content holds at `field`, led by the translation of the first the table knows, else `unknown`. A
+  `DocumentReference` takes this source and nothing else, and the source applies to a `DocumentReference` only (so a
+  renderer that predates it skips the block through its resourceType); one eventType; no `value`, `alsoMatch` or
+  `alsoEmit`. Import key: `DocumentReference|clinical-note from content`, one item per category. Tests
+  `[FHIR-SCH-4]`, `[FHIR-MAP-17]`.
+
+### Not done, on purpose
+- No import: `fromFhir` refuses the block until a writer that stores the file exists (D12 round trip pending).
+- `encounterId`, `pages` and "superseded by another document" are not rendered.
+
 ## [4.1.0] - 2026-11-13
 
 Additive, plan 115 GAP H-6: an imported FHIR Condition keeps its clinical status and its abatement. No key, stream,

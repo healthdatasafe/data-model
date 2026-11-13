@@ -759,6 +759,13 @@
         "condition-coded"
       ]
     },
+    "documents": {
+      "pair": "DocumentReference|clinical-note",
+      "parent": null,
+      "items": [
+        "document"
+      ]
+    },
     "lifestyle-tobacco-smoking": {
       "pair": "Observation|social-history",
       "parent": "lifestyle-tobacco",

@@ -34,6 +34,11 @@ legacy urine LH typed mg/L: that item now carries the same block, rendering its 
 body temperature (fertility charting) and that reading's disturbance flag, both unmapped, so a grant on it would
 over-grant; mapping it means deciding whether a reader of vital signs may see the basal readings and their flags.
 
+**Documents (4.2.0):** the `document` item carries a `DocumentReference|clinical-note` block, the first block on a
+resourceType other than Observation and Condition, and the first whose code comes from the content
+([DocumentReference: documents](#documentreference-documents)). Needs hds-fhir-js 0.5.0 to render; an older renderer
+skips it (unknown resourceType), and a SMART app then sees no document.
+
 An item's `fhir:` block says how its events **render as** a FHIR R4 resource and how a FHIR resource **imports
 back** into an event of that item. HDS uses it in three ways:
 
@@ -92,6 +97,7 @@ Entries are additive: a published category key or system label is never renamed 
 |---|---|---|
 | Observation | `vital-signs`, `social-history`, `survey`, `laboratory`, `exam`, `imaging`, `procedure`, `therapy`, `activity` (system `http://terminology.hl7.org/CodeSystem/observation-category`) | yes |
 | Condition | `problem-list-item`, `encounter-diagnosis` (system `http://terminology.hl7.org/CodeSystem/condition-category`), `health-concern` (system `http://hl7.org/fhir/us/core/CodeSystem/condition-category`) | yes |
+| DocumentReference | `clinical-note` (system `http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category`), the one key of the US Core category value set: every HDS document, whatever its XDS class (4.2.0) | yes |
 
 A resourceType that has a table must carry a `category` from it; a resourceType without a table takes none (Patient).
 The SMART scope key is `ResourceType|category` for a resourceType with a table, and the bare resourceType otherwise
@@ -107,10 +113,10 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 
 | Field | Required | Meaning |
 |---|---|---|
-| `resourceType` | yes | `Observation` or `Condition` (`Patient` is an [element block](#patient-elements)). *Permanent.* |
+| `resourceType` | yes | `Observation`, `Condition` or `DocumentReference` ([documents](#documentreference-documents); `Patient` is an [element block](#patient-elements)). *Permanent.* |
 | `category` | per resourceType (table above) | Category key. *Permanent.* |
 | `alsoMatchCategories` | no | Further category keys of the same table that a resource may carry and still import into this item, **on import only**, never emitted (smoking status filed under `survey` by older sources). Never the block's own category. |
-| `code` | yes | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }` or `{ from: eventType, codings }` (below). |
+| `code` | yes | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }`, `{ from: eventType, codings }` or `{ from: content, field, translate, unknown }` (below). |
 | `alsoMatch` | no | Extra codings accepted **on import only**, never emitted. With a static code, a list; with an eventType code, keyed by the eventType each names (`{ concentration/mg-dl: [codings] }`). Never with a datasource code. |
 | `alsoEmit` | no | Extra codings **emitted only**, after the static code in `code.coding`, never an import key: the second code a profile requires (US Core pulse oximetry wants 2708-6 beside 59408-5). A list, with a static code only. A resource that carries an `alsoEmit` coding without the code does not match the item. |
 | `value` | no | FHIR `value[x]`, by `kind` (below). Absent on a Condition, which has no `value[x]`. |
@@ -122,7 +128,7 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 non-empty `code` and a `display`. The display is the code system's official display, copied exactly: it is what a
 reviewer checks the code against and what a reader falls back on.
 
-### `code`: static, from a datasource or from the eventType
+### `code`: static, from a datasource, from the eventType or from the content
 
 - **Static:** `code: { system: http://loinc.org, code: 72166-2, display: Tobacco smoking status }`. Every event of the
   item has this code. When no LOINC or SNOMED CT code exists for the analyte, the static code is the **HDS item
@@ -154,6 +160,14 @@ reviewer checks the code against and what a reader falls back on.
     concentration/mg-dl:
       - { system: http://loinc.org, code: 13457-7, display: "Cholesterol in LDL [Mass/volume] in Serum or Plasma by calculation" }
   ```
+- **From the content** (4.2.0, a `DocumentReference` only): `code: { from: content, field: type, translate, unknown }`.
+  The content at `field` already holds FHIR Codings (a document's XDS `type`, CH:EPR SNOMED CT codes), and they are
+  rendered as they are. The profile's binding may want another terminology (US Core binds `DocumentReference.type`,
+  **required**, to the LOINC Document Ontology plus v3 NullFlavor `UNK`), so `translate` maps `"<system>|<code>"` to
+  the coding that leads the concept: the first content coding the table knows gives it, else `unknown` does. The field
+  must be a content property of the item's one eventType holding a Coding or a list of them; a key never translates to
+  itself. No `alsoMatch`, no `alsoEmit`, no `value`. The item is matched on import by (resourceType, category) alone,
+  one content-coded item per category, like a datasource code.
 
 ### Value kinds
 
@@ -235,6 +249,50 @@ composite later cannot silently vanish from the FHIR rendering.
 `profiles: { us: <url>, ips: <url>, ch: <url> }`, each a profile of the IG version in `fhirMapping.flavours`. A
 flavour that is **absent renders the base resource, with no profile claim** (`meta.profile` is omitted). There is no
 `null`: absence is the statement. `{}` claims no profile in any flavour. A split entry has its own `profiles`.
+
+### DocumentReference: documents
+
+The `document` item (`documents` root, `file/xds-v1`, [DOCUMENTS.md](DOCUMENTS.md)) carries the one
+`DocumentReference` block (4.2.0, plan 115 GAP H-8). One event renders as one `DocumentReference` whose files are
+`Binary` resources the facade streams from the Pryv attachments; the block owns the metadata side only.
+
+```yaml
+document:
+  fhir:
+    resourceType: DocumentReference
+    category: clinical-note
+    code:
+      from: content
+      field: type
+      translate:
+        "http://snomed.info/sct|4241000179101": { system: http://loinc.org, code: 11502-2, display: Laboratory report }
+        # … Consult Note, Prescription for Medication, Diagnostic imaging study
+      unknown: { system: http://terminology.hl7.org/CodeSystem/v3-NullFlavor, code: UNK, display: unknown }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-documentreference
+```
+
+| Content, event | DocumentReference (hds-fhir-js `toFhir`) |
+|---|---|
+| `type[]` | `type.coding`: the translated LOINC document type (else `UNK`) first, then the content codings as written |
+| `class` | `category[1]`; `category[0]` is the block's `clinical-note` |
+| `status` | `status`: `superseded` as stored, else `current`. Whether another document supersedes this one is not looked up |
+| `supersedes[]` | `relatesTo[]` `{ code: replaces, target: DocumentReference/<id> }` |
+| `title` | `description`, and each attachment's `title` when the file has no name |
+| `language` | `content[].attachment.language` (left out when `und`) |
+| `creation`, else the event date | `content[].attachment.creation` |
+| `authors[]` | `author[]` as `display` only (name, organization, service joined): no Practitioner or Organization resource is served |
+| `practiceSetting`, `facilityType`, `event[]` | `context.practiceSetting`, `.facilityType`, `.event[]` |
+| `format` | `content[].format` |
+| `encounterId`, `pages` | not rendered (no Encounter resource is served; a page count has no element) |
+| event `time` | `date`, as an instant: the document's date on the timeline, what a `date` search filters (`created` is `Provenance.recorded`) |
+| `attachments[]` (Pryv) | one `content[]` per file: `attachment.contentType`, `size`, `title` (file name), `url` = `Binary/<eventId>.<fileId>` (absolute on the facade, relative in an export file); never the Pryv `readToken`; no `hash` (FHIR's is SHA-1, Pryv's integrity is sha256) |
+
+The category key is `clinical-note` for every document: US Core's category value set has that one code, and a grant on
+`DocumentReference|clinical-note` is a grant on `documents`, the whole of it, as DOCUMENTS.md says of the root. IPS has no
+DocumentReference profile, so the `ips` and `ch` flavours render the base resource. **Import is not implemented:** a
+DocumentReference matches the item by category (`matchResource`), and `fromFhir` refuses the block until a writer that
+stores the file exists; the block is permanent either way.
 
 ### Qualifiers: `companionOf`
 
@@ -326,6 +384,7 @@ computes the table and publishes it:
 ```json
 "fhirScopes": {
   "Condition|problem-list-item": ["condition"],
+  "DocumentReference|clinical-note": ["documents"],
   "Observation|vital-signs": ["body-blood-pressure", "body-heart-rate", "body-height", "body-oxygen-saturation", "body-weight"],
   "Patient": ["profile-address", "profile-date-of-birth", "profile-name", "profile-sex"]
 }
@@ -587,6 +646,9 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   Condition; `alsoMatch` only with a static code (a list) or an eventType code (keyed by the item's eventTypes); an
   eventType source covers exactly the item's eventTypes; per-option `alsoMatch` only on `coded`, keyed by option keys; `alsoMatchCategories` known keys of the
   resourceType's table, never the block's own category.
+- **Content code (`[FHIR-MAP-17]`):** a `DocumentReference` takes `{ from: content }` and nothing else, and the source
+  applies to a `DocumentReference` only; one eventType; the field holds a Coding or a list of them; `translate` keys
+  are `"<canonical system>|<code>"` and never translate to themselves; no `value`, no `alsoMatch`.
 - **LOINC (`[LABC-LOINC-1]`):** on an item that asserts `references.loinc`, an eventType coding is the code its unit
   option stores, and a static LOINC code is the code every unit option stores; a LOINC import key (code, eventType
   coding, `alsoMatch`) is never a code another active item owns (`references.loinc` or `references.loincMethod`).
@@ -596,7 +658,7 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   display, each once.
 - **Uniqueness:** codings unique within an item (code, `alsoMatch` and `alsoEmit`; options and their `alsoMatch`;
   code, `alsoMatch`, `alsoEmit`, components and splits); import keys unique across active items (a static code,
-  eventType coding or `alsoMatch` coding; a datasource source per category it accepts; a Patient element). A split
+  eventType coding or `alsoMatch` coding; a datasource or content source per category it accepts; a Patient element). A split
   code is not an import key: it may be another item's code, which then wins (`body-heart-rate` and the blood-pressure
   pulse). An `alsoEmit` coding is not an import key either, and is never another active item's import key or a LOINC
   code another item owns: the rendered resource would import back into that item.
