@@ -230,10 +230,24 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => checkItem(g, 'o'), /display/);
     });
 
-    it('[FHIR-SCH-4] a code source is `{ from: datasource, field }` or `{ from: eventType, codings }` and nothing else', () => {
+    it('[FHIR-SCH-4] a code source is `{ from: datasource, field }`, `{ from: eventType, codings }` or `{ from: content, field, translate, unknown }` and nothing else', () => {
       const a = item('condition-coded');
-      a.fhir.code.from = 'content';
+      a.fhir.code.from = 'stream';
       assert.throws(() => checkItem(a, 'c'), /allowed values/);
+      const ct = item('condition-coded');
+      ct.fhir.code.from = 'content';
+      assert.throws(() => checkItem(ct, 'c'), /must have required property 'translate'/);
+      const doc = item('document');
+      checkItem(doc, 'document');
+      const noUnknown = item('document');
+      delete noUnknown.fhir.code.unknown;
+      assert.throws(() => checkItem(noUnknown, 'document'), /must have required property 'unknown'/);
+      const badKey = item('document');
+      badKey.fhir.code.translate['SNOMED-CT|1'] = { system: 'http://loinc.org', code: '1', display: 'x' };
+      assert.throws(() => checkItem(badKey, 'document'), /propertyNames|pattern/);
+      const extra = item('document');
+      extra.fhir.code.codings = {};
+      assert.throws(() => checkItem(extra, 'document'), /additional properties/);
       const b = item('condition-coded');
       b.fhir.code.display = 'x';
       assert.throws(() => checkItem(b, 'c'), /additional properties/);
@@ -567,6 +581,45 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => checkItem(g, 's'), /display/);
     });
 
+    it('[FHIR-MAP-17] a DocumentReference takes its type from the content: one eventType, a field holding codings, translate keys "<system>|<code>" not to themselves, no value (plan 115 GAP H-8)', () => {
+      const doc = () => item('document');
+      check(doc(), 'document');
+      const a = doc();
+      a.fhir.code = coding('1');
+      assert.throws(() => check(a, 'document'), /a DocumentReference takes its type from the content/);
+      const b = item('condition-coded');
+      b.fhir.code = doc().fhir.code;
+      assert.throws(() => check(b, 'c'), /a content code source applies to a DocumentReference only/);
+      const c = doc();
+      c.fhir.code.field = 'title';
+      assert.throws(() => check(c, 'document'), /code.field "title" does not hold a FHIR Coding or a list of them/);
+      const c2 = doc();
+      c2.fhir.code.field = 'class';
+      check(c2, 'document'); // one Coding, not a list: also a coding field
+      const d = doc();
+      d.fhir.code.field = 'nope';
+      assert.throws(() => check(d, 'document'), /code.field "nope" is not a content property/);
+      const e = doc();
+      e.fhir.code.translate = { 'SNOMED-CT|1': coding('1') };
+      assert.throws(() => check(e, 'document'), /code.translate "SNOMED-CT\|1": a key is "<canonical system>\|<code>"/);
+      const f = doc();
+      f.fhir.code.translate = { 'http://loinc.org|1': coding('1') };
+      assert.throws(() => check(f, 'document'), /translates to itself/);
+      const g = doc();
+      g.fhir.value = { kind: 'coded', options: {} };
+      assert.throws(() => check(g, 'document'), /a DocumentReference has no value\[x\]/);
+      const h = doc();
+      h.fhir.alsoMatch = [coding('2')];
+      assert.throws(() => check(h, 'document'), /"alsoMatch" applies to a static or eventType code only/);
+      const two = doc();
+      two.eventType = undefined;
+      two.variations = { eventType: { options: [{ value: 'file/xds-v1' }, { value: 'file/attached' }] } };
+      assert.throws(() => checkFhirMapping('document', two, ['file/xds-v1', 'file/attached']), /exactly one eventType/);
+      // The import key: one content-coded item per (resourceType, category).
+      const { checkFhirImportKeys } = require('../src/fhir');
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: doc().fhir }, b: { fhir: doc().fhir } }), /fhir import key DocumentReference\|clinical-note from content is claimed by both "a" and "b"/);
+    });
+
     it('[FHIR-MAP-14] alsoMatchCategories: known keys of the resourceType table, never the block\'s own, refused without a table', () => {
       const a = item('lifestyle-tobacco-smoking');
       a.fhir.alsoMatchCategories = ['surveys'];
@@ -855,6 +908,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.strictEqual(lab.length, 102);
       assert.deepStrictEqual(fhirScopes, {
         'Condition|problem-list-item': ['condition'],
+        'DocumentReference|clinical-note': ['documents'],
         'Observation|laboratory': lab,
         'Observation|social-history': ['lifestyle-tobacco-smoking'],
         'Observation|survey': ['wellbeing-general-health'],

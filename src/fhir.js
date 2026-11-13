@@ -137,14 +137,21 @@ function checkFhirMapping (key, item, itemEventTypes) {
   const composite = item.composite;
   const mappedFields = new Set();
   const isDatasourceCode = f.code.from === 'datasource';
-  const codeCodings = f.code.from === 'eventType' ? Object.values(f.code.codings) : isDatasourceCode ? [] : [f.code];
+  const isContentCode = f.code.from === 'content';
+  const codeCodings = f.code.from === 'eventType' ? Object.values(f.code.codings) : isDatasourceCode || isContentCode ? [] : [f.code];
   const alsoMatchCodings = alsoMatchCodingsOf(f);
   const alsoEmitCodings = f.alsoEmit || [];
   if (f.alsoEmit != null && f.code.from != null) fail('"alsoEmit" applies to a static code only');
+  // A DocumentReference's type is the document's own codings, translated for the profile's binding (DOCUMENTS.md).
+  if (f.resourceType === 'DocumentReference' && !isContentCode) fail('a DocumentReference takes its type from the content: code: { from: content, field, translate, unknown }');
+  if (isContentCode && f.resourceType !== 'DocumentReference') fail('a content code source applies to a DocumentReference only (the renderer places it as DocumentReference.type)');
   if (isDatasourceCode) {
     checkDatasourceField(item, f.code.field, itemEventTypes, fail);
     if (f.alsoMatch != null) fail('"alsoMatch" applies to a static or eventType code only');
     mappedFields.add(f.code.field.split('.')[0]);
+  } else if (isContentCode) {
+    checkContentField(item, f.code, itemEventTypes, fail);
+    if (f.alsoMatch != null) fail('"alsoMatch" applies to a static or eventType code only');
   } else if (f.code.from === 'eventType') {
     // Each eventType renders its own code, and an imported code names one eventType back; so does an import-only
     // code, keyed by the eventType it names (a mass code never imports a moles quantity).
@@ -160,7 +167,7 @@ function checkFhirMapping (key, item, itemEventTypes) {
   }
   checkLoincAgreement(item, f, itemEventTypes, fail);
 
-  if (f.resourceType === 'Condition' && f.value != null) fail('a Condition has no value[x]; remove "value"');
+  if ((f.resourceType === 'Condition' || f.resourceType === 'DocumentReference') && f.value != null) fail(`a ${f.resourceType} has no value[x]; remove "value"`);
 
   const numericField = (what, k) => {
     const field = composite?.[k];
@@ -308,6 +315,31 @@ function checkDatasourceField (item, field, itemEventTypes, fail) {
     if (def?.type !== 'datasource-search') fail(`code.field "${field}" is not a datasource-search field of the composite`);
   } else if (item.type !== 'datasource-search') {
     fail(`a datasource code source applies to a datasource field; item type is "${item.type}"`);
+  }
+}
+
+/**
+ * A `code: { from: content, field, translate, unknown }` names, in the content of the item's one eventType, a FHIR
+ * Coding or a list of them (`{ system, code }` objects: a document's `type`). `translate` is keyed `"<system>|<code>"`
+ * with a canonical system; its codings and `unknown` are what the renderer leads the concept with, so none of them
+ * may be one of the keys' own (a translation to itself says nothing) and the keys name no system the field cannot
+ * hold a coding of.
+ */
+function checkContentField (item, code, itemEventTypes, fail) {
+  if (itemEventTypes.length !== 1) fail('a content code source needs an item with exactly one eventType');
+  let prop = eventTypesById(itemEventTypes[0]);
+  for (const s of code.field.split('.')) {
+    prop = prop?.type === 'object' ? prop.properties?.[s] : undefined;
+    if (prop == null) fail(`code.field "${code.field}" is not a content property of eventType "${itemEventTypes[0]}"`);
+  }
+  const coding = prop.type === 'array' ? prop.items : prop;
+  if (coding?.type !== 'object' || coding.properties?.system?.type !== 'string' || coding.properties?.code?.type !== 'string') {
+    fail(`code.field "${code.field}" does not hold a FHIR Coding or a list of them (objects with system and code)`);
+  }
+  for (const [k, c] of Object.entries(code.translate)) {
+    const [system, value] = [k.slice(0, k.indexOf('|')), k.slice(k.indexOf('|') + 1)];
+    if (!/^(https?:|urn:)/.test(system) || value === '') fail(`code.translate "${k}": a key is "<canonical system>|<code>"`);
+    if (c.system === system && c.code === value) fail(`code.translate "${k}" translates to itself`);
   }
 }
 
@@ -485,8 +517,8 @@ function ancestorsIn (parentOf, id) {
 
 /**
  * Import match keys are unique across active items: a resource matches an item by (resourceType, static code, an
- * eventType's code or alsoMatch coding), or by (resourceType, category, datasource code source) for each category the
- * block accepts (its own and its `alsoMatchCategories`), and must match one item only. A LOINC import key is never a
+ * eventType's code or alsoMatch coding), or by (resourceType, category, datasource or content code source) for each
+ * category the block accepts (its own and its `alsoMatchCategories`), and must match one item only. A LOINC import key is never a
  * code another active item owns (`references.loinc` or `references.loincMethod`, `[LABC-LOINC-1]`). A Patient element
  * is claimed by one active item only, so an imported Patient places each element in one item. A resource that states
  * no category can still fit two datasource-coded items of different categories; the importer reports that as
@@ -517,7 +549,8 @@ function checkFhirImportKeys (items) {
     if (item.deprecated || f == null || f.companionOf != null) continue;
     if (f.element != null) {
       claim(`${f.resourceType}.${f.element}`, key);
-    } else if (f.code.from === 'datasource') {
+    } else if (f.code.from === 'datasource' || f.code.from === 'content') {
+      // The resource's code is content, so the item is matched by (resourceType, category) alone: one per category.
       for (const c of [f.category, ...(f.alsoMatchCategories || [])]) {
         claim(`${f.resourceType}${c != null ? `|${c}` : ''} from ${f.code.from}`, key);
       }

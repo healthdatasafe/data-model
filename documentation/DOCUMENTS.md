@@ -12,6 +12,7 @@ document: the person keeps the file, and HDS keeps enough validated metadata to 
 | Stream | `documents` ("Medical documents"), a root with no children |
 | Item | `document`, `type: attachments`, `repeatable: any` (since 3.29.0) |
 | eventType | `file/xds-v1` |
+| FHIR | `DocumentReference` + `Binary`, SMART scope key `DocumentReference\|clinical-note` (since 4.2.0, [below](#fhir-documentreference-and-binary-420)) |
 
 **One root, no per-theme children.** A document's kind (lab report, letter, …) and its clinical theme are carried by
 its `class` and `type` codes, which become FHIR `DocumentReference.category` and `.type`, never by the stream it is
@@ -68,12 +69,56 @@ document:
   streamId: documents
   eventType: file/xds-v1
   repeatable: any
+  fhir:
+    resourceType: DocumentReference
+    category: clinical-note
+    code:
+      from: content
+      field: type
+      translate:
+        "http://snomed.info/sct|4241000179101": { system: http://loinc.org, code: 11502-2, display: Laboratory report }
+        "http://snomed.info/sct|371530004": { system: http://loinc.org, code: 11488-4, display: Consult Note }
+        "http://snomed.info/sct|761938008": { system: http://loinc.org, code: 57833-6, display: Prescription for Medication }
+        "http://snomed.info/sct|4201000179104": { system: http://loinc.org, code: 18748-4, display: Diagnostic imaging study }
+      unknown: { system: http://terminology.hl7.org/CodeSystem/v3-NullFlavor, code: UNK, display: unknown }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-documentreference
   devNotes: >-
     One event per document: the file (or its pages) as Pryv attachments, the DocumentEntry metadata as content. The
     kind of document is its class and type codes, not a stream, and the `documents` root is a new root so no existing
     grant covers it. Not entered through a form: the person imports a file (forms show "not editable here"). A
-    replacement is a new event listing the old one in `supersedes`. See documentation/DOCUMENTS.md.
+    replacement is a new event listing the old one in `supersedes`. FHIR: a DocumentReference whose files are
+    Binary resources (the `fhir` block, 4.2.0; IPS has no DocumentReference profile). See documentation/DOCUMENTS.md.
 ```
+
+## FHIR: DocumentReference and Binary (4.2.0)
+
+The `fhir` block above (plan 115 GAP H-8, [FHIR-MAPPING.md § DocumentReference](FHIR-MAPPING.md#documentreference-documents))
+makes a document readable by a SMART on FHIR app as one `DocumentReference` whose files are `Binary` resources:
+
+- **Scope key `DocumentReference|clinical-note`**, granted on `documents`: `patient/DocumentReference.rs` (with or
+  without `?category=clinical-note`) reaches every document, the sensitive ones included, as a grant on the root does.
+  The consent screen says so. **Every document carries `clinical-note`, administrative ones included** (an insurance
+  letter, a kind "other"): it is the one code of US Core's DocumentReference category value set, the class name US
+  Core gives everything a DocumentReference carries, not a claim about the document's content. The document's own
+  `class` rides as a second `category` coding, so what it is stays stated.
+- **`date`** is the event time (the document's date on the person's timeline), as an instant: it is what a `date`
+  search filters, so a client that re-searches with a returned date finds the document again. The document's own
+  authoring date and its precision are `content[].attachment.creation`; when the event was written is
+  `Provenance.recorded`.
+- **`type`:** the content's codings as written, led by the LOINC document type that US Core's required binding wants
+  (`translate`: Laboratory report 11502-2, Consult Note 11488-4, Prescription for Medication 57833-6, Diagnostic imaging
+  study 18748-4, each verified ACTIVE and `SCALE_TYP` Doc in the local LOINC release; the four CH:EPR typeCodes are the
+  ones HDS's own writers use, hds-webapp and doctor-dashboard). Any other type, "Record artifact" (other documents)
+  included, leads with v3 NullFlavor `UNK`, which the binding admits for exactly that case. The table is additive: a
+  CH:EPR type gets its LOINC row when a writer uses it and an equivalent exists.
+- **Files:** the facade serves `Binary/<eventId>.<fileId>` by streaming the Pryv attachment with its own exchanged
+  token, under the same grant as the DocumentReference. The Pryv `readToken` (a credential, on the account's host)
+  never reaches an app. In an export file the `url` is relative (`Binary/…`) and the file is not embedded.
+- **Not rendered:** `encounterId` (no Encounter resource), `pages`, and whether another document supersedes this one
+  (a reader would need a second query; the stored `status` is rendered as it is).
+- **Import** (D12) is not implemented: `fromFhir` refuses the block. A DocumentReference import needs a writer that
+  stores the file, so it comes with the first FHIR ingestion of documents.
 
 ## `file/xds-v1`
 
