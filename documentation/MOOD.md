@@ -347,23 +347,27 @@ ignores it is unaffected, and no other dimension has colours.
 
 | Stop | Label | `color` | Contrast vs white | Contrast vs `#121212` |
 |---|---|---|---|---|
-| 0 | Very unpleasant | `#c62828` | 5.6:1 | 3.3:1 |
-| 0.25 | Unpleasant | `#ef4444` | 3.8:1 | 5.0:1 |
-| 0.5 | Neutral | `#3b82f6` | 3.7:1 | 5.1:1 |
-| 0.75 | Pleasant | `#16a34a` | 3.3:1 | 5.7:1 |
-| 1 | Very pleasant | `#15803d` | 5.0:1 | 3.7:1 |
+| 0 | Very unpleasant | `#7551ab` | 6.0:1 | 3.1:1 |
+| 0.25 | Unpleasant | `#6f64b9` | 5.0:1 | 3.7:1 |
+| 0.5 | Neutral | `#6976c4` | 4.2:1 | 4.5:1 |
+| 0.75 | Pleasant | `#6487cb` | 3.6:1 | 5.2:1 |
+| 1 | Very pleasant | `#6298cf` | 3.0:1 | 6.2:1 |
 
-**How the colours were chosen.** The hues follow the request from hds-webapp's design work (red for
-unpleasant, blue for neutral, green for pleasant), starting from its tones.
-Each colour passes the WCAG 2.x non-text contrast minimum (3:1, SC 1.4.11) against both a white and a dark
-(`#121212`) background, so one value serves both themes; `[CNVM12]` checks it. Two of the starting tones
-were replaced: `#22c55e` (2.3:1 on white) by `#16a34a`, and `#b91c1c` (2.9:1 on `#121212`) by `#c62828`.
+**How the colours were chosen.** A neutral sequential scale (4.0.2, replacing the red / blue / green of
+3.20.0): how pleasant a person felt is not good or bad, so there are no alarm or approval colours (red /
+green). The colours run from violet to blue, evenly spaced in OKLCH (lightness 0.515 to 0.665, hue 300° to
+250°), lighter as the mood gets more pleasant. Lightness rises monotonically, so the order survives
+colour-vision deficiency and grey-scale; neighbouring stops stay close (about 1.2:1 in luminance) and are not
+reliably told apart in isolation. Each colour passes the WCAG 2.x non-text contrast minimum (3:1, SC 1.4.11)
+against both a white and a dark (`#121212`) background, so one value serves both themes; `[CNVM12]` checks
+it. That band (relative luminance about 0.12 to 0.30) is why the stops are close. With one value for both
+themes, the stop that stands out flips: on white the darkest ("Very unpleasant"), on dark the lightest.
 
 **Rules for consumers.**
 
 - **Pick the tone by nearest stop** on `content.vectors.valence`, never by a private threshold table, and
   show the stop's `label` (or a face) with the colour. Colour is never the only carrier of meaning (WCAG SC
-  1.4.1): red and green are the pair most often confused in colour-vision deficiency.
+  1.4.1): neighbouring stops differ only slightly, so the colour alone does not identify a stop.
 - The colour is a **display hint, not a clinical rating**. It says how pleasant the person reported
   feeling, not whether the mood is a concern.
 - The colour is decided here. An app that needs a different palette (a print view, a high-contrast mode)

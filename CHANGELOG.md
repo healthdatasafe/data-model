@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.0.2] - 2026-11-13
+
+Display colours only; keys, stops and stored values unchanged.
+
+### Changed: mood valence colours, a neutral sequential scale
+The five `color` values on the valence stops of `converters/mood` (plan 124 4.1, hds-webapp review B4, Fable-reviewed)
+change from red / blue / green (`#c62828`, `#ef4444`, `#3b82f6`, `#16a34a`, `#15803d`, 3.20.0) to a neutral scale
+from violet to blue, lighter as the mood gets more pleasant: `#7551ab`, `#6f64b9`, `#6976c4`, `#6487cb`, `#6298cf`.
+How pleasant a person felt is not good or bad, so no alarm or approval colours. Same key, same stops, same contrast
+rule (3:1 against white and `#121212`, `[CNVM12]`); only the hex values change. Consumers read them from the pack;
+the only copies of the old values in the workspace were hds-webapp test fixtures. MOOD.md § Valence stop colours
+updated.
+
 ## [4.0.1] - 2026-11-13
 
 Documentation; pack content unchanged.
