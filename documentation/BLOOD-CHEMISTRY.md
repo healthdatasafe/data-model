@@ -101,7 +101,7 @@ no value. Every analyte stores the number as the lab prints it.
 | **SI units as variations** | An analyte that labs print in two units offers both as `variations.eventType` options, conventional unit first (the unit the item had), SI unit second: `body-blood-serum-glucose-fasting` from the start; since the lab-units release (3.21.0) the lipids, calcium, creatinine, the reproductive, adrenal and thyroid hormones, vitamin D (both forms), B12 and folate (site-agents#20); since 3.30.0 magnesium, total bilirubin, iron, TIBC, zinc, copper, vitamin A, C-peptide, PTH (pmol/L), hemoglobin, albumin, total protein and globulin (g/L), hs-CRP (mg/dL), ceruloplasmin (mg/L) and urea on `body-blood-serum-bun` (below); the items added in 3.32.0
 are two-unit from the start, US conventional first (random glucose, direct bilirubin, phosphate, haptoglobin, IgG,
 IgA, IgM, CRP, MCHC, fibrinogen; plan 114 Q15). The writer picks the option matching the **printed** unit; nothing is converted at write time. One type was added for it, `concentration/pmol-l` (no pryv type exists; it is a decade apart from `nmol-l`, so not an equivalent twin). On a `ug-l` item the option label reads **ng/mL**, how those analytes are printed; such items no longer carry an item-level `number.display.suffix`, which renderers apply whatever the unit and would put "ng/mL" on a pmol/L value (`[UCNV-VAR-3]`). A third unit is appended after the two, never inserted before them: total testosterone offers ng/dL, nmol/L, then ng/mL; C-peptide ng/mL, nmol/L, then pmol/L; ceruloplasmin mg/dL, mg/L, then g/L; haptoglobin mg/dL, g/L, then mg/L (3.33.0, as importers print it). |
-| **A ratio with a fixed denominator** | INR (`body-blood-coagulation-inr`, 3.33.0) is a `type: number` item on the legacy `ratio/generic` with an authored `ratioRelativeTo: 1` (plan 114 Q8): stored `{ value: 2.5, relativeTo: 1 }`, never a bare number, so a reader takes `content.value` (hds-lib `labNumberOf`). FHIR export: `valueQuantity` with UCUM `{INR}`. Not convertible to the prothrombin time or Quick %, which depend on the reagent. Rules in `AGENTS.md` § ratio/generic. |
+| **A ratio with a fixed denominator** | INR (`body-blood-coagulation-inr`, 3.33.0) is a `type: number` item on the legacy `ratio/generic` with an authored `ratioRelativeTo: 1` (plan 114 Q8): stored `{ value: 2.5, relativeTo: 1 }`, never a bare number, so a reader takes `content.value` (hds-lib `labNumberOf`). FHIR export: `valueQuantity` with UCUM `{INR}` (the `ratio-quantity` value kind, FHIR-MAPPING.md § Value kinds). Not convertible to the prothrombin time or Quick %, which depend on the reagent. Rules in `AGENTS.md` § ratio/generic. |
 | **Urea and urea nitrogen** | `body-blood-serum-bun` stores **urea nitrogen** in mg/dL (BUN, LOINC `3094-0`) and **urea** in mmol/L (option "Urea mmol/L", LOINC `22664-7`): labs that report in SI print urea, not its nitrogen, and one mole of urea carries two nitrogen atoms, so mg/dL → mmol/L is 10 / 28.014 = 0.3570. **Urea printed in mg/dL** (the mass of urea, LOINC `3091-6`, as some European labs print it) is not this item's mg/dL, which would read it 2.14 times too high, and it has no option of its own: the two would share `concentration/mg-dl`. Store it as printed in `lab-result/coded-v1` under `3091-6` with UCUM `mg/dL`; it is never converted into the item. |
 | **Endocrine reporting units (2.1.0)** | The reproductive/adrenal & thyroid extension added `concentration/ng-dl` (T3/T4, testosterone, androstenedione, 17-OHP, aldosterone), `concentration/nmol-l` (SHBG), `concentration/iu-ml` (TPO & thyroglobulin antibodies), `concentration/u-ml` (CA-125) and `rate/mm-h` (ESR). Each is a genuine scale difference from its nearest existing type (`ng-dl` ≠ `mcg-dl`/`pg-ml`/`ug-l`; `iu-ml` = 1000× `iu-l`; `u-ml` = 1000× `catalytic-activity/u-l`; `nmol-l` ≠ `umol-l`), not an equivalent twin. CA-125 is `concentration/u-ml`, **not** `catalytic-activity/u-ml`: the "U" is an arbitrary immunoassay unit, and `catalytic-activity/*` is reserved for the liver enzymes. |
 
@@ -363,8 +363,9 @@ false`): a misspelt `comparitor` fails validation instead of silently dropping i
 - **LOINC is per property.** Mass and substance concentrations of one analyte have different codes (bilirubin
   `1975-2` mass, `14631-6` substance). An item lists in `references.loinc` the code of every property its variations
   store, and **every unit option of such an item states the one it stores** (`variations.eventType.options[].loinc`,
-  3.32.0), `null` for a unit LOINC has no code for (the pmol/L of fasting insulin: LOINC has no fasting code in
-  moles; the untimed `body-blood-serum-insulin` has `14796-7`). Nothing is inherited: hemoglobin states `718-7` on g/dL and on g/L, so a unit added later (mmol/L) must
+  3.32.0), `null` for a unit LOINC has no code for (the pmol/L of 1,25-(OH)₂ vitamin D: LOINC has moles for
+  calcitriol alone, `14566-4`, not for the D2 + D3 total; fasting insulin in pmol/L stores `59179-2`, the untimed
+  `body-blood-serum-insulin` `14796-7`). Nothing is inherited: hemoglobin states `718-7` on g/dL and on g/L, so a unit added later (mmol/L) must
   state its own code and cannot export under the mass code. A FHIR export codes an event with its option's code; an
   item with one unit exports its single code. The loader checks that each option code is one of the item's, that
   every code is stored by an option, and that a one-unit number item asserts one code; a test checks that two options
@@ -375,8 +376,15 @@ false`): a misspelt `comparitor` fails validation instead of silently dropping i
   for the analyte whose LOINC definition does not match the stored value (Quick % as `5894-1`, § Codes) and
   discouraged codes still in use (LDH `2532-0`). **The exported code** (`loinc`) is the methodless one; where LOINC
   has none, it is the code most reports use when the method does not change the number (hematocrit `4544-3`,
-  automated; PT `5902-2`; the coagulation assays), and no code at all when it does (eGFR, one code per equation; LDH,
-  one per reaction direction). One owner per code holds over both lists (`[LABC-LOINC-1]`).
+  automated; PT `5902-2`; the coagulation assays), and no code at all when it does and LOINC has no neutral code (LDH,
+  one ACTIVE code per reaction direction, the methodless `2532-0` DISCOURAGED). **eGFR** exports `69405-9`, which
+  states a GFR per 1.73 m² with no equation and no marker; the equation changes the number and is not stored, so the
+  per-equation creatinine-based codes are owned (`loincMethod`) and never exported. One owner per code holds over
+  both lists (`[LABC-LOINC-1]`). **In FHIR** an item
+  that exports no LOINC code renders the HDS item coding (`https://hds.ngo/fhir/CodeSystem/item` with the item key),
+  and so does the one unit of an item LOINC has no code for (`loinc: null`); the owned codes are the block's import
+  keys (`alsoMatch`), so a resource coded with one lands on the item and the export states no method, equation or
+  direction the event does not carry (FHIR-MAPPING.md § code).
 - **Stored as printed, never converted.** No variations, no factors. A reader never converts a coded value, and draws
   a series only from events with the same code and the same `unit` (hds-lib `labSeriesKey`).
 - **Reference range, flag, interpretation:** the `clientData` keys of § The printed reference range, unchanged; the
@@ -523,7 +531,9 @@ and kept, so existing events still resolve and render; new data uses `body-urine
   (`ValueSet/$expand` on `http://loinc.org/vs` with a name filter), each code then checked by `$lookup` for status,
   property, system and Long Common Name against its item, and each option's code against the option's unit (mass,
   substance, arbitrary units, count). Left without a code, each saying why in the YAML: the PdG and E3G urine items,
-  `body-semen-tmc`, the pmol/L of fasting insulin and of 1,25-(OH)₂ vitamin D. Serum bicarbonate (`1963-8`) is owned
+  `body-semen-tmc`, the pmol/L of fasting insulin and of 1,25-(OH)₂ vitamin D (fasting insulin wrongly: `59179-2`
+  "Insulin [Moles/volume] in Serum or Plasma --fasting" exists, found in loinc-db and asserted in the labs slice;
+  eGFR likewise gained `69405-9` then). Serum bicarbonate (`1963-8`) is owned
   by `body-blood-serum-co2` (its SNOMED concept is the bicarbonate measurement; routine analysers report one figure
   under either name), exported as total CO2 (`2028-9`). Corrected: AMH is `38476-8` (an earlier note
   read `38476-3`, which does not exist); the semen comments citing `32623-1` (a platelet code), `11250-3` and

@@ -56,11 +56,18 @@ describe('[FIN] Fertility-intake items (3.44.0, 3.45.0)', () => {
         [['concentration/uiu-ml', 'concentration/pmol-l']]);
     });
 
-    it('[FIN-INS-5] the fhir block codes each unit with its option code; the fasting twin stays unmapped', () => {
+    it('[FIN-INS-5] the fhir block codes each unit with its option code, on both twins; the fasting pmol/L stores 59179-2 (it stored no code until the labs slice)', () => {
       const codings = item.fhir.code.codings;
       for (const { value, loinc } of item.variations.eventType.options) assert.strictEqual(codings[value].code, loinc, value);
       assert.strictEqual(item.fhir.category, 'laboratory');
-      assert.strictEqual(fasting.fhir, undefined);
+      assert.deepStrictEqual(fasting.fhir.code.codings, {
+        'concentration/uiu-ml': { system: 'http://loinc.org', code: '27873-9', display: 'Insulin [Units/volume] in Serum or Plasma --fasting' },
+        'concentration/pmol-l': { system: 'http://loinc.org', code: '59179-2', display: 'Insulin [Moles/volume] in Serum or Plasma --fasting' }
+      });
+      for (const { value, loinc } of fasting.variations.eventType.options) assert.strictEqual(fasting.fhir.code.codings[value].code, loinc, value);
+      assert.deepStrictEqual(fasting.references.loinc, ['27873-9', '59179-2']);
+      // The untimed moles code stays the untimed twin's.
+      assert.ok(!fasting.references.loinc.includes('14796-7') && item.references.loinc.includes('14796-7'));
     });
 
     it('[FIN-INS-4] each unit resolves to its own item, untimed and fasting apart', () => {

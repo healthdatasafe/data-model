@@ -1,6 +1,22 @@
 {
   "formatVersion": 2,
   "streams": {
+    "body-blood-cbc-basophils": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-cbc",
+      "items": [
+        "body-blood-cbc-basophils",
+        "body-blood-cbc-basophils-count"
+      ]
+    },
+    "body-blood-cbc-eosinophils": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-cbc",
+      "items": [
+        "body-blood-cbc-eosinophils",
+        "body-blood-cbc-eosinophils-count"
+      ]
+    },
     "body-blood-cbc-hematocrit": {
       "pair": "Observation|laboratory",
       "parent": "body-blood-cbc",
@@ -13,6 +29,14 @@
       "parent": "body-blood-cbc",
       "items": [
         "body-blood-cbc-hemoglobin"
+      ]
+    },
+    "body-blood-cbc-lymphocytes": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-cbc",
+      "items": [
+        "body-blood-cbc-lymphocytes",
+        "body-blood-cbc-lymphocytes-count"
       ]
     },
     "body-blood-cbc-mch": {
@@ -43,6 +67,14 @@
         "body-blood-cbc-metamyelocytes"
       ]
     },
+    "body-blood-cbc-monocytes": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-cbc",
+      "items": [
+        "body-blood-cbc-monocytes",
+        "body-blood-cbc-monocytes-count"
+      ]
+    },
     "body-blood-cbc-mpv": {
       "pair": "Observation|laboratory",
       "parent": "body-blood-cbc",
@@ -55,6 +87,30 @@
       "parent": "body-blood-cbc",
       "items": [
         "body-blood-cbc-myelocytes"
+      ]
+    },
+    "body-blood-cbc-neutrophils": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-cbc",
+      "items": [
+        "body-blood-cbc-neutrophils",
+        "body-blood-cbc-neutrophils-count"
+      ]
+    },
+    "body-blood-cbc-neutrophils-band": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-cbc",
+      "items": [
+        "body-blood-cbc-neutrophils-band",
+        "body-blood-cbc-neutrophils-band-count"
+      ]
+    },
+    "body-blood-cbc-neutrophils-segmented": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-cbc",
+      "items": [
+        "body-blood-cbc-neutrophils-segmented",
+        "body-blood-cbc-neutrophils-segmented-count"
       ]
     },
     "body-blood-cbc-nucleated-rbc": {
@@ -85,11 +141,26 @@
         "body-blood-cbc-rdw"
       ]
     },
+    "body-blood-cbc-reticulocytes": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-cbc",
+      "items": [
+        "body-blood-cbc-reticulocytes",
+        "body-blood-cbc-reticulocytes-count"
+      ]
+    },
     "body-blood-cbc-reticulocytes-hemoglobin": {
       "pair": "Observation|laboratory",
       "parent": "body-blood-cbc",
       "items": [
         "body-blood-cbc-reticulocytes-hemoglobin"
+      ]
+    },
+    "body-blood-cbc-reticulocytes-immature-fraction": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-cbc",
+      "items": [
+        "body-blood-cbc-reticulocytes-immature-fraction"
       ]
     },
     "body-blood-cbc-wbc": {
@@ -111,6 +182,20 @@
       "parent": "body-blood-coagulation",
       "items": [
         "body-blood-coagulation-fibrinogen"
+      ]
+    },
+    "body-blood-coagulation-inr": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-coagulation",
+      "items": [
+        "body-blood-coagulation-inr"
+      ]
+    },
+    "body-blood-coagulation-prothrombin-activity": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-coagulation",
+      "items": [
+        "body-blood-coagulation-prothrombin-activity"
       ]
     },
     "body-blood-coagulation-prothrombin-time": {
@@ -246,6 +331,13 @@
         "body-blood-serum-bun"
       ]
     },
+    "body-blood-serum-c-peptide": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-serum",
+      "items": [
+        "body-blood-serum-c-peptide"
+      ]
+    },
     "body-blood-serum-ca-125": {
       "pair": "Observation|laboratory",
       "parent": "body-blood-serum",
@@ -342,6 +434,13 @@
       "parent": "body-blood-serum",
       "items": [
         "body-blood-serum-dhea-s"
+      ]
+    },
+    "body-blood-serum-egfr": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-serum",
+      "items": [
+        "body-blood-serum-egfr"
       ]
     },
     "body-blood-serum-estradiol": {
@@ -456,11 +555,25 @@
         "body-blood-serum-insulin"
       ]
     },
+    "body-blood-serum-insulin-fasting": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-serum",
+      "items": [
+        "body-blood-serum-insulin-fasting"
+      ]
+    },
     "body-blood-serum-iron": {
       "pair": "Observation|laboratory",
       "parent": "body-blood-serum",
       "items": [
         "body-blood-serum-iron"
+      ]
+    },
+    "body-blood-serum-ldh": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-serum",
+      "items": [
+        "body-blood-serum-ldh"
       ]
     },
     "body-blood-serum-lh": {
@@ -561,6 +674,13 @@
         "body-blood-serum-testosterone-free"
       ]
     },
+    "body-blood-serum-testosterone-total": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-serum",
+      "items": [
+        "body-blood-serum-testosterone-total"
+      ]
+    },
     "body-blood-serum-thyroglobulin": {
       "pair": "Observation|laboratory",
       "parent": "body-blood-serum",
@@ -659,6 +779,13 @@
         "body-blood-serum-vitamin-c"
       ]
     },
+    "body-blood-serum-vitamin-d-125oh": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-serum",
+      "items": [
+        "body-blood-serum-vitamin-d-125oh"
+      ]
+    },
     "body-blood-serum-vitamin-d-25oh": {
       "pair": "Observation|laboratory",
       "parent": "body-blood-serum",
@@ -699,6 +826,48 @@
       "parent": "body-semen",
       "items": [
         "body-semen-concentration"
+      ]
+    },
+    "body-semen-dna-fragmentation": {
+      "pair": "Observation|laboratory",
+      "parent": "body-semen",
+      "items": [
+        "body-semen-dna-fragmentation"
+      ]
+    },
+    "body-semen-morphology-normal": {
+      "pair": "Observation|laboratory",
+      "parent": "body-semen",
+      "items": [
+        "body-semen-morphology-normal"
+      ]
+    },
+    "body-semen-motility-progressive": {
+      "pair": "Observation|laboratory",
+      "parent": "body-semen",
+      "items": [
+        "body-semen-motility-progressive"
+      ]
+    },
+    "body-semen-motility-total": {
+      "pair": "Observation|laboratory",
+      "parent": "body-semen",
+      "items": [
+        "body-semen-motility-total"
+      ]
+    },
+    "body-semen-tmc": {
+      "pair": "Observation|laboratory",
+      "parent": "body-semen",
+      "items": [
+        "body-semen-tmc"
+      ]
+    },
+    "body-semen-vitality": {
+      "pair": "Observation|laboratory",
+      "parent": "body-semen",
+      "items": [
+        "body-semen-vitality"
       ]
     },
     "body-semen-volume": {

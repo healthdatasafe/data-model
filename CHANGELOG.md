@@ -1,5 +1,88 @@
 # Changelog
 
+## [4.5.0] - 2026-11-14
+
+Additive, plan 115 labs slice (the lab items 4.3.0 left unmapped). 31 `fhir` blocks, all `Observation|laboratory`; one
+new value kind; two relaxations of the eventType code source and three new build rules; two LOINC codes newly
+asserted (`59179-2`, a fix, and `69405-9`); no key, stream or eventType change.
+
+**Release order: this pack first, then hds-fhir-js, then the facade pin and the extension options.** hds-fhir-js 0.6.0
+is safe on this pack: it skips the INR block (unknown value kind), renders every other block, and on import only
+refuses a resource coded `2986-8` or `14633-2` (it reads a code that names two eventTypes as a contradiction), never
+misplacing one. The other order would leave the library's `check:pack` red until the pack publishes; `check:pack` is
+not relaxed. The facade pins the library and the pack hash, so production sees neither until the re-pin.
+
+### Fixed
+- **Fasting insulin in pmol/L stores LOINC `59179-2`** "Insulin [Moles/volume] in Serum or Plasma --fasting" (ACTIVE,
+  component `Insulin^post CFst`, the same as the item's `27873-9`). A defect published since 3.44.0:
+  `body-blood-serum-insulin-fasting` carried `loinc: null` on its pmol/L option and `devNotes` saying LOINC had no
+  such code, so a result coded `59179-2` matched no item. Now the option stores `59179-2`, `references.loinc` is
+  `["27873-9", "59179-2"]`, the `devNotes` say so (`14796-7` stays the untimed twin's), and the item's new block codes
+  pmol/L with it. A reader that took `null` to mean "no code" now reads a code; no stored event changes.
+- **eGFR is not coded per equation only:** `body-blood-serum-egfr` `devNotes` and BLOOD-CHEMISTRY.md said so; LOINC
+  has the equation-neutral `69405-9` (below).
+
+### Added
+- **The differential, percentage and absolute count together** (16 blocks): `body-blood-cbc-neutrophils`,
+  `-neutrophils-segmented`, `-neutrophils-band`, `-lymphocytes`, `-monocytes`, `-eosinophils`, `-basophils`,
+  `-reticulocytes` and their `-count` twins. **Why together:** the two items of a pair share one stream, and a grant
+  is a stream subtree; a block on one alone would have left the other, unmapped, readable through
+  `Observation|laboratory` without being rendered, which the build refuses (the one-pair invariant). With both mapped
+  the stream holds one pair and a grant reaches exactly what it renders. The percentage is a `scaled-quantity` in `%`
+  under the methodless LOINC code, the count a `quantity` in `10*6/mL`, `/uL` (and `10*9/mL` for reticulocytes) under
+  its `[#/volume]` code; the method codes each item owns are `alsoMatch`.
+- **Percentages on their own stream** (5): `body-blood-cbc-reticulocytes-immature-fraction` (`33516-6`),
+  `body-semen-motility-progressive` (`14194-5`), `-motility-total` (`6800-7`), `-vitality` (`10613-8`),
+  `-morphology-normal` (`10622-9`).
+- **Two units of one property** (2): `body-blood-serum-testosterone-total` (ng/dL and ng/mL `2986-8`, nmol/L
+  `14913-8`) and `body-blood-serum-c-peptide` (ng/mL `1986-9`, nmol/L and pmol/L `14633-2`). An eventType code source
+  may now give two eventTypes the same coding (same display); at least two distinct codings remain required, and the
+  units of a block stay distinct, so the unit picks the eventType on import; allowed only on an item that asserts
+  `references.loinc`, whose unit options bind the repeat (`[FHIR-MAP-23]`).
+- **Fasting insulin** (1): `body-blood-serum-insulin-fasting`, a code per unit, `27873-9` (μIU/mL) and `59179-2`
+  (pmol/L, see Fixed).
+- **The one unit LOINC has no code for** (1): `body-blood-serum-vitamin-d-125oh` renders its pmol/L under the HDS item
+  coding (`https://hds.ngo/fhir/CodeSystem/item` with the item key; LOINC has moles for calcitriol alone, `14566-4`)
+  and its pg/mL under `62290-2`. The build requires exactly that coding on an eventType whose option stores
+  `loinc: null`, and refuses it on any other (`checkLoincAgreement`, `[FHIR-MAP-23]`).
+- **eGFR** (1): `body-blood-serum-egfr` now asserts `references.loinc: ["69405-9"]` ("Glomerular filtration rate
+  [Volume Rate/Area] in Serum, Plasma or Blood by based on 1.73 sq M": equation-neutral, no marker) and its block
+  exports it in `mL/min/{1.73_m2}`; the seven per-equation creatinine-based codes it already owned are `alsoMatch`
+  (the equation is not kept). The item now owns a result sent under `69405-9` whatever its marker. Import limit: a
+  quantity in `mL/min` under `69405-9` (LOINC's example unit) is refused today, for the importing bridge to normalise.
+- **Items with no exportable LOINC code** (4), the HDS item coding as static code and the owned codes
+  (`references.loincMethod`) as `alsoMatch`: `body-blood-serum-ldh` (`14804-9`, `14805-6`, `2532-0`),
+  `body-blood-coagulation-prothrombin-activity` (`5894-1` import only, and only in `%`: the unit refuses a PT ratio
+  sent as a ratio), `body-semen-dna-fragmentation` (`104620-0`), `body-semen-tmc` (no import code, in `10*6`).
+- **Build rules** (`src/fhir.js`, each holding on the model today, `[FHIR-MAP-23]`): an item that asserts
+  `references.loinc` never carries a static code of another system (the HDS item coding included); an HDS item coding
+  is the item's own key (a deprecated alias keeps its replacement's); two eventTypes share a coding only on an item
+  that asserts `references.loinc`.
+- **`body-blood-coagulation-inr`** (`6301-6`) through the **new value kind `ratio-quantity`**
+  (`{ kind, units, relativeTo }`; schema `fhirValue`, `[FHIR-MAP-24]`): a `number` item on `ratio/generic` stores
+  `{ value, relativeTo }`; the block renders `value` in UCUM `{INR}` and states the item's `ratioRelativeTo`.
+- `pack.fhirScopes['Observation|laboratory']` gains 23 streams; the lock gains the same 23 roots (nothing rewritten).
+  Every code verified ACTIVE with its Long Common Name in loinc-db (LOINC 2.83) on 2026-11-14, `2532-0` DISCOURAGED
+  and import only. Tests `[FHIR-ITEM-12]`, `[FHIR-MAP-23]`, `[FHIR-MAP-24]`; `[FHIR-ITEM-7]`, `[FHIR-ITEM-8]`,
+  `[FHIR-MAP-17]`, `[FHIR-SCOPE-11]`, `[FIN-INS-5]` updated.
+
+### Changed
+- `body-blood-serum-insulin` `devNotes`: the sentence saying the fasting twin has no code in pmol/L.
+- FHIR-MAPPING.md: the medications paragraph says 4.3.0 (it read "unreleased").
+
+### Permanent
+- The 23 streams are `Observation|laboratory` for good (FHIR-MAPPING.md § Permanence). The codes a block emits can
+  still move from the HDS item coding to a LOINC code if LOINC, or the model, gains one (the item coding then becomes
+  an `alsoMatch`).
+
+### Not done, on purpose
+- The `lab-result/coded-v1` items (`body-blood-coded`, `body-urine-coded`, `body-csf-coded`) stay unmapped: the
+  result carries its own code and unit, which no block shape renders yet.
+- No other `references.loinc` change: LDH does not take the DISCOURAGED `2532-0`, the total motile count does not
+  take `107482-2`. Each is an ownership decision of the lab model, not of the FHIR mapping.
+- No unit alias on import (`mL/min` for eGFR, `10*3/uL` for the counts, `ng/mL`): one UCUM spelling per eventType, a
+  refusal otherwise (FHIR-MAPPING.md § Import).
+
 ## [4.4.0] - 2026-11-14
 
 Additive: localised names for consent screens. No key, id, parent, eventType or item change.

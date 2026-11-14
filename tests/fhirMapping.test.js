@@ -20,7 +20,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.strictEqual(itemsById['wellbeing-self-rated-health'].fhir, undefined);
     });
 
-    it('[FHIR-ITEM-7] lab: one LOINC code per unit when mass and moles differ, else a static code; lab profiles; no block on a stream shared with an unmapped item', () => {
+    it('[FHIR-ITEM-7] lab: one LOINC code per unit when mass and moles differ, else a static code; lab profiles', () => {
       const g = itemsById['body-blood-serum-glucose-fasting'].fhir;
       assert.deepStrictEqual(g.code, {
         from: 'eventType',
@@ -37,8 +37,97 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.deepStrictEqual(itemsById['body-blood-serum-ferritin'].fhir.code, { system: 'http://loinc.org', code: '2276-4', display: 'Ferritin [Mass/volume] in Serum or Plasma' });
       // CA-125 is an arbitrary-unit property: UCUM U is the catalytic enzyme unit.
       assert.deepStrictEqual(itemsById['body-blood-serum-ca-125'].fhir.value.units, { 'concentration/u-ml': "[arb'U]/mL" });
-      for (const k of ['body-blood-cbc-basophils', 'body-blood-cbc-basophils-count', 'body-blood-serum-c-peptide', 'body-blood-serum-insulin-fasting']) {
-        assert.strictEqual(itemsById[k].fhir, undefined, k);
+    });
+
+    it('[FHIR-ITEM-12] lab (plan 115 labs slice): a differential percentage and its count map together on their stream; two units of one property share their code; a unit or an item LOINC has no code for takes the HDS item coding, the owned method codes as import keys; eGFR exports the equation-neutral 69405-9; the INR is a ratio-quantity', () => {
+      const lab = {
+        us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab',
+        ips: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips'
+      };
+      const percent = { kind: 'scaled-quantity', units: { 'ratio/proportion': { unit: '%', factor: 100 } } };
+      const loinc = (code, display) => ({ system: 'http://loinc.org', code, display });
+      const hds = (key) => ({ system: 'https://hds.ngo/fhir/CodeSystem/item', code: key, display: itemsById[key].label.en });
+      const codes = (list) => (list || []).map((c) => c.code);
+
+      // The eight differential streams: both items mapped, the percentage in %, the count in its printed unit.
+      const pairs = { neutrophils: ['26511-6', '26499-4'], 'neutrophils-segmented': ['26505-8', '30451-9'], 'neutrophils-band': ['26508-2', '26507-4'], lymphocytes: ['26478-8', '26474-7'], monocytes: ['26485-3', '26484-6'], eosinophils: ['26450-7', '26449-9'], basophils: ['30180-4', '26444-0'], reticulocytes: ['4679-7', '14196-0'] };
+      for (const [name, [pct, count]] of Object.entries(pairs)) {
+        const stream = `body-blood-cbc-${name}`;
+        const p = itemsById[stream];
+        const c = itemsById[`${stream}-count`];
+        assert.deepStrictEqual([p.streamId, c.streamId], [stream, stream], name);
+        assert.deepStrictEqual([p.fhir.category, p.fhir.code.code, p.fhir.value, p.fhir.profiles], ['laboratory', pct, percent, lab], name);
+        assert.deepStrictEqual([c.fhir.category, c.fhir.code.code, c.fhir.value.kind, c.fhir.profiles], ['laboratory', count, 'quantity', lab], name);
+        // Every method code an item owns is an import key of its block, and nothing else is.
+        for (const i of [p, c]) assert.deepStrictEqual(codes(i.fhir.alsoMatch), i.references.loincMethod, name);
+        assert.ok(fhirScopes['Observation|laboratory'].includes(stream), `${stream} is a laboratory grant root`);
+        assert.deepStrictEqual([...computeFhirScopes(itemsById).subtree.get(stream)], ['Observation|laboratory'], `${stream} holds one pair`);
+      }
+      assert.deepStrictEqual(itemsById['body-blood-cbc-neutrophils-count'].fhir.value.units, { 'concentration/megacount-ml': '10*6/mL', 'concentration/count-ul': '/uL' });
+      assert.deepStrictEqual(itemsById['body-blood-cbc-reticulocytes-count'].fhir.value.units, { 'concentration/megacount-ml': '10*6/mL', 'concentration/count-ul': '/uL', 'concentration/gigacount-ml': '10*9/mL' });
+
+      // Percentages on a stream of their own.
+      const alone = { 'body-blood-cbc-reticulocytes-immature-fraction': '33516-6', 'body-semen-motility-progressive': '14194-5', 'body-semen-motility-total': '6800-7', 'body-semen-vitality': '10613-8', 'body-semen-morphology-normal': '10622-9' };
+      for (const [k, code] of Object.entries(alone)) {
+        assert.deepStrictEqual([itemsById[k].fhir.code.code, itemsById[k].fhir.value, itemsById[k].references.loinc], [code, percent, [code]], k);
+      }
+
+      // Two units of one property store one code: the coding names both eventTypes, the units stay distinct.
+      const testo = itemsById['body-blood-serum-testosterone-total'].fhir;
+      assert.deepStrictEqual(Object.fromEntries(Object.entries(testo.code.codings).map(([t, c]) => [t, c.code])), { 'concentration/ng-dl': '2986-8', 'concentration/nmol-l': '14913-8', 'concentration/ug-l': '2986-8' });
+      assert.deepStrictEqual(testo.value.units, { 'concentration/ng-dl': 'ng/dL', 'concentration/nmol-l': 'nmol/L', 'concentration/ug-l': 'ug/L' });
+      const cpep = itemsById['body-blood-serum-c-peptide'].fhir;
+      assert.deepStrictEqual(Object.fromEntries(Object.entries(cpep.code.codings).map(([t, c]) => [t, c.code])), { 'concentration/ug-l': '1986-9', 'concentration/nmol-l': '14633-2', 'concentration/pmol-l': '14633-2' });
+      for (const k of ['body-blood-serum-testosterone-total', 'body-blood-serum-c-peptide']) {
+        for (const o of itemsById[k].variations.eventType.options) assert.strictEqual(itemsById[k].fhir.code.codings[o.value].code, o.loinc, `${k} ${o.value}`);
+      }
+
+      // The one unit LOINC has no code for (1,25-dihydroxyvitamin D in pmol/L: 14566-4 is calcitriol alone): the HDS
+      // item coding on that eventType, the LOINC code on the other. Every other `null` option is gone.
+      const vitD = itemsById['body-blood-serum-vitamin-d-125oh'];
+      assert.deepStrictEqual(vitD.fhir.code.codings['concentration/pmol-l'], hds('body-blood-serum-vitamin-d-125oh'));
+      assert.strictEqual(vitD.fhir.code.codings['concentration/pg-ml'].code, '62290-2');
+      assert.deepStrictEqual(vitD.references.loinc, ['62290-2'], 'the HDS coding is not a LOINC claim');
+      const nullUnits = Object.entries(itemsById).filter(([, i]) => !i.deprecated && (i.variations?.eventType?.options || []).some((o) => o.loinc === null)).map(([k]) => k);
+      assert.deepStrictEqual(nullUnits, ['body-blood-serum-vitamin-d-125oh']);
+      // Fasting insulin in pmol/L has a LOINC code, 59179-2 (the model said it had none until this slice).
+      assert.deepStrictEqual(itemsById['body-blood-serum-insulin-fasting'].fhir.code.codings['concentration/pmol-l'], loinc('59179-2', 'Insulin [Moles/volume] in Serum or Plasma --fasting'));
+
+      // No exportable LOINC code (none, or only codes that state a method or a direction the item does not store, or
+      // mean something else): the HDS item coding, and the codes the item owns as import keys.
+      const owned = { 'body-blood-serum-ldh': 'U/L', 'body-blood-coagulation-prothrombin-activity': '%', 'body-semen-dna-fragmentation': null, 'body-semen-tmc': '10*6' };
+      for (const [k, unit] of Object.entries(owned)) {
+        const i = itemsById[k];
+        assert.deepStrictEqual(i.fhir.code, hds(k), k);
+        assert.strictEqual(i.references?.loinc, undefined, `${k} asserts no LOINC code`);
+        assert.deepStrictEqual(codes(i.fhir.alsoMatch), i.references?.loincMethod || [], k);
+        if (unit != null) assert.deepStrictEqual(Object.values(i.fhir.value.units), [unit], k);
+      }
+      // eGFR exports the equation-neutral 69405-9; the seven per-equation codes it owns import, the equation is not kept.
+      const egfr = itemsById['body-blood-serum-egfr'];
+      assert.deepStrictEqual(egfr.fhir.code, loinc('69405-9', 'Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by based on 1.73 sq M'));
+      assert.deepStrictEqual(egfr.references.loinc, ['69405-9']);
+      assert.deepStrictEqual(codes(egfr.fhir.alsoMatch), ['98979-8', '62238-1', '77147-7', '88293-6', '88294-4', '48643-1', '48642-3']);
+      assert.deepStrictEqual(codes(egfr.fhir.alsoMatch), egfr.references.loincMethod);
+      assert.deepStrictEqual(egfr.fhir.value, { kind: 'quantity', units: { 'rate/ml-min-173m2': 'mL/min/{1.73_m2}' } });
+      assert.deepStrictEqual(itemsById['body-semen-dna-fragmentation'].fhir.value, percent);
+      // Quick % is stored as printed on ratio/percent (it exceeds 100 %): a plain quantity, never a factor.
+      assert.deepStrictEqual(itemsById['body-blood-coagulation-prothrombin-activity'].fhir.value, { kind: 'quantity', units: { 'ratio/percent': '%' } });
+
+      // The INR: `{ value, relativeTo: 1 }`, the block states the denominator the item fixes.
+      const inr = itemsById['body-blood-coagulation-inr'];
+      assert.deepStrictEqual(inr.fhir, { resourceType: 'Observation', category: 'laboratory', code: loinc('6301-6', 'INR in Platelet poor plasma by Coagulation assay'), value: { kind: 'ratio-quantity', units: { 'ratio/generic': '{INR}' }, relativeTo: 1 }, profiles: lab });
+      assert.strictEqual(inr.fhir.value.relativeTo, inr.ratioRelativeTo);
+
+      // Every HDS item coding in a block is the item's own key with its English label (a deprecated alias carries its replacement's).
+      for (const [k, i] of Object.entries(itemsById)) {
+        const f = i.fhir;
+        if (f == null || f.code == null) continue;
+        const own = f.code.from === 'eventType' ? Object.values(f.code.codings) : f.code.from == null ? [f.code] : [];
+        for (const c of own.filter((x) => x.system === 'https://hds.ngo/fhir/CodeSystem/item')) {
+          if (!i.deprecated) assert.strictEqual(c.code, k, k);
+          assert.strictEqual(c.display, itemsById[c.code].label.en, k);
+        }
       }
     });
 
@@ -86,8 +175,6 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         const f = itemsById[k].fhir;
         assert.deepStrictEqual([f.category, f.code.code, f.value], ['laboratory', code, percent], k);
       }
-      // A differential percentage whose stream also holds its absolute count stays unmapped with the count.
-      for (const k of ['body-blood-cbc-neutrophils', 'body-blood-cbc-lymphocytes', 'body-blood-cbc-reticulocytes']) assert.strictEqual(itemsById[k].fhir, undefined, k);
     });
 
     it('[FHIR-ITEM-9] body height: 8302-2, metres in cm and feet in inches (the profiles take cm or [in_i] only); body temperature stays unmapped', () => {
@@ -463,7 +550,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => check(b), /"alsoMatch" applies to a static or eventType code only/);
     });
 
-    it('[FHIR-MAP-17] eventType code source: one coding per item eventType, never twice, each the LOINC code its unit option stores', () => {
+    it('[FHIR-MAP-17] eventType code source: one coding per item eventType, each the LOINC code its unit option stores; one code for every eventType is a static code', () => {
       const g = () => item('body-blood-serum-glucose-fasting');
       check(g());
       const a = g();
@@ -471,13 +558,98 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => check(a), /code.codings keys vs the item eventTypes must match exactly; missing \[concentration\/mmol-l\]/);
       const b = g();
       b.fhir.code.codings['concentration/mmol-l'] = b.fhir.code.codings['concentration/mg-dl'];
-      assert.throws(() => check(b), /code.codings and alsoMatch: the coding http:\/\/loinc.org\|1558-6 appears more than once/);
+      assert.throws(() => check(b), /code.codings give every eventType the same coding: that is a static code/);
       const c = g();
       c.fhir.code.codings['concentration/mmol-l'] = coding('2345-7');
       assert.throws(() => check(c), /code.codings "concentration\/mmol-l": http:\/\/loinc.org\|2345-7 is not the LOINC code its unit option stores \(14771-0\)/);
       const d = g();
       d.fhir.alsoMatch = { 'concentration/mg-dl': [d.fhir.code.codings['concentration/mmol-l']] };
       assert.throws(() => check(d), /appears more than once/);
+    });
+
+    it('[FHIR-MAP-23] eventType code source: two units of one property share their coding, with one display, never the code of another property, and only on an item whose options store it; a unit without a LOINC code takes the HDS item coding and nothing else; an item coding is the item\'s own key; an item that asserts LOINC never carries a static code of another system', () => {
+      const t = () => item('body-blood-serum-testosterone-total');
+      check(t(), 'body-blood-serum-testosterone-total');
+      // The shared code is still never an alsoMatch of the block.
+      const a = t();
+      a.fhir.alsoMatch = { 'concentration/ug-l': [a.fhir.code.codings['concentration/ng-dl']] };
+      assert.throws(() => check(a), /code.codings and alsoMatch: the coding http:\/\/loinc.org\|2986-8 appears more than once/);
+      const b = t();
+      b.fhir.code.codings['concentration/ug-l'] = { ...b.fhir.code.codings['concentration/ug-l'], display: 'Testosterone' };
+      assert.throws(() => check(b), /the coding http:\/\/loinc.org\|2986-8 has two displays/);
+      // The moles unit never takes the mass code: its option stores another one.
+      const c = t();
+      c.fhir.code.codings['concentration/nmol-l'] = c.fhir.code.codings['concentration/ng-dl'];
+      assert.throws(() => check(c), /code.codings give every eventType the same coding/);
+      const d = item('body-blood-serum-c-peptide');
+      d.fhir.code.codings['concentration/pmol-l'] = d.fhir.code.codings['concentration/ug-l'];
+      assert.throws(() => check(d), /code.codings "concentration\/pmol-l": http:\/\/loinc.org\|1986-9 is not the LOINC code its unit option stores \(14633-2\)/);
+      // Two eventTypes that share a code still never share a unit: the unit is what tells them apart on import.
+      const e = t();
+      e.fhir.value.units['concentration/ug-l'] = 'ng/dL';
+      assert.throws(() => check(e), /eventTypes "concentration\/ng-dl" and "concentration\/ug-l" share the UCUM unit "ng\/dL"/);
+
+      // The one unit LOINC has no code for: the pmol/L of 1,25-dihydroxyvitamin D (14566-4 is calcitriol alone).
+      const ITEM = 'https://hds.ngo/fhir/CodeSystem/item';
+      const K = 'body-blood-serum-vitamin-d-125oh';
+      const f = () => item(K);
+      check(f(), K);
+      const g = f();
+      g.fhir.code.codings['concentration/pmol-l'] = coding('14566-4');
+      assert.throws(() => check(g, K), /code.codings "concentration\/pmol-l": its unit option stores no LOINC code, so its coding is the HDS item coding \(https:\/\/hds.ngo\/fhir\/CodeSystem\/item\|body-blood-serum-vitamin-d-125oh\), not http:\/\/loinc.org\|14566-4/);
+      // The unit that has a LOINC code never takes the item coding.
+      const i = f();
+      i.fhir.code.codings['concentration/pg-ml'] = i.fhir.code.codings['concentration/pmol-l'];
+      assert.throws(() => check(i, K), /code.codings give every eventType the same coding/);
+      // The HDS item coding is the item's own key, on a null unit and as a static code alike; a deprecated alias keeps its replacement's.
+      const h = f();
+      h.fhir.code.codings['concentration/pmol-l'] = coding('body-blood-serum-vitamin-d-25oh', ITEM);
+      assert.throws(() => check(h, K), /the HDS item coding https:\/\/hds.ngo\/fhir\/CodeSystem\/item\|body-blood-serum-vitamin-d-25oh is not the item's own key/);
+      const l = item('body-blood-serum-ldh');
+      l.fhir.code = coding('body-semen-tmc', ITEM);
+      assert.throws(() => check(l, 'body-blood-serum-ldh'), /the HDS item coding https:\/\/hds.ngo\/fhir\/CodeSystem\/item\|body-semen-tmc is not the item's own key/);
+      check(item('fertility-hormone-pdg'), 'fertility-hormone-pdg');
+      // An item that asserts LOINC exports it: a static code in another system is refused, its own item coding included.
+      const k = item('body-blood-serum-egfr');
+      k.fhir.code = coding('body-blood-serum-egfr', ITEM);
+      assert.throws(() => check(k, 'body-blood-serum-egfr'), /the item asserts LOINC \(references.loinc\): its static code is the LOINC code every unit option stores, not https:\/\/hds.ngo\/fhir\/CodeSystem\/item\|body-blood-serum-egfr/);
+      // Two eventTypes share a coding only where the unit options bind it.
+      const m = t();
+      delete m.references.loinc;
+      assert.throws(() => check(m), /two eventTypes share a coding only on an item whose unit options store it \(references.loinc\)/);
+    });
+
+    it('[FHIR-MAP-24] ratio-quantity: a number item whose eventTypes store { value, relativeTo }, units covering them, the denominator the item fixes', () => {
+      const K = 'body-blood-coagulation-inr';
+      const r = () => item(K);
+      check(r(), K);
+      checkItem(r(), K);
+      const a = r();
+      a.fhir.value.relativeTo = 100;
+      assert.throws(() => check(a), /value.relativeTo 100 is not the item's ratioRelativeTo \(1\)/);
+      const b = r();
+      b.fhir.value.units = { 'ratio/percent': '%' };
+      assert.throws(() => check(b), /value.units keys vs the item eventTypes must match exactly; missing \[ratio\/generic\], unknown \[ratio\/percent\]/);
+      // An eventType that stores a bare number is a quantity, and an object eventType is never one.
+      const c = item('body-blood-serum-ferritin');
+      c.fhir.value = { kind: 'ratio-quantity', units: { 'concentration/ug-l': 'ug/L' }, relativeTo: 1 };
+      assert.throws(() => check(c), /value.kind "ratio-quantity": eventType "concentration\/ug-l" does not store \{ value, relativeTo \}/);
+      const d = r();
+      d.fhir.value = { kind: 'quantity', units: { 'ratio/generic': '{INR}' } };
+      assert.throws(() => check(d), /value.kind "quantity": eventType "ratio\/generic" is not a number/);
+      const e = item('wellbeing-general-health');
+      e.fhir.value = { kind: 'ratio-quantity', units: { 'ratio/generic': '1' }, relativeTo: 1 };
+      assert.throws(() => check(e), /value.kind "ratio-quantity" applies to "number" items only/);
+      // The schema: units and a positive relativeTo, nothing else.
+      const f = r();
+      delete f.fhir.value.relativeTo;
+      assert.throws(() => checkItem(f, K), /must have required property 'relativeTo'/);
+      const g = r();
+      g.fhir.value.relativeTo = 0;
+      assert.throws(() => checkItem(g, K), /must be > 0/);
+      const h = r();
+      h.fhir.value.factor = 1;
+      assert.throws(() => checkItem(h, K), /additional properties/);
     });
 
     it('[FHIR-MAP-19] alsoMatch is a list with a static code, keyed by the item eventType it names with an eventType code', () => {
@@ -1004,10 +1176,11 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
 
     it('[FHIR-SCOPE-11] the model\'s table; the committed lock is up to date (run npm run fhir:lock)', () => {
       const labBlocks = Object.entries(itemsById).filter(([, i]) => i.fhir?.category === 'laboratory');
-      // 102 active items, plus the two legacy urine-hormone items (LH, PdG) whose stream is their replacement's.
-      assert.strictEqual(labBlocks.length, 104);
+      // 133 active items, plus the two legacy urine-hormone items (LH, PdG) whose stream is their replacement's. The
+      // eight differential streams hold two items each (the percentage and the absolute count).
+      assert.strictEqual(labBlocks.length, 135);
       const lab = [...new Set(labBlocks.map(([, i]) => i.streamId))].sort();
-      assert.strictEqual(lab.length, 102);
+      assert.strictEqual(lab.length, 125);
       assert.deepStrictEqual(fhirScopes, {
         'Condition|problem-list-item': ['condition'],
         'DocumentReference|clinical-note': ['documents'],

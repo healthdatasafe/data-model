@@ -173,7 +173,7 @@ describe('[LABC] Coded lab results', () => {
       it('[LABC-LOINC-3a] accepts one code per option, and null for a unit LOINC has no code for', () => {
         assert.doesNotThrow(() => checkLoincRefs('x', withCodes('2345-7', '14749-6')));
         const one = withCodes('2345-7', null); one.references.loinc = ['2345-7'];
-        assert.doesNotThrow(() => checkLoincRefs('x', one), 'pmol/L of fasting insulin has no code');
+        assert.doesNotThrow(() => checkLoincRefs('x', one), 'the pmol/L of 1,25-dihydroxyvitamin D has no code');
         assert.doesNotThrow(() => checkLoincRefs('x', { variations: base().variations }), 'no LOINC at all');
       });
 
