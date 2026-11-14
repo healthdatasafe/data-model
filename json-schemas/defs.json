@@ -275,6 +275,7 @@
           "enum": [
             "quantity",
             "scaled-quantity",
+            "ratio-quantity",
             "coded",
             "components"
           ]
@@ -344,6 +345,36 @@
             },
             "required": [
               "units"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "ratio-quantity"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "kind": {},
+              "units": {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": {
+                  "$ref": "defs.json#/definitions/fhirUnit"
+                }
+              },
+              "relativeTo": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "units",
+              "relativeTo"
             ],
             "additionalProperties": false
           }
