@@ -2,6 +2,10 @@
   {
     "id": "activity",
     "name": "Physical Activity",
+    "label": {
+      "en": "Physical Activity",
+      "fr": "Activité physique"
+    },
     "parentId": null,
     "children": [
       {
@@ -69,6 +73,10 @@
   {
     "id": "body",
     "name": "Body",
+    "label": {
+      "en": "Body",
+      "fr": "Corps"
+    },
     "parentId": null,
     "children": [
       {
@@ -89,10 +97,18 @@
       {
         "id": "body-blood",
         "name": "Blood",
+        "label": {
+          "en": "Blood",
+          "fr": "Sang"
+        },
         "children": [
           {
             "id": "body-blood-serum",
             "name": "Serum or plasma",
+            "label": {
+              "en": "Serum or plasma",
+              "fr": "Sérum ou plasma"
+            },
             "children": [
               {
                 "id": "body-blood-serum-glucose-fasting",
@@ -505,6 +521,10 @@
           {
             "id": "body-blood-cbc",
             "name": "Complete blood count",
+            "label": {
+              "en": "Complete blood count",
+              "fr": "Formule sanguine complète"
+            },
             "children": [
               {
                 "id": "body-blood-cbc-hemoglobin",
@@ -549,26 +569,46 @@
               {
                 "id": "body-blood-cbc-neutrophils",
                 "name": "Neutrophils",
+                "label": {
+                  "en": "Neutrophils",
+                  "fr": "Neutrophiles"
+                },
                 "parentId": "body-blood-cbc"
               },
               {
                 "id": "body-blood-cbc-lymphocytes",
                 "name": "Lymphocytes",
+                "label": {
+                  "en": "Lymphocytes",
+                  "fr": "Lymphocytes"
+                },
                 "parentId": "body-blood-cbc"
               },
               {
                 "id": "body-blood-cbc-monocytes",
                 "name": "Monocytes",
+                "label": {
+                  "en": "Monocytes",
+                  "fr": "Monocytes"
+                },
                 "parentId": "body-blood-cbc"
               },
               {
                 "id": "body-blood-cbc-eosinophils",
                 "name": "Eosinophils",
+                "label": {
+                  "en": "Eosinophils",
+                  "fr": "Éosinophiles"
+                },
                 "parentId": "body-blood-cbc"
               },
               {
                 "id": "body-blood-cbc-basophils",
                 "name": "Basophils",
+                "label": {
+                  "en": "Basophils",
+                  "fr": "Basophiles"
+                },
                 "parentId": "body-blood-cbc"
               },
               {
@@ -584,6 +624,10 @@
               {
                 "id": "body-blood-cbc-reticulocytes",
                 "name": "Reticulocytes",
+                "label": {
+                  "en": "Reticulocytes",
+                  "fr": "Réticulocytes"
+                },
                 "parentId": "body-blood-cbc"
               },
               {
@@ -604,11 +648,19 @@
               {
                 "id": "body-blood-cbc-neutrophils-segmented",
                 "name": "Segmented neutrophils",
+                "label": {
+                  "en": "Segmented neutrophils",
+                  "fr": "Neutrophiles segmentés"
+                },
                 "parentId": "body-blood-cbc"
               },
               {
                 "id": "body-blood-cbc-neutrophils-band",
                 "name": "Band neutrophils",
+                "label": {
+                  "en": "Band neutrophils",
+                  "fr": "Neutrophiles non segmentés"
+                },
                 "parentId": "body-blood-cbc"
               },
               {
@@ -627,6 +679,10 @@
           {
             "id": "body-blood-coagulation",
             "name": "Coagulation",
+            "label": {
+              "en": "Coagulation",
+              "fr": "Coagulation"
+            },
             "children": [
               {
                 "id": "body-blood-coagulation-prothrombin-time",
@@ -659,6 +715,10 @@
           {
             "id": "body-blood-rbc",
             "name": "Red blood cell",
+            "label": {
+              "en": "Red blood cell",
+              "fr": "Globules rouges"
+            },
             "children": [
               {
                 "id": "body-blood-rbc-magnesium",
@@ -689,19 +749,35 @@
       {
         "id": "body-vulva",
         "name": "Vulva",
+        "label": {
+          "en": "Vulva",
+          "fr": "Vulve"
+        },
         "children": [
           {
             "id": "body-vulva-wetness",
             "name": "Vulva Wetness",
+            "label": {
+              "en": "Vulva Wetness",
+              "fr": "Humidité vulvaire"
+            },
             "children": [
               {
                 "id": "body-vulva-wetness-wiping",
                 "name": "Vulva Wetness when wiping",
+                "label": {
+                  "en": "Vulva Wetness when wiping",
+                  "fr": "Humidité vulvaire à l'essuyage"
+                },
                 "parentId": "body-vulva-wetness"
               },
               {
                 "id": "body-vulva-wetness-feeling",
                 "name": "Vulva Wetness Feeling",
+                "label": {
+                  "en": "Vulva Wetness Feeling",
+                  "fr": "Sensation d'humidité vulvaire"
+                },
                 "parentId": "body-vulva-wetness"
               }
             ],
@@ -710,15 +786,27 @@
           {
             "id": "body-vulva-mucus",
             "name": "Vulva Mucus",
+            "label": {
+              "en": "Vulva Mucus",
+              "fr": "Glaire cervicale"
+            },
             "children": [
               {
                 "id": "body-vulva-mucus-inspect",
                 "name": "Vulva Mucus Inspect",
+                "label": {
+                  "en": "Vulva Mucus Inspect",
+                  "fr": "Observation de la glaire cervicale"
+                },
                 "parentId": "body-vulva-mucus"
               },
               {
                 "id": "body-vulva-mucus-stretch",
                 "name": "Vulva Mucus Stretch",
+                "label": {
+                  "en": "Vulva Mucus Stretch",
+                  "fr": "Filance de la glaire cervicale"
+                },
                 "parentId": "body-vulva-mucus"
               }
             ],
@@ -767,6 +855,10 @@
       {
         "id": "body-skin",
         "name": "Skin",
+        "label": {
+          "en": "Skin",
+          "fr": "Peau"
+        },
         "children": [
           {
             "id": "body-skin-acne",
@@ -823,10 +915,18 @@
       {
         "id": "body-urine",
         "name": "Urine",
+        "label": {
+          "en": "Urine",
+          "fr": "Urines"
+        },
         "children": [
           {
             "id": "body-urine-hormones",
             "name": "Urine Hormones",
+            "label": {
+              "en": "Urine Hormones",
+              "fr": "Hormones urinaires"
+            },
             "children": [
               {
                 "id": "body-urine-hormones-lh",
@@ -867,6 +967,10 @@
       {
         "id": "body-csf",
         "name": "Cerebrospinal fluid",
+        "label": {
+          "en": "Cerebrospinal fluid",
+          "fr": "Liquide céphalorachidien"
+        },
         "children": [
           {
             "id": "body-csf-coded",
@@ -879,6 +983,10 @@
       {
         "id": "body-semen",
         "name": "Semen",
+        "label": {
+          "en": "Semen",
+          "fr": "Sperme"
+        },
         "children": [
           {
             "id": "body-semen-concentration",
@@ -938,6 +1046,10 @@
   {
     "id": "document-shares",
     "name": "Shared documents",
+    "label": {
+      "en": "Shared documents",
+      "fr": "Documents partagés"
+    },
     "parentId": null
   },
   {
@@ -948,6 +1060,14 @@
   {
     "id": "encounter",
     "name": "Care encounters and providers",
+    "label": {
+      "en": "Care encounters and providers",
+      "fr": "Soins et prestataires"
+    },
+    "description": {
+      "en": "Your consultations, hospital stays and other care visits, with the doctors and places involved and the reason given, including sensitive visits.",
+      "fr": "Vos consultations, séjours hospitaliers et autres soins, avec les médecins et les lieux concernés et le motif indiqué, y compris les visites sensibles."
+    },
     "parentId": null,
     "children": [
       {
@@ -958,6 +1078,10 @@
       {
         "id": "encounter-provider",
         "name": "Care providers",
+        "label": {
+          "en": "Care providers",
+          "fr": "Prestataires de soins"
+        },
         "children": [
           {
             "id": "encounter-provider-person",
@@ -977,6 +1101,10 @@
   {
     "id": "family",
     "name": "Family",
+    "label": {
+      "en": "Family",
+      "fr": "Famille"
+    },
     "parentId": null,
     "children": [
       {
@@ -989,11 +1117,19 @@
   {
     "id": "fertility",
     "name": "Fertility",
+    "label": {
+      "en": "Fertility",
+      "fr": "Fertilité"
+    },
     "parentId": null,
     "children": [
       {
         "id": "fertility-cycles",
         "name": "Cycles",
+        "label": {
+          "en": "Cycles",
+          "fr": "Cycles"
+        },
         "children": [
           {
             "id": "fertility-cycles-start",
@@ -1033,6 +1169,10 @@
           {
             "id": "fertility-cycles-charted-estimation",
             "name": "Cycles charted estimation",
+            "label": {
+              "en": "Cycles charted estimation",
+              "fr": "Nombre estimé de cycles observés"
+            },
             "parentId": "fertility-cycles"
           },
           {
@@ -1066,6 +1206,10 @@
       {
         "id": "fertility-trainings",
         "name": "Trainings",
+        "label": {
+          "en": "Trainings",
+          "fr": "Formations"
+        },
         "parentId": "fertility"
       },
       {
@@ -1110,6 +1254,10 @@
           {
             "id": "fertility-miscarriages",
             "name": "Miscarriages",
+            "label": {
+              "en": "Miscarriages",
+              "fr": "Fausses couches"
+            },
             "parentId": "fertility-pregnancies"
           },
           {
@@ -1130,6 +1278,10 @@
   {
     "id": "function",
     "name": "Functional status",
+    "label": {
+      "en": "Functional status",
+      "fr": "État fonctionnel"
+    },
     "parentId": null,
     "children": [
       {
@@ -1186,11 +1338,19 @@
   {
     "id": "lifestyle",
     "name": "Lifestyle",
+    "label": {
+      "en": "Lifestyle",
+      "fr": "Mode de vie"
+    },
     "parentId": null,
     "children": [
       {
         "id": "lifestyle-tobacco",
         "name": "Tobacco and nicotine",
+        "label": {
+          "en": "Tobacco and nicotine",
+          "fr": "Tabac et nicotine"
+        },
         "children": [
           {
             "id": "lifestyle-tobacco-smoking",
@@ -1213,6 +1373,10 @@
       {
         "id": "lifestyle-alcohol",
         "name": "Alcohol",
+        "label": {
+          "en": "Alcohol",
+          "fr": "Alcool"
+        },
         "children": [
           {
             "id": "lifestyle-alcohol-frequency",
@@ -1235,6 +1399,10 @@
       {
         "id": "lifestyle-diet",
         "name": "Diet",
+        "label": {
+          "en": "Diet",
+          "fr": "Alimentation"
+        },
         "children": [
           {
             "id": "lifestyle-diet-pattern",
@@ -1254,16 +1422,28 @@
   {
     "id": "medication",
     "name": "Medication",
+    "label": {
+      "en": "Medication",
+      "fr": "Médicaments"
+    },
     "parentId": null,
     "children": [
       {
         "id": "medication-intake",
         "name": "Intake",
+        "label": {
+          "en": "Intake",
+          "fr": "Prises de médicaments"
+        },
         "parentId": "medication"
       },
       {
         "id": "medication-prescription",
         "name": "Prescriptions",
+        "label": {
+          "en": "Prescriptions",
+          "fr": "Prescriptions de médicaments"
+        },
         "parentId": "medication"
       }
     ]
@@ -1271,6 +1451,10 @@
   {
     "id": "nutrition",
     "name": "Nutrition",
+    "label": {
+      "en": "Nutrition",
+      "fr": "Nutrition"
+    },
     "parentId": null,
     "children": [
       {
@@ -1283,11 +1467,19 @@
   {
     "id": "procedure",
     "name": "Procedure",
+    "label": {
+      "en": "Procedure",
+      "fr": "Actes médicaux"
+    },
     "parentId": null,
     "children": [
       {
         "id": "procedure-fertility",
         "name": "Fertility",
+        "label": {
+          "en": "Fertility",
+          "fr": "Fertilité"
+        },
         "role": "context",
         "parentId": "procedure"
       }
@@ -1296,6 +1488,10 @@
   {
     "id": "profile",
     "name": "Profile",
+    "label": {
+      "en": "Profile",
+      "fr": "Profil"
+    },
     "parentId": null,
     "children": [
       {
@@ -1331,11 +1527,19 @@
       {
         "id": "profile-location",
         "name": "Location",
+        "label": {
+          "en": "Location",
+          "fr": "Localisation"
+        },
         "parentId": "profile"
       },
       {
         "id": "profile-name",
         "name": "Name",
+        "label": {
+          "en": "Name",
+          "fr": "Nom et prénom"
+        },
         "parentId": "profile"
       },
       {
@@ -1351,6 +1555,10 @@
       {
         "id": "profile-preferences",
         "name": "Account preferences",
+        "label": {
+          "en": "Account preferences",
+          "fr": "Préférences du compte"
+        },
         "parentId": "profile"
       }
     ]
@@ -1358,11 +1566,19 @@
   {
     "id": "symptom",
     "name": "Symptoms",
+    "label": {
+      "en": "Symptoms",
+      "fr": "Symptômes"
+    },
     "parentId": null,
     "children": [
       {
         "id": "symptom-gastrointestinal",
         "name": "Gastrointestinal",
+        "label": {
+          "en": "Gastrointestinal",
+          "fr": "Gastro-intestinaux"
+        },
         "children": [
           {
             "id": "symptom-gastrointestinal-nausea",
@@ -1405,6 +1621,10 @@
       {
         "id": "symptom-pain",
         "name": "Pain",
+        "label": {
+          "en": "Pain",
+          "fr": "Douleur"
+        },
         "children": [
           {
             "id": "symptom-pain-severity",
@@ -1447,6 +1667,10 @@
       {
         "id": "symptom-neurological",
         "name": "Neurological",
+        "label": {
+          "en": "Neurological",
+          "fr": "Neurologiques"
+        },
         "children": [
           {
             "id": "symptom-neurological-dizziness",
@@ -1479,6 +1703,10 @@
       {
         "id": "symptom-cognitive",
         "name": "Cognitive",
+        "label": {
+          "en": "Cognitive",
+          "fr": "Cognitifs"
+        },
         "children": [
           {
             "id": "symptom-cognitive-focus-difficulty",
@@ -1491,6 +1719,10 @@
       {
         "id": "symptom-dermatological",
         "name": "Dermatological",
+        "label": {
+          "en": "Dermatological",
+          "fr": "Dermatologiques"
+        },
         "children": [
           {
             "id": "symptom-dermatological-hair-loss",
@@ -1523,6 +1755,10 @@
       {
         "id": "symptom-sleep",
         "name": "Sleep",
+        "label": {
+          "en": "Sleep",
+          "fr": "Sommeil"
+        },
         "children": [
           {
             "id": "symptom-sleep-insomnia",
@@ -1535,6 +1771,10 @@
       {
         "id": "symptom-metabolic",
         "name": "Metabolic",
+        "label": {
+          "en": "Metabolic",
+          "fr": "Métaboliques"
+        },
         "children": [
           {
             "id": "symptom-metabolic-water-retention",
@@ -1547,6 +1787,10 @@
       {
         "id": "symptom-general",
         "name": "General",
+        "label": {
+          "en": "General",
+          "fr": "Généraux"
+        },
         "children": [
           {
             "id": "symptom-general-fatigue",
@@ -1559,6 +1803,10 @@
       {
         "id": "symptom-respiratory",
         "name": "Respiratory",
+        "label": {
+          "en": "Respiratory",
+          "fr": "Respiratoires"
+        },
         "children": [
           {
             "id": "symptom-respiratory-cough",
@@ -1596,6 +1844,10 @@
       {
         "id": "symptom-cardiac",
         "name": "Cardiac",
+        "label": {
+          "en": "Cardiac",
+          "fr": "Cardiaques"
+        },
         "children": [
           {
             "id": "symptom-cardiac-palpitations",
@@ -1613,6 +1865,10 @@
       {
         "id": "symptom-thermoregulation",
         "name": "Thermoregulation",
+        "label": {
+          "en": "Thermoregulation",
+          "fr": "Thermorégulation"
+        },
         "children": [
           {
             "id": "symptom-thermoregulation-chills",
@@ -1645,6 +1901,10 @@
       {
         "id": "symptom-vision",
         "name": "Vision & Sensory",
+        "label": {
+          "en": "Vision & Sensory",
+          "fr": "Vision et sens"
+        },
         "children": [
           {
             "id": "symptom-vision-blurred-vision",
@@ -1667,6 +1927,10 @@
       {
         "id": "symptom-hydration",
         "name": "Hydration & Urinary",
+        "label": {
+          "en": "Hydration & Urinary",
+          "fr": "Hydratation et voies urinaires"
+        },
         "children": [
           {
             "id": "symptom-hydration-excessive-thirst",
@@ -1684,6 +1948,10 @@
       {
         "id": "symptom-bleeding",
         "name": "Bleeding",
+        "label": {
+          "en": "Bleeding",
+          "fr": "Saignements"
+        },
         "children": [
           {
             "id": "symptom-bleeding-nosebleed",
@@ -1713,36 +1981,60 @@
       {
         "id": "sync-status-mira",
         "name": "Mira connection status",
+        "label": {
+          "en": "Mira connection status",
+          "fr": "État de la connexion Mira"
+        },
         "role": "context",
         "parentId": "sync-status"
       },
       {
         "id": "sync-status-tempdrop",
         "name": "Tempdrop connection status",
+        "label": {
+          "en": "Tempdrop connection status",
+          "fr": "État de la connexion Tempdrop"
+        },
         "role": "context",
         "parentId": "sync-status"
       },
       {
         "id": "sync-status-femm",
         "name": "FEMM connection status",
+        "label": {
+          "en": "FEMM connection status",
+          "fr": "État de la connexion FEMM"
+        },
         "role": "context",
         "parentId": "sync-status"
       },
       {
         "id": "sync-status-ryb",
         "name": "Read Your Body connection status",
+        "label": {
+          "en": "Read Your Body connection status",
+          "fr": "État de la connexion Read Your Body"
+        },
         "role": "context",
         "parentId": "sync-status"
       },
       {
         "id": "sync-status-cyclefeminin",
         "name": "cyclefeminin connection status",
+        "label": {
+          "en": "cyclefeminin connection status",
+          "fr": "État de la connexion cyclefeminin"
+        },
         "role": "context",
         "parentId": "sync-status"
       },
       {
         "id": "sync-status-healthkit",
         "name": "Apple Health connection status",
+        "label": {
+          "en": "Apple Health connection status",
+          "fr": "État de la connexion Apple Santé"
+        },
         "role": "context",
         "parentId": "sync-status"
       }
@@ -1751,11 +2043,19 @@
   {
     "id": "treatment",
     "name": "Treatment",
+    "label": {
+      "en": "Treatment",
+      "fr": "Traitements"
+    },
     "parentId": null,
     "children": [
       {
         "id": "treatment-fertility",
         "name": "Fertility",
+        "label": {
+          "en": "Fertility",
+          "fr": "Fertilité"
+        },
         "role": "context",
         "parentId": "treatment"
       }
@@ -1764,6 +2064,10 @@
   {
     "id": "wellbeing",
     "name": "Wellbeing",
+    "label": {
+      "en": "Wellbeing",
+      "fr": "Bien-être"
+    },
     "parentId": null,
     "children": [
       {
