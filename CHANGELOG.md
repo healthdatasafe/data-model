@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.5.0] - 2026-11-14
 
 Additive, plan 115 labs slice (the lab items 4.3.0 left unmapped). 31 `fhir` blocks, all `Observation|laboratory`; one
 new value kind; two relaxations of the eventType code source and three new build rules; two LOINC codes newly

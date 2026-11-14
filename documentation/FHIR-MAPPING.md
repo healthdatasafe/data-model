@@ -3,7 +3,7 @@
 **Status: published since 3.31.0 (plan 115, SMART on FHIR).** Everything below marked *permanent* is.
 
 **Lab items (3.39.0; 3.44.0 adds untimed insulin; 3.48.0 adds six percentages; 4.0.0 adds urine LH, E3G and PdG;
-unreleased, plan 115 labs slice: 31 more, below):** 133 numeric lab items carry an `Observation|laboratory` block,
+4.5.0, plan 115 labs slice: 31 more, below):** 133 numeric lab items carry an `Observation|laboratory` block,
 plus the two legacy
 urine-hormone items (`fertility-hormone-lh`, `fertility-hormone-pdg`) that keep their replacement's block for their
 past events. Where mass and moles of one
@@ -27,7 +27,7 @@ and the percentages of the labs slice.
 LH was unmapped until 4.0.0 because its stream holds the
 legacy urine LH typed mg/L: that item now carries the same block, rendering its IU/L numbers in `[IU]/L`.
 
-**The labs slice (unreleased, plan 115):** every numeric lab item now carries a block. **Release order: data-model
+**The labs slice (4.5.0, plan 115):** every numeric lab item now carries a block. **Release order: data-model
 first, then hds-fhir-js, then the facade pin and the extension options.** The pack is safe with hds-fhir-js 0.6.0: it
 skips the INR block (unknown value kind), renders every other block, and on import refuses a resource coded with a
 shared code, never misplacing one. The other order would leave the library's `check:pack` failing until the pack

@@ -740,7 +740,7 @@ body-blood-serum-insulin-fasting:
     loinc: ["27873-9", "59179-2"]
   devNotes: >-
     The pmol/L option stores 59179-2 (fasting, moles); 14796-7 is untimed and belongs to
-    body-blood-serum-insulin. (Until this release the option stored no code: 59179-2 was overlooked.)
+    body-blood-serum-insulin. (Until 4.5.0 the option stored no code: 59179-2 was overlooked.)
   fhir:
     resourceType: Observation
     category: laboratory
@@ -2898,8 +2898,9 @@ body-blood-serum-egfr:
   type: number
   repeatable: any
   # 80274001 is an observable entity, not a procedure: SNOMED has no estimated-GFR
-  # measurement procedure. The value is derived from creatinine via a named equation
-  # (CKD-EPI, MDRD, …) chosen by the reporting lab — the equation is not modelled.
+  # measurement procedure. The value comes from a named equation (CKD-EPI, MDRD, …) chosen by
+  # the reporting lab, most often on creatinine; neither the equation nor the marker is modelled
+  # (69405-9 names neither).
   references:
     snomed: ["80274001"]
     loinc: ["69405-9"]
