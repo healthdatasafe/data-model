@@ -2,7 +2,9 @@
 
 **Status: published since 3.31.0 (plan 115, SMART on FHIR).** Everything below marked *permanent* is.
 
-**Lab items (3.39.0; 3.44.0 adds untimed insulin; 3.48.0 adds six percentages; 4.0.0 adds urine LH, E3G and PdG):** 102 numeric lab items carry an `Observation|laboratory` block, plus the two legacy
+**Lab items (3.39.0; 3.44.0 adds untimed insulin; 3.48.0 adds six percentages; 4.0.0 adds urine LH, E3G and PdG;
+unreleased, plan 115 labs slice: 31 more, below):** 133 numeric lab items carry an `Observation|laboratory` block,
+plus the two legacy
 urine-hormone items (`fertility-hormone-lh`, `fertility-hormone-pdg`) that keep their replacement's block for their
 past events. Where mass and moles of one
 analyte are two LOINC codes (`BLOOD-CHEMISTRY.md` § Codes), the code comes from the eventType
@@ -19,15 +21,50 @@ lipid panel as much as urine hCG (a pregnancy test), the semen analysis and the 
 narrows it per stream on the consent screen, as for vital signs. A lab event's printed range, flag and comparator
 (`hdsRefRange`, `hdsInterpretation`, `hdsFlag`, `hdsComparator`) render as `referenceRange`, `interpretation` and the
 Quantity `comparator` (BLOOD-CHEMISTRY.md § Cross-system). The `ratio/proportion` percentages render in `%` through
-the `scaled-quantity` kind (factor 100): HbA1c, transferrin saturation, hematocrit, RDW, myelocytes and metamyelocytes.
-**Not mapped yet:** the differential percentages that share their stream with the absolute count (neutrophils,
-segmented and band neutrophils, lymphocytes, monocytes, eosinophils, basophils, reticulocytes: percentage and count
-are mapped together or not at all, or a grant would over-grant), the immature reticulocyte fraction and the semen
-percentages (motility, vitality, morphology; not reviewed
-yet), C-peptide and total testosterone (two of three units share a code), fasting insulin and 1,25-dihydroxyvitamin D
-(a unit LOINC has no code for), INR (`ratio/generic`), the other items without LOINC (E3G and PdG carry the HDS item
-coding, above), and the `lab-result/coded-v1` items. Urine LH was unmapped until 4.0.0 because its stream holds the
+the `scaled-quantity` kind (factor 100): HbA1c, transferrin saturation, hematocrit, RDW, myelocytes and metamyelocytes,
+and the percentages of the labs slice.
+**Not mapped yet:** the `lab-result/coded-v1` items (the result carries its own code and unit: its own design). Urine
+LH was unmapped until 4.0.0 because its stream holds the
 legacy urine LH typed mg/L: that item now carries the same block, rendering its IU/L numbers in `[IU]/L`.
+
+**The labs slice (unreleased, plan 115):** every numeric lab item now carries a block. **Release order: data-model
+first, then hds-fhir-js, then the facade pin and the extension options.** The pack is safe with hds-fhir-js 0.6.0: it
+skips the INR block (unknown value kind), renders every other block, and on import refuses a resource coded with a
+shared code, never misplacing one. The other order would leave the library's `check:pack` failing until the pack
+publishes (31 mappings without a block). The hds-fhir-js release that follows knows `ratio-quantity` and a code
+shared by two eventTypes (below); production sees neither until the facade is re-pinned.
+
+- **The differential, percentage and absolute count together** (neutrophils, segmented and band neutrophils,
+  lymphocytes, monocytes, eosinophils, basophils, reticulocytes): the two items of each pair sit on one stream, so they
+  are mapped together, both `Observation|laboratory`, and the stream holds one pair; mapping one alone would have put
+  the other, unmapped, under the same grant. The percentage is a `scaled-quantity` in `%` under the methodless
+  "/Leukocytes" code (reticulocytes: "/Erythrocytes"), the count a `quantity` under the "[#/volume]" code, one code
+  for its units (`10*6/mL` for 10⁹/L, `/uL`, and `10*9/mL` for the reticulocytes' 10¹²/L). The immature reticulocyte
+  fraction (`33516-6`) and the four semen percentages (progressive `14194-5` and total `6800-7` motility, vitality
+  `10613-8`, normal forms `10622-9`) are on streams of their own.
+- **Two units of one property store one code** (total testosterone: ng/dL and ng/mL under `2986-8`, nmol/L under
+  `14913-8`; C-peptide: nmol/L and pmol/L under `14633-2`): the eventType source gives both eventTypes that coding
+  ([code from the eventType](#code-static-from-a-datasource-from-the-eventtype-or-from-the-content)), and on import
+  the unit picks among the eventTypes the code names.
+- **A unit LOINC has no code for** (`options[].loinc: null`): one is left, the pmol/L of 1,25-dihydroxyvitamin D
+  (LOINC has moles for calcitriol alone, `14566-4`, and no D2 + D3 total in moles). It renders the **HDS item coding**
+  on that eventType and the LOINC code on the other. **Fasting insulin in pmol/L is not one:** it stores `59179-2`
+  "Insulin [Moles/volume] in Serum or Plasma --fasting", which the model overlooked from 3.44.0 until this slice.
+- **eGFR** exports the equation-neutral `69405-9` ("Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or
+  Blood by based on 1.73 sq M": no equation, no marker), which the item now asserts (`references.loinc`). The
+  equation changes the number and is not stored, so the seven per-equation creatinine-based codes the item owns
+  (`references.loincMethod`) are `alsoMatch`: a result coded with one imports, and the equation is not kept.
+- **An item with no exportable LOINC code** renders the HDS item coding as its static code, as E3G and PdG do, with
+  the codes it owns (`references.loincMethod`) as `alsoMatch`: LDH (the methodless `2532-0` is DISCOURAGED, the two
+  ACTIVE codes each state a reaction direction the item does not store), Quick % (no LOINC code; `5894-1`, which
+  European labs send it under, is import only: its LOINC definition, actual/normal time, runs the other way. **The
+  unit is the guard:** the block's only unit is `%`, so a PT ratio sent as a ratio under `5894-1`, unit `1` or
+  `{ratio}`, is refused, and only a figure in `%` imports; a true actual/normal ratio printed in `%` would import as
+  a Quick %, the bet `references.loincMethod` already makes), sperm DNA fragmentation (one code, by flow cytometry)
+  and the total motile count (none asserted; SNOMED CT `167806003` is the procedure, which no lab block codes an
+  Observation with).
+- **INR** (`6301-6`) is stored `{ value, relativeTo: 1 }` on `ratio/generic`: the new `ratio-quantity` kind renders
+  `value` in UCUM `{INR}` ([value kinds](#value-kinds)).
 
 **Vital signs:** body weight, blood pressure (with its pulse as a split), heart rate, body height and oxygen saturation
 (SpO2) carry an `Observation|vital-signs` block. **Body temperature is not mapped yet:** its stream holds the basal
@@ -39,13 +76,13 @@ resourceType other than Observation and Condition, and the first whose code come
 ([DocumentReference: documents](#documentreference-documents)). Needs hds-fhir-js 0.5.0 to render; an older renderer
 skips it (unknown resourceType), and a SMART app then sees no document.
 
-**Medications (unreleased, plan 115 medications slice):** the four medication items carry a block, the two intake
+**Medications (4.3.0, plan 115 medications slice):** the four medication items carry a block, the two intake
 items a `MedicationStatement`, the two prescription items a `MedicationRequest`, both **bare scope keys** (no category
 table: one item set per type, so a category would discriminate nothing). The coded twins take the medicine from the
 datasource selection (`drug`, the national product as a second coding under `fhirMapping.productSystems`), the basic
-twins the name as written through the new `{ from: text, field }` code source, and all four carry the new `dosage`
+twins the name as written through the `{ from: text, field }` code source, and all four carry the `dosage`
 field, the regimen as a FHIR `Dosage` ([Medications](#medications-medicationstatement-and-medicationrequest)). Needs
-the hds-fhir-js release that knows the two resourceTypes; an older renderer skips the blocks.
+hds-fhir-js 0.6.0 to render; an older renderer skips the blocks.
 
 An item's `fhir:` block says how its events **render as** a FHIR R4 resource and how a FHIR resource **imports
 back** into an event of that item. HDS uses it in three ways:
@@ -151,7 +188,14 @@ reviewer checks the code against and what a reader falls back on.
   item has this code. When no LOINC or SNOMED CT code exists for the analyte, the static code is the **HDS item
   coding**: `{ system: https://hds.ngo/fhir/CodeSystem/item, code: <item key>, display: <English label> }`, the coding
   the generic rendering gives an unmapped item, here with a real UCUM unit, the category and the lab profiles (urine
-  E3G and PdG, 4.0.0). It is a code like any other for the import keys and the lock.
+  E3G and PdG, 4.0.0). It is a code like any other for the import keys and the lock. The same holds when codes exist
+  but **none states what the item stores**: every one names a method or a reaction direction the item
+  does not keep (LDH, sperm DNA fragmentation), or means something else (Quick %). The item then asserts no
+  `references.loinc`, owns those codes in `references.loincMethod`, and its block lists them as `alsoMatch`: a result
+  coded with one imports into the item, and the export never claims a method the event does not state. Look for a
+  method-neutral code first: eGFR has one (`69405-9`), so it exports that and keeps its per-equation codes as
+  `alsoMatch`. The item coding is always the item's own key, and **an item that asserts `references.loinc` never
+  carries it as its static code** (nor any other non-LOINC code): the build refuses both.
 - **From a datasource:** `code: { from: datasource, field: condition }`. The code is the selection a person made in a
   `datasource-search` field: the content at `field` (a dotted path) is a datasets-service selection
   `{ label, codes[] }`, and every entry of `codes[]` becomes a coding, its `system` label translated through
@@ -166,10 +210,16 @@ reviewer checks the code against and what a reader falls back on.
       concentration/mg-dl: { system: http://loinc.org, code: 1558-6, display: "Fasting glucose [Mass/volume] in Serum or Plasma" }
       concentration/mmol-l: { system: http://loinc.org, code: 14771-0, display: "Fasting glucose [Moles/volume] in Serum or Plasma" }
   ```
-  Every eventType of the item, each with its own coding (at least two; one code for every unit is a static code). On
-  an item that asserts LOINC, each coding is the code its unit option stores (`options[].loinc`). On import, the
-  matched coding names the eventType and only that eventType's unit is accepted: a mass code with a moles unit is
-  refused, never converted; a resource carrying two of the codes is refused. `alsoMatch` is keyed by eventType here,
+  Every eventType of the item, each with its coding (at least two distinct codings; one code for every unit is a
+  static code). On an item that asserts LOINC, each coding is the code its unit option stores (`options[].loinc`).
+  **Two units of one property store one code**, so two eventTypes may carry the same coding, with the same display
+  (total testosterone: `concentration/ng-dl` and `concentration/ug-l` both `2986-8`), on an item that asserts
+  `references.loinc` only: the unit options are what binds the repeat. **A unit whose option stores
+  `null`** (LOINC has no code for it) carries the HDS item coding of the item, and nothing else: never a LOINC code of
+  another property or of another analyte. On import, the
+  matched coding names the eventTypes that carry it and only their units are accepted: a mass code with a moles unit is
+  refused, never converted; a resource carrying the codes of two properties is refused; among the eventTypes one code
+  names, the unit picks (the build keeps the units of a block distinct). `alsoMatch` is keyed by eventType here,
   so an import-only code names its eventType the same way (LDL: `13457-7` "by calculation" is a mass code and imports
   into `concentration/mg-dl` only):
   ```yaml
@@ -200,6 +250,7 @@ reviewer checks the code against and what a reader falls back on.
 |---|---|---|---|
 | `quantity` | `number`, every eventType numeric | `units`: every eventType of the item (its unit variants) → UCUM code, none empty, no two the same (annotations such as `{beats}` aside: they carry no meaning in UCUM) | `valueQuantity` (`system` UCUM, `code` = `unit`); a lab event's `hdsComparator` as its `comparator`, `hdsRefRange` as `referenceRange` (limits in the same unit), `hdsInterpretation` and `hdsFlag` as `interpretation`, and back on import (BLOOD-CHEMISTRY.md § Cross-system) |
 | `scaled-quantity` | `number`, every eventType numeric | `units`: every eventType of the item → `{ unit, factor }`: the UCUM code it renders in and the factor from the stored number to the rendered one (`factor > 0`); units distinct as for `quantity` | `valueQuantity` of the stored number × `factor` in `unit`; the lab extras as for `quantity`, the range limits × `factor` too. On import the value and the limits are divided by `factor` |
+| `ratio-quantity` | `number`, every eventType an object `{ value, relativeTo }` (`ratio/generic`) | `units`: every eventType of the item → UCUM code, distinct as for `quantity`; `relativeTo`: the item's fixed denominator (`ratioRelativeTo`) | `valueQuantity` of `content.value` in the unit, with the lab extras as for `quantity`; an event whose `relativeTo` is not the block's is refused. On import the content is `{ value, relativeTo }` with the block's denominator |
 | `coded` | `select` | `options`: every option value → coding, each coding once; optional `alsoMatch`: option value → extra codings accepted for that option on import only | `valueCodeableConcept` (the option coding, never an `alsoMatch` one) |
 | `components` | `composite` | `components`: numeric composite field → `{ code, unit }` | `component[]`, one per field present |
 
@@ -229,6 +280,28 @@ either side (`0.07 × 100` is `7`, not `7.000000000000001`). It is a kind of its
 [forward compatibility](#forward-compatibility): a renderer that does not know it skips the block, where a renderer
 that ignored an unknown `quantity` field would state `0.057 %` for `5.7 %`. For the same reason the build refuses a
 `ratio/proportion` eventType rendered in `%` with any factor other than 100, a plain `quantity` included.
+
+**`ratio-quantity`** is for a `type: number` item on `ratio/generic`, whose content is never a bare number but
+`{ value, relativeTo }` with a denominator the item fixes (`ratioRelativeTo`; BLOOD-CHEMISTRY.md § A ratio with a fixed
+denominator). The one such item is the INR:
+
+```yaml
+body-blood-coagulation-inr:
+  fhir:
+    # …
+    value:
+      kind: ratio-quantity
+      units:
+        ratio/generic: "{INR}"     # { value: 2.5, relativeTo: 1 } renders as 2.5 {INR}
+      relativeTo: 1                 # the item's ratioRelativeTo; an event carrying another one is refused
+```
+
+The Quantity is `content.value`, never divided by `relativeTo`: the denominator is part of the definition of the
+figure, and the block states it so that a renderer holding the block alone can refuse an event that carries another
+one rather than state a number on another scale. `clientData.hdsRefRange` limits are on the scale of `value`. It is a
+kind of its own for the same [forward compatibility](#forward-compatibility) reason as `scaled-quantity`: a renderer
+that read the object as a number would throw on every event, or worse. A `select` on `ratio/generic` (a score out of
+its maximum) is not a `ratio-quantity`: it is `coded` or unmapped.
 
 **Option keys** are the option value as a string, as JavaScript prints it: `never`, `0.75`, and `1` for `1.0`, `0` for
 `0.0`. Quote them in YAML (`"1": …`).
@@ -505,10 +578,13 @@ the build accepts, so plan for it before adding the variation:
   `code: { from: eventType, codings }`. The codes it emits for the existing units stay the same, and the import keys
   only grow, so the switch is additive.
 - **eventType source:** the new unit gets its coding beside the others.
-- **A unit LOINC has no code for** (`options[].loinc: null`, as fasting insulin in pmol/L) cannot join a block: a
-  coding cannot be null, and an event in that unit would have no code to render. Keep that result on
-  `lab-result/coded-v1` with its UCUM unit until LOINC has a code, or until a nullable coding exists (a renderer change
-  first, then a schema change).
+- **A unit LOINC has no code for** (`options[].loinc: null`, as 1,25-dihydroxyvitamin D in pmol/L; search loinc-db
+  before concluding so: fasting insulin in pmol/L was thought to be one and has `59179-2`) takes the HDS item coding
+  on its eventType (labs slice): the block is, or becomes, a code from eventType, and the build refuses any other
+  coding there. If LOINC codes the unit one day, the option stores the code, the eventType's coding becomes that code,
+  and the item coding moves to its keyed `alsoMatch`, so what was exported before still imports.
+- **A unit of a property that already has a code** (ng/mL beside ng/dL) on a block whose code comes from the eventType
+  carries the same coding as its sibling; it needs a UCUM unit of its own.
 
 ---
 
@@ -617,6 +693,15 @@ blocks that use it also use a kind an older renderer skips: today one block (`bo
 profile the resource does not meet, so **the build refuses `alsoEmit` on any other value kind**. The rule lifts once
 every deployed hds-fhir-js knows `alsoEmit` (the release that adds `scaled-quantity`).
 
+**A coding shared by two eventTypes** of an eventType source (labs slice) changes nothing an older renderer emits: it
+renders each eventType's coding as before. Its importer, though, takes a code that names two eventTypes for a
+contradiction and refuses the resource (never a wrong placement); the hds-fhir-js release of the labs slice lets the
+unit pick. `ratio-quantity` is a new value kind: until the facade runs that release, the INR block is skipped and a
+SMART app sees no INR. **This slice ships the pack first** (data-model, then hds-fhir-js, then the facade pin and the
+extension options): a skipped block is safe, the facade pins both the library and the pack hash so production sees
+neither until the re-pin, and the library's `check:pack` (run by its CI) compares its mappings with the published
+pack, so a library released first would stay red until the pack follows. `check:pack` is never relaxed to get green.
+
 From that release on, hds-fhir-js also skips a block carrying a top-level field it does not know, so a later field that
 changes what a block emits is skipped by the renderers that predate it rather than half-rendered. The cost: an
 import-only field added later also needs the renderer to ship first, which is the order above anyway.
@@ -671,6 +756,17 @@ resource always lands on the active item, in its current eventType.
 - `scaled-quantity`: as `quantity`, against each eventType's `unit`, then the value is divided by that eventType's
   `factor` (`97 %` → `0.97` on `ratio/proportion`, `175 cm` → `1.75` on `length/m`); so are the reference range limits.
   The stored unit itself (`m` for body height) is not one of the block's units and is rejected, like any other.
+- `ratio-quantity`: as `quantity` for the unit and the lab extras; the content is `{ value: <the number>, relativeTo:
+  <the block's> }` (`2.5 {INR}` → `{ value: 2.5, relativeTo: 1 }`). `{INR}` is an annotation, so a source that sends
+  the INR with the unity `1`, or `{ratio}`, imports too.
+- **A code from the eventType** names the eventTypes that carry it (one, or the units of one property); the quantity's
+  unit must be one of theirs, and picks among them.
+- **Import limits known today** (one UCUM spelling per eventType; each is a refusal, never a wrong value; for the
+  importing bridge of phase 4 to normalise, no block change): **eGFR under `69405-9` in `mL/min`** (the example unit
+  LOINC lists for that code) is refused, as are `mL/min/1.73m2` and `mL/min/1.73.m2`: only `mL/min/{1.73_m2}`
+  imports (the annotation-stripping comparison leaves a trailing `/`, so `mL/min` differs, although under a code
+  that says "based on 1.73 sq M" the unit adds nothing); a count in `10*3/uL` or `10*9/L` (only `10*6/mL` and `/uL`);
+  `ng/mL` for testosterone and C-peptide (only `ug/L`); an INR without a UCUM code.
 - `coded`: the `valueCodeableConcept` codings must match exactly one option, by its coding or one of its
   `alsoMatch` codings; the option value is returned with its type (`0.75`, not `"0.75"`). Option codings and
   `alsoMatch` codings are unique within an item (a build check), so a coding maps back to one option.
@@ -745,7 +841,8 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
 - **Category:** required and known for the resourceType, refused on a resourceType without a table.
 - **Agreement with the item:** `quantity` and `scaled-quantity` only on `number` items, units exactly the item's
   eventTypes, each numeric; a `ratio/proportion` eventType rendered in `%` has factor 100 (so never a plain
-  `quantity`); `alsoEmit` only with a static code;
+  `quantity`); `ratio-quantity` only on a `number` item whose eventTypes store `{ value, relativeTo }`, units exactly
+  the item's eventTypes, `relativeTo` the item's `ratioRelativeTo` (`[FHIR-MAP-24]`); `alsoEmit` only with a static code;
   `coded` only on `select` (never `multi-select`), options exactly the item's options; component, split and ignore
   keys are composite fields, components and splits numeric, no field in two roles, every composite field accounted
   for; a datasource source only on a datasource field, resolving to a `codes` array in the eventType; no `value` on a
@@ -762,8 +859,12 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   as written, `routes` keys exactly its `route` enum, each coding once and each text once; a datasource-coded
   medication's `product.system` enum is covered by `fhirMapping.productSystems`; `text` and `dosage` on any other
   resourceType are refused. Import keys: one datasource-coded and one text-coded item per (resourceType, category).
+- **eventType codings (`[FHIR-MAP-23]`):** at least two distinct codings; two eventTypes may share one, with one
+  display, on an item that asserts `references.loinc` only; a shared coding is still never an `alsoMatch` of the
+  block. **An HDS item coding** (static or per eventType) is the item's own key, a deprecated alias aside.
 - **LOINC (`[LABC-LOINC-1]`):** on an item that asserts `references.loinc`, an eventType coding is the code its unit
-  option stores, and a static LOINC code is the code every unit option stores; a LOINC import key (code, eventType
+  option stores, or the HDS item coding of the item itself when the option stores `null` (and only then), and a static
+  code is a LOINC code, the one every unit option stores (never the item coding or another system); a LOINC import key (code, eventType
   coding, `alsoMatch`) is never a code another active item owns (`references.loinc` or `references.loincMethod`).
 - **Patient elements:** the element from the allowed list (the schema's `fhirElement` enum, the checker's
   `PATIENT_ELEMENTS`); the item type the element takes, with one string eventType; no `value` on a text or date
@@ -775,8 +876,8 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   code is not an import key: it may be another item's code, which then wins (`body-heart-rate` and the blood-pressure
   pulse). An `alsoEmit` coding is not an import key either, and is never another active item's import key or a LOINC
   code another item owns: the rendered resource would import back into that item.
-- **Units:** two eventTypes of one `quantity` block never share a UCUM unit, annotations aside (`{beats}/min` is
-  `/min`): the unit picks the eventType on import.
+- **Units:** two eventTypes of one `quantity`, `scaled-quantity` or `ratio-quantity` block never share a UCUM unit,
+  annotations aside (`{beats}/min` is `/min`): the unit picks the eventType on import.
 - **Scopes:** companions valid (never of a Patient element); the one-pair invariant; the lock (no locked stream
   removed, re-parented or re-paired, no locked item removed or moved, no new item or stream under a locked stream
   without a `reviewed` entry naming that locked stream).

@@ -163,7 +163,7 @@ const defsSchema = {
     fhirValue: {
       type: 'object',
       properties: {
-        kind: { enum: ['quantity', 'scaled-quantity', 'coded', 'components'] }
+        kind: { enum: ['quantity', 'scaled-quantity', 'ratio-quantity', 'coded', 'components'] }
       },
       required: ['kind'],
       allOf: [
@@ -198,6 +198,20 @@ const defsSchema = {
               }
             },
             required: ['units'],
+            additionalProperties: false
+          }
+        },
+        { // ratio-quantity: a number stored as `{ value, relativeTo }` with a fixed denominator (INR, relativeTo 1);
+          // eventType → UCUM unit, and the denominator every event carries; renders `value` as valueQuantity.
+          // Its own kind: a renderer that does not know it skips the block instead of reading an object as a number.
+          if: { properties: { kind: { const: 'ratio-quantity' } } },
+          then: {
+            properties: {
+              kind: {},
+              units: { type: 'object', minProperties: 1, additionalProperties: { $ref: 'defs.json#/definitions/fhirUnit' } },
+              relativeTo: { type: 'number', exclusiveMinimum: 0 }
+            },
+            required: ['units', 'relativeTo'],
             additionalProperties: false
           }
         },

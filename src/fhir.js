@@ -149,7 +149,25 @@ function checkFhirMapping (key, item, itemEventTypes) {
   const isContentCode = f.code.from === 'content';
   const isTextCode = f.code.from === 'text';
   const isMedication = MEDICATION_TYPES.includes(f.resourceType);
-  const codeCodings = f.code.from === 'eventType' ? Object.values(f.code.codings) : isDatasourceCode || isContentCode || isTextCode ? [] : [f.code];
+  // An eventType source may give two eventTypes the same coding (two units of one property store one LOINC code): the
+  // coding counts once here, with one display.
+  const distinctCodings = (codings) => {
+    const byKey = new Map();
+    for (const c of codings) {
+      const k = c.system + '|' + c.code;
+      if (byKey.has(k) && byKey.get(k).display !== c.display) fail(`code.codings: the coding ${k} has two displays ("${byKey.get(k).display}", "${c.display}")`);
+      byKey.set(k, c);
+    }
+    return [...byKey.values()];
+  };
+  const codeCodings = f.code.from === 'eventType' ? distinctCodings(Object.values(f.code.codings)) : isDatasourceCode || isContentCode || isTextCode ? [] : [f.code];
+  // The HDS item coding names the item that carries it, never another one (whose generic rendering has that coding).
+  // A deprecated alias keeps its replacement's block, the replacement's key with it.
+  if (!item.deprecated) {
+    for (const c of codeCodings) {
+      if (c.system === ITEM_SYSTEM && c.code !== key) fail(`the HDS item coding ${ITEM_SYSTEM}|${c.code} is not the item's own key`);
+    }
+  }
   const alsoMatchCodings = alsoMatchCodingsOf(f);
   const alsoEmitCodings = f.alsoEmit || [];
   if (f.alsoEmit != null && f.code.from != null) fail('"alsoEmit" applies to a static code only');
@@ -179,9 +197,17 @@ function checkFhirMapping (key, item, itemEventTypes) {
     checkContentField(item, f.code, itemEventTypes, fail);
     if (f.alsoMatch != null) fail('"alsoMatch" applies to a static or eventType code only');
   } else if (f.code.from === 'eventType') {
-    // Each eventType renders its own code, and an imported code names one eventType back; so does an import-only
-    // code, keyed by the eventType it names (a mass code never imports a moles quantity).
+    // Each eventType renders its own code, and an imported code names its eventType back; so does an import-only
+    // code, keyed by the eventType it names (a mass code never imports a moles quantity). Two units of one property
+    // (ng/dL and ng/mL, both mass) store one code: that code names both eventTypes and the unit, distinct per
+    // eventType (below), picks among them. One code for every eventType is a static code.
     sameSet('code.codings keys vs the item eventTypes', Object.keys(f.code.codings), itemEventTypes);
+    if (codeCodings.length < 2) fail('code.codings give every eventType the same coding: that is a static code, not a code from eventType');
+    // What keeps a shared coding honest is the unit options (`options[].loinc`, held by checkLoincAgreement and
+    // `[LABC-LOINC-3e]`): without them nothing says the two units are one property.
+    if (codeCodings.length < Object.keys(f.code.codings).length && (item.references?.loinc || []).length === 0) {
+      fail('two eventTypes share a coding only on an item whose unit options store it (references.loinc)');
+    }
     if (Array.isArray(f.alsoMatch)) fail('with an eventType code, "alsoMatch" is keyed by eventType: { <eventType>: [codings] }');
     for (const t of Object.keys(f.alsoMatch || {})) {
       if (!itemEventTypes.includes(t)) fail(`alsoMatch "${t}" is not one of the item eventTypes (${itemEventTypes.join(', ')})`);
@@ -191,7 +217,7 @@ function checkFhirMapping (key, item, itemEventTypes) {
     if (f.alsoMatch != null && !Array.isArray(f.alsoMatch)) fail('"alsoMatch" keyed by eventType applies to an eventType code only; a static code takes a list');
     unique('code, alsoMatch and alsoEmit', [f.code, ...alsoMatchCodings, ...alsoEmitCodings]);
   }
-  checkLoincAgreement(item, f, itemEventTypes, fail);
+  checkLoincAgreement(key, item, f, itemEventTypes, fail);
 
   if ((f.resourceType === 'Condition' || f.resourceType === 'DocumentReference' || isMedication) && f.value != null) fail(`a ${f.resourceType} has no value[x]; remove "value"`);
 
@@ -215,17 +241,28 @@ function checkFhirMapping (key, item, itemEventTypes) {
         }
         // eventType → { unit, factor }; a plain quantity renders the stored number as it is.
         const scaled = Object.entries(v.units).map(([t, u]) => v.kind === 'quantity' ? [t, u, 1] : [t, u.unit, u.factor]);
-        // The unit picks the eventType on import, so two eventTypes never share one (annotations aside).
-        const byUnit = new Map();
+        distinctUnits(scaled.map(([t, u]) => [t, u]), fail);
         for (const [t, u, factor] of scaled) {
-          const other = byUnit.get(ucumKey(u));
-          if (other != null) fail(`value.units: eventTypes "${other}" and "${t}" share the UCUM unit "${ucumKey(u)}" (annotations aside); an imported quantity would map back to two eventTypes`);
-          byUnit.set(ucumKey(u), t);
           // A proportion stores 0..1: as a percentage it is 100 times the stored number, never the number itself.
           if (t === 'ratio/proportion' && ucumKey(u) === '%' && factor !== 100) {
             fail(`value.units "${t}": a proportion (0..1) renders in % with value.kind "scaled-quantity" and factor 100, not ${v.kind === 'quantity' ? 'as stored' : `factor ${factor}`}`);
           }
         }
+        break;
+      }
+      case 'ratio-quantity': {
+        // A number stored as `{ value, relativeTo }` with the item's fixed denominator (INR: relativeTo 1). The block
+        // states that denominator, so a renderer that holds the block alone refuses an event carrying another one.
+        if (item.type !== 'number') fail('value.kind "ratio-quantity" applies to "number" items only');
+        sameSet('value.units keys vs the item eventTypes', Object.keys(v.units), itemEventTypes);
+        for (const t of itemEventTypes) {
+          const et = eventTypesById(t);
+          if (et?.type !== 'object' || et.properties?.value?.type !== 'number' || et.properties?.relativeTo?.type !== 'number') {
+            fail(`value.kind "ratio-quantity": eventType "${t}" does not store { value, relativeTo }`);
+          }
+        }
+        if (v.relativeTo !== item.ratioRelativeTo) fail(`value.relativeTo ${v.relativeTo} is not the item's ratioRelativeTo (${item.ratioRelativeTo})`);
+        distinctUnits(Object.entries(v.units), fail);
         break;
       }
       case 'coded':
@@ -267,6 +304,16 @@ function checkFhirMapping (key, item, itemEventTypes) {
   }
 }
 
+/** The unit picks the eventType on import, so two eventTypes of one block never share a UCUM unit (annotations aside). */
+function distinctUnits (pairs, fail) {
+  const byUnit = new Map();
+  for (const [t, u] of pairs) {
+    const other = byUnit.get(ucumKey(u));
+    if (other != null) fail(`value.units: eventTypes "${other}" and "${t}" share the UCUM unit "${ucumKey(u)}" (annotations aside); an imported quantity would map back to two eventTypes`);
+    byUnit.set(ucumKey(u), t);
+  }
+}
+
 /**
  * A Patient element block: the element takes an item of its type whose one eventType is a string, the content as
  * written for a text or date element, and for a coded element (gender) one coding per item option, each a code of
@@ -295,6 +342,8 @@ function checkFhirElement (item, itemEventTypes, { fail, sameSet, unique }) {
 }
 
 const LOINC_SYSTEM = 'http://loinc.org';
+/** The HDS item coding: the item key as a code, for what LOINC has no code for (FHIR-MAPPING.md § code). */
+const ITEM_SYSTEM = 'https://hds.ngo/fhir/CodeSystem/item';
 
 /** Every `alsoMatch` coding of a block: the list of a static code, or all lists of an eventType code. */
 function alsoMatchCodingsOf (f) {
@@ -306,10 +355,12 @@ function alsoMatchCodingsOf (f) {
  * `[LABC-LOINC-1]`, the block side: on an item that asserts LOINC codes (`references.loinc`), the block's LOINC
  * codings agree with them, so ownership and the import match keys cannot disagree. Each eventType renders the code its
  * unit option stores (`variations.eventType.options[].loinc`; on an item without unit options, its one code), and a
- * static code is stored by every unit option. An `alsoMatch` code may be one no item owns (a discouraged panel code);
- * that no other item owns a block's LOINC import key is checked with every item loaded (checkFhirImportKeys).
+ * static code is stored by every unit option, and is a LOINC code. A unit LOINC has no code for (`loinc: null`: the
+ * pmol/L of 1,25-dihydroxyvitamin D) renders the HDS item coding, the item's own key, never a LOINC code. An `alsoMatch` code may be one no item
+ * owns (a discouraged panel code); that no other item owns a block's LOINC import key is checked with every item
+ * loaded (checkFhirImportKeys).
  */
-function checkLoincAgreement (item, f, itemEventTypes, fail) {
+function checkLoincAgreement (key, item, f, itemEventTypes, fail) {
   const loinc = item.references?.loinc || [];
   if (loinc.length === 0) return;
   const options = item.variations?.eventType?.options || [];
@@ -317,11 +368,19 @@ function checkLoincAgreement (item, f, itemEventTypes, fail) {
   const isLoinc = (c) => c.system === LOINC_SYSTEM;
   if (f.code.from === 'eventType') {
     for (const [t, c] of Object.entries(f.code.codings)) {
-      if (!isLoinc(c) || c.code !== storedBy(t)) fail(`code.codings "${t}": ${c.system}|${c.code} is not the LOINC code its unit option stores (${storedBy(t)})`);
+      const stored = storedBy(t);
+      if (stored == null) {
+        if (c.system !== ITEM_SYSTEM || c.code !== key) fail(`code.codings "${t}": its unit option stores no LOINC code, so its coding is the HDS item coding (${ITEM_SYSTEM}|${key}), not ${c.system}|${c.code}`);
+      } else if (!isLoinc(c) || c.code !== stored) {
+        fail(`code.codings "${t}": ${c.system}|${c.code} is not the LOINC code its unit option stores (${stored})`);
+      }
     }
   } else if (f.code.from == null && isLoinc(f.code)) {
     const other = itemEventTypes.filter((t) => storedBy(t) !== f.code.code);
     if (other.length > 0) fail(`code ${f.code.code} is a static code, but eventType ${other.join(', ')} stores ${other.map(storedBy).join(', ')}: use a code from eventType`);
+  } else if (f.code.from == null) {
+    // An item that asserts a LOINC code exports it: never the HDS item coding or another system in its place.
+    fail(`the item asserts LOINC (references.loinc): its static code is the LOINC code every unit option stores, not ${f.code.system}|${f.code.code}`);
   }
 }
 

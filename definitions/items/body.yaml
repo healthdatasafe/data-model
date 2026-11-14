@@ -361,6 +361,17 @@ body-semen-motility-progressive:
     derivation (concentration × volume × this). Reference: WHO 2021, lower limit 0.30.
   references:
     loinc: ["14194-5"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 14194-5, display: "Spermatozoa Progressive/Spermatozoa in Semen" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 body-semen-motility-total:
   version: v1
   label:
@@ -386,6 +397,17 @@ body-semen-motility-total:
     Progressive (PR) plus non-progressive (NP). Used to diagnose asthenozoospermia. Distinct
     from `body-semen-motility-progressive` (PR only); both can appear on the same lab report.
     Reference: WHO 2021, lower limit 0.42.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 6800-7, display: "Spermatozoa Motile/Spermatozoa in Semen" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 body-semen-vitality:
   version: v1
   label:
@@ -412,6 +434,17 @@ body-semen-vitality:
     2021, lower limit 0.54.
   references:
     loinc: ["10613-8"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 10613-8, display: "Spermatozoa Viable/Spermatozoa in Semen" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 body-semen-volume:
   version: v1
   label:
@@ -471,6 +504,19 @@ body-semen-tmc:
     a measured value on `count/mega` (10⁶ sperm) because labs report it directly. Reference:
     Hamilton 2015, lower limit 9. No LOINC: 107482-2 counts all motile spermatozoa and 81319-6 the
     progressive ones by automated count only; labs compute TMC either way, so neither is asserted.
+  # No LOINC code is asserted (devNotes), and SNOMED CT 167806003 is the procedure, which no lab block codes an
+  # Observation with: the code is the HDS item coding (FHIR-MAPPING.md § code). UCUM 10*6: millions of spermatozoa.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: https://hds.ngo/fhir/CodeSystem/item, code: body-semen-tmc, display: "Total motile count" }
+    value:
+      kind: quantity
+      units:
+        count/mega: "10*6"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 body-semen-morphology-normal:
   version: v1
   label:
@@ -496,6 +542,17 @@ body-semen-morphology-normal:
   devNotes: >-
     Kruger strict criteria. Stored on `ratio/proportion` as 0..1. Reference: WHO 2021, lower
     limit 0.04.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 10622-9, display: "Spermatozoa Normal/Spermatozoa in Semen" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 body-semen-dna-fragmentation:
   version: v1
   label:
@@ -524,6 +581,22 @@ body-semen-dna-fragmentation:
     has no code.
   references:
     loincMethod: ["104620-0"]
+  # LOINC has a method code only (devNotes), so the code is the HDS item coding (FHIR-MAPPING.md § code); a result
+  # coded 104620-0 imports into the item, the method is not kept.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: https://hds.ngo/fhir/CodeSystem/item, code: body-semen-dna-fragmentation, display: "Sperm DNA fragmentation" }
+    # Import only: the method-specific code the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 104620-0, display: "DNA fragmentation index in Semen by Flow cytometry (FC)" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Blood chemistry — see documentation/BLOOD-CHEMISTRY.md
@@ -655,7 +728,7 @@ body-blood-serum-insulin-fasting:
       label: { en: Unit, fr: Unité }
       options:
         - { value: concentration/uiu-ml, label: { en: μIU/mL, fr: μIU/mL }, loinc: "27873-9" }
-        - { value: concentration/pmol-l, label: { en: pmol/L, fr: pmol/L }, loinc: null }
+        - { value: concentration/pmol-l, label: { en: pmol/L, fr: pmol/L }, loinc: "59179-2" }
   unitConversions:
     notConvertible:
       - from: concentration/uiu-ml
@@ -664,10 +737,26 @@ body-blood-serum-insulin-fasting:
   # 16890009 is the unqualified insulin measurement; SNOMED has no fasting-specific concept.
   references:
     snomed: ["16890009"]
-    loinc: ["27873-9"]
+    loinc: ["27873-9", "59179-2"]
   devNotes: >-
-    The pmol/L option has no LOINC: LOINC 2.83 has no fasting insulin [Moles/volume] code, and 14796-7 is
-    untimed (it belongs to body-blood-serum-insulin).
+    The pmol/L option stores 59179-2 (fasting, moles); 14796-7 is untimed and belongs to
+    body-blood-serum-insulin. (Until this release the option stored no code: 59179-2 was overlooked.)
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/uiu-ml: { system: http://loinc.org, code: 27873-9, display: "Insulin [Units/volume] in Serum or Plasma --fasting" }
+        concentration/pmol-l: { system: http://loinc.org, code: 59179-2, display: "Insulin [Moles/volume] in Serum or Plasma --fasting" }
+    value:
+      kind: quantity
+      units:
+        concentration/uiu-ml: "u[IU]/mL"
+        concentration/pmol-l: pmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-insulin:
   version: v1
@@ -695,8 +784,8 @@ body-blood-serum-insulin:
   devNotes: >-
     Untimed insulin: any result whose report does not state fasting (site-agents#40). A fasting result goes
     to `body-blood-serum-insulin-fasting`; LOINC codes the two as different observations. SNOMED has no
-    fasting-specific insulin concept, so both items reference 16890009 Insulin measurement. Mapped to FHIR,
-    unlike the fasting twin, whose pmol/L option has no LOINC code.
+    fasting-specific insulin concept, so both items reference 16890009 Insulin measurement. Both units have a
+    LOINC code, as on the fasting twin (27873-9 and 59179-2).
   fhir:
     resourceType: Observation
     category: laboratory
@@ -789,6 +878,25 @@ body-blood-serum-c-peptide:
   references:
     snomed: ["88705004"]
     loinc: ["1986-9", "14633-2"]
+  # nmol/L and pmol/L are one property and store one code (14633-2): the code names both, the unit picks one.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/ug-l: { system: http://loinc.org, code: 1986-9, display: "C peptide [Mass/volume] in Serum or Plasma" }
+        concentration/nmol-l: { system: http://loinc.org, code: 14633-2, display: "C peptide [Moles/volume] in Serum or Plasma" }
+        concentration/pmol-l: { system: http://loinc.org, code: 14633-2, display: "C peptide [Moles/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ug-l: ug/L
+        concentration/nmol-l: nmol/L
+        concentration/pmol-l: pmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-fsh:
   version: v1
@@ -1337,6 +1445,20 @@ body-blood-cbc-neutrophils:
     snomed: ["271035003"]
     loinc: ["26511-6"]
     loincMethod: ["770-8"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26511-6, display: "Neutrophils/Leukocytes in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 770-8, display: "Neutrophils/Leukocytes in Blood by Automated count" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-lymphocytes:
   version: v1
@@ -1354,6 +1476,20 @@ body-blood-cbc-lymphocytes:
     snomed: ["271036002"]
     loinc: ["26478-8"]
     loincMethod: ["736-9"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26478-8, display: "Lymphocytes/Leukocytes in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 736-9, display: "Lymphocytes/Leukocytes in Blood by Automated count" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-monocytes:
   version: v1
@@ -1371,6 +1507,20 @@ body-blood-cbc-monocytes:
     snomed: ["271037006"]
     loinc: ["26485-3"]
     loincMethod: ["5905-5"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26485-3, display: "Monocytes/Leukocytes in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 5905-5, display: "Monocytes/Leukocytes in Blood by Automated count" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-eosinophils:
   version: v1
@@ -1388,6 +1538,20 @@ body-blood-cbc-eosinophils:
     snomed: ["310540006"]
     loinc: ["26450-7"]
     loincMethod: ["713-8"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26450-7, display: "Eosinophils/Leukocytes in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 713-8, display: "Eosinophils/Leukocytes in Blood by Automated count" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-basophils:
   version: v1
@@ -1405,6 +1569,20 @@ body-blood-cbc-basophils:
     snomed: ["271038001"]
     loinc: ["30180-4"]
     loincMethod: ["706-2"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 30180-4, display: "Basophils/Leukocytes in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 706-2, display: "Basophils/Leukocytes in Blood by Automated count" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ── Complete blood count: indices, reticulocytes, extended differential (site-agents#27) ──
 
@@ -1494,6 +1672,20 @@ body-blood-cbc-reticulocytes:
     snomed: ["313639004"]
     loinc: ["4679-7"]
     loincMethod: ["17849-1"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 4679-7, display: "Reticulocytes/Erythrocytes in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 17849-1, display: "Reticulocytes/Erythrocytes in Blood by Automated count" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-reticulocytes-immature-fraction:
   version: v1
@@ -1513,6 +1705,17 @@ body-blood-cbc-reticulocytes-immature-fraction:
   devNotes: >-
     A share of the reticulocytes, not of the red blood cells. LOINC 71693-6 is the immature
     platelet fraction, another analyte.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 33516-6, display: "Immature reticulocytes/Reticulocytes.total in Blood" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-reticulocytes-hemoglobin:
   version: v1
@@ -1598,6 +1801,21 @@ body-blood-cbc-neutrophils-segmented:
   devNotes: >-
     No SNOMED reference: SNOMED CT has a segmented-neutrophil count (104096007, on the count item)
     but no percentage concept.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26505-8, display: "Segmented neutrophils/Leukocytes in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 32200-8, display: "Segmented neutrophils/Leukocytes in Blood by Automated count" }
+      - { system: http://loinc.org, code: 769-0, display: "Segmented neutrophils/Leukocytes in Blood by Manual count" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-neutrophils-band:
   version: v1
@@ -1617,6 +1835,20 @@ body-blood-cbc-neutrophils-band:
   devNotes: >-
     No SNOMED reference: SNOMED CT has a band-neutrophil count (25340006, on the count item) but no
     percentage concept.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26508-2, display: "Band form neutrophils/Leukocytes in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 764-1, display: "Band form neutrophils/Leukocytes in Blood by Manual count" }
+    value:
+      kind: scaled-quantity
+      units:
+        ratio/proportion: { unit: "%", factor: 100 }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-myelocytes:
   version: v1
@@ -1713,6 +1945,21 @@ body-blood-cbc-lymphocytes-count:
     The absolute count, on the same stream as the share of white blood cells, so one grant covers both
     (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US "cells/μL" figure,
     1000 times the number (4.5 × 10⁹/L is 4500/μL).
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26474-7, display: "Lymphocytes [#/volume] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 731-0, display: "Lymphocytes [#/volume] in Blood by Automated count" }
+    value:
+      kind: quantity
+      units:
+        concentration/megacount-ml: "10*6/mL"
+        concentration/count-ul: /uL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-neutrophils-count:
   version: v1
@@ -1743,6 +1990,21 @@ body-blood-cbc-neutrophils-count:
     The absolute count, on the same stream as the share of white blood cells, so one grant covers both
     (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US "cells/μL" figure,
     1000 times the number (4.5 × 10⁹/L is 4500/μL).
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26499-4, display: "Neutrophils [#/volume] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 751-8, display: "Neutrophils [#/volume] in Blood by Automated count" }
+    value:
+      kind: quantity
+      units:
+        concentration/megacount-ml: "10*6/mL"
+        concentration/count-ul: /uL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-neutrophils-segmented-count:
   version: v1
@@ -1773,6 +2035,21 @@ body-blood-cbc-neutrophils-segmented-count:
     The absolute count, on the same stream as the share of white blood cells, so one grant covers both
     (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US "cells/μL" figure,
     1000 times the number (4.5 × 10⁹/L is 4500/μL).
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 30451-9, display: "Segmented neutrophils [#/volume] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 768-2, display: "Segmented neutrophils [#/volume] in Blood by Manual count" }
+    value:
+      kind: quantity
+      units:
+        concentration/megacount-ml: "10*6/mL"
+        concentration/count-ul: /uL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-neutrophils-band-count:
   version: v1
@@ -1803,6 +2080,21 @@ body-blood-cbc-neutrophils-band-count:
     The absolute count, on the same stream as the share of white blood cells, so one grant covers both
     (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US "cells/μL" figure,
     1000 times the number (4.5 × 10⁹/L is 4500/μL).
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26507-4, display: "Band form neutrophils [#/volume] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 763-3, display: "Band form neutrophils [#/volume] in Blood by Manual count" }
+    value:
+      kind: quantity
+      units:
+        concentration/megacount-ml: "10*6/mL"
+        concentration/count-ul: /uL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-monocytes-count:
   version: v1
@@ -1833,6 +2125,21 @@ body-blood-cbc-monocytes-count:
     The absolute count, on the same stream as the share of white blood cells, so one grant covers both
     (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US "cells/μL" figure,
     1000 times the number (4.5 × 10⁹/L is 4500/μL).
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26484-6, display: "Monocytes [#/volume] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 742-7, display: "Monocytes [#/volume] in Blood by Automated count" }
+    value:
+      kind: quantity
+      units:
+        concentration/megacount-ml: "10*6/mL"
+        concentration/count-ul: /uL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-eosinophils-count:
   version: v1
@@ -1863,6 +2170,21 @@ body-blood-cbc-eosinophils-count:
     The absolute count, on the same stream as the share of white blood cells, so one grant covers both
     (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US "cells/μL" figure,
     1000 times the number (4.5 × 10⁹/L is 4500/μL).
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26449-9, display: "Eosinophils [#/volume] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 711-2, display: "Eosinophils [#/volume] in Blood by Automated count" }
+    value:
+      kind: quantity
+      units:
+        concentration/megacount-ml: "10*6/mL"
+        concentration/count-ul: /uL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-basophils-count:
   version: v1
@@ -1893,6 +2215,21 @@ body-blood-cbc-basophils-count:
     The absolute count, on the same stream as the share of white blood cells, so one grant covers both
     (site-agents#27). Option 1 is 10⁹/L, as `body-blood-cbc-wbc`; option 2 is the US "cells/μL" figure,
     1000 times the number (4.5 × 10⁹/L is 4500/μL).
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 26444-0, display: "Basophils [#/volume] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 704-7, display: "Basophils [#/volume] in Blood by Automated count" }
+    value:
+      kind: quantity
+      units:
+        concentration/megacount-ml: "10*6/mL"
+        concentration/count-ul: /uL
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-cbc-reticulocytes-count:
   version: v1
@@ -1933,6 +2270,22 @@ body-blood-cbc-reticulocytes-count:
     covers both (site-agents#27). Option 1 is 10⁹/L, as the white-cell counts (option 1 is permanent, so it
     follows its siblings, not the US-first rule); option 2 is "cells/μL", 1000 times that number (50 × 10⁹/L
     is 50 000/μL); option 3 is 10¹²/L, the US "× 10⁶/μL" (0.05).
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 14196-0, display: "Reticulocytes [#/volume] in Blood" }
+    # Import only: the method-specific codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 60474-4, display: "Reticulocytes [#/volume] in Blood by Automated count" }
+    value:
+      kind: quantity
+      units:
+        concentration/megacount-ml: "10*6/mL"
+        concentration/count-ul: /uL
+        concentration/gigacount-ml: "10*9/mL"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 # ── Coagulation (citrated plasma) ─────────────────────────────────────────────
 
@@ -1991,6 +2344,24 @@ body-blood-coagulation-prothrombin-activity:
     way (a long PT is a ratio above 1 and a Quick below 100 %), so a reader of an export would misread the
     value. LOINC has no Quick % code. 6302-4 (normal/actual, the prothrombin index) and 3289-6 (factor II
     activity) are other analytes. No SNOMED reference: SNOMED CT has no prothrombin-activity concept.
+  # LOINC has no Quick % code (devNotes), so the code is the HDS item coding (FHIR-MAPPING.md § code). 5894-1 is
+  # import only: the code European labs send Quick % under, which the item owns; it is never emitted, since its
+  # LOINC definition (actual/normal time) runs the other way. The unit is the guard: the block's only unit is %, so
+  # a PT ratio sent as a ratio under 5894-1 (unit 1 or {ratio}, value 1.2) is refused, and only a figure in % imports.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: https://hds.ngo/fhir/CodeSystem/item, code: body-blood-coagulation-prothrombin-activity, display: "Prothrombin activity (Quick)" }
+    # Import only: the code the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 5894-1, display: "Prothrombin time (PT) actual/Normal" }
+    value:
+      kind: quantity
+      units:
+        ratio/percent: "%"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-coagulation-aptt:
   version: v1
@@ -2076,6 +2447,20 @@ body-blood-coagulation-inr:
     `clientData.hdsComparator`. 6301-6 is "by Coagulation assay" and LOINC has no methodless INR code. A home or
     point-of-care INR on capillary blood (34714-6, System Blood) is another specimen: `lab-result/coded-v1`.
     Not convertible to the prothrombin time or Quick %.
+  # The content is { value, relativeTo: 1 }: the `ratio-quantity` kind renders `value` as the Quantity, in UCUM {INR}
+  # (an annotation: the INR is dimensionless), and refuses an event whose relativeTo is not 1.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 6301-6, display: "INR in Platelet poor plasma by Coagulation assay" }
+    value:
+      kind: ratio-quantity
+      units:
+        ratio/generic: "{INR}"
+      relativeTo: 1
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 
 # ── Liver ────────────────────────────────────────────────────────────────────
@@ -2199,6 +2584,24 @@ body-blood-serum-ldh:
     No exported LOINC: the methodless 2532-0 is DISCOURAGED in LOINC 2.83, which keeps one code per
     reaction direction (lactate to pyruvate, pyruvate to lactate), and the two directions give different
     numbers. The item owns all three, so a result a lab still sends as 2532-0 lands here.
+  # No LOINC code states an LDH activity of unknown reaction direction except the DISCOURAGED 2532-0 (devNotes), so
+  # the code is the HDS item coding (FHIR-MAPPING.md § code); the three codes the item owns import into it.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: https://hds.ngo/fhir/CodeSystem/item, code: body-blood-serum-ldh, display: "LDH" }
+    # Import only: the codes the item owns (references.loincMethod).
+    alsoMatch:
+      - { system: http://loinc.org, code: 14804-9, display: "Lactate dehydrogenase [Enzymatic activity/volume] in Serum or Plasma by Lactate to pyruvate reaction" }
+      - { system: http://loinc.org, code: 14805-6, display: "Lactate dehydrogenase [Enzymatic activity/volume] in Serum or Plasma by Pyruvate to lactate reaction" }
+      - { system: http://loinc.org, code: 2532-0, display: "Lactate dehydrogenase [Enzymatic activity/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        catalytic-activity/u-l: U/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-bilirubin-total:
   version: v1
@@ -2499,11 +2902,34 @@ body-blood-serum-egfr:
   # (CKD-EPI, MDRD, …) chosen by the reporting lab — the equation is not modelled.
   references:
     snomed: ["80274001"]
+    loinc: ["69405-9"]
     loincMethod: ["98979-8", "62238-1", "77147-7", "88293-6", "88294-4", "48643-1", "48642-3"]
   devNotes: >-
-    LOINC codes eGFR per equation, and the equation changes the number, so the item exports no code and
-    owns the creatinine-based ones (CKD-EPI 2021, CKD-EPI 2009, MDRD, and the race-adjusted CKD-EPI and
-    MDRD codes labs still send). Cystatin-C-based results go to `lab-result/coded-v1`.
+    Exports LOINC 69405-9, the equation-neutral code (a GFR per 1.73 m², no equation and no marker stated).
+    The equation changes the number and is not stored, so the per-equation creatinine-based codes (CKD-EPI
+    2021, CKD-EPI 2009, MDRD, and the race-adjusted CKD-EPI and MDRD codes labs still send) are owned and
+    imported, never exported. A result coded as cystatin-C-based (50210-4) goes to `lab-result/coded-v1`.
+  # 69405-9 verified ACTIVE in loinc-db (LOINC 2.83), 2026-11-14: method "based on 1.73 sq M", no equation.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 69405-9, display: "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by based on 1.73 sq M" }
+    # Import only: the per-equation codes the item owns (references.loincMethod); the equation is not kept.
+    alsoMatch:
+      - { system: http://loinc.org, code: 98979-8, display: "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI 2021)/1.73 sq M" }
+      - { system: http://loinc.org, code: 62238-1, display: "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI)/1.73 sq M" }
+      - { system: http://loinc.org, code: 77147-7, display: "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (MDRD)/1.73 sq M" }
+      - { system: http://loinc.org, code: 88293-6, display: "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI)/1.73 sq M among black population" }
+      - { system: http://loinc.org, code: 88294-4, display: "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI)/1.73 sq M among non black population" }
+      - { system: http://loinc.org, code: 48643-1, display: "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (MDRD)/1.73 sq M among black population" }
+      - { system: http://loinc.org, code: 48642-3, display: "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (MDRD)/1.73 sq M among non black population" }
+    value:
+      kind: quantity
+      units:
+        rate/ml-min-173m2: "mL/min/{1.73_m2}"
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-sodium:
   version: v1
@@ -3318,6 +3744,23 @@ body-blood-serum-vitamin-d-125oh:
   devNotes: >-
     The pmol/L option has no LOINC: LOINC 2.83 has 1,25-dihydroxyvitamin D [Moles/volume] for D3 only
     (calcitriol, 14566-4), not for the D2 + D3 total the mass code 62290-2 measures.
+  # LOINC has no D2 + D3 total in moles (devNotes; 14566-4 is calcitriol alone): pmol/L renders the HDS item coding.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/pg-ml: { system: http://loinc.org, code: 62290-2, display: "1,25-Dihydroxyvitamin D [Mass/volume] in Serum or Plasma" }
+        concentration/pmol-l: { system: https://hds.ngo/fhir/CodeSystem/item, code: body-blood-serum-vitamin-d-125oh, display: "Vitamin D (active)" }
+    value:
+      kind: quantity
+      units:
+        concentration/pg-ml: pg/mL
+        concentration/pmol-l: pmol/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-vitamin-b12:
   version: v1
@@ -4167,6 +4610,25 @@ body-blood-serum-testosterone-total:
   references:
     snomed: ["270973006"]
     loinc: ["2986-8", "14913-8"]
+  # ng/dL and ng/mL are one property and store one code (2986-8): the code names both, the unit picks one.
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code:
+      from: eventType
+      codings:
+        concentration/ng-dl: { system: http://loinc.org, code: 2986-8, display: "Testosterone [Mass/volume] in Serum or Plasma" }
+        concentration/nmol-l: { system: http://loinc.org, code: 14913-8, display: "Testosterone [Moles/volume] in Serum or Plasma" }
+        concentration/ug-l: { system: http://loinc.org, code: 2986-8, display: "Testosterone [Mass/volume] in Serum or Plasma" }
+    value:
+      kind: quantity
+      units:
+        concentration/ng-dl: ng/dL
+        concentration/nmol-l: nmol/L
+        concentration/ug-l: ug/L
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 
 body-blood-serum-testosterone-free:
   version: v1
