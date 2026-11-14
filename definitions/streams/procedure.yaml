@@ -1,7 +1,13 @@
 id: procedure
 name: Procedure
+label:
+  en: "Procedure"
+  fr: "Actes médicaux"
 parentId: null
 children:
   - id: procedure-fertility
     name: Fertility
+    label:
+      en: "Fertility"
+      fr: "Fertilité"
     role: context

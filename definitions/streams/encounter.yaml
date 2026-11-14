@@ -3,12 +3,21 @@
 # can be granted per leaf. See documentation/ENCOUNTER.md.
 id: encounter
 name: Care encounters and providers
+label:
+  en: "Care encounters and providers"
+  fr: "Soins et prestataires"
+description:
+  en: "Your consultations, hospital stays and other care visits, with the doctors and places involved and the reason given, including sensitive visits."
+  fr: "Vos consultations, séjours hospitaliers et autres soins, avec les médecins et les lieux concernés et le motif indiqué, y compris les visites sensibles."
 parentId: null
 children:
   - id: encounter-visit
     name: Visits and stays
   - id: encounter-provider
     name: Care providers
+    label:
+      en: "Care providers"
+      fr: "Prestataires de soins"
     children:
       - id: encounter-provider-person
         name: Doctors and therapists

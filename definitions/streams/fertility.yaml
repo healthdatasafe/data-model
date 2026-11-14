@@ -1,9 +1,15 @@
 id: fertility
 name: Fertility
+label:
+  en: "Fertility"
+  fr: "Fertilité"
 parentId: null
 children:
   - id: fertility-cycles
     name: Cycles
+    label:
+      en: "Cycles"
+      fr: "Cycles"
     children:
       - id: fertility-cycles-start
         name: New Cycle
@@ -21,6 +27,9 @@ children:
         name: Coverline
       - id: fertility-cycles-charted-estimation
         name: Cycles charted estimation
+        label:
+          en: "Cycles charted estimation"
+          fr: "Nombre estimé de cycles observés"
       - id: fertility-cycles-average-length
         name: Average Cycle Length
       - id: fertility-cycles-average-period
@@ -33,6 +42,9 @@ children:
         name: Cycle regularity
   - id: fertility-trainings
     name: Trainings
+    label:
+      en: "Trainings"
+      fr: "Formations"
   - id: fertility-ttc-tta
     name: Trying to conceive / Avoiding pregnancy
   - id: fertility-ttc-duration
@@ -52,5 +64,8 @@ children:
     children:
       - id: fertility-miscarriages
         name: Miscarriages
+        label:
+          en: "Miscarriages"
+          fr: "Fausses couches"
       - id: fertility-deliveries
         name: Deliveries

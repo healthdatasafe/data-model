@@ -1,5 +1,8 @@
 id: body
 name: Body
+label:
+  en: "Body"
+  fr: "Corps"
 parentId: null
 children:
   - id: body-height
@@ -15,9 +18,15 @@ children:
   # See documentation/BLOOD-CHEMISTRY.md.
   - id: body-blood
     name: Blood
+    label:
+      en: "Blood"
+      fr: "Sang"
     children:
       - id: body-blood-serum
         name: Serum or plasma
+        label:
+          en: "Serum or plasma"
+          fr: "Sérum ou plasma"
         children:
           # Metabolic
           - id: body-blood-serum-glucose-fasting
@@ -199,6 +208,9 @@ children:
       # Whole blood — complete blood count
       - id: body-blood-cbc
         name: Complete blood count
+        label:
+          en: "Complete blood count"
+          fr: "Formule sanguine complète"
         children:
           - id: body-blood-cbc-hemoglobin
             name: Hemoglobin
@@ -218,14 +230,29 @@ children:
             name: RDW
           - id: body-blood-cbc-neutrophils
             name: Neutrophils
+            label:
+              en: "Neutrophils"
+              fr: "Neutrophiles"
           - id: body-blood-cbc-lymphocytes
             name: Lymphocytes
+            label:
+              en: "Lymphocytes"
+              fr: "Lymphocytes"
           - id: body-blood-cbc-monocytes
             name: Monocytes
+            label:
+              en: "Monocytes"
+              fr: "Monocytes"
           - id: body-blood-cbc-eosinophils
             name: Eosinophils
+            label:
+              en: "Eosinophils"
+              fr: "Éosinophiles"
           - id: body-blood-cbc-basophils
             name: Basophils
+            label:
+              en: "Basophils"
+              fr: "Basophiles"
           # Flat like the rest: -reticulocytes-immature-fraction and -reticulocytes-hemoglobin look like
           # children of -reticulocytes but are siblings, so a grant on the reticulocyte stream covers
           # neither. The absolute counts (*-count items) sit on the cell's own stream and add none.
@@ -235,6 +262,9 @@ children:
             name: MPV
           - id: body-blood-cbc-reticulocytes
             name: Reticulocytes
+            label:
+              en: "Reticulocytes"
+              fr: "Réticulocytes"
           - id: body-blood-cbc-reticulocytes-immature-fraction
             name: Immature reticulocyte fraction
           - id: body-blood-cbc-reticulocytes-hemoglobin
@@ -243,8 +273,14 @@ children:
             name: Nucleated red blood cells
           - id: body-blood-cbc-neutrophils-segmented
             name: Segmented neutrophils
+            label:
+              en: "Segmented neutrophils"
+              fr: "Neutrophiles segmentés"
           - id: body-blood-cbc-neutrophils-band
             name: Band neutrophils
+            label:
+              en: "Band neutrophils"
+              fr: "Neutrophiles non segmentés"
           - id: body-blood-cbc-myelocytes
             name: Myelocytes
           - id: body-blood-cbc-metamyelocytes
@@ -252,6 +288,9 @@ children:
       # Citrated plasma — coagulation. Named for the panel, like body-blood-cbc (plan 114 Q23).
       - id: body-blood-coagulation
         name: Coagulation
+        label:
+          en: "Coagulation"
+          fr: "Coagulation"
         children:
           - id: body-blood-coagulation-prothrombin-time
             name: Prothrombin time
@@ -266,6 +305,9 @@ children:
       # Erythrocyte specimen — distinct from serum for the same analyte
       - id: body-blood-rbc
         name: Red blood cell
+        label:
+          en: "Red blood cell"
+          fr: "Globules rouges"
         children:
           - id: body-blood-rbc-magnesium
             name: Magnesium (RBC)
@@ -279,21 +321,42 @@ children:
         name: Other blood results
   - id: body-vulva
     name: Vulva
+    label:
+      en: "Vulva"
+      fr: "Vulve"
     children:
       - id: body-vulva-wetness
         name: Vulva Wetness
+        label:
+          en: "Vulva Wetness"
+          fr: "Humidité vulvaire"
         children:
           - id: body-vulva-wetness-wiping
             name: Vulva Wetness when wiping
+            label:
+              en: "Vulva Wetness when wiping"
+              fr: "Humidité vulvaire à l'essuyage"
           - id: body-vulva-wetness-feeling
             name: Vulva Wetness Feeling
+            label:
+              en: "Vulva Wetness Feeling"
+              fr: "Sensation d'humidité vulvaire"
       - id: body-vulva-mucus
         name: Vulva Mucus
+        label:
+          en: "Vulva Mucus"
+          fr: "Glaire cervicale"
         children:
           - id: body-vulva-mucus-inspect
             name: Vulva Mucus Inspect
+            label:
+              en: "Vulva Mucus Inspect"
+              fr: "Observation de la glaire cervicale"
           - id: body-vulva-mucus-stretch
             name: Vulva Mucus Stretch
+            label:
+              en: "Vulva Mucus Stretch"
+              fr: "Filance de la glaire cervicale"
       - id: body-vulva-cervix-position
         name: Cervical Position
       - id: body-vulva-bleeding
@@ -311,6 +374,9 @@ children:
         name: Menstrual Cup
   - id: body-skin
     name: Skin
+    label:
+      en: "Skin"
+      fr: "Peau"
     children:
       - id: body-skin-acne
         name: Acne
@@ -334,9 +400,15 @@ children:
             name: Basal Temperature Disturbance
   - id: body-urine
     name: Urine
+    label:
+      en: "Urine"
+      fr: "Urines"
     children:
       - id: body-urine-hormones
         name: Urine Hormones
+        label:
+          en: "Urine Hormones"
+          fr: "Hormones urinaires"
         children:
           - id: body-urine-hormones-lh
             name: LH
@@ -352,11 +424,17 @@ children:
         name: Other urine results
   - id: body-csf
     name: Cerebrospinal fluid
+    label:
+      en: "Cerebrospinal fluid"
+      fr: "Liquide céphalorachidien"
     children:
       - id: body-csf-coded
         name: Cerebrospinal fluid results
   - id: body-semen
     name: Semen
+    label:
+      en: "Semen"
+      fr: "Sperme"
     children:
       - id: body-semen-concentration
         name: Sperm concentration

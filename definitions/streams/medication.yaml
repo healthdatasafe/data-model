@@ -1,8 +1,17 @@
 id: medication
 name: Medication
+label:
+  en: "Medication"
+  fr: "Médicaments"
 parentId: null
 children:
   - id: medication-intake
     name: Intake
+    label:
+      en: "Intake"
+      fr: "Prises de médicaments"
   - id: medication-prescription
     name: Prescriptions
+    label:
+      en: "Prescriptions"
+      fr: "Prescriptions de médicaments"

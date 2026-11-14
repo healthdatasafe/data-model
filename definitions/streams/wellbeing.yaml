@@ -1,5 +1,8 @@
 id: wellbeing
 name: Wellbeing
+label:
+  en: "Wellbeing"
+  fr: "Bien-être"
 parentId: null
 children:
   - id: wellbeing-mood

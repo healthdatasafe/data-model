@@ -4,19 +4,37 @@ parentId: null
 children:
   - id: sync-status-mira
     name: Mira connection status
+    label:
+      en: "Mira connection status"
+      fr: "État de la connexion Mira"
     role: context
   - id: sync-status-tempdrop
     name: Tempdrop connection status
+    label:
+      en: "Tempdrop connection status"
+      fr: "État de la connexion Tempdrop"
     role: context
   - id: sync-status-femm
     name: FEMM connection status
+    label:
+      en: "FEMM connection status"
+      fr: "État de la connexion FEMM"
     role: context
   - id: sync-status-ryb
     name: Read Your Body connection status
+    label:
+      en: "Read Your Body connection status"
+      fr: "État de la connexion Read Your Body"
     role: context
   - id: sync-status-cyclefeminin
     name: cyclefeminin connection status
+    label:
+      en: "cyclefeminin connection status"
+      fr: "État de la connexion cyclefeminin"
     role: context
   - id: sync-status-healthkit
     name: Apple Health connection status
+    label:
+      en: "Apple Health connection status"
+      fr: "État de la connexion Apple Santé"
     role: context

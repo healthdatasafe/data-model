@@ -1,9 +1,15 @@
 id: symptom
 name: Symptoms
+label:
+  en: "Symptoms"
+  fr: "Symptômes"
 parentId: null
 children:
   - id: symptom-gastrointestinal
     name: Gastrointestinal
+    label:
+      en: "Gastrointestinal"
+      fr: "Gastro-intestinaux"
     children:
       - id: symptom-gastrointestinal-nausea
         name: Nausea
@@ -21,6 +27,9 @@ children:
         name: Constipation
   - id: symptom-pain
     name: Pain
+    label:
+      en: "Pain"
+      fr: "Douleur"
     children:
       - id: symptom-pain-severity
         name: Overall pain severity
@@ -38,6 +47,9 @@ children:
         name: Muscle / Joint Pain
   - id: symptom-neurological
     name: Neurological
+    label:
+      en: "Neurological"
+      fr: "Neurologiques"
     children:
       - id: symptom-neurological-dizziness
         name: Dizziness
@@ -51,11 +63,17 @@ children:
         name: Muscle Twitching
   - id: symptom-cognitive
     name: Cognitive
+    label:
+      en: "Cognitive"
+      fr: "Cognitifs"
     children:
       - id: symptom-cognitive-focus-difficulty
         name: Difficulty Concentrating
   - id: symptom-dermatological
     name: Dermatological
+    label:
+      en: "Dermatological"
+      fr: "Dermatologiques"
     children:
       - id: symptom-dermatological-hair-loss
         name: Hair Loss
@@ -69,21 +87,33 @@ children:
         name: Itching
   - id: symptom-sleep
     name: Sleep
+    label:
+      en: "Sleep"
+      fr: "Sommeil"
     children:
       - id: symptom-sleep-insomnia
         name: Insomnia
   - id: symptom-metabolic
     name: Metabolic
+    label:
+      en: "Metabolic"
+      fr: "Métaboliques"
     children:
       - id: symptom-metabolic-water-retention
         name: Water Retention
   - id: symptom-general
     name: General
+    label:
+      en: "General"
+      fr: "Généraux"
     children:
       - id: symptom-general-fatigue
         name: Fatigue
   - id: symptom-respiratory
     name: Respiratory
+    label:
+      en: "Respiratory"
+      fr: "Respiratoires"
     children:
       - id: symptom-respiratory-cough
         name: Cough
@@ -99,6 +129,9 @@ children:
         name: Runny Nose
   - id: symptom-cardiac
     name: Cardiac
+    label:
+      en: "Cardiac"
+      fr: "Cardiaques"
     children:
       - id: symptom-cardiac-palpitations
         name: Palpitations
@@ -106,6 +139,9 @@ children:
         name: Skipped Heartbeat
   - id: symptom-thermoregulation
     name: Thermoregulation
+    label:
+      en: "Thermoregulation"
+      fr: "Thermorégulation"
     children:
       - id: symptom-thermoregulation-chills
         name: Chills
@@ -119,6 +155,9 @@ children:
         name: Cold Extremities
   - id: symptom-vision
     name: Vision & Sensory
+    label:
+      en: "Vision & Sensory"
+      fr: "Vision et sens"
     children:
       - id: symptom-vision-blurred-vision
         name: Blurred Vision
@@ -128,6 +167,9 @@ children:
         name: Hearing Difficulty
   - id: symptom-hydration
     name: Hydration & Urinary
+    label:
+      en: "Hydration & Urinary"
+      fr: "Hydratation et voies urinaires"
     children:
       - id: symptom-hydration-excessive-thirst
         name: Excessive Thirst
@@ -135,6 +177,9 @@ children:
         name: Frequent Urination
   - id: symptom-bleeding
     name: Bleeding
+    label:
+      en: "Bleeding"
+      fr: "Saignements"
     children:
       - id: symptom-bleeding-nosebleed
         name: Nosebleed

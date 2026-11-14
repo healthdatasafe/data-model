@@ -1,7 +1,13 @@
 id: treatment
 name: Treatment
+label:
+  en: "Treatment"
+  fr: "Traitements"
 parentId: null
 children:
   - id: treatment-fertility
     name: Fertility
+    label:
+      en: "Fertility"
+      fr: "Fertilité"
     role: context
