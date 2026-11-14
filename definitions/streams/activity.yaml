@@ -1,5 +1,8 @@
 id: activity
 name: Physical Activity
+label:
+  en: "Physical Activity"
+  fr: "Activité physique"
 parentId: null
 children:
   - id: activity-yoga

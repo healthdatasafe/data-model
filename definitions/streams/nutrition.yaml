@@ -1,5 +1,8 @@
 id: nutrition
 name: Nutrition
+label:
+  en: "Nutrition"
+  fr: "Nutrition"
 parentId: null
 children:
   - id: nutrition-appetite

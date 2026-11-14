@@ -1,11 +1,17 @@
 id: lifestyle
 name: Lifestyle
+label:
+  en: "Lifestyle"
+  fr: "Mode de vie"
 parentId: null
 children:
   # "Tobacco and nicotine", not "Tobacco": the e-cigarette child may carry nicotine
   # without tobacco.
   - id: lifestyle-tobacco
     name: Tobacco and nicotine
+    label:
+      en: "Tobacco and nicotine"
+      fr: "Tabac et nicotine"
     children:
       - id: lifestyle-tobacco-smoking
         name: Smoking
@@ -15,6 +21,9 @@ children:
         name: Smokeless tobacco
   - id: lifestyle-alcohol
     name: Alcohol
+    label:
+      en: "Alcohol"
+      fr: "Alcool"
     children:
       # The three AUDIT-C constructs are separate leaf streams on purpose: an
       # authorization can grant drinking frequency without granting heavy-episode
@@ -27,6 +36,9 @@ children:
         name: Heavy drinking episodes
   - id: lifestyle-diet
     name: Diet
+    label:
+      en: "Diet"
+      fr: "Alimentation"
     children:
       - id: lifestyle-diet-pattern
         name: Dietary pattern

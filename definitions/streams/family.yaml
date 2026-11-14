@@ -1,5 +1,8 @@
 id: family
 name: Family
+label:
+  en: "Family"
+  fr: "Famille"
 parentId: null
 children:
   - id: family-children

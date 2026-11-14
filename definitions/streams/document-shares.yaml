@@ -3,4 +3,7 @@
 # Never granted as a whole; no item anywhere in the subtree. See documentation/DOCUMENTS.md.
 id: document-shares
 name: Shared documents
+label:
+  en: "Shared documents"
+  fr: "Documents partagés"
 parentId: null

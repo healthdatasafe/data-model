@@ -1,5 +1,22 @@
 # Changelog
 
+## [4.4.0] - 2026-11-14
+
+Additive: localised names for consent screens. No key, id, parent, eventType or item change.
+
+### Added
+- **`label` { en, fr } on the 75 streams no single active item speaks for**: those with no item (most roots, the
+  intermediate streams such as `body-blood` or `symptom-pain`, connector leaves) and those with several (`procedure`,
+  `treatment`, `profile-name`, `medication-intake`, the blood-count cell streams…), with the 3.38.0 mechanism that only
+  `genetics` and `hds-support` used so far. A consent row names a stream through its item's label when exactly one
+  item is filed there; these streams had only their English `name`. `label.en` is the `name`; the French follows the
+  items' wording (`glaire cervicale`, `humidité vulvaire`). Fable-reviewed.
+- **`encounter` root: the consent `description`** of ENCOUNTER.md (en, fr): consultations, stays and care visits,
+  with the doctors and places involved and the reason given, including sensitive visits. Closes the TODO "Consent
+  screens for the `encounter` root" on the model side.
+- Test `[STRL-1]`: a stream with no active item, or with several, must carry a `label`, so a new one cannot ship
+  English-only.
+
 ## [4.3.0] - 2026-11-14
 
 Additive, plan 115 medications slice (medications through SMART on FHIR). Four `fhir` blocks, two new scope keys, one

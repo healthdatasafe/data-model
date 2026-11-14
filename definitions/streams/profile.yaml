@@ -1,5 +1,8 @@
 id: profile
 name: Profile
+label:
+  en: "Profile"
+  fr: "Profil"
 parentId: null
 children:
   - id: profile-address
@@ -16,11 +19,20 @@ children:
     name: Display Name
   - id: profile-location
     name: Location
+    label:
+      en: "Location"
+      fr: "Localisation"
   - id: profile-name
     name: Name
+    label:
+      en: "Name"
+      fr: "Nom et prénom"
   - id: profile-sex
     name: Sex
   - id: profile-reproductive-stage
     name: Reproductive stage
   - id: profile-preferences
     name: Account preferences
+    label:
+      en: "Account preferences"
+      fr: "Préférences du compte"

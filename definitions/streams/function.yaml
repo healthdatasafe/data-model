@@ -1,5 +1,8 @@
 id: function
 name: Functional status
+label:
+  en: "Functional status"
+  fr: "État fonctionnel"
 parentId: null
 children:
   - id: function-mobility
