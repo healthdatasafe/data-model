@@ -85,5 +85,9 @@
     "LOINC": "http://loinc.org",
     "ATC": "http://www.whocc.no/atc",
     "RxNorm": "http://www.nlm.nih.gov/research/umls/rxnorm"
+  },
+  "productSystems": {
+    "Swissmedic": "https://hds.ngo/fhir/sid/swissmedic",
+    "CIS": "https://smt.esante.gouv.fr/terminologie-bdpm"
   }
 }

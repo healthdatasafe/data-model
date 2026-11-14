@@ -1,6 +1,6 @@
 {
-  "version": "4.2.0",
-  "publicationDate": "2026-11-13T12:20:13.330Z",
+  "version": "4.3.0",
+  "publicationDate": "2026-11-14T12:37:18.215Z",
   "streams": [
     {
       "id": "activity",
@@ -13861,6 +13861,101 @@
         }
       },
       "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "MedicationStatement",
+        "code": {
+          "from": "text",
+          "field": "name"
+        },
+        "dosage": {
+          "field": "intake",
+          "doseUnits": {
+            "dose/tablet": "{tbl}",
+            "dose/drop": "[drp]",
+            "dose/puff": "{puff}",
+            "dose/application": "{application}",
+            "dose/suppository": "{suppository}",
+            "dose/unit": "[IU]",
+            "mass/mg": "mg",
+            "mass/mcg": "ug",
+            "mass/g": "g",
+            "volume/ml": "mL"
+          },
+          "routes": {
+            "oral": {
+              "system": "http://snomed.info/sct",
+              "code": "26643006",
+              "display": "Oral route"
+            },
+            "sublingual": {
+              "system": "http://snomed.info/sct",
+              "code": "37839007",
+              "display": "Sublingual route"
+            },
+            "parenteral": {
+              "text": "Parenteral"
+            },
+            "intravenous": {
+              "system": "http://snomed.info/sct",
+              "code": "47625008",
+              "display": "Intravenous route"
+            },
+            "intramuscular": {
+              "system": "http://snomed.info/sct",
+              "code": "78421000",
+              "display": "Intramuscular route"
+            },
+            "subcutaneous": {
+              "system": "http://snomed.info/sct",
+              "code": "34206005",
+              "display": "Subcutaneous route"
+            },
+            "inhalation": {
+              "system": "http://snomed.info/sct",
+              "code": "447694001",
+              "display": "Respiratory tract route"
+            },
+            "nasal": {
+              "system": "http://snomed.info/sct",
+              "code": "46713006",
+              "display": "Nasal route"
+            },
+            "topical": {
+              "system": "http://snomed.info/sct",
+              "code": "6064005",
+              "display": "Topical route"
+            },
+            "transdermal": {
+              "system": "http://snomed.info/sct",
+              "code": "45890007",
+              "display": "Transdermal route"
+            },
+            "ophthalmic": {
+              "system": "http://snomed.info/sct",
+              "code": "54485002",
+              "display": "Ophthalmic route"
+            },
+            "otic": {
+              "system": "http://snomed.info/sct",
+              "code": "10547007",
+              "display": "Otic route"
+            },
+            "rectal": {
+              "system": "http://snomed.info/sct",
+              "code": "37161004",
+              "display": "Rectal route"
+            },
+            "vaginal": {
+              "system": "http://snomed.info/sct",
+              "code": "16857009",
+              "display": "Vaginal route"
+            }
+          }
+        },
+        "profiles": {
+          "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationStatement-uv-ips"
+        }
+      },
       "devNotes": "Content carries an `intake` sub-object with the same structure as `medication/coded-v1`: optional dose, route, frequency, asNeeded, note and timing (timeOfDay or when, bounds). The regimen is spelled exactly as `medication/prescription-v1` `posology` (site-agents#31, DM-4), so an intake and a prescription carry the same regimen the same way (FHIR Dosage.timing.repeat, asNeeded, text). An event without duration is one intake (status, skipReason; only dose and route of `intake` are meaningful); an event with a duration is a period of use (stopReason). The form shows neither the timing nor the status fields: app-flow fields, labelled by the medication vocabularies (MEDICATION.md)."
     },
     "medication-intake-coded": {
@@ -13883,6 +13978,101 @@
       "type": "datasource-search",
       "datasource": "medication",
       "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "MedicationStatement",
+        "code": {
+          "from": "datasource",
+          "field": "drug"
+        },
+        "dosage": {
+          "field": "intake",
+          "doseUnits": {
+            "dose/tablet": "{tbl}",
+            "dose/drop": "[drp]",
+            "dose/puff": "{puff}",
+            "dose/application": "{application}",
+            "dose/suppository": "{suppository}",
+            "dose/unit": "[IU]",
+            "mass/mg": "mg",
+            "mass/mcg": "ug",
+            "mass/g": "g",
+            "volume/ml": "mL"
+          },
+          "routes": {
+            "oral": {
+              "system": "http://snomed.info/sct",
+              "code": "26643006",
+              "display": "Oral route"
+            },
+            "sublingual": {
+              "system": "http://snomed.info/sct",
+              "code": "37839007",
+              "display": "Sublingual route"
+            },
+            "parenteral": {
+              "text": "Parenteral"
+            },
+            "intravenous": {
+              "system": "http://snomed.info/sct",
+              "code": "47625008",
+              "display": "Intravenous route"
+            },
+            "intramuscular": {
+              "system": "http://snomed.info/sct",
+              "code": "78421000",
+              "display": "Intramuscular route"
+            },
+            "subcutaneous": {
+              "system": "http://snomed.info/sct",
+              "code": "34206005",
+              "display": "Subcutaneous route"
+            },
+            "inhalation": {
+              "system": "http://snomed.info/sct",
+              "code": "447694001",
+              "display": "Respiratory tract route"
+            },
+            "nasal": {
+              "system": "http://snomed.info/sct",
+              "code": "46713006",
+              "display": "Nasal route"
+            },
+            "topical": {
+              "system": "http://snomed.info/sct",
+              "code": "6064005",
+              "display": "Topical route"
+            },
+            "transdermal": {
+              "system": "http://snomed.info/sct",
+              "code": "45890007",
+              "display": "Transdermal route"
+            },
+            "ophthalmic": {
+              "system": "http://snomed.info/sct",
+              "code": "54485002",
+              "display": "Ophthalmic route"
+            },
+            "otic": {
+              "system": "http://snomed.info/sct",
+              "code": "10547007",
+              "display": "Otic route"
+            },
+            "rectal": {
+              "system": "http://snomed.info/sct",
+              "code": "37161004",
+              "display": "Rectal route"
+            },
+            "vaginal": {
+              "system": "http://snomed.info/sct",
+              "code": "16857009",
+              "display": "Vaginal route"
+            }
+          }
+        },
+        "profiles": {
+          "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationStatement-uv-ips"
+        }
+      },
       "devNotes": "Populated from datasets-service. At least one code (`drug.codes` minItems 1, 3.46.0): a medication no code was found for is medication-intake-basic, never a coded event with codes: []."
     },
     "medication-prescription-coded": {
@@ -13900,6 +14090,102 @@
       "type": "datasource-search",
       "datasource": "medication",
       "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "MedicationRequest",
+        "code": {
+          "from": "datasource",
+          "field": "drug"
+        },
+        "dosage": {
+          "field": "posology",
+          "doseUnits": {
+            "dose/tablet": "{tbl}",
+            "dose/drop": "[drp]",
+            "dose/puff": "{puff}",
+            "dose/application": "{application}",
+            "dose/suppository": "{suppository}",
+            "dose/unit": "[IU]",
+            "mass/mg": "mg",
+            "mass/mcg": "ug",
+            "mass/g": "g",
+            "volume/ml": "mL"
+          },
+          "routes": {
+            "oral": {
+              "system": "http://snomed.info/sct",
+              "code": "26643006",
+              "display": "Oral route"
+            },
+            "sublingual": {
+              "system": "http://snomed.info/sct",
+              "code": "37839007",
+              "display": "Sublingual route"
+            },
+            "parenteral": {
+              "text": "Parenteral"
+            },
+            "intravenous": {
+              "system": "http://snomed.info/sct",
+              "code": "47625008",
+              "display": "Intravenous route"
+            },
+            "intramuscular": {
+              "system": "http://snomed.info/sct",
+              "code": "78421000",
+              "display": "Intramuscular route"
+            },
+            "subcutaneous": {
+              "system": "http://snomed.info/sct",
+              "code": "34206005",
+              "display": "Subcutaneous route"
+            },
+            "inhalation": {
+              "system": "http://snomed.info/sct",
+              "code": "447694001",
+              "display": "Respiratory tract route"
+            },
+            "nasal": {
+              "system": "http://snomed.info/sct",
+              "code": "46713006",
+              "display": "Nasal route"
+            },
+            "topical": {
+              "system": "http://snomed.info/sct",
+              "code": "6064005",
+              "display": "Topical route"
+            },
+            "transdermal": {
+              "system": "http://snomed.info/sct",
+              "code": "45890007",
+              "display": "Transdermal route"
+            },
+            "ophthalmic": {
+              "system": "http://snomed.info/sct",
+              "code": "54485002",
+              "display": "Ophthalmic route"
+            },
+            "otic": {
+              "system": "http://snomed.info/sct",
+              "code": "10547007",
+              "display": "Otic route"
+            },
+            "rectal": {
+              "system": "http://snomed.info/sct",
+              "code": "37161004",
+              "display": "Rectal route"
+            },
+            "vaginal": {
+              "system": "http://snomed.info/sct",
+              "code": "16857009",
+              "display": "Vaginal route"
+            }
+          }
+        },
+        "profiles": {
+          "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest",
+          "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationRequest-uv-ips"
+        }
+      },
       "devNotes": "Populated from datasets-service. At least one code (`drug.codes` minItems 1, 3.46.0): a prescription no code was found for is medication-prescription-basic. A point event (authoredOn); the course is posology.bounds, the state of the order is status."
     },
     "medication-prescription-basic": {
@@ -14211,6 +14497,102 @@
         }
       },
       "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "MedicationRequest",
+        "code": {
+          "from": "text",
+          "field": "name"
+        },
+        "dosage": {
+          "field": "posology",
+          "doseUnits": {
+            "dose/tablet": "{tbl}",
+            "dose/drop": "[drp]",
+            "dose/puff": "{puff}",
+            "dose/application": "{application}",
+            "dose/suppository": "{suppository}",
+            "dose/unit": "[IU]",
+            "mass/mg": "mg",
+            "mass/mcg": "ug",
+            "mass/g": "g",
+            "volume/ml": "mL"
+          },
+          "routes": {
+            "oral": {
+              "system": "http://snomed.info/sct",
+              "code": "26643006",
+              "display": "Oral route"
+            },
+            "sublingual": {
+              "system": "http://snomed.info/sct",
+              "code": "37839007",
+              "display": "Sublingual route"
+            },
+            "parenteral": {
+              "text": "Parenteral"
+            },
+            "intravenous": {
+              "system": "http://snomed.info/sct",
+              "code": "47625008",
+              "display": "Intravenous route"
+            },
+            "intramuscular": {
+              "system": "http://snomed.info/sct",
+              "code": "78421000",
+              "display": "Intramuscular route"
+            },
+            "subcutaneous": {
+              "system": "http://snomed.info/sct",
+              "code": "34206005",
+              "display": "Subcutaneous route"
+            },
+            "inhalation": {
+              "system": "http://snomed.info/sct",
+              "code": "447694001",
+              "display": "Respiratory tract route"
+            },
+            "nasal": {
+              "system": "http://snomed.info/sct",
+              "code": "46713006",
+              "display": "Nasal route"
+            },
+            "topical": {
+              "system": "http://snomed.info/sct",
+              "code": "6064005",
+              "display": "Topical route"
+            },
+            "transdermal": {
+              "system": "http://snomed.info/sct",
+              "code": "45890007",
+              "display": "Transdermal route"
+            },
+            "ophthalmic": {
+              "system": "http://snomed.info/sct",
+              "code": "54485002",
+              "display": "Ophthalmic route"
+            },
+            "otic": {
+              "system": "http://snomed.info/sct",
+              "code": "10547007",
+              "display": "Otic route"
+            },
+            "rectal": {
+              "system": "http://snomed.info/sct",
+              "code": "37161004",
+              "display": "Rectal route"
+            },
+            "vaginal": {
+              "system": "http://snomed.info/sct",
+              "code": "16857009",
+              "display": "Vaginal route"
+            }
+          }
+        },
+        "profiles": {
+          "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest",
+          "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationRequest-uv-ips"
+        }
+      },
       "devNotes": "The uncoded twin of medication-prescription-coded, as medication-intake-basic is of medication-intake-coded: a name no code was found for (MEDICATION.md). Never a coded event with codes: []. Same stream as the coded twin, so one consent unit covers both. A prescription is a point event (authoredOn); its course is posology.bounds. The form shows the fields of medication-intake-basic.intake; timing and status are app-flow fields."
     },
     "nutrition-appetite": {
@@ -18993,6 +19375,12 @@
     "DocumentReference|clinical-note": [
       "documents"
     ],
+    "MedicationRequest": [
+      "medication-prescription"
+    ],
+    "MedicationStatement": [
+      "medication-intake"
+    ],
     "Observation|laboratory": [
       "body-blood-cbc-hematocrit",
       "body-blood-cbc-hemoglobin",
@@ -19204,6 +19592,10 @@
       "LOINC": "http://loinc.org",
       "ATC": "http://www.whocc.no/atc",
       "RxNorm": "http://www.nlm.nih.gov/research/umls/rxnorm"
+    },
+    "productSystems": {
+      "Swissmedic": "https://hds.ngo/fhir/sid/swissmedic",
+      "CIS": "https://smt.esante.gouv.fr/terminologie-bdpm"
     }
   },
   "eventTypes": {
@@ -22736,7 +23128,7 @@
             }
           },
           "status": {
-            "description": "One intake (an event without duration): taken or skipped. Absent means taken (every event before 3.46.0). Ignored on an intake period (an event with a duration); the schema cannot check this, as duration is outside content. HealthKit HKMedicationDoseEvent.logStatus; FHIR MedicationAdministration.status completed / not-done. Labels: vocabulary medication-intake-status.",
+            "description": "One intake (an event without duration): taken or skipped. Absent means taken (every event before 3.46.0). Ignored on an intake period (an event with a duration); the schema cannot check this, as duration is outside content. HealthKit HKMedicationDoseEvent.logStatus; FHIR (R4) MedicationStatement.status completed / not-taken, one intake rendering as a MedicationStatement at effectiveDateTime (MedicationAdministration.status completed / not-done is the R5 target). Labels: vocabulary medication-intake-status.",
             "type": "string",
             "enum": [
               "taken",
@@ -22744,7 +23136,7 @@
             ]
           },
           "skipReason": {
-            "description": "Why the intake was skipped (FHIR MedicationAdministration.statusReason). Only with status skipped. Labels and SNOMED CT codes: vocabulary medication-skip-reason.",
+            "description": "Why the intake was skipped (FHIR MedicationStatement.statusReason in R4, MedicationAdministration.statusReason in R5). Only with status skipped. Labels and SNOMED CT codes: vocabulary medication-skip-reason.",
             "type": "string",
             "enum": [
               "forgot",
@@ -22784,7 +23176,7 @@
         }
       },
       "medication/coded-v1": {
-        "description": "Coded medication intake: one intake (an event without duration, FHIR MedicationAdministration) or a period of use (an event with a duration, null while ongoing, FHIR MedicationStatement). 'drug' is the coded identity from datasets-service, with at least one code (a medication with no code is medication/basic); 'intake' is the regimen. drug → medicationCodeableConcept, intake → dosage.",
+        "description": "Coded medication intake: one intake (an event without duration; FHIR R4 MedicationStatement at effectiveDateTime, MedicationAdministration being the R5 target) or a period of use (an event with a duration, null while ongoing; MedicationStatement with effectivePeriod). 'drug' is the coded identity from datasets-service, with at least one code (a medication with no code is medication/basic); 'intake' is the regimen. drug → medicationCodeableConcept, intake → dosage.",
         "type": "object",
         "required": [
           "drug"
@@ -23148,7 +23540,7 @@
             }
           },
           "status": {
-            "description": "One intake (an event without duration): taken or skipped. Absent means taken (every event before 3.46.0). Ignored on an intake period (an event with a duration); the schema cannot check this, as duration is outside content. HealthKit HKMedicationDoseEvent.logStatus; FHIR MedicationAdministration.status completed / not-done. Labels: vocabulary medication-intake-status.",
+            "description": "One intake (an event without duration): taken or skipped. Absent means taken (every event before 3.46.0). Ignored on an intake period (an event with a duration); the schema cannot check this, as duration is outside content. HealthKit HKMedicationDoseEvent.logStatus; FHIR (R4) MedicationStatement.status completed / not-taken, one intake rendering as a MedicationStatement at effectiveDateTime (MedicationAdministration.status completed / not-done is the R5 target). Labels: vocabulary medication-intake-status.",
             "type": "string",
             "enum": [
               "taken",
@@ -23156,7 +23548,7 @@
             ]
           },
           "skipReason": {
-            "description": "Why the intake was skipped (FHIR MedicationAdministration.statusReason). Only with status skipped. Labels and SNOMED CT codes: vocabulary medication-skip-reason.",
+            "description": "Why the intake was skipped (FHIR MedicationStatement.statusReason in R4, MedicationAdministration.statusReason in R5). Only with status skipped. Labels and SNOMED CT codes: vocabulary medication-skip-reason.",
             "type": "string",
             "enum": [
               "forgot",
@@ -28485,7 +28877,7 @@
       }
     },
     "medication-intake-status": {
-      "fhirElement": "MedicationAdministration.status",
+      "fhirElement": "MedicationStatement.status",
       "binds": [
         {
           "eventType": "medication/basic",
@@ -28509,13 +28901,13 @@
             "en": "Skipped",
             "fr": "Non pris"
           },
-          "fhir": "not-done",
+          "fhir": "not-taken",
           "snomed": "1269470004"
         }
       }
     },
     "medication-skip-reason": {
-      "fhirElement": "MedicationAdministration.statusReason",
+      "fhirElement": "MedicationStatement.statusReason",
       "binds": [
         {
           "eventType": "medication/basic",

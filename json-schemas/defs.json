@@ -125,7 +125,8 @@
             "enum": [
               "datasource",
               "eventType",
-              "content"
+              "content",
+              "text"
             ]
           }
         },
@@ -133,6 +134,28 @@
           "from"
         ],
         "allOf": [
+          {
+            "if": {
+              "properties": {
+                "from": {
+                  "const": "text"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "from": true,
+                "field": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$"
+                }
+              },
+              "required": [
+                "field"
+              ],
+              "additionalProperties": false
+            }
+          },
           {
             "if": {
               "properties": {
@@ -401,6 +424,56 @@
         }
       ]
     },
+    "fhirDosage": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$"
+        },
+        "doseUnits": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "defs.json#/definitions/fhirUnit"
+          }
+        },
+        "routes": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "if": {
+              "type": "object",
+              "required": [
+                "text"
+              ]
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "else": {
+              "$ref": "defs.json#/definitions/fhirCoding"
+            }
+          }
+        }
+      },
+      "required": [
+        "field",
+        "doseUnits",
+        "routes"
+      ],
+      "additionalProperties": false
+    },
     "fhirMapping": {
       "type": "object",
       "properties": {
@@ -408,7 +481,9 @@
           "enum": [
             "Observation",
             "Condition",
-            "DocumentReference"
+            "DocumentReference",
+            "MedicationStatement",
+            "MedicationRequest"
           ]
         },
         "category": {
@@ -492,6 +567,9 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "dosage": {
+          "$ref": "defs.json#/definitions/fhirDosage"
         },
         "profiles": {
           "$ref": "defs.json#/definitions/fhirProfiles"

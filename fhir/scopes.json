@@ -5,6 +5,12 @@
   "DocumentReference|clinical-note": [
     "documents"
   ],
+  "MedicationRequest": [
+    "medication-prescription"
+  ],
+  "MedicationStatement": [
+    "medication-intake"
+  ],
   "Observation|laboratory": [
     "body-blood-cbc-hematocrit",
     "body-blood-cbc-hemoglobin",

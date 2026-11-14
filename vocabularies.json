@@ -156,7 +156,7 @@
     }
   },
   "medication-intake-status": {
-    "fhirElement": "MedicationAdministration.status",
+    "fhirElement": "MedicationStatement.status",
     "binds": [
       {
         "eventType": "medication/basic",
@@ -180,13 +180,13 @@
           "en": "Skipped",
           "fr": "Non pris"
         },
-        "fhir": "not-done",
+        "fhir": "not-taken",
         "snomed": "1269470004"
       }
     }
   },
   "medication-skip-reason": {
-    "fhirElement": "MedicationAdministration.statusReason",
+    "fhirElement": "MedicationStatement.statusReason",
     "binds": [
       {
         "eventType": "medication/basic",
