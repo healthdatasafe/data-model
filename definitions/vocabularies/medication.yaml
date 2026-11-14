@@ -32,17 +32,19 @@ medication-when:
     before-dinner: { label: { en: Before dinner, fr: Avant le repas du soir }, fhir: ACV }
     after-dinner: { label: { en: After dinner, fr: Après le repas du soir }, fhir: PCV }
 
+# One intake renders as an R4 MedicationStatement (MEDICATION.md § FHIR), so the `fhir` codes are its statuses; the
+# R5 target MedicationAdministration.status would read completed / not-done.
 medication-intake-status:
-  fhirElement: MedicationAdministration.status
+  fhirElement: MedicationStatement.status
   binds:
     - { eventType: medication/basic, path: status }
     - { eventType: medication/coded-v1, path: status }
   values:
     taken: { label: { en: Taken, fr: Pris }, fhir: completed }
-    skipped: { label: { en: Skipped, fr: Non pris }, fhir: not-done, snomed: '1269470004' } # Individual dose of drug or medicament not taken (Missed dose)
+    skipped: { label: { en: Skipped, fr: Non pris }, fhir: not-taken, snomed: '1269470004' } # Individual dose of drug or medicament not taken (Missed dose)
 
 medication-skip-reason:
-  fhirElement: MedicationAdministration.statusReason
+  fhirElement: MedicationStatement.statusReason
   binds:
     - { eventType: medication/basic, path: skipReason }
     - { eventType: medication/coded-v1, path: skipReason }

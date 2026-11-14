@@ -159,10 +159,11 @@ describe('[MED] Medication model pass (DM-4, 3.46.0)', () => {
       assert.deepStrictEqual(snomed('medication-intake-status'), { skipped: '1269470004' });
     });
 
-    it('[MED-VOC-4] FHIR status codes (MedicationRequest R4 and R5; MedicationAdministration)', () => {
+    it('[MED-VOC-4] FHIR status codes (MedicationRequest R4 and R5; MedicationStatement R4 for one intake, what the rendering emits)', () => {
       const fhir = (key) => Object.fromEntries(Object.entries(vocabulariesById[key].values).map(([k, v]) => [k, v.fhir]));
       assert.deepStrictEqual(fhir('medication-prescription-status'), { active: 'active', stopped: 'stopped', completed: 'completed' });
-      assert.deepStrictEqual(fhir('medication-intake-status'), { taken: 'completed', skipped: 'not-done' });
+      assert.deepStrictEqual(fhir('medication-intake-status'), { taken: 'completed', skipped: 'not-taken' });
+      assert.strictEqual(vocabulariesById['medication-intake-status'].fhirElement, 'MedicationStatement.status');
     });
 
     it('[MED-VOC-5] the loader refuses a vocabulary that drifts from its enum, or binds a field twice', () => {

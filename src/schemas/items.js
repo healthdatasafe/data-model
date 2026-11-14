@@ -79,17 +79,29 @@ const defsSchema = {
     // The resource's code: a static coding, a source `{ from: datasource, field }` naming the dotted
     // path in the event content where a datasets-service selection stored its `codes[]`,
     // `{ from: eventType, codings }`, one coding per eventType of the item (a lab analyte measured in mass
-    // or in moles has two LOINC codes), or `{ from: content, field, translate, unknown }`: the FHIR codings
+    // or in moles has two LOINC codes), `{ from: content, field, translate, unknown }`: the FHIR codings
     // the content holds at `field` (a document's XDS typeCode), led by the coding `translate` gives for the
     // first of them the table knows (`"<system>|<code>"` → coding, the terminology the resource's binding
-    // requires), else by `unknown`.
+    // requires), else by `unknown`, or `{ from: text, field }`: no coding at all, the concept is the text the
+    // content holds at `field` (a medication entered by its name; a MedicationStatement or MedicationRequest).
     fhirCode: {
       if: { type: 'object', required: ['from'] },
       then: {
         type: 'object',
-        properties: { from: { enum: ['datasource', 'eventType', 'content'] } },
+        properties: { from: { enum: ['datasource', 'eventType', 'content', 'text'] } },
         required: ['from'],
         allOf: [
+          {
+            if: { properties: { from: { const: 'text' } } },
+            then: {
+              properties: {
+                from: true,
+                field: { type: 'string', pattern: '^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$' }
+              },
+              required: ['field'],
+              additionalProperties: false
+            }
+          },
           {
             if: { properties: { from: { const: 'eventType' } } },
             then: {
@@ -228,11 +240,35 @@ const defsSchema = {
         }
       ]
     },
+    // The regimen of a medication item (MEDICATION.md § The regimen) as a FHIR `Dosage`: `field` is the content
+    // path of the regimen object (`intake`, `posology`); `doseUnits` maps every `doseUnit` enum value to the UCUM
+    // code its dose renders in (annotations are the meaning here, `{tbl}` is not `{puff}`, so codes compare as
+    // written); `routes` maps every `route` enum value to the coding its route renders as, or `{ text }` when no
+    // active code exists. The timing fields and the enum vocabularies need no declaration: they are one shape on
+    // every medication eventType, labelled by `pack.vocabularies`.
+    fhirDosage: {
+      type: 'object',
+      properties: {
+        field: { type: 'string', pattern: '^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$' },
+        doseUnits: { type: 'object', minProperties: 1, additionalProperties: { $ref: 'defs.json#/definitions/fhirUnit' } },
+        routes: {
+          type: 'object',
+          minProperties: 1,
+          additionalProperties: {
+            if: { type: 'object', required: ['text'] },
+            then: { type: 'object', properties: { text: { type: 'string', minLength: 1 } }, required: ['text'], additionalProperties: false },
+            else: { $ref: 'defs.json#/definitions/fhirCoding' }
+          }
+        }
+      },
+      required: ['field', 'doseUnits', 'routes'],
+      additionalProperties: false
+    },
     // A mapping: how the item's events render as (and import from) one FHIR resource.
     fhirMapping: {
       type: 'object',
       properties: {
-        resourceType: { enum: ['Observation', 'Condition', 'DocumentReference'] },
+        resourceType: { enum: ['Observation', 'Condition', 'DocumentReference', 'MedicationStatement', 'MedicationRequest'] },
         // Required or refused per resourceType, from the category table in definitions/fhir/mapping.yaml.
         category: { type: 'string', minLength: 1 },
         // Further categories of the same table a resource may carry and still import here (import only).
@@ -271,6 +307,8 @@ const defsSchema = {
         },
         // Composite fields deliberately left out of the FHIR rendering.
         ignore: { type: 'array', minItems: 1, uniqueItems: true, items: { type: 'string', minLength: 1 } },
+        // The regimen as a FHIR Dosage: required on a MedicationStatement or MedicationRequest, refused elsewhere.
+        dosage: { $ref: 'defs.json#/definitions/fhirDosage' },
         profiles: { $ref: 'defs.json#/definitions/fhirProfiles' }
       },
       required: ['resourceType', 'code', 'profiles'],

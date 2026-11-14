@@ -52,3 +52,28 @@ systems:
   LOINC: http://loinc.org
   ATC: http://www.whocc.no/atc
   RxNorm: http://www.nlm.nih.gov/research/umls/rxnorm
+
+# National product code system (`drug.product.system`, MEDICATION.md § National products) → the URI its product
+# code renders under, as the second coding of a medication concept. The labels are the `drug.product.system` enum
+# of the coded medication eventTypes (the build holds the two together). Plan 115, medications slice:
+# - Swissmedic: an HDS identifier namespace. Swissmedic publishes no canonical URI for the authorisation number plus
+#   sequence HDS stores (CH IDMP and CH EPL draft a NamingSystem for the 5-digit authorisation number alone,
+#   `http://fhir.ch/ig/ch-idmp/sid/authno`; CH EMED codes products by GTIN, `urn:oid:2.51.1.1`).
+# - CIS: the ANS "Serveur Multi-Terminologies" publishes the BDPM as a FHIR CodeSystem whose specialite concepts are
+#   coded by their CIS. Checked 2026-11-13: `GET https://smt.esante.gouv.fr/fhir/CodeSystem/$lookup?system=https://smt.esante.gouv.fr/terminologie-bdpm&code=60234100`
+#   answers "DOLIPRANE 1000 mg, comprimé" (CodeSystem version 2026-11-03, 41 257 concepts, status active), and the
+#   ANSM BDPM gives that specialite the code CIS 6 023 410 0
+#   (https://base-donnees-publique.medicaments.gouv.fr/medicament/60234100/extrait). The same CodeSystem also holds
+#   the presentations under their CIP13 (3400935955838 is its box of 8), so on import only an 8-digit code under it
+#   is a CIS; a CIP13 is refused (hds-fhir-js `fromFhir`).
+#   Precedent: the ANS document-core IG (`ans.fhir.fr.document-core`, draft 0.1.0, FR Immunization Document) slices
+#   `vaccineCode.coding:cis` with `system` patternUri `https://smt.esante.gouv.fr/terminologie-bdpm`, so the ANS itself
+#   emits CIS codes under this URI. Not taken: `http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique`
+#   from the ANS ePrescription ballot (1.1.0), which resolves nowhere (no CodeSystem on the SMT, no package defines it);
+#   if it is ever published, an importer can accept it as well without changing the URI emitted here. No
+#   `Coding.version` is emitted: a CIS is assigned once and never changes. The BDPM lists only the products marketed in
+#   the last five years, so the CIS of a medicine withdrawn earlier can fail `$validate-code` on the live server while
+#   remaining a correct code.
+productSystems:
+  Swissmedic: https://hds.ngo/fhir/sid/swissmedic
+  CIS: https://smt.esante.gouv.fr/terminologie-bdpm
