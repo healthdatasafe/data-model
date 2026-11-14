@@ -773,6 +773,22 @@
         "lifestyle-tobacco-smoking"
       ]
     },
+    "medication-intake": {
+      "pair": "MedicationStatement",
+      "parent": "medication",
+      "items": [
+        "medication-intake-basic",
+        "medication-intake-coded"
+      ]
+    },
+    "medication-prescription": {
+      "pair": "MedicationRequest",
+      "parent": "medication",
+      "items": [
+        "medication-prescription-basic",
+        "medication-prescription-coded"
+      ]
+    },
     "profile-address": {
       "pair": "Patient",
       "parent": "profile",

@@ -1,5 +1,57 @@
 # Changelog
 
+## [4.3.0] - 2026-11-14
+
+Additive, plan 115 medications slice (medications through SMART on FHIR). Four `fhir` blocks, two new scope keys, one
+new code source, one new block field and one new pack table; no key, stream or eventType changes. Needs the hds-fhir-js
+release that knows `MedicationStatement` and `MedicationRequest` (an older renderer skips the blocks: unknown
+resourceType, code source and field, so a SMART app sees no medication until the facade is updated).
+
+### Added
+- **`fhir` blocks on the four medication items** (MEDICATION.md § FHIR, FHIR-MAPPING.md § Medications):
+  `medication-intake-coded` and `medication-intake-basic` are a `MedicationStatement` (one intake or a period of use,
+  R4's one resource for both; IPS `MedicationStatement-uv-ips` on `ips`, the base resource on `us`, which has no
+  profile), `medication-prescription-coded` and `-basic` a `MedicationRequest` (US Core `us-core-medicationrequest`,
+  IPS `MedicationRequest-uv-ips`). The coded twins take the medicine from the datasource selection (`drug`), the basic
+  twins the name as written; all four share one `dosage`: the regimen path, the dose units as UCUM (`{tbl}`, `[drp]`,
+  `{puff}`, `{application}`, `{suppository}`, `[IU]`, `mg`, `ug`, `g`, `mL`) and the routes as SNOMED CT route
+  qualifiers verified active in snomed-db 20260201 (`parenteral` as text: no active concept).
+- **Scope keys `MedicationStatement` → `medication-intake` and `MedicationRequest` → `medication-prescription`** in
+  `pack.fhirScopes`: bare keys (no category table, one item set per type); the lock gains the two roots.
+- **Code source `{ from: text, field }`** (schema `fhirCode`; `checkTextField`): no coding, the concept is the string
+  at `field` (`medicationCodeableConcept.text`). A medication only. Import key `<ResourceType> from text`, one item
+  per (resourceType, category); matched when no coding of the resource has a datasource label.
+- **Block field `dosage: { field, doseUnits, routes }`** (schema `fhirDosage`; `checkDosage`): required on a
+  medication, refused elsewhere; `doseUnits` keys are exactly the regimen's `doseUnit` enum with codes distinct as
+  written (the annotation is the meaning of a count unit), `routes` keys exactly its `route` enum, a coding or
+  `{ text }` each.
+- **Pack table `fhirMapping.productSystems`**: `drug.product.system` → the URI the product code renders under as a
+  second medication coding: `Swissmedic` → `https://hds.ngo/fhir/sid/swissmedic` (an HDS identifier namespace;
+  Swissmedic publishes none for the number plus sequence), `CIS` → `https://smt.esante.gouv.fr/terminologie-bdpm` (the
+  ANS SMT's BDPM CodeSystem, whose specialite concepts are the CIS codes: checked 2026-11-13 against its `$lookup`
+  and the ANSM BDPM, evidence in `mapping.yaml`; it also holds presentations under CIP13, which hds-fhir-js refuses on
+  import); one label per URI, distinct from `systems`; the build holds it to the `product.system` enum of the coded
+  medication eventTypes. Tests `[FHIR-ITEM-11]`, `[FHIR-SCH-4]`, `[FHIR-MAP-22]`.
+
+### Changed
+- **Vocabulary `medication-intake-status`** binds to `MedicationStatement.status` and `skipped` carries `fhir:
+  not-taken` (was `MedicationAdministration.status` / `not-done`, which the R4 rendering never emits);
+  `medication-skip-reason` binds to `MedicationStatement.statusReason` likewise. A correction of what the `fhir` code
+  documents, no key or value change; the `status`, `skipReason` and `medication/coded-v1` eventType descriptions and
+  MEDICATION.md say the same.
+
+### Permanent, both ways
+- **No category table can ever be added for `MedicationStatement` or `MedicationRequest`** once these bare keys
+  ship: the lock holds their streams under the bare pair, and a table would re-pair them (FHIR-MAPPING.md
+  § Categories). A `category` coding, if a profile ever requires one, is a renderer constant, never the pack.
+- **Both kinds of the intake stream render as `MedicationStatement` for good:** a MedicationAdministration for a dose
+  (the R5 target) would need a stream of its own and a migration of the dose events (MEDICATION.md § FHIR).
+
+### Not done, on purpose
+- No MedicationAdministration: one intake renders as a MedicationStatement (`effectiveDateTime`, `completed` or
+  `not-taken`), the R4 resource the stream's two kinds share one scope under.
+- `bounds.duration` is not compared with the actual period to decide `stopped`; only a `stopReason` or `bounds.end` is.
+
 ## [4.2.0] - 2026-11-13
 
 Additive, plan 115 GAP H-8 (documents through SMART on FHIR). One `fhir` block, one new scope key, one new category

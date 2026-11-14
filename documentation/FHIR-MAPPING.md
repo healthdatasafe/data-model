@@ -39,6 +39,14 @@ resourceType other than Observation and Condition, and the first whose code come
 ([DocumentReference: documents](#documentreference-documents)). Needs hds-fhir-js 0.5.0 to render; an older renderer
 skips it (unknown resourceType), and a SMART app then sees no document.
 
+**Medications (unreleased, plan 115 medications slice):** the four medication items carry a block, the two intake
+items a `MedicationStatement`, the two prescription items a `MedicationRequest`, both **bare scope keys** (no category
+table: one item set per type, so a category would discriminate nothing). The coded twins take the medicine from the
+datasource selection (`drug`, the national product as a second coding under `fhirMapping.productSystems`), the basic
+twins the name as written through the new `{ from: text, field }` code source, and all four carry the new `dosage`
+field, the regimen as a FHIR `Dosage` ([Medications](#medications-medicationstatement-and-medicationrequest)). Needs
+the hds-fhir-js release that knows the two resourceTypes; an older renderer skips the blocks.
+
 An item's `fhir:` block says how its events **render as** a FHIR R4 resource and how a FHIR resource **imports
 back** into an event of that item. HDS uses it in three ways:
 
@@ -88,6 +96,7 @@ One file holds the tables every block refers to. The build reads it to validate 
 | `flavours` | Flavour → the implementation guide its profiles come from, as `package#version`: `us` = `hl7.fhir.us.core#6.1.0`, `ips` = `hl7.fhir.uv.ips#2.0.1`, `ch` = `ch.fhir.ig.ch-core#6.0.0`. A profile URL in a block is a profile of that IG version. |
 | `categories` | Per resourceType, category key → `{ system, code, display }`, the coding rendered in `category`. The key is also the SMART scope category. |
 | `systems` | datasets-service code-system label → canonical URI (`SNOMED-CT` → `http://snomed.info/sct`, `ICD-10` → `http://hl7.org/fhir/sid/icd-10`, `LOINC`, `ATC`, `RxNorm`). One label per URI, so an imported coding maps back to one label. Used for codes taken from a datasource. |
+| `productSystems` | national product code system (`drug.product.system`, MEDICATION.md § National products) → the URI its product code renders under, as the second coding of a medication concept: `Swissmedic` → `https://hds.ngo/fhir/sid/swissmedic` (an HDS identifier namespace: Swissmedic publishes none for the number plus sequence), `CIS` → `https://smt.esante.gouv.fr/terminologie-bdpm` (the ANS SMT's BDPM CodeSystem, whose specialite concepts are the CIS codes; the evidence is in the table's comment). One label per URI, distinct from `systems`, so an imported product coding never reads back as a `drug.codes[]` entry. The build holds the labels to the `product.system` enum of the coded medication eventTypes. |
 
 Entries are additive: a published category key or system label is never renamed or removed.
 
@@ -99,9 +108,16 @@ Entries are additive: a published category key or system label is never renamed 
 | Condition | `problem-list-item`, `encounter-diagnosis` (system `http://terminology.hl7.org/CodeSystem/condition-category`), `health-concern` (system `http://hl7.org/fhir/us/core/CodeSystem/condition-category`) | yes |
 | DocumentReference | `clinical-note` (system `http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category`), the one key of the US Core category value set: every HDS document, whatever its XDS class (4.2.0) | yes |
 
-A resourceType that has a table must carry a `category` from it; a resourceType without a table takes none (Patient).
-The SMART scope key is `ResourceType|category` for a resourceType with a table, and the bare resourceType otherwise
-(see [SMART scopes](#smart-scopes-packfhirscopes)).
+A resourceType that has a table must carry a `category` from it; a resourceType without a table takes none (Patient,
+MedicationStatement, MedicationRequest). The SMART scope key is `ResourceType|category` for a resourceType with a
+table, and the bare resourceType otherwise (see [SMART scopes](#smart-scopes-packfhirscopes)). **A bare key is a
+one-way door: once it is published, no category table can ever be added for that resourceType.** A block with a
+category pairs its stream as `ResourceType|category`, and the lock holds the type's streams under the bare pair, so a
+table added later would re-pair every one of them and the build refuses it ([Permanence](#permanence)). Nor can a
+block emit a `category` coding without a table: if a profile ever requires one (US Core 6.1.0 marks
+`MedicationRequest.category` Must Support), it is a renderer-side constant, never the pack. The medication types hold
+one item set each, so `patient/MedicationRequest.rs` is the whole of it and a `?category=` on them grants nothing,
+now and for good.
 
 ---
 
@@ -113,15 +129,16 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 
 | Field | Required | Meaning |
 |---|---|---|
-| `resourceType` | yes | `Observation`, `Condition` or `DocumentReference` ([documents](#documentreference-documents); `Patient` is an [element block](#patient-elements)). *Permanent.* |
+| `resourceType` | yes | `Observation`, `Condition`, `DocumentReference` ([documents](#documentreference-documents)), `MedicationStatement` or `MedicationRequest` ([medications](#medications-medicationstatement-and-medicationrequest); `Patient` is an [element block](#patient-elements)). *Permanent.* |
 | `category` | per resourceType (table above) | Category key. *Permanent.* |
 | `alsoMatchCategories` | no | Further category keys of the same table that a resource may carry and still import into this item, **on import only**, never emitted (smoking status filed under `survey` by older sources). Never the block's own category. |
-| `code` | yes | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }`, `{ from: eventType, codings }` or `{ from: content, field, translate, unknown }` (below). |
+| `code` | yes | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }`, `{ from: eventType, codings }`, `{ from: content, field, translate, unknown }` or `{ from: text, field }` (below). |
 | `alsoMatch` | no | Extra codings accepted **on import only**, never emitted. With a static code, a list; with an eventType code, keyed by the eventType each names (`{ concentration/mg-dl: [codings] }`). Never with a datasource code. |
 | `alsoEmit` | no | Extra codings **emitted only**, after the static code in `code.coding`, never an import key: the second code a profile requires (US Core pulse oximetry wants 2708-6 beside 59408-5). A list, with a static code only. A resource that carries an `alsoEmit` coding without the code does not match the item. |
 | `value` | no | FHIR `value[x]`, by `kind` (below). Absent on a Condition, which has no `value[x]`. |
 | `split` | no | Extra resources, one per numeric composite field (below). |
 | `ignore` | no | Composite fields deliberately left out of the FHIR rendering. |
+| `dosage` | on a medication | `{ field, doseUnits, routes }`: the regimen as a FHIR `Dosage` ([medications](#medications-medicationstatement-and-medicationrequest)). Required on a `MedicationStatement` or `MedicationRequest`, refused elsewhere. |
 | `profiles` | yes | Profile per flavour; `{}` claims none (below). |
 
 **Codings** always have a canonical system URI (`http://loinc.org`, `http://snomed.info/sct`), never a label, a
@@ -168,6 +185,14 @@ reviewer checks the code against and what a reader falls back on.
   must be a content property of the item's one eventType holding a Coding or a list of them; a key never translates to
   itself. No `alsoMatch`, no `alsoEmit`, no `value`. The item is matched on import by (resourceType, category) alone,
   one content-coded item per category, like a datasource code.
+- **From the content as text** (medications, a `MedicationStatement` or `MedicationRequest` only): `code: { from: text,
+  field: name }`. The resource carries no coding: the concept is `{ text: <the string at field> }`, the name of a
+  medication as written (`medicationCodeableConcept.text`). The field is a `text` field of the item's composite, on
+  an item with one eventType (a standalone `text` item cannot carry a `dosage`, so a medication block always sits on
+  a composite). No `alsoMatch`, no `alsoEmit`. On import the item is
+  matched by resourceType alone, one text-coded item per (resourceType, category), and only when no coding of the
+  resource has a datasource label: a coded medicine goes to the datasource item, a name alone to this one
+  (MEDICATION.md § A Swiss brand name: never a coded event with a guessed code).
 
 ### Value kinds
 
@@ -385,14 +410,17 @@ computes the table and publishes it:
 "fhirScopes": {
   "Condition|problem-list-item": ["condition"],
   "DocumentReference|clinical-note": ["documents"],
+  "MedicationRequest": ["medication-prescription"],
+  "MedicationStatement": ["medication-intake"],
   "Observation|vital-signs": ["body-blood-pressure", "body-heart-rate", "body-height", "body-oxygen-saturation", "body-weight"],
   "Patient": ["profile-address", "profile-date-of-birth", "profile-name", "profile-sex"]
 }
 ```
 
 Keys are `ResourceType|category` for a resourceType with a category table, and the **bare resourceType** for one
-without (`Patient`); values are sorted stream ids. `patient/Patient.rs` and `patient/*.rs` reach the `Patient` key;
-a scope with `?category=` never reaches a bare key. It feeds the Pryv OAuth extension's `fhirScopes` option, pinned
+without (`Patient`, `MedicationStatement`, `MedicationRequest`); values are sorted stream ids. `patient/Patient.rs` and
+`patient/*.rs` reach the `Patient` key, `patient/MedicationStatement.rs` the `MedicationStatement` key; a scope with
+`?category=` never reaches a bare key. It feeds the Pryv OAuth extension's `fhirScopes` option, pinned
 by version and hash (`hds-fhir-js`: `node scripts/extension-options.ts <pack>`); a hand-written table is never used
 in production.
 
@@ -484,15 +512,84 @@ the build accepts, so plan for it before adding the variation:
 
 ---
 
-## Medications: no block yet
+## Medications: MedicationStatement and MedicationRequest
 
-The medication items carry no `fhir` block: the block schema allows `Observation|Condition` only, and hds-fhir-js
-renders them as `unsupported`. The target mapping (one intake → MedicationAdministration, a period of use →
-MedicationStatement, a prescription → MedicationRequest, the regimen → `Dosage` / `Timing.repeat`) is in
-[`MEDICATION.md`](MEDICATION.md#fhir-and-healthkit). One unit note for the exporter: the regimen's `periodUnit`
-(`frequency.periodUnit`) and `bounds.durationUnit` use `h d wk mo y`; FHIR UnitsOfTime is `s min h d wk mo a`, so
-**`y` exports as `a`** (UCUM annum), and the other units map as they are. Enum labels and codes come from the pack's
-`vocabularies` (MEDICATION.md § Vocabularies).
+The four medication items ([MEDICATION.md](MEDICATION.md)) carry a block each. The two items of the
+`medication-intake` stream are a **`MedicationStatement`**: R4's one resource for both kinds of fact the stream holds,
+one intake (no `duration`) and a period of use (a `duration`, `null` while ongoing); the two items of
+`medication-prescription` are a **`MedicationRequest`**. Neither resourceType has a category table, so the scope keys
+are bare (`MedicationStatement`, `MedicationRequest`) and each is granted on its one stream. The coded twin takes the
+medicine from the datasource selection, the basic twin the name as written; all four share one `dosage`:
+
+```yaml
+medication-intake-coded:
+  fhir:
+    resourceType: MedicationStatement
+    code: { from: datasource, field: drug }
+    dosage:
+      field: intake                                   # the regimen object: intake, or posology on a prescription
+      doseUnits: { dose/tablet: "{tbl}", dose/drop: "[drp]", dose/puff: "{puff}", dose/application: "{application}",
+                   dose/suppository: "{suppository}", dose/unit: "[IU]", mass/mg: mg, mass/mcg: ug, mass/g: g, volume/ml: mL }
+      routes:
+        oral: { system: http://snomed.info/sct, code: "26643006", display: Oral route }
+        parenteral: { text: Parenteral }               # no active SNOMED CT route concept
+        # … one entry per route enum value
+    profiles:
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationStatement-uv-ips
+medication-intake-basic:
+  fhir: { resourceType: MedicationStatement, code: { from: text, field: name }, dosage: …, profiles: … }
+medication-prescription-coded:
+  fhir:
+    resourceType: MedicationRequest
+    code: { from: datasource, field: drug }
+    dosage: { field: posology, doseUnits: …, routes: … }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationRequest-uv-ips
+```
+
+**`dosage`**: `field` names the regimen object in the content of the item's one eventType (a composite field of the
+composite, on the basic items); `doseUnits` maps every value of its `doseUnit` enum to the UCUM code the dose renders in,
+and `routes` every value of its `route` enum to the coding its route renders as, or `{ text }` when no active code
+exists. The dose unit codes are compared **as written**, never through `ucumKey`: on a count unit the annotation is the
+meaning (`{tbl}` is not `{puff}`, and a bare `1` imports as neither), so the build holds them distinct as strings. The
+timing fields need no declaration (one shape on every medication eventType, `h d wk mo y` with **`y` exported as `a`**,
+UCUM annum), and the enum vocabularies (`when`, the intake and prescription statuses, the skip and stop reasons) are the
+pack's `vocabularies` (MEDICATION.md § Vocabularies), which the renderer carries a checked copy of.
+
+**The medicine.** `drug.codes[]` render as codings through `fhirMapping.systems` (ATC, RxNorm, SNOMED CT), `drug.label.en`
+as `text`; a `drug.product` adds a second coding under `fhirMapping.productSystems` with the box name (`product.name`)
+as its display, so the national product stands beside the coded medicine, never instead of it. A basic item renders
+`{ text: name }` and nothing else (US Core binds `medication[x]` extensibly, so a text-only medication is permitted).
+
+| Event | Resource (hds-fhir-js `toFhir`) |
+|---|---|
+| one intake (no `duration`, or `0`) | `MedicationStatement.effectiveDateTime`; `status` `completed`, or `not-taken` with `skipReason` as `statusReason`; a Dosage of the dose and route only (MEDICATION.md: the rest is ignored on a dose). A `skipReason` on an intake that was taken is refused |
+| a period still open (`duration` null) | `effectivePeriod.start`, no end; `status` `active`; the whole regimen as one Dosage |
+| an ended period | `effectivePeriod` start and end (the end at `hdsEndPrecision`, else the start's); `status` `stopped` when closed with a `stopReason` (rendered as `statusReason`) or before the planned `bounds.end`, else `completed`. `bounds.duration` is not compared (calendar arithmetic) |
+| any intake | `informationSource` = the patient unless the event was imported; no category; IPS profile on `ips`, the base resource on `us` (US Core 6.1.0 has no MedicationStatement profile) |
+| a prescription | `MedicationRequest`, `intent` `order`, `authoredOn` = the event time at its precision, `status` as stored (absent is `unknown`, never active), `stopReason` as `statusReason`, `statusChanged` as the R5 cross-version extension `http://hl7.org/fhir/5.0/StructureDefinition/extension-MedicationRequest.statusChanged` (`valueDateTime`), the posology as the one `dosageInstruction`. US Core on `us`, IPS on `ips` |
+| US Core Must Support HDS does not hold | `requester`: who wrote the order is not stored, and US Core 6.1.0 requires one on an order (us-core-21), so on `us` it is stated as absent (a data-absent-reason `unknown`, as the IPS lab performer is) and left out on the other flavours; `reported[x]`, `encounter`, `dispenseRequest` (each 0..1): omitted, as the profile allows |
+
+**Import** (`fromFhir`, § [Import](#import)): a resource is matched by its `medicationCodeableConcept`: a coding with a
+datasource label places it on the coded item, a name alone (`text`, or a display of a coding HDS cannot place) on the
+basic one; a `medicationReference` is not resolved and is refused. A national product coding comes back as a partial
+`drug.product` (`system`, `code`, `name`), which the bridge completes from datasets-service or drops. The regimen comes
+back from the one Dosage (several are refused); anything the regimen has no place for (a dose range or rate, a site, a
+method, a maximum dose, `dayOfWeek`, `count`, `offset`, a time unit outside `h d wk mo a`, a `when` outside the
+vocabulary, a dose unit or route outside the block) refuses the resource rather than drop it, and `patientInstruction`
+is not kept (`text` is the wording the model keeps as `note`). Statuses: a `MedicationRequest` must be an order
+(`intent`), `cancelled`, `draft` and `entered-in-error` are withdrawn, `on-hold` and `unknown` import without a
+`status`; a `MedicationStatement` with `effectiveDateTime` is one intake when `completed` or `not-taken` and an open
+period when `active`, with `effectivePeriod` a period of use (`active` without an end, `stopped` or `completed` with
+one), any other combination refused; a `statusReason` imports only where the model keeps a reason (a skipped intake,
+a stopped period or order) and only when it is one of the vocabulary's (by SNOMED CT code or English label). A
+national product coding without a substance code (a Swissmedic or CIS code and no ATC or RxNorm) is refused with a
+reason rather than reduced to its name: HDS has a place for the code, the text item has none, so the bridge resolves
+the product through datasets-service and passes its codes. **One mapping is lossy:** a `stopped` period without a
+`statusReason` imports as an ended period with no `stopReason` (the model has no "stopped, reason not stated") and
+renders again as `completed`, unless it closed before its planned `bounds.end`. The status is lost rather than a
+reason invented: no importer writes `stopReason: other` for it (hds-fhir-js `[IMPT-27]`).
 
 ---
 
@@ -506,7 +603,11 @@ block whose element (or value) it does not know: the Patient is assembled withou
 So a new value kind, a new code source, a new resourceType or a new Patient element **needs a renderer change
 first**: implement and validate
 it in hds-fhir-js, release that, then add the first block that uses it here. A block the deployed renderer skips is
-data a SMART app does not see.
+data a SMART app does not see. **A new value of a medication vocabulary needs the renderer first in the same way**
+(`when`, the intake and prescription statuses, the skip and stop reasons; MEDICATION.md § Vocabularies): hds-fhir-js
+renders them from a checked copy of `pack.vocabularies` (`check:pack`), so a deployed renderer refuses an event
+carrying a value it does not know until it is released with it. A new dose unit or route, by contrast, rides in the
+block's `dosage` and needs no renderer change.
 
 **A new field is not skipped:** a consumer that does not know a field ignores it. That is harmless for an import-only
 field (`alsoMatch`, `alsoMatchCategories`: an older importer accepts less), and it is why a change of what a block
@@ -534,7 +635,9 @@ its code from a datasource). A static code match wins over a datasource match. A
 code imports as a fragment of that item (below) and only when no item matches it directly: a standalone heart-rate
 Observation goes to `body-heart-rate`, not to the blood-pressure pulse. The build guarantees that a static code or an
 `alsoMatch` coding is claimed by one active item only, and a datasource source by one active item per category it
-accepts (`hds-fhir-js`: `matchResource`, which also says why nothing matched). **Deprecated items are not import
+accepts (`hds-fhir-js`: `matchResource`, which also says why nothing matched). A medication is matched on its
+`medicationCodeableConcept`: a coding with a datasource label goes to the datasource-coded item, a name alone to the
+text-coded one ([medications](#medications-medicationstatement-and-medicationrequest)). **Deprecated items are not import
 keys:** the importer matches against active items only, so a legacy item that keeps its replacement's block for its
 past events (`fertility-hormone-lh`, `fertility-hormone-pdg`) never makes a code match two items, and an imported
 resource always lands on the active item, in its current eventType.
@@ -547,7 +650,8 @@ resource always lands on the active item, in its current eventType.
   resource that states no category cannot be told apart by it: when it fits several datasource-coded items, the
   importer reports it as ambiguous and imports nothing.
 - **Withdrawn records** are refused: an Observation with `status` `entered-in-error` or `cancelled`, a Condition whose
-  `verificationStatus` is `refuted` or `entered-in-error`. Placing them would state as fact what the source
+  `verificationStatus` is `refuted` or `entered-in-error`, a MedicationStatement `entered-in-error`, a MedicationRequest
+  `entered-in-error`, `cancelled` or `draft` (never an order). Placing them would state as fact what the source
   retracted. Every other status imports as it is (`preliminary`, `amended`, `provisional`, `unconfirmed`, …).
 - **A Condition's `clinicalStatus`** (4.1.0, CONDITION.md § status and abatement) imports as `content.status` when its
   coding in `http://terminology.hl7.org/CodeSystem/condition-clinical` is one of the six codes (`active`, `recurrence`,
@@ -596,7 +700,9 @@ names that disagree) is reported per element, never guessed, and the other eleme
 clinical date: the importer records the facts at import time, as a profile entry is recorded.
 
 **Time.** Observation: `effectiveDateTime`, else `effectivePeriod.start`, else `effectiveInstant`. Condition:
-`onsetDateTime`, else `onsetPeriod.start`, else `recordedDate`. The event time of a `condition-coded` event is when
+`onsetDateTime`, else `onsetPeriod.start`, else `recordedDate`. MedicationRequest: `authoredOn` (a point event).
+MedicationStatement: `effectiveDateTime`, else `effectivePeriod.start`; an `effectivePeriod.end` becomes the event
+`duration` as an abatement does (below). The event time of a `condition-coded` event is when
 the patient has had the condition from (its onset, or the date of the diagnosis when that is all the source knows),
 not when someone wrote it down, as for the "March 1999" diagnosis of [PARTIAL-DATES.md](PARTIAL-DATES.md); so the
 rendering states it as `onsetDateTime`, and the import prefers the onset. An `onsetPeriod`'s end is not kept (the
@@ -649,6 +755,13 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
 - **Content code (`[FHIR-MAP-17]`):** a `DocumentReference` takes `{ from: content }` and nothing else, and the source
   applies to a `DocumentReference` only; one eventType; the field holds a Coding or a list of them; `translate` keys
   are `"<canonical system>|<code>"` and never translate to themselves; no `value`, no `alsoMatch`.
+- **Medications (`[FHIR-MAP-22]`):** a `MedicationStatement` or `MedicationRequest` takes `{ from: datasource }` or
+  `{ from: text }` and a `dosage`, no `value`; a text source names a `text` field of the composite, one eventType, no
+  `alsoMatch`; `dosage.field` holds a regimen (`doseValue`, `doseUnit`, `route`, `frequency`, …; a
+  composite field on a composite item), `doseUnits` keys are exactly its `doseUnit` enum with distinct non-empty codes
+  as written, `routes` keys exactly its `route` enum, each coding once and each text once; a datasource-coded
+  medication's `product.system` enum is covered by `fhirMapping.productSystems`; `text` and `dosage` on any other
+  resourceType are refused. Import keys: one datasource-coded and one text-coded item per (resourceType, category).
 - **LOINC (`[LABC-LOINC-1]`):** on an item that asserts `references.loinc`, an eventType coding is the code its unit
   option stores, and a static LOINC code is the code every unit option stores; a LOINC import key (code, eventType
   coding, `alsoMatch`) is never a code another active item owns (`references.loinc` or `references.loincMethod`).

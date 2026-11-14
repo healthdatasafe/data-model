@@ -16,6 +16,9 @@ const LOCK_FILE_PATH = path.join(__dirname, '../definitions/fhir/scopes.lock.jso
 /** Scope pair of an item that has no mapping: its events would be readable through a grant but never rendered. */
 const UNMAPPED = '(unmapped)';
 
+/** The resourceTypes whose block maps a medication item (MEDICATION.md): a regimen (`dosage`), a datasource or text code. */
+const MEDICATION_TYPES = ['MedicationStatement', 'MedicationRequest'];
+
 /**
  * The Patient elements an item may contribute (`fhir: { resourceType: Patient, element }`): the item type each needs
  * and, for a coded element, the code system its option codings come from, code → official display. Text and date
@@ -41,6 +44,7 @@ const LOCK_FORMAT = 2;
 module.exports = {
   fhirMapping,
   UNMAPPED,
+  MEDICATION_TYPES,
   PATIENT_ELEMENTS,
   LOCK_FILE_PATH,
   LOCK_FORMAT,
@@ -88,6 +92,11 @@ function checkMappingTable (t) {
   const uris = Object.values(t.systems || {});
   for (const uri of uris) if (!/^(https?:|urn:)/.test(uri)) fail(`system "${uri}" is not a canonical URI`);
   if (new Set(uris).size !== uris.length) fail('systems: one label per URI, so an imported coding maps back to one label');
+  // A product system renders a product code as a second medication coding: its own URI, never one of `systems`
+  // (an imported product coding must not read back as a `drug.codes[]` entry).
+  const productUris = Object.values(t.productSystems || {});
+  for (const uri of productUris) if (!/^(https?:|urn:)/.test(uri)) fail(`productSystem "${uri}" is not a canonical URI`);
+  if (new Set([...uris, ...productUris]).size !== uris.length + productUris.length) fail('productSystems: one label per URI, distinct from systems');
 }
 
 /**
@@ -138,15 +147,32 @@ function checkFhirMapping (key, item, itemEventTypes) {
   const mappedFields = new Set();
   const isDatasourceCode = f.code.from === 'datasource';
   const isContentCode = f.code.from === 'content';
-  const codeCodings = f.code.from === 'eventType' ? Object.values(f.code.codings) : isDatasourceCode || isContentCode ? [] : [f.code];
+  const isTextCode = f.code.from === 'text';
+  const isMedication = MEDICATION_TYPES.includes(f.resourceType);
+  const codeCodings = f.code.from === 'eventType' ? Object.values(f.code.codings) : isDatasourceCode || isContentCode || isTextCode ? [] : [f.code];
   const alsoMatchCodings = alsoMatchCodingsOf(f);
   const alsoEmitCodings = f.alsoEmit || [];
   if (f.alsoEmit != null && f.code.from != null) fail('"alsoEmit" applies to a static code only');
   // A DocumentReference's type is the document's own codings, translated for the profile's binding (DOCUMENTS.md).
   if (f.resourceType === 'DocumentReference' && !isContentCode) fail('a DocumentReference takes its type from the content: code: { from: content, field, translate, unknown }');
   if (isContentCode && f.resourceType !== 'DocumentReference') fail('a content code source applies to a DocumentReference only (the renderer places it as DocumentReference.type)');
+  // A medication is the coded medicine datasets-service returned (`drug`), or a name as written (MEDICATION.md).
+  if (isMedication && !isDatasourceCode && !isTextCode) fail(`a ${f.resourceType} takes its medication from the content: code: { from: datasource, field } (the coded medicine) or { from: text, field } (the name as written)`);
+  if (isTextCode && !isMedication) fail('a text code source applies to a MedicationStatement or MedicationRequest only (the renderer places it as medication[x].text)');
+  if (isMedication) {
+    if (f.dosage == null) fail(`a ${f.resourceType} needs "dosage": { field, doseUnits, routes } (the regimen as a FHIR Dosage)`);
+    checkDosage(item, f, itemEventTypes, fail, sameSet, unique);
+    mappedFields.add(f.dosage.field.split('.')[0]);
+  } else if (f.dosage != null) {
+    fail('"dosage" applies to a MedicationStatement or MedicationRequest only');
+  }
   if (isDatasourceCode) {
     checkDatasourceField(item, f.code.field, itemEventTypes, fail);
+    if (f.alsoMatch != null) fail('"alsoMatch" applies to a static or eventType code only');
+    mappedFields.add(f.code.field.split('.')[0]);
+    if (isMedication) checkProductSystems(f.code.field, itemEventTypes, fail);
+  } else if (isTextCode) {
+    checkTextField(item, f.code.field, itemEventTypes, fail);
     if (f.alsoMatch != null) fail('"alsoMatch" applies to a static or eventType code only');
     mappedFields.add(f.code.field.split('.')[0]);
   } else if (isContentCode) {
@@ -167,7 +193,7 @@ function checkFhirMapping (key, item, itemEventTypes) {
   }
   checkLoincAgreement(item, f, itemEventTypes, fail);
 
-  if ((f.resourceType === 'Condition' || f.resourceType === 'DocumentReference') && f.value != null) fail(`a ${f.resourceType} has no value[x]; remove "value"`);
+  if ((f.resourceType === 'Condition' || f.resourceType === 'DocumentReference' || isMedication) && f.value != null) fail(`a ${f.resourceType} has no value[x]; remove "value"`);
 
   const numericField = (what, k) => {
     const field = composite?.[k];
@@ -341,6 +367,75 @@ function checkContentField (item, code, itemEventTypes, fail) {
     if (!/^(https?:|urn:)/.test(system) || value === '') fail(`code.translate "${k}": a key is "<canonical system>|<code>"`);
     if (c.system === system && c.code === value) fail(`code.translate "${k}" translates to itself`);
   }
+}
+
+/** The content property at a dotted path of an item's one eventType, or undefined. */
+function contentProperty (eventType, field) {
+  let prop = eventTypesById(eventType);
+  for (const s of field.split('.')) {
+    prop = prop?.type === 'object' ? prop.properties?.[s] : undefined;
+    if (prop == null) return undefined;
+  }
+  return prop;
+}
+
+/**
+ * A `code: { from: text, field }` names a string in the content of the item's one eventType, the name of a
+ * medication as written: a `text` field of the item's composite. (A standalone `text` item cannot carry one: its
+ * eventType is a string, so no `field` is a content property of it, and `checkDosage` needs a regimen object in the
+ * same eventType anyway.)
+ */
+function checkTextField (item, field, itemEventTypes, fail) {
+  if (itemEventTypes.length !== 1) fail('a text code source needs an item with exactly one eventType');
+  const prop = contentProperty(itemEventTypes[0], field);
+  if (prop == null) fail(`code.field "${field}" is not a content property of eventType "${itemEventTypes[0]}"`);
+  if (prop.type !== 'string') fail(`code.field "${field}" is not a string`);
+  if (item.composite != null) {
+    let def = { composite: item.composite };
+    for (const s of field.split('.')) def = def?.composite?.[s];
+    if (def?.type !== 'text') fail(`code.field "${field}" is not a text field of the composite`);
+  }
+}
+
+/**
+ * The `dosage` of a medication block names the regimen object (MEDICATION.md § The regimen) in the content of the
+ * item's one eventType, and covers its two coded enums exactly: every `doseUnit` value renders in a UCUM code of its
+ * own (compared as written: the annotation is the meaning of a count unit), every `route` value as one coding (or a
+ * text when no active code exists), each once, so an imported dose unit or route maps back to one value.
+ */
+function checkDosage (item, f, itemEventTypes, fail, sameSet, unique) {
+  const d = f.dosage;
+  if (itemEventTypes.length !== 1) fail('"dosage" needs an item with exactly one eventType');
+  const regimen = contentProperty(itemEventTypes[0], d.field);
+  if (regimen == null) fail(`dosage.field "${d.field}" is not a content property of eventType "${itemEventTypes[0]}"`);
+  const enumOf = (name) => {
+    const p = regimen.type === 'object' ? regimen.properties?.[name] : undefined;
+    if (p?.type !== 'string' || !Array.isArray(p.enum)) fail(`dosage.field "${d.field}" does not hold a regimen: no "${name}" enum (doseValue, doseUnit, route, frequency, …)`);
+    return p.enum;
+  };
+  if (regimen.properties?.doseValue?.type !== 'number' || regimen.properties?.frequency?.type !== 'object') fail(`dosage.field "${d.field}" does not hold a regimen (doseValue, doseUnit, route, frequency, …)`);
+  if (item.composite != null) {
+    let def = { composite: item.composite };
+    for (const s of d.field.split('.')) def = def?.composite?.[s];
+    if (def?.type !== 'composite') fail(`dosage.field "${d.field}" is not a composite field of the composite`);
+  }
+  sameSet(`dosage.doseUnits keys vs the ${d.field}.doseUnit enum`, Object.keys(d.doseUnits), enumOf('doseUnit'));
+  const codes = Object.values(d.doseUnits);
+  if (new Set(codes).size !== codes.length) fail('dosage.doseUnits: two dose units share a UCUM code; an imported dose would map back to two units');
+  sameSet(`dosage.routes keys vs the ${d.field}.route enum`, Object.keys(d.routes), enumOf('route'));
+  const routeCodings = Object.values(d.routes).filter((r) => r.text == null);
+  unique('dosage.routes', routeCodings);
+  const texts = Object.values(d.routes).filter((r) => r.text != null).map((r) => r.text.toLowerCase());
+  if (new Set(texts).size !== texts.length) fail('dosage.routes: two routes share a text; an imported route would map back to two values');
+}
+
+/** The `product.system` enum of a coded medication (`drug.product`, MEDICATION.md § National products) is covered by `fhirMapping.productSystems`. */
+function checkProductSystems (field, itemEventTypes, fail) {
+  const system = contentProperty(itemEventTypes[0], `${field}.product.system`);
+  if (system == null) return;
+  const known = Object.keys(fhirMapping.productSystems || {});
+  const missing = (system.enum || []).filter((s) => !known.includes(s));
+  if (missing.length > 0) fail(`${field}.product.system admits ${missing.join(', ')}, which definitions/fhir/mapping.yaml productSystems gives no URI for`);
 }
 
 /**
@@ -549,8 +644,9 @@ function checkFhirImportKeys (items) {
     if (item.deprecated || f == null || f.companionOf != null) continue;
     if (f.element != null) {
       claim(`${f.resourceType}.${f.element}`, key);
-    } else if (f.code.from === 'datasource' || f.code.from === 'content') {
-      // The resource's code is content, so the item is matched by (resourceType, category) alone: one per category.
+    } else if (f.code.from === 'datasource' || f.code.from === 'content' || f.code.from === 'text') {
+      // The resource's code is content, so the item is matched by (resourceType, category) alone: one per category
+      // and per source (a coded medicine goes to the datasource item, a name alone to the text item).
       for (const c of [f.category, ...(f.alsoMatchCategories || [])]) {
         claim(`${f.resourceType}${c != null ? `|${c}` : ''} from ${f.code.from}`, key);
       }

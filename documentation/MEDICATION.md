@@ -21,7 +21,7 @@ The `medication-intake` stream holds two kinds of fact, and **the event's `durat
 
 | Kind | Event | FHIR | HealthKit |
 |---|---|---|---|
-| **one intake** (a dose) | no `duration`, or `0` | MedicationAdministration | `HKMedicationDoseEvent` |
+| **one intake** (a dose) | no `duration`, or `0` | MedicationStatement (`effectiveDateTime`; MedicationAdministration is the R5 target, § FHIR) | `HKMedicationDoseEvent` |
 | **a period of use** (a regimen) | a `duration`; `null` while ongoing | MedicationStatement (`effectivePeriod`) | `HKUserAnnotatedMedication` |
 
 `duration` is outside `content`, so no schema can check which fields go with which kind. The rule, which readers apply
@@ -136,7 +136,7 @@ refuses a vocabulary whose values differ from any bound enum (same values, same 
 | Vocabulary | Binds | Codes |
 |---|---|---|
 | `medication-when` | `intake.when`, `posology.when` | FHIR EventTiming (above) |
-| `medication-intake-status` | `status` on the intake types | MedicationAdministration.status `completed` / `not-done`; `skipped` SNOMED 1269470004 "Individual dose of drug or medicament not taken" (Missed dose) |
+| `medication-intake-status` | `status` on the intake types | MedicationStatement.status `completed` / `not-taken` (R4, what § FHIR emits for one intake; the R5 MedicationAdministration.status would read `completed` / `not-done`); `skipped` SNOMED 1269470004 "Individual dose of drug or medicament not taken" (Missed dose) |
 | `medication-skip-reason` | `skipReason` | SNOMED: `forgot` 1303576005 Forgets to take medication · `side-effects` 182897004 Drug declined by patient - side effects · `unavailable` 242990004 Drug not available for administration · `declined` 182895007 Drug declined by patient; `not-needed`, `advised`, `other` uncoded |
 | `medication-stop-reason` | `stopReason` on all four types | SNOMED: `medical-advice` 182840001 Drug treatment stopped - medical advice · `side-effects` 395009001 Medication stopped - side effect · `ineffective` 395007004 Medication stopped - ineffective; `own-choice`, `other` uncoded (258147002 "Stopped by patient" is inactive) |
 | `medication-prescription-status` | `status` on the prescription types | MedicationRequest.status `active` / `stopped` / `completed` |
@@ -145,23 +145,51 @@ The skip-reason codes are members of the value set R5 `MedicationAdministration.
 ∪ is-a 182895007), except `forgot`, a finding about the person. Every SCTID was checked active on the International
 release 20260201.
 
+**A new vocabulary value needs the renderer first, like a new code source** (FHIR-MAPPING.md § Forward
+compatibility). hds-fhir-js renders these enums from a checked copy of the vocabularies (`check:pack`), so a deployed
+renderer refuses an event carrying a value it does not know (an OperationOutcome, never a half-rendered resource)
+until hds-fhir-js is released with the value and the facade re-pinned. A new dose unit or route, by contrast, rides in
+the item's `fhir.dosage` block and needs no renderer change.
+
 ## FHIR and HealthKit
 
-**Regimen → `Dosage`.** `doseValue`/`doseUnit` → `doseAndRate.doseQuantity` · `route` → `route` · `frequency` →
-`timing.repeat.frequency/period/periodUnit` · `timeOfDay` → `repeat.timeOfDay` · `when` → `repeat.when` ·
-`bounds.duration`/`durationUnit` → `repeat.boundsDuration` · `bounds.start`/`end` → `repeat.boundsPeriod` · `asNeeded`
-→ `asNeededBoolean` (R4) / `asNeeded` (R5) · `note` → `text`. **Units:** `h d wk mo` as they are, **`y` → UCUM `a`**.
+**Shipped as `fhir` blocks** (plan 115 medications slice; FHIR-MAPPING.md § Medications): the intake items are a
+`MedicationStatement`, the prescription items a `MedicationRequest`, bare SMART scope keys granted on
+`medication-intake` and `medication-prescription`. The blocks declare the regimen path (`dosage.field`), the dose
+units as UCUM and the routes as SNOMED CT route qualifiers; the enum codes below come from the vocabularies.
 
-- **One intake** → MedicationAdministration, `subject` = `performer` = Patient. Taken or absent → `status: completed`,
-  `effectiveDateTime` (R5 `occurence[x]`); skipped → `status: not-done` + `statusReason` (the SNOMED coding where one
-  exists, else `text`). An exporter preferring MedicationStatement (R4) may write `status: not-taken` instead.
-- **A period** → MedicationStatement, `effectivePeriod` from the event's time and duration, `dosage` from `intake`.
-  Ended: R4 `status` `stopped` (closed with a `stopReason`, or before the `bounds` end) or `completed`, `statusReason`
-  from `stopReason`; R5 has no such status and uses `adherence.code` (`stopped`, `taking`, …) and `adherence.reason`.
-- **A prescription** → MedicationRequest, `dosageInstruction` from `posology`, `status` as stored (absent →
-  `unknown`), `statusReason` from `stopReason`, R5 `statusChanged`. R5's `ended` is the parent of `stopped`, `completed`
-  and `cancelled`: an importer receiving it writes `stopped` when the reason says the order was stopped, else no
-  `status`.
+**Regimen → `Dosage`.** `doseValue`/`doseUnit` → `doseAndRate.doseQuantity` · `route` → `route` · `frequency` →
+`timing.repeat.frequency/period/periodUnit` · `timeOfDay` → `repeat.timeOfDay` (`"08:00"` → `"08:00:00"`) · `when` →
+`repeat.when` · `bounds.duration`/`durationUnit` → `repeat.boundsDuration` · `bounds.start`/`end` →
+`repeat.boundsPeriod` · `asNeeded` → `asNeededBoolean` (R4) / `asNeeded` (R5) · `note` → `text`. **Units:** `h d wk mo`
+as they are, **`y` → UCUM `a`**. **Dose units** (`doseUnits` in the block): `dose/tablet` `{tbl}`, `dose/drop` `[drp]`,
+`dose/puff` `{puff}`, `dose/application` `{application}`, `dose/suppository` `{suppository}`, `dose/unit` `[IU]`,
+`mass/mg` `mg`, `mass/mcg` `ug`, `mass/g` `g`, `volume/ml` `mL`; compared as written on import (the annotation is the
+meaning of a count unit). **Routes** (`routes`): SNOMED CT route qualifiers, verified active on the International
+20260201 release (oral 26643006, sublingual 37839007, intravenous 47625008, intramuscular 78421000, subcutaneous
+34206005, inhalation 447694001 "Respiratory tract route", nasal 46713006, topical 6064005, transdermal 45890007,
+ophthalmic 54485002, otic 10547007, rectal 37161004, vaginal 16857009); `parenteral` has no active route concept
+(447202000 is inactive) and renders as text.
+
+- **One intake** → MedicationStatement (R4's one resource for both kinds the stream holds; MedicationAdministration
+  is the R5 target), `effectiveDateTime`, `subject` = `informationSource` = Patient. Taken or absent → `status:
+  completed`; skipped → `status: not-taken` + `statusReason` (the SNOMED coding where one exists, with the English
+  label as `text`). The Dosage carries the dose and the route only.
+- **A period** → MedicationStatement, `effectivePeriod` from the event's time and duration (no end while ongoing,
+  `status: active`), `dosage` from `intake`. Ended: R4 `status` `stopped` (closed with a `stopReason`, or before
+  `bounds.end`; `bounds.duration` is not compared) or `completed`, `statusReason` from `stopReason`; R5 has no such
+  status and uses `adherence.code` (`stopped`, `taking`, …) and `adherence.reason`.
+- **A prescription** → MedicationRequest, `intent: order`, `authoredOn` = the event time, `dosageInstruction` from
+  `posology`, `status` as stored (absent → `unknown`), `statusReason` from `stopReason`, `statusChanged` as the R5
+  cross-version extension (`http://hl7.org/fhir/5.0/StructureDefinition/extension-MedicationRequest.statusChanged`).
+  R5's `ended` is the parent of `stopped`, `completed` and `cancelled`: an importer receiving it writes `stopped` when
+  the reason says the order was stopped, else no `status`. The importer (hds-fhir-js `fromFhir`) takes an order
+  (`intent`) only, `on-hold` and `unknown` as not stated, and refuses `cancelled`, `draft` and `entered-in-error`.
+
+**Both kinds of the intake stream render as MedicationStatement permanently.** One block has one resourceType, one
+stream has one scope pair, and the scope lock holds `medication-intake` under `MedicationStatement` (FHIR-MAPPING.md
+§ Permanence). So a dose can never become a MedicationAdministration (the R5 target above), nor anything else, by an
+additive change: it would need a stream of its own for doses and a migration of the dose events.
 
 **HealthKit (iOS 26 Medications API, read-only for third-party apps in the public docs).**
 
@@ -284,5 +312,17 @@ under every older pack (hds-mcp-js and any client validate against their pinned 
 | `CIP13` | FR | pack | CIP13 of one pack | (not returned by datasets-service yet) |
 
 Packs are not part of `drug.product`: a pack would be its own additive field when datasets-service returns packs.
-FHIR: the product maps to a second `coding` of the medication concept and its name to `CodeableConcept.text`; the
-national system URIs are left to the exporter work (FHIR-MAPPING.md § Medications: no block yet).
+FHIR: the product is a second `coding` of the medication concept, under the URI `fhirMapping.productSystems` gives its
+`system`, with `product.name` as the coding's `display`; `CodeableConcept.text` stays `drug.label.en`, the name the
+person knows the medicine by, as for every datasource selection. `Swissmedic` → `https://hds.ngo/fhir/sid/swissmedic`,
+an HDS identifier namespace (Swissmedic publishes no URI for the number plus sequence). `CIS` →
+`https://smt.esante.gouv.fr/terminologie-bdpm`, the ANS SMT's BDPM CodeSystem, whose specialite concepts are the CIS
+codes (checked 2026-11-13: its `$lookup` of `60234100` answers "DOLIPRANE 1000 mg, comprimé", the ANSM's CIS
+6 023 410 0; the evidence is in `definitions/fhir/mapping.yaml`). That CodeSystem also holds the presentations under
+their CIP13, so on import an 8-digit code under it is a CIS and a CIP13 is refused. The ANS uses the same URI for a
+CIS coding (its document-core IG patterns `vaccineCode.coding:cis.system` on it). The ANS ePrescription ballot's
+`http://data.esante.gouv.fr/ansm/medicament/SpecialitePharmaceutique` was considered and not taken: no CodeSystem
+stands behind it. The BDPM covers the products marketed in the last five years, so the CIS of a medicine withdrawn
+earlier can fail
+`$validate-code` against the live server while still being correct. On import the coding comes back
+as a partial `drug.product` (`system`, `code`, `name`) that the bridge completes from datasets-service, or drops.

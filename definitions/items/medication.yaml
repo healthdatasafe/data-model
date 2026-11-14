@@ -119,6 +119,44 @@ medication-intake-basic:
           type: text
           canBeNull: true
   repeatable: unlimited
+  # A MedicationStatement (plan 115 medications slice, MEDICATION.md § FHIR): the name as written is the
+  # medication concept's text; the regimen renders as its Dosage. One block shape for the four medication items:
+  # the dose units (UCUM, the annotation being the meaning of a count unit) and the routes (SNOMED CT route
+  # qualifiers, verified active in snomed-db 20260201; `parenteral` has no active route concept) are shared.
+  fhir:
+    resourceType: MedicationStatement
+    code: { from: text, field: name }
+    dosage:
+      field: intake
+      doseUnits: &medication-dose-units
+        dose/tablet: "{tbl}"
+        dose/drop: "[drp]"
+        dose/puff: "{puff}"
+        dose/application: "{application}"
+        dose/suppository: "{suppository}"
+        dose/unit: "[IU]"
+        mass/mg: mg
+        mass/mcg: ug
+        mass/g: g
+        volume/ml: mL
+      routes: &medication-routes
+        oral: { system: http://snomed.info/sct, code: "26643006", display: Oral route }
+        sublingual: { system: http://snomed.info/sct, code: "37839007", display: Sublingual route }
+        parenteral: { text: Parenteral }
+        intravenous: { system: http://snomed.info/sct, code: "47625008", display: Intravenous route }
+        intramuscular: { system: http://snomed.info/sct, code: "78421000", display: Intramuscular route }
+        subcutaneous: { system: http://snomed.info/sct, code: "34206005", display: Subcutaneous route }
+        inhalation: { system: http://snomed.info/sct, code: "447694001", display: Respiratory tract route }
+        nasal: { system: http://snomed.info/sct, code: "46713006", display: Nasal route }
+        topical: { system: http://snomed.info/sct, code: "6064005", display: Topical route }
+        transdermal: { system: http://snomed.info/sct, code: "45890007", display: Transdermal route }
+        ophthalmic: { system: http://snomed.info/sct, code: "54485002", display: Ophthalmic route }
+        otic: { system: http://snomed.info/sct, code: "10547007", display: Otic route }
+        rectal: { system: http://snomed.info/sct, code: "37161004", display: Rectal route }
+        vaginal: { system: http://snomed.info/sct, code: "16857009", display: Vaginal route }
+    # US Core 6.1.0 has no MedicationStatement profile: the `us` flavour renders the base resource.
+    profiles:
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationStatement-uv-ips
   devNotes: >-
     Content carries an `intake` sub-object with the same structure as `medication/coded-v1`:
     optional dose, route, frequency, asNeeded, note and timing (timeOfDay or when, bounds). The
@@ -146,6 +184,14 @@ medication-intake-coded:
   type: datasource-search
   datasource: medication
   repeatable: unlimited
+  # The coded medicine (`drug.codes`, ATC / RxNorm / SNOMED CT through fhirMapping.systems) is the medication
+  # concept, `drug.product` its second coding (fhirMapping.productSystems); same Dosage shape as the basic twin.
+  fhir:
+    resourceType: MedicationStatement
+    code: { from: datasource, field: drug }
+    dosage: { field: intake, doseUnits: *medication-dose-units, routes: *medication-routes }
+    profiles:
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationStatement-uv-ips
   devNotes: >-
     Populated from datasets-service. At least one code (`drug.codes` minItems 1, 3.46.0): a
     medication no code was found for is medication-intake-basic, never a coded event with codes: [].
@@ -163,6 +209,15 @@ medication-prescription-coded:
   type: datasource-search
   datasource: medication
   repeatable: unlimited
+  # A MedicationRequest (US Core 6.1.0 on `us`, IPS 2.0.1 on `ips`): the posology as its dosageInstruction, the
+  # order's `status` as stored (absent renders `unknown`), `intent` always `order`.
+  fhir:
+    resourceType: MedicationRequest
+    code: { from: datasource, field: drug }
+    dosage: { field: posology, doseUnits: *medication-dose-units, routes: *medication-routes }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationRequest-uv-ips
   devNotes: >-
     Populated from datasets-service. At least one code (`drug.codes` minItems 1, 3.46.0): a
     prescription no code was found for is medication-prescription-basic. A point event
@@ -189,6 +244,13 @@ medication-prescription-basic:
       canBeNull: true
       composite: *medication-regimen-fields
   repeatable: unlimited
+  fhir:
+    resourceType: MedicationRequest
+    code: { from: text, field: name }
+    dosage: { field: posology, doseUnits: *medication-dose-units, routes: *medication-routes }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationRequest-uv-ips
   devNotes: >-
     The uncoded twin of medication-prescription-coded, as medication-intake-basic is of
     medication-intake-coded: a name no code was found for (MEDICATION.md). Never a coded event

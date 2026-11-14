@@ -154,6 +154,34 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.deepStrictEqual(hr.code, itemsById['body-blood-pressure'].fhir.split.rate.code);
       assert.deepStrictEqual(hr.profiles, itemsById['body-blood-pressure'].fhir.split.rate.profiles);
     });
+
+    it('[FHIR-ITEM-11] medications (plan 115): the intake items are a MedicationStatement, the prescriptions a MedicationRequest; coded items take the drug from the datasource, basic ones the name as text; one Dosage shape', () => {
+      const sct = (code, display) => ({ system: 'http://snomed.info/sct', code, display });
+      const intake = itemsById['medication-intake-coded'].fhir;
+      assert.strictEqual(intake.resourceType, 'MedicationStatement');
+      assert.strictEqual(intake.category, undefined, 'a bare scope key: no category table');
+      assert.deepStrictEqual(intake.code, { from: 'datasource', field: 'drug' });
+      assert.strictEqual(intake.dosage.field, 'intake');
+      assert.deepStrictEqual(intake.dosage.doseUnits, { 'dose/tablet': '{tbl}', 'dose/drop': '[drp]', 'dose/puff': '{puff}', 'dose/application': '{application}', 'dose/suppository': '{suppository}', 'dose/unit': '[IU]', 'mass/mg': 'mg', 'mass/mcg': 'ug', 'mass/g': 'g', 'volume/ml': 'mL' });
+      assert.deepStrictEqual(intake.dosage.routes.oral, sct('26643006', 'Oral route'));
+      assert.deepStrictEqual(intake.dosage.routes.inhalation, sct('447694001', 'Respiratory tract route'));
+      assert.deepStrictEqual(intake.dosage.routes.parenteral, { text: 'Parenteral' }, 'no active SNOMED CT route concept');
+      assert.deepStrictEqual(Object.keys(intake.dosage.routes).sort(), ['inhalation', 'intramuscular', 'intravenous', 'nasal', 'ophthalmic', 'oral', 'otic', 'parenteral', 'rectal', 'subcutaneous', 'sublingual', 'topical', 'transdermal', 'vaginal']);
+      assert.deepStrictEqual(intake.profiles, { ips: 'http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationStatement-uv-ips' }, 'US Core has no MedicationStatement profile');
+      const basic = itemsById['medication-intake-basic'].fhir;
+      assert.deepStrictEqual(basic, { ...intake, code: { from: 'text', field: 'name' } });
+      const rx = itemsById['medication-prescription-coded'].fhir;
+      assert.strictEqual(rx.resourceType, 'MedicationRequest');
+      assert.deepStrictEqual(rx.code, { from: 'datasource', field: 'drug' });
+      assert.deepStrictEqual(rx.dosage, { ...intake.dosage, field: 'posology' });
+      assert.deepStrictEqual(rx.profiles, {
+        us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest',
+        ips: 'http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationRequest-uv-ips'
+      });
+      assert.deepStrictEqual(itemsById['medication-prescription-basic'].fhir, { ...rx, code: { from: 'text', field: 'name' } });
+      // CIS: the ANS SMT's BDPM CodeSystem (its specialite concepts are the CIS codes; evidence in mapping.yaml), not an HDS namespace
+      assert.deepStrictEqual(fhirMapping.productSystems, { Swissmedic: 'https://hds.ngo/fhir/sid/swissmedic', CIS: 'https://smt.esante.gouv.fr/terminologie-bdpm' });
+    });
   });
 
   describe('[FHIR-SCH] the schema', () => {
@@ -230,10 +258,17 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => checkItem(g, 'o'), /display/);
     });
 
-    it('[FHIR-SCH-4] a code source is `{ from: datasource, field }`, `{ from: eventType, codings }` or `{ from: content, field, translate, unknown }` and nothing else', () => {
+    it('[FHIR-SCH-4] a code source is `{ from: datasource, field }`, `{ from: eventType, codings }`, `{ from: content, field, translate, unknown }` or `{ from: text, field }` and nothing else', () => {
       const a = item('condition-coded');
       a.fhir.code.from = 'stream';
       assert.throws(() => checkItem(a, 'c'), /allowed values/);
+      const txt = item('medication-intake-basic');
+      checkItem(txt, 'm');
+      txt.fhir.code.translate = {};
+      assert.throws(() => checkItem(txt, 'm'), /additional properties/);
+      const txt2 = item('medication-intake-basic');
+      delete txt2.fhir.code.field;
+      assert.throws(() => checkItem(txt2, 'm'), /must have required property 'field'/);
       const ct = item('condition-coded');
       ct.fhir.code.from = 'content';
       assert.throws(() => checkItem(ct, 'c'), /must have required property 'translate'/);
@@ -620,6 +655,73 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => checkFhirImportKeys({ a: { fhir: doc().fhir }, b: { fhir: doc().fhir } }), /fhir import key DocumentReference\|clinical-note from content is claimed by both "a" and "b"/);
     });
 
+    it('[FHIR-MAP-22] a medication block: a datasource or text code, a dosage naming the regimen and covering its doseUnit and route enums exactly (codes distinct as written), no value; text and dosage on a medication only (plan 115)', () => {
+      const med = (k = 'medication-intake-basic') => item(k);
+      for (const k of ['medication-intake-basic', 'medication-intake-coded', 'medication-prescription-coded', 'medication-prescription-basic']) check(med(k), k);
+      const a = med();
+      a.fhir.code = coding('1');
+      assert.throws(() => check(a, 'm'), /takes its medication from the content: code: \{ from: datasource, field \} .* or \{ from: text, field \}/);
+      const b = med();
+      delete b.fhir.dosage;
+      assert.throws(() => check(b, 'm'), /needs "dosage": \{ field, doseUnits, routes \}/);
+      const c = med();
+      c.fhir.value = { kind: 'coded', options: { x: coding('x') } };
+      assert.throws(() => check(c, 'm'), /a MedicationStatement has no value\[x\]/);
+      const d = med();
+      d.fhir.dosage.field = 'name';
+      assert.throws(() => check(d, 'm'), /dosage.field "name" does not hold a regimen/);
+      const e = med();
+      e.fhir.dosage.field = 'nope';
+      assert.throws(() => check(e, 'm'), /dosage.field "nope" is not a content property/);
+      const f = med();
+      delete f.fhir.dosage.doseUnits['mass/mg'];
+      assert.throws(() => check(f, 'm'), /dosage.doseUnits keys vs the intake.doseUnit enum must match exactly; missing \[mass\/mg\]/);
+      const g = med();
+      g.fhir.dosage.doseUnits['dose/puff'] = '{tbl}';
+      assert.throws(() => check(g, 'm'), /two dose units share a UCUM code/);
+      const h = med();
+      h.fhir.dosage.routes.nasal = h.fhir.dosage.routes.oral;
+      assert.throws(() => check(h, 'm'), /dosage.routes: the coding .* appears more than once/);
+      const i = med();
+      i.fhir.dosage.routes.extra = coding('9');
+      assert.throws(() => check(i, 'm'), /dosage.routes keys vs the intake.route enum must match exactly; missing \[\], unknown \[extra\]/);
+      const j = med();
+      j.fhir.dosage.routes.nasal = { text: 'parenteral' };
+      assert.throws(() => check(j, 'm'), /two routes share a text/);
+      // the text code names a text field of the composite; the dosage field a composite field
+      const k = med();
+      k.fhir.code.field = 'intake';
+      assert.throws(() => check(k, 'm'), /code.field "intake" is not a string/);
+      const k2 = med();
+      k2.composite.name.type = 'textarea';
+      assert.throws(() => check(k2, 'm'), /code.field "name" is not a text field of the composite/);
+      // the composite accounting: name is the code, intake the dosage; neither may be ignored twice
+      const l = med();
+      l.fhir.ignore = ['intake'];
+      assert.throws(() => check(l, 'm'), /field "intake" is both mapped and ignored/);
+      // text and dosage are a medication's
+      const m = item('condition-coded');
+      m.fhir.code = { from: 'text', field: 'notes' };
+      assert.throws(() => check(m, 'c'), /a text code source applies to a MedicationStatement or MedicationRequest only/);
+      const n = item('body-weight');
+      n.fhir.dosage = med().fhir.dosage;
+      assert.throws(() => check(n, 'w'), /"dosage" applies to a MedicationStatement or MedicationRequest only/);
+      // a coded medication's product systems are all in the table
+      const o = med('medication-intake-coded');
+      const { fhirMapping: table } = require('../src/fhir');
+      const saved = table.productSystems;
+      table.productSystems = { Swissmedic: saved.Swissmedic };
+      try {
+        assert.throws(() => check(o, 'm'), /drug.product.system admits CIS, which definitions\/fhir\/mapping.yaml productSystems gives no URI for/);
+      } finally {
+        table.productSystems = saved;
+      }
+      // the import keys: one datasource-coded and one text-coded item per resourceType
+      const { checkFhirImportKeys } = require('../src/fhir');
+      checkFhirImportKeys({ a: { fhir: med('medication-intake-coded').fhir }, b: { fhir: med().fhir } });
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: med().fhir }, b: { fhir: med().fhir } }), /fhir import key MedicationStatement from text is claimed by both "a" and "b"/);
+    });
+
     it('[FHIR-MAP-14] alsoMatchCategories: known keys of the resourceType table, never the block\'s own, refused without a table', () => {
       const a = item('lifestyle-tobacco-smoking');
       a.fhir.alsoMatchCategories = ['surveys'];
@@ -909,6 +1011,8 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.deepStrictEqual(fhirScopes, {
         'Condition|problem-list-item': ['condition'],
         'DocumentReference|clinical-note': ['documents'],
+        MedicationRequest: ['medication-prescription'],
+        MedicationStatement: ['medication-intake'],
         'Observation|laboratory': lab,
         'Observation|social-history': ['lifestyle-tobacco-smoking'],
         'Observation|survey': ['wellbeing-general-health'],
@@ -944,6 +1048,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.deepStrictEqual(Object.keys(m.categories.Condition), ['problem-list-item', 'encounter-diagnosis', 'health-concern']);
       assert.strictEqual(m.systems['SNOMED-CT'], 'http://snomed.info/sct');
       assert.strictEqual(m.systems['ICD-10'], 'http://hl7.org/fhir/sid/icd-10');
+      assert.deepStrictEqual(Object.keys(m.productSystems), ['Swissmedic', 'CIS']);
       assert.strictEqual(fhirMapping, m);
     });
 

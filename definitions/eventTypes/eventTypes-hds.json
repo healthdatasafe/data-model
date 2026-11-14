@@ -409,7 +409,7 @@
           }
         },
         "status": {
-          "description": "One intake (an event without duration): taken or skipped. Absent means taken (every event before 3.46.0). Ignored on an intake period (an event with a duration); the schema cannot check this, as duration is outside content. HealthKit HKMedicationDoseEvent.logStatus; FHIR MedicationAdministration.status completed / not-done. Labels: vocabulary medication-intake-status.",
+          "description": "One intake (an event without duration): taken or skipped. Absent means taken (every event before 3.46.0). Ignored on an intake period (an event with a duration); the schema cannot check this, as duration is outside content. HealthKit HKMedicationDoseEvent.logStatus; FHIR (R4) MedicationStatement.status completed / not-taken, one intake rendering as a MedicationStatement at effectiveDateTime (MedicationAdministration.status completed / not-done is the R5 target). Labels: vocabulary medication-intake-status.",
           "type": "string",
           "enum": [
             "taken",
@@ -417,7 +417,7 @@
           ]
         },
         "skipReason": {
-          "description": "Why the intake was skipped (FHIR MedicationAdministration.statusReason). Only with status skipped. Labels and SNOMED CT codes: vocabulary medication-skip-reason.",
+          "description": "Why the intake was skipped (FHIR MedicationStatement.statusReason in R4, MedicationAdministration.statusReason in R5). Only with status skipped. Labels and SNOMED CT codes: vocabulary medication-skip-reason.",
           "type": "string",
           "enum": [
             "forgot",
@@ -457,7 +457,7 @@
       }
     },
     "medication/coded-v1": {
-      "description": "Coded medication intake: one intake (an event without duration, FHIR MedicationAdministration) or a period of use (an event with a duration, null while ongoing, FHIR MedicationStatement). 'drug' is the coded identity from datasets-service, with at least one code (a medication with no code is medication/basic); 'intake' is the regimen. drug → medicationCodeableConcept, intake → dosage.",
+      "description": "Coded medication intake: one intake (an event without duration; FHIR R4 MedicationStatement at effectiveDateTime, MedicationAdministration being the R5 target) or a period of use (an event with a duration, null while ongoing; MedicationStatement with effectivePeriod). 'drug' is the coded identity from datasets-service, with at least one code (a medication with no code is medication/basic); 'intake' is the regimen. drug → medicationCodeableConcept, intake → dosage.",
       "type": "object",
       "required": [
         "drug"
@@ -821,7 +821,7 @@
           }
         },
         "status": {
-          "description": "One intake (an event without duration): taken or skipped. Absent means taken (every event before 3.46.0). Ignored on an intake period (an event with a duration); the schema cannot check this, as duration is outside content. HealthKit HKMedicationDoseEvent.logStatus; FHIR MedicationAdministration.status completed / not-done. Labels: vocabulary medication-intake-status.",
+          "description": "One intake (an event without duration): taken or skipped. Absent means taken (every event before 3.46.0). Ignored on an intake period (an event with a duration); the schema cannot check this, as duration is outside content. HealthKit HKMedicationDoseEvent.logStatus; FHIR (R4) MedicationStatement.status completed / not-taken, one intake rendering as a MedicationStatement at effectiveDateTime (MedicationAdministration.status completed / not-done is the R5 target). Labels: vocabulary medication-intake-status.",
           "type": "string",
           "enum": [
             "taken",
@@ -829,7 +829,7 @@
           ]
         },
         "skipReason": {
-          "description": "Why the intake was skipped (FHIR MedicationAdministration.statusReason). Only with status skipped. Labels and SNOMED CT codes: vocabulary medication-skip-reason.",
+          "description": "Why the intake was skipped (FHIR MedicationStatement.statusReason in R4, MedicationAdministration.statusReason in R5). Only with status skipped. Labels and SNOMED CT codes: vocabulary medication-skip-reason.",
           "type": "string",
           "enum": [
             "forgot",
