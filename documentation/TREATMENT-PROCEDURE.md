@@ -73,7 +73,8 @@ procedure-basic:
     robotAssisted: bool (optional)    # robot-assisted; absent = not recorded
     findings:      array (optional)   # see below
     notes:         text (optional)
-  # Flavour B date: event.time (native). Procedures are point-in-time — no event.duration.
+  # Flavour B date: event.time (native). Procedures are point-in-time: no event.duration on the forms
+  # (a native duration, as an imported operation's start and end, renders as a period: § FHIR).
 
 procedure-coded:
   streamId: procedure
@@ -255,11 +256,59 @@ Coded variants resolve via `datasets-service`:
 - v1 seed: `datasets-service/datasets/SNOMED-CT-STORMM/{treatments,procedures}.json` — ~25 hand-curated SNOMED-CT entries covering Plan 47 STORMM fertility intake. Complementary with any future full SNOMED-CT procedures fetcher.
 - Future expansions: ICD-10-PCS (US public domain), CPT (license-restricted), full SNOMED-CT.
 
+## FHIR
+
+**Procedures render as a FHIR R4 `Procedure`** (plan 115 procedures slice; the block, the profiles and the import
+rules are in [FHIR-MAPPING.md § Procedures](FHIR-MAPPING.md#procedures-procedure)). Both items of the `procedure`
+stream carry a block under the bare SMART scope key `Procedure`, so `patient/Procedure.rs` is a grant on the
+`procedure` root, `procedure-fertility` included.
+
+| Event | Procedure |
+|---|---|
+| `procedure` (coded) / `name` (basic) | `code`: the coded selection with its label as text / the name as text |
+| `event.time` | `performedDateTime`, at the precision of the event ([PARTIAL-DATES.md](PARTIAL-DATES.md)) |
+| `event.time` + a positive `event.duration` | `performedPeriod` (an imported operation with a start and an end) |
+| (none) | `status: completed`: a procedure event is a procedure that took place |
+| `notes` | `note` |
+| `count` (Flavour A) | **no Procedure**: the event is a lifetime tally, served as a generic Observation |
+| `robotAssisted`, `findings` | not rendered |
+
+- **Flavour A never becomes a Procedure.** "Had it 2 times" (or `0`: never) states no date of any procedure, its
+  `event.time` is when the question was answered, and one resource would state several procedures, or one that never
+  happened, as one that was performed. A reader of the grant still sees the event, as the generic Observation of its
+  item. A writer that knows the dates writes Flavour B, one event per occurrence, and those are Procedures.
+- **A Flavour A event MUST carry `count`** (`0` included): the split is `count != null` and nothing else. An intake
+  answer written without it is read as one dated procedure performed at `event.time` and served as a completed
+  Procedure. The apps show `×N` only above 1, so `count: 1` looks like a single procedure there and is a tally in
+  FHIR: when the date is known, write Flavour B, without `count`.
+- **`count` and `notes` are reserved names** on every eventType an item maps to `Procedure` (the treatment
+  eventTypes next): the renderer reads them by name, so neither can take another meaning. And nothing under
+  `procedure` can ever be served as a category-scoped Observation (`findings` included): the streams are locked under
+  the `Procedure` pair (FHIR-MAPPING.md § Procedures, one-way doors).
+- **Not a completed procedure, not rendered:** an event dated in the future (a planned operation), a span that ends
+  in the future, and content carrying the legacy `performed` key (before 1.8.1, when the event time was the entry
+  date) are refused and reported, never served as a Procedure. "In the future" is a UTC rule on a partial date: a
+  date known to the day is in the future until 00:00 UTC of that day (a month or a year until 00:00 UTC on its first
+  day); an exact time is compared as an instant.
+- **`robotAssisted` and `findings` are in the eventTypes, not in the items' form fields** (`procedure-basic`'s
+  composite is `name`, `count`, `notes`). Both are unrendered on purpose, so nothing is lost; the build's field
+  accounting will ask for a decision the day either joins the composite.
+- **No status is stored.** A planned, cancelled or interrupted procedure has no place on these items; a FHIR
+  Procedure that is not `completed` is refused on import rather than stored as done. If the model ever needs one, it
+  is an optional `status` property on the two eventTypes (additive), rendered when present.
+- **`event.duration`.** The items declare none (a procedure is a point in time on the forms), and a native duration
+  is honoured both ways: rendered as `performedPeriod`, written from a `performedPeriod` with an end. An open span
+  (`duration: null`) is not a completed procedure and is refused.
+- **Treatments are not mapped yet.** A `treatment` event is a course over time, with an optional span. Its FHIR R4
+  counterpart is a `Procedure` as well (`performedPeriod`, `in-progress` while it runs), not a `CarePlan`; mapping it
+  needs an import rule that tells the two coded Procedure items apart, by code and never by the shape of the date
+  (FHIR-MAPPING.md § Procedures, last paragraph).
+
 ## External systems & cross-walk
 
 | System | Coded analog |
 |---|---|
-| **HL7 FHIR** | `Procedure` resource (single-event); `CarePlan` / `MedicationStatement` for regimens. `Procedure.category` is a small cross-cutting tag (Surgical / Diagnostic / Counseling / …) — clinical domain lives in `code` + `bodySite`, not in category. D3's domain-context streamId is the data-model analog. |
+| **HL7 FHIR** | `Procedure` resource (single-event; mapped, § FHIR above). Regimens: listed here as `CarePlan` / `MedicationStatement` since Plan 46; on a closer look a treatment event is a `Procedure` over a period (§ FHIR above), not mapped yet. `Procedure.category` is a small cross-cutting tag (Surgical / Diagnostic / Counseling / …): clinical domain lives in `code` + `bodySite`, not in category. D3's domain-context streamId is the data-model analog. |
 | **SNOMED CT** | Procedures form a deep poly-hierarchy under `71388002 \|Procedure\|`, organised by `Procedure by site` and `Procedure by method`. Concepts have multiple parents; D3's walk-up captures one organisational axis (clinical domain) — the rest stays in datasets-service codes. |
 | **LOINC** | Not applicable. LOINC is observation/measurement, not procedure coding. |
 

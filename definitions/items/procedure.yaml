@@ -22,8 +22,19 @@ procedure-basic:
       type: text
       canBeNull: true
   repeatable: unlimited
+  # A Procedure (US Core 6.1.0 on `us`, IPS 2.0.1 on `ips`; documentation/TREATMENT-PROCEDURE.md § FHIR): the name as
+  # written is `code.text`, the event time `performedDateTime`, `notes` the `note`. `count` is never rendered, and an
+  # event that carries one is a lifetime tally ("had it N times"), not one dated procedure: no Procedure at all.
+  fhir:
+    resourceType: Procedure
+    code: { from: text, field: name }
+    ignore: [count]
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-procedure
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips
   devNotes: >-
-    Examples: laparoscopy, HSG, polypectomy.
+    Examples: laparoscopy, HSG, polypectomy. The uncoded twin of procedure-coded: a name no code was found for,
+    never a coded event with codes: []. Same stream, so one consent unit covers both.
 
 procedure-coded:
   version: v1
@@ -38,3 +49,11 @@ procedure-coded:
   type: datasource-search
   datasource: procedure
   repeatable: unlimited
+  # The coded procedure (`procedure.codes`, SNOMED CT through fhirMapping.systems) is `Procedure.code`; the rest as
+  # the basic twin. A bare scope key (`Procedure`): no category table, FHIR-MAPPING.md § Procedures.
+  fhir:
+    resourceType: Procedure
+    code: { from: datasource, field: procedure }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-procedure
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips

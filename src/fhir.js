@@ -20,6 +20,12 @@ const UNMAPPED = '(unmapped)';
 const MEDICATION_TYPES = ['MedicationStatement', 'MedicationRequest'];
 
 /**
+ * The resourceType whose block maps a procedure item (TREATMENT-PROCEDURE.md § FHIR): a datasource or text code, no
+ * value, the content's `notes` as `Procedure.note`; an event carrying `count` is a lifetime tally and never a Procedure.
+ */
+const PROCEDURE_TYPE = 'Procedure';
+
+/**
  * The Patient elements an item may contribute (`fhir: { resourceType: Patient, element }`): the item type each needs
  * and, for a coded element, the code system its option codings come from, code → official display. Text and date
  * elements take the content as written. Additive, like the `fhirElement` enum in src/schemas/items.js.
@@ -149,6 +155,7 @@ function checkFhirMapping (key, item, itemEventTypes) {
   const isContentCode = f.code.from === 'content';
   const isTextCode = f.code.from === 'text';
   const isMedication = MEDICATION_TYPES.includes(f.resourceType);
+  const isProcedure = f.resourceType === PROCEDURE_TYPE;
   // An eventType source may give two eventTypes the same coding (two units of one property store one LOINC code): the
   // coding counts once here, with one display.
   const distinctCodings = (codings) => {
@@ -176,7 +183,13 @@ function checkFhirMapping (key, item, itemEventTypes) {
   if (isContentCode && f.resourceType !== 'DocumentReference') fail('a content code source applies to a DocumentReference only (the renderer places it as DocumentReference.type)');
   // A medication is the coded medicine datasets-service returned (`drug`), or a name as written (MEDICATION.md).
   if (isMedication && !isDatasourceCode && !isTextCode) fail(`a ${f.resourceType} takes its medication from the content: code: { from: datasource, field } (the coded medicine) or { from: text, field } (the name as written)`);
-  if (isTextCode && !isMedication) fail('a text code source applies to a MedicationStatement or MedicationRequest only (the renderer places it as medication[x].text)');
+  // A procedure is the coded procedure datasets-service returned, or a name as written (TREATMENT-PROCEDURE.md).
+  if (isProcedure && !isDatasourceCode && !isTextCode) fail('a Procedure takes its code from the content: code: { from: datasource, field } (the coded procedure) or { from: text, field } (the name as written)');
+  if (isTextCode && !isMedication && !isProcedure) fail('a text code source applies to a MedicationStatement, a MedicationRequest or a Procedure only (the renderer places it as medication[x].text or code.text)');
+  if (isProcedure) {
+    checkProcedure(item, f, itemEventTypes, fail);
+    if (composite?.notes != null) mappedFields.add('notes');
+  }
   if (isMedication) {
     if (f.dosage == null) fail(`a ${f.resourceType} needs "dosage": { field, doseUnits, routes } (the regimen as a FHIR Dosage)`);
     checkDosage(item, f, itemEventTypes, fail, sameSet, unique);
@@ -219,7 +232,8 @@ function checkFhirMapping (key, item, itemEventTypes) {
   }
   checkLoincAgreement(key, item, f, itemEventTypes, fail);
 
-  if ((f.resourceType === 'Condition' || f.resourceType === 'DocumentReference' || isMedication) && f.value != null) fail(`a ${f.resourceType} has no value[x]; remove "value"`);
+  if ((f.resourceType === 'Condition' || f.resourceType === 'DocumentReference' || isMedication || isProcedure) && f.value != null) fail(`a ${f.resourceType} has no value[x]; remove "value"`);
+  if (isProcedure && f.split != null) fail('a Procedure has no numeric field to split; remove "split"');
 
   const numericField = (what, k) => {
     const field = composite?.[k];
@@ -440,7 +454,7 @@ function contentProperty (eventType, field) {
 
 /**
  * A `code: { from: text, field }` names a string in the content of the item's one eventType, the name of a
- * medication as written: a `text` field of the item's composite. (A standalone `text` item cannot carry one: its
+ * medication or of a procedure as written: a `text` field of the item's composite. (A standalone `text` item cannot carry one: its
  * eventType is a string, so no `field` is a content property of it, and `checkDosage` needs a regimen object in the
  * same eventType anyway.)
  */
@@ -454,6 +468,21 @@ function checkTextField (item, field, itemEventTypes, fail) {
     for (const s of field.split('.')) def = def?.composite?.[s];
     if (def?.type !== 'text') fail(`code.field "${field}" is not a text field of the composite`);
   }
+}
+
+/**
+ * A Procedure block (TREATMENT-PROCEDURE.md § FHIR) sits on an item with one eventType whose content the renderer
+ * reads by name: `notes`, a string, is `Procedure.note`; `count`, a number, marks a lifetime tally ("had it N times"),
+ * which is not one dated procedure and never renders as a Procedure. Either may be absent from the eventType; one
+ * that is there has that type, so a renderer holding the block alone never meets another shape under these names.
+ */
+function checkProcedure (item, f, itemEventTypes, fail) {
+  if (itemEventTypes.length !== 1) fail('a Procedure block needs an item with exactly one eventType');
+  const notes = contentProperty(itemEventTypes[0], 'notes');
+  if (notes != null && notes.type !== 'string') fail(`content property "notes" of eventType "${itemEventTypes[0]}" is not a string (it renders as Procedure.note)`);
+  const count = contentProperty(itemEventTypes[0], 'count');
+  if (count != null && count.type !== 'number') fail(`content property "count" of eventType "${itemEventTypes[0]}" is not a number (it marks a lifetime tally)`);
+  if (item.composite?.notes != null && item.composite.notes.type !== 'text') fail('composite field "notes" is not a text field (it renders as Procedure.note)');
 }
 
 /**

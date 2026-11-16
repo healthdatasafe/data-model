@@ -269,6 +269,21 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       // CIS: the ANS SMT's BDPM CodeSystem (its specialite concepts are the CIS codes; evidence in mapping.yaml), not an HDS namespace
       assert.deepStrictEqual(fhirMapping.productSystems, { Swissmedic: 'https://hds.ngo/fhir/sid/swissmedic', CIS: 'https://smt.esante.gouv.fr/terminologie-bdpm' });
     });
+
+    it('[FHIR-ITEM-13] procedures (plan 115): both procedure items are a Procedure under a bare scope key; the coded item takes its code from the datasource, the basic one the name as text; count is never rendered; the treatment items stay unmapped', () => {
+      const profiles = {
+        us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-procedure',
+        ips: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips'
+      };
+      assert.deepStrictEqual(itemsById['procedure-coded'].fhir, { resourceType: 'Procedure', code: { from: 'datasource', field: 'procedure' }, profiles });
+      assert.deepStrictEqual(itemsById['procedure-basic'].fhir, { resourceType: 'Procedure', code: { from: 'text', field: 'name' }, ignore: ['count'], profiles });
+      assert.strictEqual(fhirMapping.categories.Procedure, undefined, 'no category table: a bare scope key, for good');
+      for (const k of ['procedure-basic', 'procedure-coded']) {
+        assert.strictEqual(itemsById[k].streamId, 'procedure');
+        assert.strictEqual(itemsById[k].duration, undefined, `${k}: a point event, no duration declared`);
+      }
+      for (const k of ['treatment-basic', 'treatment-coded']) assert.strictEqual(itemsById[k].fhir, undefined, `${k} is mapped`);
+    });
   });
 
   describe('[FHIR-SCH] the schema', () => {
@@ -356,6 +371,10 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const txt2 = item('medication-intake-basic');
       delete txt2.fhir.code.field;
       assert.throws(() => checkItem(txt2, 'm'), /must have required property 'field'/);
+      const proc = item('procedure-basic');
+      checkItem(proc, 'p');
+      proc.fhir.resourceType = 'ServiceRequest';
+      assert.throws(() => checkItem(proc, 'p'), /allowed values/);
       const ct = item('condition-coded');
       ct.fhir.code.from = 'content';
       assert.throws(() => checkItem(ct, 'c'), /must have required property 'translate'/);
@@ -874,7 +893,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       // text and dosage are a medication's
       const m = item('condition-coded');
       m.fhir.code = { from: 'text', field: 'notes' };
-      assert.throws(() => check(m, 'c'), /a text code source applies to a MedicationStatement or MedicationRequest only/);
+      assert.throws(() => check(m, 'c'), /a text code source applies to a MedicationStatement, a MedicationRequest or a Procedure only/);
       const n = item('body-weight');
       n.fhir.dosage = med().fhir.dosage;
       assert.throws(() => check(n, 'w'), /"dosage" applies to a MedicationStatement or MedicationRequest only/);
@@ -892,6 +911,53 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const { checkFhirImportKeys } = require('../src/fhir');
       checkFhirImportKeys({ a: { fhir: med('medication-intake-coded').fhir }, b: { fhir: med().fhir } });
       assert.throws(() => checkFhirImportKeys({ a: { fhir: med().fhir }, b: { fhir: med().fhir } }), /fhir import key MedicationStatement from text is claimed by both "a" and "b"/);
+    });
+
+    it('[FHIR-MAP-25] a Procedure block: a datasource or text code, no category, no value, no dosage, no split; notes is the note and count is ignored, each of its type; one datasource-coded and one text-coded item (plan 115)', () => {
+      const proc = (k = 'procedure-basic') => item(k);
+      for (const k of ['procedure-basic', 'procedure-coded']) {
+        checkItem(proc(k), k);
+        check(proc(k), k);
+      }
+      const a = proc();
+      a.fhir.code = coding('80146002', 'http://snomed.info/sct');
+      assert.throws(() => check(a, 'p'), /a Procedure takes its code from the content: code: \{ from: datasource, field \} .* or \{ from: text, field \}/);
+      const b = proc();
+      b.fhir.category = 'surgical';
+      assert.throws(() => check(b, 'p'), /resourceType "Procedure" takes no category/);
+      const c = proc();
+      c.fhir.value = { kind: 'coded', options: { x: coding('x') } };
+      assert.throws(() => check(c, 'p'), /a Procedure has no value\[x\]/);
+      const d = proc();
+      d.fhir.dosage = item('medication-intake-basic').fhir.dosage;
+      assert.throws(() => check(d, 'p'), /"dosage" applies to a MedicationStatement or MedicationRequest only/);
+      const e = proc();
+      e.fhir.split = { count: { code: coding('1'), unit: '1', profiles: {} } };
+      assert.throws(() => check(e, 'p'), /a Procedure has no numeric field to split/);
+      // the composite accounting: name is the code, notes the note, count ignored
+      const f = proc();
+      delete f.fhir.ignore;
+      assert.throws(() => check(f, 'p'), /composite field "count" is neither mapped nor listed in "ignore"/);
+      const g = proc();
+      g.fhir.ignore = ['count', 'notes'];
+      assert.throws(() => check(g, 'p'), /field "notes" is both mapped and ignored/);
+      const h = proc();
+      h.composite.notes.type = 'number';
+      assert.throws(() => check(h, 'p'), /composite field "notes" is not a text field/);
+      const j = proc();
+      j.fhir.code.field = 'count';
+      assert.throws(() => check(j, 'p'), /code.field "count" is not a string/);
+      // the coded twin names the datasource field
+      const k = proc('procedure-coded');
+      k.fhir.code.field = 'notes';
+      assert.throws(() => check(k, 'p'), /code.field "notes" does not hold a datasets-service "codes" array/);
+      const l = proc('procedure-coded');
+      l.fhir.alsoMatch = [coding('1')];
+      assert.throws(() => check(l, 'p'), /"alsoMatch" applies to a static or eventType code only/);
+      // the import keys: one datasource-coded and one text-coded item for the bare key
+      const { checkFhirImportKeys } = require('../src/fhir');
+      checkFhirImportKeys({ a: { fhir: proc('procedure-coded').fhir }, b: { fhir: proc().fhir } });
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: proc('procedure-coded').fhir }, b: { fhir: proc('procedure-coded').fhir } }), /fhir import key Procedure from datasource is claimed by both "a" and "b"/);
     });
 
     it('[FHIR-MAP-14] alsoMatchCategories: known keys of the resourceType table, never the block\'s own, refused without a table', () => {
@@ -1190,8 +1256,11 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         'Observation|social-history': ['lifestyle-tobacco-smoking'],
         'Observation|survey': ['wellbeing-general-health'],
         'Observation|vital-signs': ['body-blood-pressure', 'body-heart-rate', 'body-height', 'body-oxygen-saturation', 'body-weight'],
-        Patient: ['profile-address', 'profile-date-of-birth', 'profile-name', 'profile-sex']
+        Patient: ['profile-address', 'profile-date-of-birth', 'profile-name', 'profile-sex'],
+        Procedure: ['procedure']
       });
+      // the Procedure grant reaches the context stream under its root, which holds no item of its own
+      assert.deepStrictEqual(readLock().streams['procedure-fertility'], { pair: 'Procedure', parent: 'procedure', items: [] });
       assert.deepStrictEqual(mergeLock(readLock(), lockEntries(itemsById, fhirScopes)), readLock(), 'definitions/fhir/scopes.lock.json is not up to date');
       assert.ok(!JSON.stringify(fhirScopes).includes(UNMAPPED));
     });
