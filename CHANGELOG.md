@@ -1,5 +1,57 @@
 # Changelog
 
+## [4.6.0] - 2026-11-16
+
+Additive, plan 115 procedures slice. Two `fhir` blocks, one new resourceType and scope key; no key, stream or
+eventType change.
+
+**Release order: this pack first, then hds-fhir-js (the same day), then the facade pin and the extension options,
+then hds-webapp and doctor-dashboard on the new library tag** (their export indexes the live pack). hds-fhir-js
+0.7.0 never misrenders this pack: it skips both blocks (unknown resourceType). A skipped block renders nothing, so a
+0.7.0 consumer that loads this pack shows no procedure event at all, where the previous pack gave a generic
+Observation; the facade pins the pack hash, so production keeps the previous pack until the re-pin. The other order
+would leave the library's `check:pack` red until the pack publishes
+(two draft mappings without a block); `check:pack` is not relaxed. Production serves no `Procedure` until the
+re-pin.
+
+### Added
+- **`Procedure` blocks on `procedure-coded` and `procedure-basic`** (FHIR-MAPPING.md § Procedures,
+  TREATMENT-PROCEDURE.md § FHIR): US Core 6.1.0 `us-core-procedure` on `us`, IPS 2.0.1 `Procedure-uv-ips` on `ips`.
+  The coded item takes its code from the datasource selection (`code: { from: datasource, field: procedure }`), the
+  basic item the name as written (`code: { from: text, field: name }`, `ignore: [count]`). The event time is
+  `performedDateTime` (a positive native duration: `performedPeriod`), `notes` the `note`, `status` always
+  `completed` (the items store none and record a procedure that took place). `robotAssisted` and `findings` are not
+  rendered.
+- **A lifetime tally is never a Procedure:** an event carrying `count` (Flavour A, "had it N times", `0` never)
+  states no date of any procedure, so the renderer serves it as the generic Observation of its item, as before.
+  **Writer rule, now stated: a Flavour A event MUST carry `count`**; without it the event is one dated procedure.
+- **Not a completed procedure, refused:** an open span, an event or a span end dated in the future, and content
+  carrying the legacy `performed` key (before 1.8.1) are reported, never rendered as a Procedure.
+- **`pack.fhirScopes` gains `Procedure: ["procedure"]`**, and the lock the `procedure` root with its context stream
+  `procedure-fertility` under that pair (`npm run fhir:lock`: two entries added, nothing rewritten).
+- **The text code source applies to a Procedure too** (it was a medication's only), and the schema's `resourceType`
+  enum gains `Procedure`. Build rules `[FHIR-MAP-25]`: a Procedure takes a datasource or text code, no category,
+  value, split or dosage; its `notes` is a string (counted as a mapped composite field), its `count` a number.
+
+### Permanent
+- **`Procedure` is a bare scope key, for good** (FHIR-MAPPING.md § Categories: a bare key is a one-way door). No
+  category table can ever be added for the resourceType: `patient/Procedure.rs` is every procedure, and a stream
+  mapped to `Procedure` later joins the key as another grant root.
+- **Nothing under `procedure` can ever be a category-scoped Observation.** The lock holds `procedure` and
+  `procedure-fertility` under the pair `Procedure`, and one subtree holds one pair: `findings` can never be mapped as
+  Observations from these streams, and a tally can never be served under `Observation|survey` or any other category
+  key (a faithful tally is a renderer-side, uncategorised Observation, never a pack category).
+- **`count` and `notes` are reserved names on every eventType an item maps to `Procedure`.** The block does not name
+  them; the renderer reads them by name and the build pins their types only. A non-null `count` means "a lifetime
+  tally, not a Procedure", a string `notes` is the note, on these items and on any mapped later (treatments).
+- **Both procedure items render as `Procedure`** (resourceType is permanent on a shipped block), and the `procedure`
+  root and `procedure-fertility` are locked under that pair: an item or a stream added under them is read by every
+  grant already issued and needs a `reviewed` entry.
+
+### Not done
+- The `treatment` items stay unmapped: in substance a `Procedure` over a period, which needs an import rule telling
+  two datasource-coded Procedure items apart (FHIR-MAPPING.md § Procedures, last paragraph).
+
 ## [4.5.0] - 2026-11-14
 
 Additive, plan 115 labs slice (the lab items 4.3.0 left unmapped). 31 `fhir` blocks, all `Observation|laboratory`; one
