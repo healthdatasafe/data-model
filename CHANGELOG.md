@@ -1,5 +1,20 @@
 # Changelog
 
+## [4.11.0] - 2026-11-16
+
+Meaning made explicit, text only: no key, stream, eventType or FHIR change. An answer stored before 4.11.0 may be an
+LH or monitor peak.
+
+### Changed
+- **`fertility-cycles-average-peak-day` (v2) is the average mucus Peak Day** (B-2026-10-28-7), the same Peak Day as
+  `fertility-cycles-peak-day` since 3.24.0. The description said "Your typical cycle day of peak fertility" (fr
+  « pic de fertilité »), which read as an LH peak or as a statement of fertility; it now reads "The cycle day on which
+  your mucus Peak Day usually falls, as you recall it." devNotes added (legacy caveat, no LH twin). Fable-reviewed.
+  Test `[CYC-AVG-PEAK]`.
+
+### Documentation
+- MENSTRUAL-CYCLE.md § Peak days: the recalled average follows the mucus peak.
+
 ## [4.10.0] - 2026-11-16
 
 Additive, import only: no key, stream, eventType or exported code changes. hds-fhir-js regenerates its lab mappings

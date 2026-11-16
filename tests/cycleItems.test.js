@@ -132,4 +132,14 @@ describe('[CYC] Cycle items (3.24.0)', () => {
       assert.ok(!itemsById['fertility-tracking-method'].options.some(o => o.value === 'sensiplan'));
     });
   });
+
+  it('[CYC-AVG-PEAK] the average Peak Day is the mucus Peak Day, never a fertility statement (4.11.0, B-2026-10-28-7)', () => {
+    const item = itemsById['fertility-cycles-average-peak-day'];
+    assert.strictEqual(item.version, 'v2', 'the meaning was fixed in 4.11.0');
+    assert.match(item.devNotes, /never an LH peak/);
+    assert.match(item.devNotes, /before 4\.11\.0/);
+    assert.match(item.description.en, /mucus Peak Day/);
+    assert.match(item.description.fr, /jour sommet de la glaire/);
+    for (const lang of ['en', 'fr']) assert.doesNotMatch(item.description[lang], /fertility|fertilité/i, lang);
+  });
 });
