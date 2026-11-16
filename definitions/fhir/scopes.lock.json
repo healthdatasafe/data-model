@@ -958,6 +958,19 @@
         "medication-prescription-coded"
       ]
     },
+    "procedure": {
+      "pair": "Procedure",
+      "parent": null,
+      "items": [
+        "procedure-basic",
+        "procedure-coded"
+      ]
+    },
+    "procedure-fertility": {
+      "pair": "Procedure",
+      "parent": "procedure",
+      "items": []
+    },
     "profile-address": {
       "pair": "Patient",
       "parent": "profile",

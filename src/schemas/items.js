@@ -83,7 +83,8 @@ const defsSchema = {
     // the content holds at `field` (a document's XDS typeCode), led by the coding `translate` gives for the
     // first of them the table knows (`"<system>|<code>"` → coding, the terminology the resource's binding
     // requires), else by `unknown`, or `{ from: text, field }`: no coding at all, the concept is the text the
-    // content holds at `field` (a medication entered by its name; a MedicationStatement or MedicationRequest).
+    // content holds at `field` (a medication or a procedure entered by its name; a MedicationStatement, a
+    // MedicationRequest or a Procedure).
     fhirCode: {
       if: { type: 'object', required: ['from'] },
       then: {
@@ -282,7 +283,7 @@ const defsSchema = {
     fhirMapping: {
       type: 'object',
       properties: {
-        resourceType: { enum: ['Observation', 'Condition', 'DocumentReference', 'MedicationStatement', 'MedicationRequest'] },
+        resourceType: { enum: ['Observation', 'Condition', 'DocumentReference', 'MedicationStatement', 'MedicationRequest', 'Procedure'] },
         // Required or refused per resourceType, from the category table in definitions/fhir/mapping.yaml.
         category: { type: 'string', minLength: 1 },
         // Further categories of the same table a resource may carry and still import here (import only).
