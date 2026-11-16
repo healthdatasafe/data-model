@@ -3,6 +3,9 @@ name: Lifestyle
 label:
   en: "Lifestyle"
   fr: "Mode de vie"
+description:
+  en: "Your use of tobacco and nicotine, how often and how much alcohol you drink, and your diet, including foods you avoid for reasons of belief or health."
+  fr: "Votre consommation de tabac, de nicotine et d'alcool, et votre alimentation, y compris les aliments que vous évitez par conviction ou pour raison de santé."
 parentId: null
 children:
   # "Tobacco and nicotine", not "Tobacco": the e-cigarette child may carry nicotine

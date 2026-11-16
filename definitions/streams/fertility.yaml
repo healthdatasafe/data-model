@@ -3,6 +3,9 @@ name: Fertility
 label:
   en: "Fertility"
   fr: "Fertilité"
+description:
+  en: "Your menstrual cycles, fertile days and ovulation, your sexual activity and any protection used, whether you are trying to conceive or to avoid a pregnancy, ovulation and pregnancy tests, and your pregnancies and births, including miscarriages and abortions."
+  fr: "Vos cycles menstruels, jours fertiles et ovulation, votre activité sexuelle et la protection utilisée, votre intention de concevoir ou d'éviter une grossesse, les tests d'ovulation et de grossesse, et vos grossesses et accouchements, y compris les fausses couches et les interruptions de grossesse."
 parentId: null
 children:
   - id: fertility-cycles

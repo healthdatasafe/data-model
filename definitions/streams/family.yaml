@@ -3,6 +3,9 @@ name: Family
 label:
   en: "Family"
   fr: "Famille"
+description:
+  en: "How many children you have."
+  fr: "Le nombre d'enfants que vous avez."
 parentId: null
 children:
   - id: family-children
