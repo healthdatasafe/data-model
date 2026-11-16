@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.11.1] - 2026-11-16
+
+Text only: no key, stream, eventType or FHIR block change (`condition-coded` devNotes and the docs).
+
+### Changed
+- **A same-period condition abatement is not stored** (B-2026-11-13-12, perki's choice: status only). The core reads
+  a duration of 0 back as absent, so the `duration: 0` that CONDITION.md, FHIR-MAPPING.md § Abatement,
+  PARTIAL-DATES.md and the `condition-coded` devNotes promised since 4.1.0 could never be stored. Where one period
+  contains the other (the ordered period test of CONDITION.md, before any anchor arithmetic; 14 h past a zoneless end
+  against an exact onset), `condition-coded` keeps its abated status and carries no `duration` and no
+  `hdsEndPrecision`; two different exact instants keep their positive duration. hds-fhir-js's importer follows the
+  same text (plan 115). Fable-reviewed.
+
 ## [4.11.0] - 2026-11-16
 
 Meaning made explicit, text only: no key, stream, eventType or FHIR change. An answer stored before 4.11.0 may be an

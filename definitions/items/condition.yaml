@@ -10,7 +10,7 @@ condition-coded:
   eventType: condition/coded-v1
   duration:
     mandatory: false
-    canBeNull: false # time + duration is the abatement (4.1.0). No duration: abatement unknown, never "ongoing" (content.status says that)
+    canBeNull: false # time + duration is the abatement (4.1.0). No duration: abatement unknown or within the onset's own period, never "ongoing" (content.status says that)
     maxSeconds: 3153600000 # 100 years: a lifelong condition. UI hint only, not validated.
   type: datasource-search
   datasource: condition
@@ -29,7 +29,8 @@ condition-coded:
     event.time is the onset (or the diagnosis date when that is all the source knows). Optional content.status is the
     FHIR clinicalStatus code (active, recurrence, relapse, inactive, remission, resolved); absent = not stated.
     An abated condition carries event.duration, time + duration being the abatement, and then status must be inactive,
-    remission or resolved (FHIR con-4). No abatement is no duration key: never 0, never null. 0 is a real value (abated
-    within the onset's own period) and needs an abated status like any duration. Partial onset and abatement dates
+    remission or resolved (FHIR con-4). No abatement is no duration key: never 0, never null. An abatement within one
+    period with the onset is not stored (the core reads a duration of 0 back as absent): the abated status is kept,
+    with no duration and no hdsEndPrecision (4.11.1, CONDITION.md). Partial onset and abatement dates
     follow PARTIAL-DATES.md (hdsTimePrecision, hdsEndPrecision). content.verificationStatus is reserved for the FHIR
     verification status (not stored yet). See documentation/CONDITION.md.

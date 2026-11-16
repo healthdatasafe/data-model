@@ -43,7 +43,7 @@ Since 4.1.0 (plan 115 GAP H-6) a condition can say whether it is still there, an
 | What | Where | Values |
 |---|---|---|
 | Clinical status | `content.status` (optional) | `active`, `recurrence`, `relapse`, `inactive`, `remission`, `resolved`: the FHIR `Condition.clinicalStatus` codes (`condition-clinical`). Absent: not stated. |
-| Abatement | `event.duration` (optional, never `null`) | `time + duration` is when the condition abated. Absent: the abatement is not known. |
+| Abatement | `event.duration` (optional, never `null`) | `time + duration` is when the condition abated. Absent: the abatement is not known, or falls within the onset's own period (below). |
 
 The two go together under FHIR's con-4 rule: **a condition with a duration has status `inactive`, `remission` or
 `resolved`.** A duration with no status, or with `active`, `recurrence` or `relapse`, is a contradiction: the FHIR
@@ -58,11 +58,23 @@ precision is `clientData.hdsTimePrecision`; the abatement's, when different, `cl
 end anchored at 12:00 UTC on the last day of its period ("resolved in March 2001" is `time + duration` =
 2001-03-31T12:00:00Z, `hdsEndPrecision: month`).
 
-**No abatement is no `duration` key: never `0`, never `null`.** `duration: 0` is a real value here, an abatement within
-the onset's own period ("diagnosed and resolved on 6 April 2016", or an onset known to the day and an abatement that
-same day), and like any duration it needs an abated status. Writers that use `0` or `null` for "no duration" elsewhere
-(a form's duration input, a diary that reads `0` as ongoing) must leave the key out on this item: the FHIR rendering
-refuses a `duration: 0` whose status is `active`, as it refuses any other duration without an abated status.
+**No abatement is no `duration` key: never `0`, never `null`.** A writer that uses `0` or `null` for "no duration"
+elsewhere (a form's duration input, a diary that reads `0` as ongoing) leaves the key out on this item.
+
+**A same-period abatement is not stored (4.11.1, B-2026-11-13-12).** The core cannot keep `duration: 0`: it stores
+`endTime = time + duration`, an absent duration as `endTime = time` too, and reads a duration of 0 back as absent (a
+point event, by design). The test is on periods and comes before any anchor arithmetic. The period of an exact
+dateTime is that instant; of `YYYY-MM-DD`, that UTC day; of `YYYY-MM`, that UTC month; of `YYYY`, that UTC year. One
+adjustment: a truncated (zoneless) end against an exact onset has its period extended by 14 h past its end, never
+before its start. In order: (1) the end's period lies wholly before the onset's: refused; (2) one period contains the
+other, equal periods and equal instants included: the event keeps its abated status (`inactive`, `remission` or
+`resolved`) and carries **no `duration` and no `hdsEndPrecision`**; (3) otherwise `duration` = end anchor − `time`,
+which is then always positive. So onset `2016-03` with abatement `2016-03-20`, onset `2016-04-06T21:45Z` (or
+`T08:00Z`) with abatement `2016-04-06`, and onset `2016-04-06` with abatement `2016-04-06T18:00Z` all carry no
+duration. "Diagnosed and resolved on 6 April 2016" is therefore `status: resolved` with no duration: the abatement
+date is lost, and the status alone says the condition ended. An exact onset and a later exact abatement, even on the
+same day, are two instants and keep theirs. (4.1.0 to 4.11.0 said `duration: 0` was a real value here; no stored
+event could carry it, so nothing moves.)
 
 ### The second status: `verificationStatus`
 
