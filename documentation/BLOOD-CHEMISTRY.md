@@ -557,6 +557,10 @@ legacy item (B-2026-10-29-2, found stale and closed in 4.9.0).
   prothrombin index) and `3289-6` (factor II activity) are other analytes.
 - **INR** asserts `6301-6` "INR in Platelet poor plasma by Coagulation assay" (ACTIVE, LOINC 2.83, checked 2026-10-29) and
   SNOMED `440685005` *Calculation of international normalized ratio* (active). LOINC has no methodless INR code. A home or
-  point-of-care INR (`34714-6`, System Blood) is another specimen and goes to `lab-result/coded-v1`.
+  point-of-care INR (`34714-6`, System Blood) is another specimen and goes to `lab-result/coded-v1`. `38875-1` "INR in
+  Platelet poor plasma or blood by Coagulation assay" (ACTIVE, no MapTo, LOINC 2.83, checked 2026-11-16) is owned for
+  import only (4.10.0, `references.loincMethod`): labs send the venous INR under it. The code does not state the
+  specimen, so a whole-blood INR coded `38875-1` imports too and exports as `6301-6`; only a result coded `34714-6` is
+  kept apart.
 - **CRP and hs-CRP** are two items, `body-blood-serum-crp` (`1988-5`) and `body-blood-serum-crp-hs` (`30522-7`, the
   high-sensitivity method): the printed test name or the code decides, never the value (plan 114 Q9).
