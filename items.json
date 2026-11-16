@@ -5426,9 +5426,12 @@
       ],
       "loinc": [
         "6301-6"
+      ],
+      "loincMethod": [
+        "38875-1"
       ]
     },
-    "devNotes": "International normalized ratio. `ratio/generic` with an authored `ratioRelativeTo: 1` (plan 114 Q8): the content is `{ value: 2.5, relativeTo: 1 }`, never a bare number; a censored INR (`> 8`) keeps `clientData.hdsComparator`. 6301-6 is \"by Coagulation assay\" and LOINC has no methodless INR code. A home or point-of-care INR on capillary blood (34714-6, System Blood) is another specimen: `lab-result/coded-v1`. Not convertible to the prothrombin time or Quick %.",
+    "devNotes": "International normalized ratio. `ratio/generic` with an authored `ratioRelativeTo: 1` (plan 114 Q8): the content is `{ value: 2.5, relativeTo: 1 }`, never a bare number; a censored INR (`> 8`) keeps `clientData.hdsComparator`. 6301-6 is \"by Coagulation assay\" and LOINC has no methodless INR code. A home or point-of-care INR on capillary blood (34714-6, System Blood) is another specimen: `lab-result/coded-v1`. 38875-1 (\"in Platelet poor plasma or blood\", System PPP/Bld, same method) imports here (4.10.0, B-2026-11-14-6): labs send the venous INR under it. The code does not say which specimen was used, so a whole-blood INR coded 38875-1 imports too and exports as 6301-6: the bet `references.loincMethod` makes. Only a result coded as capillary (34714-6) is kept apart. 6301-6 stays the export. Not convertible to the prothrombin time or Quick %.",
     "fhir": {
       "resourceType": "Observation",
       "category": "laboratory",
@@ -5437,6 +5440,13 @@
         "code": "6301-6",
         "display": "INR in Platelet poor plasma by Coagulation assay"
       },
+      "alsoMatch": [
+        {
+          "system": "http://loinc.org",
+          "code": "38875-1",
+          "display": "INR in Platelet poor plasma or blood by Coagulation assay"
+        }
+      ],
       "value": {
         "kind": "ratio-quantity",
         "units": {
@@ -6238,10 +6248,13 @@
         "88293-6",
         "88294-4",
         "48643-1",
-        "48642-3"
+        "48642-3",
+        "50384-7",
+        "50044-7",
+        "70969-1"
       ]
     },
-    "devNotes": "Exports LOINC 69405-9, the equation-neutral code (a GFR per 1.73 m², no equation and no marker stated). The equation changes the number and is not stored, so the per-equation creatinine-based codes (CKD-EPI 2021, CKD-EPI 2009, MDRD, and the race-adjusted CKD-EPI and MDRD codes labs still send) are owned and imported, never exported. A result coded as cystatin-C-based (50210-4) goes to `lab-result/coded-v1`.",
+    "devNotes": "Exports LOINC 69405-9, the equation-neutral code (a GFR per 1.73 m², no equation and no marker stated). The equation changes the number and is not stored, so the per-equation creatinine-based codes (CKD-EPI 2021, CKD-EPI 2009, MDRD, the race-adjusted CKD-EPI and MDRD codes labs still send, and since 4.10.0 the pediatric Schwartz and the sex-specific MDRD codes) are owned and imported, never exported. A result coded as cystatin-C-based (50210-4) goes to `lab-result/coded-v1`.",
     "fhir": {
       "resourceType": "Observation",
       "category": "laboratory",
@@ -6285,6 +6298,21 @@
           "system": "http://loinc.org",
           "code": "48642-3",
           "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (MDRD)/1.73 sq M among non black population"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "50384-7",
+          "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (Schwartz)/1.73 sq M"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "50044-7",
+          "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (MDRD)/1.73 sq M among female population"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "70969-1",
+          "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (MDRD)/1.73 sq M among male population"
         }
       ],
       "value": {
