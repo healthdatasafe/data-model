@@ -81,7 +81,8 @@ blood** measured by a blood-gas or point-of-care analyser is a different specime
 **History.** These were `fertility-hormone-*` — a key prefix that matched neither the stream
 (`body-urine-*`) nor the specimen. They were **renamed** in place. Deprecate-and-twin was *not*
 available: the loader (`src/items.js`) rejects two items sharing a `streamId:eventType` pair, and a
-renamed twin keeps both. The exception was LH, whose eventType changed (below).
+renamed twin keeps both. The exception was LH, whose eventType changed with the rename; PdG was renamed in place and
+retyped later, in 4.0.0 (both below).
 
 **Renaming an item key does not touch stored data** — events carry `streamId` + `type`, and `forEvent`
 resolves on that pair. It breaks *consumer code* that references the key, which is why it is a
@@ -485,6 +486,16 @@ users' own accounts, so there is nothing for HDS to migrate. Instead the item is
 and kept, so existing events still resolve and render; new data uses `body-urine-hormones-lh`
 (`concentration/iu-l`). This is why LH is the one urine hormone that was deprecated rather than renamed
 — its eventType changed, so the `streamId:eventType` pair differs and both items can coexist.
+
+## Known deprecation — `fertility-hormone-pdg` (4.0.0)
+
+PdG is the mirror case: `body-urine-hormones-pdg` was typed `concentration/iu-l`, but PdG is a mass analyte with no
+international unit (Mira, Inito and Proov report μg/mL, numerically mg/L). In 4.0.0 (breaking) the active key moved to
+`concentration/mg-l` (v3, shown μg/mL). Stored events cannot be retyped, so the old pair came back as the
+**deprecated** `fertility-hormone-pdg` on `concentration/iu-l`: those events still resolve, and their numbers were
+μg/mL all along, only the type label was wrong. bridge-mira needed no code change, only a re-pin: it writes by item
+key and takes the eventType from the pack, and a bridge on an older pack keeps writing `iu-l`, which resolves to the
+legacy item (B-2026-10-29-2, found stale and closed in 4.9.0).
 
 ## Codes
 

@@ -66,6 +66,10 @@ The stream `profile-location` is declared in `definitions/streams/profile.yaml` 
 and is referenced nowhere else in the repo. It is either a placeholder for work never done or a leftover.
 Removing a published stream is a published-surface change, so it is recorded here rather than dropped.
 
+The `profile` root's consent `description` (4.9.0) deliberately does not mention it. If an item is ever filed on
+`profile-location`, or a finer address item on `profile-address`, re-read that description: test `[STRL-3]` only
+catches a change in the root's direct children.
+
 ## Sensitivity
 
 Most items here are **directly identifying** (`profile-name`, `profile-surname`, `profile-date-of-birth`,

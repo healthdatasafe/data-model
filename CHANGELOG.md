@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.9.0] - 2026-11-16
+
+Additive, text only: no key, stream id, eventType or FHIR change.
+
+### Added
+- **Consent `description` { en, fr } on the roots `wellbeing` and `profile`** (Fable's next candidates after 4.7.0):
+  `wellbeing` names the sex drive and the mental distress (anxiety, depression, stress) its label hides; `profile`
+  names the identifying facts and the Article 9 ones (ethnicity, reproductive stage: pregnancy, menopause) and the
+  account preferences a root grant also reaches. Test `[STRL-3]` pins both roots' direct children. Fable-reviewed.
+
+### Documentation
+- BLOOD-CHEMISTRY.md § Known deprecation records the 4.0.0 PdG retype beside LH (the stale B-2026-10-29-2).
+- PROFILE.md § Known gap: re-read the `profile` description if an item ever lands on `profile-location`.
+
 ## [4.8.0] - 2026-11-16
 
 Additive, forms only: no key, stream, eventType or rendered FHIR change. Two Fable-review follow-ups of plan 115.

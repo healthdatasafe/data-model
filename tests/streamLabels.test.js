@@ -35,7 +35,10 @@ describe('[STRL] Localised stream labels', () => {
     fertility: ['fertility-cycles', 'fertility-trainings', 'fertility-ttc-tta', 'fertility-ttc-duration', 'fertility-sexual-activity', 'fertility-genital-contact', 'fertility-tracking-method', 'fertility-test-opk', 'fertility-test-pregnancy', 'fertility-pregnancies'],
     body: ['body-height', 'body-weight', 'body-blood-pressure', 'body-blood', 'body-vulva', 'body-skin', 'body-heart-rate', 'body-oxygen-saturation', 'body-temperature', 'body-urine', 'body-csf', 'body-semen'],
     lifestyle: ['lifestyle-tobacco', 'lifestyle-alcohol', 'lifestyle-diet'],
-    family: ['family-children']
+    family: ['family-children'],
+    // 4.9.0
+    wellbeing: ['wellbeing-mood', 'wellbeing-sex-drive', 'wellbeing-mental-distress', 'wellbeing-mental-distress-anxiety', 'wellbeing-mental-distress-depression', 'wellbeing-mental-distress-stress', 'wellbeing-self-rated-health', 'wellbeing-general-health'],
+    profile: ['profile-address', 'profile-birthcountry', 'profile-ethnicity', 'profile-date-of-birth', 'profile-avatar', 'profile-display-name', 'profile-location', 'profile-name', 'profile-sex', 'profile-reproductive-stage', 'profile-preferences']
   };
 
   it('[STRL-3] the broad sensitive roots say what a grant on them covers, en and fr, and are re-read when they change (4.7.0)', () => {
@@ -55,5 +58,13 @@ describe('[STRL] Localised stream labels', () => {
     assert.match(d('body').fr, /intimes/);
     assert.match(d('lifestyle').en, /belief/);
     assert.match(d('lifestyle').fr, /conviction/);
+    assert.match(d('wellbeing').en, /depression/);
+    assert.match(d('wellbeing').fr, /désir sexuel/);
+    assert.match(d('profile').en, /ethnicity/);
+    assert.match(d('profile').fr, /origine ethnique/);
+    assert.match(d('wellbeing').en, /sex drive/);
+    assert.match(d('wellbeing').fr, /dépression/);
+    assert.match(d('profile').en, /pregnancy/);
+    assert.match(d('profile').fr, /grossesse/);
   });
 });
