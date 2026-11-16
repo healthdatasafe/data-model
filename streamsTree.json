@@ -77,6 +77,10 @@
       "en": "Body",
       "fr": "Corps"
     },
+    "description": {
+      "en": "Your body measurements and all your laboratory results (blood, urine and other samples), including pregnancy and fertility hormones, semen analyses, and intimate observations such as vaginal bleeding and cervical mucus.",
+      "fr": "Vos mesures corporelles et tous vos résultats d'analyses (sang, urines et autres prélèvements), y compris les hormones de grossesse et de fertilité, les analyses de sperme et des observations intimes comme les saignements vaginaux et la glaire cervicale."
+    },
     "parentId": null,
     "children": [
       {
@@ -1105,6 +1109,10 @@
       "en": "Family",
       "fr": "Famille"
     },
+    "description": {
+      "en": "How many children you have.",
+      "fr": "Le nombre d'enfants que vous avez."
+    },
     "parentId": null,
     "children": [
       {
@@ -1120,6 +1128,10 @@
     "label": {
       "en": "Fertility",
       "fr": "Fertilité"
+    },
+    "description": {
+      "en": "Your menstrual cycles, fertile days and ovulation, your sexual activity and any protection used, whether you are trying to conceive or to avoid a pregnancy, ovulation and pregnancy tests, and your pregnancies and births, including miscarriages and abortions.",
+      "fr": "Vos cycles menstruels, jours fertiles et ovulation, votre activité sexuelle et la protection utilisée, votre intention de concevoir ou d'éviter une grossesse, les tests d'ovulation et de grossesse, et vos grossesses et accouchements, y compris les fausses couches et les interruptions de grossesse."
     },
     "parentId": null,
     "children": [
@@ -1341,6 +1353,10 @@
     "label": {
       "en": "Lifestyle",
       "fr": "Mode de vie"
+    },
+    "description": {
+      "en": "Your use of tobacco and nicotine, how often and how much alcohol you drink, and your diet, including foods you avoid for reasons of belief or health.",
+      "fr": "Votre consommation de tabac, de nicotine et d'alcool, et votre alimentation, y compris les aliments que vous évitez par conviction ou pour raison de santé."
     },
     "parentId": null,
     "children": [
