@@ -198,6 +198,11 @@ of `fertility-tracking-method`), and hds-feminine-cycle-ui and the method specif
 peak. Keeping that meaning moves no real data; the LH peak gets the new item. The item is `v2` since 3.24.0: events
 written before 3.24.0 by Cycle Intelligence (demo accounts only) may be LH peaks.
 
+**The recalled average follows the mucus peak (4.11.0, B-2026-10-28-7).** `fertility-cycles-average-peak-day` is the
+cycle day on which the mucus Peak Day usually falls, as the person recalls it (a recalled summary, below), `v2` since
+4.11.0: its description said "peak fertility" until then, so an answer given before 4.11.0 may be an LH or monitor
+peak. There is no recalled average for the LH peak; it would be a new item, never this one.
+
 **Not a fertility statement.** Both are chart notation the person or her method records. HDS apps show them as
 recorded; they do not derive fertile or infertile days from them.
 
