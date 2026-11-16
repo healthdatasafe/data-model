@@ -61,8 +61,13 @@ so `duration` = end − `time`.
 `hdsTimePrecision: "year"` and `hdsEndPrecision: "month"`, and reads "1997 – March 1999". "1997 to about 2000"
 is `hdsEndPrecision: "approx"` with `hdsTimeText: "1997 – about 2000"`.
 
-A span within one period ("all of March 1999" at `day` precision, starting and ending the same day) has
-`duration: 0`; a point event has no duration, so the two stay distinct. A span that is still running
+A span within one period (start and end in the same period, or one period inside the other) is written with **no
+duration**: it is a point event known to that period, and the last-day anchor above does not apply to it (it would
+store the period as a duration). Until 4.11.1 this page said `duration: 0` kept such a span distinct from a point
+event; the core reads a duration of 0 back as absent, so no stored event could (B-2026-11-13-12). What the event then
+reads as is the item's: `condition-coded` keeps its abated status (CONDITION.md § status and abatement); a medication
+period reads as one intake (MEDICATION.md § One intake or a period of use); a visit, a procedure or a treatment as a
+point event (ENCOUNTER.md § Period and status, FHIR-MAPPING.md § Procedures). A span that is still running
 (`duration: null` on a period item) is unchanged by this page.
 
 ## Rules
