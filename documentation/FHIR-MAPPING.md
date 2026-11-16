@@ -991,14 +991,16 @@ vital sign's date to the day (vs-1), and is refused rather than padded to a day;
 **Abatement** (4.1.0, `condition-coded` only). `abatementDateTime`, else `abatementPeriod.end`, becomes
 `event.duration` = abatement − `time`, in seconds; a truncated abatement is anchored at 12:00 UTC on the **last** day
 of its period (PARTIAL-DATES.md § Spans), and `clientData.hdsEndPrecision` is written when that precision differs from
-the onset's. An abatement whose period lies wholly before the onset's is refused (periods, not noon anchors: a
-date-only onset is its whole day; a zoneless end date gets 14 h of slack against a zoned onset instant, since a local
-date can lag it by that much); one period containing the other (an end within the onset's period, or an onset
-within the end's: "onset 2016-04-06T21:45, abated 2016-04-06"; equal instants too) is a span within one period: the
-status is kept and **no duration** is written, nor `hdsEndPrecision`. The period test comes before the anchor
-arithmetic, and the 14 h extend the end's period past its end only (CONDITION.md § status and abatement has the
-ordered test, 4.11.1: the core reads a duration of 0 back as absent). Two different exact instants, even on one day,
-keep their positive duration. `abatementAge`, `abatementString`, `abatementRange` and
+the onset's. An abatement whose period lies wholly before the onset's is refused (periods, not noon anchors, and
+half-open: a date-only onset is its whole UTC day, its closing midnight the next day's; against a zoned instant a
+zoneless date gets 14 h of slack, since a local day starts at most 14 h before its UTC day and ends at most 12 h
+after it: a zoneless end's period runs 14 h past its end, a zoneless onset's starts 14 h before its start); one
+period containing the other (an end within the onset's period, or an onset within the end's: "onset
+2016-04-06T21:45, abated 2016-04-06"; equal instants too) is a span within one period: the status is kept and **no
+duration** is written, nor `hdsEndPrecision`. The period test comes before the anchor arithmetic, and the 14 h widen
+the periods only, never the anchors (CONDITION.md § status and abatement has the ordered test, 4.11.1, and the
+onset-side slack, 4.11.2: the core reads a duration of 0 back as absent). Two different exact instants, even on one
+day, keep their positive duration. `abatementAge`, `abatementString`, `abatementRange` and
 `abatementBoolean` are not dates: the status is kept and the abatement dropped (no duration). Export: `time + duration`
 as `abatementDateTime`, truncated to `hdsEndPrecision`, else to `hdsTimePrecision`; a duration on an event whose status
 is not `inactive`, `remission` or `resolved` is refused (con-4), never rendered.

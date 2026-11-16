@@ -1,5 +1,20 @@
 # Changelog
 
+## [4.11.2] - 2026-11-16
+
+Text only: no key, stream, eventType or FHIR block change (the docs).
+
+### Changed
+- **The 14 h time-zone slack works both ways** (B-2026-11-16-18). CONDITION.md's ordered period test extended only a
+  zoneless END past its end, against an exact onset. The mirror case was refused: onset `2016-04-06` (its UTC day) with
+  abatement `2016-04-06T01:00+02:00` (23:00Z on the 5th, the same local day) had its end "wholly before" the onset.
+  A truncated onset against an exact end now has its period extended by 14 h before its start, never past its end;
+  both adjustments widen the periods of steps (1) and (2) only, never the anchors of step (3). CONDITION.md and
+  FHIR-MAPPING.md § Abatement now also say that a period is half-open (its closing midnight belongs to the next
+  period), and why both slacks are 14 h (a local day starts at most 14 h before its UTC day, ends at most 12 h after
+  it). hds-fhir-js 0.8.4's Condition importer follows; its Procedure `performedPeriod.end` check takes the same
+  onset-side slack. The Condition rule is Fable-reviewed.
+
 ## [4.11.1] - 2026-11-16
 
 Text only: no key, stream, eventType or FHIR block change (`condition-coded` devNotes and the docs).

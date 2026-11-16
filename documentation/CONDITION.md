@@ -64,16 +64,22 @@ elsewhere (a form's duration input, a diary that reads `0` as ongoing) leaves th
 **A same-period abatement is not stored (4.11.1, B-2026-11-13-12).** The core cannot keep `duration: 0`: it stores
 `endTime = time + duration`, an absent duration as `endTime = time` too, and reads a duration of 0 back as absent (a
 point event, by design). The test is on periods and comes before any anchor arithmetic. The period of an exact
-dateTime is that instant; of `YYYY-MM-DD`, that UTC day; of `YYYY-MM`, that UTC month; of `YYYY`, that UTC year. One
-adjustment: a truncated (zoneless) end against an exact onset has its period extended by 14 h past its end, never
-before its start. In order: (1) the end's period lies wholly before the onset's: refused; (2) one period contains the
-other, equal periods and equal instants included: the event keeps its abated status (`inactive`, `remission` or
-`resolved`) and carries **no `duration` and no `hdsEndPrecision`**; (3) otherwise `duration` = end anchor − `time`,
-which is then always positive. So onset `2016-03` with abatement `2016-03-20`, onset `2016-04-06T21:45Z` (or
-`T08:00Z`) with abatement `2016-04-06`, and onset `2016-04-06` with abatement `2016-04-06T18:00Z` all carry no
-duration. "Diagnosed and resolved on 6 April 2016" is therefore `status: resolved` with no duration: the abatement
-date is lost, and the status alone says the condition ended. An exact onset and a later exact abatement, even on the
-same day, are two instants and keep theirs. (4.1.0 to 4.11.0 said `duration: 0` was a real value here; no stored
+dateTime is that instant; of `YYYY-MM-DD`, that UTC day; of `YYYY-MM`, that UTC month; of `YYYY`, that UTC year. A
+period is half-open: it holds its opening midnight, and its closing midnight belongs to the next period (onset
+`2016-04-06` with abatement `2016-04-07T00:00Z` is a span of 12 h). Two adjustments, because a zoneless date's local
+day can start up to 14 h before its UTC day (UTC+14) and end up to 12 h after it (UTC−12); both apply only to a
+truncated date against an exact dateTime, and both are 14 h: a truncated end against an exact onset has its period
+extended by 14 h past its end, never before its start; a truncated onset against an exact end has its period extended
+by 14 h before its start, never past its end (4.11.2, B-2026-11-16-18). They widen the periods of steps (1) and (2)
+only, never the anchors of step (3). In order: (1) the end's period lies wholly before the onset's: refused; (2) one
+period contains the other, equal periods and equal instants included: the event keeps its abated status
+(`inactive`, `remission` or `resolved`) and carries **no `duration` and no `hdsEndPrecision`**; (3) otherwise
+`duration` = end anchor − `time`, which is then always positive. So onset `2016-03` with abatement `2016-03-20`, onset
+`2016-04-06T21:45Z` (or `T08:00Z`) with abatement `2016-04-06`, onset `2016-04-06` with abatement
+`2016-04-06T18:00Z`, and onset `2016-04-06` with abatement `2016-04-06T01:00+02:00` (23:00Z on the 5th, the same
+local day) all carry no duration. "Diagnosed and resolved on 6 April 2016" is therefore `status: resolved` with no
+duration: the abatement date is lost, and the status alone says the condition ended. An exact onset and a later
+exact abatement, even on the same day, are two instants and keep theirs. (4.1.0 to 4.11.0 said `duration: 0` was a real value here; no stored
 event could carry it, so nothing moves.)
 
 ### The second status: `verificationStatus`
