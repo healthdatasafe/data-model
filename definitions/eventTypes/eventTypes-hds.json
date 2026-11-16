@@ -2504,7 +2504,7 @@
       }
     },
     "questionnaire/request-v1": {
-      "description": "Doctor (or generator) → patient: a questionnaire instantiated for this patient. Carries a 'questions' map keyed by stable question keys. Each question references an existing HDS item (itemRef) with optional entity filter (params), a temporal scope (ever / window / latest with withinDays), and an optional subField for qualifier capture. The patient's matching questionnaire/answer-v1 event carries the answers map keyed by the same question keys and links back via requestEventId. Question keys must match Pryv content-query path grammar [a-zA-Z0-9_-]+ so content.answers.<key>.status queries work. See documentation/QUESTIONNAIRE.md.",
+      "description": "A questionnaire instantiated for this patient, as asked by a doctor or a generator. It is written into the patient's account ('requester', set by the patient's own app, records who asked); no event travels between two accounts. Carries a 'questions' map keyed by stable question keys. Each question references an existing HDS item (itemRef) with optional entity filter (params), a temporal scope (ever / window / latest with withinDays), and an optional subField for qualifier capture. The patient's matching questionnaire/answer-v1 event carries the answers map keyed by the same question keys and links back via requestEventId. Question keys must match Pryv content-query path grammar [a-zA-Z0-9_-]+ so content.answers.<key>.status queries work. See documentation/QUESTIONNAIRE.md.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -2690,7 +2690,7 @@
       }
     },
     "questionnaire/answer-v1": {
-      "description": "Patient → doctor: the response to a questionnaire/request-v1. 'requestEventId' links back to the request event. 'answers' is a map keyed by the same question keys as the request; key absence means 'not-answered' (skipped / unreached). Each answer entry carries a 'status' enum (answered / no / unknown / declined) with conditional fields per status. Referenced event ids in 'answered' entries must ALSO be mirrored into clientData.related.<eventId>: true per the Pryv §7 keyed-object cross-reference convention so cohort queries can use the indexed clientData parameter. See documentation/QUESTIONNAIRE.md.",
+      "description": "The patient's response to a questionnaire/request-v1, written by the patient's app into the patient's own account. Nothing sends it to the requester: the requester reads it only under a grant on the stream it is in. 'requestEventId' links back to the request event. 'answers' is a map keyed by the same question keys as the request; key absence means 'not-answered' (skipped / unreached). Each answer entry carries a 'status' enum (answered / no / unknown / declined) with conditional fields per status. Referenced event ids in 'answered' entries must ALSO be mirrored into clientData.related.<eventId>: true per the Pryv §7 keyed-object cross-reference convention so cohort queries can use the indexed clientData parameter. See documentation/QUESTIONNAIRE.md.",
       "type": "object",
       "additionalProperties": false,
       "required": [

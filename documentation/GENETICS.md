@@ -33,6 +33,11 @@ The root carries consent-screen names (`label` / `description`, en and fr, 3.38.
 covers this root only when it names it, or one of its children, explicitly.** A `*` grant, or a grant on another root,
 never reaches it. The pack publishes the streams tree as written, so the marker is in `pack.streams`.
 
+**Two roots carry it:** `genetics` (3.43.0) and `questionnaire` (4.12.0, plan 115, perki 2026-11-16). The second
+is not a special category by itself: its answer stream is a cross-topic sink, where a yes on a question about a
+genetic test says that such a result exists (QUESTIONNAIRE.md § Where the events live). Without the marker there,
+the promise made for `genetics` would hold for the records and not for the fact that they exist.
+
 What a consumer must do, by how the access is made:
 
 - **A consent request (CMC) with `streamId: '*'`** is expanded by the requesting app into the model's roots **minus the
@@ -43,6 +48,10 @@ What a consumer must do, by how the access is made:
   `{ streamId: 'genetics', level: 'none' }` for each marked root.
 - **A grant that names `genetics`** (or `genetics-variant`) is the only way in. Consent screens show the root's
   `label` and `description`.
+- **A SMART request** (plan 115, hds-fhir-js): a marked stream is **offered unticked** on the consent screen
+  (`optIn`), whatever brought it into the request: `patient/*.rs`, a scope that names the type
+  (`patient/QuestionnaireResponse.rs`) or a native token that names the stream. The person ticks it on purpose; it
+  is never ticked by default. The FHIR facade gives a `*` stream permission the model roots minus the marked ones.
 - **Readers** that list what an access shares must not show a `level: 'none'` entry as shared.
 
 ### Before the first write
@@ -63,8 +72,15 @@ third-party `*` request cannot reach the root either. The existing `*` accesses 
 (4 on ch1, none on us1; no account had a `genetics` stream). Demo, a throwaway platform, was not swept: its older
 test accesses with `*` stay unmasked. A mask **added later**
 (`accesses.update`) takes no `defaultName`, so the stream is not created; a sign-in request cannot carry one, because
-the sign-in check requires a `defaultName`, which creates the masked stream. Still to honour the marker when built:
-the plan-115 SMART `patient/*` translation (no `fhir` block, so no SMART scope reaches the root today).
+the sign-in check requires a `defaultName`, which creates the masked stream. No `fhir` block sits under `genetics`,
+so no SMART scope reaches that root; a native token that names it is offered unticked. The plan-115 SMART
+`patient/*` translation honours the marker the same way (above): `questionnaire` is the first marked root with a
+scope key under it, and `patient/*.rs` offers its answer stream unticked.
+
+**`questionnaire` (4.12.0): the same sweep, before the first write.** The existing `*` accesses masked for
+`genetics` are not masked for `questionnaire`. Before any app writes an event into `questionnaire-request` or
+`questionnaire-answer`, the `*` accesses of each production core get `{ streamId: 'questionnaire', level: 'none' }`
+(or are re-minted). Until then the streams stay empty.
 
 ## `genetic-variant/coded-v1`
 

@@ -1000,6 +1000,13 @@
         "profile-sex"
       ]
     },
+    "questionnaire-answer": {
+      "pair": "QuestionnaireResponse",
+      "parent": "questionnaire",
+      "items": [
+        "questionnaire-answer"
+      ]
+    },
     "wellbeing-general-health": {
       "pair": "Observation|survey",
       "parent": "wellbeing",

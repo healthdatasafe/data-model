@@ -289,6 +289,35 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       }
       for (const k of ['treatment-basic', 'treatment-coded']) assert.strictEqual(itemsById[k].fhir, undefined, `${k} is mapped`);
     });
+
+    it('[FHIR-ITEM-14] questionnaire answers (plan 115): the answer item is a QuestionnaireResponse under a bare scope key, with no code and no profile claimed; the request item is unmapped, on a sibling stream; the root is explicitGrantOnly and the consent text names everything a grant shows', () => {
+      const answer = itemsById['questionnaire-answer'];
+      const request = itemsById['questionnaire-request'];
+      // no profile on any flavour: a claim is added with the Questionnaire mapping, never withdrawn
+      assert.deepStrictEqual(answer.fhir, { resourceType: 'QuestionnaireResponse', profiles: {} });
+      assert.strictEqual(fhirMapping.categories.QuestionnaireResponse, undefined, 'no category table: a bare scope key, for good');
+      assert.deepStrictEqual([answer.streamId, answer.eventType, answer.type], ['questionnaire-answer', 'questionnaire/answer-v1', 'system']);
+      assert.deepStrictEqual([request.streamId, request.eventType, request.type, request.fhir], ['questionnaire-request', 'questionnaire/request-v1', 'system', undefined]);
+      const { streamsById } = require('../src/streams');
+      assert.deepStrictEqual(streamsById.questionnaire.children.map((c) => c.id), ['questionnaire-request', 'questionnaire-answer']);
+      // the consent text says what a bare label hides: answers on any health topic, with the qualifier the person
+      // added and the reason typed when declining (both free content the grant shows)
+      for (const id of ['questionnaire', 'questionnaire-answer']) {
+        assert.match(streamsById[id].description.en, /any health topic/);
+        assert.match(streamsById[id].description.fr, /tout sujet de santé/);
+        assert.match(streamsById[id].description.en, /any detail you added and the reason you gave for not answering/);
+        assert.match(streamsById[id].description.fr, /les précisions que vous avez ajoutées et la raison que vous avez donnée pour ne pas répondre/);
+      }
+      // granted on purpose only: the marker is on the root (the whole subtree), and every description says so
+      assert.strictEqual(streamsById.questionnaire.explicitGrantOnly, true);
+      for (const id of ['questionnaire', 'questionnaire-request', 'questionnaire-answer']) {
+        assert.match(streamsById[id].description.en, /Never included when you share all your data: shared only when you name them\.$/);
+        assert.match(streamsById[id].description.fr, /Jamais inclus(es)? quand vous partagez toutes vos données : partagée?s seulement si vous les nommez\.$/);
+      }
+      // one French form for the consent row, the stream and the group: the plural
+      assert.strictEqual(answer.label.fr, 'Réponses aux questionnaires');
+      assert.strictEqual(streamsById['questionnaire-answer'].label.fr, answer.label.fr);
+    });
   });
 
   describe('[FHIR-SCH] the schema', () => {
@@ -380,6 +409,14 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       checkItem(proc, 'p');
       proc.fhir.resourceType = 'ServiceRequest';
       assert.throws(() => checkItem(proc, 'p'), /allowed values/);
+      // a QuestionnaireResponse block has no code and nothing else; every other resourceType needs its code
+      const qr = item('questionnaire-answer');
+      checkItem(qr, 'q');
+      qr.fhir.code = coding('1');
+      assert.throws(() => checkItem(qr, 'q'), /must NOT have more than 2 properties/);
+      const noCode = item('procedure-basic');
+      delete noCode.fhir.code;
+      assert.throws(() => checkItem(noCode, 'p'), /must have required property 'code'/);
       const ct = item('condition-coded');
       ct.fhir.code.from = 'content';
       assert.throws(() => checkItem(ct, 'c'), /must have required property 'translate'/);
@@ -965,6 +1002,32 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => checkFhirImportKeys({ a: { fhir: proc('procedure-coded').fhir }, b: { fhir: proc('procedure-coded').fhir } }), /fhir import key Procedure from datasource is claimed by both "a" and "b"/);
     });
 
+    it('[FHIR-MAP-26] a QuestionnaireResponse block: resourceType and profiles only (no code, no category, no value), on a system item whose one eventType holds requestEventId and answers; one item maps the resourceType (plan 115)', () => {
+      const qr = () => item('questionnaire-answer');
+      checkItem(qr(), 'questionnaire-answer');
+      check(qr(), 'questionnaire-answer');
+      const a = qr();
+      a.fhir.category = 'survey';
+      assert.throws(() => check(a, 'q'), /resourceType "QuestionnaireResponse" takes no category/);
+      for (const [k, v] of [['code', coding('1')], ['value', { kind: 'coded', options: { x: coding('x') } }], ['ignore', ['answers']], ['alsoMatch', [coding('2')]]]) {
+        const b = qr();
+        b.fhir[k] = v;
+        assert.throws(() => check(b, 'q'), new RegExp(`a QuestionnaireResponse block holds "resourceType" and "profiles" only .* remove "${k}"`));
+      }
+      const c = qr();
+      c.type = 'text';
+      assert.throws(() => check(c, 'q'), /a QuestionnaireResponse block applies to a "system" item/);
+      // the renderer reads requestEventId and answers by name: an eventType without them cannot carry the block
+      const d = qr();
+      d.eventType = 'questionnaire/request-v1';
+      assert.throws(() => check(d, 'q'), /eventType "questionnaire\/request-v1" has no string content property "requestEventId"/);
+      assert.throws(() => checkFhirMapping('q', qr(), ['questionnaire/answer-v1', 'questionnaire/request-v1']), /needs an item with exactly one eventType/);
+      // the import key: the resourceType alone, one item
+      const { checkFhirImportKeys } = require('../src/fhir');
+      checkFhirImportKeys({ a: { fhir: qr().fhir } });
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: qr().fhir }, b: { fhir: qr().fhir } }), /fhir import key QuestionnaireResponse is claimed by both "a" and "b"/);
+    });
+
     it('[FHIR-MAP-14] alsoMatchCategories: known keys of the resourceType table, never the block\'s own, refused without a table', () => {
       const a = item('lifestyle-tobacco-smoking');
       a.fhir.alsoMatchCategories = ['surveys'];
@@ -1262,8 +1325,13 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         'Observation|survey': ['wellbeing-general-health'],
         'Observation|vital-signs': ['body-blood-pressure', 'body-heart-rate', 'body-height', 'body-oxygen-saturation', 'body-weight'],
         Patient: ['profile-address', 'profile-date-of-birth', 'profile-name', 'profile-sex'],
-        Procedure: ['procedure']
+        Procedure: ['procedure'],
+        QuestionnaireResponse: ['questionnaire-answer']
       });
+      // the QuestionnaireResponse grant is the answer stream alone: the request stream beside it is in no grant
+      assert.deepStrictEqual(readLock().streams['questionnaire-answer'], { pair: 'QuestionnaireResponse', parent: 'questionnaire', items: ['questionnaire-answer'] });
+      assert.strictEqual(readLock().streams['questionnaire-request'], undefined);
+      assert.strictEqual(readLock().streams.questionnaire, undefined);
       // the Procedure grant reaches the context stream under its root, which holds no item of its own
       assert.deepStrictEqual(readLock().streams['procedure-fertility'], { pair: 'Procedure', parent: 'procedure', items: [] });
       assert.deepStrictEqual(mergeLock(readLock(), lockEntries(itemsById, fhirScopes)), readLock(), 'definitions/fhir/scopes.lock.json is not up to date');
