@@ -1,6 +1,6 @@
 {
-  "version": "4.11.0",
-  "publicationDate": "2026-11-16T12:15:41.082Z",
+  "version": "4.11.1",
+  "publicationDate": "2026-11-16T12:56:22.599Z",
   "streams": [
     {
       "id": "activity",
@@ -12693,7 +12693,7 @@
           "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips"
         }
       },
-      "devNotes": "event.time is the onset (or the diagnosis date when that is all the source knows). Optional content.status is the FHIR clinicalStatus code (active, recurrence, relapse, inactive, remission, resolved); absent = not stated. An abated condition carries event.duration, time + duration being the abatement, and then status must be inactive, remission or resolved (FHIR con-4). No abatement is no duration key: never 0, never null. 0 is a real value (abated within the onset's own period) and needs an abated status like any duration. Partial onset and abatement dates follow PARTIAL-DATES.md (hdsTimePrecision, hdsEndPrecision). content.verificationStatus is reserved for the FHIR verification status (not stored yet). See documentation/CONDITION.md."
+      "devNotes": "event.time is the onset (or the diagnosis date when that is all the source knows). Optional content.status is the FHIR clinicalStatus code (active, recurrence, relapse, inactive, remission, resolved); absent = not stated. An abated condition carries event.duration, time + duration being the abatement, and then status must be inactive, remission or resolved (FHIR con-4). No abatement is no duration key: never 0, never null. An abatement within one period with the onset is not stored (the core reads a duration of 0 back as absent): the abated status is kept, with no duration and no hdsEndPrecision (4.11.1, CONDITION.md). Partial onset and abatement dates follow PARTIAL-DATES.md (hdsTimePrecision, hdsEndPrecision). content.verificationStatus is reserved for the FHIR verification status (not stored yet). See documentation/CONDITION.md."
     },
     "consent-record": {
       "version": "v1",
