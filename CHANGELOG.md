@@ -1,5 +1,23 @@
 # Changelog
 
+## [4.10.0] - 2026-11-16
+
+Additive, import only: no key, stream, eventType or exported code changes. hds-fhir-js regenerates its lab mappings
+(`check:pack` compares the blocks), plan 115.
+
+### Added
+- **Lab LOINC codes no item owned now import** (B-2026-11-14-6, Fable F8 of the plan 115 labs review), each verified
+  ACTIVE with no MapTo in the LOINC 2.83 release:
+  - `body-blood-coagulation-inr` owns **38875-1** "INR in Platelet poor plasma or blood by Coagulation assay"
+    (`references.loincMethod` + `alsoMatch`); `6301-6` stays the export. A whole-blood INR sent under 38875-1
+    imports too (the code does not state the specimen); a result coded as capillary, `34714-6`, still goes to
+    `lab-result/coded-v1`. AGENTS.md's `loincMethod` definition now names this case (a wider System).
+  - `body-blood-serum-egfr` owns **50384-7** (Schwartz, pediatric), **50044-7** and **70969-1** (MDRD among female /
+    male population), beside its seven per-equation codes; `69405-9` stays the export.
+  - **107482-2** (all motile spermatozoa) stays unowned on purpose: `body-semen-tmc` is a progressive-motility derived
+    count and the item's devNotes already record why neither 107482-2 nor 81319-6 is asserted.
+  Tests `[FHIR-ITEM-12]` (eGFR, INR).
+
 ## [4.9.0] - 2026-11-16
 
 Additive, text only: no key, stream id, eventType or FHIR change.

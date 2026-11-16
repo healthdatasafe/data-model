@@ -52,8 +52,9 @@ shared by two eventTypes (below); production sees neither until the facade is re
   "Insulin [Moles/volume] in Serum or Plasma --fasting", which the model overlooked from 3.44.0 until this slice.
 - **eGFR** exports the equation-neutral `69405-9` ("Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or
   Blood by based on 1.73 sq M": no equation, no marker), which the item now asserts (`references.loinc`). The
-  equation changes the number and is not stored, so the seven per-equation creatinine-based codes the item owns
-  (`references.loincMethod`) are `alsoMatch`: a result coded with one imports, and the equation is not kept.
+  equation changes the number and is not stored, so the ten per-equation creatinine-based codes the item owns
+  (`references.loincMethod`, the pediatric Schwartz and sex-specific MDRD codes since 4.10.0) are `alsoMatch`: a
+  result coded with one imports, and the equation is not kept.
 - **An item with no exportable LOINC code** renders the HDS item coding as its static code, as E3G and PdG do, with
   the codes it owns (`references.loincMethod`) as `alsoMatch`: LDH (the methodless `2532-0` is DISCOURAGED, the two
   ACTIVE codes each state a reaction direction the item does not store), Quick % (no LOINC code; `5894-1`, which
@@ -64,7 +65,8 @@ shared by two eventTypes (below); production sees neither until the facade is re
   and the total motile count (none asserted; SNOMED CT `167806003` is the procedure, which no lab block codes an
   Observation with).
 - **INR** (`6301-6`) is stored `{ value, relativeTo: 1 }` on `ratio/generic`: the new `ratio-quantity` kind renders
-  `value` in UCUM `{INR}` ([value kinds](#value-kinds)).
+  `value` in UCUM `{INR}` ([value kinds](#value-kinds)). `38875-1` (PPP or blood, same method) is import only
+  (`references.loincMethod`, 4.10.0); the specimen it leaves open is not kept, and the export says `6301-6`.
 
 **Vital signs:** body weight, blood pressure (with its pulse as a split), heart rate, body height and oxygen saturation
 (SpO2) carry an `Observation|vital-signs` block. **Body temperature is not mapped yet:** its stream holds the basal

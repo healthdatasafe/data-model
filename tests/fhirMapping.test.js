@@ -103,11 +103,12 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         assert.deepStrictEqual(codes(i.fhir.alsoMatch), i.references?.loincMethod || [], k);
         if (unit != null) assert.deepStrictEqual(Object.values(i.fhir.value.units), [unit], k);
       }
-      // eGFR exports the equation-neutral 69405-9; the seven per-equation codes it owns import, the equation is not kept.
+      // eGFR exports the equation-neutral 69405-9; the ten per-equation codes it owns import, the equation is not kept
+      // (Schwartz and the sex-specific MDRD codes since 4.10.0, B-2026-11-14-6).
       const egfr = itemsById['body-blood-serum-egfr'];
       assert.deepStrictEqual(egfr.fhir.code, loinc('69405-9', 'Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by based on 1.73 sq M'));
       assert.deepStrictEqual(egfr.references.loinc, ['69405-9']);
-      assert.deepStrictEqual(codes(egfr.fhir.alsoMatch), ['98979-8', '62238-1', '77147-7', '88293-6', '88294-4', '48643-1', '48642-3']);
+      assert.deepStrictEqual(codes(egfr.fhir.alsoMatch), ['98979-8', '62238-1', '77147-7', '88293-6', '88294-4', '48643-1', '48642-3', '50384-7', '50044-7', '70969-1']);
       assert.deepStrictEqual(codes(egfr.fhir.alsoMatch), egfr.references.loincMethod);
       assert.deepStrictEqual(egfr.fhir.value, { kind: 'quantity', units: { 'rate/ml-min-173m2': 'mL/min/{1.73_m2}' } });
       assert.deepStrictEqual(itemsById['body-semen-dna-fragmentation'].fhir.value, percent);
@@ -116,7 +117,8 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
 
       // The INR: `{ value, relativeTo: 1 }`, the block states the denominator the item fixes.
       const inr = itemsById['body-blood-coagulation-inr'];
-      assert.deepStrictEqual(inr.fhir, { resourceType: 'Observation', category: 'laboratory', code: loinc('6301-6', 'INR in Platelet poor plasma by Coagulation assay'), value: { kind: 'ratio-quantity', units: { 'ratio/generic': '{INR}' }, relativeTo: 1 }, profiles: lab });
+      assert.deepStrictEqual(inr.fhir, { resourceType: 'Observation', category: 'laboratory', code: loinc('6301-6', 'INR in Platelet poor plasma by Coagulation assay'), alsoMatch: [loinc('38875-1', 'INR in Platelet poor plasma or blood by Coagulation assay')], value: { kind: 'ratio-quantity', units: { 'ratio/generic': '{INR}' }, relativeTo: 1 }, profiles: lab });
+      assert.deepStrictEqual(inr.references.loincMethod, ['38875-1'], 'the PPP-or-blood INR imports (4.10.0, B-2026-11-14-6)');
       assert.strictEqual(inr.fhir.value.relativeTo, inr.ratioRelativeTo);
 
       // Every HDS item coding in a block is the item's own key with its English label (a deprecated alias carries its replacement's).
