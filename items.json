@@ -13741,7 +13741,21 @@
       }
     },
     "repeatable": "unlimited",
-    "devNotes": "Examples: laparoscopy, HSG, polypectomy."
+    "fhir": {
+      "resourceType": "Procedure",
+      "code": {
+        "from": "text",
+        "field": "name"
+      },
+      "ignore": [
+        "count"
+      ],
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-procedure",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips"
+      }
+    },
+    "devNotes": "Examples: laparoscopy, HSG, polypectomy. The uncoded twin of procedure-coded: a name no code was found for, never a coded event with codes: []. Same stream, so one consent unit covers both."
   },
   "procedure-coded": {
     "version": "v1",
@@ -13757,7 +13771,18 @@
     "eventType": "procedure/coded-v1",
     "type": "datasource-search",
     "datasource": "procedure",
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "fhir": {
+      "resourceType": "Procedure",
+      "code": {
+        "from": "datasource",
+        "field": "procedure"
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-procedure",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips"
+      }
+    }
   },
   "profile-addresscountry": {
     "version": "temporary",

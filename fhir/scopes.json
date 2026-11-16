@@ -156,5 +156,8 @@
     "profile-date-of-birth",
     "profile-name",
     "profile-sex"
+  ],
+  "Procedure": [
+    "procedure"
   ]
 }

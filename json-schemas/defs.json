@@ -514,7 +514,8 @@
             "Condition",
             "DocumentReference",
             "MedicationStatement",
-            "MedicationRequest"
+            "MedicationRequest",
+            "Procedure"
           ]
         },
         "category": {
