@@ -10834,19 +10834,20 @@
     "repeatable": "once"
   },
   "fertility-cycles-average-peak-day": {
-    "version": "v1",
+    "version": "v2",
     "label": {
       "en": "Average Peak Day",
       "fr": "Jour sommet moyen"
     },
     "description": {
-      "en": "Your typical cycle day of peak fertility (recalled average).",
-      "fr": "Le jour type de votre pic de fertilité dans le cycle (moyenne rappelée)."
+      "en": "The cycle day on which your mucus Peak Day usually falls, as you recall it.",
+      "fr": "Le jour du cycle où tombe habituellement votre jour sommet de la glaire, selon votre souvenir."
     },
     "streamId": "fertility-cycles-average-peak-day",
     "eventType": "time/d",
     "type": "number",
-    "repeatable": "once"
+    "repeatable": "once",
+    "devNotes": "The recalled average cycle day of the mucus Peak Day, the same Peak Day as `fertility-cycles-peak-day`\n(meaning fixed in 3.24.0, B-2026-10-26-19): never an LH peak, a fertility monitor's Peak reading or\novulation. The value is a cycle day number (day 1 = the `fertility-cycles-start` day), stored on\n`time/d`. A recalled summary: one event, `time` at the date the answer is given\n(MENSTRUAL-CYCLE.md § Recalled summaries). Chart notation as the person recalls it, not a statement\nof fertility. v2 since 4.11.0 (B-2026-10-28-7): v1 said \"typical cycle day of peak fertility\", so an\nanswer given before 4.11.0 may be an LH or monitor peak. No LH twin: a recalled average LH peak day\nis never written here; it gets its own item if an intake ever asks for it."
   },
   "fertility-cycles-average-luteal-phase": {
     "version": "v1",
