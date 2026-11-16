@@ -1,6 +1,6 @@
 {
-  "version": "4.8.0",
-  "publicationDate": "2026-11-16T09:02:36.295Z",
+  "version": "4.9.0",
+  "publicationDate": "2026-11-16T10:11:10.965Z",
   "streams": [
     {
       "id": "activity",
@@ -1511,6 +1511,10 @@
         "en": "Profile",
         "fr": "Profil"
       },
+      "description": {
+        "en": "Who you are: your name, display name and photo, date of birth, sex, ethnicity, country of birth and of residence, your reproductive stage, such as pregnancy or menopause, and your account preferences such as language and time zone.",
+        "fr": "Qui vous êtes : vos nom et prénom, nom d'affichage et photo, date de naissance, sexe, origine ethnique, pays de naissance et de résidence, votre stade reproductif, comme la grossesse ou la ménopause, et les préférences de votre compte comme la langue et le fuseau horaire."
+      },
       "parentId": null,
       "children": [
         {
@@ -2086,6 +2090,10 @@
       "label": {
         "en": "Wellbeing",
         "fr": "Bien-être"
+      },
+      "description": {
+        "en": "Your mood, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress.",
+        "fr": "Votre humeur, votre désir sexuel, votre santé telle que vous l'évaluez, et votre détresse mentale, y compris l'anxiété, la dépression et le stress."
       },
       "parentId": null,
       "children": [
