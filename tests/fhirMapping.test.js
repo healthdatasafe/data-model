@@ -276,7 +276,10 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         ips: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips'
       };
       assert.deepStrictEqual(itemsById['procedure-coded'].fhir, { resourceType: 'Procedure', code: { from: 'datasource', field: 'procedure' }, profiles });
-      assert.deepStrictEqual(itemsById['procedure-basic'].fhir, { resourceType: 'Procedure', code: { from: 'text', field: 'name' }, ignore: ['count'], profiles });
+      assert.deepStrictEqual(itemsById['procedure-basic'].fhir, { resourceType: 'Procedure', code: { from: 'text', field: 'name' }, ignore: ['count', 'robotAssisted'], profiles });
+      // 4.8.0 (B-2026-11-16-1): robotAssisted is on the form, still not rendered; findings is not a form field (an array).
+      assert.deepStrictEqual(Object.keys(itemsById['procedure-basic'].composite), ['name', 'count', 'robotAssisted', 'notes']);
+      assert.strictEqual(itemsById['procedure-basic'].composite.robotAssisted.type, 'checkbox');
       assert.strictEqual(fhirMapping.categories.Procedure, undefined, 'no category table: a bare scope key, for good');
       for (const k of ['procedure-basic', 'procedure-coded']) {
         assert.strictEqual(itemsById[k].streamId, 'procedure');

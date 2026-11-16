@@ -1,5 +1,5 @@
 procedure-basic:
-  version: v1
+  version: v2
   label:
     en: Procedure (free-text)
     fr: Acte médical (texte libre)
@@ -11,30 +11,40 @@ procedure-basic:
   type: composite
   composite:
     name:
-      label: Procedure name
+      label: { en: Procedure name, fr: Nom de l'acte }
       type: text
     count:
-      label: Number of times (lifetime)
+      label: { en: Number of times (lifetime), fr: Nombre de fois (au cours de la vie) }
       type: number
       canBeNull: true
+    robotAssisted:
+      label: { en: Robot-assisted, fr: Assisté par robot }
+      type: checkbox
+      canBeNull: true
     notes:
-      label: Notes
+      label: { en: Notes, fr: Notes }
       type: text
       canBeNull: true
   repeatable: unlimited
   # A Procedure (US Core 6.1.0 on `us`, IPS 2.0.1 on `ips`; documentation/TREATMENT-PROCEDURE.md § FHIR): the name as
   # written is `code.text`, the event time `performedDateTime`, `notes` the `note`. `count` is never rendered, and an
   # event that carries one is a lifetime tally ("had it N times"), not one dated procedure: no Procedure at all.
+  # `robotAssisted` is not rendered either (4.8.0 put it on the form, the rendering is unchanged).
   fhir:
     resourceType: Procedure
     code: { from: text, field: name }
-    ignore: [count]
+    ignore: [count, robotAssisted]
     profiles:
       us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-procedure
       ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips
   devNotes: >-
     Examples: laparoscopy, HSG, polypectomy. The uncoded twin of procedure-coded: a name no code was found for,
     never a coded event with codes: []. Same stream, so one consent unit covers both.
+    `findings` (eventType procedure/basic) is not a form field: it is an open-vocabulary array of objects, which no
+    composite field type holds; a form preset that needs it writes it itself (TREATMENT-PROCEDURE.md § Procedure
+    findings). Not rendered to FHIR.
+    `robotAssisted` (4.8.0): a form writes `true` when ticked and `false` only after an untick; untouched, the key is
+    absent. Readers treat absent and `false` alike unless they need the distinction (same as medication `asNeeded`).
 
 procedure-coded:
   version: v1
