@@ -1,6 +1,6 @@
 {
-  "version": "4.7.0",
-  "publicationDate": "2026-11-16T08:39:31.281Z",
+  "version": "4.8.0",
+  "publicationDate": "2026-11-16T09:02:36.295Z",
   "streams": [
     {
       "id": "activity",
@@ -14754,7 +14754,7 @@
       "devNotes": "Each event is a complete dated snapshot of the restrictions in force, the same convention as fertility/tracking-method-v1: a restriction that ends simply does not appear in the next snapshot. An empty array is meaningful and means no restriction. `nut-free` is stated as including peanuts on both labels on purpose: EU allergen labelling and French \"fruits à coque\" EXCLUDE peanuts (arachides are a separate allergen), while English \"nut-free\" is usually read to include them. For a restriction recorded by medical need that difference matters. A later split into tree-nut-free and peanut-free is additive."
     },
     "medication-intake-basic": {
-      "version": "v4",
+      "version": "v5",
       "label": {
         "en": "Medication Intake Basic",
         "fr": "Prise de médicament (simple)"
@@ -14972,6 +14972,13 @@
                   "label": {
                     "en": "Subcutaneous (SC)",
                     "fr": "Sous-cutané (SC)"
+                  }
+                },
+                {
+                  "value": "parenteral",
+                  "label": {
+                    "en": "Parenteral (injection or infusion)",
+                    "fr": "Parentéral (injection ou perfusion)"
                   }
                 }
               ]
@@ -15395,7 +15402,7 @@
       "devNotes": "Populated from datasets-service. At least one code (`drug.codes` minItems 1, 3.46.0): a prescription no code was found for is medication-prescription-basic. A point event (authoredOn); the course is posology.bounds, the state of the order is status."
     },
     "medication-prescription-basic": {
-      "version": "v1",
+      "version": "v2",
       "label": {
         "en": "Medication Prescription Basic",
         "fr": "Prescription de médicament (simple)"
@@ -15608,6 +15615,13 @@
                   "label": {
                     "en": "Subcutaneous (SC)",
                     "fr": "Sous-cutané (SC)"
+                  }
+                },
+                {
+                  "value": "parenteral",
+                  "label": {
+                    "en": "Parenteral (injection or infusion)",
+                    "fr": "Parentéral (injection ou perfusion)"
                   }
                 }
               ]
@@ -15840,7 +15854,7 @@
       "repeatable": "P1D"
     },
     "procedure-basic": {
-      "version": "v1",
+      "version": "v2",
       "label": {
         "en": "Procedure (free-text)",
         "fr": "Acte médical (texte libre)"
@@ -15855,20 +15869,31 @@
       "composite": {
         "name": {
           "label": {
-            "en": "Procedure name"
+            "en": "Procedure name",
+            "fr": "Nom de l'acte"
           },
           "type": "text"
         },
         "count": {
           "label": {
-            "en": "Number of times (lifetime)"
+            "en": "Number of times (lifetime)",
+            "fr": "Nombre de fois (au cours de la vie)"
           },
           "type": "number",
           "canBeNull": true
         },
+        "robotAssisted": {
+          "label": {
+            "en": "Robot-assisted",
+            "fr": "Assisté par robot"
+          },
+          "type": "checkbox",
+          "canBeNull": true
+        },
         "notes": {
           "label": {
-            "en": "Notes"
+            "en": "Notes",
+            "fr": "Notes"
           },
           "type": "text",
           "canBeNull": true
@@ -15882,14 +15907,15 @@
           "field": "name"
         },
         "ignore": [
-          "count"
+          "count",
+          "robotAssisted"
         ],
         "profiles": {
           "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-procedure",
           "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips"
         }
       },
-      "devNotes": "Examples: laparoscopy, HSG, polypectomy. The uncoded twin of procedure-coded: a name no code was found for, never a coded event with codes: []. Same stream, so one consent unit covers both."
+      "devNotes": "Examples: laparoscopy, HSG, polypectomy. The uncoded twin of procedure-coded: a name no code was found for, never a coded event with codes: []. Same stream, so one consent unit covers both. `findings` (eventType procedure/basic) is not a form field: it is an open-vocabulary array of objects, which no composite field type holds; a form preset that needs it writes it itself (TREATMENT-PROCEDURE.md § Procedure findings). Not rendered to FHIR. `robotAssisted` (4.8.0): a form writes `true` when ticked and `false` only after an untick; untouched, the key is absent. Readers treat absent and `false` alike unless they need the distinction (same as medication `asNeeded`)."
     },
     "procedure-coded": {
       "version": "v1",
