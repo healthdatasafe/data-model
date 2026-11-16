@@ -290,9 +290,13 @@ stream carry a block under the bare SMART scope key `Procedure`, so `patient/Pro
   date) are refused and reported, never served as a Procedure. "In the future" is a UTC rule on a partial date: a
   date known to the day is in the future until 00:00 UTC of that day (a month or a year until 00:00 UTC on its first
   day); an exact time is compared as an instant.
-- **`robotAssisted` and `findings` are in the eventTypes, not in the items' form fields** (`procedure-basic`'s
-  composite is `name`, `count`, `notes`). Both are unrendered on purpose, so nothing is lost; the build's field
-  accounting will ask for a decision the day either joins the composite.
+- **`robotAssisted` is a form field since 4.8.0, `findings` is not** (`procedure-basic`'s composite is `name`,
+  `count`, `robotAssisted`, `notes`; B-2026-11-16-1). `robotAssisted` is a checkbox, listed in the block's `ignore`,
+  so the rendering is unchanged. A form writes `true` when ticked and `false` only after an untick (untouched: absent),
+  so readers treat absent and `false` alike unless they need the distinction. `findings` is an open-vocabulary array
+  of objects, which no composite field type holds: a form preset that surfaces findings writes them itself. Both stay
+  unrendered on purpose, so nothing is lost. `procedure-coded` has no composite: its form already offered both fields
+  from the eventType schema.
 - **No status is stored.** A planned, cancelled or interrupted procedure has no place on these items; a FHIR
   Procedure that is not `completed` is refused on import rather than stored as done. If the model ever needs one, it
   is an optional `status` property on the two eventTypes (additive), rendered when present.

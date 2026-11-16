@@ -403,3 +403,13 @@ describe('[MED-DRUG] the drug object as the search stores it (3.47.0)', () => {
     });
   }
 });
+
+describe('[MED-ROUTE] the route form offers every route the eventTypes accept (4.8.0, B-2026-11-13-16)', () => {
+  it('[MED-ROUTE-1] the regimen route options equal the intake / posology route enum, parenteral included', () => {
+    const options = itemsById['medication-intake-basic'].composite.intake.composite.route.options.map((o) => o.value).sort();
+    assert.ok(options.includes('parenteral'));
+    for (const type of [...INTAKE_TYPES, ...RX_TYPES]) {
+      assert.deepStrictEqual([...regimenOf(type).properties.route.enum].sort(), options, `${type} route enum vs the form`);
+    }
+  });
+});

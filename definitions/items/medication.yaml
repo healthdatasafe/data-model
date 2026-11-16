@@ -1,5 +1,5 @@
 medication-intake-basic:
-  version: v4
+  version: v5
   label:
     en: Medication Intake Basic
     fr: Prise de médicament (simple)
@@ -82,6 +82,10 @@ medication-intake-basic:
               label: { en: Intramuscular (IM), fr: Intramusculaire (IM) }
             - value: subcutaneous
               label: { en: Subcutaneous (SC), fr: Sous-cutané (SC) }
+            # B-2026-11-13-16 (4.8.0): the eventType's 14th route. Importers write it from the WHO route `P`, so a
+            # form editing an imported event must be able to show and keep it.
+            - value: parenteral
+              label: { en: "Parenteral (injection or infusion)", fr: "Parentéral (injection ou perfusion)" }
         frequency:
           label: { en: How often, fr: Fréquence }
           type: composite
@@ -224,7 +228,7 @@ medication-prescription-coded:
     (authoredOn); the course is posology.bounds, the state of the order is status.
 
 medication-prescription-basic:
-  version: v1
+  version: v2
   label:
     en: Medication Prescription Basic
     fr: Prescription de médicament (simple)

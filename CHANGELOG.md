@@ -1,5 +1,23 @@
 # Changelog
 
+## [4.8.0] - 2026-11-16
+
+Additive, forms only: no key, stream, eventType or rendered FHIR change. Two Fable-review follow-ups of plan 115.
+
+### Added
+- **`procedure-basic` composite gains `robotAssisted`** (checkbox, optional; B-2026-11-16-1): the eventType
+  `procedure/basic` already accepted it, but no form offered it. Listed in the `Procedure` block's `ignore`, so 4.6.0's
+  "`robotAssisted` and `findings` are not rendered" still holds. `findings` stays out of the composite: it is an
+  open-vocabulary array of objects, which no composite field type holds (devNotes, TREATMENT-PROCEDURE.md). The
+  composite's other labels are now `{ en, fr }` (were English only). `procedure-coded` already offered both fields
+  from its eventType. Item `version` v1 → v2. Test `[FHIR-ITEM-13]`.
+- **The medication regimen's `route` select gains `parenteral`** (B-2026-11-13-16), « Parentéral (injection ou
+  perfusion) »: the eventTypes accepted 14 routes, the form offered 13, and importers write `parenteral` from the WHO
+  route `P`, so a form editing an imported event could neither show nor keep it. Shared by the two typed-name items
+  (`medication-intake-basic` v4 → v5, `medication-prescription-basic` v1 → v2); the coded forms derive their route
+  list from the eventType. Already rendered as text in the `MedicationStatement` block, so no FHIR change. Test
+  `[MED-ROUTE-1]` keeps the form and the enums equal.
+
 ## [4.7.0] - 2026-11-16
 
 Additive, text only: no key, stream id, eventType or FHIR change.
