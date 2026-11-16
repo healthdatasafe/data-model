@@ -28,4 +28,32 @@ describe('[STRL] Localised stream labels', () => {
     assert.match(root.description.en, /including sensitive visits/);
     assert.match(root.description.fr, /y compris les visites sensibles/);
   });
+
+  // A consent description must not understate the grant. The texts name each root's content exactly, so a root that
+  // gains or loses a direct child fails here until its description is re-read (grandchildren are not caught).
+  const DESCRIBED_CHILDREN = {
+    fertility: ['fertility-cycles', 'fertility-trainings', 'fertility-ttc-tta', 'fertility-ttc-duration', 'fertility-sexual-activity', 'fertility-genital-contact', 'fertility-tracking-method', 'fertility-test-opk', 'fertility-test-pregnancy', 'fertility-pregnancies'],
+    body: ['body-height', 'body-weight', 'body-blood-pressure', 'body-blood', 'body-vulva', 'body-skin', 'body-heart-rate', 'body-oxygen-saturation', 'body-temperature', 'body-urine', 'body-csf', 'body-semen'],
+    lifestyle: ['lifestyle-tobacco', 'lifestyle-alcohol', 'lifestyle-diet'],
+    family: ['family-children']
+  };
+
+  it('[STRL-3] the broad sensitive roots say what a grant on them covers, en and fr, and are re-read when they change (4.7.0)', () => {
+    for (const [id, children] of Object.entries(DESCRIBED_CHILDREN)) {
+      const root = streams.streamsById[id];
+      assert.ok(root.description?.en && root.description?.fr, `${id} carries a description { en, fr }`);
+      assert.deepStrictEqual((root.children ?? []).map((c) => c.id), children,
+        `${id} gained or lost a child: re-read its consent description, then update this list`);
+    }
+    const d = (id) => streams.streamsById[id].description;
+    assert.match(d('fertility').en, /sexual activity/);
+    assert.match(d('fertility').en, /abortions/);
+    assert.match(d('fertility').fr, /activité sexuelle/);
+    assert.match(d('fertility').fr, /interruptions de grossesse/);
+    assert.match(d('body').en, /all your laboratory results/);
+    assert.match(d('body').en, /intimate/);
+    assert.match(d('body').fr, /intimes/);
+    assert.match(d('lifestyle').en, /belief/);
+    assert.match(d('lifestyle').fr, /conviction/);
+  });
 });

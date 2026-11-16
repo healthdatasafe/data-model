@@ -3,6 +3,9 @@ name: Body
 label:
   en: "Body"
   fr: "Corps"
+description:
+  en: "Your body measurements and all your laboratory results (blood, urine and other samples), including pregnancy and fertility hormones, semen analyses, and intimate observations such as vaginal bleeding and cervical mucus."
+  fr: "Vos mesures corporelles et tous vos résultats d'analyses (sang, urines et autres prélèvements), y compris les hormones de grossesse et de fertilité, les analyses de sperme et des observations intimes comme les saignements vaginaux et la glaire cervicale."
 parentId: null
 children:
   - id: body-height

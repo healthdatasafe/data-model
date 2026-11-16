@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.7.0] - 2026-11-16
+
+Additive, text only: no key, stream id, eventType or FHIR change.
+
+### Added
+- **Consent `description` { en, fr } on the roots `fertility`, `body`, `lifestyle` and `family`** (Fable's follow-up
+  on the 4.4.0 review, Fable-reviewed): one sentence saying what a grant on the root covers, as `encounter` and
+  `genetics` already do. The texts name the sensitive parts a bare label hides: abortions and births under
+  `fertility`, every laboratory result and the pregnancy hormones under `body`, a diet that reveals a belief under
+  `lifestyle`. Test `[STRL-3]` also pins each root's direct children, so a new child fails until its description is
+  re-read. Consumers that do not read stream descriptions are unchanged. Next candidates: `wellbeing` (anxiety,
+  depression, sex drive) and `profile` (ethnicity, address, reproductive stage).
+
 ## [4.6.0] - 2026-11-16
 
 Additive, plan 115 procedures slice. Two `fhir` blocks, one new resourceType and scope key; no key, stream or
