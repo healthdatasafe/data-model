@@ -159,5 +159,8 @@
   ],
   "Procedure": [
     "procedure"
+  ],
+  "QuestionnaireResponse": [
+    "questionnaire-answer"
   ]
 }

@@ -1,6 +1,6 @@
 {
-  "version": "4.11.2",
-  "publicationDate": "2026-11-16T14:36:01.825Z",
+  "version": "4.12.0",
+  "publicationDate": "2026-11-16T20:33:59.028Z",
   "streams": [
     {
       "id": "activity",
@@ -1583,6 +1583,48 @@
             "fr": "Préférences du compte"
           },
           "parentId": "profile"
+        }
+      ]
+    },
+    {
+      "id": "questionnaire",
+      "name": "Questionnaires",
+      "parentId": null,
+      "explicitGrantOnly": true,
+      "label": {
+        "en": "Questionnaires",
+        "fr": "Questionnaires"
+      },
+      "description": {
+        "en": "The questionnaires you were asked to answer and your answers: for each question, whether you answered yes or no, did not know or preferred not to say, with any detail you added and the reason you gave for not answering, on any health topic. The records your answers point to are shared separately. Never included when you share all your data: shared only when you name them.",
+        "fr": "Les questionnaires auxquels on vous a demandé de répondre et vos réponses : pour chaque question, si vous avez répondu oui ou non, si vous ne saviez pas ou si vous avez préféré ne pas répondre, avec les précisions que vous avez ajoutées et la raison que vous avez donnée pour ne pas répondre, sur tout sujet de santé. Les données auxquelles vos réponses renvoient sont partagées séparément. Jamais inclus quand vous partagez toutes vos données : partagés seulement si vous les nommez."
+      },
+      "children": [
+        {
+          "id": "questionnaire-request",
+          "name": "Questionnaires received",
+          "label": {
+            "en": "Questionnaires received",
+            "fr": "Questionnaires reçus"
+          },
+          "description": {
+            "en": "The questionnaires you were asked to answer: their questions, on any health topic, and who asked. Never included when you share all your data: shared only when you name them.",
+            "fr": "Les questionnaires auxquels on vous a demandé de répondre : leurs questions, sur tout sujet de santé, et qui les a posées. Jamais inclus quand vous partagez toutes vos données : partagés seulement si vous les nommez."
+          },
+          "parentId": "questionnaire"
+        },
+        {
+          "id": "questionnaire-answer",
+          "name": "Questionnaire answers",
+          "label": {
+            "en": "Questionnaire answers",
+            "fr": "Réponses aux questionnaires"
+          },
+          "description": {
+            "en": "Your answers to questionnaires: for each question, whether you answered yes or no, did not know or preferred not to say, with any detail you added and the reason you gave for not answering, on any health topic. The records your answers point to are shared separately. Never included when you share all your data: shared only when you name them.",
+            "fr": "Vos réponses aux questionnaires : pour chaque question, si vous avez répondu oui ou non, si vous ne saviez pas ou si vous avez préféré ne pas répondre, avec les précisions que vous avez ajoutées et la raison que vous avez donnée pour ne pas répondre, sur tout sujet de santé. Les données auxquelles vos réponses renvoient sont partagées séparément. Jamais incluses quand vous partagez toutes vos données : partagées seulement si vous les nommez."
+          },
+          "parentId": "questionnaire"
         }
       ]
     },
@@ -16345,6 +16387,42 @@
       "repeatable": "any",
       "devNotes": "STRAW+10 staging. A durable but changing life-stage fact: record a new dated entry whenever it changes. It selects the reference range for stage-dependent hormones such as estradiol, FSH and prolactin. Hormone therapy is recorded separately as a medication, not encoded here."
     },
+    "questionnaire-request": {
+      "version": "v1",
+      "type": "system",
+      "label": {
+        "en": "Questionnaires received",
+        "fr": "Questionnaires reçus"
+      },
+      "description": {
+        "en": "A questionnaire you were asked to answer.",
+        "fr": "Un questionnaire auquel on vous a demandé de répondre."
+      },
+      "streamId": "questionnaire-request",
+      "eventType": "questionnaire/request-v1",
+      "repeatable": "any",
+      "devNotes": "One event per questionnaire asked of the person (QUESTIONNAIRE.md). No `fhir` block yet: it is the FHIR `Questionnaire` an answer's `QuestionnaireResponse.questionnaire` names, a mapping of its own, and its stream is a sibling of `questionnaire-answer` so that mapping can take a scope key of its own. A grant on this stream reads the question texts of every requester and `content.requester.relationship`, the base id of the access the person gave the requester: an opaque id, meaningful in her account only, accepted here because the root is `explicitGrantOnly` (plan 115, 2026-11-16)."
+    },
+    "questionnaire-answer": {
+      "version": "v1",
+      "type": "system",
+      "label": {
+        "en": "Questionnaire answers",
+        "fr": "Réponses aux questionnaires"
+      },
+      "description": {
+        "en": "Your answers to one questionnaire.",
+        "fr": "Vos réponses à un questionnaire."
+      },
+      "streamId": "questionnaire-answer",
+      "eventType": "questionnaire/answer-v1",
+      "repeatable": "any",
+      "fhir": {
+        "resourceType": "QuestionnaireResponse",
+        "profiles": {}
+      },
+      "devNotes": "One event per filling; an edit is a new event and the latest per `requestEventId` is current (QUESTIONNAIRE.md § Update semantics). A SMART grant reaches an answer only when the event is in this stream (or below it): an answer event written elsewhere (an app's own scope) is outside every FHIR grant. The root is `explicitGrantOnly`: only an access naming it or this stream reads the answers."
+    },
     "symptom-respiratory-cough": {
       "version": "v1",
       "label": {
@@ -20823,6 +20901,9 @@
     ],
     "Procedure": [
       "procedure"
+    ],
+    "QuestionnaireResponse": [
+      "questionnaire-answer"
     ]
   },
   "fhirMapping": {
@@ -26543,7 +26624,7 @@
         }
       },
       "questionnaire/request-v1": {
-        "description": "Doctor (or generator) → patient: a questionnaire instantiated for this patient. Carries a 'questions' map keyed by stable question keys. Each question references an existing HDS item (itemRef) with optional entity filter (params), a temporal scope (ever / window / latest with withinDays), and an optional subField for qualifier capture. The patient's matching questionnaire/answer-v1 event carries the answers map keyed by the same question keys and links back via requestEventId. Question keys must match Pryv content-query path grammar [a-zA-Z0-9_-]+ so content.answers.<key>.status queries work. See documentation/QUESTIONNAIRE.md.",
+        "description": "A questionnaire instantiated for this patient, as asked by a doctor or a generator. It is written into the patient's account ('requester', set by the patient's own app, records who asked); no event travels between two accounts. Carries a 'questions' map keyed by stable question keys. Each question references an existing HDS item (itemRef) with optional entity filter (params), a temporal scope (ever / window / latest with withinDays), and an optional subField for qualifier capture. The patient's matching questionnaire/answer-v1 event carries the answers map keyed by the same question keys and links back via requestEventId. Question keys must match Pryv content-query path grammar [a-zA-Z0-9_-]+ so content.answers.<key>.status queries work. See documentation/QUESTIONNAIRE.md.",
         "type": "object",
         "additionalProperties": false,
         "required": [
@@ -26729,7 +26810,7 @@
         }
       },
       "questionnaire/answer-v1": {
-        "description": "Patient → doctor: the response to a questionnaire/request-v1. 'requestEventId' links back to the request event. 'answers' is a map keyed by the same question keys as the request; key absence means 'not-answered' (skipped / unreached). Each answer entry carries a 'status' enum (answered / no / unknown / declined) with conditional fields per status. Referenced event ids in 'answered' entries must ALSO be mirrored into clientData.related.<eventId>: true per the Pryv §7 keyed-object cross-reference convention so cohort queries can use the indexed clientData parameter. See documentation/QUESTIONNAIRE.md.",
+        "description": "The patient's response to a questionnaire/request-v1, written by the patient's app into the patient's own account. Nothing sends it to the requester: the requester reads it only under a grant on the stream it is in. 'requestEventId' links back to the request event. 'answers' is a map keyed by the same question keys as the request; key absence means 'not-answered' (skipped / unreached). Each answer entry carries a 'status' enum (answered / no / unknown / declined) with conditional fields per status. Referenced event ids in 'answered' entries must ALSO be mirrored into clientData.related.<eventId>: true per the Pryv §7 keyed-object cross-reference convention so cohort queries can use the indexed clientData parameter. See documentation/QUESTIONNAIRE.md.",
         "type": "object",
         "additionalProperties": false,
         "required": [

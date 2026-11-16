@@ -14203,6 +14203,42 @@
     "repeatable": "any",
     "devNotes": "STRAW+10 staging. A durable but changing life-stage fact: record a new dated entry whenever it changes. It selects the reference range for stage-dependent hormones such as estradiol, FSH and prolactin. Hormone therapy is recorded separately as a medication, not encoded here."
   },
+  "questionnaire-request": {
+    "version": "v1",
+    "type": "system",
+    "label": {
+      "en": "Questionnaires received",
+      "fr": "Questionnaires reçus"
+    },
+    "description": {
+      "en": "A questionnaire you were asked to answer.",
+      "fr": "Un questionnaire auquel on vous a demandé de répondre."
+    },
+    "streamId": "questionnaire-request",
+    "eventType": "questionnaire/request-v1",
+    "repeatable": "any",
+    "devNotes": "One event per questionnaire asked of the person (QUESTIONNAIRE.md). No `fhir` block yet: it is the FHIR `Questionnaire` an answer's `QuestionnaireResponse.questionnaire` names, a mapping of its own, and its stream is a sibling of `questionnaire-answer` so that mapping can take a scope key of its own. A grant on this stream reads the question texts of every requester and `content.requester.relationship`, the base id of the access the person gave the requester: an opaque id, meaningful in her account only, accepted here because the root is `explicitGrantOnly` (plan 115, 2026-11-16)."
+  },
+  "questionnaire-answer": {
+    "version": "v1",
+    "type": "system",
+    "label": {
+      "en": "Questionnaire answers",
+      "fr": "Réponses aux questionnaires"
+    },
+    "description": {
+      "en": "Your answers to one questionnaire.",
+      "fr": "Vos réponses à un questionnaire."
+    },
+    "streamId": "questionnaire-answer",
+    "eventType": "questionnaire/answer-v1",
+    "repeatable": "any",
+    "fhir": {
+      "resourceType": "QuestionnaireResponse",
+      "profiles": {}
+    },
+    "devNotes": "One event per filling; an edit is a new event and the latest per `requestEventId` is current (QUESTIONNAIRE.md § Update semantics). A SMART grant reaches an answer only when the event is in this stream (or below it): an answer event written elsewhere (an app's own scope) is outside every FHIR grant. The root is `explicitGrantOnly`: only an access naming it or this stream reads the answers."
+  },
   "symptom-respiratory-cough": {
     "version": "v1",
     "label": {

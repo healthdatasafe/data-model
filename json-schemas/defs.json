@@ -515,7 +515,8 @@
             "DocumentReference",
             "MedicationStatement",
             "MedicationRequest",
-            "Procedure"
+            "Procedure",
+            "QuestionnaireResponse"
           ]
         },
         "category": {
@@ -609,9 +610,26 @@
       },
       "required": [
         "resourceType",
-        "code",
         "profiles"
       ],
+      "if": {
+        "properties": {
+          "resourceType": {
+            "const": "QuestionnaireResponse"
+          }
+        },
+        "required": [
+          "resourceType"
+        ]
+      },
+      "then": {
+        "maxProperties": 2
+      },
+      "else": {
+        "required": [
+          "code"
+        ]
+      },
       "additionalProperties": false
     },
     "fhirCompanion": {

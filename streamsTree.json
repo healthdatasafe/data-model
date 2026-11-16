@@ -1584,6 +1584,48 @@
     ]
   },
   {
+    "id": "questionnaire",
+    "name": "Questionnaires",
+    "parentId": null,
+    "explicitGrantOnly": true,
+    "label": {
+      "en": "Questionnaires",
+      "fr": "Questionnaires"
+    },
+    "description": {
+      "en": "The questionnaires you were asked to answer and your answers: for each question, whether you answered yes or no, did not know or preferred not to say, with any detail you added and the reason you gave for not answering, on any health topic. The records your answers point to are shared separately. Never included when you share all your data: shared only when you name them.",
+      "fr": "Les questionnaires auxquels on vous a demandé de répondre et vos réponses : pour chaque question, si vous avez répondu oui ou non, si vous ne saviez pas ou si vous avez préféré ne pas répondre, avec les précisions que vous avez ajoutées et la raison que vous avez donnée pour ne pas répondre, sur tout sujet de santé. Les données auxquelles vos réponses renvoient sont partagées séparément. Jamais inclus quand vous partagez toutes vos données : partagés seulement si vous les nommez."
+    },
+    "children": [
+      {
+        "id": "questionnaire-request",
+        "name": "Questionnaires received",
+        "label": {
+          "en": "Questionnaires received",
+          "fr": "Questionnaires reçus"
+        },
+        "description": {
+          "en": "The questionnaires you were asked to answer: their questions, on any health topic, and who asked. Never included when you share all your data: shared only when you name them.",
+          "fr": "Les questionnaires auxquels on vous a demandé de répondre : leurs questions, sur tout sujet de santé, et qui les a posées. Jamais inclus quand vous partagez toutes vos données : partagés seulement si vous les nommez."
+        },
+        "parentId": "questionnaire"
+      },
+      {
+        "id": "questionnaire-answer",
+        "name": "Questionnaire answers",
+        "label": {
+          "en": "Questionnaire answers",
+          "fr": "Réponses aux questionnaires"
+        },
+        "description": {
+          "en": "Your answers to questionnaires: for each question, whether you answered yes or no, did not know or preferred not to say, with any detail you added and the reason you gave for not answering, on any health topic. The records your answers point to are shared separately. Never included when you share all your data: shared only when you name them.",
+          "fr": "Vos réponses aux questionnaires : pour chaque question, si vous avez répondu oui ou non, si vous ne saviez pas ou si vous avez préféré ne pas répondre, avec les précisions que vous avez ajoutées et la raison que vous avez donnée pour ne pas répondre, sur tout sujet de santé. Les données auxquelles vos réponses renvoient sont partagées séparément. Jamais incluses quand vous partagez toutes vos données : partagées seulement si vous les nommez."
+        },
+        "parentId": "questionnaire"
+      }
+    ]
+  },
+  {
     "id": "symptom",
     "name": "Symptoms",
     "label": {
