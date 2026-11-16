@@ -26,6 +26,13 @@ const MEDICATION_TYPES = ['MedicationStatement', 'MedicationRequest'];
 const PROCEDURE_TYPE = 'Procedure';
 
 /**
+ * The resourceType whose block maps the questionnaire answer item (QUESTIONNAIRE.md § FHIR): no code, no category, no
+ * value. The renderer reads the content by name (`requestEventId`, `answers`), so the block holds `resourceType` and
+ * `profiles` only.
+ */
+const QUESTIONNAIRE_RESPONSE_TYPE = 'QuestionnaireResponse';
+
+/**
  * The Patient elements an item may contribute (`fhir: { resourceType: Patient, element }`): the item type each needs
  * and, for a coded element, the code system its option codings come from, code → official display. Text and date
  * elements take the content as written. Additive, like the `fhirElement` enum in src/schemas/items.js.
@@ -147,6 +154,12 @@ function checkFhirMapping (key, item, itemEventTypes) {
     if (table == null) fail(`resourceType "${f.resourceType}" takes no category, so no "alsoMatchCategories"`);
     if (table[c] == null) fail(`alsoMatchCategories: unknown ${f.resourceType} category "${c}" (known: ${Object.keys(table).join(', ')})`);
     if (c === f.category) fail(`alsoMatchCategories: "${c}" is the block's own category`);
+  }
+
+  // A QuestionnaireResponse has no code: nothing below applies to it.
+  if (f.resourceType === QUESTIONNAIRE_RESPONSE_TYPE) {
+    checkQuestionnaireResponse(item, f, itemEventTypes, fail);
+    return;
   }
 
   const composite = item.composite;
@@ -517,6 +530,24 @@ function checkDosage (item, f, itemEventTypes, fail, sameSet, unique) {
   if (new Set(texts).size !== texts.length) fail('dosage.routes: two routes share a text; an imported route would map back to two values');
 }
 
+/**
+ * A QuestionnaireResponse block (`[FHIR-MAP-26]`, QUESTIONNAIRE.md § FHIR) sits on a `system` item (no form field
+ * writes an answer event) with one eventType whose content the renderer reads by name: `requestEventId`, a string,
+ * names the questionnaire answered (`QuestionnaireResponse.questionnaire`), and `answers`, an object keyed by
+ * question key, holds the answers (`item[]`). The block names neither, so it holds `resourceType` and `profiles`
+ * only: no code (the resource has none), no value, nothing to split or ignore.
+ */
+function checkQuestionnaireResponse (item, f, itemEventTypes, fail) {
+  const extra = Object.keys(f).filter((k) => k !== 'resourceType' && k !== 'profiles');
+  if (extra.length > 0) fail(`a QuestionnaireResponse block holds "resourceType" and "profiles" only (the resource has no code and no value); remove ${extra.map((k) => `"${k}"`).join(', ')}`);
+  if (item.type !== 'system') fail(`a QuestionnaireResponse block applies to a "system" item (an answer event is written by an app, not entered in a form field); item type is "${item.type}"`);
+  if (itemEventTypes.length !== 1) fail('a QuestionnaireResponse block needs an item with exactly one eventType');
+  const request = contentProperty(itemEventTypes[0], 'requestEventId');
+  if (request?.type !== 'string') fail(`eventType "${itemEventTypes[0]}" has no string content property "requestEventId" (it renders as QuestionnaireResponse.questionnaire)`);
+  const answers = contentProperty(itemEventTypes[0], 'answers');
+  if (answers?.type !== 'object') fail(`eventType "${itemEventTypes[0]}" has no object content property "answers" (it renders as QuestionnaireResponse.item)`);
+}
+
 /** The `product.system` enum of a coded medication (`drug.product`, MEDICATION.md § National products) is covered by `fhirMapping.productSystems`. */
 function checkProductSystems (field, itemEventTypes, fail) {
   const system = contentProperty(itemEventTypes[0], `${field}.product.system`);
@@ -732,6 +763,9 @@ function checkFhirImportKeys (items) {
     if (item.deprecated || f == null || f.companionOf != null) continue;
     if (f.element != null) {
       claim(`${f.resourceType}.${f.element}`, key);
+    } else if (f.resourceType === QUESTIONNAIRE_RESPONSE_TYPE) {
+      // No code to match on: a QuestionnaireResponse goes to the one item that maps the resourceType.
+      claim(f.resourceType, key);
     } else if (f.code.from === 'datasource' || f.code.from === 'content' || f.code.from === 'text') {
       // The resource's code is content, so the item is matched by (resourceType, category) alone: one per category
       // and per source (a coded medicine goes to the datasource item, a name alone to the text item).

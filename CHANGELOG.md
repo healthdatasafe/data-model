@@ -1,5 +1,86 @@
 # Changelog
 
+## [4.12.0] - 2026-11-16
+
+Additive, plan 115 questionnaire answers slice. Three streams (the root `explicitGrantOnly`), two items, one `fhir`
+block, one new resourceType and scope key; no existing key or stream changes, and no eventType schema changes (two
+descriptions corrected).
+
+**Release order: this pack first, then hds-fhir-js (the same day), then the facade pin and the extension options
+with the extension rebuilt from that hds-fhir-js, then the apps.** An hds-fhir-js release before the one of this
+slice never misrenders this pack: it skips the block (unknown resourceType, tested before the code it lacks) and
+serves an answer event as the generic Observation of its item. No answer event sits in the new stream until an app
+writes there, and production keeps the previous pack until the facade re-pin. **Before the first write** into the
+new streams, the existing `*` accesses of each production core are masked for `questionnaire`, as they were for
+`genetics` (GENETICS.md).
+
+### Added
+- **Streams `questionnaire` (root), `questionnaire-request` and `questionnaire-answer`**, with consent labels and
+  descriptions { en, fr }, and the items `questionnaire-request` and `questionnaire-answer` (`type: system`) on the
+  existing eventTypes `questionnaire/request-v1` and `questionnaire/answer-v1`. Until now the pair had eventTypes
+  and no home in the model: the caller chose the stream, and the patient app wrote both into its own scope stream,
+  which no consent names. QUESTIONNAIRE.md § Where the events live.
+- **`explicitGrantOnly: true` on the `questionnaire` root**, the second root to carry the marker (perki,
+  2026-11-16). The answer stream is a cross-topic sink: a yes on a question about a genetic test says that such a
+  result exists. An access covers the root only when it names it or a child; a `*` grant and a grant on another
+  root never reach it, and a consent screen offers it unticked (the SMART `patient/*.rs` included: offered, never
+  ticked by default). The consumers already read
+  the marker from the pack (hds-lib, hds-mcp-js, the account app's consent screen, and the hds-fhir-js extension,
+  which has offered a marked stream unticked since 0.1.0); only the FHIR facade is new, from the release of this
+  slice (`*` no longer reads a marked root). GENETICS.md § `explicitGrantOnly`.
+- **A default SMART consent to `patient/*.rs` is echoed as one scope per resource type once the extension is pinned to this pack**, never
+  as the literal `patient/*.rs`: the answers are offered unticked, so the wildcard is not whole. Nothing an access
+  reads changes. FHIR-MAPPING.md § SMART scopes.
+- **Consent descriptions that say everything a grant shows:** for each question a yes, a no, "did not know" or
+  "preferred not to say", **with any detail the person added (the qualifier) and the reason given for not
+  answering**, on any health topic, and that the streams are never part of "all your data". One French form for the
+  answers, the plural (`Réponses aux questionnaires`), on the item and the stream.
+- **`fhir` block on `questionnaire-answer`: `QuestionnaireResponse`, no profile claimed** (`profiles: {}`: the base
+  resource on every flavour). One answer event is one response: `questionnaire` the canonical
+  `https://hds.ngo/fhir/Questionnaire/<requestEventId>`, `authored` the event time, `status` `completed`, one item
+  per question key with exactly one answer: `true` (the referenced events and the qualifier nested), `false`, or an
+  absent boolean carrying a data-absent-reason (`asked-unknown`, `asked-declined`, a decline's reason nested under
+  the answer). FHIR-MAPPING.md § QuestionnaireResponse.
+- **Schema and build:** `resourceType` enum gains `QuestionnaireResponse`; `code` is required on every mapping
+  except that one, whose block holds `resourceType` and `profiles` only. `[FHIR-MAP-26]`: a `system` item, one
+  eventType with a string `requestEventId` and an object `answers`; import key the resourceType alone.
+- **Scope:** `pack.fhirScopes.QuestionnaireResponse = ["questionnaire-answer"]`; lock entry `questionnaire-answer`
+  (pair `QuestionnaireResponse`, parent `questionnaire`). Nothing rewritten. The root and the request stream are in
+  no grant and not in the lock.
+
+### Permanent
+- The bare scope key `QuestionnaireResponse` (no category table can be added later), and the stream
+  `questionnaire-answer` under that pair: nothing in it can be another resource type.
+- `requestEventId` and `answers` as the names the renderer reads on any eventType mapped to
+  `QuestionnaireResponse`.
+- `explicitGrantOnly` on `questionnaire`: removing it later would widen every `*` grant given meanwhile.
+- Published by the renderer with the first response rendered anywhere (the facade, demo included, or an app's export
+  file), not by the pack: the canonical prefix `https://hds.ngo/fhir/Questionnaire/`, the identifier system
+  `https://hds.ngo/fhir/sid/event`, the child linkIds `<key>.references`, `<key>.qualifier`, `<key>.reason`, one
+  answer per question in every status, and the absence stated on `_valueBoolean`.
+
+### Not in this release
+- **No US Core profile claim.** The rendering is structurally valid against `us-core-questionnaireresponse`; the
+  claim is added with the `Questionnaire` mapping (the question text is in the request), which is additive.
+- The request has no mapping (no `Questionnaire` resource, so no question text in a response).
+- No app writes into the new streams yet: hds-webapp still writes both events into its scope stream, so no
+  response is served until it adds the model stream.
+
+### Documentation (corrections: what the page said and no code does)
+- QUESTIONNAIRE.md and the two eventType descriptions no longer say the pair travels "doctor → patient" and
+  "patient → doctor": both events are written into the patient's account by the patient's own app, and nothing
+  sends an answer to the requester.
+- QUESTIONNAIRE.md no longer says per-pregnancy requests and answers live on per-pregnancy substreams (Plan 53 D3):
+  not implemented, no app writes one.
+- QUESTIONNAIRE.md: **one JSON type across a sub-field's options**, a rule for new requests (the qualifier renders
+  as the answer of one FHIR item, which has one type); the example mixing `T1` and `9` is replaced.
+- QUESTIONNAIRE.md no longer says event ids may be UUIDs: the renderer accepts 1 to 31 characters of
+  `[A-Za-z0-9-]` (a cuid fits, a 36-character UUID is refused).
+- QUESTIONNAIRE.md: § Where the events live (the app scope stream is kept during the transition, the model stream
+  first), § FHIR; `status: unknown` mirrors `asked-unknown` (was `unknown`: the patient was asked); the FHIR mirror
+  table follows the mapping.
+- GENETICS.md: the second marked root, the SMART translation of `patient/*.rs`, the sweep before the first write.
+
 ## [4.11.2] - 2026-11-16
 
 Text only: no key, stream, eventType or FHIR block change (the docs).

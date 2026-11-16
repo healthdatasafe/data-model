@@ -98,6 +98,17 @@ hds-fhir-js, then the facade pin and the extension options, then hds-webapp and 
 tag** (their export indexes the live pack, [Forward compatibility](#forward-compatibility)). The `treatment`
 items stay unmapped ([Procedures](#procedures-procedure), last paragraph).
 
+**Questionnaire answers (4.12.0, plan 115):** the `questionnaire-answer` item carries a `QuestionnaireResponse`
+block, a **bare scope key**, the first block with no `code` (the resource has none, and its content is read by
+name) and with **no profile claimed** (`profiles: {}`)
+([QuestionnaireResponse](#questionnaireresponse-questionnaire-answers)). The streams `questionnaire`,
+`questionnaire-request` and `questionnaire-answer` and the two items are new with it, and the root is
+**`explicitGrantOnly`**: a consent screen offers it unticked, under `patient/*.rs` too, and a `*` grant never
+reaches it. Needs the hds-fhir-js release that knows the
+resourceType; an older renderer serves an answer event as a generic Observation. **Release order: data-model first,
+then hds-fhir-js, then the facade pin and the extension options (the extension rebuilt from that hds-fhir-js), then
+the apps.**
+
 An item's `fhir:` block says how its events **render as** a FHIR R4 resource and how a FHIR resource **imports
 back** into an event of that item. HDS uses it in three ways:
 
@@ -170,7 +181,8 @@ block emit a `category` coding without a table: if a profile ever requires one (
 one item set each, so `patient/MedicationRequest.rs` is the whole of it and a `?category=` on them grants nothing,
 now and for good. So does `Procedure` ([Procedures](#procedures-procedure) gives the reasons): `patient/Procedure.rs`
 is every procedure, and a stream mapped to `Procedure` later (the `treatment` root, if it comes to that) joins the
-same key as a new grant root, never a category of it.
+same key as a new grant root, never a category of it. `QuestionnaireResponse` is a bare key too
+([QuestionnaireResponse](#questionnaireresponse-questionnaire-answers)).
 
 ---
 
@@ -182,10 +194,10 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 
 | Field | Required | Meaning |
 |---|---|---|
-| `resourceType` | yes | `Observation`, `Condition`, `DocumentReference` ([documents](#documentreference-documents)), `MedicationStatement` or `MedicationRequest` ([medications](#medications-medicationstatement-and-medicationrequest)), `Procedure` ([procedures](#procedures-procedure); `Patient` is an [element block](#patient-elements)). *Permanent.* |
+| `resourceType` | yes | `Observation`, `Condition`, `DocumentReference` ([documents](#documentreference-documents)), `MedicationStatement` or `MedicationRequest` ([medications](#medications-medicationstatement-and-medicationrequest)), `Procedure` ([procedures](#procedures-procedure)), `QuestionnaireResponse` ([questionnaire answers](#questionnaireresponse-questionnaire-answers); `Patient` is an [element block](#patient-elements)). *Permanent.* |
 | `category` | per resourceType (table above) | Category key. *Permanent.* |
 | `alsoMatchCategories` | no | Further category keys of the same table that a resource may carry and still import into this item, **on import only**, never emitted (smoking status filed under `survey` by older sources). Never the block's own category. |
-| `code` | yes | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }`, `{ from: eventType, codings }`, `{ from: content, field, translate, unknown }` or `{ from: text, field }` (below). |
+| `code` | yes; none on a `QuestionnaireResponse` | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }`, `{ from: eventType, codings }`, `{ from: content, field, translate, unknown }` or `{ from: text, field }` (below). |
 | `alsoMatch` | no | Extra codings accepted **on import only**, never emitted. With a static code, a list; with an eventType code, keyed by the eventType each names (`{ concentration/mg-dl: [codings] }`). Never with a datasource code. |
 | `alsoEmit` | no | Extra codings **emitted only**, after the static code in `code.coding`, never an import key: the second code a profile requires (US Core pulse oximetry wants 2708-6 beside 59408-5). A list, with a static code only. A resource that carries an `alsoEmit` coding without the code does not match the item. |
 | `value` | no | FHIR `value[x]`, by `kind` (below). Absent on a Condition, a DocumentReference, a medication and a Procedure, which have no `value[x]`. |
@@ -507,7 +519,8 @@ computes the table and publishes it:
   "MedicationStatement": ["medication-intake"],
   "Observation|vital-signs": ["body-blood-pressure", "body-heart-rate", "body-height", "body-oxygen-saturation", "body-weight"],
   "Patient": ["profile-address", "profile-date-of-birth", "profile-name", "profile-sex"],
-  "Procedure": ["procedure"]
+  "Procedure": ["procedure"],
+  "QuestionnaireResponse": ["questionnaire-answer"]
 }
 ```
 
@@ -515,7 +528,15 @@ Keys are `ResourceType|category` for a resourceType with a category table, and t
 without (`Patient`, `MedicationStatement`, `MedicationRequest`, `Procedure`); values are sorted stream ids.
 `patient/Patient.rs` and `patient/*.rs` reach the `Patient` key, `patient/MedicationStatement.rs` the
 `MedicationStatement` key, `patient/Procedure.rs` the `Procedure` key (the `procedure` root, its context stream
-`procedure-fertility` with it); a scope with `?category=` never reaches a bare key. It feeds the Pryv OAuth extension's `fhirScopes` option, pinned
+`procedure-fertility` with it); a scope with `?category=` never reaches a bare key. **A grant root under an `explicitGrantOnly` root is offered unticked**
+([GENETICS.md](GENETICS.md#explicitgrantonly)): `questionnaire-answer` is in the offer of `patient/*.rs`, of
+`patient/QuestionnaireResponse.rs` and of the native `hds/stream/questionnaire-answer.read` alike, and in each the
+person has to tick it. Left unticked under `patient/*.rs`, the token response states the narrower scopes that were
+granted, as after any untick. **So once the extension is pinned to 4.12.0, a default consent to `patient/*.rs` never echoes the literal again:**
+it echoes one scope per resource type (`patient/Condition.rs`, `patient/Observation.rs`, ...), and so does a
+`patient/*.rs` grant given before, at its next token exchange. Nothing an access reads changes. An app that tests
+the granted scope for the string `patient/*.rs` must test for the type it needs. The table itself lists every key; the marker is in `pack.streams`, and hds-fhir-js
+pins the marked streams in the extension options (`explicitGrantOnly`, part of the hash). It feeds the Pryv OAuth extension's `fhirScopes` option, pinned
 by version and hash (`hds-fhir-js`: `node scripts/extension-options.ts <pack>`); a hand-written table is never used
 in production.
 
@@ -836,6 +857,178 @@ with a start and an end is a period and no treatment, and imports here as a proc
 code, on which datasets-service dataset holds the coding, the bridge resolving it as it completes `hdsId`, with
 procedure as the fallback. Treatment tallies are most of the intake data, so the tally rendering matters more there.
 
+## QuestionnaireResponse: questionnaire answers
+
+The `questionnaire-answer` item (stream `questionnaire-answer`, eventType `questionnaire/answer-v1`,
+[QUESTIONNAIRE.md](QUESTIONNAIRE.md)) carries the one `QuestionnaireResponse` block (4.12.0, plan 115). One
+answer event renders as one `QuestionnaireResponse`, from the event alone: no other event is read to build it.
+
+```yaml
+questionnaire-answer:
+  fhir:
+    resourceType: QuestionnaireResponse        # no code: the resource has none
+    profiles: {}                               # no profile claimed yet (below, "No profile is claimed")
+```
+
+| Event | QuestionnaireResponse (hds-fhir-js `toFhir`) |
+|---|---|
+| event id | `id` |
+| `requestEventId` | `questionnaire`: the canonical `https://hds.ngo/fhir/Questionnaire/<requestEventId>` (below) |
+| (no status field) | `status: completed`, always (below) |
+| event `time` | `authored`, at the event's precision ([PARTIAL-DATES.md](PARTIAL-DATES.md)); an `approx` date is refused (the resource has no note to say "about") |
+| the writer | `subject` is the patient; `author` is the patient too, unless the event was imported (`clientData.sourceKey`), where who recorded the answers is not known and `author` is left out |
+| `answers.<key>` | one `item`, `linkId` = the question key, with **exactly one `answer`** whatever the status; items come in the order the content is read (below) |
+| `status: answered` | `answer: [{ valueBoolean: true, item: [...] }]`: a nested item `<key>.references` with one `valueReference` per referenced event, and, when the answer has one, a nested item `<key>.qualifier` with the qualifier as `valueString`, `valueDecimal` or `valueBoolean` (a string, a number, a boolean; anything else is refused; "The qualifier's type" below) |
+| a referenced event id | `valueReference.identifier` = `{ system: https://hds.ngo/fhir/sid/event, value: <event id> }`, always; `valueReference.reference` = `<ResourceType>/<id>` as well when the caller resolved the event under the same grant (the facade reads it with the same token; the export looks it up in its own set). An event the grant cannot read keeps its identifier only |
+| `status: no` | `answer: [{ valueBoolean: false }]` |
+| `status: unknown` | `answer: [{ _valueBoolean: { extension: [data-absent-reason = asked-unknown] } }]`: the boolean is absent, and the extension `http://hl7.org/fhir/StructureDefinition/data-absent-reason` on it says why |
+| `status: declined` | `answer: [{ _valueBoolean: { extension: [data-absent-reason = asked-declined] }, item: [...] }]`; a `reason` as the nested item `<key>.reason` with `valueString`, under the answer |
+| key absent (not answered) | no item |
+| `clientData.related` | not rendered: it mirrors `requestEventId` and the references, which are |
+
+**Why a boolean with nested items.** The model's own semantics are yes with supporting records, no, does not know,
+prefers not to say (QUESTIONNAIRE.md § Status enum). One `linkId` therefore always answers with one type (a
+boolean), and the records, the qualifier and the decline reason are children of the answer, as R4 nests them
+(`item.answer.item`). A flat rendering (`valueReference` for a yes, a boolean for a no) would answer one question
+with two types, which no `Questionnaire` item can describe, and would leave the qualifier without a place when a yes
+names several records. A dot never occurs in a question key (`[a-zA-Z0-9_-]+`), so `<key>.references`,
+`<key>.qualifier` and `<key>.reason` can never collide with a question.
+
+**Why the absence sits on the value, and never on the item** (review 2026-11-16, must-fix 1). R4 allows child items
+under a question only inside an answer ("when dealing with questions, nesting must occur within each answer"). A
+declined answer rendered as an item with no `answer`, the extension on the item and the reason as `item.item`
+validates while no `Questionnaire` resolves, and fails the day one does: "Items not of type group should not have
+items outside answers". So every status keeps one answer, the data-absent-reason sits on the missing boolean
+(`_valueBoolean`, its usual place), and the reason nests under the answer like the references. The shape also holds
+in R5 (`item.item` for groups only). hds-fhir-js validates its fixtures against a test `Questionnaire` at the same
+canonical (boolean questions with `reference`, `string` or `decimal`, and `string` children), so the shape is
+checked against the resource the next slice must serve: 0 errors, 0 warnings.
+
+**The qualifier's type: one per sub-field** (review must-fix 2). The renderer does not read the request, so it
+renders the qualifier by its JSON type: a string as `valueString`, a number as `valueDecimal`, a boolean as
+`valueBoolean`. The future `Questionnaire` types the item `<key>.qualifier` from the request's `subField`:
+
+| Request `subField` | `Questionnaire` item `<key>.qualifier` |
+|---|---|
+| `text` | `string` |
+| `number` | `decimal` |
+| `select-segmented`, every option value a string | `string` (or `choice` with `valueString` options) |
+| `select-segmented`, every option value a number | `decimal` (R4 `answerOption` has no decimal, so not a `choice`) |
+| (none today: a qualifier that is a JSON boolean) | `boolean`; the renderer emits `valueBoolean` for it and import reads it back |
+| `select-segmented`, strings and numbers mixed | **not describable**: forbidden for new requests (QUESTIONNAIRE.md, "One JSON type per sub-field"); an existing one keeps one known validation error on its numeric option |
+
+A number is always `valueDecimal`, never `valueInteger`: an integer rendering would break a `number` sub-field,
+whose item type is `decimal`. Import accepts `valueInteger` too.
+
+**Item order.** Items follow the order in which the content's `answers` object is read. That is the order written
+for ordinary keys; JavaScript reads integer-like keys (`1`, `10`, `2`) first and sorted, and the core does not
+promise key order. Nothing depends on the order: an item is found by its `linkId`.
+
+**Why a bare key, and why it stays one.** HDS holds one item for answers, on one stream, and nothing stored tells one
+kind of questionnaire from another; `QuestionnaireResponse` has no `category` element in R4, and US Core 6.1.0
+defines no category search for it (its searches are `_id`, `patient`, `status`, `authored`, `questionnaire`).
+As for `Procedure`, the bare key is a one-way door ([Categories](#categories-per-resourcetype)); a second stream that
+renders as `QuestionnaireResponse` later joins the key as another grant root.
+
+**What this block closes for good** (permanent, like the key):
+
+1. **Nothing in `questionnaire-answer` or under it can ever be another resource type or a category-scoped
+   Observation.** The lock holds the stream under the pair `QuestionnaireResponse`. The request stream is a sibling,
+   in no grant and outside the lock, so that a `Questionnaire` mapping can take it under a key of its own.
+2. **`requestEventId` and `answers` are reserved names** on every eventType an item maps to
+   `QuestionnaireResponse`: the block does not name them, the renderer reads them by name, and the build pins their
+   types (`[FHIR-MAP-26]`).
+3. **Three URIs, three linkId forms and the answer shapes are published with the first rendering**, in hds-fhir-js
+   and not in the pack, and are as permanent as a code: the canonical prefix `https://hds.ngo/fhir/Questionnaire/`,
+   the identifier system `https://hds.ngo/fhir/sid/event`, the child linkIds `<key>.references`, `<key>.qualifier`,
+   `<key>.reason`, one answer per question in every status, and the absence on `_valueBoolean`. An app that stores a
+   rendered response keeps them. "First rendering" means anywhere: the facade, demo included, or an app's export
+   file.
+
+**The `questionnaire` canonical.** A request is a questionnaire instantiated for one patient, so the canonical names
+that instance: `https://hds.ngo/fhir/Questionnaire/<requestEventId>`. It is an identifier, the same on every base an
+account is read on (a regional base, a per-user base, an export file) and after a core move; it does not resolve. No
+`Questionnaire` resource is served yet. When the request item is mapped, the `Questionnaire` it renders carries this
+value as its `url`, so a canonical stored today resolves then by `GET Questionnaire?url=`. The request is not read to
+render a response, so `item.text` (the question as asked) and the questionnaire's title are not rendered until then;
+`linkId` is the request's own question key. Two limits, stated: the canonical names **one patient's instance**, so
+two patients answering the same template have different canonicals (the future `Questionnaire` carries the template
+in `derivedFrom`, from the request's `templateRef`, or apps cannot group responses); and it is unversioned and not
+hosted, where SDC's text asks for the version-specific URL of a form on a Form Manager (prose, not a validator rule).
+
+**`status` is `completed`, a constant of the renderer.** An app writes the answer event when the person submits, and
+the eventType has no status. An edit is a new answer event, never a change in place (QUESTIONNAIRE.md § Update
+semantics), so every answer event is a response completed at its `authored` time, and **the current response to a
+questionnaire is the one with the latest `authored` among those naming it**: an earlier one is not rendered
+`amended` or `entered-in-error`, since no event says which one replaced it.
+
+**A date ahead of the clock: tolerated up to 24 hours, refused beyond.** An answer is stamped by the device at
+submit, not dated by hand, so a time ahead of the server is a clock fault, not a planned response: a phone 30
+seconds fast must not hide the answer until the server catches up, and a time zone set wrong moves it by hours. The
+renderer and the importer accept an answer whose date (the UTC period it names) starts up to 24 hours after
+`ctx.now`, and render `authored` as written. Beyond 24 hours the event is refused ("dated more than a day in the
+future"), an outcome in the search. A procedure keeps the strict rule: it is dated by hand, and a future one is a
+planned one.
+
+**The reach of the grant.** `patient/QuestionnaireResponse.rs` reads every answer event in `questionnaire-answer`:
+which questions were asked (their keys); for each a yes, a no, "does not know" or "prefers not to say"; **the
+qualifier the person chose or typed and the reason typed when declining**, both free content; on any health topic,
+whatever other scope the app holds. A question about a medication, a pregnancy or a genetic test answered here is
+read under this grant even when the app holds no grant on those records; the records themselves are read only under
+their own grants (the reference is then an identifier the app cannot follow). **The ids are part of the reach:** the
+canonical carries the id of a request the app cannot read, and each reference identifier the id of a record it may
+not read either; an HDS event id (a cuid) encodes its creation instant, so an id says roughly when its event was
+written. The same token reads those ids in `content` on the raw API, so the FHIR rendering shows nothing more. The
+stream description says all of this in plain words on the consent screen. **A grant reaches an answer only when
+the event is in this stream:** an answer event written anywhere else (an app's own scope stream) is in no FHIR grant
+and is not served.
+
+**Granted on purpose only.** The `questionnaire` root is `explicitGrantOnly`
+([GENETICS.md](GENETICS.md#explicitgrantonly)): because of the paragraph above, the answers are not part of "all my
+data". Every SMART request that reaches the stream, `patient/*.rs` included, offers it **unticked**, and the
+person ticks it (the behaviour `genetics` has on a native token; perki, 2026-11-16); a `*` stream permission does
+not read it at the facade, and the apps leave the root out of a `*` request (or mask it on a minted access), as for
+`genetics`.
+
+**No profile is claimed** (perki, 2026-11-16). The block ships `profiles: {}`: the base resource on `us`, `ips` and
+`ch`, no `meta.profile`, no `supportedProfile` in the CapabilityStatement. The rendering is structurally valid
+against US Core 6.1.0 `us-core-questionnaireresponse` (the validator finds no error), which is not conformance: the
+profile's Must Support set includes `item.text` (through SDC), which HDS holds in the request and does not render
+until the request is mapped, and typed answers. Withdrawing a published claim would be a public downgrade; adding
+one is additive. The claim on `us` is added with the `Questionnaire` slice, after the Inferno US Core group passes
+on demo. IPS 2.0.1 has no QuestionnaireResponse profile. For reference, what US Core requires and HDS renders:
+
+| Element | US Core 6.1.0 `us-core-questionnaireresponse` (on SDC 3.0.0) | HDS |
+|---|---|---|
+| `questionnaire` | 1..1 (SDC), Must Support | the canonical above |
+| `status` | 1..1 (base), Must Support | `completed` |
+| `subject` | 1..1, Must Support, a US Core Patient | the patient |
+| `authored` | 1..1 (SDC), Must Support | the event time |
+| `author` | Must Support | the patient, unless imported |
+| `item.linkId` | 1..1, Must Support | the question key |
+| `item.text`, `identifier` | Must Support (SDC) | `item.text` not rendered (it is in the request); `identifier` is the source record's on an imported event |
+
+**Import** (`fromFhir`): a `QuestionnaireResponse` matches the one item that maps the resourceType. Only a response
+HDS rendered has a place: its `questionnaire` must be an HDS canonical (the request event id comes from it) and its
+items must have the shapes above, since `questionnaire/answer-v1` stores references to records and not values. A
+response to another questionnaire (a PHQ-9 from an EHR, with coded or typed answers) is refused: its answers are
+values, which belong in the typed items of their domain, an import of its own design. `status` `completed` or
+`amended` imports (HDS keeps no status, so `amended` renders back as `completed`); `in-progress`, `stopped` and
+`entered-in-error` are refused, as is a response authored more than a day in the future. The data-absent-reason is
+read on the answer's `_valueBoolean`, and on the item itself too (another writer's usual place for it; a reason
+is then read from the item's child): `unknown` is read as `asked-unknown`. An item with no answer and no
+data-absent-reason, or with `not-asked`, is an unanswered question: no key. Any question key the grammar allows
+imports, `constructor` and `__proto__` included.
+The importer also returns the `clientData.related` mirror. **The event ids are those of the account the response
+was rendered from:** a bridge that imports into another account maps them to the events it wrote there (the
+`related` mirror lists every one of them), or the references dangle (QUESTIONNAIRE.md: a dangling reference is a
+known degraded state). `item.text`, `author`, `source` and `identifier` are not kept.
+
+**Forward compatibility.** A new resourceType: hds-fhir-js releases before the one of this slice skip the block and
+serve an answer event as the generic Observation of its item (the item coding, no value), which answers an
+Observation search without a category and no `QuestionnaireResponse` search. The block has no `code`, which every
+earlier mapping had; those releases test the resourceType before they read the code.
+
 ---
 
 ## Forward compatibility
@@ -1048,6 +1241,10 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   as `Procedure.note`) and whose `count`, when declared, is a number (on a composite it is listed in `ignore`). The
   two names are reserved on every Procedure-mapped eventType: the renderer reads them by name
   ([Procedures](#procedures-procedure), one-way doors).
+- **Questionnaire answers (`[FHIR-MAP-26]`):** a `QuestionnaireResponse` block holds `resourceType` and `profiles`
+  only (`profiles` may be empty; no `code`, which every other mapping requires; no `category`, `value`, `split`, `ignore` or `dosage`), on a
+  `system` item with one eventType whose content has a string `requestEventId` and an object `answers`, the two
+  names the renderer reads. Import key: the resourceType alone, one active item.
 - **eventType codings (`[FHIR-MAP-23]`):** at least two distinct codings; two eventTypes may share one, with one
   display, on an item that asserts `references.loinc` only; a shared coding is still never an `alsoMatch` of the
   block. **An HDS item coding** (static or per eventType) is the item's own key, a deprecated alias aside.
