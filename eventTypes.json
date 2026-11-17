@@ -6428,8 +6428,24 @@
           ],
           "properties": {
             "system": {
+              "description": "A URI. Not urn:oid:<root> (in any case): that is the root-plus-extension form, which has no settled mapping and is not stored (documentation/DOCUMENTS.md, Open points). urn:ietf:rfc:3986 is written in lower case only.",
               "type": "string",
-              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:[^\\s|]+$"
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:[^\\s|]+$",
+              "not": {
+                "anyOf": [
+                  {
+                    "pattern": "^[Uu][Rr][Nn]:[Oo][Ii][Dd]:"
+                  },
+                  {
+                    "pattern": "^[Uu][Rr][Nn]:[Ii][Ee][Tt][Ff]:[Rr][Ff][Cc]:3986$",
+                    "not": {
+                      "enum": [
+                        "urn:ietf:rfc:3986"
+                      ]
+                    }
+                  }
+                ]
+              }
             },
             "value": {
               "type": "string",
