@@ -33,6 +33,34 @@ const PROCEDURE_TYPE = 'Procedure';
 const QUESTIONNAIRE_RESPONSE_TYPE = 'QuestionnaireResponse';
 
 /**
+ * The resourceType whose block maps the questionnaire request item (QUESTIONNAIRE.md § FHIR): no code, no category, no
+ * value either. The renderer reads the content by name (`questions`, and in each question `label` and `itemRef`), so
+ * the block holds `resourceType` and `profiles` only.
+ */
+const QUESTIONNAIRE_TYPE = 'Questionnaire';
+
+/**
+ * The grammar of a question key on an eventType an item maps to `Questionnaire`, as the eventType declares it
+ * (`questions.propertyNames.pattern`): the Pryv content-query path grammar. No dot, so the child linkIds a
+ * Questionnaire and its responses carry (`<key>.references`, `<key>.qualifier`, `<key>.reason`, published with
+ * 4.12.0) are never a question's. Never widened.
+ */
+const QUESTION_KEY_PATTERN = '^[a-zA-Z0-9_-]+$';
+
+/**
+ * The sub-field types of a question (`subField.type`) the renderer knows: each has a rendering as the item
+ * `<key>.qualifier`. The eventType's enum is held equal to this list, and hds-fhir-js `check:pack` compares its own
+ * copy with the pack's enum, so a type is never published before a renderer that serves it.
+ */
+const QUESTIONNAIRE_SUB_FIELD_TYPES = ['select-segmented', 'text', 'number'];
+
+/**
+ * The JSON types of a sub-field option `value` the renderer knows (`subField.options[].value`): it refuses a request
+ * holding an option of another type. Held equal to the eventType's, like the list above.
+ */
+const QUESTIONNAIRE_OPTION_VALUE_TYPES = ['number', 'string'];
+
+/**
  * The Patient elements an item may contribute (`fhir: { resourceType: Patient, element }`): the item type each needs
  * and, for a coded element, the code system its option codings come from, code → official display. Text and date
  * elements take the content as written. Additive, like the `fhirElement` enum in src/schemas/items.js.
@@ -59,6 +87,9 @@ module.exports = {
   UNMAPPED,
   MEDICATION_TYPES,
   PATIENT_ELEMENTS,
+  QUESTION_KEY_PATTERN,
+  QUESTIONNAIRE_SUB_FIELD_TYPES,
+  QUESTIONNAIRE_OPTION_VALUE_TYPES,
   LOCK_FILE_PATH,
   LOCK_FORMAT,
   checkMappingTable,
@@ -159,6 +190,11 @@ function checkFhirMapping (key, item, itemEventTypes) {
   // A QuestionnaireResponse has no code: nothing below applies to it.
   if (f.resourceType === QUESTIONNAIRE_RESPONSE_TYPE) {
     checkQuestionnaireResponse(item, f, itemEventTypes, fail);
+    return;
+  }
+  // Nor has a Questionnaire.
+  if (f.resourceType === QUESTIONNAIRE_TYPE) {
+    checkQuestionnaire(item, f, itemEventTypes, fail);
     return;
   }
 
@@ -548,6 +584,56 @@ function checkQuestionnaireResponse (item, f, itemEventTypes, fail) {
   if (answers?.type !== 'object') fail(`eventType "${itemEventTypes[0]}" has no object content property "answers" (it renders as QuestionnaireResponse.item)`);
 }
 
+/**
+ * A Questionnaire block (`[FHIR-MAP-27]`, QUESTIONNAIRE.md § FHIR) sits on a `system` item (no form field writes a
+ * request event) with one eventType whose content the renderer reads by name: `questions`, an object keyed by
+ * question key, each question an object with a `label` (an object of texts per language: `item.text`) and a string
+ * `itemRef` (the HDS item coding of `item.code`). The block names none of them, so it holds `resourceType` and
+ * `profiles` only: no code (the resource has none), no value, nothing to split or ignore.
+ *
+ * Also held, because a renderer that holds the block alone depends on them:
+ * - the question keys follow `QUESTION_KEY_PATTERN` exactly: a key never holds a dot, so the child linkIds
+ *   `<key>.references`, `<key>.qualifier` and `<key>.reason` never collide with a question's (R4 que-2);
+ * - a declared `subField` is an object whose `type` enum is `QUESTIONNAIRE_SUB_FIELD_TYPES` exactly: the renderer
+ *   refuses a request with a type it does not know, so a new type is added here and in the renderer first;
+ * - its `options`, when declared, are an array whose `value` types are `QUESTIONNAIRE_OPTION_VALUE_TYPES` exactly: the
+ *   renderer refuses a request holding an option value of another type;
+ * - `title` and `description`, when declared, are objects (texts per language), and `templateRef` a string.
+ */
+function checkQuestionnaire (item, f, itemEventTypes, fail) {
+  const extra = Object.keys(f).filter((k) => k !== 'resourceType' && k !== 'profiles');
+  if (extra.length > 0) fail(`a Questionnaire block holds "resourceType" and "profiles" only (the resource has no code and no value); remove ${extra.map((k) => `"${k}"`).join(', ')}`);
+  if (item.type !== 'system') fail(`a Questionnaire block applies to a "system" item (a request event is written by an app, not entered in a form field); item type is "${item.type}"`);
+  if (itemEventTypes.length !== 1) fail('a Questionnaire block needs an item with exactly one eventType');
+  const questions = contentProperty(itemEventTypes[0], 'questions');
+  const question = questions?.type === 'object' ? questions.additionalProperties : undefined;
+  if (question?.type !== 'object') fail(`eventType "${itemEventTypes[0]}" has no object content property "questions" whose entries are objects (they render as Questionnaire.item)`);
+  if (question.properties?.label?.type !== 'object') fail(`eventType "${itemEventTypes[0]}": a question has no object "label" (it renders as Questionnaire.item.text)`);
+  if (question.properties?.itemRef?.type !== 'string') fail(`eventType "${itemEventTypes[0]}": a question has no string "itemRef" (it renders as Questionnaire.item.code)`);
+  if (questions.propertyNames?.pattern !== QUESTION_KEY_PATTERN) fail(`eventType "${itemEventTypes[0]}": the keys of "questions" must follow exactly ${QUESTION_KEY_PATTERN} (a key without a dot keeps the child linkIds <key>.references, <key>.qualifier and <key>.reason distinct)`);
+  const subField = question.properties?.subField;
+  if (subField != null) {
+    if (subField.type !== 'object') fail(`eventType "${itemEventTypes[0]}": a question's "subField" is not an object (it renders as the item <key>.qualifier)`);
+    const types = subField.properties?.type?.enum;
+    const same = Array.isArray(types) && types.length === QUESTIONNAIRE_SUB_FIELD_TYPES.length && QUESTIONNAIRE_SUB_FIELD_TYPES.every((t) => types.includes(t));
+    if (!same) fail(`eventType "${itemEventTypes[0]}": the "subField.type" enum must be exactly ${QUESTIONNAIRE_SUB_FIELD_TYPES.join(', ')} (the renderer refuses a request with a type it does not know: add the type to QUESTIONNAIRE_SUB_FIELD_TYPES and to the renderer first)`);
+    const options = subField.properties?.options;
+    if (options != null) {
+      if (options.type !== 'array') fail(`eventType "${itemEventTypes[0]}": a question's "subField.options" is not an array (the renderer reads a list of options)`);
+      const declared = options.items?.properties?.value?.type;
+      const valueTypes = Array.isArray(declared) ? declared : [declared];
+      const sameValues = valueTypes.length === QUESTIONNAIRE_OPTION_VALUE_TYPES.length && QUESTIONNAIRE_OPTION_VALUE_TYPES.every((t) => valueTypes.includes(t));
+      if (!sameValues) fail(`eventType "${itemEventTypes[0]}": the option "value" types of "subField.options" must be exactly ${QUESTIONNAIRE_OPTION_VALUE_TYPES.join(', ')} (the renderer refuses a request holding an option value of another type: add the type to QUESTIONNAIRE_OPTION_VALUE_TYPES and to the renderer first)`);
+    }
+  }
+  for (const name of ['title', 'description']) {
+    const p = contentProperty(itemEventTypes[0], name);
+    if (p != null && p.type !== 'object') fail(`content property "${name}" of eventType "${itemEventTypes[0]}" is not an object of texts per language (it renders as Questionnaire.${name})`);
+  }
+  const templateRef = contentProperty(itemEventTypes[0], 'templateRef');
+  if (templateRef != null && templateRef.type !== 'string') fail(`content property "templateRef" of eventType "${itemEventTypes[0]}" is not a string (it renders as Questionnaire.derivedFrom)`);
+}
+
 /** The `product.system` enum of a coded medication (`drug.product`, MEDICATION.md § National products) is covered by `fhirMapping.productSystems`. */
 function checkProductSystems (field, itemEventTypes, fail) {
   const system = contentProperty(itemEventTypes[0], `${field}.product.system`);
@@ -763,8 +849,10 @@ function checkFhirImportKeys (items) {
     if (item.deprecated || f == null || f.companionOf != null) continue;
     if (f.element != null) {
       claim(`${f.resourceType}.${f.element}`, key);
-    } else if (f.resourceType === QUESTIONNAIRE_RESPONSE_TYPE) {
-      // No code to match on: a QuestionnaireResponse goes to the one item that maps the resourceType.
+    } else if (f.resourceType === QUESTIONNAIRE_RESPONSE_TYPE || f.resourceType === QUESTIONNAIRE_TYPE) {
+      // No code to match on: a QuestionnaireResponse, or a Questionnaire, goes to the one item that maps the resourceType.
+      // A Questionnaire is never imported: its claim is kept so the refusal names one item, and it can be lifted when
+      // a second item maps the type.
       claim(f.resourceType, key);
     } else if (f.code.from === 'datasource' || f.code.from === 'content' || f.code.from === 'text') {
       // The resource's code is content, so the item is matched by (resourceType, category) alone: one per category

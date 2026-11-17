@@ -283,7 +283,7 @@ const defsSchema = {
     fhirMapping: {
       type: 'object',
       properties: {
-        resourceType: { enum: ['Observation', 'Condition', 'DocumentReference', 'MedicationStatement', 'MedicationRequest', 'Procedure', 'QuestionnaireResponse'] },
+        resourceType: { enum: ['Observation', 'Condition', 'DocumentReference', 'MedicationStatement', 'MedicationRequest', 'Procedure', 'QuestionnaireResponse', 'Questionnaire'] },
         // Required or refused per resourceType, from the category table in definitions/fhir/mapping.yaml.
         category: { type: 'string', minLength: 1 },
         // Further categories of the same table a resource may carry and still import here (import only).
@@ -327,9 +327,10 @@ const defsSchema = {
         profiles: { $ref: 'defs.json#/definitions/fhirProfiles' }
       },
       required: ['resourceType', 'profiles'],
-      // Every resource is named by a code, except a QuestionnaireResponse, which has none: its block holds
-      // `resourceType` and `profiles` and nothing else (FHIR-MAPPING.md § QuestionnaireResponse).
-      if: { properties: { resourceType: { const: 'QuestionnaireResponse' } }, required: ['resourceType'] },
+      // Every resource is named by a code, except a QuestionnaireResponse and a Questionnaire, which have none: their
+      // block holds `resourceType` and `profiles` and nothing else (FHIR-MAPPING.md § QuestionnaireResponse,
+      // § Questionnaire).
+      if: { properties: { resourceType: { enum: ['QuestionnaireResponse', 'Questionnaire'] } }, required: ['resourceType'] },
       then: { maxProperties: 2 },
       else: { required: ['code'] },
       additionalProperties: false

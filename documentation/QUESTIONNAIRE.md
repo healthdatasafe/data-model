@@ -62,6 +62,8 @@ content:
 
 **Question keys** must match the Pryv content-query path grammar `[a-zA-Z0-9_-]+` — no colons, dots, brackets, or wildcards. This is enforced by the eventType schema (`propertyNames.pattern`) so that `content.answers.<key>.status` queries work against the matching answer event. Keys are **scoped per request**; nothing enforces cross-questionnaire uniqueness in v1.
 
+**The template reference (`templateRef`).** An optional string that says which saved template the request was written from. It is **chosen by the requester's app** and is **unique only within that requester's templates**: nothing registers it with HDS, and two requesters may use the same reference (`intake`) for different templates. It is not an HDS registry entry. Requests written with the same reference by the same requester come from the same template; across requesters the reference says nothing. A requester that uses a published form may set its canonical URL as the reference. The eventType sets no pattern and no maximum length on it. Its FHIR rendering is in FHIR-MAPPING.md § Questionnaire ("The template reference").
+
 **Scope variants:**
 
 | `scope.type` | Required extra fields | Meaning |
@@ -170,13 +172,15 @@ These must land as one **Pryv `events.batch`** so a partial failure doesn't leav
 
 Patient edits to a previous answer **create a new `questionnaire/answer-v1` event**, never mutate the existing one. The renderer's prefill logic uses **latest-by-`event.time` per `requestEventId`** — older answer events for the same request are kept for audit trail but ignored by display. This mirrors how HDS treats most clinical record edits and aligns with FHIR's `QuestionnaireResponse.status: in-progress | completed | amended | entered-in-error` lifecycle (v1 doesn't yet expose those status codes — deferred).
 
+**The content of a request event is never updated; a changed questionnaire is a new request event** (4.13.0). The answers name their request by its event id, and the FHIR canonical built from that id has no version (FHIR-MAPPING.md § QuestionnaireResponse), so a request whose questions were edited after an answer would make the stored responses disagree with the Questionnaire at their canonical, with nothing to tell the two apart. Adding the model stream to a request's `streamIds` (§ Where the events live) is not a content change.
+
 ---
 
 ## FHIR mirror
 
 | HDS | FHIR |
 |---|---|
-| `questionnaire/request-v1` | `Questionnaire` (per-patient instantiation; FHIR's `Questionnaire.item[].linkId` ≈ HDS's question key) |
+| `questionnaire/request-v1` | `Questionnaire`, mapped (below, § FHIR: Questionnaire): a per-patient instantiation, `item.linkId` = the question key, each question a boolean |
 | `requester.relationship` on a request | `Task.requester` (a `Task` with `focus` = the `Questionnaire`, `for` = the patient), resolved to a `Practitioner` / `Organization` through the contact. Not `QuestionnaireResponse.author` (the person, on the answer) nor `Questionnaire.publisher` |
 | `questionnaire/answer-v1` | `QuestionnaireResponse`, mapped (below, § FHIR: QuestionnaireResponse): one answer per question, a boolean with the references nested, or an absent boolean with a data-absent-reason for `unknown` and `declined` |
 | `references[]` on an `answered` entry | `valueReference` answers of the nested item `<key>.references` |
@@ -207,13 +211,15 @@ stream (`:_cmc:apps:hds-patient`), which is not a model stream: no consent names
   answers are a cross-topic sink (a yes on a question about a genetic test says that such a result exists), so the
   default is "not shared unless ticked".
 - The two streams are siblings so each is granted alone: answers under `patient/QuestionnaireResponse.rs`, requests
-  under nothing yet (a `Questionnaire` mapping of its own, later).
+  under `patient/Questionnaire.rs` (4.13.0). An app that holds the answers alone reads them without their question
+  texts.
 - **What a grant on the answers shows:** the question keys; for each a yes, a no, "does not know" or "prefers not to
   say"; **the qualifier the person chose or typed** (a trimester, a number, free text) **and the reason typed when
   declining**; the id of the request and the ids of the referenced records, on any health topic. The stream
   descriptions say so on the consent screen. The referenced records themselves are read under their own grants only.
 - **What a grant on the requests shows:** every requester's question texts, and `requester.relationship` (an id of
-  another access of the account, meaningful there only).
+  another access of the account, meaningful there only). The FHIR rendering shows the questions and leaves
+  `requester`, `params` and `scope` out (§ FHIR: Questionnaire).
 - **During the transition the app scope stream is kept.** Events already written in an app's scope stream are not
   moved by the data model. The app that owns them **adds** the model stream to their `streamIds` (a Pryv event may
   sit in several streams), the model stream first, and keeps the scope stream, so that an older build of the app
@@ -233,8 +239,30 @@ from the event alone. The mapping, its one-way doors, the grant's reach and the 
 `status` `completed`; each question key is an item with one answer: `true` (with the referenced events and the
 qualifier nested), `false` (`no`), or a boolean that is absent with a data-absent-reason (`asked-unknown`,
 `asked-declined`, a decline's reason nested under the answer). The latest response per questionnaire is the current
-one. The request has no mapping yet, so the question text is not in the response, and **no profile is claimed**: the
-base resource on every flavour, until the `Questionnaire` mapping ships.
+one. A response carries the question as asked (`item.text`) when its reader also holds the requests (4.13.0, below).
+**No profile is claimed**: the base resource on every flavour (FHIR-MAPPING.md, "No profile is claimed").
+
+## FHIR: Questionnaire (4.13.0, plan 115)
+
+The `questionnaire-request` item carries a `fhir` block: one request event is one `Questionnaire`, rendered from
+the event alone ([FHIR-MAPPING.md § Questionnaire](FHIR-MAPPING.md#questionnaire-questionnaire-requests)). In short:
+`url` is `https://hds.ngo/fhir/Questionnaire/<request event id>`, the canonical its responses name; `status`
+`active` (a constant of the renderer today); `title` and `description` with their translations; `derivedFrom` the
+template reference (`templateRef`: unchanged when it is an absolute `http:`, `https:` or `urn:` URI, the scheme in any case and printable ASCII only, under
+`https://hds.ngo/fhir/Questionnaire/template/` otherwise); each question a `boolean` item whose `linkId` is the
+question key, `text` the label and `code` the HDS item (`itemRef`, when it is an item key of the model; a deprecated
+alias as its current key), with the children a response nests under its answer: `<key>.references`,
+`<key>.qualifier` (from the `subField`) and `<key>.reason`. `requester`, `params` and `scope` are not rendered. A
+Questionnaire is not imported: `scope` and `params` are not in it.
+
+**Names the renderer reads** (reserved on this eventType, their types pinned by the build, `[FHIR-MAP-27]`):
+`questions` and, in each question, `label` and `itemRef` (required); `title`, `description`, `templateRef` and, in a
+question, `subField` (read when present). The build also holds the question key grammar (`^[a-zA-Z0-9_-]+$`, no dot)
+and the `subField.type` enum (`select-segmented`, `text`, `number`), with the `options` of a sub-field (an array,
+each `value` a number or a string): **a new sub-field type is added to the
+renderer, and to `QUESTIONNAIRE_SUB_FIELD_TYPES` in `src/fhir.js`, before the eventType**, since the renderer refuses
+a request whose sub-field type it does not know. The same holds for a new JSON type of an option value
+(`QUESTIONNAIRE_OPTION_VALUE_TYPES`).
 
 ---
 

@@ -1,5 +1,6 @@
 # The questionnaire request / answer pair (documentation/QUESTIONNAIRE.md). Neither is entered through a form field:
-# an app writes the request it materializes and the answer event of one filling.
+# an app writes the request it materializes and the answer event of one filling. In FHIR the request is a
+# Questionnaire and the answer a QuestionnaireResponse (documentation/FHIR-MAPPING.md), each under its own scope key.
 questionnaire-request:
   version: v1
   type: system
@@ -12,13 +13,20 @@ questionnaire-request:
   streamId: questionnaire-request
   eventType: questionnaire/request-v1
   repeatable: any
+  # One request event is one Questionnaire, rendered from the event alone (FHIR-MAPPING.md § Questionnaire): its `url`
+  # is the canonical an answer's `QuestionnaireResponse.questionnaire` names. No code and no category: the resource
+  # has neither, and the scope key is the bare resourceType, granted on this stream alone. No profile is claimed on
+  # any flavour (`profiles: {}`, the base resource). Adding a profile later is additive; withdrawing one is not.
+  fhir:
+    resourceType: Questionnaire
+    profiles: {}
   devNotes: >-
-    One event per questionnaire asked of the person (QUESTIONNAIRE.md). No `fhir` block yet: it is the FHIR
-    `Questionnaire` an answer's `QuestionnaireResponse.questionnaire` names, a mapping of its own, and its stream is a
-    sibling of `questionnaire-answer` so that mapping can take a scope key of its own. A grant on this stream reads
-    the question texts of every requester and `content.requester.relationship`, the base id of the access the person
-    gave the requester: an opaque id, meaningful in her account only, accepted here because the root is
-    `explicitGrantOnly` (plan 115, 2026-11-16).
+    One event per questionnaire asked of the person (QUESTIONNAIRE.md), rendered in FHIR as the `Questionnaire` an
+    answer's `QuestionnaireResponse.questionnaire` names. Its stream is a sibling of `questionnaire-answer`, so each
+    is granted alone (`patient/Questionnaire.rs`, `patient/QuestionnaireResponse.rs`). A grant on this stream reads
+    the question texts of every requester and, on the Pryv API, `content.requester.relationship`, the base id of the
+    access the person gave the requester: an opaque id, meaningful in her account only, accepted here because the root
+    is `explicitGrantOnly` (plan 115, 2026-11-16). The FHIR rendering leaves `requester` out.
 
 questionnaire-answer:
   version: v1
