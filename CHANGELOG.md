@@ -1,12 +1,23 @@
 # Changelog
 
-## [Unreleased]
+## [4.15.0] - 2026-11-17
+
+Additive: one stream and two items on existing eventTypes. No eventType, fhir block or scope changes.
+
+### Added
+- **`symptom-general-malaise` / `symptom-general-malaise-severity`** ("Feeling unwell", SNOMED `367391008` Malaise),
+  stream `symptom-general-malaise` under `symptom-general`. Additive: one stream, two items on existing eventTypes. The
+  presence item is `deprecated` like every other symptom presence marker. No HealthKit category type exists. First
+  source: Mira's daily-log symptom `Sickness` (B-2026-11-17-10), which bridge-mira dropped; Mira does not document the
+  value and also sends `Nausea`, so it is read as feeling unwell. Malaise was already listed in SYMPTOMS.md's
+  constitutional domain without an item.
 
 ### Documentation
 - DOCUMENTS.md "One spelling": the list of spellings no longer says "an OID given as `system`", which contradicted the
   rule that a `urn:oid:<root>` system is the unsettled root-plus-extension form; that form is now named in the bullet.
   It points to hds-lib 2.55.0 `normalizeDocumentUniqueId`, and the open point on hds-lib is replaced by what 2.55.0
   ships.
+- SYMPTOMS.md: nausea is SNOMED `422587007` (it listed the inactive `73879007` twice; the item was already right).
 
 ## [4.14.0] - 2026-11-17
 

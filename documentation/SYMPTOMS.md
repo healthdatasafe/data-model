@@ -110,11 +110,11 @@ Apple uses a **flat list** of symptom identifiers under `HKCategoryTypeIdentifie
 
 | Body System | SNOMED Concept ID | Example symptoms |
 |-------------|-------------------|------------------|
-| Digestive system | 53619000 | nausea (73879007), bloating (236653009) |
+| Digestive system | 53619000 | nausea (422587007), bloating (236653009) |
 | Nervous system | 118940003 | headache (25064002), dizziness (404640003) |
 | Respiratory system | 50043002 | cough, dyspnea, wheezing |
 | Musculoskeletal system | 928000 | joint pain, back pain |
-| General/constitutional | 162408000 | fatigue (84229001), malaise, fever |
+| General/constitutional | 162408000 | fatigue (84229001), malaise (367391008), fever |
 
 **FHIR modeling:**
 - **Observation** (category: `survey` or `symptom`) — for point-in-time patient-reported symptoms
@@ -168,7 +168,7 @@ Source: PMC8631160 — "The real-world applications of the symptom tracking func
 |---|---|---|
 | Headache | `headache` (Severity) | 25064002 |
 | Migraine | `headache` (Severity) | 37796009 |
-| Nausea | `nausea` (Severity) | 73879007 |
+| Nausea | `nausea` (Severity) | 422587007 |
 | Cramps | `abdominalCramps` (Severity) | 21522001 |
 | Gas | — | 271835004 |
 | Cravings | — | — |
@@ -184,6 +184,7 @@ Source: PMC8631160 — "The real-world applications of the symptom tracking func
 | Hair loss | `hairLoss` (Severity) | 278040002 |
 | Insomnia | `sleepChanges` (Presence) | 193462001 |
 | Low energy | `fatigue` (Severity) | 84229001 |
+| Sickness | — (no HealthKit type) | 367391008 (malaise: Mira does not document the value; it also sends Nausea, so read as feeling unwell) |
 | Anxiety | `moodChanges` (Presence) | 48694002 |
 | Stress | — | 73595000 |
 | Increased appetite | `appetiteChanges` (AppetiteChanges) | 72405004 |
@@ -207,7 +208,7 @@ Source: PMC8631160 — "The real-world applications of the symptom tracking func
 | Gastrointestinal | 7 symptoms (Severity) | Digestive system (53619000) | Nausea, Gas, Cramps, Cravings, Bloating, Diarrhea, Constipation, Increased appetite | Nausea, bloating, cramps, diarrhea, constipation |
 | Pain / Musculoskeletal | 4 symptoms (Severity) | Finding site-based | Headache, Migraine, Sore breasts, Backache | Headaches, migraines, cramps, backache, breast tenderness |
 | Neurological | 4 symptoms (Severity) | Nervous system (118940003) | Dizziness | Dizziness |
-| Constitutional | 4 symptoms (Severity) | General symptom (162408000) | Low energy | Fatigue |
+| Constitutional | 4 symptoms (Severity) | General symptom (162408000) | Low energy, Sickness | Fatigue |
 | Dermatological | 3 symptoms (Severity) | Finding site-based | Acne, Hair loss, Body/Facial hair growth | Acne |
 | Psychological | 3 symptoms (Presence/special) | Finding-based | Anxiety, Stress | Mood (10+ options) |
 | Sleep | `sleepChanges` (Presence) | 193462001 | Insomnia | Sleep patterns |
