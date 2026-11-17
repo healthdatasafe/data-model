@@ -24,6 +24,7 @@ conventions below are contracts between HDS apps, documented here so every write
 | `clientData.hdsSupport` | Which team member a support line comes from, on the group's copy of a support chat event; written by the support service, never forwarded to the person | [SUPPORT.md](SUPPORT.md#which-member-wrote-a-line-clientdatahdssupport) |
 | `clientData.hdsApp` (on an **access**; for CMC, `requesterMeta.hdsApp` in the invite, mirrored as `content.hdsApp` on the accept event) | The app's manifest URL, from which HDS apps name the app that holds the access | [APP-DESCRIPTION.md](APP-DESCRIPTION.md) |
 | `clientData.hdsGln`, `hdsZsr` | A provider's GLN and ZSR, bare values mirroring its content `identifiers`: the cross-writer lookup keys (GLN, then ZSR, then `sourceKey`) | [ENCOUNTER.md](ENCOUNTER.md#one-provider-one-event-clientdatahdsgln-hdszsr) |
+| `clientData.hdsDocumentUniqueId` | A document's `uniqueId` as `<system>\|<value>`, mirroring its content: the cross-writer key that recognises a document already held | [DOCUMENTS.md](DOCUMENTS.md#filexds-v1) |
 
 A reader ignores any `clientData` key it does not know. A new key is `hds`-prefixed and documented here (or in
 its domain document, and indexed here) before an app ships it. `related` and `sourceKey` predate the prefix

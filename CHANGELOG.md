@@ -11,10 +11,83 @@
   constitutional domain without an item.
 
 ### Documentation
+- DOCUMENTS.md "One spelling": the list of spellings no longer says "an OID given as `system`", which contradicted the
+  rule that a `urn:oid:<root>` system is the unsettled root-plus-extension form; that form is now named in the bullet.
+  It points to hds-lib 2.55.0 `normalizeDocumentUniqueId`, and the open point on hds-lib is replaced by what 2.55.0
+  ships.
+
+## [4.14.0] - 2026-11-17
+
+Additive, site-agents#36 A11: a document's own identifier and the key that recognises a document already held. No
+stream, item or `fhir` block changes. hds-fhir-js does not render the new property yet (it ignores unknown content), so
+no renderer release is needed for this pack.
+
+### Added
+- **`file/xds-v1` `uniqueId`** (optional): the document's own identifier from its issuing system, XDS
+  `DocumentEntry.uniqueId` / FHIR `DocumentReference.masterIdentifier`, as a closed Identifier `{ system, value }`. An
+  OID or a UUID has one spelling, enforced: system `urn:ietf:rfc:3986`, value `urn:oid:<oid>` or lower-case
+  `urn:uuid:<uuid>` (IHE ITI TF-2 Appendix Z.9.1). It is mirrored in the new `clientData.hdsDocumentUniqueId`
+  (`<system>|<value>`), the cross-writer key a writer looks up before creating a document, so a document that reaches
+  the account from two sources carrying its identifier (two importers, an EPR import and a FHIR import) is one event.
+  DOCUMENTS.md § "A document already held". Additive for writers on this pack; content stays closed, so a validator on
+  an older pack refuses a document carrying `uniqueId`. Follow-ups: hds-lib key mirror and normaliser before the first
+  writer; hds-fhir-js `masterIdentifier` render (plan 115).
+
+## [4.13.0] - 2026-11-17
+
+Additive, plan 115 Questionnaire slice. One `fhir` block, one new resourceType and scope key. No stream, item or
+eventType is added, and no eventType schema changes.
+
+**Release order: this pack first, then hds-fhir-js (the same day), then the facade pin and the extension options
+with the extension rebuilt from that hds-fhir-js, then the apps.** An hds-fhir-js release before the one of this
+slice never misrenders this pack: it skips the block (unknown resourceType) and serves a request event as the
+generic Observation of its item, as before (0.8.0 and later; earlier ones render nothing for it).
+
+### Added
+- **`fhir` block on `questionnaire-request`: `Questionnaire`, no profile claimed** (`profiles: {}`). One request
+  event is one Questionnaire whose `url` is `https://hds.ngo/fhir/Questionnaire/<event id>`, the canonical the
+  responses have carried since 4.12.0: it now names a resource. Each question is a boolean item (`linkId` the
+  question key, `text` the label, `code` the HDS item when `itemRef` is an item key of the model) with the children
+  a response nests under its answer. `requester`, `params` and `scope` are not rendered. FHIR-MAPPING.md
+  § Questionnaire.
+- **Scope key `Questionnaire`**, granted on `questionnaire-request` alone (`patient/Questionnaire.rs`). The stream
+  is under the `explicitGrantOnly` root `questionnaire`: offered unticked, under `patient/*.rs` too (a second
+  unticked row beside the answers), never reached by `*`.
+- Schema: the `resourceType` enum gains `Questionnaire`; its block holds `resourceType` and `profiles` only.
+  Build rule `[FHIR-MAP-27]`: beside the names the renderer reads, it holds the question key grammar
+  (`^[a-zA-Z0-9_-]+$`, no dot) and the `subField.type` enum (`QUESTIONNAIRE_SUB_FIELD_TYPES` in `src/fhir.js`: a
+  new type is added there and in the renderer before the eventType) and the option values of a sub-field (an array, `value` types exactly number and string:
+  `QUESTIONNAIRE_OPTION_VALUE_TYPES`). Lock: one entry added
+  (`questionnaire-request`, pair `Questionnaire`).
+
+### Changed (what a reader sees once the facade and the extension are pinned to this pack)
+- **A request event under a grant that names its stream (or the root) is a `Questionnaire`, no longer a generic
+  Observation** without content: the question texts become readable in FHIR, as they are on the Pryv API under the
+  same grant.
+- **A `patient/*.rs` consent that was whole (the answers ticked) is no longer whole**: it is echoed as one scope
+  per resource type, the answers included, at its next token exchange. Nothing an access reads changes.
+- A response carries `item.text` and the questionnaire's title when its reader also holds the requests.
+
+### Permanent
+- The bare key `Questionnaire`; `questionnaire-request` under that pair; the reserved names `questions`, `label`,
+  `itemRef`, `title`, `description`, `templateRef` and `subField` (its `options` and their `value` types with it), and
+  the question key grammar; and, published by
+  the renderer with the first Questionnaire rendered anywhere, the template canonical prefix
+  `https://hds.ngo/fhir/Questionnaire/template/` (a `templateRef` that is itself an absolute `http:`, `https:` or
+  `urn:` URI, the scheme in any case and printable ASCII only, is emitted unchanged), `item.code` in the HDS item system and the three children on every question.
+  `status` is `active`, a constant of the renderer today, not a permanent value.
+
+### Documentation
 - `TREATMENT-PROCEDURE.md` states the care-programme history mapping decided 2026-10-13 (site-agents#4):
   `treatment-coded` at `treatment-fertility` with SNOMED `718701005` *Natural family planning method*, no new item.
   The "known ergonomic gap" paragraph is replaced: hds-forms-js 0.16.0 shipped `itemCustomizations[...].pin`, which
   shows the concept as static text and asks only for the companion fields.
+- 4.12.0 announced the US Core QuestionnaireResponse claim with this mapping; it is not made (reasons in FHIR-MAPPING.md).
+- FHIR-MAPPING.md § QuestionnaireResponse: the canonical paragraph and the qualifier table (a select of texts is a
+  `string` item with `answerOption`) follow the mapping. The round-trip rule states its one exception (a
+  `Questionnaire` is rendered and never imported), and the procedures paragraph no longer says "unreleased" (4.6.0).
+- QUESTIONNAIRE.md defines `templateRef` (chosen by the requester's app, unique within that requester's templates
+  only) and states that the content of a request event is never updated.
 
 ## [4.12.0] - 2026-11-16
 

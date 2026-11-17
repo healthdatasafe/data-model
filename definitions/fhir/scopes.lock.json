@@ -1007,6 +1007,13 @@
         "questionnaire-answer"
       ]
     },
+    "questionnaire-request": {
+      "pair": "Questionnaire",
+      "parent": "questionnaire",
+      "items": [
+        "questionnaire-request"
+      ]
+    },
     "wellbeing-general-health": {
       "pair": "Observation|survey",
       "parent": "wellbeing",
