@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.16.0] - 2026-11-17
+
+### Changed
+- **`file/xds-v1` `uniqueId.system` refuses `urn:oid:<root>`** (in any case): the root-plus-extension form, which has
+  no settled mapping (DOCUMENTS.md Open points). 4.14.0 left it to writers (hds-lib `normalizeDocumentUniqueId`
+  already returns `null` for it). Refusing it in the schema while no writer stores a `uniqueId` means that settling
+  the mapping later adds a form instead of migrating stored events. Also refuses `urn:ietf:rfc:3986` in any spelling
+  but lower case (hds-lib already canonicalises it), so the one-spelling rule cannot be bypassed by case. No other
+  change; a pack before 4.16.0 accepts what this one refuses, never the reverse (a tightening, kept minor: the field
+  is from 4.14.0 and nothing stores it yet).
+
 ## [4.15.0] - 2026-11-17
 
 Additive: one stream and two items on existing eventTypes. No eventType, fhir block or scope changes.

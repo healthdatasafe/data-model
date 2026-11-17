@@ -170,6 +170,14 @@ describe('[DOCS] Medical documents and read markers', () => {
           assert.ok(!validate({ ...minimal(), uniqueId: { system: 'urn:ietf:rfc:3986', value } }), `one spelling under urn:ietf:rfc:3986: ${value}`);
         }
         assert.ok(validate({ ...minimal(), uniqueId: { system: 'https://lab.example.org/reports', value: 'R-2026-0042' } }), 'another system keeps its value');
+        for (const system of ['urn:oid:2.999.1', 'URN:OID:2.999.1', 'Urn:Oid:2.16.756.5.30']) {
+          assert.ok(!validate({ ...minimal(), uniqueId: { system, value: 'ext-42' } }), `root plus extension refused: ${system}`);
+        }
+        assert.ok(validate({ ...minimal(), uniqueId: { system: 'urn:oidx:1', value: 'a' } }), 'only the urn:oid: namespace is refused');
+        for (const system of ['URN:IETF:RFC:3986', 'Urn:ietf:rfc:3986']) {
+          assert.ok(!validate({ ...minimal(), uniqueId: { system, value: 'urn:oid:2.999.1.2.3' } }), `urn:ietf:rfc:3986 in lower case only: ${system}`);
+        }
+        assert.ok(validate({ ...minimal(), uniqueId: { system: 'urn:ietf:rfc:39860', value: 'x' } }), 'another URN is not rfc 3986');
         for (const creation of ['28.10.2026', 'October 2026', '2026-1', '2026-10-28T09:30', '2026-10-28T:::', '2026-13-45', '2026-10-28T25:00Z']) {
           assert.ok(!validate({ ...minimal(), creation }), creation);
         }

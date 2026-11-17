@@ -305,8 +305,11 @@ app sends only the alert, and offers no take-back.
 - An XDS `uniqueId` in the `<root>^<extension>` form has no IHE rule for `masterIdentifier`, so it is not stored
   until settled (two importers guessing differently would split one document for good). Appendix Z.9.1.1's
   root-plus-extension rule (system `urn:oid:<root>`, value `<extension>`) is the likely one; settle it with the first
-  source that sends one. A `masterIdentifier` already in that form (`system` `urn:oid:<root>`) is held back with it.
-  The schema does not refuse that form yet; a writer that bypasses hds-lib must not store it.
+  source that sends one. A `masterIdentifier` already in that form (`system` `urn:oid:<root>`) is held back with it,
+  and the schema refuses a `urn:oid:` system in any case (4.16.0), so settling it later is an addition, not a
+  migration. It also refuses `urn:ietf:rfc:3986` in any spelling but lower case.
+- The scheme case of other systems (`HTTPS://…` vs `https://…`) is stored as given, by the schema and by hds-lib
+  alike: two writers spelling one system differently would not find each other's document. Not normalised yet.
 - hds-lib (2.55.0) mirrors `hdsDocumentUniqueId` in `withRelatedMirror` (`null` on an update that drops the
   `uniqueId`) and reports `missing-document-key` / `stale-document-key` in `checkRelatedMirror`. It has no lookup
   helper: the writer runs the `events.get` above itself.
