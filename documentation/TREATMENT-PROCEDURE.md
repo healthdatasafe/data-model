@@ -188,9 +188,30 @@ figures: the regimen separates IVF from ovulation induction from IUI, while the 
 transfer counts come from `procedure-coded` (oocyte recovery `177037000`, embryo transfer
 `75456002`). Between them the figures stay separable without the model having to adjudicate.
 
-**Known ergonomic gap.** An intake form wants a fixed numeric field ("IVF cycles: __"), not a search
-box. That needs hds-forms-js to pin the datasource value from `itemCustomizations` and surface only
-`count`. It is a forms-lib feature, not a reason to add items here.
+**A fixed field is a form setting, not an item.** An intake form wants "IVF cycles: __", not a search
+box. hds-forms-js 0.16.0 and later does this with `itemCustomizations['treatment-coded'].pin`: the
+form shows the pinned concept as static text and asks only for the companion fields (`count`,
+`notes`). The event it writes is the
+same as one written after a search, so the model needs nothing more.
+
+### Care-programme history has no item of its own either
+
+"Have you been cared for in a restorative reproductive medicine (RRM) programme such as
+NaProTECHNOLOGY, FEMM or Neo Fertility?" has the same shape: `treatment-coded` at context
+`treatment-fertility`, with the regimen SNOMED `718701005` *Natural family planning method
+(regime/therapy)*. The International Edition has no RRM concept and no concept per programme, so
+the datasets-service seed documents this concept as the RRM umbrella and carries the programme
+names as synonyms. Record "ever / how many" with `count` (`0` = never), or each span of care with
+`event.time` + `event.duration`. Put the programme's name in `notes` and leave `regimen` as the
+dataset returns it. Each partner's history is written on that partner's own account: an event never
+carries a "whose history" qualifier, so a couple's intake writes to two accounts.
+
+This is not `fertility-tracking-method`. That item records the charting method or device a person
+uses (Billings, Creighton, FEMM, Marquette and others). Care-programme history records having been
+under a practitioner's care in such a programme. The same name can appear in both: charting with a
+method and being treated in its programme are two facts, two events. Functional medicine is not RRM
+and has no SNOMED concept, so it stays free text: a `treatment-basic` event named for it, never the
+`notes` of a `718701005` event, which would assert RRM care. Decided 2026-10-13 (site-agents#4).
 
 ### Cross-tree context naming convention
 
