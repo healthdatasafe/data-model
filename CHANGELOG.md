@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Added
+- **`symptom-general-malaise` / `symptom-general-malaise-severity`** ("Feeling unwell", SNOMED `367391008` Malaise),
+  stream `symptom-general-malaise` under `symptom-general`. Additive: one stream, two items on existing eventTypes. The
+  presence item is `deprecated` like every other symptom presence marker. No HealthKit category type exists. First
+  source: Mira's daily-log symptom `Sickness` (B-2026-11-17-10), which bridge-mira dropped; Mira does not document the
+  value and also sends `Nausea`, so it is read as feeling unwell. Malaise was already listed in SYMPTOMS.md's
+  constitutional domain without an item.
+
 ### Documentation
 - `TREATMENT-PROCEDURE.md` states the care-programme history mapping decided 2026-10-13 (site-agents#4):
   `treatment-coded` at `treatment-fertility` with SNOMED `718701005` *Natural family planning method*, no new item.

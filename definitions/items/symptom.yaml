@@ -614,3 +614,35 @@ symptom-general-fatigue-severity:
   repeatable: unlimited
   references:
     snomed: ["84229001"]
+
+# Malaise: the general feeling of being ill. Not a global health rating (wellbeing-self-rated-health,
+# wellbeing-general-health) and not tiredness (fatigue). No HealthKit category type exists for it.
+symptom-general-malaise:
+  version: v1
+  label:
+    en: Feeling unwell
+    fr: Malaise général
+  description:
+    en: "General feeling of being ill or unwell (malaise). Presence marker for sources that record occurrence only (no grade); use symptom-general-malaise-severity when a severity is known."
+    fr: "Sensation générale d'être malade ou de ne pas se sentir bien (malaise). Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-general-malaise-severity lorsqu'une sévérité est connue."
+  deprecated: true
+  streamId: symptom-general-malaise
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+
+symptom-general-malaise-severity:
+  version: v1
+  label:
+    en: Feeling unwell
+    fr: Malaise général
+  description:
+    en: General feeling of being ill or unwell (malaise).
+    fr: Sensation générale d'être malade ou de ne pas se sentir bien (malaise).
+  streamId: symptom-general-malaise
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["367391008"]

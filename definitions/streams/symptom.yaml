@@ -109,6 +109,8 @@ children:
     children:
       - id: symptom-general-fatigue
         name: Fatigue
+      - id: symptom-general-malaise
+        name: Malaise
   - id: symptom-respiratory
     name: Respiratory
     label:
