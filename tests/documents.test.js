@@ -122,8 +122,10 @@ describe('[DOCS] Medical documents and read markers', () => {
           facilityType: coding('371531000'),
           format: coding('4241000179101'),
           event: [coding('4241000179101')],
-          pages: 3
+          pages: 3,
+          uniqueId: { system: 'urn:ietf:rfc:3986', value: 'urn:oid:2.999.1.2.3' }
         }), JSON.stringify(validate.errors));
+        assert.ok(validate({ ...minimal(), uniqueId: { system: 'urn:ietf:rfc:3986', value: 'urn:uuid:6f1e3c2a-8b4d-4e5f-9a0b-1c2d3e4f5a6b' } }), 'a UUID uniqueId');
         for (const creation of ['2026', '2026-10-28', '2026-10-28T09:30Z', '2026-10-28T09:30:00Z', '2026-10-28T09:30:00.5+01:00']) {
           assert.ok(validate({ ...minimal(), creation }), creation);
         }
@@ -156,6 +158,18 @@ describe('[DOCS] Medical documents and read markers', () => {
         assert.ok(!validate({ ...minimal(), status: 'deprecated' }), 'status enum');
         assert.ok(!validate({ ...minimal(), pages: 0 }), 'pages >= 1');
         assert.ok(!validate({ ...minimal(), pages: 2.5 }), 'pages is an integer');
+        assert.ok(!validate({ ...minimal(), uniqueId: { system: 'urn:ietf:rfc:3986' } }), 'a uniqueId needs a value');
+        assert.ok(!validate({ ...minimal(), uniqueId: { value: 'urn:oid:2.999.1.2.3' } }), 'a uniqueId needs a system');
+        assert.ok(!validate({ ...minimal(), uniqueId: { system: 'urn:ietf:rfc:3986', value: '' } }), 'a uniqueId value is not empty');
+        assert.ok(!validate({ ...minimal(), uniqueId: { system: 'XDS', value: '2.999.1.2.3' } }), 'a uniqueId system is a URI');
+        assert.ok(!validate({ ...minimal(), uniqueId: { system: 'urn:ietf:rfc:3986', value: 'urn:oid:2.999.1.2.3', use: 'official' } }), 'a uniqueId is closed');
+        assert.ok(!validate({ ...minimal(), uniqueId: 'urn:oid:2.999.1.2.3' }), 'a uniqueId is an Identifier, not a string');
+        assert.ok(!validate({ ...minimal(), uniqueId: { system: 'urn:x|y', value: 'abc' } }), 'a uniqueId system holds no |');
+        assert.ok(!validate({ ...minimal(), uniqueId: { system: 'urn:ietf:rfc:3986', value: ' urn:oid:2.999 ' } }), 'no surrounding spaces');
+        for (const value of ['2.999.1.2.3', 'URN:OID:2.999.1', 'urn:oid:2.01.3', 'urn:uuid:6F1E3C2A-8B4D-4E5F-9A0B-1C2D3E4F5A6B', 'http://example.org/doc/1']) {
+          assert.ok(!validate({ ...minimal(), uniqueId: { system: 'urn:ietf:rfc:3986', value } }), `one spelling under urn:ietf:rfc:3986: ${value}`);
+        }
+        assert.ok(validate({ ...minimal(), uniqueId: { system: 'https://lab.example.org/reports', value: 'R-2026-0042' } }), 'another system keeps its value');
         for (const creation of ['28.10.2026', 'October 2026', '2026-1', '2026-10-28T09:30', '2026-10-28T:::', '2026-13-45', '2026-10-28T25:00Z']) {
           assert.ok(!validate({ ...minimal(), creation }), creation);
         }

@@ -116,7 +116,8 @@ makes a document readable by a SMART on FHIR app as one `DocumentReference` whos
   token, under the same grant as the DocumentReference. The Pryv `readToken` (a credential, on the account's host)
   never reaches an app. In an export file the `url` is relative (`Binary/…`) and the file is not embedded.
 - **Not rendered:** `encounterId` (no Encounter resource), `pages`, and whether another document supersedes this one
-  (a reader would need a second query; the stored `status` is rendered as it is).
+  (a reader would need a second query; the stored `status` is rendered as it is). `uniqueId` is not rendered yet; it
+  maps to `masterIdentifier` as it is, once the renderer has a release that reads it (plan 115).
 - **Import** (D12) is not implemented: `fromFhir` refuses the block. A DocumentReference import needs a writer that
   stores the file, so it comes with the first FHIR ingestion of documents.
 
@@ -144,6 +145,7 @@ to the top level and `encounter` to `context`.
 | `format` | | `formatCode` | `content.format` |
 | `event[]` | | `eventCodeList` | `context.event` |
 | `pages` | | | |
+| `uniqueId` (Identifier `{ system, value }`, set by the issuing system) | | `uniqueId` | `masterIdentifier` |
 
 **At publication.** XDS / CH:EPR require `creationTime`, `formatCode`, `healthcareFacilityTypeCode` and
 `practiceSettingCode`, which the model keeps optional (an imported document may not say). The publisher derives what
@@ -173,6 +175,40 @@ event stays, as Pryv keeps it. A reader treats a document as superseded when ano
 whatever the old event's own `status` says, so a writer need not rewrite the old event (it may set its `status` to
 `superseded`).
 
+**A document already held: `uniqueId` and `clientData.hdsDocumentUniqueId`.** The same document can reach the account
+from two sources that both carry its identifier: two importers, or an EPR import and a FHIR import. `sourceKey` cannot
+tell, because it is per tool ([PROVENANCE.md](PROVENANCE.md)). The document's own identifier can. A scan, a photo or a
+PDF loaded by hand carries none, so it is recognised by its importer's `sourceKey` only.
+
+- **`uniqueId`** is the identifier the issuing system gave the document (XDS `uniqueId`, FHIR `masterIdentifier`), as
+  a FHIR Identifier `{ system, value }`. A writer never makes one up. The XDS `entryUUID` / MHD `identifier` names a
+  registry entry, not the document: it is not the `uniqueId`.
+- **One spelling.** When the identifier is an OID or a UUID, however the source spells it (bare, `urn:oid:` prefixed,
+  upper case, or an OID given as `system`), the writer stores system `urn:ietf:rfc:3986` and value `urn:oid:<oid>` or
+  `urn:uuid:<uuid in lower case>`, prefix in lower case (IHE ITI TF-2 Appendix Z.9.1, which MHD applies). The schema
+  refuses any other value under `urn:ietf:rfc:3986`. Any other FHIR `masterIdentifier` is copied as it is; one without
+  a `system` is not stored. `use`, `type` and `assigner` are stripped (the renderer restates MHD's fixed `type`). An
+  XDS `<root>^<extension>` identifier is not stored until its mapping is settled (Open points).
+- **One per version.** A corrected document has its own `uniqueId` and lists the old event in `supersedes`. Two
+  versions are two events; one version is one event.
+- **`clientData.hdsDocumentUniqueId`** = `<system>|<value>` (the FHIR token form, e.g.
+  `urn:ietf:rfc:3986|urn:oid:2.999.1.2.3`; `system` cannot hold `|`), set in the same create or update as `uniqueId`
+  and removed with it (set to `null`: `events.update` merges `clientData`). It is the cross-writer lookup key: content
+  is not searchable, `clientData` is, by exact match. If the two disagree, the content is authoritative and the key is
+  a writer bug.
+- **Before creating a document, a writer holding a `uniqueId` looks it up**: its own `sourceKey` first, then
+  `events.get` with `types: ['file/xds-v1']`, `clientData: [{ "path": "hdsDocumentUniqueId", "eq": "<system>|<value>" }]`,
+  `state: 'all'`. On a found event it only fills fields that are absent: it never replaces a value, never changes
+  `sourceKey`, `status` or `supersedes`, and adds its file only when the event has no attachment. Several matches: the
+  oldest `created`, never merged. An event found by `sourceKey` without a `uniqueId` gets it added. A trashed event is
+  left trashed: a re-run never restores what the person removed ([PROVENANCE.md](PROVENANCE.md)). Only when nothing is
+  found does it create the event. The lookup sees only what the writer's access reads; a `create-only` writer cannot
+  look up.
+- **Visible.** The identifier is shown to every reader of the stream and to each contact the document is shared with,
+  in content and in `clientData`. An OID root can name the issuing institution even when `authors` is empty, and the
+  id lets a reader with access to the source system match the document there. A writer does not store an identifier
+  built from a patient or case number.
+
 **No attachment.** Pryv lets an event exist before its attachment is uploaded. A reader shows a `file/xds-v1` event
 without an attachment as a failed import, never drops it silently.
 
@@ -185,7 +221,7 @@ links; if the two drift, the content is authoritative. An author's `name` is the
 one field.
 
 **Visibility.** `title`, `authors[].name`, `organization` and `service` are free text and are shown to every reader of
-the stream, and to the contact a document is shared with.
+the stream, and to the contact a document is shared with. So is `uniqueId` (above).
 
 **Validation.** The cores do not validate HDS types (an HDS type is unknown to them, so content validation is
 skipped), and no core code reads `attachmentRequired`. Like every HDS schema it is advisory there; a writer
@@ -261,6 +297,11 @@ app sends only the alert, and offers no take-back.
   is asked of Pryv; its event type will be the platform's.
 - A superseded document: a share does not follow the new version. Whether marking the old one `superseded` should
   tell the contact that a newer one exists is open.
-- Not modelled yet, both minor to add: XDS `uniqueId` / FHIR `masterIdentifier` (to recognise a document already
-  imported from the EPR) and `serviceStartTime` / `serviceStopTime` (`context.period`).
+- Not modelled yet, minor to add: `serviceStartTime` / `serviceStopTime` (`context.period`).
+- An XDS `uniqueId` in the `<root>^<extension>` form has no IHE rule for `masterIdentifier`, so it is not stored
+  until settled (two importers guessing differently would split one document for good). Appendix Z.9.1.1's
+  root-plus-extension rule (system `urn:oid:<root>`, value `<extension>`) is the likely one; settle it with the first
+  source that sends one.
+- hds-lib's `withRelatedMirror` / `checkRelatedMirror` cover `related` only on `file/xds-v1`; the
+  `hdsDocumentUniqueId` key and the "one spelling" normaliser come before the first writer that sets `uniqueId`.
 - `status` may gain `entered-in-error` (FHIR has it, XDS does not) if a need appears.
