@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Documentation
+- DOCUMENTS.md "One spelling": the list of spellings no longer says "an OID given as `system`", which contradicted the
+  rule that a `urn:oid:<root>` system is the unsettled root-plus-extension form; that form is now named in the bullet.
+  It points to hds-lib 2.55.0 `normalizeDocumentUniqueId`, and the open point on hds-lib is replaced by what 2.55.0
+  ships.
+
 ## [4.14.0] - 2026-11-17
 
 Additive, site-agents#36 A11: a document's own identifier and the key that recognises a document already held. No

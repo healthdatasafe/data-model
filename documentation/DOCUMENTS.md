@@ -183,12 +183,16 @@ PDF loaded by hand carries none, so it is recognised by its importer's `sourceKe
 - **`uniqueId`** is the identifier the issuing system gave the document (XDS `uniqueId`, FHIR `masterIdentifier`), as
   a FHIR Identifier `{ system, value }`. A writer never makes one up. The XDS `entryUUID` / MHD `identifier` names a
   registry entry, not the document: it is not the `uniqueId`.
-- **One spelling.** When the identifier is an OID or a UUID, however the source spells it (bare, `urn:oid:` prefixed,
-  upper case, or an OID given as `system`), the writer stores system `urn:ietf:rfc:3986` and value `urn:oid:<oid>` or
-  `urn:uuid:<uuid in lower case>`, prefix in lower case (IHE ITI TF-2 Appendix Z.9.1, which MHD applies). The schema
-  refuses any other value under `urn:ietf:rfc:3986`. Any other FHIR `masterIdentifier` is copied as it is; one without
-  a `system` is not stored. `use`, `type` and `assigner` are stripped (the renderer restates MHD's fixed `type`). An
-  XDS `<root>^<extension>` identifier is not stored until its mapping is settled (Open points).
+- **One spelling.** An OID or a UUID is stored as system `urn:ietf:rfc:3986` and value `urn:oid:<oid>` or
+  `urn:uuid:<uuid in lower case>`, prefix in lower case (IHE ITI TF-2 Appendix Z.9.1, which MHD applies). That covers
+  an XDS `uniqueId` (a string, bare or `urn:oid:` / `urn:uuid:` prefixed, in any case) and a FHIR `masterIdentifier`
+  whose `system` is `urn:ietf:rfc:3986` (in any case), its `value` spelled either way. The schema refuses any other
+  value under `urn:ietf:rfc:3986`. Not stored until that mapping is settled (Open points): an XDS
+  `<root>^<extension>` identifier, and a `masterIdentifier` whose `system` is `urn:oid:<root>`, the same
+  root-plus-extension form. Also not stored: a `masterIdentifier` without a `system`, whatever its `value`. Any other
+  `masterIdentifier` is copied with `system` and `value` trimmed; `use`, `type` and `assigner` are stripped (the
+  renderer restates MHD's fixed `type`). hds-lib `normalizeDocumentUniqueId` (2.55.0) applies these rules and returns
+  `null` for what is not stored.
 - **One per version.** A corrected document has its own `uniqueId` and lists the old event in `supersedes`. Two
   versions are two events; one version is one event.
 - **`clientData.hdsDocumentUniqueId`** = `<system>|<value>` (the FHIR token form, e.g.
@@ -301,7 +305,9 @@ app sends only the alert, and offers no take-back.
 - An XDS `uniqueId` in the `<root>^<extension>` form has no IHE rule for `masterIdentifier`, so it is not stored
   until settled (two importers guessing differently would split one document for good). Appendix Z.9.1.1's
   root-plus-extension rule (system `urn:oid:<root>`, value `<extension>`) is the likely one; settle it with the first
-  source that sends one.
-- hds-lib's `withRelatedMirror` / `checkRelatedMirror` cover `related` only on `file/xds-v1`; the
-  `hdsDocumentUniqueId` key and the "one spelling" normaliser come before the first writer that sets `uniqueId`.
+  source that sends one. A `masterIdentifier` already in that form (`system` `urn:oid:<root>`) is held back with it.
+  The schema does not refuse that form yet; a writer that bypasses hds-lib must not store it.
+- hds-lib (2.55.0) mirrors `hdsDocumentUniqueId` in `withRelatedMirror` (`null` on an update that drops the
+  `uniqueId`) and reports `missing-document-key` / `stale-document-key` in `checkRelatedMirror`. It has no lookup
+  helper: the writer runs the `events.get` above itself.
 - `status` may gain `entered-in-error` (FHIR has it, XDS does not) if a need appears.
