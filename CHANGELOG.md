@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Documentation
+- `TREATMENT-PROCEDURE.md` states the care-programme history mapping decided 2026-10-13 (site-agents#4):
+  `treatment-coded` at `treatment-fertility` with SNOMED `718701005` *Natural family planning method*, no new item.
+  The "known ergonomic gap" paragraph is replaced: hds-forms-js 0.16.0 shipped `itemCustomizations[...].pin`, which
+  shows the concept as static text and asks only for the companion fields.
+
 ## [4.12.0] - 2026-11-16
 
 Additive, plan 115 questionnaire answers slice. Three streams (the root `explicitGrantOnly`), two items, one `fhir`
