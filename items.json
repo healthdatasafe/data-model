@@ -17770,6 +17770,79 @@
       ]
     }
   },
+  "symptom-general-malaise": {
+    "version": "v1",
+    "label": {
+      "en": "Feeling unwell",
+      "fr": "Malaise général"
+    },
+    "description": {
+      "en": "General feeling of being ill or unwell (malaise). Presence marker for sources that record occurrence only (no grade); use symptom-general-malaise-severity when a severity is known.",
+      "fr": "Sensation générale d'être malade ou de ne pas se sentir bien (malaise). Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-general-malaise-severity lorsqu'une sévérité est connue."
+    },
+    "deprecated": true,
+    "streamId": "symptom-general-malaise",
+    "eventType": "activity/plain",
+    "type": "checkbox",
+    "repeatable": "unlimited"
+  },
+  "symptom-general-malaise-severity": {
+    "version": "v1",
+    "label": {
+      "en": "Feeling unwell",
+      "fr": "Malaise général"
+    },
+    "description": {
+      "en": "General feeling of being ill or unwell (malaise).",
+      "fr": "Sensation générale d'être malade ou de ne pas se sentir bien (malaise)."
+    },
+    "streamId": "symptom-general-malaise",
+    "eventType": "ratio/proportion",
+    "type": "select",
+    "options": [
+      {
+        "value": 0,
+        "label": {
+          "en": "None",
+          "fr": "Aucun"
+        }
+      },
+      {
+        "value": 0.25,
+        "label": {
+          "en": "Slight",
+          "fr": "Léger"
+        }
+      },
+      {
+        "value": 0.5,
+        "label": {
+          "en": "Moderate",
+          "fr": "Modéré"
+        }
+      },
+      {
+        "value": 0.75,
+        "label": {
+          "en": "Severe",
+          "fr": "Sévère"
+        }
+      },
+      {
+        "value": 1,
+        "label": {
+          "en": "Extreme",
+          "fr": "Extrême"
+        }
+      }
+    ],
+    "repeatable": "unlimited",
+    "references": {
+      "snomed": [
+        "367391008"
+      ]
+    }
+  },
   "sync-status": {
     "version": "v1",
     "type": "system",

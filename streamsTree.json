@@ -1858,6 +1858,11 @@
             "id": "symptom-general-fatigue",
             "name": "Fatigue",
             "parentId": "symptom-general"
+          },
+          {
+            "id": "symptom-general-malaise",
+            "name": "Malaise",
+            "parentId": "symptom-general"
           }
         ],
         "parentId": "symptom"
