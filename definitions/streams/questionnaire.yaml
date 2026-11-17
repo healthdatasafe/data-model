@@ -1,8 +1,8 @@
 # The asking and answering act (documentation/QUESTIONNAIRE.md): the questionnaires a person was asked and the answers
 # given. Requests and answers sit in two sibling streams so each can be granted alone: a grant on
 # `questionnaire-answer` is the SMART scope `patient/QuestionnaireResponse.rs` (documentation/FHIR-MAPPING.md §
-# QuestionnaireResponse), and `questionnaire-request` stays free to carry a FHIR mapping of its own later. The clinical
-# records an answer points to stay in their own streams and are never copied here.
+# QuestionnaireResponse), and a grant on `questionnaire-request` is `patient/Questionnaire.rs` (§ Questionnaire). The
+# clinical records an answer points to stay in their own streams and are never copied here.
 #
 # `explicitGrantOnly` (documentation/GENETICS.md § explicitGrantOnly): the answers are a cross-topic sink. A question
 # about a genetic test, a pregnancy or a medication, answered here, says under this grant that such a record exists,

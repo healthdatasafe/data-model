@@ -75,7 +75,8 @@ test accesses with `*` stay unmasked. A mask **added later**
 the sign-in check requires a `defaultName`, which creates the masked stream. No `fhir` block sits under `genetics`,
 so no SMART scope reaches that root; a native token that names it is offered unticked. The plan-115 SMART
 `patient/*` translation honours the marker the same way (above): `questionnaire` is the first marked root with a
-scope key under it, and `patient/*.rs` offers its answer stream unticked.
+scope key under it, and `patient/*.rs` offers its answer stream unticked (and, since 4.13.0, its request stream, as
+a second row).
 
 **`questionnaire` (4.12.0): the same sweep, before the first write.** The existing `*` accesses masked for
 `genetics` are not masked for `questionnaire`. Before any app writes an event into `questionnaire-request` or

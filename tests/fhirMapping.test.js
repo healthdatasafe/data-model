@@ -290,14 +290,17 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       for (const k of ['treatment-basic', 'treatment-coded']) assert.strictEqual(itemsById[k].fhir, undefined, `${k} is mapped`);
     });
 
-    it('[FHIR-ITEM-14] questionnaire answers (plan 115): the answer item is a QuestionnaireResponse under a bare scope key, with no code and no profile claimed; the request item is unmapped, on a sibling stream; the root is explicitGrantOnly and the consent text names everything a grant shows', () => {
+    it('[FHIR-ITEM-14] questionnaire answers (plan 115): the answer item is a QuestionnaireResponse under a bare scope key, with no code and no profile claimed; the request item is a Questionnaire under a bare scope key of its own, on a sibling stream; the root is explicitGrantOnly and the consent text names everything a grant shows', () => {
       const answer = itemsById['questionnaire-answer'];
       const request = itemsById['questionnaire-request'];
-      // no profile on any flavour: a claim is added with the Questionnaire mapping, never withdrawn
+      // no profile on any flavour: the US Core profile is not claimed (FHIR-MAPPING.md § No profile is claimed)
       assert.deepStrictEqual(answer.fhir, { resourceType: 'QuestionnaireResponse', profiles: {} });
       assert.strictEqual(fhirMapping.categories.QuestionnaireResponse, undefined, 'no category table: a bare scope key, for good');
       assert.deepStrictEqual([answer.streamId, answer.eventType, answer.type], ['questionnaire-answer', 'questionnaire/answer-v1', 'system']);
-      assert.deepStrictEqual([request.streamId, request.eventType, request.type, request.fhir], ['questionnaire-request', 'questionnaire/request-v1', 'system', undefined]);
+      assert.deepStrictEqual([request.streamId, request.eventType, request.type], ['questionnaire-request', 'questionnaire/request-v1', 'system']);
+      // the request (Questionnaire slice): the same shape of block, its own bare key, no profile either
+      assert.deepStrictEqual(request.fhir, { resourceType: 'Questionnaire', profiles: {} });
+      assert.strictEqual(fhirMapping.categories.Questionnaire, undefined, 'no category table: a bare scope key, for good');
       const { streamsById } = require('../src/streams');
       assert.deepStrictEqual(streamsById.questionnaire.children.map((c) => c.id), ['questionnaire-request', 'questionnaire-answer']);
       // the consent text says what a bare label hides: answers on any health topic, with the qualifier the person
@@ -414,6 +417,10 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       checkItem(qr, 'q');
       qr.fhir.code = coding('1');
       assert.throws(() => checkItem(qr, 'q'), /must NOT have more than 2 properties/);
+      const qn = item('questionnaire-request');
+      checkItem(qn, 'q');
+      qn.fhir.code = coding('1');
+      assert.throws(() => checkItem(qn, 'q'), /must NOT have more than 2 properties/);
       const noCode = item('procedure-basic');
       delete noCode.fhir.code;
       assert.throws(() => checkItem(noCode, 'p'), /must have required property 'code'/);
@@ -1028,6 +1035,74 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => checkFhirImportKeys({ a: { fhir: qr().fhir }, b: { fhir: qr().fhir } }), /fhir import key QuestionnaireResponse is claimed by both "a" and "b"/);
     });
 
+    it('[FHIR-MAP-27] a Questionnaire block: resourceType and profiles only (no code, no category, no value), on a system item whose one eventType holds questions, each with a label and an itemRef; the key grammar, the sub-field types and the types of title, description, templateRef and subField are held; one item maps the resourceType (plan 115)', () => {
+      const qn = () => item('questionnaire-request');
+      checkItem(qn(), 'questionnaire-request');
+      check(qn(), 'questionnaire-request');
+      const a = qn();
+      a.fhir.category = 'survey';
+      assert.throws(() => check(a, 'q'), /resourceType "Questionnaire" takes no category/);
+      for (const [k, v] of [['code', coding('1')], ['value', { kind: 'coded', options: { x: coding('x') } }], ['ignore', ['questions']], ['alsoMatch', [coding('2')]]]) {
+        const b = qn();
+        b.fhir[k] = v;
+        assert.throws(() => check(b, 'q'), new RegExp(`a Questionnaire block holds "resourceType" and "profiles" only .* remove "${k}"`));
+      }
+      const c = qn();
+      c.type = 'text';
+      assert.throws(() => check(c, 'q'), /a Questionnaire block applies to a "system" item/);
+      // the renderer reads questions, and each question's label and itemRef, by name
+      const d = qn();
+      d.eventType = 'questionnaire/answer-v1';
+      assert.throws(() => check(d, 'q'), /eventType "questionnaire\/answer-v1" has no object content property "questions"/);
+      assert.throws(() => checkFhirMapping('q', qn(), ['questionnaire/answer-v1', 'questionnaire/request-v1']), /needs an item with exactly one eventType/);
+      // what a renderer holding the block alone depends on in the eventType: the key grammar (no dot, so the child
+      // linkIds stay distinct), the sub-field types it knows, and the type of each name it reads when declared
+      const { eventTypesById } = require('../src/eventTypes');
+      const { QUESTION_KEY_PATTERN, QUESTIONNAIRE_SUB_FIELD_TYPES, QUESTIONNAIRE_OPTION_VALUE_TYPES } = require('../src/fhir');
+      const schema = eventTypesById('questionnaire/request-v1');
+      const question = schema.properties.questions.additionalProperties;
+      assert.strictEqual(schema.properties.questions.propertyNames.pattern, QUESTION_KEY_PATTERN);
+      assert.deepStrictEqual(question.properties.subField.properties.type.enum, QUESTIONNAIRE_SUB_FIELD_TYPES);
+      assert.deepStrictEqual(question.properties.subField.properties.options.items.properties.value.type, QUESTIONNAIRE_OPTION_VALUE_TYPES);
+      const withSchema = (change, expected) => {
+        const saved = structuredClone(schema.properties);
+        try {
+          change();
+          assert.throws(() => check(qn(), 'q'), expected);
+        } finally {
+          schema.properties = saved;
+        }
+        check(qn(), 'q');
+      };
+      const questionOf = () => schema.properties.questions.additionalProperties;
+      withSchema(() => { schema.properties.questions.propertyNames.pattern = '^[a-zA-Z0-9_.-]+$'; }, /the keys of "questions" must follow exactly \^\[a-zA-Z0-9_-\]\+\$/);
+      withSchema(() => { delete schema.properties.questions.propertyNames; }, /the keys of "questions" must follow exactly/);
+      withSchema(() => { questionOf().properties.subField.properties.type.enum.push('date'); }, /the "subField.type" enum must be exactly select-segmented, text, number/);
+      withSchema(() => { questionOf().properties.subField.properties.type.enum.pop(); }, /the "subField.type" enum must be exactly/);
+      withSchema(() => { questionOf().properties.subField = { type: 'string' }; }, /a question's "subField" is not an object/);
+      withSchema(() => { questionOf().properties.subField.properties.options = { type: 'object' }; }, /a question's "subField.options" is not an array/);
+      withSchema(() => { questionOf().properties.subField.properties.options.items.properties.value.type.push('boolean'); }, /the option "value" types of "subField.options" must be exactly number, string/);
+      withSchema(() => { questionOf().properties.subField.properties.options.items.properties.value.type = 'string'; }, /the option "value" types of "subField.options" must be exactly number, string/);
+      withSchema(() => { schema.properties.title = { type: 'string' }; }, /content property "title" of eventType "questionnaire\/request-v1" is not an object/);
+      withSchema(() => { schema.properties.description = { type: 'string' }; }, /content property "description" of eventType "questionnaire\/request-v1" is not an object/);
+      withSchema(() => { schema.properties.templateRef = { type: 'object' }; }, /content property "templateRef" of eventType "questionnaire\/request-v1" is not a string/);
+      // each of the optional names may be absent from the eventType
+      const saved = structuredClone(schema.properties);
+      try {
+        delete questionOf().properties.subField.properties.options;
+        check(qn(), 'q');
+        for (const k of ['title', 'description', 'templateRef']) delete schema.properties[k];
+        delete questionOf().properties.subField;
+        check(qn(), 'q');
+      } finally {
+        schema.properties = saved;
+      }
+      // the import key: the resourceType alone, one item; it never collides with the answers' key
+      const { checkFhirImportKeys } = require('../src/fhir');
+      checkFhirImportKeys({ a: { fhir: qn().fhir }, b: { fhir: item('questionnaire-answer').fhir } });
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: qn().fhir }, b: { fhir: qn().fhir } }), /fhir import key Questionnaire is claimed by both "a" and "b"/);
+    });
+
     it('[FHIR-MAP-14] alsoMatchCategories: known keys of the resourceType table, never the block\'s own, refused without a table', () => {
       const a = item('lifestyle-tobacco-smoking');
       a.fhir.alsoMatchCategories = ['surveys'];
@@ -1326,11 +1401,12 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         'Observation|vital-signs': ['body-blood-pressure', 'body-heart-rate', 'body-height', 'body-oxygen-saturation', 'body-weight'],
         Patient: ['profile-address', 'profile-date-of-birth', 'profile-name', 'profile-sex'],
         Procedure: ['procedure'],
+        Questionnaire: ['questionnaire-request'],
         QuestionnaireResponse: ['questionnaire-answer']
       });
-      // the QuestionnaireResponse grant is the answer stream alone: the request stream beside it is in no grant
+      // each of the two streams is a grant of its own, under its own pair; the root above them is in no grant
       assert.deepStrictEqual(readLock().streams['questionnaire-answer'], { pair: 'QuestionnaireResponse', parent: 'questionnaire', items: ['questionnaire-answer'] });
-      assert.strictEqual(readLock().streams['questionnaire-request'], undefined);
+      assert.deepStrictEqual(readLock().streams['questionnaire-request'], { pair: 'Questionnaire', parent: 'questionnaire', items: ['questionnaire-request'] });
       assert.strictEqual(readLock().streams.questionnaire, undefined);
       // the Procedure grant reaches the context stream under its root, which holds no item of its own
       assert.deepStrictEqual(readLock().streams['procedure-fertility'], { pair: 'Procedure', parent: 'procedure', items: [] });
