@@ -1,5 +1,22 @@
 # Changelog
 
+## [4.14.0] - 2026-11-17
+
+Additive, site-agents#36 A11: a document's own identifier and the key that recognises a document already held. No
+stream, item or `fhir` block changes. hds-fhir-js does not render the new property yet (it ignores unknown content), so
+no renderer release is needed for this pack.
+
+### Added
+- **`file/xds-v1` `uniqueId`** (optional): the document's own identifier from its issuing system, XDS
+  `DocumentEntry.uniqueId` / FHIR `DocumentReference.masterIdentifier`, as a closed Identifier `{ system, value }`. An
+  OID or a UUID has one spelling, enforced: system `urn:ietf:rfc:3986`, value `urn:oid:<oid>` or lower-case
+  `urn:uuid:<uuid>` (IHE ITI TF-2 Appendix Z.9.1). It is mirrored in the new `clientData.hdsDocumentUniqueId`
+  (`<system>|<value>`), the cross-writer key a writer looks up before creating a document, so a document that reaches
+  the account from two sources carrying its identifier (two importers, an EPR import and a FHIR import) is one event.
+  DOCUMENTS.md § "A document already held". Additive for writers on this pack; content stays closed, so a validator on
+  an older pack refuses a document carrying `uniqueId`. Follow-ups: hds-lib key mirror and normaliser before the first
+  writer; hds-fhir-js `masterIdentifier` render (plan 115).
+
 ## [4.13.0] - 2026-11-17
 
 Additive, plan 115 Questionnaire slice. One `fhir` block, one new resourceType and scope key. No stream, item or

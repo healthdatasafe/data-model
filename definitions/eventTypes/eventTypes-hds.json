@@ -3298,6 +3298,45 @@
           "description": "Number of pages of the original, when known.",
           "type": "integer",
           "minimum": 1
+        },
+        "uniqueId": {
+          "description": "The document's own global identifier, set by the system that issued it (an EPR, a laboratory system), never made up by a writer: DocumentEntry.uniqueId, FHIR DocumentReference.masterIdentifier, as a FHIR Identifier {system, value}. One per version: a replacement document has its own. An OID or a UUID is always stored as system urn:ietf:rfc:3986 with value urn:oid:<oid> or urn:uuid:<uuid in lower case> (IHE ITI TF-2 Appendix Z.9.1), however the source spells it. Mirrored in clientData.hdsDocumentUniqueId as <system>|<value>, the key that recognises a document already held (documentation/DOCUMENTS.md).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "system",
+            "value"
+          ],
+          "properties": {
+            "system": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:[^\\s|]+$"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^\\S(.*\\S)?$"
+            }
+          },
+          "anyOf": [
+            {
+              "properties": {
+                "system": {
+                  "not": {
+                    "enum": [
+                      "urn:ietf:rfc:3986"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "value": {
+                  "pattern": "^(urn:oid:[0-2](\\.(0|[1-9][0-9]*))+|urn:uuid:[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12})$"
+                }
+              }
+            }
+          ]
         }
       }
     },

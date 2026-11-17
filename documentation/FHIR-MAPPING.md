@@ -427,6 +427,7 @@ document:
 | `practiceSetting`, `facilityType`, `event[]` | `context.practiceSetting`, `.facilityType`, `.event[]` |
 | `format` | `content[].format` |
 | `encounterId`, `pages` | not rendered (no Encounter resource is served; a page count has no element) |
+| `uniqueId` | not rendered yet: `masterIdentifier` with MHD's fixed `type`, in a later hds-fhir-js release (plan 115) |
 | event `time` | `date`, as an instant: the document's date on the timeline, what a `date` search filters (`created` is `Provenance.recorded`) |
 | `attachments[]` (Pryv) | one `content[]` per file: `attachment.contentType`, `size`, `title` (file name), `url` = `Binary/<eventId>.<fileId>` (absolute on the facade, relative in an export file); never the Pryv `readToken`; no `hash` (FHIR's is SHA-1, Pryv's integrity is sha256) |
 
