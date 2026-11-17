@@ -110,7 +110,7 @@ Apple uses a **flat list** of symptom identifiers under `HKCategoryTypeIdentifie
 
 | Body System | SNOMED Concept ID | Example symptoms |
 |-------------|-------------------|------------------|
-| Digestive system | 53619000 | nausea (73879007), bloating (236653009) |
+| Digestive system | 53619000 | nausea (422587007), bloating (236653009) |
 | Nervous system | 118940003 | headache (25064002), dizziness (404640003) |
 | Respiratory system | 50043002 | cough, dyspnea, wheezing |
 | Musculoskeletal system | 928000 | joint pain, back pain |
@@ -168,7 +168,7 @@ Source: PMC8631160 — "The real-world applications of the symptom tracking func
 |---|---|---|
 | Headache | `headache` (Severity) | 25064002 |
 | Migraine | `headache` (Severity) | 37796009 |
-| Nausea | `nausea` (Severity) | 73879007 |
+| Nausea | `nausea` (Severity) | 422587007 |
 | Cramps | `abdominalCramps` (Severity) | 21522001 |
 | Gas | — | 271835004 |
 | Cravings | — | — |
