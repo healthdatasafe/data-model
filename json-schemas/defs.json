@@ -516,7 +516,8 @@
             "MedicationStatement",
             "MedicationRequest",
             "Procedure",
-            "QuestionnaireResponse"
+            "QuestionnaireResponse",
+            "Questionnaire"
           ]
         },
         "category": {
@@ -615,7 +616,10 @@
       "if": {
         "properties": {
           "resourceType": {
-            "const": "QuestionnaireResponse"
+            "enum": [
+              "QuestionnaireResponse",
+              "Questionnaire"
+            ]
           }
         },
         "required": [

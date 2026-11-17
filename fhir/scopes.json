@@ -160,6 +160,9 @@
   "Procedure": [
     "procedure"
   ],
+  "Questionnaire": [
+    "questionnaire-request"
+  ],
   "QuestionnaireResponse": [
     "questionnaire-answer"
   ]
