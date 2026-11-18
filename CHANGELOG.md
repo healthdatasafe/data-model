@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.18.0] - 2026-11-18
 
 Licence change, and a terminology-lookup page. No stream, item, eventType or `fhir` block changes.
 

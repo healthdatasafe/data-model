@@ -3,7 +3,7 @@ HDS Data Model: licensing
 Copyright (c) 2025-2026, Health Data Safe (https://www.healthdatasafe.org) and contributors
 
 Versions up to and including 4.17.1 were released in their entirety under the
-BSD 3-Clause License and remain available under it. From the next version,
+BSD 3-Clause License and remain available under it. From version 4.18.0,
 this repository holds two kinds of material, under two licences. Third-party
 material (section 3) is covered by neither.
 
