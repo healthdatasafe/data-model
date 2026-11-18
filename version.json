@@ -1,9 +1,9 @@
 {
-  "commit": "10a4a41c3b6b143a756e34706bb90cc52b57267f",
-  "commitShort": "10a4a41",
+  "commit": "abec76472f374b1d449bd35e13c1c839ba1f0522",
+  "commitShort": "abec764",
   "branch": "main",
-  "buildDate": "2026-11-18T12:22:22Z",
-  "publicationDate": "2026-11-18T12:22:07.547Z",
+  "buildDate": "2026-11-18T19:18:54Z",
+  "publicationDate": "2026-11-18T19:18:44.967Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -94,5 +94,7 @@
       "file": "appStreams.json"
     }
   ],
-  "version": "4.17.1"
+  "version": "4.18.0",
+  "license": "CC-BY-4.0",
+  "attribution": "HDS Data Model 4.18.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
 }
