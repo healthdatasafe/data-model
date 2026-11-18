@@ -14,6 +14,9 @@ Licence change, and a terminology-lookup page. No stream, item, eventType or `fh
   code systems, third-party product names), and adds a notice on the model's name
   and on conformance: a modified version is not the HDS Data Model, and "compatible with the HDS Data Model
   `<version>`" stays allowed.
+- The SNOMED CT notice uses SNOMED International's standard attribution ("used by permission", College of American
+  Pathologists origin). It states that Health Data Safe holds a SNOMED CT Affiliate Licence obtained through eHealth
+  Suisse and grants no licence or sublicence in SNOMED CT: users need their own.
 
 ### Added
 - `TERMS.md`: terms of use of the hosted service at model.datasafe.dev (open to all, attribution, fair use, no

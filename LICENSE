@@ -78,16 +78,19 @@ their owners' terms. Neither licence above grants any right in them.
   under the license at http://loinc.org/license. LOINC® is a registered
   United States trademark of Regenstrief Institute, Inc.
 
-- SNOMED CT. This material includes SNOMED Clinical Terms® (SNOMED CT®),
-  owned by the International Health Terminology Standards Development
-  Organisation (trading as SNOMED International). "SNOMED" and "SNOMED CT" are
-  registered trademarks of SNOMED International. This covers the identifiers,
-  their display terms, and the labels and translations derived from them,
-  including the CH Term value sets and the concepts of the Swiss extension
-  published by eHealth Suisse, the Swiss National Release Centre. Use of
-  SNOMED CT is governed by the SNOMED CT Affiliate Licence: it is free of
-  charge in member territories (Switzerland is one) through the National
-  Release Centre, and may require a licence and fees elsewhere. See
+- SNOMED CT. This material includes SNOMED Clinical Terms® (SNOMED CT®)
+  which is used by permission of SNOMED International (the International
+  Health Terminology Standards Development Organisation). All rights
+  reserved. SNOMED CT® was originally created by the College of American
+  Pathologists. "SNOMED" and "SNOMED CT" are registered trademarks of SNOMED
+  International. This covers the identifiers, their display terms, and the
+  labels and translations derived from them, including the CH Term value sets
+  and the concepts of the Swiss extension published by eHealth Suisse, the
+  Swiss National Release Centre. Health Data Safe holds a SNOMED CT Affiliate
+  Licence, obtained through eHealth Suisse. Health Data Safe grants you no
+  licence or sublicence in SNOMED CT: to use it you need your own licence,
+  which is free of charge in member territories (Switzerland is one) through
+  the National Release Centre, and may carry fees elsewhere. See
   https://www.snomed.org/get-snomed.
 
 - Other code systems named in the definitions (ICD-10, ICD-10-PCS, ICF,

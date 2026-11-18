@@ -16,8 +16,8 @@ pack and use it under CC BY 4.0, with or without this service.
    with the HDS Data Model `<version>`" when it reads and writes data as that version defines. Using this service
    does not mean Health Data Safe endorses you or your product.
 5. **Third-party code systems.** The pack carries codes from LOINC, SNOMED CT and other code systems, under their
-   owners' terms (LICENSE §3). The LOINC notice is published as `LOINC_NOTICE.txt`. Using SNOMED CT may require a
-   licence outside member territories.
+   owners' terms (LICENSE §3). The LOINC notice is published as `LOINC_NOTICE.txt`. Using SNOMED CT requires your
+   own licence from SNOMED International or your National Release Centre; Health Data Safe grants none.
 6. **Fair use.** Cache the pack and fetch it again when `version.json` changes, rather than on every request. Health
    Data Safe may limit or block traffic that degrades the service for others.
 7. **No warranty, no liability.** The service and its content are provided as is, without warranty of accuracy,

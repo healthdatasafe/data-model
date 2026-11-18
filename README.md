@@ -129,7 +129,7 @@ npm run build    # Generate dist/pack.json (served at model.datasafe.dev)
   whether you modified it. Versions up to 4.17.1 remain available under BSD-3-Clause in their entirety.
 - **Code** (`src/`, `scripts/`, `tests/`): BSD-3-Clause. The JSON Schemas may be used under either licence.
 - **Third-party code systems** (LOINC, SNOMED CT and others) are not covered: they stay under their owners' terms.
-  Using SNOMED CT may require a licence in your country.
+  Using SNOMED CT requires your own licence (free of charge in member territories, fees may apply elsewhere).
 - **Name and conformance:** a modified version is not the HDS Data Model. You may call a product "compatible with
   the HDS Data Model `<version>`" when it reads and writes data as that version defines.
 
