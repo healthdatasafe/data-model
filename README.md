@@ -122,7 +122,21 @@ npm run setup    # Install dependencies
 npm run build    # Generate dist/pack.json (served at model.datasafe.dev)
 ```
 
-## LOINC notice
+## Licence
+
+- **Model content** (`definitions/`, `documentation/`, the published pack): [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+  Suggested credit: "HDS Data Model `<version>`, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0", saying
+  whether you modified it. Versions up to 4.17.1 remain available under BSD-3-Clause in their entirety.
+- **Code** (`src/`, `scripts/`, `tests/`): BSD-3-Clause. The JSON Schemas may be used under either licence.
+- **Third-party code systems** (LOINC, SNOMED CT and others) are not covered: they stay under their owners' terms.
+  Using SNOMED CT may require a licence in your country.
+- **Name and conformance:** a modified version is not the HDS Data Model. You may call a product "compatible with
+  the HDS Data Model `<version>`" when it reads and writes data as that version defines.
+
+Full text: [LICENSE](LICENSE). The hosted service at model.datasafe.dev has its own [terms of use](TERMS.md). The
+build publishes both next to the pack, as `LICENSE.txt` and `TERMS.txt`. Contributions: [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### LOINC notice
 
 The pack carries LOINC codes and their long common names (`references.loinc`, `references.loincMethod`, unit options,
 `fhir:` blocks). The LOINC licence (§10) requires this notice wherever the pack is distributed; the build also

@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+Licence change, and a terminology-lookup page. No stream, item, eventType or `fhir` block changes.
+
+### Changed
+- **The model content is licensed under CC BY 4.0** from this release: `definitions/`, `documentation/` and the
+  published pack. The code (`src/`, `scripts/`, `tests/`) stays BSD-3-Clause; `package.json` declares
+  `BSD-3-Clause AND CC-BY-4.0`. Releases up to 4.17.1 remain available under BSD-3-Clause in their entirety, content
+  included; that grant is not withdrawn. CC BY 4.0 applies to the content as published from this release. The JSON
+  Schemas may be used under either licence.
+- LICENSE carves out third-party material (LOINC, SNOMED CT with the CH Term value sets and Swiss extension, other
+  code systems, third-party product names), and adds a notice on the model's name
+  and on conformance: a modified version is not the HDS Data Model, and "compatible with the HDS Data Model
+  `<version>`" stays allowed.
+
+### Added
+- `TERMS.md`: terms of use of the hosted service at model.datasafe.dev (open to all, attribution, fair use, no
+  warranty, Swiss law). The build publishes `LICENSE.txt` and `TERMS.txt` next to the pack, links them from the landing
+  page, and adds `license` and `attribution` to `version.json`.
+- `CONTRIBUTING.md`: contributions are signed off under the Developer Certificate of Origin (DCO).
+
 ### Docs
 - **`documentation/TERMINOLOGY.md`** (site-agents#36 A8): terminology lookups when a writer codes a person's record.
   A lookup sent to a third party carries one bare code at most, never a name from the record. A third-party

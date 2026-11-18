@@ -1,0 +1,123 @@
+HDS Data Model: licensing
+
+Copyright (c) 2025-2026, Health Data Safe (https://www.healthdatasafe.org) and contributors
+
+Versions up to and including 4.17.1 were released in their entirety under the
+BSD 3-Clause License and remain available under it. From the next version,
+this repository holds two kinds of material, under two licences. Third-party
+material (section 3) is covered by neither.
+
+-------------------------------------------------------------------------------
+1. Model content: Creative Commons Attribution 4.0 International (CC BY 4.0)
+-------------------------------------------------------------------------------
+
+Covered, except the third-party material of section 3: everything under
+`definitions/` and `documentation/`, the Markdown files at the repository
+root, and the published pack built from them (`pack.json` and the other data
+files served at https://model.datasafe.dev, converter definitions included):
+streams, items, event types, conversions, settings, vocabularies, document
+kinds, labels, descriptions and translations.
+
+The JSON Schemas (`src/schemas/`, published under `json-schemas/`) may be used
+under either licence, at your choice.
+
+Licence text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+Suggested credit:
+
+    HDS Data Model <version>, (c) Health Data Safe, https://model.datasafe.dev,
+    licensed under CC BY 4.0. <State "modified" if you changed it.>
+
+SPDX-License-Identifier: CC-BY-4.0
+
+-------------------------------------------------------------------------------
+2. Software: BSD 3-Clause License
+-------------------------------------------------------------------------------
+
+Covered: everything under `src/`, `scripts/` and `tests/`, and every other
+file not listed in section 1.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+SPDX-License-Identifier: BSD-3-Clause
+
+-------------------------------------------------------------------------------
+3. Third-party material: not covered by this licence
+-------------------------------------------------------------------------------
+
+The model carries codes, and in places names and translations, from external
+code systems. Those remain the property of their owners and are used under
+their owners' terms. Neither licence above grants any right in them.
+
+- LOINC. This material contains content from LOINC (http://loinc.org). LOINC is
+  copyright © Regenstrief Institute, Inc. and the Logical Observation
+  Identifiers Names and Codes (LOINC) Committee and is available at no cost
+  under the license at http://loinc.org/license. LOINC® is a registered
+  United States trademark of Regenstrief Institute, Inc.
+
+- SNOMED CT. This material includes SNOMED Clinical Terms® (SNOMED CT®),
+  owned by the International Health Terminology Standards Development
+  Organisation (trading as SNOMED International). "SNOMED" and "SNOMED CT" are
+  registered trademarks of SNOMED International. This covers the identifiers,
+  their display terms, and the labels and translations derived from them,
+  including the CH Term value sets and the concepts of the Swiss extension
+  published by eHealth Suisse, the Swiss National Release Centre. Use of
+  SNOMED CT is governed by the SNOMED CT Affiliate Licence: it is free of
+  charge in member territories (Switzerland is one) through the National
+  Release Centre, and may require a licence and fees elsewhere. See
+  https://www.snomed.org/get-snomed.
+
+- Other code systems named in the definitions (ICD-10, ICD-10-PCS, ICF,
+  RxNorm, CPT, Swissmedic, HL7 terminology, HGNC, HGVS, dbSNP, ClinVar, UCUM,
+  and others) are referenced under their publishers' terms. CPT is a
+  proprietary code system of the American Medical Association.
+
+- Names of third-party methods, products and applications (for example
+  fertility-awareness methods and tracking apps in the converter definitions)
+  are used for identification only and remain their owners' trademarks.
+
+-------------------------------------------------------------------------------
+4. Notice on the model's name and on conformance
+-------------------------------------------------------------------------------
+
+This section adds no condition to the licences above. It states how Health
+Data Safe uses the model's name, and recalls what CC BY 4.0 already provides.
+
+You may fork, adapt and redistribute the model, including in commercial or
+closed products, and you may describe a product as "compatible with the HDS
+Data Model <version>" when it reads and writes data as that published version
+defines.
+
+Health Data Safe alone publishes the HDS Data Model and defines what conforms
+to it. A modified version is not the HDS Data Model. CC BY 4.0 requires you to
+indicate that you modified it (section 3(a)(1)(B)), and gives no permission to
+suggest that Health Data Safe endorses you or your version (section
+2(a)(6)). CC BY 4.0 does not license trademark or name rights (section
+2(b)(2)); Health Data Safe reserves its rights in the names "Health Data
+Safe", "HDS" and "HDS Data Model" under applicable law. Health Data Safe may
+also ask you to remove its attribution from a modified version (section
+3(a)(3)). Please do not name a modified version "HDS Data Model", or present
+it as an official or conformant version.

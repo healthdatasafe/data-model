@@ -71,6 +71,9 @@ const versionContent = {
   ...existingVersion,
   version: pack.version,
   publicationDate: pack.publicationDate,
+  license: 'CC-BY-4.0',
+  attribution: `HDS Data Model ${pack.version}, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. ` +
+    'Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt',
   files: filesIndex
 };
 fs.writeFileSync(versionFilePath, JSON.stringify(versionContent, null, 2), 'utf-8');
@@ -81,6 +84,11 @@ const LOINC_NOTICE = 'This material contains content from LOINC (http://loinc.or
   'and the Logical Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under the license at ' +
   'http://loinc.org/license. LOINC® is a registered United States trademark of Regenstrief Institute, Inc.';
 fs.writeFileSync(path.resolve(basePath, 'LOINC_NOTICE.txt'), LOINC_NOTICE + '\n', 'utf-8');
+
+// -- Licence and terms of use of the hosted service, published next to the pack so a consumer of model.datasafe.dev
+// sees them without the repository.
+fs.copyFileSync(path.resolve(__dirname, '../LICENSE'), path.resolve(basePath, 'LICENSE.txt'));
+fs.copyFileSync(path.resolve(__dirname, '../TERMS.md'), path.resolve(basePath, 'TERMS.txt'));
 
 // -- index.html — small landing page that redirects to the React browser.
 // The previous static items / streams tables have been replaced by
@@ -104,6 +112,8 @@ const redirectHtml = `<!DOCTYPE html>
     <h1>HDS Data Model</h1>
     <p>The data-model browser has moved to <a href="${BROWSER_URL}">${BROWSER_URL}</a>.</p>
     <p>If you are not redirected automatically, click the link above.</p>
+    <p><small>HDS Data Model © Health Data Safe. Content under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>,
+      code under BSD-3-Clause: see <a href="LICENSE.txt">LICENSE.txt</a> and the <a href="TERMS.txt">terms of use</a>.</small></p>
     <p><small>${LOINC_NOTICE}</small></p>
   </body>
 </html>
