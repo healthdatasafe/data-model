@@ -87,6 +87,7 @@ In-depth notes on specific subdomains live in `documentation/`:
 - `MEDICATION.md` — intake vs period, regimen timing, skipped and stopped, the typed prescription, the medication vocabularies, and coding a medication read from a document (a Swiss brand name as printed, its ATC substance code, the `hdsId` datasets-service returns).
 - `PROVENANCE.md` — the index of HDS `clientData` keys, and the definitions of `clientData.hdsInstrument` (the instrument a measure was taken with) and `clientData.related.<eventId>` (a link to a source event) and `clientData.sourceKey` (the identity of an imported record), with their FHIR and HealthKit mappings.
 - `PARTIAL-DATES.md` — dates known only to the month or the year, or approximately ("March 1999", "about spring 1998"): `time` at the period start at 12:00 UTC, `clientData.hdsTimePrecision` and its companions, and the FHIR mapping.
+- `TERMINOLOGY.md` — terminology lookups when coding a person's record: codes only to remote services (a printed code checked by code, never a name searched), the local lookups first (the pack, the local MCP's `search_items`, a terminology copy the writer holds), and HDS datasets-service searches (site-agents#36 A8).
 - `FHIR-MAPPING.md`: the per-item `fhir:` block: how an item's events render as FHIR R4 and import back, the SMART scope grant table published as `pack.fhirScopes` and its lock, and how to add a mapping (plan 115, draft).
 - `CUSTOM-FIELDS-AND-SYSTEM.md`, `DESIGN-NOTES.md`, `TAGS.md`
 

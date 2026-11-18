@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Docs
+- **`documentation/TERMINOLOGY.md`** (site-agents#36 A8): terminology lookups when a writer codes a person's record.
+  A lookup sent to a third party carries one bare code at most, never a name from the record. A third-party
+  terminology service only checks a code the record prints (`$lookup` by code); a text search there or on the web is
+  not allowed. Local lookups come first: the pack, the local MCP's `search_items`, a terminology copy the writer
+  holds. HDS datasets-service searches send the name only, with the person told. With no code found: no code, never a
+  guess. BLOOD-CHEMISTRY.md § Codes and AGENTS.md now say their tx.fhir.org procedures are for curating definitions.
+  No pack change.
+
 ## [4.17.1] - 2026-11-18
 
 ### Changed

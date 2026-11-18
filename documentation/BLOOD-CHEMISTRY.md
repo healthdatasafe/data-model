@@ -499,6 +499,10 @@ legacy item (B-2026-10-29-2, found stale and closed in 4.9.0).
 
 ## Codes
 
+These are the procedures for curating the model's own definitions, with generic concept names and no person's data.
+A writer coding a person's record follows [TERMINOLOGY.md](TERMINOLOGY.md): no names from the record to a
+third-party service, and a code checked by the code alone.
+
 - **SNOMED** references are verified against the local `snomed-db` (International Edition RF2
   20260201) — **never** hand-written, and **never taken from search order**. Verification is not a
   formality here: several concepts a plain search returns *first* are **inactive** — `35170002`
