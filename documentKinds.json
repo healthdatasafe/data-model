@@ -429,8 +429,8 @@
         "it": "Immagine"
       },
       "description": {
-        "en": "An image filed as a document of its own, without a written report (CH:EPR \"Image\").",
-        "fr": "Une image classée comme document à part entière, sans compte rendu écrit (DEP « Image »)."
+        "en": "An image filed as a document of its own, without a written report, such as an X-ray, ultrasound or MRI image (DICOM included) or a photo of a wound or of the skin (CH:EPR \"Image\"). HDS writers file every picture here, except a picture of a specimen.",
+        "fr": "Une image classée comme document à part entière, sans compte rendu écrit, comme une image de radiographie, d'échographie ou d'IRM (DICOM compris) ou la photo d'une plaie ou de la peau (DEP « Image »). Les writers HDS classent ici toute image, sauf celle d'un prélèvement."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -452,8 +452,8 @@
         "it": "Immagine, video o audio"
       },
       "description": {
-        "en": "A picture, video or sound recording of a finding (CH:EPR \"Picture/Video/Audio\"; SNOMED CT digital representation of a specimen).",
-        "fr": "Une image, une vidéo ou un enregistrement sonore d'une constatation (DEP « Image/vidéo/audio » ; SNOMED CT représentation numérique d'un spécimen)."
+        "en": "A video or a sound recording, or a picture of a specimen (a biopsy slide, a smear) (CH:EPR \"Picture/Video/Audio\"; SNOMED CT digital representation of a specimen). HDS writers file any other picture as an \"Image\"; a document from another source may use this kind for a photo.",
+        "fr": "Une vidéo ou un enregistrement sonore, ou l'image d'un prélèvement (lame de biopsie, frottis) (DEP « Image/vidéo/audio » ; SNOMED CT représentation numérique d'un spécimen). Les writers HDS classent toute autre image comme « Image » ; un document d'une autre source peut utiliser ce type pour une photo."
       },
       "class": {
         "system": "http://snomed.info/sct",
