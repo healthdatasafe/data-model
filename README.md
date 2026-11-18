@@ -66,6 +66,7 @@ definitions/
     mood/            5D vector model for mood states
   datasources/     External data source definitions
   vocabularies/    Labels and code mappings of eventType enum values (pack.vocabularies; medication.yaml)
+  documentKinds.yaml  Document kind → CH-EPR class / type codes and which date counts (pack.documentKinds)
 ```
 
 ## Subdomain documentation

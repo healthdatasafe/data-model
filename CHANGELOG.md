@@ -1,5 +1,27 @@
 # Changelog
 
+## [4.17.0] - 2026-11-18
+
+Additive, site-agents#36 A9: a published document-kind table. No stream, item, eventType or `fhir` block changes.
+
+### Added
+- **`documentKinds`** (pack section, `documentKinds.json`, schema `json-schemas/documentKinds.json`): 45 kinds of
+  medical document, one per row of the CH Term 3.4.0 ConceptMap `DocumentEntryClassCodeToDocumentEntryTypeCode`, each
+  with the SNOMED CT Codings a `file/xds-v1` document writes as `class` and first `type`, a label (en / fr / de / it,
+  based on the CH Term designations, edited), a `description` saying when to pick it (en / fr), and `timeBasis`
+  (`service` or `creation`: the writer's default for which printed date is the event time). The three
+  Swiss-extension concepts (Obstetrical record, Imaging order, Medication dispense document) carry
+  `version: http://snomed.info/sct/2011000195101`; the other 42 codes are active in the International Edition. The
+  build refuses two kinds that their codes or labels cannot tell apart, and a code with two Codings. A kind a later
+  CH Term release drops is kept with `deprecated: true`.
+
+### Documentation
+- DOCUMENTS.md: "Document kinds" (the table, the Swiss extension, picking and reading a kind back, new CH Term
+  releases) and "Which date is a document's date" (care over a period takes its end; records kept up to date take
+  their last entry; only a date from the body, never the fax, scan, print or upload date; day precision at 12:00 UTC;
+  importers that cannot ask; a printed date can be wrong; a writer default, not a reader claim). The "Codes" paragraph
+  no longer says the model publishes no table.
+
 ## [4.16.0] - 2026-11-17
 
 ### Changed
