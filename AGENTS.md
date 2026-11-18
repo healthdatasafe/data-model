@@ -351,6 +351,7 @@ data-model/
 │   ├── appStreams.yaml                    # App-contextual sub-streams (notes, chat)
 │   ├── datasources/                       # External data source references
 │   ├── vocabularies/*.yaml                # Labels + FHIR/SNOMED codes of eventType enum values (pack.vocabularies, 3.46.0)
+│   ├── documentKinds.yaml                 # Document kind → CH-EPR class / type Codings + timeBasis (pack.documentKinds, 4.17.0)
 │   ├── conversions/                       # Unit conversions (mass, length, temperature)
 │   ├── settings/settings.yaml             # HDS user-settings definitions
 │   ├── fhir/mapping.yaml                  # FHIR tables: categories per resourceType, systems, IG versions
@@ -367,6 +368,8 @@ data-model/
 │   ├── datasources.js                     # Datasource loader
 │   ├── vocabularies.js                    # Vocabulary loader: pins each vocabulary to the enums it binds
 │   ├── schemas/vocabularies.js            # AJV JSON Schema for a vocabulary (published json-schemas/vocabulary.json)
+│   ├── documentKinds.js                   # Document-kind loader: one kind per class / type pair, one Coding per code
+│   ├── schemas/documentKinds.js           # AJV JSON Schema for the table (published json-schemas/documentKinds.json)
 │   ├── conversions.js                     # Unit conversion loader
 │   ├── settings.js                        # Settings loader
 │   ├── build.js                           # Pack generation (writes dist/pack.json)

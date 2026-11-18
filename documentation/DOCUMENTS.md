@@ -159,16 +159,14 @@ the Swiss extension). It is closed: FHIR Coding's `userSelected` is rejected, so
 is a minor change.
 
 **Codes.** `class` and `type` take their codes from the CH:EPR value sets
-`http://fhir.ch/ig/ch-term/ValueSet/DocumentEntry.classCode` and `.typeCode`. The model publishes no kind-to-code table:
-the importer that classifies a document owns it. Several CH:EPR class, type and practice-setting concepts are Swiss
-extension SNOMED codes, which the International Edition (and the workspace's snomed-db) does not hold. Check them on
-fhir.ch, and say which are CH-extension, before shipping a table.
+`http://fhir.ch/ig/ch-term/ValueSet/DocumentEntry.classCode` and `.typeCode`. A type belongs to one class: the pairs
+are the CH Term ConceptMap's, published as [document kinds](#document-kinds-documentkinds-4170) since 4.17.0.
 
 **Not stored, on purpose.** The confidentiality code (a choice made at publication) and the XDS SHA-1 hash (computed at
 publication; the attachment's own integrity is its sha256).
 
 **Time.** The event time is when the document belongs on the person's timeline. `creation` is when it was written,
-when that differs.
+when that differs. Which printed date is which: [below](#which-date-is-a-documents-date).
 
 **Replacing a document.** A corrected or newer version is a new event that lists the old one in `supersedes`. The old
 event stays, as Pryv keeps it. A reader treats a document as superseded when another document supersedes it,
@@ -230,6 +228,93 @@ the stream, and to the contact a document is shared with. So is `uniqueId` (abov
 **Validation.** The cores do not validate HDS types (an HDS type is unknown to them, so content validation is
 skipped), and no core code reads `attachmentRequired`. Like every HDS schema it is advisory there; a writer
 validates against the pack.
+
+## Document kinds: `documentKinds` (4.17.0)
+
+An importer that knows what a document is (a lab report, a discharge summary, a referral letter) writes the class and
+first type of its kind, from the pack's `documentKinds` (`definitions/documentKinds.yaml`, `documentKinds.json`,
+schema `json-schemas/documentKinds.json`). From [site-agents#36](https://github.com/healthdatasafe/site-agents/issues/36)
+A9: until then every importer drafted its own table, and a first one drafted from the two value sets put types under
+the wrong classes.
+
+```json
+"laboratory-report": {
+  "label": { "en": "Laboratory report", "fr": "Rapport de laboratoire", "de": "Laborbericht", "it": "Referto di laboratorio" },
+  "description": { "en": "The results of laboratory tests (blood, urine and other samples).", "fr": "…" },
+  "class": { "system": "http://snomed.info/sct", "code": "371525003", "display": "Clinical procedure report" },
+  "type": { "system": "http://snomed.info/sct", "code": "4241000179101", "display": "Laboratory report" },
+  "timeBasis": "service"
+}
+```
+
+- **Source.** One kind per row of the CH Term ConceptMap `DocumentEntryClassCodeToDocumentEntryTypeCode`, version
+  3.4.0 (`source` in the table): 45 kinds, 17 classes, 29 types. Each type is in exactly one class, except Record
+  artifact (`419891008`), which the ConceptMap pairs with every class: a class with more specific types has an
+  "Other …" kind for it (`other-encounter-report`, `other-order`, `other-summary`, `other-procedure-report`,
+  `other-care-plan`, `other-prescription`, `other-patient-record`, `other-health-event-record`, and
+  `administrative-document`), a fallback when none of the class's specific kinds fits, never a default, and seven classes have
+  Record artifact as their only type (referral letter, consent, advance directive, access log, emergency card, organ
+  donor card, pregnancy or birth report). `other` is Record artifact for both.
+- **Pick a kind by its `description`,** which says when it applies and how it differs from its neighbours (a
+  medication list, a medication plan and a medication treatment decision; a referral letter and a transfer summary).
+  When even the class is unclear, use `other`.
+- **Copy the Codings as they are** into `class` and `type[0]`. `display` is the International Edition preferred term.
+- **Swiss extension.** Three concepts are in the SNOMED CT Swiss extension, not the International Edition: class
+  `2171000195109` Obstetrical record, types `2161000195103` Imaging order and `82291000195104` Medication dispense
+  document. Their Coding carries `version: http://snomed.info/sct/2011000195101`, as the value sets list them; a
+  terminology lookup against the International Edition does not find them. The other 42 codes are active in the
+  International Edition (2026-02-01 release).
+- **Reading a kind back.** Take the first `http://snomed.info/sct` coding in `type` (another writer may lead with a
+  LOINC one) and `class`: the type identifies the kind, except Record artifact, where the class does. A document whose
+  codes are in no kind keeps its codes; a reader shows it by its class `display` (its type would only say "Record
+  artifact"), or as `other`.
+- **Labels** are based on the CH Term designations (en-US, fr-CH, de-CH, it-CH), edited: typos fixed, a few
+  renamed so that no two kinds share a label in one language (the build refuses that), and the "Other …" labels
+  added. de and it are there because Swiss documents are written in them, and an agent classifying a document matches
+  their words. hds-lib's `localizeText` reads en, fr and es only, so an app gets the de and it labels from the pack
+  directly; the rest of the pack has no German or Italian yet.
+- **Order.** The kinds are grouped by class in the file; JSON key order is no contract, so a picker groups by
+  `class.code` itself.
+- **Not in the table:** practice setting, facility type and format codes (chosen at publication, above), and the LOINC
+  document type, which the `document` item's `fhir` block translates from the type.
+- **A new CH Term release** may move a type or add a code: the table is checked against its ConceptMap by
+  `tests/documentKinds.test.js`, whose copy of the pairs is updated with the table. A kind key is never renamed or
+  removed: a pair a release drops stays, marked `deprecated: true`, so stored documents still read back, and pickers
+  leave it out. A release that puts one type under two classes is refused by the build, and the reading rule above
+  would need a revision first.
+
+### Which date is a document's date
+
+The event `time` places the document on the person's timeline; `creation` is the date the document was written or
+signed, when it differs. A kind's `timeBasis` is the writer's default for which date printed on the document is the
+event time:
+
+| `timeBasis` | Event time | Kinds |
+|---|---|---|
+| `service` | the date of the care the document reports: the sample taken (lab, pathology), the examination (imaging, history and physical), the operation, the consultation, the emergency visit, the dispense | reports, discharge and transfer summaries, emergency and allied-health reports, images, pregnancy or birth report |
+| `creation` | the date the document was written or signed, the date `creation` holds | prescriptions, orders, letters, plans, certificates, consents, cards, lists, other summaries, administrative documents, `other` |
+
+- **Care over a period takes its end; separate acts take the first.** A hospital stay, a transfer, a course of
+  follow-up or therapy (progress and allied-health reports), a pregnancy: the day it ended (the discharge date for a
+  discharge summary). A document reporting separate acts on several days (a lab report with samples on two days):
+  the first day, and its own results carry their own times.
+- **A record kept up to date** (a vaccination booklet, an allergy pass, an emergency card, a medication list or plan)
+  often prints no issue date: take the date of its last entry or update.
+- **Only a date from the document's body counts.** Never the fax header, the scan or print date, the upload date, the
+  e-mail it came with or the date of a later copy: these say when a copy moved, not when the care happened.
+- **When the kind's date is not printed,** use the other one (a lab report without a sampling date takes its report
+  date). When no date can be read at all, ask the person; never fill one in. An importer that cannot ask (a bridge, a
+  batch run) holds the document for review, or writes the year or an `approx` date with `hdsTimeText` saying what is
+  known, and never the upload date.
+- **Day, month, year.** A printed date has no hour: `time` is 12:00 UTC on that day with
+  `clientData.hdsTimePrecision: day`, never local midnight. Partial dates ("03.1999", "spring 1998") follow
+  [PARTIAL-DATES.md](PARTIAL-DATES.md) the same way, with `hdsTimeText` as printed. `creation` takes the date as a
+  FHIR date (`1999-03-14`) or a partial one (`1999-03`).
+- **A printed date can be wrong** (a template's date never updated, a typo, a year that contradicts the content). Check
+  it against the content and the other documents of the same care; when in doubt, ask the person.
+- **A default for writers, not a claim readers can use.** A reader cannot infer from the kind which date an existing
+  event carries: the fallbacks above leave no trace, and older documents predate the table. The date of the care as
+  a field of its own (XDS `serviceStartTime` / `serviceStopTime`) is an open point below.
 
 ## Sharing one document: the `document-shares` root (3.37.0)
 
@@ -314,3 +399,6 @@ app sends only the alert, and offers no take-back.
   `uniqueId`) and reports `missing-document-key` / `stale-document-key` in `checkRelatedMirror`. It has no lookup
   helper: the writer runs the `events.get` above itself.
 - `status` may gain `entered-in-error` (FHIR has it, XDS does not) if a need appears.
+- Document kinds `image-reference` and `media-recording` (CH:EPR "Image" and "Picture/Video/Audio"): their
+  descriptions do not yet decide a wound photo or an X-ray file without a report. Add examples once the eHealth Suisse
+  metadata annex is checked.
