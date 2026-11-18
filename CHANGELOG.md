@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.17.1] - 2026-11-18
+
+### Changed
+- `documentKinds` descriptions of `image-reference` and `media-recording` now decide between the two (the open point
+  of 4.17.0), by an HDS convention.
+  - **`image-reference`** is every picture an HDS writer files: an X-ray, ultrasound or MRI image (DICOM included),
+    or a photo of a wound or of the skin.
+  - **`media-recording`** is a video, a sound recording, or a picture of a specimen.
+  - **Readers** accept either code for a picture.
+  - **Sources** (DOCUMENTS.md Open points): EPDV-EDI Annex 3 edition 7 lists both codes as legal and does not define
+    them. eHealth Suisse's non-binding 2022 implementation aid offers `900000000000471006` as "Bild".
+  - Descriptions only: no code, key or schema change.
+
 ## [4.17.0] - 2026-11-18
 
 Additive, site-agents#36 A9: a published document-kind table. No stream, item, eventType or `fhir` block changes.

@@ -399,6 +399,18 @@ app sends only the alert, and offers no take-back.
   `uniqueId`) and reports `missing-document-key` / `stale-document-key` in `checkRelatedMirror`. It has no lookup
   helper: the writer runs the `events.get` above itself.
 - `status` may gain `entered-in-error` (FHIR has it, XDS does not) if a need appears.
-- Document kinds `image-reference` and `media-recording` (CH:EPR "Image" and "Picture/Video/Audio"): their
-  descriptions do not yet decide a wound photo or an X-ray file without a report. Add examples once the eHealth Suisse
-  metadata annex is checked.
+- Document kinds `image-reference` and `media-recording` (CH:EPR "Image" and "Picture/Video/Audio"), settled in
+  4.17.1, by an **HDS convention**. What the Swiss sources say:
+  - EPDV-EDI Annex 3, edition 7 (in force 2025-06-01), lists both as legal typeCodes under Clinical procedure report,
+    with no definition or example. Edition 3 (2021) had only `900000000000471006`; `787148009` is there since edition
+    6 (2024) at the latest.
+  - eHealth Suisse's non-binding 2022 implementation aid ("Vereinfachte Anzeige und Handhabung der Metadaten im EPD",
+    annex B.2) offers practitioners "Bild" with `900000000000471006`.
+  - In SNOMED CT, `787148009` is a record type for a specimen. CH Term designates it "Bild/Video/Audio" with no
+    specimen restriction.
+
+  **The convention.** An HDS writer files every picture as `image-reference`. It files a video, a sound recording or a
+  picture of a specimen as `media-recording`. A reader accepts either code for a picture, since another source may
+  type a photo `787148009`. Revisit if a later edition of the annex drops one of them: the CH-EPR ART-DECOR changelog
+  (2019-2020) once recorded `900000000000471006` as replaced by `787148009`, though neither the annex nor CH Term
+  carried that through.
