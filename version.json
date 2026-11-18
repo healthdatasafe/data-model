@@ -1,9 +1,9 @@
 {
-  "commit": "bfd494a74d17519212e52f07577717955197bb00",
-  "commitShort": "bfd494a",
+  "commit": "dcb8b032cf3f434a4f2e3c2421ecf7980031b8b3",
+  "commitShort": "dcb8b03",
   "branch": "main",
-  "buildDate": "2026-11-17T20:35:19Z",
-  "publicationDate": "2026-11-17T20:35:04.898Z",
+  "buildDate": "2026-11-18T08:22:13Z",
+  "publicationDate": "2026-11-18T08:22:01.150Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -24,6 +24,10 @@
     {
       "title": "Json Schema Vocabulary",
       "file": "json-schemas/vocabulary.json"
+    },
+    {
+      "title": "Json Schema Document kinds",
+      "file": "json-schemas/documentKinds.json"
     },
     {
       "title": "Streams Tree",
@@ -48,6 +52,10 @@
     {
       "title": "Vocabularies dictionnary",
       "file": "vocabularies.json"
+    },
+    {
+      "title": "Document kinds",
+      "file": "documentKinds.json"
     },
     {
       "title": "Datasources dictionnary",
@@ -86,5 +94,5 @@
       "file": "appStreams.json"
     }
   ],
-  "version": "4.16.0"
+  "version": "4.17.0"
 }

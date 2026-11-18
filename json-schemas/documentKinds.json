@@ -1,0 +1,179 @@
+{
+  "$id": "https://model.datasafe.dev/json-schemas/documentKinds.json",
+  "title": "HDS document kinds",
+  "type": "object",
+  "required": [
+    "source",
+    "kinds"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "source": {
+      "type": "object",
+      "required": [
+        "conceptMap",
+        "classCodes",
+        "typeCodes",
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "conceptMap": {
+          "type": "string",
+          "pattern": "^https?://"
+        },
+        "classCodes": {
+          "type": "string",
+          "pattern": "^https?://"
+        },
+        "typeCodes": {
+          "type": "string",
+          "pattern": "^https?://"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "kinds": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "label",
+          "description",
+          "class",
+          "type",
+          "timeBasis"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "type": "object",
+            "required": [
+              "en",
+              "fr"
+            ],
+            "properties": {
+              "en": {
+                "type": "string",
+                "minLength": 1
+              },
+              "fr": {
+                "type": "string",
+                "minLength": 1
+              },
+              "de": {
+                "type": "string",
+                "minLength": 1
+              },
+              "it": {
+                "type": "string",
+                "minLength": 1
+              },
+              "es": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": {
+            "type": "object",
+            "required": [
+              "en",
+              "fr"
+            ],
+            "properties": {
+              "en": {
+                "type": "string",
+                "minLength": 1
+              },
+              "fr": {
+                "type": "string",
+                "minLength": 1
+              },
+              "de": {
+                "type": "string",
+                "minLength": 1
+              },
+              "it": {
+                "type": "string",
+                "minLength": 1
+              },
+              "es": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "class": {
+            "type": "object",
+            "required": [
+              "system",
+              "code",
+              "display"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "system": {
+                "const": "http://snomed.info/sct"
+              },
+              "version": {
+                "const": "http://snomed.info/sct/2011000195101"
+              },
+              "code": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{5,17}$"
+              },
+              "display": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "type": {
+            "type": "object",
+            "required": [
+              "system",
+              "code",
+              "display"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "system": {
+                "const": "http://snomed.info/sct"
+              },
+              "version": {
+                "const": "http://snomed.info/sct/2011000195101"
+              },
+              "code": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{5,17}$"
+              },
+              "display": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "timeBasis": {
+            "enum": [
+              "service",
+              "creation"
+            ]
+          },
+          "deprecated": {
+            "const": true
+          }
+        }
+      }
+    }
+  }
+}

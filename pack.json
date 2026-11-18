@@ -1,6 +1,6 @@
 {
-  "version": "4.16.0",
-  "publicationDate": "2026-11-17T20:35:04.898Z",
+  "version": "4.17.0",
+  "publicationDate": "2026-11-18T08:22:01.150Z",
   "streams": [
     {
       "id": "activity",
@@ -30598,6 +30598,1054 @@
           },
           "fhir": "completed"
         }
+      }
+    }
+  },
+  "documentKinds": {
+    "source": {
+      "conceptMap": "http://fhir.ch/ig/ch-term/ConceptMap/DocumentEntryClassCodeToDocumentEntryTypeCode",
+      "classCodes": "http://fhir.ch/ig/ch-term/ValueSet/DocumentEntry.classCode",
+      "typeCodes": "http://fhir.ch/ig/ch-term/ValueSet/DocumentEntry.typeCode",
+      "version": "3.4.0"
+    },
+    "kinds": {
+      "consultation-report": {
+        "label": {
+          "en": "Consultation report",
+          "fr": "Rapport de consultation",
+          "de": "Konsultationsbericht",
+          "it": "Rapporto di consultazione"
+        },
+        "description": {
+          "en": "A doctor's report or letter on a consultation, including a specialist's reply to the referring doctor.",
+          "fr": "Le rapport ou la lettre d'un médecin sur une consultation, y compris la réponse d'un spécialiste au médecin qui l'a adressé."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "371531000",
+          "display": "Encounter report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "371530004",
+          "display": "Clinical consultation report"
+        },
+        "timeBasis": "service"
+      },
+      "history-and-physical": {
+        "label": {
+          "en": "History and physical examination",
+          "fr": "Anamnèse et examen clinique",
+          "de": "Anamnese und Untersuchungsbefund",
+          "it": "Anamnesi ed esame obiettivo"
+        },
+        "description": {
+          "en": "The medical history and examination findings taken at a first visit or an admission.",
+          "fr": "L'anamnèse et les constatations de l'examen, relevées lors d'une première visite ou d'une admission."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "371531000",
+          "display": "Encounter report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "371529009",
+          "display": "History and physical report"
+        },
+        "timeBasis": "service"
+      },
+      "progress-report": {
+        "label": {
+          "en": "Progress report",
+          "fr": "Rapport de suivi",
+          "de": "Verlaufsbericht",
+          "it": "Referto sul decorso"
+        },
+        "description": {
+          "en": "How a condition or a treatment has evolved over a period of follow-up.",
+          "fr": "L'évolution d'une affection ou d'un traitement sur une période de suivi."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "371531000",
+          "display": "Encounter report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "371532007",
+          "display": "Progress report"
+        },
+        "timeBasis": "service"
+      },
+      "other-encounter-report": {
+        "label": {
+          "en": "Other encounter report",
+          "fr": "Autre rapport de consultation",
+          "de": "Anderer Konsultationsbericht",
+          "it": "Altro rapporto di visita medica"
+        },
+        "description": {
+          "en": "A report on a visit that is neither a consultation report, a history and physical nor a progress report.",
+          "fr": "Un rapport sur une visite qui n'est ni un rapport de consultation, ni une anamnèse, ni un rapport de suivi."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "371531000",
+          "display": "Encounter report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "service"
+      },
+      "referral-letter": {
+        "label": {
+          "en": "Referral letter",
+          "fr": "Lettre de référence",
+          "de": "Zuweisungsschreiben",
+          "it": "Lettera d'invio"
+        },
+        "description": {
+          "en": "A doctor's letter sending the person to another doctor or a hospital.",
+          "fr": "La lettre d'un médecin qui adresse la personne à un autre médecin ou à un hôpital."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "721927009",
+          "display": "Referral note"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "creation"
+      },
+      "laboratory-order": {
+        "label": {
+          "en": "Laboratory order",
+          "fr": "Demande de laboratoire",
+          "de": "Laborauftrag",
+          "it": "Richiesta di laboratorio"
+        },
+        "description": {
+          "en": "A request for laboratory tests.",
+          "fr": "Une demande d'analyses de laboratoire."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "721963009",
+          "display": "Order document"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "721965002",
+          "display": "Laboratory order"
+        },
+        "timeBasis": "creation"
+      },
+      "pathology-order": {
+        "label": {
+          "en": "Pathology order",
+          "fr": "Demande de pathologie",
+          "de": "Pathologieauftrag",
+          "it": "Richiesta di patologia"
+        },
+        "description": {
+          "en": "A request for a pathology examination of tissue or cells.",
+          "fr": "Une demande d'examen pathologique de tissus ou de cellules."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "721963009",
+          "display": "Order document"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "721966001",
+          "display": "Pathology order"
+        },
+        "timeBasis": "creation"
+      },
+      "imaging-order": {
+        "label": {
+          "en": "Imaging order",
+          "fr": "Demande d'imagerie",
+          "de": "Bildgebungsauftrag",
+          "it": "Richiesta di immaginografia"
+        },
+        "description": {
+          "en": "A request for an imaging examination (X-ray, ultrasound, CT, MRI).",
+          "fr": "Une demande d'examen d'imagerie (radiographie, échographie, scanner, IRM)."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "721963009",
+          "display": "Order document"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/2011000195101",
+          "code": "2161000195103",
+          "display": "Imaging order"
+        },
+        "timeBasis": "creation"
+      },
+      "other-order": {
+        "label": {
+          "en": "Other order",
+          "fr": "Autre demande d'examen",
+          "de": "Anderer Untersuchungsauftrag",
+          "it": "Altra richiesta di esami"
+        },
+        "description": {
+          "en": "A request for an examination that is not a laboratory, pathology or imaging order.",
+          "fr": "Une demande d'examen qui n'est pas une demande de laboratoire, de pathologie ou d'imagerie."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "721963009",
+          "display": "Order document"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "creation"
+      },
+      "discharge-summary": {
+        "label": {
+          "en": "Discharge summary",
+          "fr": "Rapport de sortie",
+          "de": "Austrittsbericht",
+          "it": "Rapporto di dimissione"
+        },
+        "description": {
+          "en": "The summary of a hospital stay, written when the person leaves.",
+          "fr": "Le résumé d'un séjour hospitalier, rédigé à la sortie de la personne."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "422735006",
+          "display": "Summary clinical document"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "373942005",
+          "display": "Discharge summary"
+        },
+        "timeBasis": "service"
+      },
+      "transfer-summary": {
+        "label": {
+          "en": "Transfer summary",
+          "fr": "Rapport de transfert",
+          "de": "Verlegungsbericht",
+          "it": "Rapporto di trasferimento"
+        },
+        "description": {
+          "en": "The summary sent with the person when moved from one hospital or ward to another; a letter to another doctor is a referral letter.",
+          "fr": "Le résumé qui accompagne la personne transférée d'un hôpital ou d'un service à un autre ; une lettre à un autre médecin est une lettre de référence."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "422735006",
+          "display": "Summary clinical document"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "371535009",
+          "display": "Transfer summary report"
+        },
+        "timeBasis": "service"
+      },
+      "medication-list": {
+        "label": {
+          "en": "Medication list",
+          "fr": "Liste des médicaments",
+          "de": "Medikationsliste",
+          "it": "Elenco dei medicamenti"
+        },
+        "description": {
+          "en": "A list of the medicines the person takes, without a schedule.",
+          "fr": "Une liste des médicaments que la personne prend, sans horaire de prise."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "422735006",
+          "display": "Summary clinical document"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "721912009",
+          "display": "Medication summary document"
+        },
+        "timeBasis": "creation"
+      },
+      "medication-plan": {
+        "label": {
+          "en": "Medication plan",
+          "fr": "Plan de médication",
+          "de": "Medikationsplan",
+          "it": "Piano dei medicamenti"
+        },
+        "description": {
+          "en": "The medicines the person takes with when and how much, as given to the person (for example the Swiss eMediplan).",
+          "fr": "Les médicaments que la personne prend, avec quand et combien, tels que remis à la personne (par exemple l'eMediplan suisse)."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "422735006",
+          "display": "Summary clinical document"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "736378000",
+          "display": "Medication management plan"
+        },
+        "timeBasis": "creation"
+      },
+      "other-summary": {
+        "label": {
+          "en": "Other summary",
+          "fr": "Autre résumé",
+          "de": "Andere Zusammenfassung",
+          "it": "Altro riepilogo"
+        },
+        "description": {
+          "en": "A summary of the person's health or care that is not a discharge or transfer summary, a medication list or a medication plan.",
+          "fr": "Un résumé de la santé ou des soins de la personne qui n'est ni un rapport de sortie ou de transfert, ni une liste ou un plan de médication."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "422735006",
+          "display": "Summary clinical document"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "creation"
+      },
+      "operative-report": {
+        "label": {
+          "en": "Operative report",
+          "fr": "Rapport d'opération",
+          "de": "Operationsbericht",
+          "it": "Rapporto operatorio"
+        },
+        "description": {
+          "en": "The surgeon's report of an operation.",
+          "fr": "Le rapport du chirurgien sur une opération."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "371525003",
+          "display": "Clinical procedure report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "371526002",
+          "display": "Operative report"
+        },
+        "timeBasis": "service"
+      },
+      "laboratory-report": {
+        "label": {
+          "en": "Laboratory report",
+          "fr": "Rapport de laboratoire",
+          "de": "Laborbericht",
+          "it": "Referto di laboratorio"
+        },
+        "description": {
+          "en": "The results of laboratory tests (blood, urine and other samples).",
+          "fr": "Les résultats d'analyses de laboratoire (sang, urine et autres échantillons)."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "371525003",
+          "display": "Clinical procedure report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "4241000179101",
+          "display": "Laboratory report"
+        },
+        "timeBasis": "service"
+      },
+      "pathology-report": {
+        "label": {
+          "en": "Pathology report",
+          "fr": "Rapport de pathologie",
+          "de": "Pathologiebericht",
+          "it": "Rapporto di patologia"
+        },
+        "description": {
+          "en": "The result of a pathology examination (biopsy, cytology, smear).",
+          "fr": "Le résultat d'un examen pathologique (biopsie, cytologie, frottis)."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "371525003",
+          "display": "Clinical procedure report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "371528001",
+          "display": "Pathology report"
+        },
+        "timeBasis": "service"
+      },
+      "imaging-report": {
+        "label": {
+          "en": "Imaging report",
+          "fr": "Rapport d'imagerie",
+          "de": "Bericht zur Bildgebung",
+          "it": "Referto di immaginografia"
+        },
+        "description": {
+          "en": "The radiologist's written report on an imaging examination.",
+          "fr": "Le compte rendu écrit du radiologue sur un examen d'imagerie."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "371525003",
+          "display": "Clinical procedure report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "4201000179104",
+          "display": "Imaging report"
+        },
+        "timeBasis": "service"
+      },
+      "image-reference": {
+        "label": {
+          "en": "Image",
+          "fr": "Image",
+          "de": "Bild",
+          "it": "Immagine"
+        },
+        "description": {
+          "en": "An image filed as a document of its own, without a written report (CH:EPR \"Image\").",
+          "fr": "Une image classée comme document à part entière, sans compte rendu écrit (DEP « Image »)."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "371525003",
+          "display": "Clinical procedure report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "900000000000471006",
+          "display": "Image reference"
+        },
+        "timeBasis": "service"
+      },
+      "media-recording": {
+        "label": {
+          "en": "Picture, video or audio",
+          "fr": "Image, vidéo ou audio",
+          "de": "Bild, Video oder Audio",
+          "it": "Immagine, video o audio"
+        },
+        "description": {
+          "en": "A picture, video or sound recording of a finding (CH:EPR \"Picture/Video/Audio\"; SNOMED CT digital representation of a specimen).",
+          "fr": "Une image, une vidéo ou un enregistrement sonore d'une constatation (DEP « Image/vidéo/audio » ; SNOMED CT représentation numérique d'un spécimen)."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "371525003",
+          "display": "Clinical procedure report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "787148009",
+          "display": "Digital representation of specimen"
+        },
+        "timeBasis": "service"
+      },
+      "other-procedure-report": {
+        "label": {
+          "en": "Other procedure report",
+          "fr": "Autre rapport d'intervention",
+          "de": "Anderer Interventionsbericht",
+          "it": "Altro rapporto di intervento"
+        },
+        "description": {
+          "en": "The report of an examination or procedure that is none of the above, such as an endoscopy, an ECG or a lung function test.",
+          "fr": "Le rapport d'un examen ou d'une intervention qui n'est aucun des précédents, comme une endoscopie, un ECG ou un test de fonction pulmonaire."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "371525003",
+          "display": "Clinical procedure report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "service"
+      },
+      "medical-care-plan": {
+        "label": {
+          "en": "Medical care plan",
+          "fr": "Plan de traitement médical",
+          "de": "Ärztlicher Behandlungsplan",
+          "it": "Piano di cure mediche"
+        },
+        "description": {
+          "en": "A doctor's plan for the person's treatment.",
+          "fr": "Le plan d'un médecin pour le traitement de la personne."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "734163000",
+          "display": "Care plan"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "737427001",
+          "display": "Clinical management plan"
+        },
+        "timeBasis": "creation"
+      },
+      "nursing-care-plan": {
+        "label": {
+          "en": "Nursing care plan",
+          "fr": "Plan de soins infirmiers",
+          "de": "Pflegeplan",
+          "it": "Piano di cure infermieristiche"
+        },
+        "description": {
+          "en": "A nursing team's plan of care.",
+          "fr": "Le plan de soins d'une équipe infirmière."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "734163000",
+          "display": "Care plan"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "773130005",
+          "display": "Nursing care plan"
+        },
+        "timeBasis": "creation"
+      },
+      "rehabilitation-plan": {
+        "label": {
+          "en": "Rehabilitation plan",
+          "fr": "Plan de réhabilitation",
+          "de": "Rehabilitationsplan",
+          "it": "Piano di riabilitazione"
+        },
+        "description": {
+          "en": "A plan of rehabilitation, such as physiotherapy after an operation.",
+          "fr": "Un plan de réhabilitation, comme la physiothérapie après une opération."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "734163000",
+          "display": "Care plan"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "736055001",
+          "display": "Rehabilitation care plan"
+        },
+        "timeBasis": "creation"
+      },
+      "medication-treatment-plan": {
+        "label": {
+          "en": "Medication treatment decision",
+          "fr": "Décision de traitement médicamenteux",
+          "de": "Therapieentscheid Medikation",
+          "it": "Decisione di terapia medicamentosa"
+        },
+        "description": {
+          "en": "A doctor's decision to prescribe a medicine, with its reasons.",
+          "fr": "La décision d'un médecin de prescrire un médicament, avec ses raisons."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "734163000",
+          "display": "Care plan"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "761931002",
+          "display": "Medication treatment plan report"
+        },
+        "timeBasis": "creation"
+      },
+      "other-care-plan": {
+        "label": {
+          "en": "Other care plan",
+          "fr": "Autre plan de soins",
+          "de": "Anderer Behandlungsplan",
+          "it": "Altro piano di cura"
+        },
+        "description": {
+          "en": "A plan of care that is none of the above.",
+          "fr": "Un plan de soins qui n'est aucun des précédents."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "734163000",
+          "display": "Care plan"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "creation"
+      },
+      "medication-prescription": {
+        "label": {
+          "en": "Medication prescription",
+          "fr": "Ordonnance de médicaments",
+          "de": "Arzneimittelrezept",
+          "it": "Prescrizione di medicamenti"
+        },
+        "description": {
+          "en": "A prescription for medicines.",
+          "fr": "Une ordonnance de médicaments."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "440545006",
+          "display": "Prescription record"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "761938008",
+          "display": "Medicinal prescription record"
+        },
+        "timeBasis": "creation"
+      },
+      "non-drug-prescription": {
+        "label": {
+          "en": "Non-drug prescription",
+          "fr": "Prescription non médicamenteuse",
+          "de": "Nicht-Arzneimittel-Verschreibung",
+          "it": "Prescrizione non di medicamenti"
+        },
+        "description": {
+          "en": "A prescription for something other than a medicine, such as physiotherapy, aids or devices.",
+          "fr": "Une prescription d'autre chose qu'un médicament, comme de la physiothérapie, des moyens auxiliaires ou des appareils."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "440545006",
+          "display": "Prescription record"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "765492005",
+          "display": "Non-drug prescription record"
+        },
+        "timeBasis": "creation"
+      },
+      "other-prescription": {
+        "label": {
+          "en": "Other prescription",
+          "fr": "Autre prescription",
+          "de": "Andere Verschreibung",
+          "it": "Altra prescrizione medica"
+        },
+        "description": {
+          "en": "A prescription that cannot be told to be for medicines or for something else.",
+          "fr": "Une prescription dont on ne peut pas dire si elle porte sur des médicaments ou sur autre chose."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "440545006",
+          "display": "Prescription record"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "creation"
+      },
+      "allergy-record": {
+        "label": {
+          "en": "Allergy record",
+          "fr": "Carnet des allergies",
+          "de": "Allergieausweis",
+          "it": "Passaporto delle allergie"
+        },
+        "description": {
+          "en": "An allergy pass or record listing the person's allergies.",
+          "fr": "Un passeport ou carnet des allergies de la personne."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "184216000",
+          "display": "Patient record type"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "722446000",
+          "display": "Allergy record"
+        },
+        "timeBasis": "creation"
+      },
+      "immunization-record": {
+        "label": {
+          "en": "Vaccination record",
+          "fr": "Document de vaccination",
+          "de": "Impfdokument",
+          "it": "Documento di vaccinazione"
+        },
+        "description": {
+          "en": "A vaccination booklet or certificate.",
+          "fr": "Un carnet ou un certificat de vaccination."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "184216000",
+          "display": "Patient record type"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "41000179103",
+          "display": "Immunization record"
+        },
+        "timeBasis": "creation"
+      },
+      "other-patient-record": {
+        "label": {
+          "en": "Other patient record",
+          "fr": "Autre documentation du patient",
+          "de": "Andere Patientendokumentation",
+          "it": "Altra documentazione del paziente"
+        },
+        "description": {
+          "en": "A long-running record about the person, such as an extract of the medical file or a health booklet, that is not an allergy or vaccination record.",
+          "fr": "Un document tenu dans la durée sur la personne, comme un extrait du dossier médical ou un carnet de santé, qui n'est ni un carnet des allergies ni un document de vaccination."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "184216000",
+          "display": "Patient record type"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "creation"
+      },
+      "consent": {
+        "label": {
+          "en": "Consent",
+          "fr": "Consentement",
+          "de": "Einverständniserklärung",
+          "it": "Consenso"
+        },
+        "description": {
+          "en": "A consent the person signed, for example to an operation or to a study.",
+          "fr": "Un consentement que la personne a signé, par exemple à une opération ou à une étude."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "371537001",
+          "display": "Consent report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "creation"
+      },
+      "advance-directive": {
+        "label": {
+          "en": "Advance directive",
+          "fr": "Directives anticipées",
+          "de": "Patientenverfügung",
+          "it": "Direttive anticipate"
+        },
+        "description": {
+          "en": "The person's instructions for care if they can no longer decide.",
+          "fr": "Les instructions de la personne pour ses soins si elle ne peut plus décider."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "371538006",
+          "display": "Advance directive report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "creation"
+      },
+      "access-log": {
+        "label": {
+          "en": "Record access log",
+          "fr": "Traçabilité des accès au DEP",
+          "de": "Rückverfolgung der EPD-Zugriffe",
+          "it": "Cronologia degli accessi alla CIP"
+        },
+        "description": {
+          "en": "A log of who accessed the person's health record, such as an EPR access report.",
+          "fr": "Un journal de qui a accédé au dossier de santé de la personne, comme un rapport des accès au DEP."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "722160009",
+          "display": "Audit trail report"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "creation"
+      },
+      "emergency-card": {
+        "label": {
+          "en": "Emergency card",
+          "fr": "Carte d'urgence",
+          "de": "Notfallkarte",
+          "it": "Tessera di emergenza"
+        },
+        "description": {
+          "en": "A card with the information needed in an emergency.",
+          "fr": "Une carte avec les informations utiles en cas d'urgence."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "722216001",
+          "display": "Emergency medical ID record"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "creation"
+      },
+      "organ-donor-card": {
+        "label": {
+          "en": "Organ donor card",
+          "fr": "Carte de donneur d'organes",
+          "de": "Organspendeausweis",
+          "it": "Tessera di donatore di organi"
+        },
+        "description": {
+          "en": "The person's organ donation card.",
+          "fr": "La carte de don d'organes de la personne."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "772790007",
+          "display": "Organ donor card"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "creation"
+      },
+      "obstetrical-record": {
+        "label": {
+          "en": "Pregnancy or birth report",
+          "fr": "Rapport de grossesse ou de naissance",
+          "de": "Schwangerschafts- oder Geburtsbericht",
+          "it": "Rapporto di gravidanza o del parto"
+        },
+        "description": {
+          "en": "A report on a pregnancy or a birth.",
+          "fr": "Un rapport sur une grossesse ou une naissance."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/2011000195101",
+          "code": "2171000195109",
+          "display": "Obstetrical record"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "service"
+      },
+      "medical-certificate": {
+        "label": {
+          "en": "Medical certificate",
+          "fr": "Certificat médical",
+          "de": "Ärztliches Attest",
+          "it": "Certificato medico"
+        },
+        "description": {
+          "en": "A doctor's certificate, such as a sick note or a fitness certificate.",
+          "fr": "Un certificat d'un médecin, comme un arrêt de travail ou un certificat d'aptitude."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "405624007",
+          "display": "Administrative documentation"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "772786005",
+          "display": "Medical certificate"
+        },
+        "timeBasis": "creation"
+      },
+      "administrative-document": {
+        "label": {
+          "en": "Administrative document",
+          "fr": "Document administratif",
+          "de": "Administratives Dokument",
+          "it": "Documento amministrativo"
+        },
+        "description": {
+          "en": "An administrative document about the person's care, such as an insurance letter, an invoice or an appointment.",
+          "fr": "Un document administratif sur les soins de la personne, comme une lettre d'assurance, une facture ou un rendez-vous."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "405624007",
+          "display": "Administrative documentation"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "creation"
+      },
+      "emergency-report": {
+        "label": {
+          "en": "Emergency report",
+          "fr": "Rapport d'urgence",
+          "de": "Notfallbericht",
+          "it": "Rapporto d'urgenza"
+        },
+        "description": {
+          "en": "The report of a visit to an emergency department.",
+          "fr": "Le rapport d'un passage aux urgences."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "417319006",
+          "display": "Record of health event"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "445300006",
+          "display": "Emergency department record"
+        },
+        "timeBasis": "service"
+      },
+      "allied-health-report": {
+        "label": {
+          "en": "Non-medical report",
+          "fr": "Rapport non médical",
+          "de": "Nichtmedizinischer Bericht",
+          "it": "Rapporto non medico"
+        },
+        "description": {
+          "en": "A report by a health professional who is not a doctor, such as a physiotherapist, a midwife or a dietitian.",
+          "fr": "Le rapport d'un professionnel de santé qui n'est pas médecin, comme un physiothérapeute, une sage-femme ou un diététicien."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "417319006",
+          "display": "Record of health event"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "445418005",
+          "display": "Professional allied to medicine clinical report"
+        },
+        "timeBasis": "service"
+      },
+      "medication-dispense": {
+        "label": {
+          "en": "Medication dispense",
+          "fr": "Dispensation de médicaments",
+          "de": "Medikamentenabgabe",
+          "it": "Dispensazione di medicamenti"
+        },
+        "description": {
+          "en": "A pharmacy's record of the medicines it handed out.",
+          "fr": "Le relevé d'une pharmacie des médicaments qu'elle a remis."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "417319006",
+          "display": "Record of health event"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "version": "http://snomed.info/sct/2011000195101",
+          "code": "82291000195104",
+          "display": "Medication dispense document"
+        },
+        "timeBasis": "service"
+      },
+      "other-health-event-record": {
+        "label": {
+          "en": "Other health event report",
+          "fr": "Autre document sur un événement sanitaire",
+          "de": "Anderes Dokument zu einem Gesundheitsereignis",
+          "it": "Altro documento su un evento sanitario"
+        },
+        "description": {
+          "en": "A document about a health event that is not an emergency, a non-medical report or a medication dispense.",
+          "fr": "Un document sur un événement de santé qui n'est ni un passage aux urgences, ni un rapport non médical, ni une dispensation de médicaments."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "417319006",
+          "display": "Record of health event"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "service"
+      },
+      "other": {
+        "label": {
+          "en": "Other document",
+          "fr": "Autre document",
+          "de": "Sonstige Dokumentation",
+          "it": "Altra documentazione"
+        },
+        "description": {
+          "en": "A medical document of no other kind, or whose kind cannot be told.",
+          "fr": "Un document médical d'aucun autre type, ou dont le type ne peut pas être déterminé."
+        },
+        "class": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "type": {
+          "system": "http://snomed.info/sct",
+          "code": "419891008",
+          "display": "Record artifact"
+        },
+        "timeBasis": "creation"
       }
     }
   },
