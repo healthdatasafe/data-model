@@ -522,7 +522,8 @@ LOINC definition does not match the stored value (Quick % as 5894-1), discourage
 whose System is wider than the exported code's (INR 38875-1, "Platelet poor plasma or blood", beside 6301-6): the
 specimen it leaves open is not kept. A code has
 one owner across both lists. Verify every code on tx.fhir.org before asserting it (`documentation/BLOOD-CHEMISTRY.md`
-§ Codes), including its property against the option's unit.
+§ Codes), including its property against the option's unit. That procedure is for curating definitions; coding a
+person's record sends no names to a third-party service (`documentation/TERMINOLOGY.md`).
 
 - **SNOMED CT** — https://bioportal.bioontology.org/ontologies/SNOMEDCT
 - **LOINC** — https://loinc.org/
