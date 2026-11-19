@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.19.1] - 2026-11-19
+
+Documentation only. No key, stream, eventType, option value, schema or `fhir` block change.
+
+### Fixed
+- **The FHIR import of a qualified Condition** (B-2026-11-19-15): FHIR-MAPPING.md § Import and CONDITION.md § The
+  second status now state that a Condition whose `verificationStatus` is `provisional`, `differential` or
+  `unconfirmed`, or any stated value other than `confirmed`, is refused, as hds-fhir-js 0.10.3 does. CONDITION.md no
+  longer records the importer as a known gap to its rule that a qualified diagnosis is never written as
+  `condition-coded`.
+
 ## [4.19.0] - 2026-11-19
 
 A value for a date nobody knows. Documentation only: no key, stream, item, eventType, option value, schema or `fhir`
