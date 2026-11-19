@@ -1,9 +1,9 @@
 {
-  "commit": "d838c1699b562de9c110a296b7c9abae65013bea",
-  "commitShort": "d838c16",
+  "commit": "093003ef8c643dd54414f15c54314453024c0665",
+  "commitShort": "093003e",
   "branch": "main",
-  "buildDate": "2026-11-19T15:20:54Z",
-  "publicationDate": "2026-11-19T15:20:44.459Z",
+  "buildDate": "2026-11-19T16:05:53Z",
+  "publicationDate": "2026-11-19T16:05:24.524Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -28,6 +28,14 @@
     {
       "title": "Json Schema Document kinds",
       "file": "json-schemas/documentKinds.json"
+    },
+    {
+      "title": "Json Schema clientData.hdsSourceAnchor",
+      "file": "json-schemas/hds-source-anchor.json"
+    },
+    {
+      "title": "Json Schema clientData.hdsExtraction",
+      "file": "json-schemas/hds-extraction.json"
     },
     {
       "title": "Streams Tree",
@@ -94,7 +102,7 @@
       "file": "appStreams.json"
     }
   ],
-  "version": "4.19.2",
+  "version": "4.20.0",
   "license": "CC-BY-4.0",
-  "attribution": "HDS Data Model 4.19.2, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
+  "attribution": "HDS Data Model 4.20.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
 }

@@ -1,0 +1,53 @@
+{
+  "$id": "https://model.datasafe.dev/json-schemas/hds-source-anchor.json",
+  "title": "HDS clientData.hdsSourceAnchor",
+  "description": "Where the value was printed in the source document (the file/xds-v1 event in clientData.related): an attachment, a page and a box, nothing of what is printed there. See documentation/PROVENANCE.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "attachmentId",
+    "page"
+  ],
+  "properties": {
+    "attachmentId": {
+      "description": "The id of the document event's attachment (Pryv attachments[].id) the value was read from.",
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "page": {
+      "description": "Page number within that attachment, from 1 (an image is page 1).",
+      "type": "integer",
+      "minimum": 1
+    },
+    "bbox": {
+      "description": "[x, y, width, height] of the printed line the value was read from, in percent of the page as displayed (x and width of its width, y and height of its height), origin at the top left. Absent when the reader has no box it trusts.",
+      "type": "array",
+      "items": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      ],
+      "additionalItems": false,
+      "minItems": 4,
+      "maxItems": 4
+    }
+  }
+}

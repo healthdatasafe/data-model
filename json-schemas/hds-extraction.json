@@ -1,0 +1,55 @@
+{
+  "$id": "https://model.datasafe.dev/json-schemas/hds-extraction.json",
+  "title": "HDS clientData.hdsExtraction",
+  "description": "Which program read the value from a document, with which knowledge base and backend, and the role of who confirmed it. Ids and versions only: no document text, no prompt or model output, no name or account id. See documentation/PROVENANCE.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "engine",
+    "engineVersion",
+    "kbVersion",
+    "backend",
+    "confirmedBy"
+  ],
+  "properties": {
+    "engine": {
+      "description": "Stable id of the reading program, lowercase (hds-reader); the <tool> of the sourceKey it writes.",
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "engineVersion": {
+      "description": "The program's version, semver MAJOR.MINOR.PATCH with an optional pre-release.",
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "kbVersion": {
+      "description": "The version of the knowledge-base pack the program used, semver MAJOR.MINOR.PATCH.",
+      "type": "string",
+      "maxLength": 32,
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "backend": {
+      "description": "Opaque id of the program's backend configuration record that read the printed line, never parsed (for example <runtime>:<model>, or text-layer when no backend ran). No spaces; never a URL, a host name, a device name or a user name.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+-]*$"
+    },
+    "confirmedBy": {
+      "description": "The role of who confirmed the value before it was written: person (the account holder, from her own app). Never a name or an account id.",
+      "type": "string",
+      "enum": [
+        "person"
+      ]
+    },
+    "corrected": {
+      "description": "true when the person changed the value, the item or the unit before it was written. Absent otherwise.",
+      "type": "boolean",
+      "enum": [
+        true
+      ]
+    }
+  }
+}
