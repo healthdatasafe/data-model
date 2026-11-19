@@ -1,5 +1,46 @@
 # Changelog
 
+## [4.20.0] - 2026-11-19
+
+The HDS Reader: provenance of a value read from a document, and the dialogue that confirms it. Additive: one
+eventType, two `clientData` keys; no item, stream, option value or `fhir` block change.
+
+### Added
+- **`clientData.hdsSourceAnchor`** (PROVENANCE.md § Values read from a document by a program): where a value read from
+  a document is printed in it, `{ attachmentId, page, bbox? }`. `attachmentId` the document event's Pryv attachment
+  id; `page` the page within it, from 1 (an image is 1); `bbox` `[x, y, width, height]` in percent of the page as
+  displayed (a PDF's CropBox after `/Rotate`), origin top left, absent when the reader has no box it trusts. Closed: no
+  text, no value, no OCR output. A reader ignores an anchor whose attachment it cannot find.
+- **`clientData.hdsExtraction`** (same section): `{ engine, engineVersion, kbVersion, backend, confirmedBy,
+  corrected? }`, the first five required. Program id (lowercase, the `<tool>` of its `sourceKey`), semver versions,
+  an opaque id of the backend configuration (no spaces, never parsed), the **role** that confirmed the value
+  (`person` only in this version), never a name or account id, and `corrected: true` when the person changed the
+  value, the item or the unit. Written only on a confirmed value, under `create-only`, so it
+  describes the event as created ("originally read by" once another access modified it).
+- Both keys are closed objects, published as `json-schemas/hds-source-anchor.json` and
+  `json-schemas/hds-extraction.json` (source `src/schemas/clientDataKeys.js`, draft-04 and draft-07); PROVENANCE.md
+  indexes them. A printed value and unit of a rescaled value, if ever written, get their own key, never
+  `hdsExtraction`.
+- **eventType `message/hds-reader-v1`** (HDS-READER.md): the dialogue between the Reader and the person, on
+  `hds-reader-dialogue` in the Reader's own app tree (not a model stream; the placement is decided again before the
+  first production write). `content.kind` discriminates nine closed kinds: `job`, `notice`, `reading`, `question`,
+  `answer`, `access-request`, `access-result`, `written`, `summary`. `reading` carries what the document prints;
+  `answer` may carry the corrected number (and the date given in answer to `which-date`); everything else is codes, ids
+  and counts. No free-text kind. Event ids in content (`inReplyTo`, `eventId`) are mirrored in `clientData.related`
+  (PROVENANCE.md list extended). One encoding per answer (`choose` + `option` for the which-* and is-fasting
+  questions, `confirm` + `time` / `timePrecision` for which-date, `confirm` or `not-mine` for is-this-yours, and
+  `candidateIds` on every answer to a reading); `kept-aside` is set by the Reader at reading time, never after an
+  answer. Writers validate, readers dispatch on `kind` and fall back on unknown values; an answer counts only when
+  written by the person's app and is void if a reading it covers changed after it; retention rules delete readings
+  once written, skipped, or disowned. Printed flags and `hdsFlag` up to 16 characters.
+- Tests `[RDR-*]` (`tests/hdsReader.test.js`): both flavours, every kind valid, closed objects, free text rejected in
+  codes, ids, options and dates, exact enums and field lists, the inlined copies pinned to the key schemas, the
+  published files, the model's ids fitting the patterns, the documentation examples valid.
+
+### Consumers
+- Nothing reads these yet. The Reader engine writes them; hds-webapp shows the dialogue and the anchor crop. A reader
+  that does not know the keys ignores them, as any `clientData` key.
+
 ## [4.19.1] - 2026-11-19
 
 Documentation only. No key, stream, eventType, option value, schema or `fhir` block change.

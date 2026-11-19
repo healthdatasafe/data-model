@@ -25,6 +25,8 @@ conventions below are contracts between HDS apps, documented here so every write
 | `clientData.hdsApp` (on an **access**; for CMC, `requesterMeta.hdsApp` in the invite, mirrored as `content.hdsApp` on the accept event) | The app's manifest URL, from which HDS apps name the app that holds the access | [APP-DESCRIPTION.md](APP-DESCRIPTION.md) |
 | `clientData.hdsGln`, `hdsZsr` | A provider's GLN and ZSR, bare values mirroring its content `identifiers`: the cross-writer lookup keys (GLN, then ZSR, then `sourceKey`) | [ENCOUNTER.md](ENCOUNTER.md#one-provider-one-event-clientdatahdsgln-hdszsr) |
 | `clientData.hdsDocumentUniqueId` | A document's `uniqueId` as `<system>\|<value>`, mirroring its content: the cross-writer key that recognises a document already held | [DOCUMENTS.md](DOCUMENTS.md#filexds-v1) |
+| `clientData.hdsSourceAnchor` | Where a value read from a document is printed in it: a page and a box, nothing of what is printed there | this page, [below](#clientdatahdssourceanchor--where-a-value-is-printed-in-its-document) |
+| `clientData.hdsExtraction` | Which program read a value from a document, with which knowledge base and backend, and the role of who confirmed it | this page, [below](#clientdatahdsextraction--which-program-read-a-value-and-who-confirmed-it) |
 
 A reader ignores any `clientData` key it does not know. A new key is `hds`-prefixed and documented here (or in
 its domain document, and indexed here) before an app ships it. `related` and `sourceKey` predate the prefix
@@ -125,7 +127,7 @@ was read from.
 - **An event id held in content MUST be mirrored here.** When an eventType carries event ids in its content
   (`file/xds-v1` `supersedes[]`, `authors[].eventId`, `encounterId`; `encounter/visit-v1` `participants[].eventId`,
   `serviceProvider.eventId`; `provider/practitioner-v1` `organizations[].eventId`; `genetic-variant/coded-v1`
-  `laboratory.eventId`), the writer sets
+  `laboratory.eventId`; `message/hds-reader-v1` `inReplyTo` and `eventId`, [HDS-READER.md](HDS-READER.md)), the writer sets
   `clientData.related.<eventId>: true` for each one, in the same create or update, so a cohort query finds the link
   without reading content. On an update, the key of an id that left the content is removed in the same call (write
   the whole `related` object). The content is the typed link (which field, which role); `related` is its index. If
@@ -219,3 +221,113 @@ site: <https://agents.datasafe.dev/llms-full.txt>, § "5f".
 **Cross-system.** FHIR `Resource.identifier` with a `system` naming the tool; HealthKit
 `HKMetadataKeyExternalUUID`, or `HKMetadataKeySyncIdentifier` (which HealthKit requires together with
 `HKMetadataKeySyncVersion`).
+
+---
+
+
+## Values read from a document by a program
+
+A program that reads values from a document (a lab report photographed, scanned or downloaded) writes each value
+the person confirmed as an ordinary event on its item, linked to the document by `clientData.related.<document event
+id>` and identified by `clientData.sourceKey` (its `<tool>` is the program's `engine` id; the HDS Reader's is
+`hds-reader`). Two keys say how it was read, so a reader can show the person where the value came from and an audit
+can tell which program and knowledge base produced it. The HDS Reader is the first writer
+([HDS-READER.md](HDS-READER.md)); the keys name no program and any reader of documents may write them.
+
+```json
+{
+  "streamIds": ["body-blood-serum-ferritin"],
+  "type": "concentration/ug-l",
+  "content": 48,
+  "time": 1773316800,
+  "clientData": {
+    "related": { "ckq3w8n1x0001": true },
+    "hdsTimePrecision": "day",
+    "hdsRefRange": { "lowerLimit": 30, "upperLimit": 400, "text": "30 - 400" },
+    "hdsSourceAnchor": { "attachmentId": "ckq3w8n1x0001a", "page": 1, "bbox": [8.5, 41.2, 83, 2.1] },
+    "hdsExtraction": { "engine": "hds-reader", "engineVersion": "0.2.0", "kbVersion": "0.4.0", "backend": "text-layer", "confirmedBy": "person" }
+  }
+}
+```
+
+Both are closed objects. Their JSON Schemas (draft-04 and draft-07) are published with the pack as
+`json-schemas/hds-source-anchor.json` and `json-schemas/hds-extraction.json` (source `src/schemas/clientDataKeys.js`,
+tests `[RDR-KEY-*]`); the dialogue type `message/hds-reader-v1` inlines the same shapes. Compile them as draft-07 (or
+draft-04), not 2020-12: the box's tuple `items` array means something else there.
+
+**Content-free, by shape, as far as writers conform.** Neither key may carry document text, a value, a date, a
+person's or practitioner's name, or an identifier that leads to one: every field is a number, a code, an id or a
+version. Nothing on the platform validates `clientData`, so the shape is enforced by conforming writers, which
+validate against the published schemas before writing and carry conformance tests for it. What the document prints
+stays in the document (and, while the reading is in progress, on the dialogue events, which are the person's).
+
+**No printed value here.** Values are stored as printed (BLOOD-CHEMISTRY.md § Units). If a value rescaled by a power
+of ten is ever written, its printed value and unit get their own key, defined with that change to the store-as-printed
+rule; never `hdsExtraction`.
+
+### `clientData.hdsSourceAnchor` — where a value is printed in its document
+
+| Field | Type | Required | Meaning |
+|---|---|---|---|
+| `attachmentId` | string, `^[a-zA-Z0-9_-]+$`, ≤ 64 | yes | The id of the document event's attachment (Pryv `attachments[].id`) the value was read from. |
+| `page` | integer ≥ 1 | yes | The page **within that attachment**, from 1; an image is page 1. |
+| `bbox` | 4 numbers, each 0..100 | no | `[x, y, width, height]` of the printed line the value was read from, in **percent of the page as displayed**: `x` and `width` of the page width, `y` and `height` of its height, origin at the **top left**. For a PDF, the page as displayed is its CropBox after its `/Rotate`; for an image, the image after its orientation (EXIF) is applied. |
+
+The anchor names the attachment because a document event may hold its pages as several attachments.
+
+**Rules.**
+
+- **It points into the one document the event is related to.** Written only on an event whose `clientData.related`
+  names exactly one `file/xds-v1` event; the anchor is in that document's attachment `attachmentId`. An event linked
+  to no document, or to several, carries no anchor.
+- **A box only when the reader trusts it.** Without one, the anchor is `{ attachmentId, page }`: no box rather than a
+  doubtful one. Writers keep `x + width ≤ 100` and `y + height ≤ 100`, width and height above 0, and round to two
+  decimals.
+- **Nothing of the line.** No text, no value, no OCR output: the box says where to look, the document says what is
+  there. A reader renders the crop from the document itself. When it cannot read the document (deleted, or on a
+  stream it has no permission for), or the document has no attachment `attachmentId`, it ignores the anchor.
+- **It does not follow a replacement.** A document that supersedes another is a new event; values read from the older
+  one keep their anchor into it.
+- **Written by the program that read the value**, at create. An app that moves the value to another document's
+  reading writes the new anchor with the new `related` link, or removes it.
+
+**Cross-system.** No FHIR or HealthKit element holds a position in a document. The link to the document could render
+as `Observation.derivedFrom` (from `related`, which FHIR-MAPPING.md does not render today); the box could then be a
+fragment on the file in the style of W3C Media Fragments, `Binary/<eventId>.<fileId>#page=<page>&xywh=percent:<x>,<y>,<width>,<height>`
+(`<fileId>` is `attachmentId`, as FHIR-MAPPING.md names it; `page=` comes from the PDF fragment identifiers of
+RFC 8118, and Media Fragments' `xywh` takes integers, so the percentages are rounded there).
+
+### `clientData.hdsExtraction` — which program read a value, and who confirmed it
+
+| Field | Type | Required | Meaning |
+|---|---|---|---|
+| `engine` | string, `^[a-z][a-z0-9]*(-[a-z0-9]+)*$`, ≤ 64 | yes | The stable id of the reading program (`hds-reader`): the `<tool>` of the `sourceKey` it writes. |
+| `engineVersion` | semver, optional pre-release, ≤ 64 | yes | The program's version (`0.2.0`, `0.3.0-rc.1`). |
+| `kbVersion` | semver `MAJOR.MINOR.PATCH`, ≤ 32 | yes | The version of the knowledge-base pack the program used to read and map the line. |
+| `backend` | string, `^[A-Za-z0-9][A-Za-z0-9._:/+-]*$`, ≤ 128 | yes | An **opaque** id of the program's backend configuration record that read the printed line, never parsed: for example `<runtime>:<model>` (`ollama:qwen2.5vl:7b`), or `text-layer` when no backend ran (a born-digital PDF's text read deterministically). No spaces; never a URL, a host name, a device name or a user name. |
+| `confirmedBy` | `person` | yes | The **role** of who confirmed the value before it was written: `person`, the account holder, from her own app. |
+| `corrected` | `true` | no | The person changed the value, the item or the unit before it was written. Absent otherwise. |
+
+**Rules.**
+
+- **Written only after a confirmation.** The key is written on a value the person confirmed, so it always names a
+  role. A value written with no confirmation carries no `hdsExtraction`.
+- **A role, never an identity.** No name, no account id, no username. The writing access is already the event's
+  `createdBy`; who answered is on the dialogue, on the person's own account. `confirmedBy` is the program's claim, and
+  can be checked against the dialogue's answer events.
+- **Ids and versions only.** No prompt, no model output, no confidence, no document text. A correction is the value
+  itself (or its item, or its unit), with `corrected: true`.
+- **`backend` names a configuration, not a place or a person.** It is never a URL, a host name, a device name or a user
+  name, even where the pattern would let one through: `ollama:qwen2.5vl:7b` conforms; `https://gpu1.lab.example/v1`,
+  `annas-macbook` or `ollama:anna` do not.
+- **What the versions audit.** The mapping from a printed line to an item is decided by the knowledge base, never by
+  the backend, so `kbVersion` is what audits it; `backend` audits the reading of the line. `kbVersion` does not cover
+  the person's own private corrections that the program may also apply (its private overlay, on her account).
+- **As created.** The program writes under `create-only` and cannot update the event. When the event's `modifiedBy`
+  differs from its `createdBy`, the key describes the event as it was created: a reader presents it as "originally
+  read by".
+- **A role list that grows by addition.** A reader that meets a `confirmedBy` it does not know shows the value as
+  confirmed, without naming the role.
+
+**Cross-system.** A FHIR export may later render it as a `Provenance` (the program as an agent of type `assembler`, the
+role as a `verifier`); not exported today.

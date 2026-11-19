@@ -11,6 +11,7 @@ const sources = [
   require('./schemas/appManifest').toBePublished,
   require('./schemas/vocabularies').toBePublished,
   require('./schemas/documentKinds').toBePublished,
+  require('./schemas/clientDataKeys').toBePublished,
   require('./streams').toBePublished,
   require('./items').toBePublished,
   require('./eventTypes').toBePublished,
