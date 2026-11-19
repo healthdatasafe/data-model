@@ -119,7 +119,7 @@ profile-date-of-birth:
 profile-name:
   version: temporary
   label:
-    en: Name
+    en: First name
     fr: Prénom
   description:
     en: Your first name.

@@ -50,7 +50,10 @@ periodUnit }`, `asNeeded`, `note`, and since 3.46.0:
   `medication-when`): `waking` WAKE, `morning` MORN, `noon` NOON, `afternoon` AFT, `evening` EVE, `night` NIGHT,
   `bedtime` HS, `meal` C, `before-meal` AC, `after-meal` PC, `breakfast` CM, `before-breakfast` ACM, `after-breakfast`
   PCM, `lunch` CD, `before-lunch` ACD, `after-lunch` PCD, `dinner` CV, `before-dinner` ACV, `after-dinner` PCV. Every
-  EventTiming code except `MORN/AFT/EVE.early/.late`, `PHS`, `IMD`. Closed enum, additive.
+  EventTiming code except `MORN/AFT/EVE.early/.late`, `PHS`, `IMD`. Closed enum, additive. French "déjeuner" and
+  "dîner" name breakfast and lunch in Switzerland, Belgium and Québec, but lunch and dinner in France.
+  "Petit-déjeuner" in the same document means the France reading, "souper" the other; otherwise the meal is read from
+  the document's country, and left unresolved (no meal-specific `when` value) while the country is unknown.
 - **`bounds`**: the planned course (FHIR `Timing.repeat.bounds[x]`): `duration` + `durationUnit` (boundsDuration,
   both or neither) or `start` / `end` dates (boundsPeriod), never `duration` with `end`. Start defaults to the event
   time; `end >= start` is not validated.
@@ -213,6 +216,11 @@ additive change: it would need a stream of its own for doses and a migration of 
   RxNorm code too when RxNorm has the product. A product picked through the search adds `drug.product` (below).
 - **A name the importer cannot match stays `medication-intake-basic`** (or `medication-prescription-basic`), with the
   name as printed. Never a coded event with a code that was guessed or built.
+- **A product's strength stays in the name, never in `doseValue`.** The `-basic` items have no strength field: in
+  "Metformine 500 mg, 2 cp", `name` is "Metformine 500 mg" and the dose is `doseValue: 2`, `doseUnit: dose/tablet`.
+  `doseValue` is the amount taken: a mass is written there (with a `mass/*` unit) only when the source states it as the
+  dose taken ("20 mg le matin"), never because it is printed with the product name. When the source does not say which
+  it is, the mass stays in `name` and `doseValue` is left empty.
 
 ## The ATC `hdsId`
 

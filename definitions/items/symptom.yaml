@@ -341,7 +341,7 @@ symptom-pain-sore-breasts-severity:
   options: *severity5
   repeatable: unlimited
   references:
-    snomed: ["290077003"]
+    snomed: ["53430007", "55222007"]
 
 symptom-pain-backache:
   version: v1

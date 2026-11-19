@@ -13,7 +13,7 @@ This page is the convention (site-agents#26). It changes no item, stream or even
 | What | Value |
 |---|---|
 | `time` | The **start of the period**, at **12:00 UTC**: 1999-03-01T12:00:00Z for "March 1999", 1997-01-01T12:00:00Z for "1997". |
-| `duration` | Unchanged meaning: `null` (or absent) for a point event, the length of a span otherwise. **A partial date never becomes a duration**: "March 1999" is a point known to the month, not a 31-day span. |
+| `duration` | Unchanged meaning: absent for a point event, the length of a span otherwise, and `null` for a span still running, on an item that allows it (an ongoing medication period, treatment or stay: MEDICATION.md § One intake or a period of use, ENCOUNTER.md § Period and status). `condition-coded` never carries `null`: there an absent duration means the abatement is not known (CONDITION.md § status and abatement). **A partial date never becomes a duration**: "March 1999" is a point known to the month, not a 31-day span. |
 | `clientData.hdsTimePrecision` | How much of `time` is known: `minute`, `day`, `month`, `year` or `approx`. |
 | `clientData.hdsTimeText` | The whole date expression as the source wrote it, span included (`"03.1999"`, `"spring 1998"`, `"1997 – about 2000"`). **Required when the start or the end is `approx`**, optional otherwise. |
 | `clientData.hdsTimeZone` | IANA zone name (`"Europe/Zurich"`) of the place where an exact time was recorded. Only with `minute`. |
@@ -77,6 +77,12 @@ point event (ENCOUNTER.md § Period and status, FHIR-MAPPING.md § Procedures). 
   precision re-anchors `time` to the start of the period at 12:00 UTC.
 - **Never store the period as a duration** to express precision (see `duration` above). Readers that sum or
   chart durations would count a "March 1999" diagnosis as a month-long episode.
+- **An unknown date is asked, never filled in.** When the source gives no date for the event itself (an undated
+  diagnosis, an operation with no year), ask the person. The document's date is never used in its place: on the event
+  it would read as the onset, the operation or the intake. What the person answers, even roughly ("about ten years
+  ago"), is written at `year` or `approx` with `hdsTimeText`. An importer that cannot ask holds the event for review.
+  This extends to events the rule DOCUMENTS.md § Which date is a document's date states for a document; unlike a
+  document, an event never takes a date derived from the document.
 - **`hdsTimeText` is visible to everyone who can read the event.** It is copied from the source as written;
   do not put anything in it that the event itself would not show.
 - **Pre-1970 dates** are negative timestamps; nothing else changes.

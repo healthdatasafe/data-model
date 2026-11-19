@@ -1,5 +1,40 @@
 # Changelog
 
+## [4.18.1] - 2026-11-19
+
+Text fixes from a review of the model against printed lab reports and documents. No key, stream, eventType, option
+value, schema or `fhir` block change.
+
+### Fixed
+- **Two wrong SNOMED CT references:** `function-usual-activities` carried 413156007 (Left ankle circumference), now
+  284545001 Ability to perform activities of everyday life; `symptom-pain-sore-breasts-severity` carried 290077003
+  (Edema of breast), now 53430007 Pain of breast and 55222007 Tenderness of breast. FUNCTION.md and SYMPTOMS.md
+  aligned; FUNCTION.md no longer lists the invalid 284774004 and the unused 228127002.
+- **Labels that read as another measurement:** BUN option "BUN mg/dL" / "Azote uréique mg/dL" (urea nitrogen, not
+  urea mass); `profile-name` en "First name" (fr was already "Prénom"); "Mucus peak day" / "Jour sommet de la glaire"
+  and "Average mucus peak day" / "Jour sommet moyen de la glaire"; `fertility-pregnancy` option `abortion` en
+  "Induced abortion (termination)"; vulva items "Vaginal bleeding intensity", "Brown/dark vaginal bleeding",
+  "Blood clots in vaginal bleeding", en "Cervix position". Stream names are deliberately unchanged (already written
+  into accounts), so these items' label and stream name now differ. Labels reach FHIR output as the HDS item
+  coding's `display`.
+
+### Added
+- **devNotes on items a printed label can be mistaken for:** urea mass vs BUN (×2.14 in the same unit); mEq/L
+  (also "mval/L") = mmol/L for sodium, potassium, chloride, bicarbonate, but 2 × mmol/L for calcium and magnesium;
+  ESR first hour only; "not this item" notes on calcium (ionised, corrected), vitamin B12 (holoTC), 25-OH vitamin D
+  (D3 / D2 fractions, a lone "25-OH D3" line), PTH (PTHrP, third-generation, fragments; "1-84" alone does not
+  exclude), progesterone (17-OH), DHEA-S (DHEA), globulin (electrophoresis fractions, immunoglobulins, SHBG, TBG,
+  thyroglobulin).
+- **Documentation rules:** a product's strength stays in `name`, never in `doseValue` (MEDICATION.md); French
+  "déjeuner" / "dîner" by country (MEDICATION.md); a qualified or negated diagnosis is never `condition-coded`, the
+  FHIR import's `provisional` / `differential` / `unconfirmed` noted as a known gap (CONDITION.md); one rule for time
+  and duration: absent duration = point event, `null` = ongoing, an unknown date is asked and never taken from the
+  document (PARTIAL-DATES.md, linked from CONDITION.md, TREATMENT-PROCEDURE.md and FHIR-MAPPING.md); wild type and a
+  bare genotype are never `present`, `zygosity` only with `present` (GENETICS.md).
+
+### Removed
+- FINDING.md no longer lists "a genetic test result" as a finding (GENETICS.md).
+
 ## [4.18.0] - 2026-11-18
 
 Licence change, and a terminology-lookup page. No stream, item, eventType or `fhir` block changes.

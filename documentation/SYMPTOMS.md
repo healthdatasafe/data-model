@@ -172,7 +172,7 @@ Source: PMC8631160 — "The real-world applications of the symptom tracking func
 | Cramps | `abdominalCramps` (Severity) | 21522001 |
 | Gas | — | 271835004 |
 | Cravings | — | — |
-| Sore breasts | `breastPain` (Severity) | 290077003 |
+| Sore breasts | `breastPain` (Severity) | 53430007, 55222007 |
 | Bloating | `bloating` (Severity) | 248490000 |
 | Backache | `lowerBackPain` (Severity) | 161891005 |
 | Dizziness | `dizziness` (Severity) | 404640003 |
