@@ -1283,6 +1283,17 @@ resource always lands on the active item, in its current eventType.
   imports (the annotation-stripping comparison leaves a trailing `/`, so `mL/min` differs, although under a code
   that says "based on 1.73 sq M" the unit adds nothing); a count in `10*3/uL` or `10*9/L` (only `10*6/mL` and `/uL`);
   `ng/mL` for testosterone and C-peptide (only `ug/L`); an INR without a UCUM code.
+- **eGFR population pairs** (B-2026-11-16-17): LOINC gives some eGFR equations one code per population, MDRD among
+  female `50044-7` / among male `70969-1`, MDRD among black `48643-1` / non black `48642-3`, CKD-EPI among black
+  `88293-6` / non black `88294-4`, and `body-blood-serum-egfr` imports every one of them while keeping no equation
+  and no population. A report that states both codes of a pair for one subject and time would give two eGFR events
+  at that time with different values, and nothing would say which applies to the person. So, among the resources of
+  one source (a lab report, a bundle), both members of such a pair are left out: when the report also states an eGFR
+  result for that time under a code in no pair (`69405-9`, CKD-EPI 2021 `98979-8`, ...), that result stands for
+  them (if the import then refuses it, no eGFR is imported for that time); otherwise neither is imported, since HDS
+  does not choose a population for the person. One member alone (the lab sent one population's value, or the other
+  member is withdrawn) imports as before, and so does a result that carries both codes as codings of one resource. This needs the whole report: hds-fhir-js `pairedEgfr(resources, mappings)` (0.10.5) returns the resources
+  to leave out, each with its reason, and the importing bridge calls it before `fromFhir`.
 - `coded`: the `valueCodeableConcept` codings must match exactly one option, by its coding or one of its
   `alsoMatch` codings; the option value is returned with its type (`0.75`, not `"0.75"`). Option codings and
   `alsoMatch` codings are unique within an item (a build check), so a coding maps back to one option.
