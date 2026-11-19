@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased]
+
+Documentation only. No key, stream, eventType, option value, schema or `fhir` block change.
+
+### Fixed
+- **eGFR: one result per time on import** (B-2026-11-19-34): FHIR-MAPPING.md § Import now also covers a report that
+  states two different eGFR equations for one subject and time: after the population-pair rule, the result first in
+  a fixed equation order (`69405-9`, CKD-EPI 2021, CKD-EPI 2009, MDRD, Schwartz) is kept and the others are left
+  out. None is imported for a tie at the best rank with different values, for Schwartz beside an adult equation
+  without `69405-9`, or for a per-population result beside a dropped pair. hds-fhir-js 0.10.6 `egfrSetAside`
+  implements it.
+
 ## [4.20.0] - 2026-11-19
 
 The HDS Reader: provenance of a value read from a document, and the dialogue that confirms it. Additive: one

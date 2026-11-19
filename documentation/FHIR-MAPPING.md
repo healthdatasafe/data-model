@@ -1283,17 +1283,31 @@ resource always lands on the active item, in its current eventType.
   imports (the annotation-stripping comparison leaves a trailing `/`, so `mL/min` differs, although under a code
   that says "based on 1.73 sq M" the unit adds nothing); a count in `10*3/uL` or `10*9/L` (only `10*6/mL` and `/uL`);
   `ng/mL` for testosterone and C-peptide (only `ug/L`); an INR without a UCUM code.
-- **eGFR population pairs** (B-2026-11-16-17): LOINC gives some eGFR equations one code per population, MDRD among
-  female `50044-7` / among male `70969-1`, MDRD among black `48643-1` / non black `48642-3`, CKD-EPI among black
-  `88293-6` / non black `88294-4`, and `body-blood-serum-egfr` imports every one of them while keeping no equation
-  and no population. A report that states both codes of a pair for one subject and time would give two eGFR events
-  at that time with different values, and nothing would say which applies to the person. So, among the resources of
-  one source (a lab report, a bundle), both members of such a pair are left out: when the report also states an eGFR
-  result for that time under a code in no pair (`69405-9`, CKD-EPI 2021 `98979-8`, ...), that result stands for
-  them (if the import then refuses it, no eGFR is imported for that time); otherwise neither is imported, since HDS
-  does not choose a population for the person. One member alone (the lab sent one population's value, or the other
-  member is withdrawn) imports as before, and so does a result that carries both codes as codings of one resource. This needs the whole report: hds-fhir-js `pairedEgfr(resources, mappings)` (0.10.5) returns the resources
-  to leave out, each with its reason, and the importing bridge calls it before `fromFhir`.
+- **eGFR: one result per time** (B-2026-11-16-17, B-2026-11-19-34): `body-blood-serum-egfr` imports every eGFR code
+  it lists, per equation and per population, while keeping no equation and no population, so a report that states
+  several eGFR results for one subject and time would give several eGFR events at that time with different values.
+  Among the resources of one source (a lab report, a bundle), at most one eGFR is imported per subject and time. Only
+  results the import can take count: a withdrawn one, one with no readable time, or one with no numeric quantity in
+  the item's unit counts for nothing (the import refuses it).
+  - **Population pairs.** LOINC gives some equations one code per population: MDRD among female `50044-7` / among
+    male `70969-1`, MDRD among black `48643-1` / non black `48642-3`, CKD-EPI among black `88293-6` / non black
+    `88294-4`. When both codes of a pair are stated for one time, both are left out: nothing says which population
+    applies to the person, and HDS does not choose one. A per-population result of another equation at that time is
+    left out too, since the report does not settle the population. A result coded with per-population codes only is
+    a pair member; one that also carries the other code of its pair, or a code in no pair, is not.
+  - **Age.** Schwartz `50384-7` is for children, the other equations for adults. When both are stated for one time
+    (an adult pair left out above included) and `69405-9` is not, none is imported: HDS does not record the person's
+    age.
+  - **Equations.** Otherwise, of the results left, the first in this order is kept and the others are left out:
+    `69405-9` (equation-neutral like the item, and the code it exports), CKD-EPI 2021 `98979-8`, CKD-EPI 2009
+    `62238-1`, then its per-population codes, MDRD `77147-7`, then its per-population codes, Schwartz `50384-7`. A
+    result carrying several codes ranks by its best one. When several results share the best rank with different
+    values (value and comparator: one code twice, or two per-population codes of one equation), none is imported,
+    the lower ranked ones included; when they agree, one is kept.
+
+  This needs the whole report: hds-fhir-js `egfrSetAside(resources, mappings)` (0.10.6; `EGFR_PREFERENCE` holds the
+  order) returns the resources to leave out, each with its reason, and the importing bridge calls it before
+  `fromFhir`.
 - `coded`: the `valueCodeableConcept` codings must match exactly one option, by its coding or one of its
   `alsoMatch` codings; the option value is returned with its type (`0.75`, not `"0.75"`). Option codings and
   `alsoMatch` codings are unique within an item (a build check), so a coding maps back to one option.
