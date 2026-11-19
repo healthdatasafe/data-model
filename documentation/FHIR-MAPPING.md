@@ -1244,8 +1244,16 @@ resource always lands on the active item, in its current eventType.
   `verificationStatus` is `refuted` or `entered-in-error`, a MedicationStatement `entered-in-error`, a MedicationRequest
   `entered-in-error`, `cancelled` or `draft` (never an order), a Procedure `entered-in-error` or `not-done`. Placing
   them would state as fact what the source retracted. Every other status imports as it is (`preliminary`, `amended`,
-  `provisional`, `unconfirmed`, …), except on a Procedure, where only `completed` has a place
-  ([procedures](#procedures-procedure)).
+  …), except on a Procedure, where only `completed` has a place ([procedures](#procedures-procedure)), and on a
+  Condition (next point).
+- **A qualified Condition is refused too** (hds-fhir-js 0.10.3), though nothing was withdrawn: a `verificationStatus`
+  of `provisional`, `differential` or `unconfirmed`, and any other stated value but `confirmed` (another code, a coding
+  outside `condition-ver-status` only, text only: R4 binds the element to that value set, so an unreadable one may be
+  a qualifier). A `condition-coded` event states an established diagnosis and `verificationStatus` is not stored yet
+  (CONDITION.md § The second status), so the import would drop the qualifier. Unlike an unreadable `clinicalStatus`
+  (next point), which only leaves `status` out, an unreadable `verificationStatus` cannot be dropped: the event would
+  then state the diagnosis as established. A Condition whose only `condition-ver-status` code is `confirmed`, or with
+  no `verificationStatus`, imports.
 - **A Condition's `clinicalStatus`** (4.1.0, CONDITION.md § status and abatement) imports as `content.status` when its
   coding in `http://terminology.hl7.org/CodeSystem/condition-clinical` is one of the six codes (`active`, `recurrence`,
   `relapse`, `inactive`, `remission`, `resolved`); another code or no coding leaves `status` out, the resource still

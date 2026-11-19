@@ -93,15 +93,15 @@ FHIR's `Condition.verificationStatus` (`condition-ver-status`: `unconfirmed`, `p
 `confirmed`, `refuted`, `entered-in-error`) is **not stored yet**. The key is reserved: when it is added it will be
 `content.verificationStatus`, with those codes, next to `status`, so nothing else should be written there in the
 meantime. Current import behaviour (FHIR-MAPPING.md § Import): `refuted` and `entered-in-error` are refused (the
-source withdrew the diagnosis); `confirmed`, `provisional`, `differential` and `unconfirmed` import, and the qualifier
-is lost, so an imported event states the diagnosis without saying how sure the source was.
+source withdrew the diagnosis); `provisional`, `differential` and `unconfirmed` are refused too (the rule below), and
+so is any other stated value but `confirmed`; a Condition stating `confirmed`, or no `verificationStatus`, imports as
+an established diagnosis. Before hds-fhir-js 0.10.3 the three qualified codes imported and the qualifier was lost.
 
 **A qualified or negated diagnosis is never written as `condition-coded`.** Since `verificationStatus` is not stored,
 an event of this item can only state an established diagnosis. A diagnosis a document or the person qualifies or
 negates ("suspicion de", "DD" or "differential", "à exclure", "rule out", a "?") is not written as one, nor moved to
-another coded item: it stays in the source document. The FHIR import above does not follow this rule yet: it imports
-`provisional`, `differential` and `unconfirmed` and loses the qualifier. That is a known gap until the key ships, not a
-pattern for other writers.
+another coded item: it stays in the source document. The FHIR import follows the same rule: a qualified Condition is
+refused, and will be imported with its qualifier once `content.verificationStatus` ships.
 
 The 4.1.0 addition is additive: events written before it carry neither key and read as "status not stated, abatement
 unknown", which is what they were. Until 4.1.0 this page said the absence of a status was an open question (the plan
