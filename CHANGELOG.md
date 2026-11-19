@@ -41,6 +41,16 @@ eventType, two `clientData` keys; no item, stream, option value or `fhir` block 
 - Nothing reads these yet. The Reader engine writes them; hds-webapp shows the dialogue and the anchor crop. A reader
   that does not know the keys ignores them, as any `clientData` key.
 
+## [4.19.2] - 2026-11-19
+
+Documentation only. No key, stream, eventType, option value, schema or `fhir` block change.
+
+### Fixed
+- **eGFR population pairs on import** (B-2026-11-16-17): FHIR-MAPPING.md § Import now states the rule for a report
+  that sends both codes of a population pair (MDRD female / male, MDRD and CKD-EPI black / non black) for one subject
+  and time: both are left out, the report's population-neutral eGFR result at that time standing for them, or none
+  imported when it has none. hds-fhir-js 0.10.5 `pairedEgfr` implements it for the importing bridge.
+
 ## [4.19.1] - 2026-11-19
 
 Documentation only. No key, stream, eventType, option value, schema or `fhir` block change.
