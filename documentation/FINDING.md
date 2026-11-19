@@ -41,9 +41,6 @@ So the four coded siblings are meant to partition cleanly:
 *finding* hierarchy is very broad and covers a great deal that HDS models as `symptom-*`, `condition-*`
 or `body-*`. Several concepts sit uncomfortably:
 
-- **A genetic test result.** Not a diagnosis, not seen at surgery or on imaging. It was peeled out of
-  `_plans/TODO-ASAP.md` on the reasoning that `finding-coded` plus `procedure-coded` already carry it —
-  but only once this root's scope admits a lab result.
 - **A lab abnormality.** `body-blood-*` items carry the measured values; whether an abnormal one is also
   a `finding` is undecided.
 - **A physical-examination finding.** Not surgery, not imaging.

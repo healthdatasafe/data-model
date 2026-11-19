@@ -34,8 +34,8 @@ fertility-cycles-average-period:
 fertility-cycles-average-peak-day:
   version: v2
   label:
-    en: Average Peak Day
-    fr: Jour sommet moyen
+    en: Average mucus peak day
+    fr: Jour sommet moyen de la glaire
   description:
     en: The cycle day on which your mucus Peak Day usually falls, as you recall it.
     fr: Le jour du cycle où tombe habituellement votre jour sommet de la glaire, selon votre souvenir.
@@ -186,8 +186,8 @@ fertility-cycles-fertile-window:
 fertility-cycles-peak-day:
   version: v2
   label:
-    en: Peak Day
-    fr: Jour sommet
+    en: Mucus peak day
+    fr: Jour sommet de la glaire
   description:
     en: The last day of peak-type mucus in your cycle.
     fr: Le dernier jour de glaire de type sommet de votre cycle.
@@ -521,7 +521,7 @@ fertility-pregnancy:
         fr: "Naissance vivante"
     - value: 'abortion'
       label:
-        en: "Abortion"
+        en: "Induced abortion (termination)"
         fr: "Interruption de grossesse"
 fertility-delivery:
   version: v1

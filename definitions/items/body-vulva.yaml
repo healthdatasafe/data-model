@@ -115,8 +115,8 @@ body-vulva-wetness-wiping:
 body-vulva-bleeding:
   version: v2
   label:
-    en: Bleeding intensity
-    fr: Intensité du saignement
+    en: Vaginal bleeding intensity
+    fr: Intensité du saignement vaginal
   description:
     en: How heavy your bleeding is.
     fr: L'intensité de votre saignement.
@@ -159,8 +159,8 @@ body-vulva-bleeding:
 body-vulva-bleeding-browndark:
   version: v1
   label:
-    en: Brown/dark coloration
-    fr: Coloration brune ou foncée
+    en: Brown/dark vaginal bleeding
+    fr: Saignement vaginal brun ou foncé
   description:
     en: Brown or dark coloration in the bleeding.
     fr: Coloration brune ou foncée du saignement.
@@ -174,8 +174,8 @@ body-vulva-bleeding-browndark:
 body-vulva-bleeding-clots:
   version: v1
   label:
-    en: Blood clots
-    fr: Caillots sanguins
+    en: Blood clots in vaginal bleeding
+    fr: Caillots dans le saignement vaginal
   description:
     en: Blood clots during bleeding.
     fr: Caillots de sang pendant le saignement.
@@ -247,7 +247,7 @@ body-vulva-menstrual-cup:
 body-vulva-cervix-position:
   version: v2
   label:
-    en: Cervical Position
+    en: Cervix position
     fr: Position du col utérin
   description:
     en: Self-checked cervix — height, firmness, openness, and tilt.

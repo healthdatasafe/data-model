@@ -112,4 +112,4 @@ function-usual-activities:
   repeatable: unlimited
   references:
     icf: ["d630", "d640", "d845", "d859", "d920"]
-    snomed: ["413156007"]
+    snomed: ["284545001"]

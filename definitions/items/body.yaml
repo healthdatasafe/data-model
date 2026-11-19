@@ -2821,7 +2821,7 @@ body-blood-serum-bun:
     eventType:
       label: { en: Unit, fr: Unité }
       options:
-        - { value: concentration/mg-dl, label: { en: mg/dL, fr: mg/dL }, loinc: "3094-0" }
+        - { value: concentration/mg-dl, label: { en: BUN mg/dL, fr: Azote uréique mg/dL }, loinc: "3094-0" }
         - { value: concentration/mmol-l, label: { en: Urea mmol/L, fr: Urée mmol/L }, loinc: "22664-7" }
   # mg/dL is urea NITROGEN (BUN); mmol/L is urea, which labs print as "urea" (one mole of urea carries
   # two nitrogen atoms, hence the factor). Urea printed in mg/dL (mass of urea, not of its nitrogen)
@@ -2836,6 +2836,11 @@ body-blood-serum-bun:
   references:
     snomed: ["105011006"]
     loinc: ["3094-0", "22664-7"]
+  devNotes: >-
+    The mg/dL option is urea nitrogen (BUN), the mass of the nitrogen in urea, not the mass of urea.
+    Urea printed as a mass (mg/dL, g/L, mg/L; French "Urée ... g/L") is not this item and is never
+    rescaled onto it: in the same unit, urea is 2.14 × BUN (60.06 / 28.014). It goes to
+    `lab-result/coded-v1`. The mmol/L option is urea in moles, as labs print it ("Urea", "Urée").
   fhir:
     resourceType: Observation
     category: laboratory
@@ -2959,6 +2964,8 @@ body-blood-serum-sodium:
   references:
     snomed: ["104934005"]
     loinc: ["2951-2"]
+  devNotes: >-
+    mEq/L (also printed "mval/L") = mmol/L for sodium (monovalent): a value printed in mEq/L is stored unchanged.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -2984,6 +2991,8 @@ body-blood-serum-potassium:
   references:
     snomed: ["271236005"]
     loinc: ["2823-3"]
+  devNotes: >-
+    mEq/L (also printed "mval/L") = mmol/L for potassium (monovalent): a value printed in mEq/L is stored unchanged.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -3009,6 +3018,8 @@ body-blood-serum-chloride:
   references:
     snomed: ["271238006"]
     loinc: ["2075-0"]
+  devNotes: >-
+    mEq/L (also printed "mval/L") = mmol/L for chloride (monovalent): a value printed in mEq/L is stored unchanged.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -3039,7 +3050,8 @@ body-blood-serum-co2:
     Exports total CO2 (LOINC 2028-9). Serum bicarbonate (1963-8, "Bicarbonates" on French reports) is the
     same analyser measurement under another LOINC component, and the item's SNOMED concept is the
     bicarbonate measurement: the item owns it, so one series does not split by the lab's wording. A
-    blood-gas bicarbonate is another specimen and goes to `lab-result/coded-v1`.
+    blood-gas bicarbonate is another specimen and goes to `lab-result/coded-v1`. mEq/L (also printed
+    "mval/L") = mmol/L (bicarbonate is monovalent): a value printed in mEq/L is stored unchanged.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -3080,6 +3092,10 @@ body-blood-serum-calcium:
   references:
     snomed: ["271240001"]
     loinc: ["17861-6", "2000-8"]
+  devNotes: >-
+    Total calcium. Not this item: ionised (free) calcium, or albumin-corrected (adjusted) calcium.
+    mEq/L (also printed "mval/L") is NOT mmol/L for calcium (divalent): mEq/L = 2 × mmol/L, so a value
+    printed in mEq/L is halved for the mmol/L option.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -3240,6 +3256,10 @@ body-blood-serum-globulin:
     snomed: ["270994009"]
     loinc: ["2336-6"]
     loincMethod: ["10834-0"]
+  devNotes: >-
+    Total globulin. Not this item: the serum protein electrophoresis fractions (alpha-1, alpha-2,
+    beta, gamma globulin), each printed as g/L or % of total protein; nor immunoglobulins (IgG, IgA,
+    IgM), sex hormone-binding globulin (SHBG), thyroxine-binding globulin or thyroglobulin.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -3574,6 +3594,9 @@ body-blood-serum-magnesium:
   references:
     snomed: ["63571001"]
     loinc: ["19123-9", "2601-3"]
+  devNotes: >-
+    mEq/L (also printed "mval/L") is NOT mmol/L for magnesium (divalent): mEq/L = 2 × mmol/L, so a
+    value printed in mEq/L is halved for the mmol/L option.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -3714,6 +3737,12 @@ body-blood-serum-vitamin-d-25oh:
   references:
     snomed: ["12199005"]
     loinc: ["62292-8", "68438-1"]
+  devNotes: >-
+    Total 25-hydroxyvitamin D (D2 + D3). Not this item: 25-OH D3 or 25-OH D2 when the lab reports
+    the fractions separately (only their total is), nor 1,25-dihydroxyvitamin D
+    (`body-blood-serum-vitamin-d-125oh`). A single line labelled "25-OH D3" with no D2 and no total
+    line is ambiguous (often the total assay under an older name): it is this item only when the
+    report or its method says total.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -3802,6 +3831,8 @@ body-blood-serum-vitamin-b12:
   references:
     snomed: ["271216009"]
     loinc: ["2132-9", "14685-2"]
+  devNotes: >-
+    Total vitamin B12 (cobalamin). Not this item: active B12 (holotranscobalamin, holoTC).
   fhir:
     resourceType: Observation
     category: laboratory
@@ -4223,6 +4254,9 @@ body-blood-esr:
     snomed: ["416838001"]
     loinc: ["30341-2"]
     loincMethod: ["4537-7"]
+  devNotes: >-
+    First-hour value only (mm after 1 hour). A 2-hour value ("VS 2ème heure", "2nd hour") is not this
+    item.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -4572,6 +4606,9 @@ body-blood-serum-progesterone:
   references:
     snomed: ["270972001"]
     loinc: ["2839-9", "14890-8"]
+  devNotes: >-
+    Not this item: 17-hydroxyprogesterone ("17-OH progesterone"), which is
+    `body-blood-serum-17-oh-progesterone`.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -4737,6 +4774,9 @@ body-blood-serum-dhea-s:
   references:
     snomed: ["395134004"]
     loinc: ["2191-5", "14688-6"]
+  devNotes: >-
+    Dehydroepiandrosterone sulfate. Not this item: DHEA (unsulfated dehydroepiandrosterone), a
+    distinct analyte.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -4973,6 +5013,11 @@ body-blood-serum-pth:
   references:
     snomed: ["271541003"]
     loinc: ["2731-8", "14866-8"]
+  devNotes: >-
+    Intact PTH (second-generation assay), which many labs print as "PTH intacte (1-84)" or "intact
+    PTH 1-84": "1-84" alone does not exclude a result. Not this item: PTH-related peptide (PTHrP); a
+    result the report names as whole, bio-intact or third-generation PTH, whose values run lower and
+    are not comparable; C-terminal, mid-molecule or N-terminal PTH fragments.
   fhir:
     resourceType: Observation
     category: laboratory

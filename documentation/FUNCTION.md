@@ -67,10 +67,9 @@ These classical ADL scales use binary or 2–4 level per-item responses and sum 
 
 ### SNOMED CT
 
-- `301438001` Able to walk (finding)
-- `228127002` Mobility finding
-- `284774004` Self-care finding
-- `413156007` Activities of daily living finding
+- `function-mobility`: `301438001` Ability to mobilize (observable entity)
+- `function-self-care`: `228151002` Personal care disability (finding)
+- `function-usual-activities`: `284545001` Ability to perform activities of everyday life (observable entity)
 
 Finer-grained SNOMED concepts (unable to walk, uses walker, needs assistance for bathing, etc.) can be attached as additional references on more specific items if the domain is extended.
 

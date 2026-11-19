@@ -86,7 +86,8 @@ procedure-coded:
 
 > **Timing is carried by Pryv-native event fields, not by the payload.** `period.{start,end}` and
 > `performed.date` were removed in 1.8.1 — a treatment span is `event.time` + `event.duration`
-> (duration omitted for ongoing), and a procedure is `event.time` alone. Existing events that still
+> (`duration: null` while ongoing; no duration is a point event: PARTIAL-DATES.md § The rule), and a
+> procedure is `event.time` alone. Existing events that still
 > carry the old keys validate (`additionalProperties` is open), but new writers must not emit them.
 
 ### Flavours via eventType variation, same item key

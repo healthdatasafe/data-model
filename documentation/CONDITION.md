@@ -49,14 +49,15 @@ The two go together under FHIR's con-4 rule: **a condition with a duration has s
 `resolved`.** A duration with no status, or with `active`, `recurrence` or `relapse`, is a contradiction: the FHIR
 rendering refuses the event rather than emit it, and the importer refuses the resource.
 
-`event.time` stays the onset (or the diagnosis date when that is all the source knows, FHIR-MAPPING.md § Time). An
-absent duration never means "ongoing": whether the condition is still there is said by `status`, and a writer that
-does not know the abatement writes no duration at all. This is the opposite of the encounter and medication items,
-where `duration: null` is an ongoing period: a condition is an assertion about the patient, not a period of care, and
-the status carries that meaning on its own. Partial dates follow [PARTIAL-DATES.md](PARTIAL-DATES.md): the onset's
-precision is `clientData.hdsTimePrecision`; the abatement's, when different, `clientData.hdsEndPrecision`, with the
-end anchored at 12:00 UTC on the last day of its period ("resolved in March 2001" is `time + duration` =
-2001-03-31T12:00:00Z, `hdsEndPrecision: month`).
+`event.time` stays the onset (or the diagnosis date when that is all the source knows, FHIR-MAPPING.md § Time). **An
+undated diagnosis is asked, never filled in:** the document's date is never used as `event.time`, where it would read
+as the onset; ask the person (PARTIAL-DATES.md § Rules). An absent duration never means "ongoing": whether the
+condition is still there is said by `status`, and a writer that does not know the abatement writes no duration at
+all. This is the opposite of the encounter and medication items, where `duration: null` is an ongoing period: a
+condition is an assertion about the patient, not a period of care, and the status carries that meaning on its own.
+Partial dates follow [PARTIAL-DATES.md](PARTIAL-DATES.md): the onset's precision is `clientData.hdsTimePrecision`;
+the abatement's, when different, `clientData.hdsEndPrecision`, with the end anchored at 12:00 UTC on the last day of
+its period ("resolved in March 2001" is `time + duration` = 2001-03-31T12:00:00Z, `hdsEndPrecision: month`).
 
 **No abatement is no `duration` key: never `0`, never `null`.** A writer that uses `0` or `null` for "no duration"
 elsewhere (a form's duration input, a diary that reads `0` as ongoing) leaves the key out on this item.
@@ -90,6 +91,13 @@ FHIR's `Condition.verificationStatus` (`condition-ver-status`: `unconfirmed`, `p
 meantime. Current import behaviour (FHIR-MAPPING.md § Import): `refuted` and `entered-in-error` are refused (the
 source withdrew the diagnosis); `confirmed`, `provisional`, `differential` and `unconfirmed` import, and the qualifier
 is lost, so an imported event states the diagnosis without saying how sure the source was.
+
+**A qualified or negated diagnosis is never written as `condition-coded`.** Since `verificationStatus` is not stored,
+an event of this item can only state an established diagnosis. A diagnosis a document or the person qualifies or
+negates ("suspicion de", "DD" or "differential", "à exclure", "rule out", a "?") is not written as one, nor moved to
+another coded item: it stays in the source document. The FHIR import above does not follow this rule yet: it imports
+`provisional`, `differential` and `unconfirmed` and loses the qualifier. That is a known gap until the key ships, not a
+pattern for other writers.
 
 The 4.1.0 addition is additive: events written before it carry neither key and read as "status not stated, abatement
 unknown", which is what they were. Until 4.1.0 this page said the absence of a status was an open question (the plan

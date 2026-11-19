@@ -866,8 +866,8 @@ and `status: in-progress` while it runs), not a `CarePlan` (an intention; the ev
 what is planned) and not a `MedicationStatement` (no substance). The seeded regimens are SNOMED CT procedures
 (`52637005` Test tube ovum fertilization (procedure), `61285001` Ovulation induction (procedure), …). Mapping it
 means: the `treatment` root as a second grant root of the `Procedure` key; `status` from the span (open: `in-progress`,
-ended: `completed`), once the model settles what an absent duration means on a treatment (the doc says "omitted for
-ongoing", the item says `null` while ongoing; absent can only be `unknown`); and an import rule that tells the two
+ended: `completed`), the duration being `null` while ongoing and no duration for a point event (PARTIAL-DATES.md
+§ The rule), so an absent duration maps to `unknown`; and an import rule that tells the two
 datasource-coded Procedure items apart, which the build refuses today (one datasource-coded item per bare key) and
 no category can supply. That rule is the design to make first. It cannot be the shape of the date (an operation
 with a start and an end is a period and no treatment, and imports here as a procedure with a duration): route by

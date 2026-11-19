@@ -112,7 +112,11 @@ A Coding is `{ system, version?, code, display? }`, closed, `system` a URI: the 
 | `no-call` | LA18198-4 No call |
 
 A report that says a variant was detected without printing a zygosity is `present` alone. "Not detected", "normal",
-"wild type" are `absent`.
+"wild type" are `absent`, and so are "homozygote sauvage" and "homozygous wild type": the person carries the normal
+allele twice, so they are never `present` with `zygosity: homozygous`. A bare genotype ("CC", "CT", "TT") is not
+`present` either, nor `absent`, `indeterminate` or `no-call`: read alone, it does not say whether the variant is
+there. `result` is required, so no event is written from a bare genotype alone; it is held for review, and written with
+the genotype in `resultText` only once the report (or its legend) says whether the variant was found.
 
 **`zygosity`** (LOINC 53034-5 "Allelic state", answer list LL381-5):
 
@@ -124,8 +128,8 @@ A report that says a variant was detected without printing a zygosity is `presen
 | `homoplasmic` | LA6704-6 Homoplasmic |
 | `heteroplasmic` | LA6703-8 Heteroplasmic |
 
-A zygosity is meaningful with `present` only. The schema does not enforce it (advisory): a reader ignores a zygosity on
-any other result.
+A zygosity is meaningful with `present` only, and a writer writes it with `present` only. The schema does not enforce
+it (advisory): a reader ignores a zygosity on any other result.
 
 **LOINC 81252-9** ("Discrete genetic variant") has status TRIAL in LOINC 2.83; the others above are ACTIVE.
 
