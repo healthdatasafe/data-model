@@ -1,6 +1,6 @@
 {
-  "version": "4.18.0",
-  "publicationDate": "2026-11-18T19:18:44.967Z",
+  "version": "4.18.1",
+  "publicationDate": "2026-11-19T08:54:07.442Z",
   "streams": [
     {
       "id": "activity",
@@ -2956,8 +2956,8 @@
     "body-vulva-bleeding": {
       "version": "v2",
       "label": {
-        "en": "Bleeding intensity",
-        "fr": "Intensité du saignement"
+        "en": "Vaginal bleeding intensity",
+        "fr": "Intensité du saignement vaginal"
       },
       "description": {
         "en": "How heavy your bleeding is.",
@@ -3023,8 +3023,8 @@
     "body-vulva-bleeding-browndark": {
       "version": "v1",
       "label": {
-        "en": "Brown/dark coloration",
-        "fr": "Coloration brune ou foncée"
+        "en": "Brown/dark vaginal bleeding",
+        "fr": "Saignement vaginal brun ou foncé"
       },
       "description": {
         "en": "Brown or dark coloration in the bleeding.",
@@ -3039,8 +3039,8 @@
     "body-vulva-bleeding-clots": {
       "version": "v1",
       "label": {
-        "en": "Blood clots",
-        "fr": "Caillots sanguins"
+        "en": "Blood clots in vaginal bleeding",
+        "fr": "Caillots dans le saignement vaginal"
       },
       "description": {
         "en": "Blood clots during bleeding.",
@@ -3124,7 +3124,7 @@
     "body-vulva-cervix-position": {
       "version": "v2",
       "label": {
-        "en": "Cervical Position",
+        "en": "Cervix position",
         "fr": "Position du col utérin"
       },
       "description": {
@@ -8252,8 +8252,8 @@
             {
               "value": "concentration/mg-dl",
               "label": {
-                "en": "mg/dL",
-                "fr": "mg/dL"
+                "en": "BUN mg/dL",
+                "fr": "Azote uréique mg/dL"
               },
               "loinc": "3094-0"
             },
@@ -8288,6 +8288,7 @@
           "22664-7"
         ]
       },
+      "devNotes": "The mg/dL option is urea nitrogen (BUN), the mass of the nitrogen in urea, not the mass of urea. Urea printed as a mass (mg/dL, g/L, mg/L; French \"Urée ... g/L\") is not this item and is never rescaled onto it: in the same unit, urea is 2.14 × BUN (60.06 / 28.014). It goes to `lab-result/coded-v1`. The mmol/L option is urea in moles, as labs print it (\"Urea\", \"Urée\").",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -8538,6 +8539,7 @@
           "2951-2"
         ]
       },
+      "devNotes": "mEq/L (also printed \"mval/L\") = mmol/L for sodium (monovalent): a value printed in mEq/L is stored unchanged.",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -8580,6 +8582,7 @@
           "2823-3"
         ]
       },
+      "devNotes": "mEq/L (also printed \"mval/L\") = mmol/L for potassium (monovalent): a value printed in mEq/L is stored unchanged.",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -8622,6 +8625,7 @@
           "2075-0"
         ]
       },
+      "devNotes": "mEq/L (also printed \"mval/L\") = mmol/L for chloride (monovalent): a value printed in mEq/L is stored unchanged.",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -8667,7 +8671,7 @@
           "1963-8"
         ]
       },
-      "devNotes": "Exports total CO2 (LOINC 2028-9). Serum bicarbonate (1963-8, \"Bicarbonates\" on French reports) is the same analyser measurement under another LOINC component, and the item's SNOMED concept is the bicarbonate measurement: the item owns it, so one series does not split by the lab's wording. A blood-gas bicarbonate is another specimen and goes to `lab-result/coded-v1`.",
+      "devNotes": "Exports total CO2 (LOINC 2028-9). Serum bicarbonate (1963-8, \"Bicarbonates\" on French reports) is the same analyser measurement under another LOINC component, and the item's SNOMED concept is the bicarbonate measurement: the item owns it, so one series does not split by the lab's wording. A blood-gas bicarbonate is another specimen and goes to `lab-result/coded-v1`. mEq/L (also printed \"mval/L\") = mmol/L (bicarbonate is monovalent): a value printed in mEq/L is stored unchanged.",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -8754,6 +8758,7 @@
           "2000-8"
         ]
       },
+      "devNotes": "Total calcium. Not this item: ionised (free) calcium, or albumin-corrected (adjusted) calcium. mEq/L (also printed \"mval/L\") is NOT mmol/L for calcium (divalent): mEq/L = 2 × mmol/L, so a value printed in mEq/L is halved for the mmol/L option.",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -9091,6 +9096,7 @@
           "10834-0"
         ]
       },
+      "devNotes": "Total globulin. Not this item: the serum protein electrophoresis fractions (alpha-1, alpha-2, beta, gamma globulin), each printed as g/L or % of total protein; nor immunoglobulins (IgG, IgA, IgM), sex hormone-binding globulin (SHBG), thyroxine-binding globulin or thyroglobulin.",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -9790,6 +9796,7 @@
           "2601-3"
         ]
       },
+      "devNotes": "mEq/L (also printed \"mval/L\") is NOT mmol/L for magnesium (divalent): mEq/L = 2 × mmol/L, so a value printed in mEq/L is halved for the mmol/L option.",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -10051,6 +10058,7 @@
           "68438-1"
         ]
       },
+      "devNotes": "Total 25-hydroxyvitamin D (D2 + D3). Not this item: 25-OH D3 or 25-OH D2 when the lab reports the fractions separately (only their total is), nor 1,25-dihydroxyvitamin D (`body-blood-serum-vitamin-d-125oh`). A single line labelled \"25-OH D3\" with no D2 and no total line is ambiguous (often the total assay under an older name): it is this item only when the report or its method says total.",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -10231,6 +10239,7 @@
           "14685-2"
         ]
       },
+      "devNotes": "Total vitamin B12 (cobalamin). Not this item: active B12 (holotranscobalamin, holoTC).",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -11046,6 +11055,7 @@
           "4537-7"
         ]
       },
+      "devNotes": "First-hour value only (mm after 1 hour). A 2-hour value (\"VS 2ème heure\", \"2nd hour\") is not this item.",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -11710,6 +11720,7 @@
           "14890-8"
         ]
       },
+      "devNotes": "Not this item: 17-hydroxyprogesterone (\"17-OH progesterone\"), which is `body-blood-serum-17-oh-progesterone`.",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -12049,6 +12060,7 @@
           "14688-6"
         ]
       },
+      "devNotes": "Dehydroepiandrosterone sulfate. Not this item: DHEA (unsulfated dehydroepiandrosterone), a distinct analyte.",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -12539,6 +12551,7 @@
           "14866-8"
         ]
       },
+      "devNotes": "Intact PTH (second-generation assay), which many labs print as \"PTH intacte (1-84)\" or \"intact PTH 1-84\": \"1-84\" alone does not exclude a result. Not this item: PTH-related peptide (PTHrP); a result the report names as whole, bio-intact or third-generation PTH, whose values run lower and are not comparable; C-terminal, mid-molecule or N-terminal PTH fragments.",
       "fhir": {
         "resourceType": "Observation",
         "category": "laboratory",
@@ -13025,8 +13038,8 @@
     "fertility-cycles-average-peak-day": {
       "version": "v2",
       "label": {
-        "en": "Average Peak Day",
-        "fr": "Jour sommet moyen"
+        "en": "Average mucus peak day",
+        "fr": "Jour sommet moyen de la glaire"
       },
       "description": {
         "en": "The cycle day on which your mucus Peak Day usually falls, as you recall it.",
@@ -13181,8 +13194,8 @@
     "fertility-cycles-peak-day": {
       "version": "v2",
       "label": {
-        "en": "Peak Day",
-        "fr": "Jour sommet"
+        "en": "Mucus peak day",
+        "fr": "Jour sommet de la glaire"
       },
       "description": {
         "en": "The last day of peak-type mucus in your cycle.",
@@ -13644,7 +13657,7 @@
         {
           "value": "abortion",
           "label": {
-            "en": "Abortion",
+            "en": "Induced abortion (termination)",
             "fr": "Interruption de grossesse"
           }
         }
@@ -14347,7 +14360,7 @@
           "d920"
         ],
         "snomed": [
-          "413156007"
+          "284545001"
         ]
       }
     },
@@ -16232,7 +16245,7 @@
     "profile-name": {
       "version": "temporary",
       "label": {
-        "en": "Name",
+        "en": "First name",
         "fr": "Prénom"
       },
       "description": {
@@ -19237,7 +19250,8 @@
       "repeatable": "unlimited",
       "references": {
         "snomed": [
-          "290077003"
+          "53430007",
+          "55222007"
         ]
       }
     },
