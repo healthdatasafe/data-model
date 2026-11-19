@@ -2503,6 +2503,674 @@
         }
       }
     },
+    "message/hds-reader-v1": {
+      "description": "One message of the HDS Reader dialogue on the person's account (stream hds-reader-dialogue): the reading of a document, the engine's questions, the person's answers, access requests and job state. content.kind discriminates; each kind is a closed object. Every event of a document carries clientData.related.<document event id>: true, and every event id in content is mirrored there. The values read are on reading events, so a grant on this stream reads them. See documentation/HDS-READER.md.",
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "oneOf": [
+        {
+          "description": "job (engine): the state of the reading of one document. Append-only: the latest job event of a document is its state.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "status",
+            "attempt",
+            "engine",
+            "engineVersion",
+            "kbVersion"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "job"
+              ]
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "received",
+                "reading",
+                "awaiting-answers",
+                "awaiting-access",
+                "writing",
+                "done",
+                "error"
+              ]
+            },
+            "attempt": {
+              "description": "Reading attempt, from 1.",
+              "type": "integer",
+              "minimum": 1
+            },
+            "engine": {
+              "description": "Stable id of the reading program, lowercase (hds-reader); the <tool> of the sourceKey it writes.",
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+            },
+            "engineVersion": {
+              "description": "The program's version, semver MAJOR.MINOR.PATCH with an optional pre-release.",
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$"
+            },
+            "kbVersion": {
+              "description": "The version of the knowledge-base pack the program used, semver MAJOR.MINOR.PATCH.",
+              "type": "string",
+              "maxLength": 32,
+              "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+            },
+            "backend": {
+              "description": "Opaque id of the program's backend configuration record that read the printed line, never parsed (for example <runtime>:<model>, or text-layer when no backend ran). No spaces; never a URL, a host name, a device name or a user name.",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+-]*$"
+            },
+            "counts": {
+              "description": "Counts only, never what was counted.",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "readings": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "questions": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "written": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "keptAside": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "dropped": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "errorCode": {
+              "description": "With status error: a code, never a message.",
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+            }
+          }
+        },
+        {
+          "description": "notice (engine): a message the app renders from its code. Never model or free text.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "code"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "notice"
+              ]
+            },
+            "code": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+            },
+            "about": {
+              "description": "The candidateId the message is about, or document for the document as a whole (document is reserved, never a candidateId).",
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            }
+          }
+        },
+        {
+          "description": "reading (engine): one printed line as read, and what the engine proposes to write. Holds what the document prints on that line.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "candidateId",
+            "printed",
+            "status"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "reading"
+              ]
+            },
+            "candidateId": {
+              "description": "Opaque id of this candidate, derived by the engine from the document and the record. A reading is never updated once answered: a re-read writes a new candidateId. Never parsed.",
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            },
+            "printed": {
+              "description": "What the document prints on this line, exactly.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "label",
+                "value"
+              ],
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "value": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 32
+                },
+                "unit": {
+                  "type": "string",
+                  "maxLength": 24
+                },
+                "refRange": {
+                  "type": "string",
+                  "maxLength": 64
+                },
+                "flag": {
+                  "type": "string",
+                  "maxLength": 16
+                },
+                "section": {
+                  "type": "string",
+                  "maxLength": 80
+                }
+              }
+            },
+            "anchor": {
+              "description": "Where the value was printed in the source document (the file/xds-v1 event in clientData.related): an attachment, a page and a box, nothing of what is printed there. See documentation/PROVENANCE.md.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "attachmentId",
+                "page"
+              ],
+              "properties": {
+                "attachmentId": {
+                  "description": "The id of the document event's attachment (Pryv attachments[].id) the value was read from.",
+                  "type": "string",
+                  "maxLength": 64,
+                  "pattern": "^[a-zA-Z0-9_-]+$"
+                },
+                "page": {
+                  "description": "Page number within that attachment, from 1 (an image is page 1).",
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "bbox": {
+                  "description": "[x, y, width, height] of the printed line the value was read from, in percent of the page as displayed (x and width of its width, y and height of its height), origin at the top left. Absent when the reader has no box it trusts.",
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    }
+                  ],
+                  "additionalItems": false,
+                  "minItems": 4,
+                  "maxItems": 4
+                }
+              }
+            },
+            "confidence": {
+              "description": "The engine's confidence in the reading, 0..1.",
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "proposal": {
+              "description": "The event the engine proposes to write once confirmed. Absent when nothing is proposed.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "itemKey",
+                "type",
+                "content"
+              ],
+              "properties": {
+                "itemKey": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                },
+                "type": {
+                  "description": "The eventType id.",
+                  "type": "string",
+                  "maxLength": 128,
+                  "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"
+                },
+                "content": {
+                  "description": "The content as it would be stored, valid against type.",
+                  "type": [
+                    "number",
+                    "object"
+                  ]
+                },
+                "time": {
+                  "description": "The event time, Unix seconds. Absent when the document prints no usable date (a which-date question is asked).",
+                  "type": "number"
+                },
+                "clientData": {
+                  "description": "The clientData keys of the proposed event that the model defines for a lab result (documentation/BLOOD-CHEMISTRY.md, PARTIAL-DATES.md).",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "hdsRefRange": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "minProperties": 1,
+                      "properties": {
+                        "lowerLimit": {
+                          "type": "number"
+                        },
+                        "upperLimit": {
+                          "type": "number"
+                        },
+                        "text": {
+                          "type": "string",
+                          "maxLength": 64
+                        }
+                      }
+                    },
+                    "hdsFlag": {
+                      "type": "string",
+                      "maxLength": 16
+                    },
+                    "hdsInterpretation": {
+                      "type": "string",
+                      "enum": [
+                        "H",
+                        "L",
+                        "N",
+                        "A",
+                        "HH",
+                        "LL"
+                      ]
+                    },
+                    "hdsComparator": {
+                      "type": "string",
+                      "enum": [
+                        "<",
+                        "<=",
+                        ">",
+                        ">="
+                      ]
+                    },
+                    "hdsTimePrecision": {
+                      "description": "No minute (no zone in v1) and no approx (no hdsTimeText).",
+                      "type": "string",
+                      "enum": [
+                        "day",
+                        "month",
+                        "year",
+                        "unknown"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "status": {
+              "description": "clear: proposed, may be confirmed in a batch; check: proposed, asked one by one; unmapped: read, no event proposed (see reason); unit-missing: the line prints no unit; kept-aside: read; no item can hold it yet; kept for a later offer (see reason, requestKey). Unlike unmapped, the line is a metric the Reader can name (a requestKey), only no item holds it; set at reading time, never after an answer.",
+              "type": "string",
+              "enum": [
+                "clear",
+                "check",
+                "unmapped",
+                "unit-missing",
+                "kept-aside"
+              ]
+            },
+            "reason": {
+              "description": "Why the reading is not written: a closed reason code. A line that is not clinical, about a special category or about another person never becomes a reading (documentation/HDS-READER.md).",
+              "type": "string",
+              "enum": [
+                "no-item",
+                "unit-not-offered",
+                "no-coded-stream",
+                "timed-draw",
+                "implausible-value",
+                "ambiguous-label",
+                "qualitative-result",
+                "derived-index"
+              ]
+            },
+            "requestKey": {
+              "description": "The item-request key derived for this metric (specimen and LOINC code, else specimen, language and normalised label tokens), so a kept-aside reading can be offered again once an item ships. No spaces, no control characters.",
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^[^\\s\\u0000-\\u001f\\u007f-\\u009f]+$"
+            },
+            "kbEntries": {
+              "description": "Ids of the knowledge-base entries the mapping rests on. Empty when none does.",
+              "type": "array",
+              "maxItems": 16,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "maxLength": 96,
+                "pattern": "^[a-z0-9]+([.-][a-z0-9]+)*$"
+              }
+            },
+            "askOneByOne": {
+              "description": "true: never offered in a batch (a check, or a mapping resting on a community-tier entry).",
+              "type": "boolean"
+            },
+            "specimenImplied": {
+              "description": "true: the document does not print the specimen and a reviewed knowledge-base entry implies it; the app says so.",
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "description": "question (engine): a closed question to the person.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "code",
+            "about"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "question"
+              ]
+            },
+            "code": {
+              "type": "string",
+              "enum": [
+                "which-specimen",
+                "which-unit",
+                "which-analyte",
+                "which-date",
+                "is-fasting",
+                "is-this-yours"
+              ]
+            },
+            "about": {
+              "description": "The candidateId the message is about, or document for the document as a whole (document is reserved, never a candidateId).",
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            },
+            "options": {
+              "description": "The choices offered, as codes the app labels (a specimen, a UCUM code, an item key, yes, no). Absent for which-date (the person enters a date) and is-this-yours (answered with confirm or not-mine).",
+              "type": "array",
+              "maxItems": 16,
+              "uniqueItems": true,
+              "items": {
+                "description": "One choice, a code.",
+                "type": "string",
+                "pattern": "^[!-~]{1,64}$"
+              }
+            }
+          }
+        },
+        {
+          "description": "answer (the person's app): the person's answer to a reading or a question.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "inReplyTo",
+            "action"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "answer"
+              ]
+            },
+            "inReplyTo": {
+              "description": "The id of the reading or question event answered, mirrored in clientData.related. Idempotency is per candidateId (documentation/HDS-READER.md rule 5).",
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            },
+            "action": {
+              "description": "confirm, correct (with value), not-mine (the document is not about the person), skip, choose (with option), request-item (opt in to request an item for this metric), duplicate (the person's app found the value already recorded).",
+              "type": "string",
+              "enum": [
+                "confirm",
+                "correct",
+                "not-mine",
+                "skip",
+                "choose",
+                "request-item",
+                "duplicate"
+              ]
+            },
+            "candidateIds": {
+              "description": "The candidates the answer covers: required on every answer to a reading (the answered one included; several for a batch) and on every answer to a question about a candidate (that candidate). Absent on an answer to a document-level question.",
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 200,
+              "uniqueItems": true,
+              "items": {
+                "description": "A candidateId.",
+                "type": "string",
+                "maxLength": 64,
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              }
+            },
+            "option": {
+              "description": "With choose: the option picked, one of the question's options.",
+              "type": "string",
+              "pattern": "^[!-~]{1,64}$"
+            },
+            "value": {
+              "description": "With correct: the value as the person corrects it, on the scale of eventType.",
+              "type": "number"
+            },
+            "eventType": {
+              "description": "With correct: the eventType (unit) the corrected value is in, when it differs from the proposal.",
+              "type": "string",
+              "maxLength": 128,
+              "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"
+            },
+            "itemKey": {
+              "description": "With correct: the item the person moves the value to, when it differs from the proposal.",
+              "type": "string",
+              "maxLength": 128,
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+            },
+            "time": {
+              "description": "With an answer to which-date: the date the person gives, Unix seconds, placed as PARTIAL-DATES.md places it for timePrecision.",
+              "type": "number"
+            },
+            "timePrecision": {
+              "description": "With an answer to which-date: how much of time is known.",
+              "type": "string",
+              "enum": [
+                "day",
+                "month",
+                "year",
+                "unknown"
+              ]
+            }
+          }
+        },
+        {
+          "description": "access-request (engine): the engine asks for create-only on streams it must write to; the request itself goes through the CMC scope request.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "streamIds",
+            "level"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "access-request"
+              ]
+            },
+            "streamIds": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 64,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "maxLength": 128,
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+              }
+            },
+            "level": {
+              "type": "string",
+              "enum": [
+                "create-only"
+              ]
+            }
+          }
+        },
+        {
+          "description": "access-result (the person's app): the outcome of an access-request.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "inReplyTo",
+            "granted"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "access-result"
+              ]
+            },
+            "inReplyTo": {
+              "description": "The id of the access-request event, mirrored in clientData.related.",
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            },
+            "granted": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "description": "written (engine): one confirmed value was written. The engine's record of its own writes (it cannot read the stream it wrote to).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "candidateId",
+            "eventId"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "written"
+              ]
+            },
+            "candidateId": {
+              "description": "The candidate written.",
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            },
+            "eventId": {
+              "description": "The id of the value event written, mirrored in clientData.related.",
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            }
+          }
+        },
+        {
+          "description": "summary (engine): the outcome of the reading of one document.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "written"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "summary"
+              ]
+            },
+            "written": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "keptAside": {
+              "description": "The readings kept aside, by reference: their text and requestKey are on the reading events only, joined by candidateId.",
+              "type": "array",
+              "maxItems": 200,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "candidateId",
+                  "reason"
+                ],
+                "properties": {
+                  "candidateId": {
+                    "description": "A candidateId.",
+                    "type": "string",
+                    "maxLength": 64,
+                    "pattern": "^[a-zA-Z0-9_-]+$"
+                  },
+                  "reason": {
+                    "description": "Why the reading is not written: a closed reason code. A line that is not clinical, about a special category or about another person never becomes a reading (documentation/HDS-READER.md).",
+                    "type": "string",
+                    "enum": [
+                      "no-item",
+                      "unit-not-offered",
+                      "no-coded-stream",
+                      "timed-draw",
+                      "implausible-value",
+                      "ambiguous-label",
+                      "qualitative-result",
+                      "derived-index"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "questionnaire/request-v1": {
       "description": "A questionnaire instantiated for this patient, as asked by a doctor or a generator. It is written into the patient's account ('requester', set by the patient's own app, records who asked); no event travels between two accounts. Carries a 'questions' map keyed by stable question keys. Each question references an existing HDS item (itemRef) with optional entity filter (params), a temporal scope (ever / window / latest with withinDays), and an optional subField for qualifier capture. The patient's matching questionnaire/answer-v1 event carries the answers map keyed by the same question keys and links back via requestEventId. Question keys must match Pryv content-query path grammar [a-zA-Z0-9_-]+ so content.answers.<key>.status queries work. See documentation/QUESTIONNAIRE.md.",
       "type": "object",

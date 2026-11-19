@@ -5,7 +5,8 @@ This file orients future agents (Claude or others) working on the `data-model` r
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
 - `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md`, `DOCUMENTS.md`, `ENCOUNTER.md`, `MEDICATION.md`, `SUPPORT.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
-- `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `sourceKey`, `hdsBasis`, …): read it before adding one. New keys are `hds`-prefixed.
+- `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `sourceKey`, `hdsBasis`, `hdsSourceAnchor`, `hdsExtraction`, …): read it before adding one. New keys are `hds`-prefixed. A key with a closed object shape gets its JSON Schema in `src/schemas/clientDataKeys.js`, tested under both flavours and published as `json-schemas/<key>.json`.
+- `documentation/HDS-READER.md` — the HDS Reader's dialogue type `message/hds-reader-v1` (on the Reader's own app tree, not a model stream) and the provenance keys on each value it writes. It is the first eventType whose schema has a root `oneOf` (one closed branch per `content.kind`) and no root `properties`: a tool that reads `schema.properties` to list an eventType's fields finds none there and must walk the branches.
 - `documentation/APP-DESCRIPTION.md` — how HDS apps name the app holding an access: the `hdsApp` pointer, the `hds-app-manifest` (schema `json-schemas/hds-app-manifest.json`), the catalogue's vouching and the trust rule.
 - `documentation/PARTIAL-DATES.md` — partial and approximate dates (`hdsTimePrecision`): cross-domain, applies to any event whose date is known only to the month or the year.
 
@@ -343,7 +344,7 @@ data-model/
 │   ├── items/*.yaml                       # Health data point definitions (352 items, 287 active, 23 YAML files)
 │   ├── streams/*.yaml                     # Clinical-domain tree (22 top-level roots, 335 streams in all)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (86)
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (87)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)
@@ -370,6 +371,7 @@ data-model/
 │   ├── schemas/vocabularies.js            # AJV JSON Schema for a vocabulary (published json-schemas/vocabulary.json)
 │   ├── documentKinds.js                   # Document-kind loader: one kind per class / type pair, one Coding per code
 │   ├── schemas/documentKinds.js           # AJV JSON Schema for the table (published json-schemas/documentKinds.json)
+│   ├── schemas/clientDataKeys.js          # JSON Schemas of the closed clientData keys (published json-schemas/hds-source-anchor.json, hds-extraction.json)
 │   ├── conversions.js                     # Unit conversion loader
 │   ├── settings.js                        # Settings loader
 │   ├── build.js                           # Pack generation (writes dist/pack.json)
@@ -390,7 +392,8 @@ data-model/
 │   ├── NUTRITION.md                       # Nutritional state vs lifestyle-diet
 │   ├── FAMILY.md                          # Household / family-structure facts
 │   ├── SYNC-STATUS.md                     # Connector status: sync-status root, `type: system` item
-│   ├── PROVENANCE.md                      # clientData keys: hdsInstrument, related.<eventId>, sourceKey; index of the others
+│   ├── PROVENANCE.md                      # clientData keys: hdsInstrument, related.<eventId>, sourceKey, hdsSourceAnchor, hdsExtraction; index of the others
+│   ├── HDS-READER.md                      # HDS Reader: message/hds-reader-v1 dialogue, the Reader's app tree
 │   ├── PARTIAL-DATES.md                   # Partial / approximate dates: hdsTimePrecision, time at period start 12:00 UTC
 │   ├── CONSENTS.md                        # Account-level consent record: consents root, `type: system` item
 │   ├── DOCUMENTS.md                       # Medical documents: documents root, `type: attachments` item, file/xds-v1; document-shares
