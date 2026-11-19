@@ -94,7 +94,11 @@ Two facts, kept apart as FHIR keeps them:
   `side-effects`, `ineffective`, `own-choice`, `other`; absent = ended as planned, or not said). Taking it again is a
   new open period, never a reopened one. A period's start is a fact, or it is marked approximate
   (`clientData.hdsTimePrecision: 'approx'` + `hdsTimeText`, [PARTIAL-DATES.md](PARTIAL-DATES.md)): a period an app
-  creates only to close it, starting at the first logged intake, is approximate.
+  creates only to close it, starting at the first logged intake, is approximate. A start the person does not know at
+  all is `hdsTimePrecision: 'unknown'` (4.19.0, PARTIAL-DATES.md § A date nobody knows): `time` is when the period was
+  recorded, the period is open (`duration: null`), and stopping it sets the duration as for any open period, with
+  `hdsEndPrecision`. The end is then real; the length is not, and is never shown. A period that ended before it is
+  recorded cannot have an unknown start: ask for a rough one (`year`, `approx`).
 - **The order is the prescription's `status`** (both prescription types, top level): `active`, `stopped`, `completed`
   (FHIR `MedicationRequest.status`, R4 and R5), with `statusChanged` (the day it took effect, needs `status`) and
   `stopReason` (only with `status: stopped`). Written by whoever wrote the prescription. **Absent means not stated**

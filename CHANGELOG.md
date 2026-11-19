@@ -1,5 +1,41 @@
 # Changelog
 
+## [4.19.0] - 2026-11-19
+
+A value for a date nobody knows. Documentation only: no key, stream, item, eventType, option value, schema or `fhir`
+block change; `hdsTimePrecision` is a documented `clientData` convention, not a schema.
+
+### Added
+- **`clientData.hdsTimePrecision: unknown`** (PARTIAL-DATES.md § A date nobody knows): the person was asked for the
+  date and does not know it at all. `time` is then only the moment the event was recorded and makes no claim about
+  the event. Written only from the person's answer, never by an importer on its own. Allowed on a closed list of
+  history items (`condition-coded`, `finding-coded`, `procedure-*`, `treatment-*`, `encounter-visit`,
+  `medication-intake-*`, `document`), never on a measured value or a prescription. The end may be known, the length
+  never is: `duration: null` for a running span, a finite `duration` only as an end after the recording moment,
+  with `hdsEndPrecision` required (stopping a medication period, a condition's abatement); no `unknown` for
+  `hdsEndPrecision`; no `hdsTimeText` / `hdsTimeZone`. Readers show "date unknown", keep the event off any time axis
+  (charts, timeline positions, latest value, "since", age at onset), and keep an ongoing period current. An edit
+  that withdraws a date sets `unknown`.
+- **FHIR rendering of `unknown`:** the date element carries only the `data-absent-reason` extension, code
+  `asked-unknown` (`_onsetDateTime`, `_performedDateTime`, `_effectiveDateTime`, `effectivePeriod._start` with a
+  known end as `end`); a DocumentReference has no `date` and takes `attachment.creation` only from `creation`; a
+  vital-sign, laboratory or screening event with `unknown` is refused, and so is a procedure with `unknown` and a
+  `duration`. The recording moment is an exact instant in the period tests: only an end after it is written. A date
+  learned later keeps the end (duration recomputed); withdrawing a date drops a finite duration, and is refused on
+  an ended medication period.
+  FHIR import still refuses a resource with no date (open point), and a Condition onset stated absent no longer
+  falls through to `recordedDate`. CONDITION.md, DOCUMENTS.md, MEDICATION.md and FHIR-MAPPING.md link to it.
+
+### Changed
+- PARTIAL-DATES.md § Spans: `hdsEndPrecision` takes the same values except `unknown`, and an `unknown` start never
+  lends its precision to an end.
+
+### Consumers
+- A reader written before 4.19.0 reads the new value as absent and shows the recording moment as the event's date.
+  hds-lib's `formatEventDate` and the timeline / chart readers need to learn it before a writer uses it.
+- hds-fhir-js renders and refuses as above only once it implements this release (`toFhir` data-absent-reason,
+  DocumentReference `date`, the Condition `recordedDate` fall-through in `fromFhir`).
+
 ## [4.18.1] - 2026-11-19
 
 Text fixes from a review of the model against printed lab reports and documents. No key, stream, eventType, option

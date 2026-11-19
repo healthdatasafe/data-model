@@ -422,13 +422,13 @@ document:
 | `supersedes[]` | `relatesTo[]` `{ code: replaces, target: DocumentReference/<id> }` |
 | `title` | `description`, and each attachment's `title` when the file has no name |
 | `language` | `content[].attachment.language` (left out when `und`) |
-| `creation`, else the event date | `content[].attachment.creation` |
+| `creation`, else the event date | `content[].attachment.creation`; with `hdsTimePrecision: unknown` (4.19.0), only from `creation`, never from the event time |
 | `authors[]` | `author[]` as `display` only (name, organization, service joined): no Practitioner or Organization resource is served |
 | `practiceSetting`, `facilityType`, `event[]` | `context.practiceSetting`, `.facilityType`, `.event[]` |
 | `format` | `content[].format` |
 | `encounterId`, `pages` | not rendered (no Encounter resource is served; a page count has no element) |
 | `uniqueId` | not rendered yet: `masterIdentifier` with MHD's fixed `type`, in a later hds-fhir-js release (plan 115) |
-| event `time` | `date`, as an instant: the document's date on the timeline, what a `date` search filters (`created` is `Provenance.recorded`) |
+| event `time` | `date`, as an instant: the document's date on the timeline, what a `date` search filters (`created` is `Provenance.recorded`); no `date` (0..1) when `hdsTimePrecision` is `unknown` (4.19.0, PARTIAL-DATES.md) |
 | `attachments[]` (Pryv) | one `content[]` per file: `attachment.contentType`, `size`, `title` (file name), `url` = `Binary/<eventId>.<fileId>` (absolute on the facade, relative in an export file); never the Pryv `readToken`; no `hash` (FHIR's is SHA-1, Pryv's integrity is sha256) |
 
 The category key is `clinical-note` for every document: US Core's category value set has that one code, and a grant on
@@ -702,6 +702,7 @@ as its display, so the national product stands beside the coded medicine, never 
 |---|---|
 | one intake (no `duration`, or `0`) | `MedicationStatement.effectiveDateTime`; `status` `completed`, or `not-taken` with `skipReason` as `statusReason`; a Dosage of the dose and route only (MEDICATION.md: the rest is ignored on a dose). A `skipReason` on an intake that was taken is refused |
 | a period still open (`duration` null) | `effectivePeriod.start`, no end; `status` `active`; the whole regimen as one Dosage |
+| a start the person does not know (`hdsTimePrecision: unknown`, 4.19.0) | `effectivePeriod._start` (or `_effectiveDateTime` for one intake) carrying only the `data-absent-reason` `asked-unknown`; a known end as `effectivePeriod.end` at `hdsEndPrecision`; the recording moment is never rendered. A prescription never carries `unknown` (PARTIAL-DATES.md) and is refused if it does |
 | an ended period | `effectivePeriod` start and end (the end at `hdsEndPrecision`, else the start's); `status` `stopped` when closed with a `stopReason` (rendered as `statusReason`) or before the planned `bounds.end`, else `completed`. `bounds.duration` is not compared (calendar arithmetic) |
 | any intake | `informationSource` = the patient unless the event was imported; no category; IPS profile on `ips`, the base resource on `us` (US Core 6.1.0 has no MedicationStatement profile) |
 | a prescription | `MedicationRequest`, `intent` `order`, `authoredOn` = the event time at its precision, `status` as stored (absent is `unknown`, never active), `stopReason` as `statusReason`, `statusChanged` as the R5 cross-version extension `http://hl7.org/fhir/5.0/StructureDefinition/extension-MedicationRequest.statusChanged` (`valueDateTime`), the posology as the one `dosageInstruction`. US Core on `us`, IPS on `ips` |
@@ -753,7 +754,7 @@ procedure-basic:
 | Event | Procedure (hds-fhir-js `toFhir`) |
 |---|---|
 | `procedure` (coded) or `name` (basic) | `code`: the selection's codings with `label.en` as `text`, or `{ text: name }` |
-| event `time` | `performedDateTime`, truncated to `hdsTimePrecision` ([PARTIAL-DATES.md](PARTIAL-DATES.md): a year, a month, a day or the moment; `approx` gives the year and a note) |
+| event `time` | `performedDateTime`, truncated to `hdsTimePrecision` ([PARTIAL-DATES.md](PARTIAL-DATES.md): a year, a month, a day or the moment; `approx` gives the year and a note; `unknown` gives `_performedDateTime` with only the `data-absent-reason` `asked-unknown`, 4.19.0; `unknown` with a `duration` is refused) |
 | `time` and a positive `duration` | `performedPeriod` `{ start, end }`, the end at `hdsEndPrecision`, else at the start's. Absent or `0`: a point event. `null` (an open span, a procedure still under way) is refused, never stated as completed |
 | a `time`, or an end, in the future; a legacy `performed` key | refused (below): not a completed procedure, or a date that is not known |
 | (no status field) | `status: completed`, always (below) |
@@ -839,7 +840,7 @@ Flavour B, without `count`.
 | `status` | 1..1, Must Support | 1..1 (base) | `completed` (above) |
 | `code` | 1..1, Must Support, extensible binding to US Core Procedure Codes | 1..1, preferred binding | the datasource selection (SNOMED CT today), or text only on the basic item: an extensible binding admits text when no code applies, and the validator notes it as a warning |
 | `subject` | 1..1, Must Support | 1..1, `reference` 1..1 | the patient |
-| `performed[x]` | Must Support (`dateTime`); required when `completed` (us-core-7) | 1..1 | always present: `performedDateTime`, or `performedPeriod` |
+| `performed[x]` | Must Support (`dateTime`); required when `completed` (us-core-7) | 1..1 | always present: `performedDateTime`, or `performedPeriod`; with `hdsTimePrecision: unknown` (4.19.0), `_performedDateTime` carrying only the `data-absent-reason` `asked-unknown`, which satisfies us-core-7 and the IPS 1..1; `unknown` with a `duration` is refused (a completed procedure cannot end after it is recorded) |
 | `basedOn`, `encounter`, `performer`, `bodySite` | not Must Support in 6.1.0 | optional | not stored, omitted |
 
 **Import** (`fromFhir`, § [Import](#import)): a Procedure is matched on its `code`: a coding with a datasource label
@@ -1311,11 +1312,18 @@ the patient has had the condition from (its onset, or the date of the diagnosis 
 not when someone wrote it down, as for the "March 1999" diagnosis of [PARTIAL-DATES.md](PARTIAL-DATES.md); so the
 rendering states it as `onsetDateTime`, and the import prefers the onset. An `onsetPeriod`'s end is not kept (the
 onset is a moment). An Observation's `effectivePeriod.end` is not kept either: the mapped Observation items are point
-events. A missing or unreadable date is rejected (a text onset such as `onsetString` included). Precision follows
+events. A missing or unreadable date is rejected (a text onset such as `onsetString` included, and a date element
+carrying only a `data-absent-reason`: reading it back as `unknown` is an open point of PARTIAL-DATES.md). An onset
+stated absent does not fall through to `recordedDate`: the resource is refused, since the recorded date would read
+as the onset. Precision follows
 [PARTIAL-DATES.md](PARTIAL-DATES.md): a full dateTime is the exact moment, `clientData.hdsTimePrecision: minute`; a
 truncated one (`YYYY`, `YYYY-MM`, `YYYY-MM-DD`) is the start of its period at 12:00 UTC with precision `year`, `month`
 or `day`. Export is the reverse: the date is truncated to the event's precision (`approx` gives the year and a note
-with `hdsTimeText`). A vital sign known only to the month or the year cannot be exported, since FHIR requires a
+with `hdsTimeText`; `unknown`, 4.19.0, gives no date: the date element carries only the `data-absent-reason`
+extension, code `asked-unknown`, and the recording moment is never exported as the date; an event of a vital-sign,
+laboratory or US Core screening item that carries `unknown` is refused, as a month or year one is, since PARTIAL-DATES.md
+never allows `unknown` there; the generic Observation of an unmapped item, such as `finding-coded`, `treatment-*` or
+`encounter-visit`, takes `_effectiveDateTime` the same way). A vital sign known only to the month or the year cannot be exported, since FHIR requires a
 vital sign's date to the day (vs-1), and is refused rather than padded to a day; so is a US Core screening answer
 (us-core-1).
 

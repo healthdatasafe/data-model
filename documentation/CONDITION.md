@@ -43,7 +43,7 @@ Since 4.1.0 (plan 115 GAP H-6) a condition can say whether it is still there, an
 | What | Where | Values |
 |---|---|---|
 | Clinical status | `content.status` (optional) | `active`, `recurrence`, `relapse`, `inactive`, `remission`, `resolved`: the FHIR `Condition.clinicalStatus` codes (`condition-clinical`). Absent: not stated. |
-| Abatement | `event.duration` (optional, never `null`) | `time + duration` is when the condition abated. Absent: the abatement is not known, or falls within the onset's own period (below). |
+| Abatement | `event.duration` (optional, never `null`) | `time + duration` is when the condition abated. Absent: the abatement is not known, or falls within the onset's own period (below), or is not later than the recording of an unknown onset (PARTIAL-DATES.md § A date nobody knows). |
 
 The two go together under FHIR's con-4 rule: **a condition with a duration has status `inactive`, `remission` or
 `resolved`.** A duration with no status, or with `active`, `recurrence` or `relapse`, is a contradiction: the FHIR
@@ -51,7 +51,11 @@ rendering refuses the event rather than emit it, and the importer refuses the re
 
 `event.time` stays the onset (or the diagnosis date when that is all the source knows, FHIR-MAPPING.md § Time). **An
 undated diagnosis is asked, never filled in:** the document's date is never used as `event.time`, where it would read
-as the onset; ask the person (PARTIAL-DATES.md § Rules). An absent duration never means "ongoing": whether the
+as the onset; ask the person (PARTIAL-DATES.md § Rules). When the person does not know it at all, the onset is
+written with `hdsTimePrecision: unknown` (PARTIAL-DATES.md § A date nobody knows, 4.19.0): `time` is then when the
+condition was recorded. An abatement learned later (after the recording) is written as for any condition, with
+`hdsEndPrecision`; an abatement before the recording cannot follow an unknown onset (ask for a rough onset, or write
+the status without a duration). An absent duration never means "ongoing": whether the
 condition is still there is said by `status`, and a writer that does not know the abatement writes no duration at
 all. This is the opposite of the encounter and medication items, where `duration: null` is an ongoing period: a
 condition is an assertion about the patient, not a period of care, and the status carries that meaning on its own.

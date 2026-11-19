@@ -303,9 +303,13 @@ event time:
 - **Only a date from the document's body counts.** Never the fax header, the scan or print date, the upload date, the
   e-mail it came with or the date of a later copy: these say when a copy moved, not when the care happened.
 - **When the kind's date is not printed,** use the other one (a lab report without a sampling date takes its report
-  date). When no date can be read at all, ask the person; never fill one in. An importer that cannot ask (a bridge, a
-  batch run) holds the document for review, or writes the year or an `approx` date with `hdsTimeText` saying what is
-  known, and never the upload date.
+  date). When no date can be read at all, ask the person; never fill one in. When the person does not know it either,
+  the document is written with `hdsTimePrecision: unknown` (PARTIAL-DATES.md § A date nobody knows, 4.19.0): its
+  `time` is then only the moment it was recorded, never a claim about the care. This is the one case where `time` is
+  the recording moment, and the precision says it is not the document's date; its FHIR rendering has no `date`
+  (FHIR-MAPPING.md § DocumentReference). An importer that cannot ask (a
+  bridge, a batch run) holds the document for review, or writes the year or an `approx` date with `hdsTimeText`
+  saying what is known, and never the upload date; it never writes `unknown` on its own.
 - **Day, month, year.** A printed date has no hour: `time` is 12:00 UTC on that day with
   `clientData.hdsTimePrecision: day`, never local midnight. Partial dates ("03.1999", "spring 1998") follow
   [PARTIAL-DATES.md](PARTIAL-DATES.md) the same way, with `hdsTimeText` as printed. `creation` takes the date as a
