@@ -1,4 +1,7 @@
 {
+  "AllergyIntolerance": [
+    "allergy"
+  ],
   "Condition|problem-list-item": [
     "condition"
   ],

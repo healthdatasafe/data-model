@@ -44,10 +44,15 @@
             },
             {
               "enum": [
-                "composite"
+                "composite",
+                "multi-select",
+                "datasource-search"
               ]
             }
           ]
+        },
+        "datasource": {
+          "type": "string"
         },
         "canBeNull": {
           "type": "boolean",
@@ -517,7 +522,8 @@
             "MedicationRequest",
             "Procedure",
             "QuestionnaireResponse",
-            "Questionnaire"
+            "Questionnaire",
+            "AllergyIntolerance"
           ]
         },
         "category": {

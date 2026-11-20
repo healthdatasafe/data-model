@@ -1,6 +1,6 @@
 {
-  "version": "4.20.0",
-  "publicationDate": "2026-11-19T16:05:24.524Z",
+  "version": "4.21.0",
+  "publicationDate": "2026-11-20T17:10:16.549Z",
   "streams": [
     {
       "id": "activity",
@@ -72,6 +72,15 @@
           "parentId": "activity"
         }
       ]
+    },
+    {
+      "id": "allergy",
+      "name": "Allergies and intolerances",
+      "label": {
+        "en": "Allergies and intolerances",
+        "fr": "Allergies et intolérances"
+      },
+      "parentId": null
     },
     {
       "id": "body",
@@ -2728,6 +2737,405 @@
       },
       "repeatable": "P1D",
       "devNotes": "The source's own \"active\" or \"exercise\" minutes (HealthKit appleExerciseTime, Google Fit active_minutes), in seconds; each source defines active differently, so compare a person with themself, not across devices. No LOINC asserted: 55411-3 \"Exercise duration\" is one session, not a daily total."
+    },
+    "allergy-coded": {
+      "version": "v1",
+      "label": {
+        "en": "Allergy or intolerance (coded)",
+        "fr": "Allergie ou intolérance (codée)"
+      },
+      "description": {
+        "en": "Search and select what you are allergic or intolerant to.",
+        "fr": "Recherchez et sélectionnez ce à quoi vous êtes allergique ou intolérant."
+      },
+      "streamId": "allergy",
+      "eventType": "allergy/coded-v1",
+      "type": "composite",
+      "composite": {
+        "allergen": {
+          "label": {
+            "en": "Allergen",
+            "fr": "Allergène"
+          },
+          "type": "datasource-search",
+          "datasource": "allergen"
+        },
+        "status": {
+          "label": {
+            "en": "Status",
+            "fr": "Statut"
+          },
+          "type": "select",
+          "options": [
+            {
+              "value": "active",
+              "label": {
+                "en": "Active",
+                "fr": "Active"
+              }
+            },
+            {
+              "value": "inactive",
+              "label": {
+                "en": "Inactive",
+                "fr": "Inactive"
+              }
+            },
+            {
+              "value": "resolved",
+              "label": {
+                "en": "Resolved",
+                "fr": "Résolue"
+              }
+            }
+          ]
+        },
+        "verificationStatus": {
+          "label": {
+            "en": "Verification",
+            "fr": "Vérification"
+          },
+          "type": "select",
+          "canBeNull": true,
+          "options": [
+            {
+              "value": "unconfirmed",
+              "label": {
+                "en": "Suspected (not confirmed)",
+                "fr": "Suspectée (non confirmée)"
+              }
+            },
+            {
+              "value": "confirmed",
+              "label": {
+                "en": "Confirmed (by a test or a doctor)",
+                "fr": "Confirmée (par un test ou un médecin)"
+              }
+            }
+          ]
+        },
+        "categories": {
+          "label": {
+            "en": "Category",
+            "fr": "Catégorie"
+          },
+          "type": "multi-select",
+          "canBeNull": true,
+          "options": [
+            {
+              "value": "food",
+              "label": {
+                "en": "Food",
+                "fr": "Aliment"
+              }
+            },
+            {
+              "value": "medication",
+              "label": {
+                "en": "Medication",
+                "fr": "Médicament"
+              }
+            },
+            {
+              "value": "environment",
+              "label": {
+                "en": "Environment (pollen, animals, dust…)",
+                "fr": "Environnement (pollens, animaux, poussière…)"
+              }
+            },
+            {
+              "value": "biologic",
+              "label": {
+                "en": "Biologic product (vaccine, blood product…)",
+                "fr": "Produit biologique (vaccin, produit sanguin…)"
+              }
+            }
+          ]
+        },
+        "type": {
+          "label": {
+            "en": "Type",
+            "fr": "Type"
+          },
+          "type": "select",
+          "canBeNull": true,
+          "options": [
+            {
+              "value": "allergy",
+              "label": {
+                "en": "Allergy",
+                "fr": "Allergie"
+              }
+            },
+            {
+              "value": "intolerance",
+              "label": {
+                "en": "Intolerance",
+                "fr": "Intolérance"
+              }
+            }
+          ]
+        },
+        "criticality": {
+          "label": {
+            "en": "Risk of a severe reaction",
+            "fr": "Risque de réaction grave"
+          },
+          "type": "select",
+          "canBeNull": true,
+          "options": [
+            {
+              "value": "low",
+              "label": {
+                "en": "Low",
+                "fr": "Faible"
+              }
+            },
+            {
+              "value": "high",
+              "label": {
+                "en": "High",
+                "fr": "Élevé"
+              }
+            },
+            {
+              "value": "unable-to-assess",
+              "label": {
+                "en": "Cannot be assessed",
+                "fr": "Impossible à évaluer"
+              }
+            }
+          ]
+        },
+        "lastOccurrence": {
+          "label": {
+            "en": "Last reaction",
+            "fr": "Dernière réaction"
+          },
+          "type": "date",
+          "canBeNull": true
+        },
+        "notes": {
+          "label": {
+            "en": "Notes",
+            "fr": "Notes"
+          },
+          "type": "text",
+          "canBeNull": true
+        }
+      },
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "AllergyIntolerance",
+        "code": {
+          "from": "datasource",
+          "field": "allergen"
+        },
+        "profiles": {
+          "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-allergyintolerance",
+          "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/AllergyIntolerance-uv-ips"
+        }
+      },
+      "devNotes": "event.time is the onset, at its precision (PARTIAL-DATES.md); hdsTimePrecision: unknown when the person does not know it. No duration in v1: time + duration is reserved for an abatement, as on condition-coded, and an event that carries one is refused by the FHIR rendering. `status` is required: the item format has no default value, so the entry UI presets it to active; a writer that is not a form (a bridge, the MCP import) states it and never defaults it. `verificationStatus` absent = not stated; never defaulted to confirmed. `reactions` (allergy/coded-v1) is not a form field: an array of objects, which no composite field type holds (as procedure `findings`); a writer that has reactions writes them itself, and the entry UI adds a repeating group later, the stored shape being fixed now. At least one code (`allergen.codes` minItems 1): an allergen no code was found for is allergy-basic. The entry UI must write no `categories` key for an empty multi-select, never `categories: []` (minItems 1), and must write `lastOccurrence` as YYYY, YYYY-MM or YYYY-MM-DD, never a full ISO datetime, with a way to enter a year or a month alone (a plain date widget allows neither). An allergy pass as a document is the `allergy-record` document kind (documentKinds.yaml), on `documents`, not here. \"No known allergy\" is a later item (allergy-none-known), never an allergen. See documentation/ALLERGY.md."
+    },
+    "allergy-basic": {
+      "version": "v1",
+      "label": {
+        "en": "Allergy or intolerance (free-text)",
+        "fr": "Allergie ou intolérance (texte libre)"
+      },
+      "description": {
+        "en": "Something you are allergic or intolerant to, entered as free text.",
+        "fr": "Ce à quoi vous êtes allergique ou intolérant, saisi en texte libre."
+      },
+      "streamId": "allergy",
+      "eventType": "allergy/basic-v1",
+      "type": "composite",
+      "composite": {
+        "name": {
+          "label": {
+            "en": "Allergen",
+            "fr": "Allergène"
+          },
+          "type": "text"
+        },
+        "status": {
+          "label": {
+            "en": "Status",
+            "fr": "Statut"
+          },
+          "type": "select",
+          "options": [
+            {
+              "value": "active",
+              "label": {
+                "en": "Active",
+                "fr": "Active"
+              }
+            },
+            {
+              "value": "inactive",
+              "label": {
+                "en": "Inactive",
+                "fr": "Inactive"
+              }
+            },
+            {
+              "value": "resolved",
+              "label": {
+                "en": "Resolved",
+                "fr": "Résolue"
+              }
+            }
+          ]
+        },
+        "verificationStatus": {
+          "label": {
+            "en": "Verification",
+            "fr": "Vérification"
+          },
+          "type": "select",
+          "canBeNull": true,
+          "options": [
+            {
+              "value": "unconfirmed",
+              "label": {
+                "en": "Suspected (not confirmed)",
+                "fr": "Suspectée (non confirmée)"
+              }
+            },
+            {
+              "value": "confirmed",
+              "label": {
+                "en": "Confirmed (by a test or a doctor)",
+                "fr": "Confirmée (par un test ou un médecin)"
+              }
+            }
+          ]
+        },
+        "categories": {
+          "label": {
+            "en": "Category",
+            "fr": "Catégorie"
+          },
+          "type": "multi-select",
+          "canBeNull": true,
+          "options": [
+            {
+              "value": "food",
+              "label": {
+                "en": "Food",
+                "fr": "Aliment"
+              }
+            },
+            {
+              "value": "medication",
+              "label": {
+                "en": "Medication",
+                "fr": "Médicament"
+              }
+            },
+            {
+              "value": "environment",
+              "label": {
+                "en": "Environment (pollen, animals, dust…)",
+                "fr": "Environnement (pollens, animaux, poussière…)"
+              }
+            },
+            {
+              "value": "biologic",
+              "label": {
+                "en": "Biologic product (vaccine, blood product…)",
+                "fr": "Produit biologique (vaccin, produit sanguin…)"
+              }
+            }
+          ]
+        },
+        "type": {
+          "label": {
+            "en": "Type",
+            "fr": "Type"
+          },
+          "type": "select",
+          "canBeNull": true,
+          "options": [
+            {
+              "value": "allergy",
+              "label": {
+                "en": "Allergy",
+                "fr": "Allergie"
+              }
+            },
+            {
+              "value": "intolerance",
+              "label": {
+                "en": "Intolerance",
+                "fr": "Intolérance"
+              }
+            }
+          ]
+        },
+        "criticality": {
+          "label": {
+            "en": "Risk of a severe reaction",
+            "fr": "Risque de réaction grave"
+          },
+          "type": "select",
+          "canBeNull": true,
+          "options": [
+            {
+              "value": "low",
+              "label": {
+                "en": "Low",
+                "fr": "Faible"
+              }
+            },
+            {
+              "value": "high",
+              "label": {
+                "en": "High",
+                "fr": "Élevé"
+              }
+            },
+            {
+              "value": "unable-to-assess",
+              "label": {
+                "en": "Cannot be assessed",
+                "fr": "Impossible à évaluer"
+              }
+            }
+          ]
+        },
+        "lastOccurrence": {
+          "label": {
+            "en": "Last reaction",
+            "fr": "Dernière réaction"
+          },
+          "type": "date",
+          "canBeNull": true
+        },
+        "notes": {
+          "label": {
+            "en": "Notes",
+            "fr": "Notes"
+          },
+          "type": "text",
+          "canBeNull": true
+        }
+      },
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "AllergyIntolerance",
+        "code": {
+          "from": "text",
+          "field": "name"
+        },
+        "profiles": {
+          "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-allergyintolerance",
+          "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/AllergyIntolerance-uv-ips"
+        }
+      },
+      "devNotes": "The uncoded twin of allergy-coded: a name no code was found for (an allergen coded only in a system outside fhirMapping.systems, UNII or NDF-RT, imports here and loses its code), never a coded event with codes: []. Same stream, so one consent unit covers both. Every other field, and every rule of allergy-coded's devNotes (onset, no duration in v1, status stated by every writer, verification never defaulted to confirmed, reactions not a form field, no empty `categories` and `lastOccurrence` written as YYYY, YYYY-MM or YYYY-MM-DD by the entry UI), applies unchanged."
     },
     "body-skin-acne": {
       "version": "v1",
@@ -20837,6 +21245,9 @@
     }
   },
   "fhirScopes": {
+    "AllergyIntolerance": [
+      "allergy"
+    ],
     "Condition|problem-list-item": [
       "condition"
     ],
@@ -26041,6 +26452,413 @@
               "remission",
               "resolved"
             ]
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "allergy/coded-v1": {
+        "description": "Coded allergy or intolerance (FHIR AllergyIntolerance). 'allergen' is the coded substance from datasets-service. event.time is the onset; no duration (reserved for an abatement).",
+        "type": "object",
+        "required": [
+          "allergen",
+          "status"
+        ],
+        "properties": {
+          "allergen": {
+            "description": "Coded allergen (a substance, a drug ingredient or a drug class), populated from datasets-service selection.",
+            "type": "object",
+            "required": [
+              "label",
+              "codes"
+            ],
+            "properties": {
+              "label": {
+                "description": "Localized allergen name for display",
+                "type": "object",
+                "required": [
+                  "en"
+                ],
+                "properties": {
+                  "en": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "description": {
+                "description": "Localized full description",
+                "type": "object",
+                "properties": {
+                  "en": {
+                    "type": "string"
+                  }
+                }
+              },
+              "hdsId": {
+                "description": "HDS identifier of the picked search result, as datasets-service returns it (the hdsId of its primary code). Never constructed.",
+                "type": "string"
+              },
+              "codes": {
+                "description": "Coding identifiers across systems (SNOMED-CT, RxNorm, …). At least one: an allergen with no code is allergy/basic-v1.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "code",
+                    "system",
+                    "hdsId"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "system": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "hdsId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "status": {
+            "description": "AllergyIntolerance.clinicalStatus code (FHIR allergyintolerance-clinical). Required: a writer states it, never defaults it.",
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "resolved"
+            ]
+          },
+          "verificationStatus": {
+            "description": "AllergyIntolerance.verificationStatus code (FHIR allergyintolerance-verification); absent = not stated, never defaulted to confirmed.",
+            "type": "string",
+            "enum": [
+              "unconfirmed",
+              "confirmed"
+            ]
+          },
+          "categories": {
+            "description": "AllergyIntolerance.category codes; absent = not stated.",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "food",
+                "medication",
+                "environment",
+                "biologic"
+              ]
+            }
+          },
+          "type": {
+            "description": "AllergyIntolerance.type code; absent = not stated.",
+            "type": "string",
+            "enum": [
+              "allergy",
+              "intolerance"
+            ]
+          },
+          "criticality": {
+            "description": "AllergyIntolerance.criticality code; absent = not stated.",
+            "type": "string",
+            "enum": [
+              "low",
+              "high",
+              "unable-to-assess"
+            ]
+          },
+          "reactions": {
+            "description": "Reactions to the allergen, each an AllergyIntolerance.reaction.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "manifestations"
+              ],
+              "properties": {
+                "manifestations": {
+                  "description": "What the reaction was (reaction.manifestation, 1..*): a datasets-service selection (label, codes) or a text.",
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "dependencies": {
+                      "codes": [
+                        "label"
+                      ]
+                    },
+                    "anyOf": [
+                      {
+                        "required": [
+                          "text"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "label"
+                        ]
+                      }
+                    ],
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "label": {
+                        "type": "object",
+                        "required": [
+                          "en"
+                        ],
+                        "properties": {
+                          "en": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "codes": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "code",
+                            "system",
+                            "hdsId"
+                          ],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "system": {
+                              "type": "string"
+                            },
+                            "source": {
+                              "type": "object",
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "hdsId": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "severity": {
+                  "description": "reaction.severity code.",
+                  "type": "string",
+                  "enum": [
+                    "mild",
+                    "moderate",
+                    "severe"
+                  ]
+                },
+                "notes": {
+                  "description": "reaction.description.",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "lastOccurrence": {
+            "description": "Date of the last known reaction (AllergyIntolerance.lastOccurrence), at its precision: YYYY, YYYY-MM or YYYY-MM-DD.",
+            "type": "string",
+            "pattern": "^[0-9]{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12][0-9]|3[01]))?)?$"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "allergy/basic-v1": {
+        "description": "Allergy or intolerance to an allergen entered as free text (FHIR AllergyIntolerance). event.time is the onset; no duration (reserved for an abatement).",
+        "type": "object",
+        "required": [
+          "name",
+          "status"
+        ],
+        "properties": {
+          "name": {
+            "description": "The allergen as written: a name no code was found for.",
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "description": "AllergyIntolerance.clinicalStatus code (FHIR allergyintolerance-clinical). Required: a writer states it, never defaults it.",
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "resolved"
+            ]
+          },
+          "verificationStatus": {
+            "description": "AllergyIntolerance.verificationStatus code (FHIR allergyintolerance-verification); absent = not stated, never defaulted to confirmed.",
+            "type": "string",
+            "enum": [
+              "unconfirmed",
+              "confirmed"
+            ]
+          },
+          "categories": {
+            "description": "AllergyIntolerance.category codes; absent = not stated.",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "food",
+                "medication",
+                "environment",
+                "biologic"
+              ]
+            }
+          },
+          "type": {
+            "description": "AllergyIntolerance.type code; absent = not stated.",
+            "type": "string",
+            "enum": [
+              "allergy",
+              "intolerance"
+            ]
+          },
+          "criticality": {
+            "description": "AllergyIntolerance.criticality code; absent = not stated.",
+            "type": "string",
+            "enum": [
+              "low",
+              "high",
+              "unable-to-assess"
+            ]
+          },
+          "reactions": {
+            "description": "Reactions to the allergen, each an AllergyIntolerance.reaction.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "manifestations"
+              ],
+              "properties": {
+                "manifestations": {
+                  "description": "What the reaction was (reaction.manifestation, 1..*): a datasets-service selection (label, codes) or a text.",
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "dependencies": {
+                      "codes": [
+                        "label"
+                      ]
+                    },
+                    "anyOf": [
+                      {
+                        "required": [
+                          "text"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "label"
+                        ]
+                      }
+                    ],
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "label": {
+                        "type": "object",
+                        "required": [
+                          "en"
+                        ],
+                        "properties": {
+                          "en": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "codes": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "code",
+                            "system",
+                            "hdsId"
+                          ],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "system": {
+                              "type": "string"
+                            },
+                            "source": {
+                              "type": "object",
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "hdsId": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "severity": {
+                  "description": "reaction.severity code.",
+                  "type": "string",
+                  "enum": [
+                    "mild",
+                    "moderate",
+                    "severe"
+                  ]
+                },
+                "notes": {
+                  "description": "reaction.description.",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "lastOccurrence": {
+            "description": "Date of the last known reaction (AllergyIntolerance.lastOccurrence), at its precision: YYYY, YYYY-MM or YYYY-MM-DD.",
+            "type": "string",
+            "pattern": "^[0-9]{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12][0-9]|3[01]))?)?$"
           },
           "notes": {
             "type": "string"
@@ -32332,6 +33150,28 @@
     }
   },
   "datasources": {
+    "allergen": {
+      "label": {
+        "en": "Allergens"
+      },
+      "description": {
+        "en": "Search allergens (substances, drug ingredients and classes; SNOMED-CT, RxNorm) from datasets service"
+      },
+      "endpoint": "datasets://allergen",
+      "queryParam": "search",
+      "minQueryLength": 3,
+      "resultKey": "allergens",
+      "displayFields": {
+        "label": "label",
+        "description": "description"
+      },
+      "valueFields": [
+        "label",
+        "description",
+        "codes",
+        "hdsId"
+      ]
+    },
     "condition": {
       "label": {
         "en": "Conditions"
