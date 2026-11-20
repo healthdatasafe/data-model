@@ -942,7 +942,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       // text and dosage are a medication's
       const m = item('condition-coded');
       m.fhir.code = { from: 'text', field: 'notes' };
-      assert.throws(() => check(m, 'c'), /a text code source applies to a MedicationStatement, a MedicationRequest or a Procedure only/);
+      assert.throws(() => check(m, 'c'), /a text code source applies to a MedicationStatement, a MedicationRequest, a Procedure or an AllergyIntolerance only/);
       const n = item('body-weight');
       n.fhir.dosage = med().fhir.dosage;
       assert.throws(() => check(n, 'w'), /"dosage" applies to a MedicationStatement or MedicationRequest only/);
@@ -1391,6 +1391,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const lab = [...new Set(labBlocks.map(([, i]) => i.streamId))].sort();
       assert.strictEqual(lab.length, 125);
       assert.deepStrictEqual(fhirScopes, {
+        AllergyIntolerance: ['allergy'],
         'Condition|problem-list-item': ['condition'],
         'DocumentReference|clinical-note': ['documents'],
         MedicationRequest: ['medication-prescription'],

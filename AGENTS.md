@@ -4,7 +4,7 @@ This file orients future agents (Claude or others) working on the `data-model` r
 
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
-- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md`, `DOCUMENTS.md`, `ENCOUNTER.md`, `MEDICATION.md`, `SUPPORT.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
+- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `ALLERGY.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md`, `DOCUMENTS.md`, `ENCOUNTER.md`, `MEDICATION.md`, `SUPPORT.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
 - `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `sourceKey`, `hdsBasis`, `hdsSourceAnchor`, `hdsExtraction`, …): read it before adding one. New keys are `hds`-prefixed. A key with a closed object shape gets its JSON Schema in `src/schemas/clientDataKeys.js`, tested under both flavours and published as `json-schemas/<key>.json`.
 - `documentation/HDS-READER.md` — the HDS Reader's dialogue type `message/hds-reader-v1` (on the Reader's own app tree, not a model stream) and the provenance keys on each value it writes. It is the first eventType whose schema has a root `oneOf` (one closed branch per `content.kind`) and no root `properties`: a tool that reads `schema.properties` to list an eventType's fields finds none there and must walk the branches.
 - `documentation/APP-DESCRIPTION.md` — how HDS apps name the app holding an access: the `hdsApp` pointer, the `hds-app-manifest` (schema `json-schemas/hds-app-manifest.json`), the catalogue's vouching and the trust rule.
@@ -388,6 +388,7 @@ data-model/
 │   ├── LIFESTYLE.md                       # Tobacco, alcohol, diet; AUDIT-C
 │   ├── PROFILE.md                         # Durable identity/demographic facts
 │   ├── CONDITION.md                       # Coded diagnoses; the 4-way coded split
+│   ├── ALLERGY.md                         # Allergies and intolerances: allergy root, coded / basic twins, AllergyIntolerance
 │   ├── FINDING.md                         # Coded findings — ROOT SCOPE UNDECIDED
 │   ├── NUTRITION.md                       # Nutritional state vs lifestyle-diet
 │   ├── FAMILY.md                          # Household / family-structure facts

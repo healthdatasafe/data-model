@@ -2,7 +2,56 @@
 
 ## [Unreleased]
 
-Documentation only. No key, stream, eventType, option value, schema or `fhir` block change.
+Allergies and intolerances (plan 133). Additive: one root stream, two items, two eventTypes, one datasource, an
+`AllergyIntolerance` block under a new bare scope key, and two composite field types; no existing key, stream, option
+value or `fhir` block changes.
+
+### Added
+- **Stream `allergy`** (root, no children; label "Allergies and intolerances" / "Allergies et intolérances") and
+  **items `allergy-coded` and `allergy-basic`** (ALLERGY.md): composites, `repeatable: unlimited`, no `duration`
+  (time + duration is reserved for an abatement, refused in v1). The coded twin selects its `allergen` through a
+  `datasource-search` field (datasource `allergen`), the basic twin takes a `name` as written. Both share one field
+  set through YAML anchors: `status` (required select), `verificationStatus`, `categories` (multi-select), `type`,
+  `criticality` (selects), `lastOccurrence` (date), `notes`. `reactions` is not a form field (an array of objects, as
+  procedure `findings`). event.time is the onset; `status` is stated by every writer, never defaulted;
+  `verificationStatus` is never defaulted to `confirmed`.
+- **eventTypes `allergy/coded-v1` and `allergy/basic-v1`**, identical but for `allergen` (a datasets-service
+  selection with at least one code and a non-empty `label.en`, no `drug.product`) and `name` (non-empty): `status` required (`active`, `inactive`,
+  `resolved`), `verificationStatus` (`unconfirmed`, `confirmed`), `categories` (unique, at least one, `food`,
+  `medication`, `environment`, `biologic`), `type`, `criticality`, `reactions` (at least one, each with at least one
+  manifestation holding a text or a label, `codes` only with a label, `severity` `mild` / `moderate` / `severe`,
+  `notes`), `lastOccurrence` (`YYYY`, `YYYY-MM` or `YYYY-MM-DD`, month and day in range), `notes`. Both flavours (draft-04, draft-07).
+- **Datasource `allergen`** (`datasets://allergen`, result key `allergens`): substances only in v1. The datasets-service
+  kind ships separately; until then the coded item's search returns nothing.
+- **`fhir` blocks: `AllergyIntolerance`** (US Core `us-core-allergyintolerance` on `us`, IPS `AllergyIntolerance-uv-ips`
+  on `ips`, no `ch`), a **bare scope key** granted on `allergy` (`fhirScopes.AllergyIntolerance: ["allergy"]`, locked).
+  No category table: the content `categories` is never a scope category, for good. The coded twin's code comes from
+  the datasource, the basic twin's as text: the `{ from: text, field }` code source now applies to an
+  AllergyIntolerance too. FHIR-MAPPING.md § AllergyIntolerance has the render and import rules (onset, statuses and
+  their systems, refused verification values, reactions, `lastOccurrence` truncation, what is not carried), with the
+  import decisions of 2026-11-20: no `clinicalStatus` refused; an out-of-set category, type, criticality or severity
+  dropped and reported; an `onsetPeriod` start as the onset, the period in `notes`; the no-known-allergy codes refused
+  before placement.
+- **Build (`src/fhir.js`, `checkAllergyIntolerance`):** an AllergyIntolerance takes a datasource or text code, no
+  category, value, split or dosage, and its item no `duration`; its eventType declares and requires `status` (never a
+  nullable form field), and the content the
+  renderer reads by name keeps its JSON types and exactly its enums (`ALLERGY_FIELDS`, `ALLERGY_REACTION_SEVERITIES`,
+  exported); on a composite each is a field of its type and counts as mapped, and a `reactions` field is refused.
+- **Composite field types `datasource-search` (with `datasource`) and `multi-select`** (`src/schemas/items.js`,
+  `src/items.js`): a `datasource-search` field names a known datasource, takes no `options` and matches an object
+  property; a `multi-select` field has string option values and matches an array property whose `items.enum` holds
+  them; `datasource` on any other field type is refused.
+- Tests `[ALG-*]` (`tests/allergy.test.js`).
+
+### Consumers
+- hds-fhir-js renders and imports the block in its next release (plan 133 phase 3); until then a renderer from 0.8.0
+  serves an allergy event as the generic Observation of its item. Release order: data-model, hds-fhir-js, the facade
+  pin and the extension options, then the apps.
+- hds-forms-js and hds-lib meet a `datasource-search` and a `multi-select` field inside a composite for the first time;
+  the entry UI (plan 133 phase 5) checks both before the items are offered in a form. It must also write no empty
+  `categories` and a `lastOccurrence` at its precision (`YYYY`, `YYYY-MM`, `YYYY-MM-DD`), never a full datetime.
+- hds-lib `eventToShortText` skips object and array content fields, so an allergy displays as its first string field
+  until plan 133 phase 5 teaches it the allergen: display work for the entry-UI phase.
 
 ### Fixed
 - **eGFR: one result per time on import** (B-2026-11-19-34): FHIR-MAPPING.md § Import now also covers a report that

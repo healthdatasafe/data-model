@@ -1,0 +1,15 @@
+allergen:
+  label: Allergens
+  description: Search allergens (substances, drug ingredients and classes; SNOMED-CT, RxNorm) from datasets service
+  endpoint: datasets://allergen
+  queryParam: search
+  minQueryLength: 3
+  resultKey: allergens
+  displayFields:
+    label: label
+    description: description
+  valueFields:
+    - label
+    - description
+    - codes
+    - hdsId

@@ -119,6 +119,15 @@ renderer serves a request event as the generic Observation it was (0.8.0 and lat
 it). **Release order: data-model first, then
 hds-fhir-js, then the facade pin and the extension options, then the apps.**
 
+**Allergies (4.21.0, plan 133):** the new `allergy` root and its two items, `allergy-coded` and `allergy-basic`, carry
+an `AllergyIntolerance` block, a **bare scope key** (no category table), the coded twin taking its code from the
+datasource selection (`allergen`), the basic twin the name as written through the `{ from: text, field }` code source,
+which an AllergyIntolerance now takes as a medication and a Procedure do
+([AllergyIntolerance](#allergyintolerance-allergies)). Both items are composites whose other fields the renderer reads
+by name. Needs the hds-fhir-js release that knows the resourceType; an older renderer (0.8.0 and later) serves an
+allergy event as the generic Observation of its item. **Release order: data-model first, then hds-fhir-js, then the
+facade pin and the extension options, then the apps.**
+
 An item's `fhir:` block says how its events **render as** a FHIR R4 resource and how a FHIR resource **imports
 back** into an event of that item. HDS uses it in three ways:
 
@@ -182,7 +191,7 @@ Entries are additive: a published category key or system label is never renamed 
 | DocumentReference | `clinical-note` (system `http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category`), the one key of the US Core category value set: every HDS document, whatever its XDS class (4.2.0) | yes |
 
 A resourceType that has a table must carry a `category` from it; a resourceType without a table takes none (Patient,
-MedicationStatement, MedicationRequest, Procedure). The SMART scope key is `ResourceType|category` for a resourceType with a
+MedicationStatement, MedicationRequest, Procedure, QuestionnaireResponse, Questionnaire, AllergyIntolerance). The SMART scope key is `ResourceType|category` for a resourceType with a
 table, and the bare resourceType otherwise (see [SMART scopes](#smart-scopes-packfhirscopes)). **A bare key is a
 one-way door: once it is published, no category table can ever be added for that resourceType.** A block with a
 category pairs its stream as `ResourceType|category`, and the lock holds the type's streams under the bare pair, so a
@@ -194,7 +203,9 @@ now and for good. So does `Procedure` ([Procedures](#procedures-procedure) gives
 is every procedure, and a stream mapped to `Procedure` later (the `treatment` root, if it comes to that) joins the
 same key as a new grant root, never a category of it. `QuestionnaireResponse` is a bare key too
 ([QuestionnaireResponse](#questionnaireresponse-questionnaire-answers)), and so is `Questionnaire`
-([Questionnaire](#questionnaire-questionnaire-requests)).
+([Questionnaire](#questionnaire-questionnaire-requests)). So is `AllergyIntolerance` (4.21.0,
+[AllergyIntolerance](#allergyintolerance-allergies)): `patient/AllergyIntolerance.rs` is every allergy, and the
+content's `categories` (food, medication, environment, biologic) is never a scope category, now and for good.
 
 ---
 
@@ -206,13 +217,13 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 
 | Field | Required | Meaning |
 |---|---|---|
-| `resourceType` | yes | `Observation`, `Condition`, `DocumentReference` ([documents](#documentreference-documents)), `MedicationStatement` or `MedicationRequest` ([medications](#medications-medicationstatement-and-medicationrequest)), `Procedure` ([procedures](#procedures-procedure)), `QuestionnaireResponse` ([questionnaire answers](#questionnaireresponse-questionnaire-answers)), `Questionnaire` ([questionnaire requests](#questionnaire-questionnaire-requests); `Patient` is an [element block](#patient-elements)). *Permanent.* |
+| `resourceType` | yes | `Observation`, `Condition`, `DocumentReference` ([documents](#documentreference-documents)), `MedicationStatement` or `MedicationRequest` ([medications](#medications-medicationstatement-and-medicationrequest)), `Procedure` ([procedures](#procedures-procedure)), `QuestionnaireResponse` ([questionnaire answers](#questionnaireresponse-questionnaire-answers)), `Questionnaire` ([questionnaire requests](#questionnaire-questionnaire-requests)), `AllergyIntolerance` ([allergies](#allergyintolerance-allergies); `Patient` is an [element block](#patient-elements)). *Permanent.* |
 | `category` | per resourceType (table above) | Category key. *Permanent.* |
 | `alsoMatchCategories` | no | Further category keys of the same table that a resource may carry and still import into this item, **on import only**, never emitted (smoking status filed under `survey` by older sources). Never the block's own category. |
 | `code` | yes; none on a `QuestionnaireResponse` or a `Questionnaire` | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }`, `{ from: eventType, codings }`, `{ from: content, field, translate, unknown }` or `{ from: text, field }` (below). |
 | `alsoMatch` | no | Extra codings accepted **on import only**, never emitted. With a static code, a list; with an eventType code, keyed by the eventType each names (`{ concentration/mg-dl: [codings] }`). Never with a datasource code. |
 | `alsoEmit` | no | Extra codings **emitted only**, after the static code in `code.coding`, never an import key: the second code a profile requires (US Core pulse oximetry wants 2708-6 beside 59408-5). A list, with a static code only. A resource that carries an `alsoEmit` coding without the code does not match the item. |
-| `value` | no | FHIR `value[x]`, by `kind` (below). Absent on a Condition, a DocumentReference, a medication and a Procedure, which have no `value[x]`. |
+| `value` | no | FHIR `value[x]`, by `kind` (below). Absent on a Condition, a DocumentReference, a medication, a Procedure and an AllergyIntolerance, which have no `value[x]`. |
 | `split` | no | Extra resources, one per numeric composite field (below). |
 | `ignore` | no | Composite fields deliberately left out of the FHIR rendering. |
 | `dosage` | on a medication | `{ field, doseUnits, routes }`: the regimen as a FHIR `Dosage` ([medications](#medications-medicationstatement-and-medicationrequest)). Required on a `MedicationStatement` or `MedicationRequest`, refused elsewhere. |
@@ -285,7 +296,9 @@ reviewer checks the code against and what a reader falls back on.
   (MEDICATION.md § A Swiss brand name: never a coded event with a guessed code). **A `Procedure` takes it too**
   (procedures slice): `code: { from: text, field: name }` on `procedure-basic` renders `Procedure.code` as
   `{ text: <name> }`, and the import rule is the same (a coding with a datasource label goes to `procedure-coded`, a
-  name alone to `procedure-basic`). Any other resourceType refuses it.
+  name alone to `procedure-basic`). **So does an `AllergyIntolerance`** (4.21.0): `code: { from: text, field: name }`
+  on `allergy-basic` renders `AllergyIntolerance.code` as `{ text: <name> }`, with the same import rule (a coding with
+  a datasource label goes to `allergy-coded`, a name alone to `allergy-basic`). Any other resourceType refuses it.
 
 ### Value kinds
 
@@ -373,7 +386,9 @@ lifestyle-tobacco-smoking:
 
 Every top-level field of a composite item is accounted for, exactly once: as a component, as a split, as the
 datasource or text field of the code, as the `dosage` field of a medication, as the `notes` of a Procedure (rendered
-as `Procedure.note`, by name), or in `ignore`. A field that is none of these fails the build, so a field added to the
+as `Procedure.note`, by name), as one of the fields of an AllergyIntolerance the renderer reads by name (`status`,
+`verificationStatus`, `categories`, `type`, `criticality`, `lastOccurrence`, `notes`;
+[AllergyIntolerance](#allergyintolerance-allergies)), or in `ignore`. A field that is none of these fails the build, so a field added to the
 composite later cannot silently vanish from the FHIR rendering.
 
 - **Components and split fields are numeric** (`number` or `slider`), and one field is never both.
@@ -526,6 +541,7 @@ computes the table and publishes it:
 
 ```json
 "fhirScopes": {
+  "AllergyIntolerance": ["allergy"],
   "Condition|problem-list-item": ["condition"],
   "DocumentReference|clinical-note": ["documents"],
   "MedicationRequest": ["medication-prescription"],
@@ -540,7 +556,7 @@ computes the table and publishes it:
 
 Keys are `ResourceType|category` for a resourceType with a category table, and the **bare resourceType** for one
 without (`Patient`, `MedicationStatement`, `MedicationRequest`, `Procedure`, `QuestionnaireResponse`,
-`Questionnaire`); values are sorted stream ids.
+`Questionnaire`, `AllergyIntolerance`); values are sorted stream ids.
 `patient/Patient.rs` and `patient/*.rs` reach the `Patient` key, `patient/MedicationStatement.rs` the
 `MedicationStatement` key, `patient/Procedure.rs` the `Procedure` key (the `procedure` root, its context stream
 `procedure-fertility` with it); a scope with `?category=` never reaches a bare key. **A grant root under an `explicitGrantOnly` root is offered unticked**
@@ -880,6 +896,95 @@ with a start and an end is a period and no treatment, and imports here as a proc
 code, on which datasets-service dataset holds the coding, the bridge resolving it as it completes `hdsId`, with
 procedure as the fallback. Treatment tallies are most of the intake data, so the tally rendering matters more there.
 
+## AllergyIntolerance: allergies
+
+The two items of the `allergy` root ([ALLERGY.md](ALLERGY.md)) carry an `AllergyIntolerance` block each (4.21.0, plan
+133). One event renders as one `AllergyIntolerance`.
+
+```yaml
+allergy-coded:
+  fhir:
+    resourceType: AllergyIntolerance
+    code: { from: datasource, field: allergen }    # allergen.codes through fhirMapping.systems, label.en as text
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-allergyintolerance
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/AllergyIntolerance-uv-ips
+allergy-basic:
+  fhir:
+    resourceType: AllergyIntolerance
+    code: { from: text, field: name }               # the allergen as written: code.text, no coding
+    profiles: { us: …, ips: … }
+```
+
+No `ch` profile: it comes with the CH flavour as a whole.
+
+| Event | AllergyIntolerance (hds-fhir-js `toFhir`) |
+|---|---|
+| `allergen` (coded) or `name` (basic) | `code`: the selection's codings with `label.en` as `text`, or `{ text: name }`. A `drug.product` is never part of an allergen |
+| `status` (required) | `clinicalStatus`, a coding of `http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical` (`active`, `inactive`, `resolved`): always present, as ait-1 requires |
+| `verificationStatus` | `verificationStatus`, a coding of `http://terminology.hl7.org/CodeSystem/allergyintolerance-verification` (`unconfirmed`, `confirmed`); absent renders none, never `confirmed` |
+| `categories[]` | `category[]`, the codes as stored (`food`, `medication`, `environment`, `biologic`) |
+| `type`, `criticality` | `type` (`allergy`, `intolerance`), `criticality` (`low`, `high`, `unable-to-assess`), the codes as stored |
+| event `time` | `onsetDateTime`, truncated to `hdsTimePrecision` ([PARTIAL-DATES.md](PARTIAL-DATES.md)); with `unknown`, no onset at all (`onset[x]` is 0..1 in both profiles), never the recording moment |
+| a `duration` | refused: `time + duration` is reserved for an abatement (IPS has an abatement extension), not in v1 |
+| `reactions[]` | `reaction[]`: each manifestation a `manifestation` concept (its `codes` through `fhirMapping.systems`, `label.en` or `text` as `text`), `severity` as stored, `notes` as `description` |
+| `lastOccurrence` | `lastOccurrence`, as written (`YYYY`, `YYYY-MM` or `YYYY-MM-DD`) |
+| `notes` | `note[0].text` |
+| the writer | `recorder` and `asserter` are the patient, unless the event was imported (`clientData.sourceKey`) |
+
+**Why a bare key, and why it stays one.** The reason: **US Core requires no granular `?category=` scope for
+AllergyIntolerance** (its granular scopes are for Observation and Condition), so no app asks for one. Base R4 does
+define a `category` search parameter, but a category scope would not fit the content anyway: `categories` is a list of
+zero or more codes, one allergy (a drug that is also a food additive) can be in several and many are in none, so a
+`?category=` grant could neither place every allergy nor place each once. The bare key is a one-way door ([Categories](#categories-per-resourcetype)): no category table is ever added
+for the type, and the content `categories` is never a scope category.
+
+**Reserved names.** `status`, `verificationStatus`, `categories`, `type`, `criticality`, `lastOccurrence`, `notes` and
+`reactions` are read by name on every eventType an item maps to `AllergyIntolerance`; the build pins their types and
+their enums (`ALLERGY_FIELDS`, `ALLERGY_REACTION_SEVERITIES` in `src/fhir.js`), so a new value (R5's `presumed`) is
+added in the renderer first, then here. `reactions` is never a form field (no composite field holds an array of
+objects): a writer that has reactions writes them itself, until the entry UI gains a repeating group.
+
+**Import** (`fromFhir`, § [Import](#import)): an AllergyIntolerance is matched on its `code`: a coding with a datasource
+label places it on `allergy-coded` (the selection completed from datasets-service's `allergen` kind), a name alone
+(`text`, or the display of a coding HDS cannot place) on `allergy-basic`. **An allergen coded only in a system outside
+`fhirMapping.systems` (UNII, NDF-RT) imports into `allergy-basic` and loses its code.**
+
+Decided 2026-11-20 (perki): the status, out-of-set, `onsetPeriod` and no-known-allergy rules below.
+
+- **No known allergy first.** Before placement, a resource coded with a "no known allergy" concept is refused: SNOMED
+  CT `716186003` (No known allergy), `409137002` (No known drug allergy), `429625007` (No known food allergy),
+  `428607008` (No known environmental allergy), and the allergy codes of the IPS `absent-unknown-uv-ips` value set.
+  The check runs before the item is chosen, so such a resource never lands in `allergy-basic` as a name. It has its
+  own item later (below).
+- **Status.** `clinicalStatus` imports as `status` when its coding in `allergyintolerance-clinical` is one of the three
+  codes. A resource without one is refused and reported per resource: `status` is required, and an importer never
+  defaults it.
+- **Verification.** `unconfirmed` and `confirmed` import as `verificationStatus`; no `verificationStatus` imports with
+  none. `refuted`, `entered-in-error` and any other value are refused, as a withdrawn Condition is: placing them would
+  state as an allergy what the source retracted or never asserted. `presumed` (R5) is refused today, and becomes an
+  additive enum value later.
+- **Onset.** `onsetDateTime` is the event time at its precision ([PARTIAL-DATES.md](PARTIAL-DATES.md)). An
+  `onsetPeriod`'s start is the event time at its precision, and the period goes as a text into `notes`, never a
+  `duration` (reserved for an abatement); an `onsetPeriod` without a start imports as unknown. No onset, `onsetAge`,
+  `onsetString` or `onsetRange` imports with `hdsTimePrecision: unknown`, the stated onset as a text in `notes`; never
+  refused. **`recordedDate` is never read as the onset** (unlike a Condition's fallback): it is when someone wrote the
+  allergy down.
+- **Category, type, criticality** import as their codes. **A value outside the set** (of these three, or a reaction
+  `severity`) drops that one optional element, reported, and the resource is kept: none of them is required, and
+  losing one states less, never something false.
+- **Reactions.** Each `reaction` becomes one entry of `reactions`: each `manifestation` a selection (a coding with a
+  datasource label, completed from datasets-service's manifestations; a coded manifestation keeps its label) or a
+  `text` (its `text`, else a display), `severity` as its code, `description` as `notes`. Not carried:
+  `reaction.substance`, `reaction.onset`, `reaction.exposureRoute`.
+- **`lastOccurrence`**: a dateTime is truncated to its date (`YYYY-MM-DD`); a `YYYY` or `YYYY-MM` is kept as written.
+- `note[].text` are joined into `notes`; `recorder` and `asserter` are not kept.
+
+**No known allergies** is not an allergen and has no place in these two items: it is a dedicated item,
+`allergy-none-known`, on the same stream, in a later minor (a static code, `716186003` "No known allergy", with a
+scope of all, drug, food or environment). Until it ships, such a resource is refused (the first rule above), never
+imported as an allergen.
+
 ## QuestionnaireResponse: questionnaire answers
 
 The `questionnaire-answer` item (stream `questionnaire-answer`, eventType `questionnaire/answer-v1`,
@@ -1188,7 +1293,7 @@ first**: implement and validate
 it in hds-fhir-js, release that, then add the first block that uses it here. A block the deployed renderer skips is
 data a SMART app does not see. **One case may ship pack first:** a new resourceType on an item whose events an
 older renderer already serves generically (hds-fhir-js 0.8.0 and later, paragraph above), as `QuestionnaireResponse`
-(4.12.0) and `Questionnaire` (4.13.0) did. The older renderer keeps serving the generic Observation, the facade pins
+(4.12.0), `Questionnaire` (4.13.0) and `AllergyIntolerance` (4.21.0) did. The older renderer keeps serving the generic Observation, the facade pins
 the pack by hash, and the library's `check:pack` stays red until the pack is published. **A new value of a medication vocabulary needs the renderer first in the same way**
 (`when`, the intake and prescription statuses, the skip and stop reasons; MEDICATION.md § Vocabularies): hds-fhir-js
 renders them from a checked copy of `pack.vocabularies` (`check:pack`), so a deployed renderer refuses an event
@@ -1247,7 +1352,8 @@ resource always lands on the active item, in its current eventType.
   importer reports it as ambiguous and imports nothing.
 - **Withdrawn records** are refused: an Observation with `status` `entered-in-error` or `cancelled`, a Condition whose
   `verificationStatus` is `refuted` or `entered-in-error`, a MedicationStatement `entered-in-error`, a MedicationRequest
-  `entered-in-error`, `cancelled` or `draft` (never an order), a Procedure `entered-in-error` or `not-done`. Placing
+  `entered-in-error`, `cancelled` or `draft` (never an order), a Procedure `entered-in-error` or `not-done`, an
+  AllergyIntolerance whose `verificationStatus` is `refuted` or `entered-in-error` ([allergies](#allergyintolerance-allergies)). Placing
   them would state as fact what the source retracted. Every other status imports as it is (`preliminary`, `amended`,
   …), except on a Procedure, where only `completed` has a place ([procedures](#procedures-procedure)), and on a
   Condition (next point).
@@ -1425,6 +1531,13 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   as `Procedure.note`) and whose `count`, when declared, is a number (on a composite it is listed in `ignore`). The
   two names are reserved on every Procedure-mapped eventType: the renderer reads them by name
   ([Procedures](#procedures-procedure), one-way doors).
+- **Allergies (`[ALG-FHIR-*]`):** an `AllergyIntolerance` takes `{ from: datasource }` or `{ from: text }`, no
+  `category`, no `value`, no `split`, no `dosage`, and its item declares no `duration`; one eventType, which declares
+  and requires `status` (on a composite never `canBeNull`), and whose `status`, `verificationStatus`, `categories`, `type`, `criticality`, `lastOccurrence`, `notes`
+  and `reactions`, when declared, have their JSON type and exactly their enum (`ALLERGY_FIELDS`, and the
+  `reactions[].severity` enum, `ALLERGY_REACTION_SEVERITIES`); on a composite each but `reactions` is a field of its
+  type (`select`, `multi-select` for `categories`, `date`, `text`), counted as mapped, and a `reactions` field is
+  refused. Import keys: one datasource-coded and one text-coded item for the bare key.
 - **Questionnaire answers (`[FHIR-MAP-26]`):** a `QuestionnaireResponse` block holds `resourceType` and `profiles`
   only (`profiles` may be empty; no `code`, which every other mapping requires; no `category`, `value`, `split`, `ignore` or `dosage`), on a
   `system` item with one eventType whose content has a string `requestEventId` and an object `answers`, the two

@@ -26,6 +26,26 @@ const MEDICATION_TYPES = ['MedicationStatement', 'MedicationRequest'];
 const PROCEDURE_TYPE = 'Procedure';
 
 /**
+ * The resourceType whose block maps an allergy item (ALLERGY.md, FHIR-MAPPING.md § AllergyIntolerance): a datasource or
+ * text code, no category, no value, no split. The renderer reads these content properties by name: each has this JSON
+ * type, and an enum held equal to this one (every value renders as its FHIR code, so a value is added here and in the
+ * renderer first); on a composite, each is a field of this type, counted as mapped. `reactions` is never a form field.
+ */
+const ALLERGY_TYPE = 'AllergyIntolerance';
+const ALLERGY_FIELDS = {
+  status: { type: 'string', enum: ['active', 'inactive', 'resolved'], field: 'select' },
+  verificationStatus: { type: 'string', enum: ['unconfirmed', 'confirmed'], field: 'select' },
+  categories: { type: 'array', enum: ['food', 'medication', 'environment', 'biologic'], field: 'multi-select' },
+  type: { type: 'string', enum: ['allergy', 'intolerance'], field: 'select' },
+  criticality: { type: 'string', enum: ['low', 'high', 'unable-to-assess'], field: 'select' },
+  lastOccurrence: { type: 'string', field: 'date' },
+  notes: { type: 'string', field: 'text' },
+  reactions: { type: 'array' }
+};
+/** The `reactions[].severity` enum of an AllergyIntolerance eventType (reaction.severity), held equal as above. */
+const ALLERGY_REACTION_SEVERITIES = ['mild', 'moderate', 'severe'];
+
+/**
  * The resourceType whose block maps the questionnaire answer item (QUESTIONNAIRE.md § FHIR): no code, no category, no
  * value. The renderer reads the content by name (`requestEventId`, `answers`), so the block holds `resourceType` and
  * `profiles` only.
@@ -86,6 +106,8 @@ module.exports = {
   fhirMapping,
   UNMAPPED,
   MEDICATION_TYPES,
+  ALLERGY_FIELDS,
+  ALLERGY_REACTION_SEVERITIES,
   PATIENT_ELEMENTS,
   QUESTION_KEY_PATTERN,
   QUESTIONNAIRE_SUB_FIELD_TYPES,
@@ -205,6 +227,7 @@ function checkFhirMapping (key, item, itemEventTypes) {
   const isTextCode = f.code.from === 'text';
   const isMedication = MEDICATION_TYPES.includes(f.resourceType);
   const isProcedure = f.resourceType === PROCEDURE_TYPE;
+  const isAllergy = f.resourceType === ALLERGY_TYPE;
   // An eventType source may give two eventTypes the same coding (two units of one property store one LOINC code): the
   // coding counts once here, with one display.
   const distinctCodings = (codings) => {
@@ -234,10 +257,16 @@ function checkFhirMapping (key, item, itemEventTypes) {
   if (isMedication && !isDatasourceCode && !isTextCode) fail(`a ${f.resourceType} takes its medication from the content: code: { from: datasource, field } (the coded medicine) or { from: text, field } (the name as written)`);
   // A procedure is the coded procedure datasets-service returned, or a name as written (TREATMENT-PROCEDURE.md).
   if (isProcedure && !isDatasourceCode && !isTextCode) fail('a Procedure takes its code from the content: code: { from: datasource, field } (the coded procedure) or { from: text, field } (the name as written)');
-  if (isTextCode && !isMedication && !isProcedure) fail('a text code source applies to a MedicationStatement, a MedicationRequest or a Procedure only (the renderer places it as medication[x].text or code.text)');
+  // An allergen is the coded substance datasets-service returned, or a name as written (ALLERGY.md).
+  if (isAllergy && !isDatasourceCode && !isTextCode) fail('an AllergyIntolerance takes its code from the content: code: { from: datasource, field } (the coded allergen) or { from: text, field } (the name as written)');
+  if (isTextCode && !isMedication && !isProcedure && !isAllergy) fail('a text code source applies to a MedicationStatement, a MedicationRequest, a Procedure or an AllergyIntolerance only (the renderer places it as medication[x].text or code.text)');
   if (isProcedure) {
     checkProcedure(item, f, itemEventTypes, fail);
     if (composite?.notes != null) mappedFields.add('notes');
+  }
+  if (isAllergy) {
+    checkAllergyIntolerance(item, itemEventTypes, fail);
+    for (const [k, spec] of Object.entries(ALLERGY_FIELDS)) if (spec.field != null && composite?.[k] != null) mappedFields.add(k);
   }
   if (isMedication) {
     if (f.dosage == null) fail(`a ${f.resourceType} needs "dosage": { field, doseUnits, routes } (the regimen as a FHIR Dosage)`);
@@ -281,8 +310,8 @@ function checkFhirMapping (key, item, itemEventTypes) {
   }
   checkLoincAgreement(key, item, f, itemEventTypes, fail);
 
-  if ((f.resourceType === 'Condition' || f.resourceType === 'DocumentReference' || isMedication || isProcedure) && f.value != null) fail(`a ${f.resourceType} has no value[x]; remove "value"`);
-  if (isProcedure && f.split != null) fail('a Procedure has no numeric field to split; remove "split"');
+  if ((f.resourceType === 'Condition' || f.resourceType === 'DocumentReference' || isMedication || isProcedure || isAllergy) && f.value != null) fail(`a ${f.resourceType} has no value[x]; remove "value"`);
+  if ((isProcedure || isAllergy) && f.split != null) fail(`a ${f.resourceType} has no numeric field to split; remove "split"`);
 
   const numericField = (what, k) => {
     const field = composite?.[k];
@@ -532,6 +561,41 @@ function checkProcedure (item, f, itemEventTypes, fail) {
   const count = contentProperty(itemEventTypes[0], 'count');
   if (count != null && count.type !== 'number') fail(`content property "count" of eventType "${itemEventTypes[0]}" is not a number (it marks a lifetime tally)`);
   if (item.composite?.notes != null && item.composite.notes.type !== 'text') fail('composite field "notes" is not a text field (it renders as Procedure.note)');
+}
+
+/**
+ * An AllergyIntolerance block (FHIR-MAPPING.md § AllergyIntolerance) sits on an item with one eventType that requires
+ * `status` (clinicalStatus, ait-1) and whose other content the renderer reads by name (`ALLERGY_FIELDS`): each one
+ * declared has its JSON type and exactly its enum, and is a field of its type on a composite; `reactions` is never a
+ * form field, and its items hold a `manifestations` array and exactly the severity enum. The item declares no
+ * `duration`: time + duration is reserved for an abatement, refused in v1.
+ */
+function checkAllergyIntolerance (item, itemEventTypes, fail) {
+  if (itemEventTypes.length !== 1) fail('an AllergyIntolerance block needs an item with exactly one eventType');
+  if (item.duration != null) fail('an AllergyIntolerance item declares no "duration": time + duration is reserved for an abatement, refused in v1');
+  const et = itemEventTypes[0];
+  const sameEnum = (values, expected) => Array.isArray(values) && values.length === expected.length && expected.every((v) => values.includes(v));
+  if (contentProperty(et, 'status') == null) fail(`eventType "${et}" must declare the content property "status" (AllergyIntolerance.clinicalStatus, ait-1)`);
+  if (!eventTypesById(et)?.required?.includes('status')) fail(`eventType "${et}" must require "status" (AllergyIntolerance.clinicalStatus, ait-1)`);
+  if (item.composite?.status?.canBeNull === true) fail('composite field "status" cannot be null: every writer states it (AllergyIntolerance.clinicalStatus, ait-1)');
+  for (const [name, spec] of Object.entries(ALLERGY_FIELDS)) {
+    const prop = contentProperty(et, name);
+    if (prop != null) {
+      if (prop.type !== spec.type) fail(`content property "${name}" of eventType "${et}" is not of type ${spec.type} (the renderer reads it by name)`);
+      if (spec.enum != null && !sameEnum(spec.type === 'array' ? prop.items?.enum : prop.enum, spec.enum)) {
+        fail(`content property "${name}" of eventType "${et}": the enum must be exactly ${spec.enum.join(', ')} (each value renders as its FHIR code: add a value here and in the renderer first)`);
+      }
+    }
+    const field = item.composite?.[name];
+    if (field == null) continue;
+    if (spec.field == null) fail(`composite field "${name}" is not a form field of an AllergyIntolerance item`);
+    if (field.type !== spec.field) fail(`composite field "${name}" is not a ${spec.field} field (the renderer reads it by name)`);
+  }
+  const reaction = contentProperty(et, 'reactions')?.items;
+  if (reaction != null) {
+    if (reaction.properties?.manifestations?.type !== 'array') fail(`eventType "${et}": a reaction has no array "manifestations" (reaction.manifestation, 1..*)`);
+    if (!sameEnum(reaction.properties?.severity?.enum, ALLERGY_REACTION_SEVERITIES)) fail(`eventType "${et}": the "reactions[].severity" enum must be exactly ${ALLERGY_REACTION_SEVERITIES.join(', ')}`);
+  }
 }
 
 /**
