@@ -55,7 +55,10 @@ does it); every other writer (a bridge, the MCP import) states it and never defa
 erroneous record has no place: it is not written at all.
 
 **Time.** `event.time` is the onset, at its precision ([PARTIAL-DATES.md](PARTIAL-DATES.md));
-`hdsTimePrecision: unknown` when the person does not know when it began, the usual case for a childhood allergy.
+`hdsTimePrecision: unknown` when the person does not know when it began, the usual case for a childhood allergy. An
+import whose source states no readable onset date writes `unknown` too, with `time` the recording moment: the
+source's `recordedDate` when readable and not ahead, else the import moment ([FHIR-MAPPING.md §
+AllergyIntolerance](FHIR-MAPPING.md#allergyintolerance-allergies), Import).
 **No duration in v1:** `time + duration` is reserved for an abatement, as on `condition-coded`, and the FHIR
 rendering refuses an event that carries one. Whether the allergy is still there is said by `status`.
 
@@ -91,7 +94,8 @@ rules: [FHIR-MAPPING.md § AllergyIntolerance](FHIR-MAPPING.md#allergyintoleranc
 
 - **`allergy-none-known`**, a dedicated item on the same stream, in a later minor: "no known allergy" (SNOMED CT
   `716186003`, with a scope of all, drug, food or environment). Not an allergen: a negation has no onset, and must
-  not carry a criticality or reactions, or appear in every allergen search.
+  not carry a criticality or reactions, or appear in every allergen search. Until it ships, an import refuses a "no
+  known allergy" code or name (FHIR-MAPPING.md § AllergyIntolerance, Import).
 - Labels for the reaction `severity` values (`mild`, `moderate`, `severe`): `reactions` is not a form field, so no
   item option labels them. Deferred to the entry UI (plan 133 phase 5).
 - `presumed` (R5) as an additive `verificationStatus` value.

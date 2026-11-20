@@ -948,37 +948,76 @@ objects): a writer that has reactions writes them itself, until the entry UI gai
 **Import** (`fromFhir`, § [Import](#import)): an AllergyIntolerance is matched on its `code`: a coding with a datasource
 label places it on `allergy-coded` (the selection completed from datasets-service's `allergen` kind), a name alone
 (`text`, or the display of a coding HDS cannot place) on `allergy-basic`. **An allergen coded only in a system outside
-`fhirMapping.systems` (UNII, NDF-RT) imports into `allergy-basic` and loses its code.**
+`fhirMapping.systems` (UNII, NDF-RT) imports into `allergy-basic` and loses its code.** **An allergen coding
+datasets-service cannot place** (a labelled system, but a code the `allergen` kind does not know, so `hdsId` cannot be
+completed) **falls back to `allergy-basic` by its name** (`text`, else the first display), never a coded event with a
+guessed code: the bridge imports the resource again with the `allergy-basic` block. A labelled allergen coding with no
+`text` and no display keeps its code as `label.en`, which the bridge completes from datasets-service, as a
+manifestation does.
 
-Decided 2026-11-20 (perki): the status, out-of-set, `onsetPeriod` and no-known-allergy rules below.
+Decided 2026-11-20 (perki): the status, out-of-set, `onsetPeriod` and no-known-allergy rules below, and Q1 to Q6 (the
+text "no known allergy", the anchor of an unknown onset, no `patient` check, an unreadable onset date, the reaction
+notes, the fallback above).
 
-- **No known allergy first.** Before placement, a resource coded with a "no known allergy" concept is refused: SNOMED
-  CT `716186003` (No known allergy), `409137002` (No known drug allergy), `429625007` (No known food allergy),
-  `428607008` (No known environmental allergy), and the allergy codes of the IPS `absent-unknown-uv-ips` value set.
-  The check runs before the item is chosen, so such a resource never lands in `allergy-basic` as a name. It has its
-  own item later (below).
-- **Status.** `clinicalStatus` imports as `status` when its coding in `allergyintolerance-clinical` is one of the three
-  codes. A resource without one is refused and reported per resource: `status` is required, and an importer never
-  defaults it.
+- **No known allergy first.** Before placement, a resource whose `code` carries a "no known allergy" concept is
+  refused, whatever else it carries (an allergen coding beside it included). A fixed list (hds-fhir-js
+  `NO_KNOWN_ALLERGY`): SNOMED CT `716186003` (No known allergy), `409137002` (No known drug allergy), `429625007` (No
+  known food allergy), `428607008` (No known environmental allergy), the other active children of `716186003`
+  (`716220001`, `428197003`, `1003774007`), all active in the 20260201 International Edition; two retired predecessors
+  still found in older records, refused on import only: `160244002` "No known allergies" and `716184000` "No known
+  latex allergy", both inactive in 20260201; and five codes of
+  `http://hl7.org/fhir/uv/ips/CodeSystem/absent-unknown-uv-ips` (`no-known-allergies`,
+  `no-known-medication-allergies`, `no-known-environmental-allergies`, `no-known-food-allergies`, `no-allergy-info`).
+  The IPS 2.0.1 value set `allergies-intolerances-uv-ips` takes absent allergies as `is-a 716186003`; the five
+  `absent-unknown-uv-ips` codes are listed from IPS 1.1.0 and not verified against 2.0.1. `no-allergy-info` says there
+  is no information, not that there is no allergy: refused all the same, with its own reason. **The same as a name
+  (Q1):** a `code.text`, or any display of the `code`, equal after trim, lowercase and the removal of trailing dots to
+  one of a short list (`NO_KNOWN_ALLERGY_TEXTS`: `nka`, `nkda`, `no known allergy`, `no known
+  allergies`, `no known drug allergy`, `no known drug allergies`, `none known`, `aucune allergie connue`, `pas
+  d'allergie connue`, `keine bekannten allergien`, `keine allergien bekannt`), is refused with the same report. An
+  exact match, never a substring: "No known allergies except latex" is a name. The check runs before the item is
+  chosen, so such a resource never lands in `allergy-basic` as a name. It has its own item later (below).
+- **Status.** `clinicalStatus` imports as `status` when it carries exactly one code of `allergyintolerance-clinical`
+  and that code is one of the three. Every code of that system counts: `active` beside another code of it is two
+  statuses and is refused; a coding in another system is ignored. A resource without one is refused and reported per
+  resource: `status` is required, and an importer never defaults it.
 - **Verification.** `unconfirmed` and `confirmed` import as `verificationStatus`; no `verificationStatus` imports with
   none. `refuted`, `entered-in-error` and any other value are refused, as a withdrawn Condition is: placing them would
   state as an allergy what the source retracted or never asserted. `presumed` (R5) is refused today, and becomes an
   additive enum value later.
+- **Patient (Q3).** A resource without `patient` is not refused: the bridge reads one patient's record, and the
+  element is not stored.
 - **Onset.** `onsetDateTime` is the event time at its precision ([PARTIAL-DATES.md](PARTIAL-DATES.md)). An
-  `onsetPeriod`'s start is the event time at its precision, and the period goes as a text into `notes`, never a
-  `duration` (reserved for an abatement); an `onsetPeriod` without a start imports as unknown. No onset, `onsetAge`,
-  `onsetString` or `onsetRange` imports with `hdsTimePrecision: unknown`, the stated onset as a text in `notes`; never
-  refused. **`recordedDate` is never read as the onset** (unlike a Condition's fallback): it is when someone wrote the
-  allergy down.
+  `onsetPeriod`'s start is the event time at its precision, never a `duration` (reserved for an abatement); a period
+  with an end goes as a text into `notes` ("Onset: 2010-03 to 2012", or "Onset: before 2012" without a start), a start
+  alone writes no text. `onsetAge`, `onsetRange` and `onsetString` import as unknown, the stated onset as a text in
+  `notes` ("Onset: at age 4 years": the UCUM units `a`, `mo`, `wk`, `d` in words). **An unreadable `onsetDateTime` or
+  `onsetPeriod.start` (Q4)** imports as unknown, its value as written in `notes` and reported as dropped. No text is
+  written when nothing readable is stated. Never refused. **A future onset has no rule:** it imports and renders as
+  stated (unlike a completed Procedure, an allergy states no event that must have taken place).
+- **An unknown onset (Q2)** is `hdsTimePrecision: unknown`, with `time` the recording moment (PARTIAL-DATES.md): a
+  readable `recordedDate` whose anchor is not after the import moment, else the import moment. **`recordedDate` is never
+  read as the onset** (unlike a Condition's fallback): it is when someone wrote the allergy down, which is what
+  `unknown` puts in `time`. A bridge passes one import moment per run and keeps the stored `time` when it updates an
+  event, so a re-run does not move an allergy without a `recordedDate`.
 - **Category, type, criticality** import as their codes. **A value outside the set** (of these three, or a reaction
   `severity`) drops that one optional element, reported, and the resource is kept: none of them is required, and
-  losing one states less, never something false.
+  losing one states less, never something false. A repeated category is kept once. The report (hds-fhir-js
+  `ImportedEvent.dropped`) names each element, with its index when it repeats (`category[1]`,
+  `reaction[0].severity`), and its value as the resource states it; it also lists an unreadable onset date or
+  `lastOccurrence` and a manifestation or reaction left out (below). Elements the model never carries (the "Not
+  carried" ones below) are not listed. The report's `value` carries raw health data: it is never logged or sent to
+  telemetry.
 - **Reactions.** Each `reaction` becomes one entry of `reactions`: each `manifestation` a selection (a coding with a
-  datasource label, completed from datasets-service's manifestations; a coded manifestation keeps its label) or a
-  `text` (its `text`, else a display), `severity` as its code, `description` as `notes`. Not carried:
-  `reaction.substance`, `reaction.onset`, `reaction.exposureRoute`.
-- **`lastOccurrence`**: a dateTime is truncated to its date (`YYYY-MM-DD`); a `YYYY` or `YYYY-MM` is kept as written.
-- `note[].text` are joined into `notes`; `recorder` and `asserter` are not kept.
+  datasource label, completed from datasets-service's manifestations; a coded manifestation keeps its label: its
+  `text`, else a display, else the code itself, which the bridge completes) or a `text` (its `text`, else a display),
+  `severity` as its code, `description` then `note[].text` (Q5) as `notes`, joined by a blank line. A manifestation that
+  names nothing is dropped, and so is a reaction left with none. Not carried: `reaction.substance`, `reaction.onset`,
+  `reaction.exposureRoute`.
+- **`lastOccurrence`**: a dateTime is truncated to its date (`YYYY-MM-DD`); a `YYYY` or `YYYY-MM` is kept as written;
+  an unreadable one is dropped and reported.
+- `note[].text` are joined into `notes`, an onset text after them; `recorder`, `asserter`, `patient` and `encounter`
+  are not kept.
 
 **No known allergies** is not an allergen and has no place in these two items: it is a dedicated item,
 `allergy-none-known`, on the same stream, in a later minor (a static code, `716186003` "No known allergy", with a
