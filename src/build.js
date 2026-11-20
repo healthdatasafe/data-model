@@ -12,6 +12,7 @@ const sources = [
   require('./schemas/vocabularies').toBePublished,
   require('./schemas/documentKinds').toBePublished,
   require('./schemas/clientDataKeys').toBePublished,
+  require('./schemas/conversationAlert').toBePublished,
   require('./streams').toBePublished,
   require('./items').toBePublished,
   require('./eventTypes').toBePublished,

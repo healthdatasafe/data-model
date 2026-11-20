@@ -1,5 +1,12 @@
 # HDS Reader: the dialogue, and the values it writes
 
+> **Superseded (4.22.0).** The Reader is now a standard conversation counterparty: questions, proposed values and
+> answers are `message/hds-conversation-v1` events in the relationship's children of `conversation-items`, pointed at
+> by value-free alerts, and the person's app writes the values she confirms. The contract is
+> [CONVERSATION.md](CONVERSATION.md). `message/hds-reader-v1` and the app tree below stay documented because demo
+> accounts hold events of that type; no new writer uses them, and no migration is planned. The provenance keys
+> (`hdsSourceAnchor`, `hdsExtraction`) are unchanged and used by both.
+
 The HDS Reader is a service that reads values from a document the person sent it (a lab report photographed,
 scanned or downloaded), asks her to confirm them, and writes the confirmed ones to her items. The model defines
 three things for it:

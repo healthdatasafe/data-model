@@ -193,7 +193,7 @@ The operator's dashboard reads `app-system-in`, joins the ack to the alert by `a
 
 ---
 
-## CMC system messages carrying an HDS payload: data-export requests, documents, reminders, scope requests and updates
+## CMC system messages carrying an HDS payload: data-export requests, documents, reminders, conversations, scope requests and updates
 
 The CMC plugin (open-pryv.io `components/cmc`) forwards only its own event types between a
 patient and a doctor; a type HDS would define here would never be delivered. HDS therefore rides
@@ -326,6 +326,69 @@ so the form opens; the contact writes the key as it stands in its request.
 The person's app never writes this kind. A reader keeps only alerts carrying `content.from`
 (stamped by the plugin on delivery); an alert without `from` on a stream is the writer's own copy,
 which only the contact's app reads back (to show when it last reminded the person of an item).
+
+### A conversation: `notification/alert-cmc` kinds *(4.22.0)*
+
+A contact asks the person questions and proposes values read from a document she shared; she answers. The questions,
+the proposed values and her answers are `message/hds-conversation-v1` events on her account, in the relationship's
+children of `conversation-items`; these alerts only point at them. The contract, its rules and what never travels:
+[CONVERSATION.md](CONVERSATION.md).
+
+Written by the sender on its own `<scope>:collectors:<peerSlug>` stream; the plugin delivers it.
+
+```json
+{
+  "level": "info",
+  "title": { "en": "Proposed values", "fr": "Valeurs proposées" },
+  "body": { "en": "Your contact proposes values read from a document. Please check them.", "fr": "Votre contact propose des valeurs lues dans un document. Merci de les vérifier." },
+  "code": "hds-proposed-values",
+  "hds": { "kind": "proposed-values", "about": "ckq3w8n1x0001", "count": 12 }
+}
+```
+
+| `hds.kind` | Direction | `hds` fields | Meaning |
+|---|---|---|---|
+| `task-status` | contact → person | `about`, `status`, `attempt`, `counts?`, `errorCode?` | The state of the contact's work on one document. |
+| `notice` | contact → person | `code`, `about?` | A message the person's app renders from its code. |
+| `question` | contact → person | `eventId`, `about` | A question event was written on her `received` child. |
+| `proposed-values` | contact → person | `about`, `count` | `count` proposed-value events for that document were written on her `received` child. |
+| `answer` | person → contact | `eventId`, `inReplyTo`, `about` | Her answer event was written on her `sent` child. |
+
+- `about` is always the event id of a document shared in the relationship; `eventId` and `inReplyTo` are event ids
+  on the person's account. Every id matches `^[a-zA-Z0-9_-]+$`, at most 64 characters. The `hds` block is closed per
+  kind and published as `json-schemas/hds-conversation-alert.json`; every writer validates against it (the cores do
+  not validate `hds`).
+- `status` is one of `received`, `reading`, `awaiting-answers`, `done`, `error`; the state of a document is its latest
+  `task-status` by alert `time`, `attempt` (from 1) only labelling it and breaking a tie: a contact that restarts may
+  not know the last attempt. `counts` holds `proposed`, `questions`, `keptAside`, `dropped`, integers only.
+  `errorCode` is a code, MUST with `error`. `notice.code` and `errorCode` are codes, bare for HDS's and `x-<vendor>-`
+  for a third party's (CONVERSATION.md § Notice and error codes).
+- `proposed-values` is a wake-up only: the person's app lists the `received` child by `about` and never trusts
+  `count` (which only says how many the batch held).
+- `level: 'info'`, a **fixed** localised `title` and `body` per kind, and `code: 'hds-<kind>'`, as for the document
+  kinds. The words never say anything about the document, and the person's app renders from `hds.kind`, never from
+  `title` or `body`. No `ackRequired`: the answer is an event.
+
+| `hds.kind` | `title` en / fr | `body` en / fr |
+|---|---|---|
+| `task-status` | Document update / Suivi du document | Your contact updated the status of a document. / Votre contact a mis à jour l'état d'un document. |
+| `notice` | Message / Message | Your contact sent you a message. / Votre contact vous a envoyé un message. |
+| `question` | Question / Question | Your contact asks you a question. / Votre contact vous pose une question. |
+| `proposed-values` | Proposed values / Valeurs proposées | Your contact proposes values read from a document. Please check them. / Votre contact propose des valeurs lues dans un document. Merci de les vérifier. |
+| `answer` | Answer / Réponse | The person answered. / La personne a répondu. |
+
+**Reading.** A reader keeps only alerts carrying `content.from` (stamped on delivery) and resolves each pointer only
+inside the relationship (CONVERSATION.md R11). A duplicate (two devices) shows once, keyed per kind:
+
+| `hds.kind` | Duplicate key |
+|---|---|
+| `task-status` | `(kind, about, attempt, status)`; the state is still the latest by `time` |
+| `notice` | `(kind, code, about)` |
+| `question`, `answer` | `(kind, eventId)` |
+| `proposed-values` | `(kind, about)`: a wake-up, the items are listed from the child |
+
+A pointer whose event is gone shows as no longer available. The sender's own copy (no `from`) is its record of what
+it sent, deleted with the rest (CONVERSATION.md R10).
 
 ### `consent/scope-request-cmc` with a `content.hds` block *(connection → person)*: the updated data set *(3.41.0)*
 

@@ -1,5 +1,41 @@
 # Changelog
 
+## [4.22.0] - unreleased
+
+A conversation between a person and any contact (plan 128): the HDS Reader becomes a standard counterparty, and
+the contract is public so a third party can plug in its own. Additive: one root stream, one eventType, five alert
+kinds and one published schema; `message/hds-reader-v1` is unchanged and marked superseded.
+
+### Added
+- **Stream `conversation-items`** (root, `explicitGrantOnly`, no children in the model, label "Conversation items" /
+  "Éléments de conversation"; CONVERSATION.md): two children per relationship created by the person's app, `conv-` +
+  12 lowercase base36, name = id, `clientData.hdsConversationItems = { relationship, direction }`: `received` (the
+  contact's questions and proposed values, granted `contribute`) and `sent` (her answers, granted `read`). No item in
+  the subtree. The third marked root, after `genetics` and `questionnaire`.
+- **eventType `message/hds-conversation-v1`**: three closed kinds discriminated by `content.kind`. `question`
+  (`about`, `code` as an open code with the six HDS codes registered and `x-<vendor>-` reserved for third parties,
+  `candidateId?`, `options?` (codes up to 128 characters, so any item key), `context?` with `identity` and `dates`
+  from H2 rev. 2 and `anchor`); `proposed-value` (the reader-v1 `reading` fields without `confidence` and
+  `kbEntries`, plus `about`, `replaces?` and a required `extraction`); `answer` (`inReplyTo`, `about`, `action`,
+  `candidateIds?`, `option?`, `time?`, `timePrecision?`, `basis?` (`profile-match`), `written?` as
+  `[{ candidateId, eventId }]`; no value travels). Only `confirm` / `correct` on a proposed value write a value; an
+  answer to a question writes nothing and the contact re-proposes with `replaces`. Every id has the `related` path
+  pattern and at most 64 characters.
+- **`notification/alert-cmc` kinds `task-status`, `notice`, `question`, `proposed-values`, `answer`**
+  (CUSTOM-FIELDS-AND-SYSTEM.md): value-free pointers with fixed localised titles and bodies; their `hds` block is
+  published as **`json-schemas/hds-conversation-alert.json`** (source `src/schemas/conversationAlert.js`, draft-04 and
+  draft-07).
+- **CONVERSATION.md**, normative: the by-reference principle, the children and their grants, the flow, the question
+  codes and allowed answers, the writer MUSTs, rules R1 to R12 (child decides the writer, binding and void, the
+  automatic `profile-match` answer, never over CMC, dropped lines and identity, fallbacks, proposal and engine checks,
+  retention, pointer containment, fixed alert words), how the person's app writes a value (`sourceKey`
+  `<engine>:document:<document event id>:<candidateId>`), chat, and the minimum a counterparty implements.
+
+### Changed
+- **`message/hds-reader-v1`**: description and HDS-READER.md marked superseded; schema unchanged. GENETICS.md,
+  PROVENANCE.md (index row `hdsConversationItems`, the `related` mirror list, the conversation `sourceKey`), README and
+  AGENTS updated.
+
 ## [4.21.0] - 2026-11-20
 
 Allergies and intolerances (plan 133). Additive: one root stream, two items, two eventTypes, one datasource, an

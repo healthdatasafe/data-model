@@ -33,10 +33,12 @@ The root carries consent-screen names (`label` / `description`, en and fr, 3.38.
 covers this root only when it names it, or one of its children, explicitly.** A `*` grant, or a grant on another root,
 never reaches it. The pack publishes the streams tree as written, so the marker is in `pack.streams`.
 
-**Two roots carry it:** `genetics` (3.43.0) and `questionnaire` (4.12.0, plan 115, perki 2026-11-16). The second
-is not a special category by itself: its answer stream is a cross-topic sink, where a yes on a question about a
-genetic test says that such a result exists (QUESTIONNAIRE.md § Where the events live). Without the marker there,
-the promise made for `genetics` would hold for the records and not for the fact that they exist.
+**Three roots carry it:** `genetics` (3.43.0), `questionnaire` (4.12.0, plan 115, perki 2026-11-16) and
+`conversation-items` (4.22.0, plan 128). The second is not a special category by itself: its answer stream is a
+cross-topic sink, where a yes on a question about a genetic test says that such a result exists (QUESTIONNAIRE.md §
+Where the events live). Without the marker there, the promise made for `genetics` would hold for the records and not
+for the fact that they exist. The third holds what documents print, read for one contact only (a name and birth date
+among them): each child is granted to that contact, never through `*` ([CONVERSATION.md](CONVERSATION.md)).
 
 What a consumer must do, by how the access is made:
 
