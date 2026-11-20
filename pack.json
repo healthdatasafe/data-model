@@ -1,6 +1,6 @@
 {
-  "version": "4.21.0",
-  "publicationDate": "2026-11-20T17:10:16.549Z",
+  "version": "4.22.0",
+  "publicationDate": "2026-11-20T23:48:30.573Z",
   "streams": [
     {
       "id": "activity",
@@ -1058,6 +1058,20 @@
       "id": "consents",
       "name": "Privacy and consents",
       "parentId": null
+    },
+    {
+      "id": "conversation-items",
+      "name": "Conversation items",
+      "parentId": null,
+      "explicitGrantOnly": true,
+      "label": {
+        "en": "Conversation items",
+        "fr": "Éléments de conversation"
+      },
+      "description": {
+        "en": "The questions and proposed values a contact sends you in a conversation, and your answers. Never included when you share all your data: each contact reads only its own conversation.",
+        "fr": "Les questions et les valeurs proposées qu'un contact vous envoie dans une conversation, et vos réponses. Jamais inclus quand vous partagez toutes vos données : chaque contact ne lit que sa propre conversation."
+      }
     },
     {
       "id": "document-shares",
@@ -27541,7 +27555,7 @@
         }
       },
       "message/hds-reader-v1": {
-        "description": "One message of the HDS Reader dialogue on the person's account (stream hds-reader-dialogue): the reading of a document, the engine's questions, the person's answers, access requests and job state. content.kind discriminates; each kind is a closed object. Every event of a document carries clientData.related.<document event id>: true, and every event id in content is mirrored there. The values read are on reading events, so a grant on this stream reads them. See documentation/HDS-READER.md.",
+        "description": "SUPERSEDED by message/hds-conversation-v1 (4.22.0, documentation/CONVERSATION.md): no new writer; kept so the demo events written before it still validate. One message of the HDS Reader dialogue on the person's account (stream hds-reader-dialogue):the reading of a document, the engine's questions, the person's answers, access requests and job state. content.kind discriminates; each kind is a closed object. Every event of a document carries clientData.related.<document event id>: true, and every event id in content is mirrored there. The values read are on reading events, so a grant on this stream reads them. See documentation/HDS-READER.md.",
         "type": "object",
         "required": [
           "kind"
@@ -28200,6 +28214,594 @@
                         "qualitative-result",
                         "derived-index"
                       ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "message/hds-conversation-v1": {
+        "description": "One structured item of a conversation between the person and a contact (a doctor, a reading service such as the HDS Reader, a third party's counterparty), on the person's account in the relationship's child of conversation-items: the contact's questions and proposed values (direction received), the person's answers (direction sent). content.kind discriminates; each kind is a closed object. Every event carries clientData.related.<document event id>: true (about), and every event id in content is mirrored there. Proposed values hold what the document prints, so a grant on the child reads them; nothing of them travels over CMC (alerts carry ids and counts only). Supersedes message/hds-reader-v1. See documentation/CONVERSATION.md.",
+        "type": "object",
+        "required": [
+          "kind"
+        ],
+        "oneOf": [
+          {
+            "description": "question (the contact, on received): a closed question to the person about one document, with what she needs to answer it without the document.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "about",
+              "code"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "question"
+                ]
+              },
+              "about": {
+                "description": "The event id of the document the question is about (a file/xds-v1 event shared in the relationship), mirrored in clientData.related.",
+                "type": "string",
+                "maxLength": 64,
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "code": {
+                "description": "What is asked, a code the app renders. Bare codes are HDS's and listed in documentation/CONVERSATION.md (which-specimen, which-unit, which-analyte, which-date, is-fasting, is-this-yours); a third party's own codes start with x-<vendor>-. An unknown code is shown, not answerable.",
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+              },
+              "candidateId": {
+                "description": "The candidate the question is about, the candidateId of a proposed-value on the same child. Absent for a question about the whole document.",
+                "type": "string",
+                "maxLength": 64,
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "options": {
+                "description": "The choices offered, as codes the app labels (a specimen, a UCUM code, an item key, yes, no). Absent for which-date (the person enters a date) and is-this-yours (answered with confirm or not-mine).",
+                "type": "array",
+                "maxItems": 16,
+                "uniqueItems": true,
+                "items": {
+                  "description": "One choice, a code (up to 128 characters: an item key).",
+                  "type": "string",
+                  "pattern": "^[!-~]{1,128}$"
+                }
+              },
+              "context": {
+                "description": "What the document prints that the person needs to answer: identity (is-this-yours only), dates (which-date only), anchor (where the identity is printed; is-this-yours only in this version). Copied verbatim from the document's text layer, never produced or completed by a model.",
+                "type": "object",
+                "additionalProperties": false,
+                "minProperties": 1,
+                "properties": {
+                  "identity": {
+                    "description": "is-this-yours only: the patient's name and birth date as the document prints them, copied verbatim from its text layer (never produced or completed by a model), so the person can answer without the document.",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "minProperties": 1,
+                    "properties": {
+                      "name": {
+                        "description": "The patient's name as printed.",
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 128
+                      },
+                      "birthDate": {
+                        "description": "The birth date as printed.",
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 32
+                      },
+                      "birthDay": {
+                        "description": "birthDate as a day, only when it is unambiguous (a four-digit year).",
+                        "type": "string",
+                        "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+                      }
+                    }
+                  },
+                  "dates": {
+                    "description": "which-date only: the candidate sampling dates the document prints (never the birth date), so the person can pick one without the document. Partial dates are not listed.",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 6,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "day",
+                        "text"
+                      ],
+                      "properties": {
+                        "day": {
+                          "type": "string",
+                          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+                        },
+                        "text": {
+                          "description": "The date as printed, the date only.",
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 32
+                        },
+                        "label": {
+                          "description": "The label printed before it (e.g. Édité le), never a person's name.",
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 48
+                        },
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "sampling",
+                            "report",
+                            "received",
+                            "other"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "anchor": {
+                    "description": "Where the value was printed in the source document (the file/xds-v1 event in clientData.related): an attachment, a page and a box, nothing of what is printed there. See documentation/PROVENANCE.md.",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "attachmentId",
+                      "page"
+                    ],
+                    "properties": {
+                      "attachmentId": {
+                        "description": "The id of the document event's attachment (Pryv attachments[].id) the value was read from.",
+                        "type": "string",
+                        "maxLength": 64,
+                        "pattern": "^[a-zA-Z0-9_-]+$"
+                      },
+                      "page": {
+                        "description": "Page number within that attachment, from 1 (an image is page 1).",
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "bbox": {
+                        "description": "[x, y, width, height] of the printed line the value was read from, in percent of the page as displayed (x and width of its width, y and height of its height), origin at the top left. Absent when the reader has no box it trusts.",
+                        "type": "array",
+                        "items": [
+                          {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 100
+                          },
+                          {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 100
+                          },
+                          {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 100
+                          },
+                          {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 100
+                          }
+                        ],
+                        "additionalItems": false,
+                        "minItems": 4,
+                        "maxItems": 4
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "description": "proposed-value (the contact, on received): one printed line as read from a document, and the event the contact proposes; the person's app writes it once she confirms. Holds what the document prints on that line.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "about",
+              "candidateId",
+              "printed",
+              "status",
+              "extraction"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "proposed-value"
+                ]
+              },
+              "about": {
+                "description": "The event id of the document the value was read from, mirrored in clientData.related.",
+                "type": "string",
+                "maxLength": 64,
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "candidateId": {
+                "description": "Opaque id of this candidate, derived by the contact from the document, the record and the proposal: the same on every re-read while the proposal is the same, a new one when it differs. Never parsed.",
+                "type": "string",
+                "maxLength": 64,
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "replaces": {
+                "description": "The candidateId of a proposed value of the same document that this one replaces (a re-proposal after the person answered a question about it); the replaced one is no longer confirmable.",
+                "type": "string",
+                "maxLength": 64,
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "printed": {
+                "description": "What the document prints on this line, exactly.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "label",
+                  "value"
+                ],
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 32
+                  },
+                  "unit": {
+                    "type": "string",
+                    "maxLength": 24
+                  },
+                  "refRange": {
+                    "type": "string",
+                    "maxLength": 64
+                  },
+                  "flag": {
+                    "type": "string",
+                    "maxLength": 16
+                  },
+                  "section": {
+                    "type": "string",
+                    "maxLength": 80
+                  }
+                }
+              },
+              "anchor": {
+                "description": "Where the value was printed in the source document (the file/xds-v1 event in clientData.related): an attachment, a page and a box, nothing of what is printed there. See documentation/PROVENANCE.md.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "attachmentId",
+                  "page"
+                ],
+                "properties": {
+                  "attachmentId": {
+                    "description": "The id of the document event's attachment (Pryv attachments[].id) the value was read from.",
+                    "type": "string",
+                    "maxLength": 64,
+                    "pattern": "^[a-zA-Z0-9_-]+$"
+                  },
+                  "page": {
+                    "description": "Page number within that attachment, from 1 (an image is page 1).",
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "bbox": {
+                    "description": "[x, y, width, height] of the printed line the value was read from, in percent of the page as displayed (x and width of its width, y and height of its height), origin at the top left. Absent when the reader has no box it trusts.",
+                    "type": "array",
+                    "items": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 100
+                      }
+                    ],
+                    "additionalItems": false,
+                    "minItems": 4,
+                    "maxItems": 4
+                  }
+                }
+              },
+              "proposal": {
+                "description": "The event the contact proposes; the person's app writes it once she confirms. Absent when nothing is proposed.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "itemKey",
+                  "type",
+                  "content"
+                ],
+                "properties": {
+                  "itemKey": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                  },
+                  "type": {
+                    "description": "The eventType id.",
+                    "type": "string",
+                    "maxLength": 128,
+                    "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"
+                  },
+                  "content": {
+                    "description": "The content as it would be stored, valid against type.",
+                    "type": [
+                      "number",
+                      "object"
+                    ]
+                  },
+                  "time": {
+                    "description": "The event time, Unix seconds. Absent when the document prints no usable date (a which-date question is asked).",
+                    "type": "number"
+                  },
+                  "clientData": {
+                    "description": "The clientData keys of the proposed event that the model defines for a lab result (documentation/BLOOD-CHEMISTRY.md, PARTIAL-DATES.md).",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "hdsRefRange": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "minProperties": 1,
+                        "properties": {
+                          "lowerLimit": {
+                            "type": "number"
+                          },
+                          "upperLimit": {
+                            "type": "number"
+                          },
+                          "text": {
+                            "type": "string",
+                            "maxLength": 64
+                          }
+                        }
+                      },
+                      "hdsFlag": {
+                        "type": "string",
+                        "maxLength": 16
+                      },
+                      "hdsInterpretation": {
+                        "type": "string",
+                        "enum": [
+                          "H",
+                          "L",
+                          "N",
+                          "A",
+                          "HH",
+                          "LL"
+                        ]
+                      },
+                      "hdsComparator": {
+                        "type": "string",
+                        "enum": [
+                          "<",
+                          "<=",
+                          ">",
+                          ">="
+                        ]
+                      },
+                      "hdsTimePrecision": {
+                        "description": "No minute (no zone in v1) and no approx (no hdsTimeText).",
+                        "type": "string",
+                        "enum": [
+                          "day",
+                          "month",
+                          "year",
+                          "unknown"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "status": {
+                "description": "clear: proposed, may be confirmed in a batch; check: proposed, asked one by one; unmapped: read, no event proposed (see reason); unit-missing: the line prints no unit; kept-aside: read; no item can hold it yet; kept for a later offer (see reason, requestKey). Set when the line is read, never after an answer.",
+                "type": "string",
+                "enum": [
+                  "clear",
+                  "check",
+                  "unmapped",
+                  "unit-missing",
+                  "kept-aside"
+                ]
+              },
+              "reason": {
+                "description": "Why nothing is proposed: a closed reason code. A line that is not clinical, about a special category or about another person never becomes a proposed value (documentation/CONVERSATION.md).",
+                "type": "string",
+                "enum": [
+                  "no-item",
+                  "unit-not-offered",
+                  "no-coded-stream",
+                  "timed-draw",
+                  "implausible-value",
+                  "ambiguous-label",
+                  "qualitative-result",
+                  "derived-index"
+                ]
+              },
+              "requestKey": {
+                "description": "The item-request key derived for this metric (specimen and LOINC code, else specimen, language and normalised label tokens), so a kept-aside value can be offered again once an item ships. No spaces, no control characters.",
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^[^\\s\\u0000-\\u001f\\u007f-\\u009f]+$"
+              },
+              "askOneByOne": {
+                "description": "true: never offered in a batch (a check, or a mapping resting on a community-tier entry).",
+                "type": "boolean"
+              },
+              "specimenImplied": {
+                "description": "true: the document does not print the specimen and a reviewed knowledge-base entry implies it; the app says so.",
+                "type": "boolean"
+              },
+              "extraction": {
+                "description": "The program that read the line: the person's app copies these four fields into clientData.hdsExtraction of the value it writes, after checking engine against the relationship (documentation/CONVERSATION.md).",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "engine",
+                  "engineVersion",
+                  "kbVersion",
+                  "backend"
+                ],
+                "properties": {
+                  "engine": {
+                    "description": "Stable id of the reading program, lowercase (hds-reader); the <tool> of the sourceKey it writes.",
+                    "type": "string",
+                    "maxLength": 64,
+                    "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+                  },
+                  "engineVersion": {
+                    "description": "The program's version, semver MAJOR.MINOR.PATCH with an optional pre-release.",
+                    "type": "string",
+                    "maxLength": 64,
+                    "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$"
+                  },
+                  "kbVersion": {
+                    "description": "The version of the knowledge-base pack the program used, semver MAJOR.MINOR.PATCH.",
+                    "type": "string",
+                    "maxLength": 32,
+                    "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+                  },
+                  "backend": {
+                    "description": "Opaque id of the program's backend configuration record that read the printed line, never parsed (for example <runtime>:<model>, or text-layer when no backend ran). No spaces; never a URL, a host name, a device name or a user name.",
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+-]*$"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "description": "answer (the person's app, on sent): the person's answer to a proposed value or a question. Only confirm and correct on a proposed value write a value: her app writes it first and lists it in written. An answer to a question (choose included) writes nothing.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "inReplyTo",
+              "about",
+              "action"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "answer"
+                ]
+              },
+              "inReplyTo": {
+                "description": "The id of the proposed-value or question event answered, mirrored in clientData.related.",
+                "type": "string",
+                "maxLength": 64,
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "about": {
+                "description": "The event id of the document the answered event is about, mirrored in clientData.related.",
+                "type": "string",
+                "maxLength": 64,
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "action": {
+                "description": "confirm, correct (her app wrote a value she changed; the value does not travel), not-mine (the document is not about the person), skip, choose (with option), request-item (opt in to request an item for this metric), duplicate (the person's app found the value already recorded).",
+                "type": "string",
+                "enum": [
+                  "confirm",
+                  "correct",
+                  "not-mine",
+                  "skip",
+                  "choose",
+                  "request-item",
+                  "duplicate"
+                ]
+              },
+              "candidateIds": {
+                "description": "The candidates the answer covers: required on every answer to a proposed value (the answered one included; several for a batch) and on every answer to a question about a candidate (that candidate). Absent on an answer to a document-level question.",
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 200,
+                "uniqueItems": true,
+                "items": {
+                  "description": "A candidateId.",
+                  "type": "string",
+                  "maxLength": 64,
+                  "pattern": "^[a-zA-Z0-9_-]+$"
+                }
+              },
+              "option": {
+                "description": "With choose: the option picked, one of the question's options.",
+                "type": "string",
+                "pattern": "^[!-~]{1,128}$"
+              },
+              "time": {
+                "description": "With an answer to which-date: the date the person gives, Unix seconds, placed as PARTIAL-DATES.md places it for timePrecision.",
+                "type": "number"
+              },
+              "timePrecision": {
+                "description": "With an answer to which-date: how much of time is known.",
+                "type": "string",
+                "enum": [
+                  "day",
+                  "month",
+                  "year",
+                  "unknown"
+                ]
+              },
+              "basis": {
+                "description": "is-this-yours only: the person's app confirmed because the printed identity matches her profile. Absent when she answered herself.",
+                "type": "string",
+                "enum": [
+                  "profile-match"
+                ]
+              },
+              "written": {
+                "description": "The value events her app wrote for this answer, one per candidate, mirrored in clientData.related: the contact's record that a candidate is written (it cannot read the event), and her app's list of what to delete after a later not-mine.",
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 200,
+                "uniqueItems": true,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "candidateId",
+                    "eventId"
+                  ],
+                  "properties": {
+                    "candidateId": {
+                      "description": "A candidateId.",
+                      "type": "string",
+                      "maxLength": 64,
+                      "pattern": "^[a-zA-Z0-9_-]+$"
+                    },
+                    "eventId": {
+                      "description": "The id of the value event written.",
+                      "type": "string",
+                      "maxLength": 64,
+                      "pattern": "^[a-zA-Z0-9_-]+$"
                     }
                   }
                 }

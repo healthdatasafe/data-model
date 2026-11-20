@@ -1,0 +1,202 @@
+{
+  "$id": "https://model.datasafe.dev/json-schemas/hds-conversation-alert.json",
+  "title": "HDS notification/alert-cmc content.hds, conversation kinds",
+  "description": "The hds block of a conversation alert: kinds, event ids, codes and counts only, never a value, a printed line, a name, a date, an item key or a stream id. The ids point into the relationship's own child of conversation-items, or at a document shared in it. See documentation/CONVERSATION.md.",
+  "type": "object",
+  "required": [
+    "kind"
+  ],
+  "oneOf": [
+    {
+      "description": "task-status (contact to person: the state of the work on one document. Alerts are immutable: the state is the latest by alert time, attempt breaking a tie.)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "about",
+        "status",
+        "attempt"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "task-status"
+          ]
+        },
+        "about": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "The event id of the document."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "received",
+            "reading",
+            "awaiting-answers",
+            "done",
+            "error"
+          ]
+        },
+        "attempt": {
+          "description": "Attempt on this document, from 1: a label and a tie-break, never the order (a restarted contact may not know the last one).",
+          "type": "integer",
+          "minimum": 1
+        },
+        "counts": {
+          "description": "Counts only, never what was counted.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "proposed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "questions": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "keptAside": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "dropped": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "errorCode": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "description": "With status error: a code, never a message."
+        }
+      }
+    },
+    {
+      "description": "notice (contact to person: a message the app renders from its code. Never free text.)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "code"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "notice"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "about": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "The event id of the document, when the notice is about one."
+        }
+      }
+    },
+    {
+      "description": "question (contact to person: a question event was written on the received child.)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "eventId",
+        "about"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "question"
+          ]
+        },
+        "eventId": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "The id of the question event (message/hds-conversation-v1) on the person's account."
+        },
+        "about": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "The event id of the document the question is about."
+        }
+      }
+    },
+    {
+      "description": "proposed-values (contact to person: proposed-value events for one document were written on the received child. A wake-up only: the person's app lists the child by about, never trusts count.)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "about",
+        "count"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "proposed-values"
+          ]
+        },
+        "about": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "The event id of the document."
+        },
+        "count": {
+          "description": "How many proposed-value events were written for it in this batch.",
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    {
+      "description": "answer (person to contact: an answer event was written on the sent child.)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "eventId",
+        "inReplyTo",
+        "about"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "answer"
+          ]
+        },
+        "eventId": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "The id of the answer event (message/hds-conversation-v1) on the person's account."
+        },
+        "inReplyTo": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "The id of the question or proposed-value event it answers."
+        },
+        "about": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "The event id of the document."
+        }
+      }
+    }
+  ]
+}
