@@ -1815,5 +1815,179 @@
         }
       ]
     }
-  ]
+  ],
+  "notation": {
+    "rows": [
+      {
+        "id": "number",
+        "label": {
+          "en": "Number",
+          "fr": "Chiffre"
+        },
+        "parts": [
+          "base"
+        ]
+      },
+      {
+        "id": "letters",
+        "label": {
+          "en": "Letters",
+          "fr": "Lettres"
+        },
+        "parts": [
+          "consistency",
+          "colour",
+          "sensation",
+          "lubricative"
+        ]
+      }
+    ],
+    "values": {
+      "base": [
+        {
+          "value": "0",
+          "label": {
+            "en": "dry",
+            "fr": "sec"
+          }
+        },
+        {
+          "value": "2",
+          "label": {
+            "en": "damp",
+            "fr": "moite"
+          }
+        },
+        {
+          "value": "2W",
+          "label": {
+            "en": "wet",
+            "fr": "mouillé"
+          }
+        },
+        {
+          "value": "4",
+          "label": {
+            "en": "shiny",
+            "fr": "brillant"
+          }
+        },
+        {
+          "value": "6",
+          "label": {
+            "en": "sticky",
+            "fr": "collant"
+          }
+        },
+        {
+          "value": "8",
+          "label": {
+            "en": "tacky",
+            "fr": "poisseux"
+          }
+        },
+        {
+          "value": "10",
+          "label": {
+            "en": "stretchy",
+            "fr": "étirable"
+          }
+        }
+      ],
+      "consistency": [
+        {
+          "value": "G",
+          "label": {
+            "en": "gummy",
+            "fr": "gommeux"
+          }
+        },
+        {
+          "value": "P",
+          "label": {
+            "en": "pasty",
+            "fr": "pâteux"
+          }
+        }
+      ],
+      "colour": [
+        {
+          "value": "C",
+          "label": {
+            "en": "cloudy",
+            "fr": "trouble"
+          }
+        },
+        {
+          "value": "CK",
+          "text": "C/K",
+          "label": {
+            "en": "cloudy/clear",
+            "fr": "trouble/clair"
+          }
+        },
+        {
+          "value": "K",
+          "label": {
+            "en": "clear",
+            "fr": "clair"
+          }
+        },
+        {
+          "value": "Y",
+          "label": {
+            "en": "yellow",
+            "fr": "jaune"
+          }
+        },
+        {
+          "value": "B",
+          "label": {
+            "en": "brown",
+            "fr": "brun"
+          }
+        },
+        {
+          "value": "R",
+          "label": {
+            "en": "red",
+            "fr": "rouge"
+          }
+        }
+      ],
+      "sensation": [
+        {
+          "value": "D",
+          "label": {
+            "en": "damp",
+            "fr": "moite"
+          }
+        },
+        {
+          "value": "S",
+          "label": {
+            "en": "shiny",
+            "fr": "brillant"
+          }
+        },
+        {
+          "value": "W",
+          "label": {
+            "en": "wet",
+            "fr": "mouillé"
+          }
+        }
+      ],
+      "lubricative": [
+        {
+          "value": true,
+          "code": "L",
+          "label": {
+            "en": "lubricative",
+            "fr": "lubrifiant"
+          }
+        }
+      ]
+    }
+  }
 }
