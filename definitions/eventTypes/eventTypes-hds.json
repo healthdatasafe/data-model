@@ -67,7 +67,7 @@
           }
         },
         "source": {
-          "description": "Provenance: which method produced this vector. Absent = direct vector input.",
+          "description": "Provenance and method-specific qualifiers: which method produced this vector, and what qualifies its observation (`annotations`). Absent = direct vector input.",
           "type": "object",
           "properties": {
             "key": {
@@ -84,6 +84,13 @@
             "modelVersion": {
               "type": "string",
               "description": "Model definition version used"
+            },
+            "annotations": {
+              "type": "object",
+              "description": "Values that qualify the source observation without being part of it, keyed by the id of an annotation of the method's notation (converter pack `notation.annotations`), e.g. Creighton { \"frequency\": \"X2\" }. Scoped to the method named by `key`: a writer that changes `key` drops them. Not in the vector, never used by a conversion. Optional for validity: `requiredAtEntry` on the annotation is an entry-form rule only, so events stored before it, imported or converted from another method have none and stay valid. An editor that does not know annotations may drop them when it rewrites `source`.",
+              "additionalProperties": {
+                "type": "string"
+              }
             }
           }
         }
