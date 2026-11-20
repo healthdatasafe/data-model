@@ -11,6 +11,11 @@ Documentation only. No key, stream, eventType, option value, schema or `fhir` bl
   out. None is imported for a tie at the best rank with different values, for Schwartz beside an adult equation
   without `69405-9`, or for a per-population result beside a dropped pair. hds-fhir-js 0.10.6 `egfrSetAside`
   implements it.
+- **A medication or procedure period within one period, on import** (B-2026-11-16-19): FHIR-MAPPING.md now says what
+  PARTIAL-DATES.md § Spans already implied. A `stopped` or `completed` MedicationStatement period within one period
+  imports as one intake (its regimen kept, a `statusReason` refused), listed as the second lossy medication mapping.
+  A Procedure start within its end's period is a point event, like an end within the start's. hds-fhir-js 0.10.7
+  implements both.
 
 ## [4.20.0] - 2026-11-19
 

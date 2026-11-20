@@ -719,14 +719,19 @@ is not kept (`text` is the wording the model keeps as `note`). Statuses: a `Medi
 (`intent`), `cancelled`, `draft` and `entered-in-error` are withdrawn, `on-hold` and `unknown` import without a
 `status`; a `MedicationStatement` with `effectiveDateTime` is one intake when `completed` or `not-taken` and an open
 period when `active`, with `effectivePeriod` a period of use (`active` without an end, `stopped` or `completed` with
-one), any other combination refused; a `statusReason` imports only where the model keeps a reason (a skipped intake,
+one), any other combination refused; a `stopped` or `completed` period within one period (an end within the start's
+period, or a start within the end's: [PARTIAL-DATES.md](PARTIAL-DATES.md) § Spans) imports as one intake, with no
+`duration`, its regimen kept as written (one intake reads only its dose and route), and a `statusReason` on it refused,
+since one intake keeps no stop reason; a `statusReason` imports only where the model keeps a reason (a skipped intake,
 a stopped period or order) and only when it is one of the vocabulary's (by SNOMED CT code or English label). A
 national product coding without a substance code (a Swissmedic or CIS code and no ATC or RxNorm) is refused with a
 reason rather than reduced to its name: HDS has a place for the code, the text item has none, so the bridge resolves
-the product through datasets-service and passes its codes. **One mapping is lossy:** a `stopped` period without a
+the product through datasets-service and passes its codes. **Two mappings are lossy.** A `stopped` period without a
 `statusReason` imports as an ended period with no `stopReason` (the model has no "stopped, reason not stated") and
 renders again as `completed`, unless it closed before its planned `bounds.end`. The status is lost rather than a
-reason invented: no importer writes `stopReason: other` for it (hds-fhir-js `[IMPT-27]`).
+reason invented: no importer writes `stopReason: other` for it (hds-fhir-js `[IMPT-27]`). And a period within one
+period imports as one intake: its end, and a `stopped` status, are lost, since a span within one period has no
+`duration` to hold them (PARTIAL-DATES.md § Spans).
 
 ---
 
@@ -850,7 +855,7 @@ completed` imports: `entered-in-error` and `not-done` are withdrawn records, and
 `on-hold`, `stopped` and `unknown` are refused, since the model would store each as a procedure that took place.
 The time is `performedDateTime`, else `performedPeriod.start`; a `performedPeriod.end` becomes `event.duration` as an
 abatement does (the last day of a truncated end's period, `hdsEndPrecision` when it differs; an end before the start
-is refused; an end within the start's own period is a point event). `performedString`, `performedAge` and
+is refused; an end within the start's own period, or a start within the end's, is a point event). `performedString`, `performedAge` and
 `performedRange` are not dates: refused, like a text onset. `note[].text` are joined into `notes` (the note an
 approximate date renders, "Date: about …", comes back there too). Everything else (`category`, `bodySite`, `outcome`,
 `performer`, `reasonCode`, `complication`, `report`, `usedCode`) is not kept, and `count`, `robotAssisted` and
