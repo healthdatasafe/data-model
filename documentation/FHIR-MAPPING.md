@@ -706,7 +706,7 @@ as its display, so the national product stands beside the coded medicine, never 
 | an ended period | `effectivePeriod` start and end (the end at `hdsEndPrecision`, else the start's); `status` `stopped` when closed with a `stopReason` (rendered as `statusReason`) or before the planned `bounds.end`, else `completed`. `bounds.duration` is not compared (calendar arithmetic) |
 | any intake | `informationSource` = the patient unless the event was imported; no category; IPS profile on `ips`, the base resource on `us` (US Core 6.1.0 has no MedicationStatement profile) |
 | a prescription | `MedicationRequest`, `intent` `order`, `authoredOn` = the event time at its precision, `status` as stored (absent is `unknown`, never active), `stopReason` as `statusReason`, `statusChanged` as the R5 cross-version extension `http://hl7.org/fhir/5.0/StructureDefinition/extension-MedicationRequest.statusChanged` (`valueDateTime`), the posology as the one `dosageInstruction`. US Core on `us`, IPS on `ips` |
-| US Core Must Support HDS does not hold | `requester`: who wrote the order is not stored, and US Core 6.1.0 requires one on an order (us-core-21), so on `us` it is stated as absent (a data-absent-reason `unknown`, as the IPS lab performer is) and left out on the other flavours; `reported[x]`, `encounter`, `dispenseRequest` (each 0..1): omitted, as the profile allows |
+| US Core Must Support beyond the model | `requester`: who wrote the order is not stored, and US Core 6.1.0 requires one on an order (us-core-21), so on `us` it is stated as absent (a data-absent-reason `unknown`, as the IPS lab performer is) and left out on the other flavours; `reported[x]`: `reportedBoolean: true` on `us` for an order with no `clientData.sourceKey` (one the patient recorded: a patient-held copy is the secondary, reported record the element describes), stated only where the profile marks it Must Support, so omitted on the other flavours and for an imported order (hds-fhir-js 0.10.8). A writer that acts as the primary source of an order (a practitioner app, a bridge) must set a `sourceKey`; `encounter`, `dispenseRequest` (each 0..1): omitted, as the profile allows |
 
 **Import** (`fromFhir`, § [Import](#import)): a resource is matched by its `medicationCodeableConcept`: a coding with a
 datasource label places it on the coded item, a name alone (`text`, or a display of a coding HDS cannot place) on the
@@ -715,7 +715,8 @@ basic one; a `medicationReference` is not resolved and is refused. A national pr
 back from the one Dosage (several are refused); anything the regimen has no place for (a dose range or rate, a site, a
 method, a maximum dose, `dayOfWeek`, `count`, `offset`, a time unit outside `h d wk mo a`, a `when` outside the
 vocabulary, a dose unit or route outside the block) refuses the resource rather than drop it, and `patientInstruction`
-is not kept (`text` is the wording the model keeps as `note`). Statuses: a `MedicationRequest` must be an order
+is not kept (`text` is the wording the model keeps as `note`). `reported[x]` is not read and not carried: an order
+that arrived as reported re-renders as an imported one, which states nothing (absence is not `false`). Statuses: a `MedicationRequest` must be an order
 (`intent`), `cancelled`, `draft` and `entered-in-error` are withdrawn, `on-hold` and `unknown` import without a
 `status`; a `MedicationStatement` with `effectiveDateTime` is one intake when `completed` or `not-taken` and an open
 period when `active`, with `effectivePeriod` a period of use (`active` without an end, `stopped` or `completed` with
