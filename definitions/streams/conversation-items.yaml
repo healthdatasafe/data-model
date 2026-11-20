@@ -1,0 +1,15 @@
+# Per-relationship conversation children, created by the person's app (`conv-` + 12 lowercase base36, name = id),
+# each granted to one contact: `contribute` on `received` (the contact's questions and proposed values), `read` on
+# `sent` (the person's answers). `explicitGrantOnly`: proposed values hold what a document prints, and a question can
+# hold the name and birth date it prints, so no `*` grant and no grant on another root reaches them. Never granted as
+# a whole; no item anywhere in the subtree. See documentation/CONVERSATION.md.
+id: conversation-items
+name: Conversation items
+parentId: null
+explicitGrantOnly: true
+label:
+  en: Conversation items
+  fr: Éléments de conversation
+description:
+  en: "The questions and proposed values a contact sends you in a conversation, and your answers. Never included when you share all your data: each contact reads only its own conversation."
+  fr: "Les questions et les valeurs proposées qu'un contact vous envoie dans une conversation, et vos réponses. Jamais inclus quand vous partagez toutes vos données : chaque contact ne lit que sa propre conversation."

@@ -21,6 +21,7 @@ conventions below are contracts between HDS apps, documented here so every write
 | `clientData.hdsRefRange`, `hdsFlag`, `hdsInterpretation` | The reference range and flag a lab printed for one result, and the flag normalised | [BLOOD-CHEMISTRY.md](BLOOD-CHEMISTRY.md#the-printed-reference-range-flag-and-interpretation-of-one-result) |
 | `clientData.hdsComparator` | The value is a printed limit (`<`, `<=`, `>`, `>=`), not an exact figure | [BLOOD-CHEMISTRY.md](BLOOD-CHEMISTRY.md#a-censored-value-hdscomparator) |
 | `clientData.hdsDocumentShare` | A share child's relationship and direction (stream clientData); visible to the contact granted the child | [DOCUMENTS.md](DOCUMENTS.md#sharing-one-document-the-document-shares-root-3370) |
+| `clientData.hdsConversationItems` | A conversation child's relationship and direction (`received`, `sent`; stream clientData); visible to the contact granted the child | [CONVERSATION.md](CONVERSATION.md#where-it-lives-the-conversation-items-root) |
 | `clientData.hdsSupport` | Which team member a support line comes from, on the group's copy of a support chat event; written by the support service, never forwarded to the person | [SUPPORT.md](SUPPORT.md#which-member-wrote-a-line-clientdatahdssupport) |
 | `clientData.hdsApp` (on an **access**; for CMC, `requesterMeta.hdsApp` in the invite, mirrored as `content.hdsApp` on the accept event) | The app's manifest URL, from which HDS apps name the app that holds the access | [APP-DESCRIPTION.md](APP-DESCRIPTION.md) |
 | `clientData.hdsGln`, `hdsZsr` | A provider's GLN and ZSR, bare values mirroring its content `identifiers`: the cross-writer lookup keys (GLN, then ZSR, then `sourceKey`) | [ENCOUNTER.md](ENCOUNTER.md#one-provider-one-event-clientdatahdsgln-hdszsr) |
@@ -127,7 +128,8 @@ was read from.
 - **An event id held in content MUST be mirrored here.** When an eventType carries event ids in its content
   (`file/xds-v1` `supersedes[]`, `authors[].eventId`, `encounterId`; `encounter/visit-v1` `participants[].eventId`,
   `serviceProvider.eventId`; `provider/practitioner-v1` `organizations[].eventId`; `genetic-variant/coded-v1`
-  `laboratory.eventId`; `message/hds-reader-v1` `inReplyTo` and `eventId`, [HDS-READER.md](HDS-READER.md)), the writer sets
+  `laboratory.eventId`; `message/hds-reader-v1` `inReplyTo` and `eventId`, [HDS-READER.md](HDS-READER.md);
+  `message/hds-conversation-v1` `about`, `inReplyTo` and `written[].eventId`, [CONVERSATION.md](CONVERSATION.md)), the writer sets
   `clientData.related.<eventId>: true` for each one, in the same create or update, so a cohort query finds the link
   without reading content. On an update, the key of an id that left the content is removed in the same call (write
   the whole `related` object). The content is the typed link (which field, which role); `related` is its index. If
@@ -230,7 +232,8 @@ site: <https://agents.datasafe.dev/llms-full.txt>, § "5f".
 A program that reads values from a document (a lab report photographed, scanned or downloaded) writes each value
 the person confirmed as an ordinary event on its item, linked to the document by `clientData.related.<document event
 id>` and identified by `clientData.sourceKey` (its `<tool>` is the program's `engine` id; the HDS Reader's is
-`hds-reader`). Two keys say how it was read, so a reader can show the person where the value came from and an audit
+`hds-reader`; in a conversation the person's app writes the value and builds the key as
+`<engine>:document:<document event id>:<candidateId>`, [CONVERSATION.md](CONVERSATION.md#writing-a-value)). Two keys say how it was read, so a reader can show the person where the value came from and an audit
 can tell which program and knowledge base produced it. The HDS Reader is the first writer
 ([HDS-READER.md](HDS-READER.md)); the keys name no program and any reader of documents may write them.
 
