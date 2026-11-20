@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.21.0] - 2026-11-20
 
 Allergies and intolerances (plan 133). Additive: one root stream, two items, two eventTypes, one datasource, an
 `AllergyIntolerance` block under a new bare scope key, and two composite field types; no existing key, stream, option
