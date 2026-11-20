@@ -6,8 +6,8 @@
     "fr": "Creighton"
   },
   "description": {
-    "en": "Standardized system using numerical codes (0–10) with letter modifiers for color and lubricative quality.",
-    "fr": "Système standardisé utilisant des codes numériques (0–10) avec des modificateurs alphabétiques pour la couleur et la qualité lubrifiante."
+    "en": "Creighton notation (book ch. 6): a stretch number (6, 8, 10) with letters for consistency (G, P), colour (C, C/K, K, Y, B) and lubrication (L); 0, 2, 2W, 4 for dry days; 10DL, 10SL, 10WL for lubrication without stretch.",
+    "fr": "Notation Creighton (livre ch. 6) : un chiffre d'élasticité (6, 8, 10) avec des lettres pour la consistance (G, P), la couleur (C, C/K, K, Y, B) et la lubrification (L) ; 0, 2, 2W, 4 pour les jours secs ; 10DL, 10SL, 10WL pour une lubrification sans élasticité."
   },
   "referenceUrl": "https://www.creightonmodel.com/",
   "caseInsensitive": true,
@@ -25,7 +25,11 @@
             "en": "0 — Dry",
             "fr": "0 — Sec"
           },
-          "vector": {}
+          "vector": {},
+          "parts": {
+            "category": "dry",
+            "base": "0"
+          }
         },
         {
           "value": "2",
@@ -37,18 +41,10 @@
             "wetness": 0.25,
             "sensation": 0.25,
             "mucusVolume": 0.1
-          }
-        },
-        {
-          "value": "2W",
-          "label": {
-            "en": "2W — Wet without lubrication",
-            "fr": "2W — Mouillé sans lubrification"
           },
-          "vector": {
-            "wetness": 0.5,
-            "sensation": 0.5,
-            "mucusVolume": 0.15
+          "parts": {
+            "category": "dry",
+            "base": "2"
           }
         },
         {
@@ -65,6 +61,26 @@
             "densityFluidity": 0.15,
             "sensation": 0.35,
             "mucusVolume": 0.25
+          },
+          "parts": {
+            "category": "dry",
+            "base": "4"
+          }
+        },
+        {
+          "value": "2W",
+          "label": {
+            "en": "2W — Wet without lubrication",
+            "fr": "2W — Mouillé sans lubrification"
+          },
+          "vector": {
+            "wetness": 0.5,
+            "sensation": 0.5,
+            "mucusVolume": 0.15
+          },
+          "parts": {
+            "category": "dry",
+            "base": "2W"
           }
         },
         {
@@ -82,7 +98,15 @@
             "densityFluidity": 0.15,
             "sensation": 0.25,
             "mucusVolume": 0.3
-          }
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": null,
+            "colour": null,
+            "lubricative": false
+          },
+          "offer": false
         },
         {
           "value": "6B",
@@ -100,6 +124,13 @@
             "color": 1,
             "sensation": 0.25,
             "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": null,
+            "colour": "B",
+            "lubricative": false
           }
         },
         {
@@ -118,6 +149,13 @@
             "color": 0.05,
             "sensation": 0.25,
             "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": null,
+            "colour": "C",
+            "lubricative": false
           }
         },
         {
@@ -136,7 +174,66 @@
             "color": 0.25,
             "sensation": 0.25,
             "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": null,
+            "colour": "CK",
+            "lubricative": false
           }
+        },
+        {
+          "value": "6CKL",
+          "label": {
+            "en": "6CKL — Sticky, cloudy/clear, lubricative",
+            "fr": "6CKL — Collant, trouble/clair, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.3,
+            "stretchability": 0.1,
+            "lubricative": 0.6,
+            "transparency": 0.5,
+            "wetness": 0.4,
+            "densityFluidity": 0.15,
+            "color": 0.25,
+            "sensation": 0.5,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": null,
+            "colour": "CK",
+            "lubricative": true
+          },
+          "produce": false
+        },
+        {
+          "value": "6CL",
+          "label": {
+            "en": "6CL — Sticky, cloudy, lubricative",
+            "fr": "6CL — Collant, trouble, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.3,
+            "stretchability": 0.1,
+            "lubricative": 0.6,
+            "transparency": 0.05,
+            "wetness": 0.4,
+            "densityFluidity": 0.15,
+            "color": 0.05,
+            "sensation": 0.5,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": null,
+            "colour": "C",
+            "lubricative": true
+          },
+          "produce": false
         },
         {
           "value": "6G",
@@ -153,7 +250,170 @@
             "densityFluidity": 0.05,
             "sensation": 0.2,
             "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": "G",
+            "colour": null,
+            "lubricative": false
           }
+        },
+        {
+          "value": "6GC",
+          "label": {
+            "en": "6GC — Sticky, gummy, cloudy",
+            "fr": "6GC — Collant, gommeux, trouble"
+          },
+          "vector": {
+            "threadiness": 0.4,
+            "stretchability": 0.1,
+            "lubricative": 0.1,
+            "transparency": 0.05,
+            "wetness": 0.25,
+            "densityFluidity": 0.05,
+            "color": 0.05,
+            "sensation": 0.2,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": "G",
+            "colour": "C",
+            "lubricative": false
+          },
+          "produce": false
+        },
+        {
+          "value": "6GCK",
+          "label": {
+            "en": "6GCK — Sticky, gummy, cloudy/clear",
+            "fr": "6GCK — Collant, gommeux, trouble/clair"
+          },
+          "vector": {
+            "threadiness": 0.4,
+            "stretchability": 0.1,
+            "lubricative": 0.1,
+            "transparency": 0.5,
+            "wetness": 0.25,
+            "densityFluidity": 0.05,
+            "color": 0.25,
+            "sensation": 0.2,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": "G",
+            "colour": "CK",
+            "lubricative": false
+          },
+          "produce": false
+        },
+        {
+          "value": "6GCKL",
+          "label": {
+            "en": "6GCKL — Sticky, gummy, cloudy/clear, lubricative",
+            "fr": "6GCKL — Collant, gommeux, trouble/clair, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.4,
+            "stretchability": 0.1,
+            "lubricative": 0.55,
+            "transparency": 0.5,
+            "wetness": 0.35,
+            "densityFluidity": 0.05,
+            "color": 0.25,
+            "sensation": 0.45,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": "G",
+            "colour": "CK",
+            "lubricative": true
+          },
+          "produce": false
+        },
+        {
+          "value": "6GCL",
+          "label": {
+            "en": "6GCL — Sticky, gummy, cloudy, lubricative",
+            "fr": "6GCL — Collant, gommeux, trouble, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.4,
+            "stretchability": 0.1,
+            "lubricative": 0.55,
+            "transparency": 0.05,
+            "wetness": 0.35,
+            "densityFluidity": 0.05,
+            "color": 0.05,
+            "sensation": 0.45,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": "G",
+            "colour": "C",
+            "lubricative": true
+          },
+          "produce": false
+        },
+        {
+          "value": "6GK",
+          "label": {
+            "en": "6GK — Sticky, gummy, clear",
+            "fr": "6GK — Collant, gommeux, clair"
+          },
+          "vector": {
+            "threadiness": 0.4,
+            "stretchability": 0.1,
+            "lubricative": 0.1,
+            "transparency": 0.8,
+            "wetness": 0.25,
+            "densityFluidity": 0.05,
+            "color": 0.5,
+            "sensation": 0.2,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": "G",
+            "colour": "K",
+            "lubricative": false
+          },
+          "produce": false
+        },
+        {
+          "value": "6GKL",
+          "label": {
+            "en": "6GKL — Sticky, gummy, clear, lubricative",
+            "fr": "6GKL — Collant, gommeux, clair, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.4,
+            "stretchability": 0.1,
+            "lubricative": 0.55,
+            "transparency": 0.8,
+            "wetness": 0.35,
+            "densityFluidity": 0.05,
+            "color": 0.5,
+            "sensation": 0.45,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": "G",
+            "colour": "K",
+            "lubricative": true
+          },
+          "produce": false
         },
         {
           "value": "6GL",
@@ -170,7 +430,66 @@
             "densityFluidity": 0.05,
             "sensation": 0.4,
             "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": "G",
+            "colour": null,
+            "lubricative": true
           }
+        },
+        {
+          "value": "6GY",
+          "label": {
+            "en": "6GY — Sticky, gummy, yellow",
+            "fr": "6GY — Collant, gommeux, jaune"
+          },
+          "vector": {
+            "threadiness": 0.4,
+            "stretchability": 0.1,
+            "lubricative": 0.1,
+            "transparency": 0.2,
+            "wetness": 0.25,
+            "densityFluidity": 0.05,
+            "color": 0.4,
+            "sensation": 0.2,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": "G",
+            "colour": "Y",
+            "lubricative": false
+          },
+          "produce": false
+        },
+        {
+          "value": "6GYL",
+          "label": {
+            "en": "6GYL — Sticky, gummy, yellow, lubricative",
+            "fr": "6GYL — Collant, gommeux, jaune, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.4,
+            "stretchability": 0.1,
+            "lubricative": 0.55,
+            "transparency": 0.2,
+            "wetness": 0.35,
+            "densityFluidity": 0.05,
+            "color": 0.4,
+            "sensation": 0.45,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": "G",
+            "colour": "Y",
+            "lubricative": true
+          },
+          "produce": false
         },
         {
           "value": "6K",
@@ -188,7 +507,40 @@
             "color": 0.5,
             "sensation": 0.25,
             "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": null,
+            "colour": "K",
+            "lubricative": false
           }
+        },
+        {
+          "value": "6KL",
+          "label": {
+            "en": "6KL — Sticky, clear, lubricative",
+            "fr": "6KL — Collant, clair, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.3,
+            "stretchability": 0.1,
+            "lubricative": 0.6,
+            "transparency": 0.8,
+            "wetness": 0.4,
+            "densityFluidity": 0.15,
+            "color": 0.5,
+            "sensation": 0.5,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": null,
+            "colour": "K",
+            "lubricative": true
+          },
+          "produce": false
         },
         {
           "value": "6L",
@@ -205,6 +557,13 @@
             "densityFluidity": 0.15,
             "sensation": 0.5,
             "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": null,
+            "colour": null,
+            "lubricative": true
           }
         },
         {
@@ -223,7 +582,66 @@
             "color": 0.2,
             "sensation": 0.25,
             "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": "P",
+            "colour": null,
+            "lubricative": false
           }
+        },
+        {
+          "value": "6PC",
+          "label": {
+            "en": "6PC — Sticky, pasty, cloudy",
+            "fr": "6PC — Collant, pâteux, trouble"
+          },
+          "vector": {
+            "threadiness": 0.25,
+            "stretchability": 0.1,
+            "lubricative": 0.15,
+            "transparency": 0.05,
+            "wetness": 0.3,
+            "densityFluidity": 0.2,
+            "color": 0.05,
+            "sensation": 0.25,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": "P",
+            "colour": "C",
+            "lubricative": false
+          },
+          "produce": false
+        },
+        {
+          "value": "6PY",
+          "label": {
+            "en": "6PY — Sticky, pasty, yellow",
+            "fr": "6PY — Collant, pâteux, jaune"
+          },
+          "vector": {
+            "threadiness": 0.25,
+            "stretchability": 0.1,
+            "lubricative": 0.15,
+            "transparency": 0.2,
+            "wetness": 0.3,
+            "densityFluidity": 0.2,
+            "color": 0.4,
+            "sensation": 0.25,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": "P",
+            "colour": "Y",
+            "lubricative": false
+          },
+          "produce": false
         },
         {
           "value": "6R",
@@ -241,6 +659,13 @@
             "color": 0.8,
             "sensation": 0.3,
             "mucusVolume": 0.35
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": null,
+            "colour": "R",
+            "lubricative": false
           }
         },
         {
@@ -259,7 +684,40 @@
             "color": 0.4,
             "sensation": 0.25,
             "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": null,
+            "colour": "Y",
+            "lubricative": false
           }
+        },
+        {
+          "value": "6YL",
+          "label": {
+            "en": "6YL — Sticky, yellow, lubricative",
+            "fr": "6YL — Collant, jaune, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.3,
+            "stretchability": 0.1,
+            "lubricative": 0.6,
+            "transparency": 0.2,
+            "wetness": 0.4,
+            "densityFluidity": 0.15,
+            "color": 0.4,
+            "sensation": 0.5,
+            "mucusVolume": 0.3
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "6",
+            "consistency": null,
+            "colour": "Y",
+            "lubricative": true
+          },
+          "produce": false
         },
         {
           "value": "8",
@@ -276,7 +734,15 @@
             "densityFluidity": 0.25,
             "sensation": 0.3,
             "mucusVolume": 0.4
-          }
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": null,
+            "colour": null,
+            "lubricative": false
+          },
+          "offer": false
         },
         {
           "value": "8C",
@@ -294,6 +760,13 @@
             "color": 0.05,
             "sensation": 0.3,
             "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": null,
+            "colour": "C",
+            "lubricative": false
           }
         },
         {
@@ -312,7 +785,274 @@
             "color": 0.25,
             "sensation": 0.3,
             "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": null,
+            "colour": "CK",
+            "lubricative": false
           }
+        },
+        {
+          "value": "8CKL",
+          "label": {
+            "en": "8CKL — Tacky, cloudy/clear, lubricative",
+            "fr": "8CKL — Poisseux, trouble/clair, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.5,
+            "stretchability": 0.35,
+            "lubricative": 0.65,
+            "transparency": 0.5,
+            "wetness": 0.55,
+            "densityFluidity": 0.35,
+            "color": 0.25,
+            "sensation": 0.55,
+            "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": null,
+            "colour": "CK",
+            "lubricative": true
+          },
+          "produce": false
+        },
+        {
+          "value": "8CL",
+          "label": {
+            "en": "8CL — Tacky, cloudy, lubricative",
+            "fr": "8CL — Poisseux, trouble, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.5,
+            "stretchability": 0.35,
+            "lubricative": 0.65,
+            "transparency": 0.08,
+            "wetness": 0.55,
+            "densityFluidity": 0.3,
+            "color": 0.05,
+            "sensation": 0.55,
+            "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": null,
+            "colour": "C",
+            "lubricative": true
+          },
+          "produce": false
+        },
+        {
+          "value": "8GC",
+          "label": {
+            "en": "8GC — Tacky, gummy, cloudy",
+            "fr": "8GC — Poisseux, gommeux, trouble"
+          },
+          "vector": {
+            "threadiness": 0.6,
+            "stretchability": 0.35,
+            "lubricative": 0.2,
+            "transparency": 0.08,
+            "wetness": 0.35,
+            "densityFluidity": 0.15,
+            "color": 0.05,
+            "sensation": 0.25,
+            "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": "G",
+            "colour": "C",
+            "lubricative": false
+          },
+          "produce": false
+        },
+        {
+          "value": "8GCK",
+          "label": {
+            "en": "8GCK — Tacky, gummy, cloudy/clear",
+            "fr": "8GCK — Poisseux, gommeux, trouble/clair"
+          },
+          "vector": {
+            "threadiness": 0.6,
+            "stretchability": 0.35,
+            "lubricative": 0.2,
+            "transparency": 0.5,
+            "wetness": 0.35,
+            "densityFluidity": 0.2,
+            "color": 0.25,
+            "sensation": 0.25,
+            "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": "G",
+            "colour": "CK",
+            "lubricative": false
+          },
+          "produce": false
+        },
+        {
+          "value": "8GCKL",
+          "label": {
+            "en": "8GCKL — Tacky, gummy, cloudy/clear, lubricative",
+            "fr": "8GCKL — Poisseux, gommeux, trouble/clair, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.6,
+            "stretchability": 0.35,
+            "lubricative": 0.6,
+            "transparency": 0.5,
+            "wetness": 0.5,
+            "densityFluidity": 0.25,
+            "color": 0.25,
+            "sensation": 0.5,
+            "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": "G",
+            "colour": "CK",
+            "lubricative": true
+          },
+          "produce": false
+        },
+        {
+          "value": "8GCL",
+          "label": {
+            "en": "8GCL — Tacky, gummy, cloudy, lubricative",
+            "fr": "8GCL — Poisseux, gommeux, trouble, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.6,
+            "stretchability": 0.35,
+            "lubricative": 0.6,
+            "transparency": 0.08,
+            "wetness": 0.5,
+            "densityFluidity": 0.2,
+            "color": 0.05,
+            "sensation": 0.5,
+            "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": "G",
+            "colour": "C",
+            "lubricative": true
+          },
+          "produce": false
+        },
+        {
+          "value": "8GK",
+          "label": {
+            "en": "8GK — Tacky, gummy, clear",
+            "fr": "8GK — Poisseux, gommeux, clair"
+          },
+          "vector": {
+            "threadiness": 0.6,
+            "stretchability": 0.35,
+            "lubricative": 0.25,
+            "transparency": 0.8,
+            "wetness": 0.4,
+            "densityFluidity": 0.25,
+            "color": 0.5,
+            "sensation": 0.3,
+            "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": "G",
+            "colour": "K",
+            "lubricative": false
+          },
+          "produce": false
+        },
+        {
+          "value": "8GKL",
+          "label": {
+            "en": "8GKL — Tacky, gummy, clear, lubricative",
+            "fr": "8GKL — Poisseux, gommeux, clair, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.6,
+            "stretchability": 0.35,
+            "lubricative": 0.65,
+            "transparency": 0.8,
+            "wetness": 0.55,
+            "densityFluidity": 0.3,
+            "color": 0.5,
+            "sensation": 0.55,
+            "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": "G",
+            "colour": "K",
+            "lubricative": true
+          },
+          "produce": false
+        },
+        {
+          "value": "8GY",
+          "label": {
+            "en": "8GY — Tacky, gummy, yellow",
+            "fr": "8GY — Poisseux, gommeux, jaune"
+          },
+          "vector": {
+            "threadiness": 0.6,
+            "stretchability": 0.35,
+            "lubricative": 0.2,
+            "transparency": 0.25,
+            "wetness": 0.35,
+            "densityFluidity": 0.15,
+            "color": 0.4,
+            "sensation": 0.25,
+            "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": "G",
+            "colour": "Y",
+            "lubricative": false
+          },
+          "produce": false
+        },
+        {
+          "value": "8GYL",
+          "label": {
+            "en": "8GYL — Tacky, gummy, yellow, lubricative",
+            "fr": "8GYL — Poisseux, gommeux, jaune, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.6,
+            "stretchability": 0.35,
+            "lubricative": 0.6,
+            "transparency": 0.25,
+            "wetness": 0.5,
+            "densityFluidity": 0.2,
+            "color": 0.4,
+            "sensation": 0.5,
+            "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": "G",
+            "colour": "Y",
+            "lubricative": true
+          },
+          "produce": false
         },
         {
           "value": "8K",
@@ -330,7 +1070,40 @@
             "color": 0.5,
             "sensation": 0.35,
             "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": null,
+            "colour": "K",
+            "lubricative": false
           }
+        },
+        {
+          "value": "8KL",
+          "label": {
+            "en": "8KL — Tacky, clear, lubricative",
+            "fr": "8KL — Poisseux, clair, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.5,
+            "stretchability": 0.35,
+            "lubricative": 0.7,
+            "transparency": 0.8,
+            "wetness": 0.6,
+            "densityFluidity": 0.4,
+            "color": 0.5,
+            "sensation": 0.6,
+            "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": null,
+            "colour": "K",
+            "lubricative": true
+          },
+          "produce": false
         },
         {
           "value": "8L",
@@ -347,6 +1120,13 @@
             "densityFluidity": 0.3,
             "sensation": 0.55,
             "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": null,
+            "colour": null,
+            "lubricative": true
           }
         },
         {
@@ -365,7 +1145,15 @@
             "color": 0.2,
             "sensation": 0.3,
             "mucusVolume": 0.35
-          }
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": "P",
+            "colour": null,
+            "lubricative": false
+          },
+          "offer": false
         },
         {
           "value": "8Y",
@@ -383,6 +1171,13 @@
             "color": 0.4,
             "sensation": 0.3,
             "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": null,
+            "colour": "Y",
+            "lubricative": false
           }
         },
         {
@@ -401,6 +1196,13 @@
             "color": 0.4,
             "sensation": 0.55,
             "mucusVolume": 0.4
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "8",
+            "consistency": null,
+            "colour": "Y",
+            "lubricative": true
           }
         },
         {
@@ -418,7 +1220,15 @@
             "densityFluidity": 0.53,
             "sensation": 0.58,
             "mucusVolume": 0.6
-          }
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": null,
+            "colour": null,
+            "lubricative": false
+          },
+          "offer": false
         },
         {
           "value": "10B",
@@ -436,6 +1246,13 @@
             "color": 1,
             "sensation": 0.5,
             "mucusVolume": 0.6
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": null,
+            "colour": "B",
+            "lubricative": false
           }
         },
         {
@@ -454,6 +1271,13 @@
             "color": 0.05,
             "sensation": 0.58,
             "mucusVolume": 0.6
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": null,
+            "colour": "C",
+            "lubricative": false
           }
         },
         {
@@ -472,7 +1296,274 @@
             "color": 0.25,
             "sensation": 0.6,
             "mucusVolume": 0.65
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": null,
+            "colour": "CK",
+            "lubricative": false
           }
+        },
+        {
+          "value": "10CKL",
+          "label": {
+            "en": "10CKL — Stretchy, cloudy/clear, lubricative",
+            "fr": "10CKL — Étirable, trouble/clair, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.9,
+            "stretchability": 0.85,
+            "lubricative": 0.87,
+            "transparency": 0.5,
+            "wetness": 0.87,
+            "densityFluidity": 0.67,
+            "color": 0.25,
+            "sensation": 0.87,
+            "mucusVolume": 0.75
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": null,
+            "colour": "CK",
+            "lubricative": true
+          },
+          "produce": false
+        },
+        {
+          "value": "10CL",
+          "label": {
+            "en": "10CL — Stretchy, cloudy, lubricative",
+            "fr": "10CL — Étirable, trouble, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.9,
+            "stretchability": 0.85,
+            "lubricative": 0.85,
+            "transparency": 0.1,
+            "wetness": 0.85,
+            "densityFluidity": 0.65,
+            "color": 0.05,
+            "sensation": 0.85,
+            "mucusVolume": 0.7
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": null,
+            "colour": "C",
+            "lubricative": true
+          },
+          "produce": false
+        },
+        {
+          "value": "10GC",
+          "label": {
+            "en": "10GC — Stretchy, gummy, cloudy",
+            "fr": "10GC — Étirable, gommeux, trouble"
+          },
+          "vector": {
+            "threadiness": 1,
+            "stretchability": 0.85,
+            "lubricative": 0.53,
+            "transparency": 0.1,
+            "wetness": 0.63,
+            "densityFluidity": 0.43,
+            "color": 0.05,
+            "sensation": 0.53,
+            "mucusVolume": 0.6
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": "G",
+            "colour": "C",
+            "lubricative": false
+          },
+          "produce": false
+        },
+        {
+          "value": "10GCK",
+          "label": {
+            "en": "10GCK — Stretchy, gummy, cloudy/clear",
+            "fr": "10GCK — Étirable, gommeux, trouble/clair"
+          },
+          "vector": {
+            "threadiness": 1,
+            "stretchability": 0.85,
+            "lubricative": 0.55,
+            "transparency": 0.5,
+            "wetness": 0.65,
+            "densityFluidity": 0.45,
+            "color": 0.25,
+            "sensation": 0.55,
+            "mucusVolume": 0.65
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": "G",
+            "colour": "CK",
+            "lubricative": false
+          },
+          "produce": false
+        },
+        {
+          "value": "10GCKL",
+          "label": {
+            "en": "10GCKL — Stretchy, gummy, cloudy/clear, lubricative",
+            "fr": "10GCKL — Étirable, gommeux, trouble/clair, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 1,
+            "stretchability": 0.85,
+            "lubricative": 0.82,
+            "transparency": 0.5,
+            "wetness": 0.82,
+            "densityFluidity": 0.57,
+            "color": 0.25,
+            "sensation": 0.82,
+            "mucusVolume": 0.75
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": "G",
+            "colour": "CK",
+            "lubricative": true
+          },
+          "produce": false
+        },
+        {
+          "value": "10GCL",
+          "label": {
+            "en": "10GCL — Stretchy, gummy, cloudy, lubricative",
+            "fr": "10GCL — Étirable, gommeux, trouble, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 1,
+            "stretchability": 0.85,
+            "lubricative": 0.8,
+            "transparency": 0.1,
+            "wetness": 0.8,
+            "densityFluidity": 0.55,
+            "color": 0.05,
+            "sensation": 0.8,
+            "mucusVolume": 0.7
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": "G",
+            "colour": "C",
+            "lubricative": true
+          },
+          "produce": false
+        },
+        {
+          "value": "10GK",
+          "label": {
+            "en": "10GK — Stretchy, gummy, clear",
+            "fr": "10GK — Étirable, gommeux, clair"
+          },
+          "vector": {
+            "threadiness": 1,
+            "stretchability": 0.9,
+            "lubricative": 0.65,
+            "transparency": 0.9,
+            "wetness": 0.75,
+            "densityFluidity": 0.6,
+            "color": 0.5,
+            "sensation": 0.65,
+            "mucusVolume": 0.7
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": "G",
+            "colour": "K",
+            "lubricative": false
+          },
+          "produce": false
+        },
+        {
+          "value": "10GKL",
+          "label": {
+            "en": "10GKL — Stretchy, gummy, clear, lubricative",
+            "fr": "10GKL — Étirable, gommeux, clair, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 1,
+            "stretchability": 0.9,
+            "lubricative": 0.92,
+            "transparency": 0.9,
+            "wetness": 0.92,
+            "densityFluidity": 0.72,
+            "color": 0.5,
+            "sensation": 0.92,
+            "mucusVolume": 0.8
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": "G",
+            "colour": "K",
+            "lubricative": true
+          },
+          "produce": false
+        },
+        {
+          "value": "10GY",
+          "label": {
+            "en": "10GY — Stretchy, gummy, yellow",
+            "fr": "10GY — Étirable, gommeux, jaune"
+          },
+          "vector": {
+            "threadiness": 0.95,
+            "stretchability": 0.8,
+            "lubricative": 0.53,
+            "transparency": 0.3,
+            "wetness": 0.63,
+            "densityFluidity": 0.43,
+            "color": 0.4,
+            "sensation": 0.53,
+            "mucusVolume": 0.6
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": "G",
+            "colour": "Y",
+            "lubricative": false
+          },
+          "produce": false
+        },
+        {
+          "value": "10GYL",
+          "label": {
+            "en": "10GYL — Stretchy, gummy, yellow, lubricative",
+            "fr": "10GYL — Étirable, gommeux, jaune, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.95,
+            "stretchability": 0.8,
+            "lubricative": 0.8,
+            "transparency": 0.3,
+            "wetness": 0.8,
+            "densityFluidity": 0.55,
+            "color": 0.4,
+            "sensation": 0.8,
+            "mucusVolume": 0.7
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": "G",
+            "colour": "Y",
+            "lubricative": true
+          },
+          "produce": false
         },
         {
           "value": "10K",
@@ -490,6 +1581,13 @@
             "color": 0.5,
             "sensation": 0.7,
             "mucusVolume": 0.7
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": null,
+            "colour": "K",
+            "lubricative": false
           }
         },
         {
@@ -508,6 +1606,13 @@
             "color": 0.5,
             "sensation": 1,
             "mucusVolume": 0.85
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": null,
+            "colour": "K",
+            "lubricative": true
           }
         },
         {
@@ -525,6 +1630,13 @@
             "densityFluidity": 0.65,
             "sensation": 0.85,
             "mucusVolume": 0.7
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": null,
+            "colour": null,
+            "lubricative": true
           }
         },
         {
@@ -543,7 +1655,15 @@
             "color": 0.2,
             "sensation": 0.53,
             "mucusVolume": 0.55
-          }
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": "P",
+            "colour": null,
+            "lubricative": false
+          },
+          "offer": false
         },
         {
           "value": "10R",
@@ -561,6 +1681,13 @@
             "color": 0.8,
             "sensation": 0.55,
             "mucusVolume": 0.65
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": null,
+            "colour": "R",
+            "lubricative": false
           }
         },
         {
@@ -579,7 +1706,40 @@
             "color": 0.4,
             "sensation": 0.58,
             "mucusVolume": 0.6
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": null,
+            "colour": "Y",
+            "lubricative": false
           }
+        },
+        {
+          "value": "10YL",
+          "label": {
+            "en": "10YL — Stretchy, yellow, lubricative",
+            "fr": "10YL — Étirable, jaune, lubrifiant"
+          },
+          "vector": {
+            "threadiness": 0.85,
+            "stretchability": 0.8,
+            "lubricative": 0.85,
+            "transparency": 0.3,
+            "wetness": 0.85,
+            "densityFluidity": 0.65,
+            "color": 0.4,
+            "sensation": 0.85,
+            "mucusVolume": 0.7
+          },
+          "parts": {
+            "category": "mucus",
+            "base": "10",
+            "consistency": null,
+            "colour": "Y",
+            "lubricative": true
+          },
+          "produce": false
         },
         {
           "value": "10DL",
@@ -597,6 +1757,12 @@
             "color": 0.25,
             "sensation": 0.6,
             "mucusVolume": 0.55
+          },
+          "parts": {
+            "category": "lubricative",
+            "base": "10",
+            "sensation": "D",
+            "lubricative": true
           }
         },
         {
@@ -615,6 +1781,12 @@
             "color": 0.3,
             "sensation": 0.7,
             "mucusVolume": 0.6
+          },
+          "parts": {
+            "category": "lubricative",
+            "base": "10",
+            "sensation": "S",
+            "lubricative": true
           }
         },
         {
@@ -633,6 +1805,12 @@
             "color": 0.25,
             "sensation": 0.85,
             "mucusVolume": 0.75
+          },
+          "parts": {
+            "category": "lubricative",
+            "base": "10",
+            "sensation": "W",
+            "lubricative": true
           }
         }
       ]
