@@ -472,6 +472,7 @@ function checkCompositeVsObjectType (key, composite, objectType, pathPrefix) {
  * Validate a single composite field against its matching eventType property.
  */
 function checkCompositeFieldVsPropType (key, fieldPath, fieldDef, propType) {
+  if (fieldDef.datasource != null && fieldDef.type !== 'datasource-search') throw new Error(`composite item "${key}" field "${fieldPath}" names a "datasource" but is "${fieldDef.type}", not "datasource-search"`);
   switch (fieldDef.type) {
     case 'text':
     case 'date':
@@ -504,8 +505,20 @@ function checkCompositeFieldVsPropType (key, fieldPath, fieldDef, propType) {
     case 'composite':
       checkCompositeVsObjectType(key, fieldDef.composite, propType, fieldPath);
       return;
+    case 'multi-select': {
+      // An array of chosen option values, as a `multi-select` item stores (checkItemVsEvenType).
+      if (propType.type !== 'array' || !Array.isArray(propType.items?.enum)) throw new Error(`composite item "${key}" field "${fieldPath}" is "multi-select" but the eventType property is not an array with "items.enum"`);
+      if (!Array.isArray(fieldDef.options) || fieldDef.options.length === 0) throw new Error(`composite item "${key}" field "${fieldPath}" is "multi-select" and must declare at least one option`);
+      for (const option of fieldDef.options) {
+        if (typeof option.value !== 'string') throw new Error(`composite item "${key}" field "${fieldPath}" is "multi-select" and all option values must be strings, check the following option: ` + JSON.stringify(option));
+        if (!propType.items.enum.includes(option.value)) throw new Error(`composite item "${key}" field "${fieldPath}" multi-select value "${option.value}" is not in the eventType "items.enum": ` + JSON.stringify(propType.items.enum));
+      }
+      return;
+    }
     case 'datasource-search':
       if (propType.type !== 'object') throw new Error(`composite item "${key}" field "${fieldPath}" is "datasource-search" but the eventType property is "${propType.type}" (expected "object")`);
+      if (fieldDef.options != null) throw new Error(`composite item "${key}" field "${fieldPath}" is "datasource-search" and takes no "options" (its values come from the datasource)`);
+      if (!datasourcesById[fieldDef.datasource]) throw new Error(`composite item "${key}" field "${fieldPath}" is "datasource-search" and must name a known "datasource" (got "${fieldDef.datasource}")`);
       return;
     default:
       throw new Error(`composite item "${key}" field "${fieldPath}" has unsupported type "${fieldDef.type}" for composite↔eventType validation`);

@@ -23,6 +23,9 @@ const defsSchema = {
     // `composite` carries its own nested `composite` block, so the stored event
     // content can mirror a nested eventType (e.g. medication/basic's `intake`
     // sub-object). Leaf fields keep the flat shape (label/type/canBeNull/options).
+    // A `multi-select` field stores an array of option values; a `datasource-search`
+    // field stores a datasets-service selection and names its `datasource` (4.21.0,
+    // allergy-coded's `allergen`). Rules checked in src/items.js.
     compositeField: {
       type: 'object',
       nullable: false,
@@ -32,9 +35,10 @@ const defsSchema = {
           type: 'string',
           oneOf: [
             { $ref: 'defs.json#/definitions/entryType' },
-            { enum: ['composite'] }
+            { enum: ['composite', 'multi-select', 'datasource-search'] }
           ]
         },
+        datasource: { type: 'string' },
         canBeNull: { type: 'boolean', nullable: true },
         options: {
           type: 'array',
@@ -83,8 +87,8 @@ const defsSchema = {
     // the content holds at `field` (a document's XDS typeCode), led by the coding `translate` gives for the
     // first of them the table knows (`"<system>|<code>"` → coding, the terminology the resource's binding
     // requires), else by `unknown`, or `{ from: text, field }`: no coding at all, the concept is the text the
-    // content holds at `field` (a medication or a procedure entered by its name; a MedicationStatement, a
-    // MedicationRequest or a Procedure).
+    // content holds at `field` (a medication, a procedure or an allergen entered by its name; a MedicationStatement, a
+    // MedicationRequest, a Procedure or an AllergyIntolerance).
     fhirCode: {
       if: { type: 'object', required: ['from'] },
       then: {
@@ -283,7 +287,7 @@ const defsSchema = {
     fhirMapping: {
       type: 'object',
       properties: {
-        resourceType: { enum: ['Observation', 'Condition', 'DocumentReference', 'MedicationStatement', 'MedicationRequest', 'Procedure', 'QuestionnaireResponse', 'Questionnaire'] },
+        resourceType: { enum: ['Observation', 'Condition', 'DocumentReference', 'MedicationStatement', 'MedicationRequest', 'Procedure', 'QuestionnaireResponse', 'Questionnaire', 'AllergyIntolerance'] },
         // Required or refused per resourceType, from the category table in definitions/fhir/mapping.yaml.
         category: { type: 'string', minLength: 1 },
         // Further categories of the same table a resource may carry and still import here (import only).

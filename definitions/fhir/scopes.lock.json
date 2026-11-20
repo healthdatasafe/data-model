@@ -1,6 +1,14 @@
 {
   "formatVersion": 2,
   "streams": {
+    "allergy": {
+      "pair": "AllergyIntolerance",
+      "parent": null,
+      "items": [
+        "allergy-basic",
+        "allergy-coded"
+      ]
+    },
     "body-blood-cbc-basophils": {
       "pair": "Observation|laboratory",
       "parent": "body-blood-cbc",
