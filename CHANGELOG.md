@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+Documentation only: one `settings/hds-webapp-diary` key description. No key, item, stream, eventType, option value,
+schema or `fhir` block change.
+
+### Documented: two more `rememberNever` prompt ids
+
+`rememberNever` (4.23.0) gains two prompt ids (B-2026-11-20-17): `input-method:<item key>` (keep the method chosen in
+the entry form of a convertible item other than cervical fluid, such as mood) and `unit:<item key>` (keep the unit
+chosen in the entry form of an item with variations), each kept as the item's `preferred-input-` setting on Yes. The
+item key is everything after the first `:` and only names the prompt's item; a reader ignores an id whose item key it
+does not know. When the person asks for a prompt again, a writer removes only ids of the forms the description names
+and keeps every other. `[DSET-SET-2]` validates both forms. Fable-reviewed (clean with edits, applied).
+
 ## [4.23.0] - 2026-11-21
 
 Additive: two documented `settings/hds-webapp-diary` keys (plan 134); one datasource and one vocabulary for allergy

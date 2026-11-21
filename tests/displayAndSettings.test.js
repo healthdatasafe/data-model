@@ -72,6 +72,8 @@ describe('[DSET] Display symbols and app settings types', () => {
         assert.ok(validate({ ...layout, stars: [{ id: 'cycle', items: [] }] }), JSON.stringify(validate.errors));
         // "remember it?" prompts declined for good (an id this reader does not know is kept)
         assert.ok(validate({ ...layout, rememberNever: ['charting-method', 'some-later-prompt'] }), JSON.stringify(validate.errors));
+        // the per-item prompts: an input method, a unit, and one for an item key this model does not have (kept)
+        assert.ok(validate({ ...layout, rememberNever: ['input-method:wellbeing-mood', 'unit:body-weight', 'unit:some-later-item'] }), JSON.stringify(validate.errors));
       }
     });
   });
