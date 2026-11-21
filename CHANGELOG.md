@@ -1,9 +1,9 @@
 # Changelog
 
-## [Unreleased]
+## [4.24.0] - 2026-11-21
 
-Documentation only: one `settings/hds-webapp-diary` key description. No key, item, stream, eventType, option value,
-schema or `fhir` block change.
+Additive: two registered conversation codes (plan 128) and two more documented `rememberNever` prompt ids. No item,
+stream, eventType, option value, schema or `fhir` block change; a minor release.
 
 ### Documented: two more `rememberNever` prompt ids
 
@@ -13,6 +13,24 @@ chosen in the entry form of an item with variations), each kept as the item's `p
 item key is everything after the first `:` and only names the prompt's item; a reader ignores an id whose item key it
 does not know. When the person asks for a prompt again, a writer removes only ids of the forms the description names
 and keeps every other. `[DSET-SET-2]` validates both forms. Fable-reviewed (clean with edits, applied).
+
+### Added: notice `several-sampling-dates` and error code `reading-failed` (CONVERSATION.md, plan 128)
+
+Two bare HDS codes registered in § Notice and error codes, both met by the HDS Reader on real reports.
+- **Notice `several-sampling-dates`** (`about` the document). A cumulative report prints one value column per sampling
+  day, and the contact proposes no value from it: nothing proposed, no question, `done` with zero counts, and no date
+  in the notice (R6). It is sent instead of `no-result-found`, never with it; it is not `which-date`, which asks for the
+  one day all the waiting values share. Until now the Reader sent `no-result-found`, which reads as "no result printed".
+- **`task-status.errorCode` `reading-failed`.** The attachment is of a type the contact reads, but fetching or reading
+  it failed. The contact retries on its own, and a later `task-status` supersedes the error (R4).
+- **Wording tightened on two 4.22.0 codes, meaning unchanged:**
+  - `no-result-found`: the read completed and recognised no line; a failed read is `reading-failed`.
+  - `no-attachment`: no attachment, or none of a type the contact reads; not retried.
+- **Schema and tests.** The alert schema is unchanged: codes were already open patterns, so an app that does not know
+  them still shows a generic text (R8). `[CNV-DOC-9]` pins the registered codes, checks that every table row is parsed,
+  and validates each code in its alert.
+- **Review.** Fable-reviewed ("ship with edits", all taken). The HDS Reader engine switches to the new notice once
+  hds-webapp renders it.
 
 ## [4.23.0] - 2026-11-21
 

@@ -86,9 +86,11 @@ const KINDS = Object.keys(VALID);
 const VALID_ALERTS = [
   { kind: 'task-status', about: DOC, status: 'received', attempt: 1 },
   { kind: 'task-status', about: DOC, status: 'awaiting-answers', attempt: 1, counts: { proposed: 12, questions: 1, keptAside: 2, dropped: 3 } },
-  { kind: 'task-status', about: DOC, status: 'error', attempt: 2, errorCode: 'document-unreadable' },
+  { kind: 'task-status', about: DOC, status: 'error', attempt: 2, errorCode: 'x-acme-scanner-offline' },
   { kind: 'notice', code: 'no-result-found', about: DOC },
   { kind: 'notice', code: 'typed-text-not-read' },
+  { kind: 'notice', code: 'several-sampling-dates', about: DOC },
+  { kind: 'task-status', about: DOC, status: 'error', attempt: 1, errorCode: 'reading-failed' },
   { kind: 'question', eventId: 'ckq3w8n1x0011', about: DOC },
   { kind: 'proposed-values', about: DOC, count: 12 },
   { kind: 'answer', eventId: 'ckq3w8n1x0030', inReplyTo: 'ckq3w8n1x0012', about: DOC }
@@ -504,6 +506,24 @@ describe('[CNV] conversation', () => {
         assert.strictEqual(a.ackRequired, undefined);
         assert.deepStrictEqual({ title: a.title, body: a.body }, words[a.hds.kind]);
       }
+    });
+
+    it('[CNV-DOC-9] the registered notice and error codes are exactly these, bare, and valid in their alert', () => {
+      const text = fs.readFileSync(path.join(__dirname, '../documentation/CONVERSATION.md'), 'utf-8');
+      const section = text.slice(text.indexOf('### Notice and error codes'), text.indexOf('## Rules'));
+      const notices = [...section.matchAll(/^\| `([a-z0-9-]+)` \| (the document|none) \|/gm)].map((m) => [m[1], m[2]]);
+      const errors = [...section.matchAll(/^\| `([a-z0-9-]+)` \| (?!the document \||none \|)[^|]+\|\s*$/gm)].map((m) => m[1]);
+      // every code row is parsed: the rows starting with a code, less the two header rows
+      const rows = section.split('\n').filter((l) => l.startsWith('| `')).length - 2;
+      assert.strictEqual(notices.length + errors.length, rows, 'a table row matched neither pattern');
+      assert.deepStrictEqual(notices, [['no-result-found', 'the document'], ['several-sampling-dates', 'the document'], ['typed-text-not-read', 'none']]);
+      assert.deepStrictEqual(errors, ['no-attachment', 'write-failed', 'reading-failed']);
+      const validate = new AjvDraft04({ strict: false, logger: false }).compile(ALERT);
+      for (const [code, about] of notices) {
+        assert.ok(!code.startsWith('x-'), code + ' is a bare HDS code');
+        assert.ok(validate(about === 'none' ? { kind: 'notice', code } : { kind: 'notice', code, about: DOC }), JSON.stringify(validate.errors));
+      }
+      for (const errorCode of errors) assert.ok(validate({ kind: 'task-status', about: DOC, status: 'error', attempt: 1, errorCode }), JSON.stringify(validate.errors));
     });
 
     it('[CNV-DOC-5] no description says an answer to a question writes a value', () => {

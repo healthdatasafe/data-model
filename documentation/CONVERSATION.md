@@ -86,7 +86,8 @@ app deletes a child whose relationship no longer exists.
 5. The contact reads the answer, and posts `task-status` `done` once nothing waits.
 6. Retention (§ R10) removes what is no longer needed, on both accounts.
 
-A notice may come at any step; `no-result-found` ends the work on a document with no question (§ Notice and error codes).
+A notice may come at any step; `no-result-found` and `several-sampling-dates` end the work on a document with no
+question (§ Notice and error codes).
 
 ## `message/hds-conversation-v1`
 
@@ -197,13 +198,15 @@ unknown code is shown with a generic text.
 
 | `notice.code` | `about` | Meaning |
 |---|---|---|
-| `no-result-found` | the document | No result line could be read: nothing is proposed, no question is asked, the work ends `done` with zero counts. Not "not a lab report": a failed read of a lab scan has none either. |
+| `no-result-found` | the document | The contact read the document and recognised no result line: nothing is proposed, no question is asked, the work ends `done` with zero counts. Not "not a lab report": a scan in which no line was recognised has none either. A read that failed is the error `reading-failed`, not this notice. |
+| `several-sampling-dates` | the document | The document prints its results for several sampling days, one value column per day (a cumulative report), and the contact proposes no value from it: it does not tell which value was taken which day. Nothing is proposed, no question is asked, the work ends `done` with zero counts. Sent instead of `no-result-found`, never both for one read. A contact that reads each column under its own day sends neither. Not `which-date`, which asks for the one day all the waiting values share. The notice names no date (R6). |
 | `typed-text-not-read` | none | The contact does not read typed text (§ Chat). At most one per relationship per 24 h. |
 
 | `task-status.errorCode` | Meaning |
 |---|---|
-| `no-attachment` | The shared document has no attachment the contact can read. |
+| `no-attachment` | The shared document has no attachment, or none of a type the contact reads. Not retried. |
 | `write-failed` | The contact could not write its items on the person's account. |
+| `reading-failed` | The document has an attachment of a type the contact reads, but fetching or reading it failed. The contact retries on its own: a later `task-status` (another `attempt`) supersedes the error (R4), and the person has nothing to do. The error stands once the contact stops retrying. |
 
 ## Rules
 
