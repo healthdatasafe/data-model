@@ -55,15 +55,28 @@ function newestUpdatedAt (filePaths, fallbackPath) {
 }
 
 /**
+ * `pack-latest.json` keeps the pack of this converter version for good, without `modelVersion`: as
+ * published before the versioned packs. hds-lib before 2.60.0 fetches only that URL and ignores
+ * `produce: false`; newer hds-lib fetches `pack-{v}.json`, v the highest of the index's `versions` it
+ * supports. The published packs are pinned by tests/fixtures/converter-packs.sha256.json and checked
+ * again by scripts/deploy.sh against the deployed files.
+ */
+const LEGACY_PACK_VERSION = 'v0';
+
+/** A converter or model version name: `v<number>`. */
+const VERSION_NAME = /^v\d+$/;
+
+/**
  * Loads all converter definitions from definitions/converters/{itemKey}/
  * Each item-key directory contains:
  *   converter/{version}.yaml — dimensions, weights, helpers
  *   models/{sourceKey}/{version}.json — observations + vectors per method
  *
  * Publishes:
- *   dist/converters/pack.json — index of all converters
+ *   dist/converters/pack.json — index of all converters (`latestVersion`, `versions` per item key)
  *   dist/converters/{itemKey}/index.json — versions with status
- *   dist/converters/{itemKey}/pack-latest.json — bundled converter config + all models
+ *   dist/converters/{itemKey}/pack-{version}.json — bundled converter config + models, per converter version
+ *   dist/converters/{itemKey}/pack-latest.json — the v0 pack, frozen (legacy URL, see LEGACY_PACK_VERSION)
  */
 
 const converterIndex = {};
@@ -106,6 +119,8 @@ for (const itemKey of itemKeys) {
     }
   }
 
+  checkVersions(itemKey, converterVersions, models);
+
   // Build version index
   const versions = {};
   for (const version of Object.keys(converterVersions)) {
@@ -115,47 +130,89 @@ for (const itemKey of itemKeys) {
     };
   }
 
-  // Build pack-latest: latest converter config + all models at latest version
-  const latestVersion = Object.keys(converterVersions).sort().pop();
-  let packLatest = null;
-  if (latestVersion) {
-    const latestConfig = converterVersions[latestVersion];
-    const latestModels = [];
-    for (const sourceKey of Object.keys(models)) {
-      const sourceVersions = Object.keys(models[sourceKey]).sort();
-      const latestModelVersion = sourceVersions[sourceVersions.length - 1];
-      if (latestModelVersion) {
-        latestModels.push(models[sourceKey][latestModelVersion]);
-      }
-    }
-    const methods = checkTemperatureRules(itemKey, latestConfig, latestModels);
-    packLatest = {
-      itemKey,
-      converterVersion: latestVersion,
-      engine: latestConfig.engine,
-      eventType: latestConfig.eventType,
-      dimensionNames: latestConfig.dimensionNames,
-      dimensions: latestConfig.dimensions,
-      colorToRGB: latestConfig.colorToRGB || undefined,
-      temperatureRules: latestConfig.temperatureRules || undefined,
-      methods
-    };
+  // One pack per converter version: pack-{version}.json
+  const packs = {};
+  for (const version of Object.keys(converterVersions)) {
+    packs[version] = buildPack(itemKey, version, converterVersions[version], models);
   }
+  const sortedVersions = Object.keys(converterVersions).sort(byVersion);
 
   converterIndex[itemKey] = {
-    latestVersion,
+    latestVersion: sortedVersions[sortedVersions.length - 1],
+    versions: sortedVersions,
     updatedAt: newestUpdatedAt(sourcePaths, itemDir)
   };
 
   // Store for publishing
   converterIndex[itemKey]._versions = versions;
-  converterIndex[itemKey]._packLatest = packLatest;
+  converterIndex[itemKey]._packs = packs;
 }
 
 module.exports = {
   toBePublished,
-  checkTemperatureRules
+  checkTemperatureRules,
+  checkVersions,
+  buildPack,
+  legacyPackOf,
+  byVersion
 };
+
+/** Orders version names "v0", "v1", …, "v10" by their number. */
+function byVersion (a, b) {
+  return Number(a.slice(1)) - Number(b.slice(1));
+}
+
+/**
+ * Version names are `v<number>`; a converter yaml's `version:` is its file name; a model version has a converter
+ * version of the same name (else it would be in no pack, silently).
+ */
+function checkVersions (itemKey, converterVersions, models) {
+  const fail = (msg) => { throw new Error(`converter "${itemKey}": ${msg}`); };
+  for (const [version, config] of Object.entries(converterVersions)) {
+    if (!VERSION_NAME.test(version)) fail(`converter/${version}.yaml: a version is named v<number>`);
+    if (config.version !== version) fail(`converter/${version}.yaml declares version "${config.version}"`);
+  }
+  for (const [sourceKey, versions] of Object.entries(models)) {
+    for (const version of Object.keys(versions)) {
+      if (!VERSION_NAME.test(version)) fail(`models/${sourceKey}/${version}.json: a version is named v<number>`);
+      if (!converterVersions[version]) fail(`models/${sourceKey}/${version}.json has no converter/${version}.yaml: a new model version comes with the converter version of the same name`);
+    }
+  }
+}
+
+/** The legacy `pack-latest.json`: the v0 pack as published before the versioned packs, without `modelVersion`. */
+function legacyPackOf (pack) {
+  return { ...pack, methods: pack.methods.map(({ modelVersion, ...m }) => m) };
+}
+
+/**
+ * The pack of one converter version: its config, and each method at its newest model version not
+ * above the converter version. Each method carries that `modelVersion`.
+ *
+ * A model version is therefore published only from the converter version of the same name on: a
+ * method changed in a way older readers cannot take (Creighton v1: codes with `produce: false`,
+ * which hds-lib before 2.60.0 ignores) gets a new model version and a new converter version, and the
+ * packs of older converter versions keep the method as it was.
+ */
+function buildPack (itemKey, version, config, models) {
+  const packModels = [];
+  for (const sourceKey of Object.keys(models)) {
+    const modelVersion = Object.keys(models[sourceKey]).filter(v => byVersion(v, version) <= 0).sort(byVersion).pop();
+    if (modelVersion) packModels.push({ ...models[sourceKey][modelVersion], modelVersion });
+  }
+  const methods = checkTemperatureRules(itemKey, config, packModels);
+  return {
+    itemKey,
+    converterVersion: version,
+    engine: config.engine,
+    eventType: config.eventType,
+    dimensionNames: config.dimensionNames,
+    dimensions: config.dimensions,
+    colorToRGB: config.colorToRGB || undefined,
+    temperatureRules: config.temperatureRules || undefined,
+    methods
+  };
+}
 
 /**
  * Check a converter's per-method temperature rule declaration (3.24.0) and return the methods,
@@ -204,14 +261,25 @@ function toBePublished () {
       content: { itemKey, versions: entry._versions }
     });
 
-    // pack-latest.json — bundled converter + models
-    if (entry._packLatest) {
+    // pack-{version}.json — bundled converter + models, one per converter version
+    for (const [version, pack] of Object.entries(entry._packs)) {
       files.push({
-        title: `Converter: ${itemKey} — latest pack`,
+        title: `Converter: ${itemKey} — pack ${version}`,
+        path: `converters/${itemKey}/`,
+        filename: `pack-${version}.json`,
+        type: 'json',
+        content: pack
+      });
+    }
+
+    // pack-latest.json — the v0 pack, frozen: hds-lib before 2.60.0 reads only this URL
+    if (entry._packs[LEGACY_PACK_VERSION]) {
+      files.push({
+        title: `Converter: ${itemKey} — pack ${LEGACY_PACK_VERSION} (legacy URL)`,
         path: `converters/${itemKey}/`,
         filename: 'pack-latest.json',
         type: 'json',
-        content: entry._packLatest
+        content: legacyPackOf(entry._packs[LEGACY_PACK_VERSION])
       });
     }
   }
@@ -221,6 +289,7 @@ function toBePublished () {
   for (const itemKey of Object.keys(converterIndex)) {
     packContent[itemKey] = {
       latestVersion: converterIndex[itemKey].latestVersion,
+      versions: converterIndex[itemKey].versions,
       updatedAt: converterIndex[itemKey].updatedAt
     };
   }

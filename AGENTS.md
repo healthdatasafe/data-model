@@ -73,6 +73,21 @@ When multiple observation methods measure the same underlying construct (e.g. 15
 
 This is not about questionnaires. It is about sources / methods of observation converging on a single normalized representation.
 
+**Versions.** The build publishes `pack-{version}.json` per converter version (`converter/vN.yaml`); its methods are the
+newest `models/<method>/vM.json` with M ≤ N, each tagged `modelVersion`. The index (`converters` in `pack.json`) lists
+`versions`; hds-lib 2.60.0+ fetches the highest it supports (its `SUPPORTED_CONVERTER_VERSIONS`), never a newer one.
+`pack-latest.json` is the v0 pack without `modelVersion`, frozen: hds-lib before 2.60.0 reads only that URL.
+
+- **A published pack never changes.** `tests/fixtures/converter-packs.sha256.json` pins each one and `scripts/deploy.sh`
+  refuses a build that changes a deployed pack. So any method change (a label, a new option, a vector, a new method) is
+  a new model version **and** a new converter version of the same name, never an edit of a published file; the build
+  refuses a model version with no converter version. Model versions are sparse: a method's next version may be v3.
+- A new converter version keeps the dimensions and weights of the previous ones unless it says otherwise, so vectors
+  stored under `engineVersion` v0 and v1 are comparable. `source.modelVersion` names the method file that produced the
+  code (`models/<source.key>/<modelVersion>.json`).
+- An item's `converter-engine.version` is the engine's initial version, not the pack selector.
+- Creighton v1 / converter v1 (plan 131) is the first case; hds-lib supports it from 2.60.0.
+
 ### 6b. ⚑ `description` is short, and written for the end user
 
 **An item's `description` is user-facing UI text, not a spec note.** It is rendered directly under the field label in every consuming app, to a patient or a clinician — not to the person maintaining this repo. Keep it to **one short sentence**.

@@ -3,7 +3,10 @@
 ## [Unreleased]
 
 Additive: two documented `settings/hds-webapp-diary` keys (plan 134); one datasource and one vocabulary for allergy
-reactions (plan 133). No item, stream, eventType, option value or `fhir` block change. A minor release.
+reactions (plan 133); cervical-fluid converter v1, the Creighton notation as the book's grammar generates it, with one
+converter pack per version (plan 131). No item, stream, option value or `fhir` block change; one eventType description
+(`source.annotations`). `pack-latest.json` is unchanged (JSON-equal to the pack published before); the converter
+index gains `versions`, and cervical-fluid's `latestVersion` becomes `v1`. A minor release.
 
 ### Added: `stars` and `rememberNever` documented on `settings/hds-webapp-diary`
 
@@ -31,6 +34,34 @@ its values.
   the binding path `reactions.severity` on `allergy/coded-v1` and `allergy/basic-v1`, FHIR code = the stored value.
 - The vocabulary loader resolves a path through an array of objects (`reactions.severity`), not only an array at
   its end. Fable-reviewed (ship with fixes, applied).
+
+### Added: one converter pack per converter version
+- `dist/converters/{itemKey}/pack-{version}.json` for every converter version. The pack of converter vN holds each
+  method at its newest model version not above vN, and every method carries that `modelVersion`.
+- The converter index (`converters` in `pack.json`) lists `versions` per item key. hds-lib 2.60.0 fetches the highest
+  one it supports; `latestVersion` is informational.
+- `pack-latest.json` is the v0 pack without `modelVersion`, as published before, and stays so: hds-lib before 2.60.0
+  fetches only that URL.
+- A published pack is frozen: `tests/fixtures/converter-packs.sha256.json` pins each one, and `scripts/deploy.sh`
+  refuses a build that changes or drops a deployed `pack-latest.json` / `pack-vN.json`. The build refuses a version not
+  named `v<number>`, a converter yaml whose `version` is not its file name, and a model version with no converter
+  version of the same name (AGENTS.md §6).
+- Cervical-fluid converter **v1** (`converter/v1.yaml`): same dimensions, weights, colours and temperature rules as v0.
+  Its pack differs from v0 only by Creighton.
+
+### Added: Creighton model v1
+- `models/creighton/v1.json`, a byte copy of model-cervical-fluid `src/definitions/v0/creighton.json`: 106 codes
+  from the book's grammar and the practitioner's answers. The 36 codes of v0 keep their vectors. The 70 new codes
+  are `produce: false` (offered for entry, never produced by a conversion); 11 of the 36 are `offer: false` (not
+  offered for entry, still read and produced). Every option has
+  `parts` (its parsed code), and the method has a `notation` block (the rows a picker shows, and the frequency
+  annotation X1, X2, X3, AD, required with a code).
+- `models/creighton/v0.json` is unchanged (the 36 codes, model-cervical-fluid `tools/creighton-original-v0.json`).
+
+### Changed: `vulva-mucus-inspect/9d-vector` documents `source.annotations`
+- `content.source.annotations`, an object of strings: qualifiers of the record in the source method that the vector
+  does not carry (Creighton `frequency`). Scoped to `source.key`; written at entry only; a reader that does not
+  know it keeps it as is.
 
 ## [4.22.0] - unreleased
 

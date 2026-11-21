@@ -292,7 +292,7 @@ Observation with a local code, or leave it out.
 
 The cervical-fluid converter declares, for each method, the coverline rule its charts use. It is data only: the rule
 parameters and their sources are in model-cervical-fluid (`references/rules/coverline-rules.json`, the method
-specification), and the computation is hds-lib's. Each method of `converters/cervical-fluid/pack-latest.json` carries
+specification), and the computation is hds-lib's. Each method of every cervical-fluid pack (`converters/cervical-fluid/pack-{version}.json`) carries
 `temperatureRule`, a key of the pack's `temperatureRules` or `none`:
 
 | `temperatureRule` | Methods |

@@ -158,6 +158,22 @@ if (c === 0 && strip(next) !== strip(live)) { console.error("ERROR: the pack con
   exit 1
 fi
 
+# A published converter pack never changes (plan 131): hds-lib before 2.60.0 reads
+# converters/<key>/pack-latest.json, newer ones pack-<v>.json, and store builds can't
+# be updated. Refuse any deployed pack file whose content differs in the new build,
+# or that the new build no longer has. A change goes in a new converter version.
+if ! git -C dist ls-tree -r --name-only HEAD converters | grep -E '/pack-(latest|v[0-9]+)\.json$' | while read -r f; do
+  if [ ! -f "dist/$f" ]; then echo "ERROR: $f is deployed but no longer built."; exit 1; fi
+  git -C dist show "HEAD:$f" | node -e '
+const live = JSON.parse(require("fs").readFileSync(0, "utf8"));
+const next = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"));
+if (JSON.stringify(live) !== JSON.stringify(next)) { console.error("ERROR: " + process.argv[1] + " differs from the deployed one; a published pack is frozen."); process.exit(1); }
+' "dist/$f" || exit 1
+done; then
+  echo "Refusing to deploy."
+  exit 1
+fi
+
 # Sanity-check build output before committing — a silent build failure that
 # emptied dist/ but produced nothing must not be committed
 # (broke demo-app.datasafe.dev on 2026-05-04, see _macro/_plans/_TEMP/_done/fix-demo-app-spa-404-loop.md).
