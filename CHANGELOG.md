@@ -2,7 +2,9 @@
 
 ## [Unreleased]
 
-Planned as 4.26.0 (plan 128). Additive: one conversation kind, two question codes, one notice code, a basis value, two
+## [4.26.0] - 2026-11-21
+
+Plan 128. Additive: one conversation kind, two question codes, one notice code, a basis value, two
 answer fields, three `clientData` keys; no item, stream or alert-kind change; a minor release.
 
 ### Added: a document's date and kind, asked in the conversation (CONVERSATION.md, DOCUMENTS.md)
