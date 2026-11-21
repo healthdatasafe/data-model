@@ -1,0 +1,16 @@
+{
+  "$id": "https://model.datasafe.dev/json-schemas/hds-document-values.json",
+  "title": "HDS clientData.hdsDocumentValues",
+  "description": "On a document event (file/xds-v1): her value events read from this document, keyed by event id, with their role, source (the value's clientData.related names the document). An index for readers, written by her app; ids only, never a value. A reader skips an id it cannot read, and an entry whose role it does not know. A value she already had that the document also prints is not listed here: it carries hdsPrintedIn. See documentation/PROVENANCE.md.",
+  "type": "object",
+  "maxProperties": 1000,
+  "additionalProperties": false,
+  "patternProperties": {
+    "^[a-zA-Z0-9_-]{1,64}$": {
+      "type": "string",
+      "enum": [
+        "source"
+      ]
+    }
+  }
+}

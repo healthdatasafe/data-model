@@ -1,0 +1,16 @@
+{
+  "$id": "https://model.datasafe.dev/json-schemas/hds-document-pending.json",
+  "title": "HDS clientData.hdsDocumentPending",
+  "description": "On a document event (file/xds-v1): the fields she has not confirmed yet. time: the event time is the moment she added the document, not its date; kind: class and type are the kind other as a placeholder. Removed field by field when she sets or confirms it; null when none is left. See documentation/DOCUMENTS.md.",
+  "type": "array",
+  "minItems": 1,
+  "maxItems": 2,
+  "uniqueItems": true,
+  "items": {
+    "type": "string",
+    "enum": [
+      "time",
+      "kind"
+    ]
+  }
+}

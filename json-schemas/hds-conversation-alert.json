@@ -133,7 +133,7 @@
       }
     },
     {
-      "description": "proposed-values (contact to person: proposed-value events for one document were written on the received child. A wake-up only: the person's app lists the child by about, never trusts count.)",
+      "description": "proposed-values (contact to person: proposed-value (or proposed-document) events for one document were written on the received child. A wake-up only: the person's app lists the child by about, never trusts count.)",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -155,7 +155,7 @@
           "description": "The event id of the document."
         },
         "count": {
-          "description": "How many proposed-value events were written for it in this batch.",
+          "description": "How many proposed-value and proposed-document events were written for it in this batch.",
           "type": "integer",
           "minimum": 1
         }

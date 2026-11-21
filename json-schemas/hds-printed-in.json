@@ -1,0 +1,16 @@
+{
+  "$id": "https://model.datasafe.dev/json-schemas/hds-printed-in.json",
+  "title": "HDS clientData.hdsPrintedIn",
+  "description": "On a value event already in her record: the document events (file/xds-v1) that also print this value, keyed by event id, value true. Not its source: the value keeps its own related, sourceKey and anchor. Written by her app when her conversation finds the value already there (an automatic duplicate). See documentation/PROVENANCE.md.",
+  "type": "object",
+  "maxProperties": 100,
+  "additionalProperties": false,
+  "patternProperties": {
+    "^[a-zA-Z0-9_-]{1,64}$": {
+      "type": "boolean",
+      "enum": [
+        true
+      ]
+    }
+  }
+}

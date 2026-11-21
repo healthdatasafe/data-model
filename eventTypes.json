@@ -6736,7 +6736,7 @@
       ]
     },
     "message/hds-conversation-v1": {
-      "description": "One structured item of a conversation between the person and a contact (a doctor, a reading service such as the HDS Reader, a third party's counterparty), on the person's account in the relationship's child of conversation-items: the contact's questions and proposed values (direction received), the person's answers (direction sent). content.kind discriminates; each kind is a closed object. Every event carries clientData.related.<document event id>: true (about), and every event id in content is mirrored there. Proposed values hold what the document prints, so a grant on the child reads them; nothing of them travels over CMC (alerts carry ids and counts only). Supersedes message/hds-reader-v1. See documentation/CONVERSATION.md.",
+      "description": "One structured item of a conversation between the person and a contact (a doctor, a reading service such as the HDS Reader, a third party's counterparty), on the person's account in the relationship's child of conversation-items: the contact's questions, proposed values and proposed document date and kind (direction received), the person's answers (direction sent). content.kind discriminates; each kind is a closed object. Every event carries clientData.related.<document event id>: true (about), and every event id in content is mirrored there. Proposed values hold what the document prints, so a grant on the child reads them; nothing of them travels over CMC (alerts carry ids and counts only). Supersedes message/hds-reader-v1. See documentation/CONVERSATION.md.",
       "type": "object",
       "required": [
         "kind"
@@ -6765,18 +6765,18 @@
               "pattern": "^[a-zA-Z0-9_-]+$"
             },
             "code": {
-              "description": "What is asked, a code the app renders. Bare codes are HDS's and listed in documentation/CONVERSATION.md (which-specimen, which-unit, which-analyte, which-date, is-fasting, is-this-yours); a third party's own codes start with x-<vendor>-. An unknown code is shown, not answerable.",
+              "description": "What is asked, a code the app renders. Bare codes are HDS's and listed in documentation/CONVERSATION.md (which-specimen, which-unit, which-analyte, which-date, is-fasting, is-this-yours, which-document-kind, which-document-date); a third party's own codes start with x-<vendor>-. An unknown code is shown, not answerable.",
               "type": "string",
               "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
             },
             "candidateId": {
-              "description": "The candidate the question is about, the candidateId of a proposed-value on the same child. Absent for a question about the whole document.",
+              "description": "The candidate the question is about, the candidateId of a proposed-value (or, for which-document-kind and which-document-date, of a proposed-document) on the same child. Absent for a question about the whole document.",
               "type": "string",
               "maxLength": 64,
               "pattern": "^[a-zA-Z0-9_-]+$"
             },
             "options": {
-              "description": "The choices offered, as codes the app labels (a specimen, a UCUM code, an item key, yes, no). Absent for which-date (the person enters a date) and is-this-yours (answered with confirm or not-mine).",
+              "description": "The choices offered, as codes the app labels (a specimen code, a UCUM code, an item key, a document kind key, yes, no). Absent for which-date and which-document-date (the person enters a date) and is-this-yours (answered with confirm or not-mine).",
               "type": "array",
               "maxItems": 16,
               "uniqueItems": true,
@@ -6787,7 +6787,7 @@
               }
             },
             "context": {
-              "description": "What the document prints that the person needs to answer: identity (is-this-yours only), dates (which-date only), anchor (where the identity is printed; is-this-yours only in this version). Copied verbatim from the document's text layer, never produced or completed by a model.",
+              "description": "What the document prints that the person needs to answer: identity (is-this-yours only), dates (which-date and which-document-date only), anchor (where the identity is printed; is-this-yours only in this version). Copied verbatim from the document's text layer, never produced or completed by a model.",
               "type": "object",
               "additionalProperties": false,
               "minProperties": 1,
@@ -6818,7 +6818,7 @@
                   }
                 },
                 "dates": {
-                  "description": "which-date only: the candidate sampling dates the document prints (never the birth date), so the person can pick one without the document. Partial dates are not listed.",
+                  "description": "which-date and which-document-date only: the dates the document prints (never the birth date), so the person can pick one without the document. Partial dates are not listed.",
                   "type": "array",
                   "minItems": 1,
                   "maxItems": 6,
@@ -7228,7 +7228,183 @@
           }
         },
         {
-          "description": "answer (the person's app, on sent): the person's answer to a proposed value or a question. Only confirm and correct on a proposed value write a value: her app writes it first and lists it in written. An answer to a question (choose included) writes nothing.",
+          "description": "proposed-document (the contact, on received): the date and the kind the contact proposes for a document the person added without them (clientData.hdsDocumentPending on the document event, documentation/DOCUMENTS.md). Her app applies a field once she confirms, and only while that field is still pending. Carries a pack kind key and a date, nothing printed.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "about",
+            "candidateId",
+            "proposal",
+            "status"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "proposed-document"
+              ]
+            },
+            "about": {
+              "description": "The event id of the document (a file/xds-v1 event shared in the relationship) the date and kind are proposed for, mirrored in clientData.related.",
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            },
+            "candidateId": {
+              "description": "Opaque id of this proposal, derived by the contact from the document, its attachment and the proposal: the same on every re-read while the proposal is the same, a new one when it differs. Never parsed.",
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            },
+            "replaces": {
+              "description": "The candidateId of a proposed-document of the same document that this one replaces (the contact learned more, e.g. her answer to which-date); the replaced one is no longer confirmable.",
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            },
+            "proposal": {
+              "description": "What the contact proposes: the document's kind (documentKind), its date (time and timePrecision), or both. Her app writes a field only while it is pending on the document.",
+              "type": "object",
+              "additionalProperties": false,
+              "minProperties": 1,
+              "dependencies": {
+                "time": [
+                  "timePrecision"
+                ],
+                "timePrecision": [
+                  "time"
+                ]
+              },
+              "properties": {
+                "documentKind": {
+                  "description": "A documentKinds key of the pack (documentation/DOCUMENTS.md), never deprecated: her app copies its class and type Codings into the document. Not a Coding: nothing the contact writes reaches the document but a key and a date.",
+                  "type": "string",
+                  "maxLength": 64,
+                  "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                },
+                "time": {
+                  "description": "The document's date (DOCUMENTS.md, Which date is a document's date), Unix seconds, 12:00 UTC at the start of its period (PARTIAL-DATES.md).",
+                  "type": "number"
+                },
+                "timePrecision": {
+                  "description": "How much of time is known. Never unknown: a contact that does not know the date proposes none.",
+                  "type": "string",
+                  "enum": [
+                    "day",
+                    "month",
+                    "year"
+                  ]
+                }
+              }
+            },
+            "anchor": {
+              "description": "Where the proposed date is printed in the document: the document, an attachment, a page and a box, nothing of what is printed there (documentation/PROVENANCE.md).",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "attachmentId",
+                "page"
+              ],
+              "properties": {
+                "eventId": {
+                  "description": "The id of the file/xds-v1 document event, the one clientData.related names (it stays there for queries). Absent on anchors written before 4.25.0: the document is then the one related names.",
+                  "type": "string",
+                  "maxLength": 64,
+                  "pattern": "^[a-zA-Z0-9_-]+$"
+                },
+                "attachmentId": {
+                  "description": "The id of the document event's attachment (Pryv attachments[].id) the value was read from.",
+                  "type": "string",
+                  "maxLength": 64,
+                  "pattern": "^[a-zA-Z0-9_-]+$"
+                },
+                "page": {
+                  "description": "Page number within that attachment, from 1 (an image is page 1).",
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "bbox": {
+                  "description": "[x, y, width, height] of the printed line the value was read from, in percent of the page as displayed (x and width of its width, y and height of its height), origin at the top left. Absent when the reader has no box it trusts.",
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    }
+                  ],
+                  "additionalItems": false,
+                  "minItems": 4,
+                  "maxItems": 4
+                }
+              }
+            },
+            "status": {
+              "description": "clear: the date and kind are read with no doubt; check: one of them is a fallback (a report date for a lab report, the sampling date not printed). Both need her tap.",
+              "type": "string",
+              "enum": [
+                "clear",
+                "check"
+              ]
+            },
+            "extraction": {
+              "description": "The program that read the document, when one did. Optional: a person (a doctor) may propose a date and a kind; no vouching applies, since only a pack key and a date reach the document, on her tap.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "engine",
+                "engineVersion",
+                "kbVersion",
+                "backend"
+              ],
+              "properties": {
+                "engine": {
+                  "description": "Stable id of the reading program, lowercase (hds-reader); the <tool> of the sourceKey it writes.",
+                  "type": "string",
+                  "maxLength": 64,
+                  "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+                },
+                "engineVersion": {
+                  "description": "The program's version, semver MAJOR.MINOR.PATCH with an optional pre-release.",
+                  "type": "string",
+                  "maxLength": 64,
+                  "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$"
+                },
+                "kbVersion": {
+                  "description": "The version of the knowledge-base pack the program used, semver MAJOR.MINOR.PATCH.",
+                  "type": "string",
+                  "maxLength": 32,
+                  "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+                },
+                "backend": {
+                  "description": "Opaque id of the program's backend configuration record that read the printed line, never parsed (for example <runtime>:<model>, or text-layer when no backend ran). No spaces; never a URL, a host name, a device name or a user name.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+-]*$"
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "answer (the person's app, on sent): the person's answer to a proposed value, a proposed document or a question. Only confirm and correct on a proposed value write a value: her app writes it first and lists it in written. Confirm and correct on a proposed document update the document: her app lists the fields it wrote in applied, never in written. An answer to a question (choose included) writes nothing. note carries her own comment, removed by her app after the work on the document is done.",
           "type": "object",
           "additionalProperties": false,
           "required": [
@@ -7245,7 +7421,7 @@
               ]
             },
             "inReplyTo": {
-              "description": "The id of the proposed-value or question event answered, mirrored in clientData.related.",
+              "description": "The id of the proposed-value, proposed-document or question event answered, mirrored in clientData.related.",
               "type": "string",
               "maxLength": 64,
               "pattern": "^[a-zA-Z0-9_-]+$"
@@ -7288,11 +7464,11 @@
               "pattern": "^[!-~]{1,128}$"
             },
             "time": {
-              "description": "With an answer to which-date: the date the person gives, Unix seconds, placed as PARTIAL-DATES.md places it for timePrecision.",
+              "description": "With an answer to which-date or which-document-date: the date the person gives, Unix seconds, placed as PARTIAL-DATES.md places it for timePrecision.",
               "type": "number"
             },
             "timePrecision": {
-              "description": "With an answer to which-date: how much of time is known.",
+              "description": "With an answer to which-date or which-document-date: how much of time is known.",
               "type": "string",
               "enum": [
                 "day",
@@ -7302,15 +7478,16 @@
               ]
             },
             "basis": {
-              "description": "An answer the person's app gave without a tap, and why. profile-match: a confirm on is-this-yours, the printed identity matches her profile. existing-value: a duplicate on proposed values, each already in her record (same item, same day, equal value; documentation/CONVERSATION.md, A value she already has). Absent when she answered herself.",
+              "description": "An answer the person's app gave without a tap, and why. profile-match: a confirm on is-this-yours, the printed identity matches her profile. existing-value: a duplicate on proposed values, each already in her record (same item, same day, equal value; documentation/CONVERSATION.md, A value she already has). not-pending: a skip on a proposed document none of whose proposed fields is pending on the document any more (4.26.0). Absent when she answered herself.",
               "type": "string",
               "enum": [
                 "profile-match",
-                "existing-value"
+                "existing-value",
+                "not-pending"
               ]
             },
             "written": {
-              "description": "The value events her app wrote for this answer, one per candidate, mirrored in clientData.related: the contact's record that a candidate is written (it cannot read the event), and her app's list of what to delete after a later not-mine.",
+              "description": "The value events her app wrote for this answer, one per candidate, mirrored in clientData.related: the contact's record that a candidate is written (it cannot read the event), and her app's list of what to delete after a later not-mine. Never on an answer to a proposed document (applied).",
               "type": "array",
               "minItems": 1,
               "maxItems": 200,
@@ -7337,6 +7514,26 @@
                   }
                 }
               }
+            },
+            "applied": {
+              "description": "With confirm or correct on a proposed document: the document's fields her app wrote (time, kind), only those still pending (4.26.0). Never with written.",
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "time",
+                  "kind"
+                ]
+              }
+            },
+            "note": {
+              "description": "Her own comment on what she answers, plain text, on any action (a comment alone is a skip with a note). Never changes the action's meaning, never in an alert, never echoed by the contact; her app removes it once the work on the document is done (documentation/CONVERSATION.md, R10).",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
             }
           }
         }

@@ -1,9 +1,9 @@
 {
-  "commit": "6e662086c3ede6cf260ba9b797e70ac2cebba85a",
-  "commitShort": "6e66208",
+  "commit": "4f0bee169990d1d6fb5397522406f80232c73130",
+  "commitShort": "4f0bee1",
   "branch": "main",
-  "buildDate": "2026-11-21T17:23:56Z",
-  "publicationDate": "2026-11-21T17:23:43.312Z",
+  "buildDate": "2026-11-21T18:01:17Z",
+  "publicationDate": "2026-11-21T18:01:04.654Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -36,6 +36,18 @@
     {
       "title": "Json Schema clientData.hdsExtraction",
       "file": "json-schemas/hds-extraction.json"
+    },
+    {
+      "title": "Json Schema clientData.hdsDocumentPending",
+      "file": "json-schemas/hds-document-pending.json"
+    },
+    {
+      "title": "Json Schema clientData.hdsDocumentValues",
+      "file": "json-schemas/hds-document-values.json"
+    },
+    {
+      "title": "Json Schema clientData.hdsPrintedIn",
+      "file": "json-schemas/hds-printed-in.json"
     },
     {
       "title": "Json Schema notification/alert-cmc content.hds, conversation kinds",
@@ -118,7 +130,7 @@
       "file": "appStreams.json"
     }
   ],
-  "version": "4.25.0",
+  "version": "4.26.0",
   "license": "CC-BY-4.0",
-  "attribution": "HDS Data Model 4.25.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
+  "attribution": "HDS Data Model 4.26.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
 }
