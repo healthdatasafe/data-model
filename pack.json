@@ -1,6 +1,6 @@
 {
-  "version": "4.23.0",
-  "publicationDate": "2026-11-21T11:53:06.686Z",
+  "version": "4.24.0",
+  "publicationDate": "2026-11-21T15:27:55.942Z",
   "streams": [
     {
       "id": "activity",
@@ -27344,7 +27344,7 @@
             }
           },
           "rememberNever": {
-            "description": "The \"remember it?\" prompts the person said never to show again, as prompt ids. A prompt offers, in an entry form, to keep a choice just made there as the person's setting: Yes sets it, Later hides the prompt in that form only (stored nowhere), Never adds its id here. Ids are defined by hds-webapp; today 'charting-method' (the offer to make the method of a cervical-fluid observation the person's charting method). An id names a prompt, never the value offered or declined. Absent, empty or not an array: none. A reader ignores an id it does not know and reads a repeated id once; a writer keeps the ids it does not know. An id stays once the setting is set elsewhere. Holds no observation and no choice: the setting itself lives where it always does (the charting method in HDSSettings).",
+            "description": "The \"remember it?\" prompts the person said never to show again, as prompt ids. A prompt offers, in an entry form, to keep a choice just made there as the person's setting: Yes sets it, Later hides the prompt in that form only (stored nowhere), Never adds its id here. Ids are defined by hds-webapp; today 'charting-method' (the offer to make the method of a cervical-fluid observation the person's charting method), 'input-method:' followed by an item key (the offer to keep the method chosen in the entry form of a convertible item other than cervical fluid as that item's preferred-input setting) and 'unit:' followed by an item key (the offer to keep the unit chosen in the entry form of an item with variations as that item's preferred-input setting). The item key is everything after the first ':'. An id names a prompt, never the value offered or declined; the item key in it only says which item's form the prompt was in, so an id can say which items the person enters: personal data as the rest of the event. Absent, empty or not an array: none. A reader ignores an id it does not know, or whose item key it does not know, and reads a repeated id once. A writer keeps the ids it does not know. An id leaves only when the person asks for that prompt again; a writer then removes only ids of the forms named here ('charting-method', and ids starting 'input-method:' or 'unit:') and keeps every other. An id stays once the setting is set elsewhere. Holds no observation and no choice: the setting itself lives where it always does (the charting method and the preferred-input settings in HDSSettings).",
             "type": "array",
             "items": {
               "type": "string"
