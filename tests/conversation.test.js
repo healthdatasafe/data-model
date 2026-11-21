@@ -28,7 +28,17 @@ const ID_RE = '^[a-zA-Z0-9_-]+$';
 const DOC = 'ckq3w8n1x0001';
 const ANCHOR = { eventId: 'ckq3w8n1x0001', attachmentId: 'ckq3w8n1x0001a', page: 1, bbox: [8.5, 41.2, 83, 2.1] };
 const EXTRACTION = { engine: 'hds-reader', engineVersion: '0.3.0', kbVersion: '0.4.0', backend: 'text-layer' };
-const HDS_CODES = ['which-specimen', 'which-unit', 'which-analyte', 'which-date', 'is-fasting', 'is-this-yours'];
+const HDS_CODES = ['which-specimen', 'which-unit', 'which-analyte', 'which-date', 'is-fasting', 'is-this-yours', 'which-document-kind', 'which-document-date'];
+const SPECIMENS = ['serum-plasma', 'whole-blood', 'citrated-plasma', 'rbc', 'urine', 'urine-24h', 'semen', 'csf', 'stool', 'saliva'];
+const KIND = require('../src/documentKinds').documentKinds.kinds;
+
+const branch = (s, k) => s.oneOf.find((b) => b.properties.kind.enum[0] === k);
+
+// DOCUMENTS.md also holds JSON fragments (a kind's row): parse the blocks that are whole objects only.
+function jsonBlocksLoose (file) {
+  const text = fs.readFileSync(path.join(__dirname, '../documentation', file), 'utf-8');
+  return [...text.matchAll(/```json\n([\s\S]*?)\n```/g)].flatMap((m) => { try { return [JSON.parse(m[1])]; } catch { return []; } });
+}
 
 function jsonBlocks (file) {
   const text = fs.readFileSync(path.join(__dirname, '../documentation', file), 'utf-8');
@@ -60,7 +70,10 @@ const VALID = {
     { kind: 'question', about: DOC, code: 'which-date', candidateId: 'c-3f9a1e0b' },
     { kind: 'question', about: DOC, code: 'is-this-yours', context: { identity: { name: 'DUPONT Marie', birthDate: '14.03.1985', birthDay: '1985-03-14' }, anchor: ANCHOR } },
     { kind: 'question', about: DOC, code: 'is-this-yours' },
-    { kind: 'question', about: DOC, code: 'x-acme-which-lab', candidateId: 'c-1' }
+    { kind: 'question', about: DOC, code: 'x-acme-which-lab', candidateId: 'c-1' },
+    { kind: 'question', about: DOC, code: 'which-specimen', candidateId: 'c-77', options: ['serum-plasma', 'whole-blood'] },
+    { kind: 'question', about: DOC, code: 'which-document-kind', candidateId: 'd-1', options: ['laboratory-report', 'other'] },
+    { kind: 'question', about: DOC, code: 'which-document-date', candidateId: 'd-1', context: { dates: [{ day: '2026-03-13', text: '13/03/26', label: 'Édité le', role: 'report' }] } }
   ],
   'proposed-value': [
     proposed,
@@ -69,6 +82,11 @@ const VALID = {
     { ...proposed, proposal: { itemKey: 'body-blood-coded', type: 'lab-result/coded-v1', content: { analyte: { label: { en: 'X' }, codes: [{ system: 'http://loinc.org', code: '2947-0' }] }, value: 140, unit: 'mmol/L' } } },
     { ...proposed, candidateId: 'c-78b', replaces: 'c-78', printed: { label: 'Hémoglobine', value: '13.5' }, proposal: { itemKey: 'body-blood-serum-ferritin', type: 'concentration/ug-l', content: 13.5 }, status: 'check' },
     { ...proposed, candidateId: 'c-79', printed: { ...proposed.printed, samplingTime: '08:30' }, anchor: { ...proposed.anchor, eventId: DOC } }
+  ],
+  'proposed-document': [
+    { kind: 'proposed-document', about: DOC, candidateId: 'd-5c2e9a14', proposal: { documentKind: 'laboratory-report', time: 1773316800, timePrecision: 'day' }, anchor: ANCHOR, status: 'clear', extraction: EXTRACTION },
+    { kind: 'proposed-document', about: DOC, candidateId: 'd-1', proposal: { documentKind: 'laboratory-report' }, status: 'check' },
+    { kind: 'proposed-document', about: DOC, candidateId: 'd-2', replaces: 'd-1', proposal: { time: 1772366400, timePrecision: 'month' }, status: 'check' }
   ],
   answer: [
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0012', about: DOC, action: 'confirm', candidateIds: ['c-3f9a1e0b', 'c-79'], written: [{ candidateId: 'c-3f9a1e0b', eventId: 'ckq3w8n1x0020' }, { candidateId: 'c-79', eventId: 'ckq3w8n1x0021' }] },
@@ -80,7 +98,12 @@ const VALID = {
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0016', about: DOC, action: 'confirm', timePrecision: 'unknown' },
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0017', about: DOC, action: 'duplicate', candidateIds: ['c-3f9a1e0b'] },
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0017', about: DOC, action: 'duplicate', candidateIds: ['c-3f9a1e0b', 'c-79'], basis: 'existing-value' },
-    { kind: 'answer', inReplyTo: 'ckq3w8n1x0018', about: DOC, action: 'skip', candidateIds: ['c-77'] }
+    { kind: 'answer', inReplyTo: 'ckq3w8n1x0018', about: DOC, action: 'skip', candidateIds: ['c-77'] },
+    { kind: 'answer', inReplyTo: 'ckq3w8n1x0019', about: DOC, action: 'skip', candidateIds: ['c-79'], note: 'I think this one was taken after lunch.' },
+    { kind: 'answer', inReplyTo: 'ckq3w8n1x0024', about: DOC, action: 'confirm', candidateIds: ['d-5c2e9a14'], applied: ['time', 'kind'], note: 'The follow-up blood test.' },
+    { kind: 'answer', inReplyTo: 'ckq3w8n1x0025', about: DOC, action: 'choose', option: 'laboratory-report', candidateIds: ['d-1'] },
+    { kind: 'answer', inReplyTo: 'ckq3w8n1x0026', about: DOC, action: 'confirm', candidateIds: ['d-1'], time: 1773316800, timePrecision: 'day' },
+    { kind: 'answer', inReplyTo: 'ckq3w8n1x0027', about: DOC, action: 'skip', candidateIds: ['d-2'], basis: 'not-pending' }
   ]
 };
 const KINDS = Object.keys(VALID);
@@ -92,6 +115,7 @@ const VALID_ALERTS = [
   { kind: 'notice', code: 'no-result-found', about: DOC },
   { kind: 'notice', code: 'typed-text-not-read' },
   { kind: 'notice', code: 'several-sampling-dates', about: DOC },
+  { kind: 'notice', code: 'note-not-read', about: DOC },
   { kind: 'task-status', about: DOC, status: 'error', attempt: 1, errorCode: 'reading-failed' },
   { kind: 'question', eventId: 'ckq3w8n1x0011', about: DOC },
   { kind: 'proposed-values', about: DOC, count: 12 },
@@ -142,8 +166,19 @@ describe('[CNV] conversation', () => {
 
       it('[CNV-ET-2] every kind is closed, and so is every object in it', () => {
         for (const [k, list] of Object.entries(VALID)) {
-          assert.ok(!validate({ ...list[0], note: 'free text' }), k);
+          assert.ok(!validate({ ...list[0], comment: 'free text' }), k);
+          if (k !== 'answer') assert.ok(!validate({ ...list[0], note: 'free text' }), k + ': a note is hers, on an answer only');
           assert.ok(!validate({ ...list[0], text: { en: 'Is this right?' } }), k + ': no text in this version');
+        }
+        const pd = VALID['proposed-document'][0];
+        for (const bad of [
+          { ...pd, printed: { label: 'Date', value: '12.03.2026' } },
+          { ...pd, proposal: { ...pd.proposal, title: 'Bilan sanguin' } },
+          { ...pd, proposal: { ...pd.proposal, class: { system: 'http://snomed.info/sct', code: '371525003' } } },
+          { ...pd, anchor: { ...ANCHOR, text: '12.03.2026' } },
+          { ...pd, extraction: { ...EXTRACTION, confirmedBy: 'person' } }
+        ]) {
+          assert.ok(!validate(bad), JSON.stringify(bad));
         }
         const [, , dateQ, , idQ] = VALID.question;
         for (const bad of [
@@ -196,6 +231,16 @@ describe('[CNV] conversation', () => {
         assert.ok(!validate({ ...VALID.question[2], context: { dates: [{ day: '2026-03-12' }] } }), 'a date without its text');
         assert.ok(!validate({ ...VALID.answer[0], written: [] }), 'an empty written');
         assert.ok(!validate({ ...VALID.answer[0], written: [{ candidateId: 'c-1' }] }), 'written without eventId');
+        const pd = VALID['proposed-document'][0];
+        for (const f of ['about', 'candidateId', 'proposal', 'status']) {
+          const { [f]: _, ...partial } = pd;
+          assert.ok(!validate(partial), 'proposed-document without ' + f);
+        }
+        const { extraction: _e, anchor: _an, ...bare } = pd;
+        assert.ok(validate(bare), 'proposed-document without extraction or anchor ' + JSON.stringify(validate.errors));
+        assert.ok(!validate({ ...pd, proposal: {} }), 'an empty proposal');
+        assert.ok(!validate({ ...pd, proposal: { time: 1773316800 } }), 'a time without its precision');
+        assert.ok(!validate({ ...pd, proposal: { documentKind: 'other', timePrecision: 'day' } }), 'a precision without a time');
       });
 
       it('[CNV-ET-5] codes, ids, options and dates reject free text and values outside the lists', () => {
@@ -244,7 +289,24 @@ describe('[CNV] conversation', () => {
           { ...proposed, proposal: { ...proposed.proposal, clientData: { hdsTimePrecision: 'approx' } } },
           { ...proposed, proposal: { ...proposed.proposal, content: '48' } },
           { ...proposed, extraction: { ...EXTRACTION, engine: 'HDS Reader' } },
-          { ...proposed, extraction: { ...EXTRACTION, backend: 'read by Dr Martin' } }
+          { ...proposed, extraction: { ...EXTRACTION, backend: 'read by Dr Martin' } },
+          { ...answer, note: '' },
+          { ...answer, note: 'x'.repeat(1001) },
+          { ...answer, note: { en: 'yes' } },
+          { ...answer, applied: ['date'] },
+          { ...answer, applied: [] },
+          { ...answer, applied: ['time', 'time'] },
+          { ...answer, basis: 'pending' },
+          { ...VALID['proposed-document'][0], proposal: { documentKind: 'Laboratory report' } },
+          { ...VALID['proposed-document'][0], proposal: { documentKind: { system: 'http://snomed.info/sct', code: '4241000179101' } } },
+          { ...VALID['proposed-document'][0], proposal: { documentKind: 'x'.repeat(65) } },
+          { ...VALID['proposed-document'][0], proposal: { time: 1773316800, timePrecision: 'unknown' } },
+          { ...VALID['proposed-document'][0], proposal: { time: 1773316800, timePrecision: 'approx' } },
+          { ...VALID['proposed-document'][0], proposal: { time: '2026-03-12', timePrecision: 'day' } },
+          { ...VALID['proposed-document'][0], status: 'unmapped' },
+          { ...VALID['proposed-document'][0], status: 'kept-aside' },
+          { ...VALID['proposed-document'][0], candidateId: 'Laboratory report' },
+          { ...VALID['proposed-document'][0], about: 'not an id' }
         ]) {
           assert.ok(!validate(bad), JSON.stringify(bad));
         }
@@ -301,7 +363,6 @@ describe('[CNV] conversation', () => {
   describe('[CNV-SHAPE] shapes, pinned', () => {
     const schema = eventTypesById(TYPE);
     const reader = eventTypesById('message/hds-reader-v1');
-    const branch = (s, k) => s.oneOf.find((b) => b.properties.kind.enum[0] === k);
 
     it('[CNV-SHAPE-1] one closed branch per kind, discriminated by a one-value enum, in the portable subset', () => {
       for (const s of [schema, ALERT]) {
@@ -322,8 +383,18 @@ describe('[CNV] conversation', () => {
       const SHAPES = {
         question: [['kind', 'about', 'code'], ['kind', 'about', 'code', 'candidateId', 'options', 'context']],
         'proposed-value': [['kind', 'about', 'candidateId', 'printed', 'status', 'extraction'], ['kind', 'about', 'candidateId', 'replaces', 'printed', 'anchor', 'proposal', 'status', 'reason', 'requestKey', 'askOneByOne', 'specimenImplied', 'extraction']],
-        answer: [['kind', 'inReplyTo', 'about', 'action'], ['kind', 'inReplyTo', 'about', 'action', 'candidateIds', 'option', 'time', 'timePrecision', 'basis', 'written']]
+        'proposed-document': [['kind', 'about', 'candidateId', 'proposal', 'status'], ['kind', 'about', 'candidateId', 'replaces', 'proposal', 'anchor', 'status', 'extraction']],
+        answer: [['kind', 'inReplyTo', 'about', 'action'], ['kind', 'inReplyTo', 'about', 'action', 'candidateIds', 'option', 'time', 'timePrecision', 'basis', 'written', 'applied', 'note']]
       };
+      const pdProposal = branch(schema, 'proposed-document').properties.proposal;
+      assert.deepStrictEqual(Object.keys(pdProposal.properties), ['documentKind', 'time', 'timePrecision']);
+      assert.deepStrictEqual(branch(schema, 'answer').properties.applied.items.enum, ['time', 'kind']);
+      assert.strictEqual(pdProposal.minProperties, 1);
+      assert.deepStrictEqual(pdProposal.dependencies, { time: ['timePrecision'], timePrecision: ['time'] });
+      assert.deepStrictEqual(pdProposal.properties.timePrecision.enum, ['day', 'month', 'year']);
+      assert.deepStrictEqual(branch(schema, 'proposed-document').properties.status.enum, ['clear', 'check']);
+      const note = branch(schema, 'answer').properties.note;
+      assert.deepStrictEqual([note.type, note.minLength, note.maxLength], ['string', 1, 1000]);
       for (const [k, [required, props]] of Object.entries(SHAPES)) {
         assert.deepStrictEqual(branch(schema, k).required, required, k + ' required');
         assert.deepStrictEqual(Object.keys(branch(schema, k).properties), props, k + ' properties');
@@ -354,7 +425,7 @@ describe('[CNV] conversation', () => {
     it('[CNV-SHAPE-3] every enum is exactly this list', () => {
       assert.deepStrictEqual(branch(schema, 'answer').properties.action.enum, ['confirm', 'correct', 'not-mine', 'skip', 'choose', 'request-item', 'duplicate']);
       assert.deepStrictEqual(branch(schema, 'answer').properties.timePrecision.enum, ['day', 'month', 'year', 'unknown']);
-      assert.deepStrictEqual(branch(schema, 'answer').properties.basis.enum, ['profile-match', 'existing-value']);
+      assert.deepStrictEqual(branch(schema, 'answer').properties.basis.enum, ['profile-match', 'existing-value', 'not-pending']);
       assert.deepStrictEqual(branch(ALERT, 'task-status').properties.status.enum, ['received', 'reading', 'awaiting-answers', 'done', 'error']);
       assert.strictEqual(branch(schema, 'question').properties.code.enum, undefined, 'an open code');
       const codeRe = new RegExp(branch(schema, 'question').properties.code.pattern);
@@ -378,6 +449,13 @@ describe('[CNV] conversation', () => {
         assert.deepStrictEqual(strip(pv.extraction.properties[f]), strip(keys.hdsExtraction.properties[f]), 'extraction.' + f);
       }
       assert.deepStrictEqual(strip(pv.replaces), strip(pv.candidateId));
+      // a proposed document reuses the proposed value's id, anchor and extraction shapes
+      const pd = branch(schema, 'proposed-document').properties;
+      for (const f of ['about', 'candidateId', 'replaces']) assert.deepStrictEqual(strip(pd[f]), strip(pv.candidateId), 'proposed-document.' + f);
+      assert.deepStrictEqual(strip(pd.anchor), strip(keys.hdsSourceAnchor));
+      assert.deepStrictEqual(strip(pd.extraction), strip(pv.extraction));
+      const kindRe = new RegExp(pd.proposal.properties.documentKind.pattern);
+      for (const k of Object.keys(KIND)) assert.ok(kindRe.test(k), 'a kind key is a proposal kind: ' + k);
       // Options are reader-v1's but up to 128 characters, so a which-analyte option holds any item key.
       const q = branch(schema, 'question').properties;
       const rq = branch(reader, 'question').properties;
@@ -399,11 +477,12 @@ describe('[CNV] conversation', () => {
       const ids = [
         branch(schema, 'question').properties.about, branch(schema, 'question').properties.candidateId,
         branch(schema, 'proposed-value').properties.about, branch(schema, 'proposed-value').properties.replaces,
+        branch(schema, 'proposed-document').properties.about, branch(schema, 'proposed-document').properties.replaces,
         branch(schema, 'answer').properties.inReplyTo, branch(schema, 'answer').properties.about,
         branch(schema, 'answer').properties.written.items.properties.eventId,
         ...ALERT.oneOf.flatMap((b) => ['about', 'eventId', 'inReplyTo'].filter((f) => b.properties[f]).map((f) => b.properties[f]))
       ];
-      assert.strictEqual(ids.length, 15);
+      assert.strictEqual(ids.length, 17);
       for (const id of ids) {
         assert.strictEqual(id.pattern, ID_RE);
         assert.strictEqual(id.maxLength, 64);
@@ -430,16 +509,24 @@ describe('[CNV] conversation', () => {
 
     it('[CNV-DOC-1] the CONVERSATION.md examples are valid events, related-mirrored, and the proposal is valid against its type and item', () => {
       const validate = new AjvDraft04({ strict: false, logger: false }).compile(schema);
-      assert.deepStrictEqual(docs.map((e) => e.content.kind), ['question', 'proposed-value', 'answer', 'answer']);
+      assert.deepStrictEqual(docs.map((e) => e.content.kind), ['question', 'proposed-value', 'answer', 'answer', 'proposed-document', 'answer']);
       assert.strictEqual(docs[3].content.basis, 'existing-value', 'the automatic duplicate is documented');
       assert.strictEqual(docs[1].content.anchor.eventId, docs[1].content.about, 'a self-contained anchor names its document');
       for (const e of docs) {
         assert.ok(validate(e.content), JSON.stringify(validate.errors));
         assert.strictEqual(e.streamIds.length, 1);
         assert.match(e.streamIds[0], /^conv-[a-z0-9]{12}$/);
-        const ids = [e.content.about, e.content.inReplyTo, ...(e.content.written || []).map((w) => w.eventId)].filter(Boolean);
+        const ids = [...new Set([e.content.about, e.content.inReplyTo, ...(e.content.written || []).map((w) => w.eventId)].filter(Boolean))];
         assert.deepStrictEqual(Object.keys(e.clientData.related).sort(), ids.sort(), 'every id in content is mirrored in related');
       }
+      // the proposed document: a pack kind, on received; her confirmation lists the document itself, with her note
+      const [pd, pdAnswer] = [docs[4].content, docs[5].content];
+      assert.ok(KIND[pd.proposal.documentKind], 'a documentKinds key');
+      assert.strictEqual(docs[4].streamIds[0], docs[0].streamIds[0], 'on the received child');
+      assert.strictEqual(pdAnswer.written, undefined, 'never the document in written');
+      assert.deepStrictEqual(pdAnswer.applied, ['time', 'kind']);
+      assert.deepStrictEqual(pdAnswer.candidateIds, [pd.candidateId]);
+      assert.ok(pdAnswer.note);
       const { proposal } = docs[1].content;
       const validateProposal = new Ajv({ strict: false }).compile(eventTypesById(proposal.type));
       assert.ok(validateProposal(proposal.content), JSON.stringify(validateProposal.errors));
@@ -457,22 +544,44 @@ describe('[CNV] conversation', () => {
         'which-analyte': ['choose', 'skip'],
         'is-fasting': ['choose', 'skip'],
         'which-date': ['confirm', 'skip'],
-        'is-this-yours': ['confirm', 'not-mine', 'skip']
+        'is-this-yours': ['confirm', 'not-mine', 'skip'],
+        'which-document-kind': ['choose', 'skip'],
+        'which-document-date': ['confirm', 'skip']
       };
+      assert.deepStrictEqual(Object.keys(ALLOWED).sort(), [...HDS_CODES].sort());
       const messages = [...docs.map((e) => e.content), ...Object.values(VALID).flat()];
+      const documentProposals = new Set(messages.filter((x) => x.kind === 'proposed-document').map((x) => x.candidateId));
       for (const m of messages.filter((x) => x.kind === 'question')) {
         if (m.code.startsWith('x-')) continue;
         assert.ok(ALLOWED[m.code], m.code);
-        if (['which-specimen', 'which-unit', 'which-analyte', 'is-fasting'].includes(m.code)) {
+        if (['which-specimen', 'which-unit', 'which-analyte', 'is-fasting', 'which-document-kind'].includes(m.code)) {
           assert.ok(m.candidateId && m.options?.length, m.code + ' carries candidateId and options');
           assert.strictEqual(m.context, undefined, m.code + ' carries no context');
         }
         if (m.code === 'is-fasting') assert.deepStrictEqual(m.options, ['yes', 'no']);
-        if (m.code === 'which-date' || m.code === 'is-this-yours') assert.strictEqual(m.options, undefined, m.code + ' has no options');
+        if (m.code === 'which-specimen') for (const o of m.options) assert.ok(SPECIMENS.includes(o), 'a registered specimen code: ' + o);
+        if (m.code === 'which-document-kind') {
+          assert.ok(m.options.length >= 2 && m.options.length <= 8, '2 to 8 kinds');
+          for (const o of m.options) assert.ok(KIND[o] && !KIND[o].deprecated, 'a kind key: ' + o);
+        }
+        if (m.code.startsWith('which-document-')) assert.ok(documentProposals.has(m.candidateId), m.code + ' names a proposed-document');
+        if (['which-date', 'is-this-yours', 'which-document-date'].includes(m.code)) assert.strictEqual(m.options, undefined, m.code + ' has no options');
         if (m.code === 'is-this-yours') assert.strictEqual(m.candidateId, undefined);
         if (m.context?.identity) assert.strictEqual(m.code, 'is-this-yours', 'identity on is-this-yours only');
-        if (m.context?.dates) assert.strictEqual(m.code, 'which-date', 'dates on which-date only');
+        if (m.context?.dates) assert.ok(['which-date', 'which-document-date'].includes(m.code), 'dates on the two date codes only');
         if (m.context?.anchor) assert.strictEqual(m.code, 'is-this-yours', 'a context anchor on is-this-yours only');
+      }
+      for (const m of messages.filter((x) => x.kind === 'proposed-document')) {
+        assert.ok(KIND[m.proposal.documentKind ?? 'other'], 'a pack kind');
+        if (m.proposal.time !== undefined) assert.strictEqual(m.proposal.time % 86400, 43200, 'at 12:00 UTC');
+        if (m.replaces) assert.ok(documentProposals.has(m.replaces) && m.replaces !== m.candidateId, 'replaces a proposed-document');
+      }
+      for (const m of messages.filter((x) => x.kind === 'answer' && x.candidateIds?.some((c) => documentProposals.has(c)))) {
+        assert.strictEqual(m.candidateIds.length, 1, 'one proposed document per answer');
+        assert.strictEqual(m.written, undefined, 'a proposed document is never in written');
+        if (m.applied) assert.ok(['confirm', 'correct'].includes(m.action), 'applied only on a confirm or correct of the proposed document');
+        if (m.basis === 'not-pending') assert.strictEqual(m.action, 'skip');
+        assert.ok(['confirm', 'correct', 'skip', 'choose'].includes(m.action), m.action);
       }
       const proposals = messages.filter((x) => x.kind === 'proposed-value');
       for (const m of proposals.filter((x) => x.replaces)) {
@@ -490,6 +599,7 @@ describe('[CNV] conversation', () => {
         }
         if (m.basis === 'profile-match') assert.ok(m.action === 'confirm' && !m.candidateIds && !m.written, 'profile-match only on an is-this-yours confirm');
         if (m.basis === 'existing-value') assert.ok(m.action === 'duplicate' && m.candidateIds?.length && !m.written, 'existing-value only on a duplicate of proposed values, writing nothing');
+        if (m.applied) assert.ok(!m.written && m.candidateIds?.length === 1, 'applied: one proposed document, no written');
         if (m.timePrecision === 'unknown') assert.strictEqual(m.time, undefined, 'no time with unknown');
         else if (m.timePrecision) assert.strictEqual(typeof m.time, 'number');
       }
@@ -537,7 +647,7 @@ describe('[CNV] conversation', () => {
       // every code row is parsed: the rows starting with a code, less the two header rows
       const rows = section.split('\n').filter((l) => l.startsWith('| `')).length - 2;
       assert.strictEqual(notices.length + errors.length, rows, 'a table row matched neither pattern');
-      assert.deepStrictEqual(notices, [['no-result-found', 'the document'], ['several-sampling-dates', 'the document'], ['typed-text-not-read', 'none']]);
+      assert.deepStrictEqual(notices, [['no-result-found', 'the document'], ['several-sampling-dates', 'the document'], ['typed-text-not-read', 'none'], ['note-not-read', 'the document']]);
       assert.deepStrictEqual(errors, ['no-attachment', 'write-failed', 'reading-failed']);
       const validate = new AjvDraft04({ strict: false, logger: false }).compile(ALERT);
       for (const [code, about] of notices) {
@@ -592,6 +702,62 @@ describe('[CNV] conversation', () => {
         }
       }
       assert.deepStrictEqual(seen.sort(), [...ALERT_KINDS].sort());
+    });
+
+    it('[CNV-DOC-10] the specimen codes are registered, each with an en, fr and es label, and are valid options', () => {
+      const text = fs.readFileSync(path.join(__dirname, '../documentation/CONVERSATION.md'), 'utf-8');
+      const section = text.slice(text.indexOf('### Specimen codes'), text.indexOf('### Answers, by what they answer'));
+      const rows = [...section.matchAll(/^\| `([a-z0-9-]+)` \| ([^|]+) \| ([^|]+) \| ([^|]+) \|$/gm)];
+      assert.deepStrictEqual(rows.map((r) => r[1]), SPECIMENS);
+      for (const [, , en, fr, es] of rows) for (const l of [en, fr, es]) assert.ok(l.trim().length > 0);
+      const optionRe = new RegExp(branch(schema, 'question').properties.options.items.pattern);
+      for (const c of SPECIMENS) assert.ok(optionRe.test(c), c);
+    });
+
+    it('[CNV-DOC-11] the two document keys: schemas, and the DOCUMENTS.md and PROVENANCE.md examples', () => {
+      for (const [, make] of FLAVOURS) {
+        const ajv = make();
+        const pending = ajv.compile(keys.hdsDocumentPending);
+        for (const ok of [['time', 'kind'], ['kind'], ['time']]) assert.ok(pending(ok), JSON.stringify(ok));
+        for (const bad of [[], ['time', 'time'], ['date'], ['time', 'kind', 'title'], 'time', { time: true }]) assert.ok(!pending(bad), JSON.stringify(bad));
+        const values = ajv.compile(keys.hdsDocumentValues);
+        for (const ok of [{}, { ckq3w8n1x0020: 'source', 'ckpz7r2m4-0_9': 'source' }]) assert.ok(values(ok), JSON.stringify(ok));
+        for (const bad of [{ ckq3w8n1x0020: 'matched' }, { ckq3w8n1x0020: 'read' }, { ckq3w8n1x0020: true }, { 'ck.x': 'source' }, { ['x'.repeat(65)]: 'source' }, ['ckq3w8n1x0020'], { ckq3w8n1x0020: { role: 'source', value: 48 } }]) {
+          assert.ok(!values(bad), JSON.stringify(bad));
+        }
+        assert.ok(!values(Object.fromEntries(Array.from({ length: 1001 }, (_, i) => ['e' + i, 'source']))), 'at most 1000 entries');
+        const printedIn = ajv.compile(keys.hdsPrintedIn);
+        for (const ok of [{}, { ckq3w8n1x0001: true }]) assert.ok(printedIn(ok), JSON.stringify(ok));
+        for (const bad of [{ ckq3w8n1x0001: false }, { ckq3w8n1x0001: 'source' }, { 'ck.x': true }, ['ckq3w8n1x0001'], Object.fromEntries(Array.from({ length: 101 }, (_, i) => ['d' + i, true]))]) {
+          assert.ok(!printedIn(bad), JSON.stringify(bad).slice(0, 80));
+        }
+      }
+      assert.ok(!PORTABLE.test(JSON.stringify([keys.hdsDocumentPending, keys.hdsDocumentValues, keys.hdsPrintedIn])));
+      const placeholder = jsonBlocksLoose('DOCUMENTS.md').find((e) => e.clientData?.hdsDocumentPending);
+      assert.ok(placeholder, 'DOCUMENTS.md shows the placeholder');
+      const other = KIND.other;
+      assert.deepStrictEqual(placeholder.content.class, other.class, 'class of the kind other');
+      assert.deepStrictEqual(placeholder.content.type[0], other.type, 'type of the kind other');
+      assert.strictEqual(placeholder.clientData.hdsTimePrecision, undefined, 'no precision on a pending time');
+      const validateDoc = new Ajv({ strict: false }).compile(eventTypesById('file/xds-v1'));
+      assert.ok(validateDoc(placeholder.content), JSON.stringify(validateDoc.errors));
+      const indexed = jsonBlocks('PROVENANCE.md').find((e) => e.clientData?.hdsDocumentValues);
+      assert.ok(indexed, 'PROVENANCE.md shows the index');
+      assert.ok(new Ajv({ strict: false }).validate(keys.hdsDocumentValues, indexed.clientData.hdsDocumentValues));
+      assert.deepStrictEqual([...new Set(Object.values(indexed.clientData.hdsDocumentValues))], ['source'], 'source entries only');
+      const printed = jsonBlocks('PROVENANCE.md').find((e) => e.clientData?.hdsPrintedIn);
+      assert.ok(printed && new Ajv({ strict: false }).validate(keys.hdsPrintedIn, printed.clientData.hdsPrintedIn), 'PROVENANCE.md shows hdsPrintedIn');
+      assert.strictEqual(printed.clientData.related, undefined, 'a matched value is not related to the document');
+      const conv = fs.readFileSync(path.join(__dirname, '../documentation/CONVERSATION.md'), 'utf-8');
+      assert.ok(conv.includes('never which event\n    or its value'), 'R3 keeps never which event');
+    });
+
+    it('[CNV-DOC-12] a document\'s date and kind: the document codes take no specimen, value or item key', () => {
+      const text = fs.readFileSync(path.join(__dirname, '../documentation/CONVERSATION.md'), 'utf-8');
+      for (const s of ['### A document\'s date and kind: `proposed-document` (4.26.0)', '## Writing a document\'s date and kind (4.26.0)', '### Her note (4.26.0)']) assert.ok(text.includes(s), s);
+      const pd = branch(schema, 'proposed-document');
+      assert.strictEqual(pd.properties.printed, undefined, 'nothing printed');
+      assert.strictEqual(pd.properties.proposal.properties.content, undefined, 'no content: a key and a date');
     });
 
     it('[CNV-DOC-4] reader-v1 is marked superseded, and its schema is unchanged in shape', () => {

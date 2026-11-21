@@ -437,13 +437,13 @@ document:
 | `supersedes[]` | `relatesTo[]` `{ code: replaces, target: DocumentReference/<id> }` |
 | `title` | `description`, and each attachment's `title` when the file has no name |
 | `language` | `content[].attachment.language` (left out when `und`) |
-| `creation`, else the event date | `content[].attachment.creation`; with `hdsTimePrecision: unknown` (4.19.0), only from `creation`, never from the event time |
+| `creation`, else the event date | `content[].attachment.creation`; with `hdsTimePrecision: unknown` (4.19.0), or while `hdsDocumentPending` holds `time` (4.26.0), only from `creation`, never from the event time |
 | `authors[]` | `author[]` as `display` only (name, organization, service joined): no Practitioner or Organization resource is served |
 | `practiceSetting`, `facilityType`, `event[]` | `context.practiceSetting`, `.facilityType`, `.event[]` |
 | `format` | `content[].format` |
 | `encounterId`, `pages` | not rendered (no Encounter resource is served; a page count has no element) |
 | `uniqueId` | not rendered yet: `masterIdentifier` with MHD's fixed `type`, in a later hds-fhir-js release (plan 115) |
-| event `time` | `date`, as an instant: the document's date on the timeline, what a `date` search filters (`created` is `Provenance.recorded`); no `date` (0..1) when `hdsTimePrecision` is `unknown` (4.19.0, PARTIAL-DATES.md) |
+| event `time` | `date`, as an instant: the document's date on the timeline, what a `date` search filters (`created` is `Provenance.recorded`); no `date` (0..1) when `hdsTimePrecision` is `unknown` (4.19.0, PARTIAL-DATES.md), nor while `clientData.hdsDocumentPending` holds `time` (4.26.0, DOCUMENTS.md § A document waiting for its date and kind) |
 | `attachments[]` (Pryv) | one `content[]` per file: `attachment.contentType`, `size`, `title` (file name), `url` = `Binary/<eventId>.<fileId>` (absolute on the facade, relative in an export file); never the Pryv `readToken`; no `hash` (FHIR's is SHA-1, Pryv's integrity is sha256) |
 
 The category key is `clinical-note` for every document: US Core's category value set has that one code, and a grant on

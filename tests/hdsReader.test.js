@@ -120,11 +120,14 @@ describe('[RDR] HDS Reader', () => {
       assert.ok(ajv.validate(keys.hdsExtraction, examples[0].clientData.hdsExtraction), JSON.stringify(ajv.errors));
     });
 
-    it('[RDR-KEY-7] both schemas are published with the pack, under json-schemas/', () => {
+    it('[RDR-KEY-7] the key schemas are published with the pack, under json-schemas/', () => {
       const files = keys.toBePublished();
-      assert.deepStrictEqual(files.map((f) => f.path + f.filename), ['./json-schemas/hds-source-anchor.json', './json-schemas/hds-extraction.json']);
+      assert.deepStrictEqual(files.map((f) => f.path + f.filename), ['./json-schemas/hds-source-anchor.json', './json-schemas/hds-extraction.json', './json-schemas/hds-document-pending.json', './json-schemas/hds-document-values.json', './json-schemas/hds-printed-in.json']);
       assert.strictEqual(files[0].content, keys.hdsSourceAnchor);
       assert.strictEqual(files[1].content, keys.hdsExtraction);
+      assert.strictEqual(files[2].content, keys.hdsDocumentPending);
+      assert.strictEqual(files[3].content, keys.hdsDocumentValues);
+      assert.strictEqual(files[4].content, keys.hdsPrintedIn);
       for (const f of files) assert.strictEqual(f.content.$id, 'https://model.datasafe.dev/json-schemas/' + f.filename);
       if (fs.existsSync(path.join(__dirname, '../dist/pack.json'))) {
         for (const f of files) {

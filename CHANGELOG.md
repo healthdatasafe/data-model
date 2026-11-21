@@ -2,6 +2,69 @@
 
 ## [Unreleased]
 
+## [4.26.0] - 2026-11-21
+
+Plan 128. Additive: one conversation kind, two question codes, one notice code, a basis value, two
+answer fields, three `clientData` keys; no item, stream or alert-kind change; a minor release.
+
+### Added: a document's date and kind, asked in the conversation (CONVERSATION.md, DOCUMENTS.md)
+
+perki: the import form no longer asks Day and Kind. The document sits on her timeline at the moment she added it, as
+"Other document", until she confirms the date and kind a contact proposes in the chat.
+
+- **The placeholder** (DOCUMENTS.md § A document waiting for its date and kind): kind `other`, `time` the moment she
+  added it with no precision, and `clientData.hdsDocumentPending: ['time', 'kind']`. Readers show "date not confirmed"
+  and "Other document"; the FHIR rendering omits `date` while `time` is pending (FHIR-MAPPING.md). Any write that sets
+  a field removes its entry. One sentence of exception to "never the upload date".
+- **`proposed-document`**, a new kind on `received`: `proposal` with a `documentKind` (a `documentKinds` key) and/or a
+  date (`time`, `timePrecision` day, month or year, never unknown), `status` clear or check, optional `anchor` and
+  `extraction` (no vouching: only a key and a date reach the document, on her tap). At most one open per contact and
+  document, and only onto a document whose `hdsDocumentPending` holds a proposed field, so an older app never gets one.
+- **A stale flag** (an older app set the date or kind and left the flag) is recognised and ignored: `time` is pending
+  only without `hdsTimePrecision`, `kind` only while the kind is still `other`.
+- **Two question codes**, `which-document-kind` (2 to 8 kind keys) and `which-document-date` (`context.dates`), each
+  naming its `proposed-document`; neither writes nor triggers a re-proposal.
+- **§ Writing a document's date and kind**: one `events.update` of the document, only the fields still pending (the
+  first confirmation wins, her own edit is never overwritten). Her answer lists the fields in the new
+  `answer.applied` (`time`, `kind`), never in `written`, which stays the list of values to delete on `not-mine`. When
+  nothing is pending any more, her app answers `skip` with the new `basis: not-pending`.
+- R2, R3, R5, R8, R9 and R10 say how the new kind is counted, checked, kept and deleted. The `proposed-values` alert is
+  reused as its wake-up. A contact does not wait for it, nor for the two document questions, to post `done`, and does
+  not count them in `task-status.counts`.
+
+### Added: her note on an answer (CONVERSATION.md § Her note)
+
+perki's one-by-one conversation: she may comment on what she answers. `answer.note`, plain text, at most 1000
+characters, on any action (a comment alone is a `skip` with a `note`, with every effect of a skip). It never changes
+the action, travels in no alert (R6), is never echoed, and her app removes it after `done`, or 24 h after the answer
+when the work was already done, on `not-mine` or on unshare (R10). New notice `note-not-read` (about the document,
+once per document) for a contact that does not read notes.
+
+### Added: a document's values, `hdsDocumentValues` and `hdsPrintedIn` (PROVENANCE.md)
+
+perki: the document lists the values tied to it, those read from it and, apart, those she already had that it prints
+("listed, but not as the original source"). Shape chosen on Fable's review, so that no contact the document is shared
+with learns which older events of hers match (4.25.0's "never which event" holds):
+
+- **`clientData.hdsDocumentValues`** on the document: `{ <value event id>: "source" }`, the values written from it.
+  An index, not the link (`related` on the value stays authoritative), written by her app best effort after the
+  answer. Its ids are already in her answers' `written`, so its readers learn nothing new.
+- **`clientData.hdsPrintedIn.<document event id>: true`** on a value she already had, written by her app when an
+  automatic `duplicate` matches it. Not its source; the document's view finds them with one `clientData` query.
+- Dangling ids are skipped by readers and dropped on the next write; `not-mine` removes both. The `related` rule now
+  names the index.
+
+### Added: specimen codes (CONVERSATION.md § Specimen codes)
+
+The options of `which-specimen` are registered with en, fr and es labels: `serum-plasma`, `whole-blood`,
+`citrated-plasma`, `rbc`, `urine`, `urine-24h`, `semen`, `csf`, `stool`, `saliva`.
+
+### Published
+
+`json-schemas/hds-document-pending.json`, `hds-document-values.json` and `hds-printed-in.json` (source
+`src/schemas/clientDataKeys.js`). Tests `[CNV-*]`: the new kind under draft-04 and draft-07, the MUST rows, the
+examples, the specimen table and both keys.
+
 ## [4.25.0] - 2026-11-21
 
 Additive (plan 128): the conversation's automatic `duplicate`, a printed sampling time, and a self-contained document

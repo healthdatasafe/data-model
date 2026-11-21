@@ -1,6 +1,7 @@
 // JSON Schemas of the documented `clientData` keys that have a closed shape (documentation/PROVENANCE.md).
-// Most keys are conventions defined in prose; these two are closed objects, so their shape is pinned here, tested
-// (tests/hdsReader.test.js) and published as json-schemas/hds-source-anchor.json and json-schemas/hds-extraction.json.
+// Most keys are conventions defined in prose; these have a closed shape, so it is pinned here, tested
+// (tests/hdsReader.test.js, tests/conversation.test.js) and published as json-schemas/hds-source-anchor.json,
+// hds-extraction.json, hds-document-pending.json, hds-document-values.json and hds-printed-in.json (4.26.0).
 // The eventType `message/hds-reader-v1` inlines the same shapes (no `$ref` in event type schemas, AGENTS.md), and a
 // test pins each copy to the schema below.
 // Portable subset: compiles under draft-04 (the cores) and draft-07, so no const, not, if/then/else or $ref. Compile
@@ -16,10 +17,16 @@ const enums = {
 
 const hdsSourceAnchor = sourceAnchorSchema();
 const hdsExtraction = extractionSchema();
+const hdsDocumentPending = documentPendingSchema();
+const hdsDocumentValues = documentValuesSchema();
+const hdsPrintedIn = printedInSchema();
 
 module.exports = {
   hdsSourceAnchor,
   hdsExtraction,
+  hdsDocumentPending,
+  hdsDocumentValues,
+  hdsPrintedIn,
   enums,
   toBePublished
 };
@@ -111,9 +118,56 @@ function extractionSchema () {
   };
 }
 
+// On a document event (file/xds-v1), 4.26.0: which of its fields still wait for her confirmation (DOCUMENTS.md).
+function documentPendingSchema () {
+  return {
+    $id: 'https://model.datasafe.dev/json-schemas/hds-document-pending.json',
+    title: 'HDS clientData.hdsDocumentPending',
+    description: 'On a document event (file/xds-v1): the fields she has not confirmed yet. time: the event time is the moment she added the document, not its date; kind: class and type are the kind other as a placeholder. Removed field by field when she sets or confirms it; null when none is left. See documentation/DOCUMENTS.md.',
+    type: 'array',
+    minItems: 1,
+    maxItems: 2,
+    uniqueItems: true,
+    items: { type: 'string', enum: ['time', 'kind'] }
+  };
+}
+
+// On a document event (file/xds-v1), 4.26.0: an index of her value events tied to it, with their role (PROVENANCE.md).
+function documentValuesSchema () {
+  return {
+    $id: 'https://model.datasafe.dev/json-schemas/hds-document-values.json',
+    title: 'HDS clientData.hdsDocumentValues',
+    description: 'On a document event (file/xds-v1): her value events read from this document, keyed by event id, with their role, source (the value\'s clientData.related names the document). An index for readers, written by her app; ids only, never a value. A reader skips an id it cannot read, and an entry whose role it does not know. A value she already had that the document also prints is not listed here: it carries hdsPrintedIn. See documentation/PROVENANCE.md.',
+    type: 'object',
+    maxProperties: 1000,
+    additionalProperties: false,
+    patternProperties: {
+      '^[a-zA-Z0-9_-]{1,64}$': { type: 'string', enum: ['source'] }
+    }
+  };
+}
+
+// On a value event, 4.26.0: the documents that print this value, although it was not read from them (PROVENANCE.md).
+function printedInSchema () {
+  return {
+    $id: 'https://model.datasafe.dev/json-schemas/hds-printed-in.json',
+    title: 'HDS clientData.hdsPrintedIn',
+    description: 'On a value event already in her record: the document events (file/xds-v1) that also print this value, keyed by event id, value true. Not its source: the value keeps its own related, sourceKey and anchor. Written by her app when her conversation finds the value already there (an automatic duplicate). See documentation/PROVENANCE.md.',
+    type: 'object',
+    maxProperties: 100,
+    additionalProperties: false,
+    patternProperties: {
+      '^[a-zA-Z0-9_-]{1,64}$': { type: 'boolean', enum: [true] }
+    }
+  };
+}
+
 function toBePublished () {
   return [
     { title: 'Json Schema clientData.hdsSourceAnchor', path: './json-schemas/', filename: 'hds-source-anchor.json', type: 'json', content: hdsSourceAnchor },
-    { title: 'Json Schema clientData.hdsExtraction', path: './json-schemas/', filename: 'hds-extraction.json', type: 'json', content: hdsExtraction }
+    { title: 'Json Schema clientData.hdsExtraction', path: './json-schemas/', filename: 'hds-extraction.json', type: 'json', content: hdsExtraction },
+    { title: 'Json Schema clientData.hdsDocumentPending', path: './json-schemas/', filename: 'hds-document-pending.json', type: 'json', content: hdsDocumentPending },
+    { title: 'Json Schema clientData.hdsDocumentValues', path: './json-schemas/', filename: 'hds-document-values.json', type: 'json', content: hdsDocumentValues },
+    { title: 'Json Schema clientData.hdsPrintedIn', path: './json-schemas/', filename: 'hds-printed-in.json', type: 'json', content: hdsPrintedIn }
   ];
 }

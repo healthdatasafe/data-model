@@ -6,7 +6,8 @@ page defines, questions, proposed values and her answers. This page is the **wir
 implements it, and any person's app renders it, without knowing who is on the other side. The person's app
 dispatches on `hds.kind` and on `content.kind`, never on the contact's app code.
 
-**Normative** (4.22.0). "MUST" and "never" bind writers; readers follow § Writers validate, readers dispatch.
+**Normative** (4.22.0; 4.26.0 adds a document's date and kind, her `note`, and the specimen codes). "MUST" and "never"
+bind writers; readers follow § Writers validate, readers dispatch.
 
 ## The principle: the conversation is standard, the content travels by reference
 
@@ -23,7 +24,8 @@ applied to the rest of the conversation.
 | The contact tells her something | alert `notice`: a code her app renders |
 | The contact asks a question, with what she needs to answer it | a `question` event on the `received` child + alert `question` |
 | The contact proposes values read from a document | `proposed-value` events on the `received` child + one alert `proposed-values` per batch |
-| She answers | her app writes the values she confirmed, then an `answer` event on the `sent` child + alert `answer` |
+| The contact proposes a document's date and kind (4.26.0) | a `proposed-document` event on the `received` child + alert `proposed-values` |
+| She answers | her app writes the values she confirmed (or the document's date and kind), then an `answer` event on the `sent` child + alert `answer`; her comment, if she types one, is the answer's `note` |
 | Typed text, both ways | `message/chat-cmc` (`features.chat` set at invite); never a value, a name or a date from the contact's side (§ Chat) |
 
 **Her app writes the values.** The contact proposes; once she confirms, her own app writes each value event with her
@@ -53,7 +55,7 @@ conversation (its invite), or before the contact's first item:
 
 | `direction` | Holds | Contact's level | Written by |
 |---|---|---|---|
-| `received` | the contact's `question` and `proposed-value` events | `contribute` (it writes, and deletes under § Retention) | the contact only |
+| `received` | the contact's `question`, `proposed-value` and `proposed-document` events | `contribute` (it writes, and deletes under § Retention) | the contact only |
 | `sent` | the person's `answer` events | `read` | the person's app only |
 
 Granted by `consent/scope-update-cmc`, one child at a time, never the root. The contact cannot write an answer: it
@@ -77,8 +79,8 @@ app deletes a child whose relationship no longer exists.
 1. She shares a document (`document-shared`, `eventId` = the document's event id). The contact reads the event and its
    attachment by id.
 2. The contact posts `task-status` (`received`, then `reading`, `attempt` from 1).
-3. It writes its `proposed-value` events, then its `question` events, on `received`, each with `about` = the
-   document's event id, and posts one `proposed-values` alert per batch and one `question` alert per question. Then
+3. It writes its `proposed-value` events (and a `proposed-document` when the document waits for its date or kind),
+   then its `question` events, on `received`, each with `about` = the document's event id, and posts one `proposed-values` alert per batch and one `question` alert per question. Then
    `task-status` `awaiting-answers`, with `counts`.
 4. Her app reads the events the alerts point at (§ R11), shows them, and she answers. For each value she confirms or
    corrects, her app writes the value event (§ Writing a value), then writes the `answer` on `sent`, listing what it
@@ -100,7 +102,8 @@ only). Every event carries `about` (the document's event id) and
 |---|---|---|---|
 | `question` | `received` | the contact | `about`, `code`, `candidateId?`, `options?` (codes), `context?` (`identity?`, `dates?`, `anchor?`) |
 | `proposed-value` | `received` | the contact | `about`, `candidateId`, `replaces?` (the candidateId it replaces), `printed` (`label`, `value`, `unit?`, `refRange?`, `flag?`, `section?`, `samplingTime?`: the line as printed; `samplingTime` is the time printed over the value's column, normalised to `HH:MM`, display only), `anchor?` (`hdsSourceAnchor`, with `eventId` = `about`), `proposal?` (`itemKey`, `type`, `content`, `time?`, `clientData?`: the event proposed), `status` (`clear`, `check`, `unmapped`, `unit-missing`, `kept-aside`), `reason?`, `requestKey?`, `askOneByOne?`, `specimenImplied?`, `extraction` (`engine`, `engineVersion`, `kbVersion`, `backend`) |
-| `answer` | `sent` | the person's app | `inReplyTo`, `about`, `action` (`confirm`, `correct`, `not-mine`, `skip`, `choose`, `request-item`, `duplicate`), `candidateIds?`, `option?`, `time?`, `timePrecision?` (`day`, `month`, `year`, `unknown`), `basis?` (`profile-match`, `existing-value`), `written?` (`[{ candidateId, eventId }]`) |
+| `proposed-document` (4.26.0) | `received` | the contact | `about`, `candidateId`, `replaces?`, `proposal` (at least one of `documentKind`, a `documentKinds` key, and `time` with `timePrecision`: `day`, `month`, `year`), `anchor?` (where the date is printed), `status` (`clear`, `check`), `extraction?` (§ A document's date and kind) |
+| `answer` | `sent` | the person's app | `inReplyTo`, `about`, `action` (`confirm`, `correct`, `not-mine`, `skip`, `choose`, `request-item`, `duplicate`), `candidateIds?`, `option?`, `time?`, `timePrecision?` (`day`, `month`, `year`, `unknown`), `basis?` (`profile-match`, `existing-value`, `not-pending`), `written?` (`[{ candidateId, eventId }]`), `applied?` (`time`, `kind`: on a proposed document, 4.26.0), `note?` (plain text, at most 1000 characters, 4.26.0: § Her note) |
 
 `reason` is one of `no-item`, `unit-not-offered`, `no-coded-stream`, `timed-draw`, `implausible-value`,
 `ambiguous-label`, `qualitative-result`, `derived-index`. `requestKey` is the key of the item request for a metric no
@@ -110,6 +113,44 @@ can, but no item holds it yet).
 
 There is no job, summary or notice kind on the person's account: the state of the work and the notices are alerts
 only (§ Alerts), and a kept-aside line is a `proposed-value` with `status: kept-aside`.
+
+### A document's date and kind: `proposed-document` (4.26.0)
+
+She may add a document without saying when it is from or what it is: her app then writes it as a placeholder, kind
+`other`, at the moment she added it, with `clientData.hdsDocumentPending` naming the fields she has not confirmed
+([DOCUMENTS.md](DOCUMENTS.md#a-document-waiting-for-its-date-and-kind-4260)). A contact she shares it with proposes
+them in the conversation; she confirms in one tap.
+
+- **Only onto a document waiting for it.** A contact writes a `proposed-document`, or asks `which-document-kind` or
+  `which-document-date`, only while the document's `hdsDocumentPending` holds at least one field it proposes or asks
+  about. A document added before 4.26.0, or by an app that does not write the flag, never gets one, so an older app
+  never receives a kind it skips or a question it cannot answer.
+- **What is proposed.** `proposal.documentKind` is a `documentKinds` key of the pack, never a Coding: her app copies the class
+  and type from the pack, so nothing the contact writes reaches the document but a key and a date. `proposal.time` is
+  the document's date as § Which date is a document's date of DOCUMENTS.md decides (for a lab report, `timeBasis:
+  service`, the sampling day, the same day the values carry; its report date only as a fallback, with `status: check`),
+  at 12:00 UTC at the start of its period with `timePrecision` (PARTIAL-DATES.md); never `unknown`: a contact that
+  does not know the date proposes none, or asks `which-document-date`.
+- **`status`.** `clear`: read with no doubt; `check`: one field is a fallback. Both need her tap: nothing changes on
+  the document before her `confirm` or `correct` (R3).
+- **`extraction` is optional.** A person (a doctor) may propose a date and a kind, and no vouching applies (R9): only
+  a pack key and a date reach the document, on her tap.
+- **One open at a time.** A contact keeps at most one unanswered `proposed-document` per document: it rewrites it in
+  place while the proposal is the same candidate, or writes a new one with `replaces` and deletes the stale one at
+  once (unlike a replaced proposed value, kept until `done`). Her app treats a `replaces` naming an item that is gone
+  as normal.
+- **A question fills what the proposal lacks.** `which-document-kind` (options: kind keys) and `which-document-date`
+  (`context.dates`) name the `proposed-document` in `candidateId`; her answer supplies the missing field when she
+  confirms it (§ Writing a document's date and kind). Neither triggers a re-proposal, and `which-date` stays the sampling
+  day of values.
+- **The first confirmation wins.** Her app applies a proposed field only while it is pending on the document: a field
+  she set herself, or confirmed from another contact's proposal, is never overwritten by a contact.
+- **It does not hold up the work.** A contact does not wait for an answer to a `proposed-document`, nor to the two
+  document questions, to post `done`, and does not count them in `task-status.counts` (`proposed`, `questions`).
+- **Answered** means: an answer whose `inReplyTo` is the `proposed-document` (a `which-document-date` answer that
+  names it in `candidateIds` answers its question, not the proposal).
+- **It may arrive after `done`.** Her app lists the `received` child on every `proposed-values` alert, whatever the
+  task status.
 
 ### Question codes
 
@@ -126,8 +167,11 @@ shown, not answerable.
 | `is-fasting` | MUST | MUST: exactly `yes`, `no` | none | `choose` (+ `option`), `skip` |
 | `which-date` | MAY (absent: the whole document) | none | `dates?` | `confirm` (+ `timePrecision`, `time` unless `unknown`), `skip` |
 | `is-this-yours` | none | none | `identity?`, `anchor?` | `confirm` (+ `basis?`), `not-mine`, `skip` |
+| `which-document-kind` (4.26.0) | MUST: a `proposed-document` | MUST: 2 to 8 `documentKinds` keys | none | `choose` (+ `option`), `skip` |
+| `which-document-date` (4.26.0) | MUST: a `proposed-document` | none | `dates?` | `confirm` (+ `timePrecision`, `time` unless `unknown`), `skip` |
 
-- `context.identity` and `context.anchor` appear on `is-this-yours` only, `context.dates` on `which-date` only. The
+- `context.identity` and `context.anchor` appear on `is-this-yours` only, `context.dates` on `which-date` and
+  `which-document-date` only. The
   anchor points at where the identity block is printed, for her app's anchored view of her own copy of the document;
   one anchor cannot point at several dates, so an anchor per date is reserved for later.
 - `which-date` is asked only when no sampling date is certain and at least one proposed value waits for a date.
@@ -138,7 +182,27 @@ shown, not answerable.
   `which-analyte` (and on `is-fasting` when fasting changes the item) with a new `proposed-value`, a new
   `candidateId` carrying `replaces` = the candidate the question was about, which she confirms like any other. Once a
   replacement exists, the replaced proposed value is shown as not confirmable. An answer to `which-date` or
-  `is-this-yours` settles that question only.
+  `is-this-yours` settles that question only. An answer to `which-document-kind` or `which-document-date` writes
+  nothing either: it supplies a field of its `proposed-document`, written when she confirms that one.
+
+### Specimen codes
+
+The options of `which-specimen`, registered here (4.26.0). Her app labels them; an unknown option is not selectable
+(R8). They name the specimen of the item's stream (BLOOD-CHEMISTRY.md: specimen is part of the item key), never a
+printed text.
+
+| Code | en | fr | es |
+|---|---|---|---|
+| `serum-plasma` | Serum or plasma | Sérum ou plasma | Suero o plasma |
+| `whole-blood` | Whole blood | Sang total | Sangre total |
+| `citrated-plasma` | Citrated plasma (coagulation) | Plasma citraté (coagulation) | Plasma citratado (coagulación) |
+| `rbc` | Red blood cells | Globules rouges | Glóbulos rojos |
+| `urine` | Urine | Urine | Orina |
+| `urine-24h` | 24-hour urine | Urines de 24 heures | Orina de 24 horas |
+| `semen` | Semen | Sperme | Semen |
+| `csf` | Cerebrospinal fluid | Liquide céphalorachidien | Líquido cefalorraquídeo |
+| `stool` | Stool | Selles | Heces |
+| `saliva` | Saliva | Salive | Saliva |
 
 ### Answers, by what they answer
 
@@ -148,10 +212,32 @@ shown, not answerable.
 | a `which-specimen`, `which-unit`, `which-analyte` or `is-fasting` question | `choose` | `option`, one of the question's `options`; `candidateIds` naming the question's `candidateId` |
 | a `which-date` question | `confirm` | `timePrecision`, and `time` unless `timePrecision` is `unknown`; `candidateIds` naming the question's `candidateId` when it has one |
 | an `is-this-yours` question | `confirm` or `not-mine` | `basis: profile-match` only on an automatic `confirm` (§ R3) |
+| a `proposed-document` | `confirm`, `correct`, `skip` | `candidateIds` naming it; `applied` (the fields her app wrote, `time`, `kind`) with `confirm` and `correct`, never `written`; `basis: not-pending` only on an automatic `skip`, when none of its fields is still pending on the document (§ Writing a document's date and kind) |
+| a `which-document-kind` question | `choose` | `option`, one of the question's kind keys; `candidateIds` naming its `proposed-document` |
+| a `which-document-date` question | `confirm` | as for `which-date`; `candidateIds` naming its `proposed-document` |
 
-Any question or proposed value may be answered with `skip`, which settles nothing. `not-mine` is always about the
-whole document and answers `is-this-yours` only. An answer whose `action` is not in this table for what it answers is
-ignored: never a confirmation, never a `not-mine`.
+Any question, proposed value or proposed document may be answered with `skip`, which settles nothing. `not-mine` is
+always about the whole document and answers `is-this-yours` only. An answer whose `action` is not in this table for
+what it answers is ignored: never a confirmation, never a `not-mine`.
+
+### Her note (4.26.0)
+
+She may comment on what she answers by typing: her app puts the text in the answer's `note`, on any action. A comment
+alone is a `skip` with a `note`, `inReplyTo` the item she comments on, and has every effect of a `skip`: the item is
+set aside, may leave nothing waiting, and is deleted at `done` (R10). Her app says so before sending it; a later
+`confirm` still counts while the item exists.
+
+- **Plain text, at most 1000 characters,** hers. It never changes the action's meaning: a `note` that says "yes" on a
+  `skip` is still a `skip`, and no app or contact reads a decision from it.
+- **On `sent` only.** It travels in no alert (R6), and the contact never echoes it, in an item, an alert or a chat
+  message. A contact that does not read notes says so once per document, with the notice `note-not-read`.
+- **Removed after `done`.** Her app removes `note` from an answer (an `events.update` of the answer, writing nothing
+  else) once the contact's latest `task-status` for the document is `done` and later than the answer; when the work
+  was already `done` before the answer (a proposed document answered later), or on `not-mine` and on
+  `document-unshared`, 24 h after the answer, so the contact may read it first (R10). Answers are ordered by `created`:
+  an answer's `modified` never matters (R3, R4). The removal assumes the platform keeps no event history; where it
+  does, the note stays in it.
+- Her app shows that the contact reads it, as for the chat (§ Chat).
 
 **Which answer settles a proposed value.** A `written` entry (from a `confirm` or `correct`) settles it for good.
 Otherwise the latest answer that counts decides. A `duplicate`, automatic or tapped, may therefore be followed by a
@@ -168,18 +254,23 @@ The schema cannot express conditions between fields, so writers check them befor
 
 | When | The event MUST |
 |---|---|
-| any `answer` to a proposed value, or to a question with a `candidateId` | carry `candidateIds`, naming the answered value or the question's candidate |
+| any `answer` to a proposed value or a proposed document, or to a question with a `candidateId` | carry `candidateIds`, naming the answered item or the question's candidate |
 | `answer` with `action: choose` | carry `option`, one of the question's `options` |
 | `answer` with `confirm` or `correct` on a proposed value | carry `written`, one entry per candidate whose value her app wrote; `correct` covers exactly one candidate |
-| `answer` with any other action, or to a question | carry no `written` |
-| `answer` to a `which-date` question | carry `timePrecision`; `time` unless `timePrecision` is `unknown`, and then no `time` |
+| `answer` with `confirm` or `correct` on a proposed document | carry exactly one `candidateIds` entry and `applied`, the fields her app wrote; no `written` |
+| `answer` with any other action, or to a question | carry no `written` and no `applied` |
+| `answer` to a `which-date` or `which-document-date` question | carry `timePrecision`; `time` unless `timePrecision` is `unknown`, and then no `time` |
 | `answer` with `basis: profile-match` | be a `confirm` on an `is-this-yours` question (§ R3) |
 | `answer` with `basis: existing-value` | be a `duplicate` on proposed values, each one already in her record (§ R3, § A value she already has) |
+| `answer` with `basis: not-pending` | be a `skip` on one proposed document none of whose proposed fields is pending on the document (4.26.0) |
 | `question` | follow its row of § Question codes (`candidateId`, `options`, `context`) |
-| `question` or `answer` with a `candidateId` | name a `proposed-value` of the same document on the same relationship's `received` child |
-| `question` with `context.identity` or `context.anchor` | be `is-this-yours`; with `context.dates`, be `which-date` |
-| `proposed-value` with `replaces` | name a proposed value of the same document on the same child, one the person answered a question about and that has no `written` entry |
-| `proposed-value` with `anchor`, `question` with `context.anchor` (from 4.25.0) | carry `anchor.eventId` = `about` (PROVENANCE.md, a self-contained anchor) |
+| `question` or `answer` with a `candidateId` | name a `proposed-value` (or, for the two document codes and an answer to a proposed document, a `proposed-document`) of the same document on the same relationship's `received` child |
+| `question` with `context.identity` or `context.anchor` | be `is-this-yours`; with `context.dates`, be `which-date` or `which-document-date` |
+| `proposed-value` or `proposed-document` with `replaces` | name an item of the same kind and the same document on the same child, not written (no `written` entry, no answer with `applied`); for a proposed value, one the person answered a question about |
+| `proposed-value` or `proposed-document` with `anchor`, `question` with `context.anchor` (from 4.25.0) | carry `anchor.eventId` = `about` (PROVENANCE.md, a self-contained anchor) |
+| `proposed-document` | carry a `proposal.documentKind` that is a `documentKinds` key of the pack, not deprecated; `proposal.time` at 12:00 UTC at the start of its period; be the only unanswered one of its contact for the document; be written only while the document's `hdsDocumentPending` holds at least one proposed field |
+| `which-document-kind`, `which-document-date` question | be asked only while the document's `hdsDocumentPending` holds `kind`, `time` respectively |
+| `answer` with `note` | carry nothing of the note anywhere else (an alert, another field) |
 | `proposed-value` with `status: kept-aside` or `unmapped` | carry `reason` |
 | `proposal` with `time` | carry `clientData.hdsTimePrecision`; `unknown` only on a re-proposal after she answered `which-date` with `unknown` |
 
@@ -196,7 +287,7 @@ cores do not validate `hds`, so every writer validates against it.
 | `task-status` | contact → person | `about`, `status` (`received`, `reading`, `awaiting-answers`, `done`, `error`), `attempt` (from 1, a label), `counts?` (`proposed`, `questions`, `keptAside`, `dropped`), `errorCode?` (with `error`, MUST) |
 | `notice` | contact → person | `code`, `about?` (a document event id) |
 | `question` | contact → person | `eventId` (the question event), `about` |
-| `proposed-values` | contact → person | `about`, `count` (from 1): a wake-up, her app lists the `received` child by `about` and never trusts `count` |
+| `proposed-values` | contact → person | `about`, `count` (from 1): a wake-up, her app lists the `received` child by `about` and never trusts `count`; also sent for a `proposed-document` (4.26.0), counted in `count` (the fixed words are not rendered, R12) |
 | `answer` | person → contact | `eventId` (the answer event), `inReplyTo`, `about` |
 
 ### Notice and error codes
@@ -209,6 +300,7 @@ unknown code is shown with a generic text.
 | `no-result-found` | the document | The contact read the document and recognised no result line: nothing is proposed, no question is asked, the work ends `done` with zero counts. Not "not a lab report": a scan in which no line was recognised has none either. A read that failed is the error `reading-failed`, not this notice. |
 | `several-sampling-dates` | the document | The document prints its results for several sampling days, one value column per day (a cumulative report), and the contact proposes no value from it: it does not tell which value was taken which day. Nothing is proposed, no question is asked, the work ends `done` with zero counts. Sent instead of `no-result-found`, never both for one read. A contact that reads each column under its own day sends neither. Not `which-date`, which asks for the one day all the waiting values share. The notice names no date (R6). |
 | `typed-text-not-read` | none | The contact does not read typed text (§ Chat). At most one per relationship per 24 h. |
+| `note-not-read` | the document | The contact does not read her notes (§ Her note, 4.26.0). At most one per document. The notice names no text of the note (R6). |
 
 | `task-status.errorCode` | Meaning |
 |---|---|
@@ -222,15 +314,19 @@ unknown code is shown with a generic text.
 `clientData.related.<about>: true`; every event id in content (`inReplyTo`, `written[].eventId`) is mirrored in
 `clientData.related` ([PROVENANCE.md](PROVENANCE.md#clientdatarelatedeventid--a-link-to-another-event)).
 
-**R2. The child decides who wrote it.** A `question` or `proposed-value` counts only on the relationship's `received`
-child; an `answer` counts only on its `sent` child. A reader ignores any other kind found on a child, and any item of
+**R2. The child decides who wrote it.** A `question`, `proposed-value` or `proposed-document` counts only on the
+relationship's `received` child; an `answer` counts only on its `sent` child. A reader ignores any other kind found on a child, and any item of
 this type outside the relationship's two children.
 
 **R3. Nothing is written before an answer, and an answer binds to what was shown.**
 - Her app writes a value only for a proposed value she answered with `confirm` or `correct`, and only once every
   `is-this-yours` question of the document has a `confirm` answer (when one was asked) and the value has a date (its
   `proposal.time`, or her answer to `which-date`). `not-mine` writes nothing from the document.
-- A proposed value or a question that has an answer is never updated (R5 says when a re-read writes a new one).
+- **A proposed document** changes nothing on the document before her `confirm` or `correct`, and only its fields still
+  pending (§ Writing a document's date and kind). It needs no `is-this-yours` (it is about her document, not about
+  her), and is refused once the document is `not-mine`.
+- A proposed value, a proposed document or a question that has an answer is never updated (R5 says when a re-read
+  writes a new one).
 - An answer covers `inReplyTo`, each of its `candidateIds`, and the question's `candidateId`. It is void when any event
   it covers was modified after the answer was created (that event's `modified` is later than the answer's
   `created`). Just before writing, her app re-reads what an answer covers and does not write if one changed since it
@@ -253,12 +349,16 @@ this type outside the relationship's two children.
   above). It writes nothing.
   - **What the contact learns.** That she already holds a value equal to each of those candidates, never which event
     or its value. This is a disclosure about her record to a contact she shares the document with, hence the
-    restriction to confirmable proposals of a vouched engine.
+    restriction to confirmable proposals of a vouched engine. (From 4.26.0 her app links the matched event to the
+    document with `hdsPrintedIn`, on that event, which the document's readers do not see: § Writing a value.)
   - **What she sees.** Her app shows these values as already in her record, from the answer's `candidateIds` (her
     answers stay on `sent`), and offers to add each one anyway while its proposed value exists, that is until the
     work is `done`: a later `confirm` or `correct` writes it (§ Answers, which answer settles a proposed value).
   - **The contact** treats it as any `duplicate`: the value is settled, and deleted at `done` (R10). With every value
     of a document matched, nothing waits and the work may end at once.
+- **`basis: not-pending`** (4.26.0, also without a tap): only with `skip` on a proposed document none of whose
+  proposed fields is still pending on the document (she set them, or confirmed another contact's). It writes nothing
+  and tells the contact nothing it cannot read on the shared document; the contact deletes the proposal (R10).
 
 **R4. The state of the work is the latest `task-status`** of the document by alert `time`; `attempt` labels it and
 breaks a tie, never orders it (the contact deletes its alert copies, R10, so after a restart it may not know the last
@@ -272,11 +372,12 @@ written again in place; a candidate found in an answer's `written` is never prop
 stay on `sent`). An answer counts once per `candidateId`, until a `written` entry settles it (§ Answers). The record
 includes the column of a report printing one value column per day: two columns of one row are two candidates, even
 with equal values on one day. The contact knows a candidate is written from
-`answer.written`; her app knows it from the value's `sourceKey` (§ Writing a value).
+`answer.written`; her app knows it from the value's `sourceKey` (§ Writing a value). A `proposed-document`'s
+`candidateId` derives from the document, its attachment and the proposal, the same way.
 
 **R6. Never over CMC.** No alert, no chat message of the contact and no alert `title` or `body` carries a value, a
-printed line, a name, a birth date, a date or a time of the document, an item key, a stream id or free text from a
-model. They
+printed line, a name, a birth date, a date or a time of the document, an item key, a document kind, a stream id, free
+text from a model or her `note`. They
 carry kinds, event ids, codes and counts. What the document prints is only on the person's account: in
 `proposed-value.printed`, `question.context`, and the values her app writes.
 
@@ -301,13 +402,17 @@ additive (a minor release); a breaking change is a `-v2` type. A value a reader 
 | `reason` | a generic "not saved" |
 | `question.code` (bare or `x-`) | shown, not answerable |
 | `answer.action` | ignored by the contact, never a confirmation |
-| `answer.basis` | never a confirmation; the answer does not count. On a `duplicate` with `existing-value`, a contact that does not know it sees the value still open and never reaches `done`, and an older app shows it open: a contact reads `existing-value` before any app sends it |
+| `answer.basis` | never a confirmation; the answer does not count. On a `duplicate` with `existing-value`, a contact that does not know it sees the value still open and never reaches `done`, and an older app shows it open: a contact reads `existing-value` before any app sends it. `not-pending` comes only from a 4.26.0 app, on a proposed document only a 4.26.0 contact writes, and `done` never waits for it |
 | `context.dates[].role` | `other` |
 | `proposal.clientData.hdsComparator` | the proposal is not confirmable |
 | `timePrecision`, `proposal.clientData.hdsTimePrecision` | absent |
 | `proposal.clientData.hdsInterpretation` | absent |
 | `notice.code`, `task-status.errorCode` | a generic text |
 | an option code (`question.options`) | not selectable |
+| `proposed-document.proposal.documentKind` | the proposal is not confirmable |
+| `answer.note` | ignored by a contact that does not read notes (it may send `note-not-read`); never an action |
+| `answer.applied` | a field name it does not know is ignored; the answer still settles its proposed document |
+| a kind (`proposed-document` before 4.26.0) | skipped: an older app shows nothing, and the contact does not wait for it |
 
 **R9. The proposal is checked before it is shown, and before it is written.**
 - Her app validates `proposal.content` against `proposal.type` from the pack, and checks that `proposal.itemKey` is an
@@ -321,6 +426,10 @@ additive (a minor release); a breaking change is a `-v2` type. A value a reader 
   HDS Reader's relationship only. Proposals from any other relationship, or with another engine, are shown as not
   confirmable. This reads the contact's app identity as an authorisation check, not to choose how to render: every
   relationship's items render the same way.
+- **A proposed document** is checked too: `proposal.documentKind` is a `documentKinds` key of the pack, not deprecated;
+  `about` is a `file/xds-v1` event shared in this relationship (R11), not trashed, and at least one of the proposed
+  fields is still in its `hdsDocumentPending`. No engine binding applies (§ A document's date and kind). One that
+  fails is shown as not confirmable.
 
 **R10. Retention.** The items are the person's, on her account; the contact keeps nothing beyond the work on a
 document. Deleted means deleted (twice), not only trashed.
@@ -330,9 +439,15 @@ document. Deleted means deleted (twice), not only trashed.
   `identity` is deleted on `not-mine`, on `document-unshared` and when the work is `done`, whatever else stays. A
   kept-aside value stays until she dismisses it or its item ships; offering it again means reading the document again
   (it must still be shared).
+- **A `proposed-document`** is deleted by the contact once answered (an answer whose `inReplyTo` is it) with
+  `confirm`, `correct`, or `skip` with `basis: not-pending`, or once replaced, whenever that happens, and the
+  `which-document-kind` and `which-document-date` questions about it with it. An unanswered one, or one she skipped
+  herself, stays after `done`: she may confirm it later. The contact keeps reading her answers about it until it is
+  gone.
 - **`not-mine`, `document-unshared` and a document gone win over everything above:** every item of that document is
   deleted, kept-aside values included.
-- **Her answers** stay on `sent` until the relationship ends: they carry ids, codes and her date only.
+- **Her answers** stay on `sent` until the relationship ends: they carry ids, codes and her date only, once her app
+  has removed her `note` (after `done`, or 24 h after the answer, § Her note).
 - **On the contact's account**, the delivered copies of the conversation alerts and of her chat messages, and its own
   copies of what it sent, are deleted once the work they are about is `done`, at the latest 24 h after they arrived.
 - **After a revoke**, her app deletes both children (§ Where it lives); the contact deletes everything it still holds
@@ -367,6 +482,47 @@ Her app writes each confirmed value as an ordinary event on its item, with her t
 
 Order: re-read (R3), write the values (looking each `sourceKey` up first), write the `answer` with `written`, post the
 `answer` alert. A retry after a failure finds the values by `sourceKey` and does not write them twice.
+
+**The document lists them (4.26.0).** Then her app adds each value it wrote to the document event's
+`clientData.hdsDocumentValues` with the role `source`
+([PROVENANCE.md](PROVENANCE.md#clientdatahdsdocumentvalues--the-values-read-from-a-document)). It is an index,
+written after the answer and best effort: a failure does not void the answer, and her app restores a missing entry on
+its next write, from the `written` entries of the document's answers. When it deletes values (a `not-mine`), it
+removes their entries.
+
+**A value she already had (4.26.0).** For each event an automatic `duplicate` matched (§ A value she already has), her
+app adds `clientData.hdsPrintedIn.<document event id>: true` to that event, after the answer and best effort
+([PROVENANCE.md](PROVENANCE.md#clientdatahdsprintedineventid--a-document-that-prints-a-value-she-already-had)): the
+document's view lists it as found in the document, not read from it. Nothing about it is written on the document,
+which the contacts it is shared with read. On `not-mine`, her app removes the document from the `hdsPrintedIn` of her
+events.
+
+## Writing a document's date and kind (4.26.0)
+
+When she confirms a `proposed-document`, her app updates the document event, with her token:
+
+1. Re-read (R3): the `proposed-document` and the questions about it (their `modified` is the void test), and the
+   document event for its pending fields and `content` (its own `modified` is not part of the void test: her index
+   writes and share edits change it).
+2. Take each field: from her `correct` when she changed it; else from the proposal; else from her answer to
+   `which-document-kind` (`option`) or `which-document-date` (`time`, `timePrecision`) about it.
+3. Keep only the fields still pending on the document (DOCUMENTS.md, a stale flag counts as not pending). With none
+   left, write no update: answer `skip` with `basis: not-pending` instead (her app does this without a tap when it
+   finds such a proposal).
+4. One `events.update` of the document: the whole `content` with `class` and `type` replaced by the kind's Codings
+   from the pack (`type` = `[kind.type]`, the other fields of `content` as they are); `time` and
+   `clientData.hdsTimePrecision` (with `unknown`, from her `which-document-date` answer: `time` stays the moment she
+   added it, DOCUMENTS.md); `hdsDocumentPending` reduced by the fields written, `null` when empty. `streamIds`,
+   `title`, `language`, `creation` and the attachments are not touched, and no `hdsExtraction` is written: the date and
+   kind are her statement, and her answer on `sent` is the trace.
+5. Write the `answer` (`confirm`, or `correct` when she changed a field) with `applied`, the fields written, and no
+   `written` (a `written` entry is a value to delete on `not-mine`, never the document), then post the `answer`
+   alert. The answer does not carry her correction; the document, which the contact reads, does.
+
+A retry finds the fields no longer pending and writes no second update. When the document already holds the values
+this confirmation would write (the update went through, the answer did not), the retry writes the `confirm` (or
+`correct`) with `applied`; `not-pending` is only for fields set by someone else. Her own edit of the document's date or kind
+(her document viewer) removes that field from `hdsDocumentPending` the same way, so no contact's proposal overrides it.
 
 ## A value she already has
 
@@ -415,11 +571,12 @@ once per relationship per 24 h), and deletes what she typed within 24 h (R10).
    vouched app (R9).
 2. Read a shared document by its event id on `document-shared`; stop and delete on `document-unshared` and on revoke.
 3. Post `task-status` for every document it takes.
-4. Write `proposed-value` and `question` events on the `received` child, validated against this type and following §
-   What a writer MUST include (an anchor names its document: `anchor.eventId` = `about`), each followed by its alert,
-   validated against `hds-conversation-alert.json`.
+4. Write `proposed-value` and `question` events (and, optionally, one `proposed-document`) on the `received` child,
+   validated against this type and following § What a writer MUST include (an anchor names its document:
+   `anchor.eventId` = `about`), each followed by its alert, validated against `hds-conversation-alert.json`.
 5. Read her answers on `sent`, and only there (R2); honour the binding and void rules (R3), and read an automatic
-   `duplicate` (`basis: existing-value`) as settling its values.
+   `duplicate` (`basis: existing-value`) as settling its values. A contact that does not read her `note` says so once
+   per document (`note-not-read`).
 6. Never put a value, a name or a date in an alert or a chat message (R6, R12); resolve nothing outside the
    relationship (R11).
 7. Delete as R10 says, on her account and on its own.
@@ -508,6 +665,44 @@ already has); it writes nothing:
     "basis": "existing-value"
   },
   "clientData": { "related": { "ckq3w8n1x0001": true, "ckq3w8n1x0013": true } }
+}
+```
+
+A proposed date and kind for a document she added without them (4.26.0), on the `received` child:
+
+```json
+{
+  "streamIds": ["conv-k3x9q2m7a1b0"],
+  "type": "message/hds-conversation-v1",
+  "content": {
+    "kind": "proposed-document",
+    "about": "ckq3w8n1x0001",
+    "candidateId": "d-5c2e9a14",
+    "proposal": { "documentKind": "laboratory-report", "time": 1773316800, "timePrecision": "day" },
+    "anchor": { "eventId": "ckq3w8n1x0001", "attachmentId": "ckq3w8n1x0001a", "page": 1, "bbox": [62, 6.5, 30, 2.2] },
+    "status": "clear",
+    "extraction": { "engine": "hds-reader", "engineVersion": "0.4.0", "kbVersion": "0.4.0", "backend": "text-layer" }
+  },
+  "clientData": { "related": { "ckq3w8n1x0001": true } }
+}
+```
+
+Her confirmation, after her app updated the document, with a comment:
+
+```json
+{
+  "streamIds": ["conv-p0w4e8r2t6y1"],
+  "type": "message/hds-conversation-v1",
+  "content": {
+    "kind": "answer",
+    "inReplyTo": "ckq3w8n1x0014",
+    "about": "ckq3w8n1x0001",
+    "action": "confirm",
+    "candidateIds": ["d-5c2e9a14"],
+    "applied": ["time", "kind"],
+    "note": "The follow-up blood test."
+  },
+  "clientData": { "related": { "ckq3w8n1x0001": true, "ckq3w8n1x0014": true } }
 }
 ```
 
