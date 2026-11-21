@@ -1,6 +1,6 @@
 {
-  "version": "4.24.0",
-  "publicationDate": "2026-11-21T15:27:55.942Z",
+  "version": "4.25.0",
+  "publicationDate": "2026-11-21T17:23:43.312Z",
   "streams": [
     {
       "id": "activity",
@@ -28384,7 +28384,7 @@
                     }
                   },
                   "anchor": {
-                    "description": "Where the value was printed in the source document (the file/xds-v1 event in clientData.related): an attachment, a page and a box, nothing of what is printed there. See documentation/PROVENANCE.md.",
+                    "description": "Where the value was printed in the source document (the file/xds-v1 event in clientData.related): the document, an attachment, a page and a box, nothing of what is printed there. Self-contained: whoever may read both the event and the document finds the zone from the anchor alone. See documentation/PROVENANCE.md.",
                     "type": "object",
                     "additionalProperties": false,
                     "required": [
@@ -28392,6 +28392,12 @@
                       "page"
                     ],
                     "properties": {
+                      "eventId": {
+                        "description": "The id of the file/xds-v1 document event, the one clientData.related names (it stays there for queries). Absent on anchors written before 4.25.0: the document is then the one related names.",
+                        "type": "string",
+                        "maxLength": 64,
+                        "pattern": "^[a-zA-Z0-9_-]+$"
+                      },
                       "attachmentId": {
                         "description": "The id of the document event's attachment (Pryv attachments[].id) the value was read from.",
                         "type": "string",
@@ -28509,11 +28515,17 @@
                   "section": {
                     "type": "string",
                     "maxLength": 80
+                  },
+                  "samplingTime": {
+                    "description": "The sampling time printed over the value's column on a report with one column per sampling, normalised to HH:MM (24 h), so two same-day values can be told apart. Display only: never the value's time, never sent over CMC.",
+                    "type": "string",
+                    "maxLength": 5,
+                    "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
                   }
                 }
               },
               "anchor": {
-                "description": "Where the value was printed in the source document (the file/xds-v1 event in clientData.related): an attachment, a page and a box, nothing of what is printed there. See documentation/PROVENANCE.md.",
+                "description": "Where the value was printed in the source document (the file/xds-v1 event in clientData.related): the document, an attachment, a page and a box, nothing of what is printed there. Self-contained: whoever may read both the event and the document finds the zone from the anchor alone. See documentation/PROVENANCE.md.",
                 "type": "object",
                 "additionalProperties": false,
                 "required": [
@@ -28521,6 +28533,12 @@
                   "page"
                 ],
                 "properties": {
+                  "eventId": {
+                    "description": "The id of the file/xds-v1 document event, the one clientData.related names (it stays there for queries). Absent on anchors written before 4.25.0: the document is then the one related names.",
+                    "type": "string",
+                    "maxLength": 64,
+                    "pattern": "^[a-zA-Z0-9_-]+$"
+                  },
                   "attachmentId": {
                     "description": "The id of the document event's attachment (Pryv attachments[].id) the value was read from.",
                     "type": "string",
@@ -28809,10 +28827,11 @@
                 ]
               },
               "basis": {
-                "description": "is-this-yours only: the person's app confirmed because the printed identity matches her profile. Absent when she answered herself.",
+                "description": "An answer the person's app gave without a tap, and why. profile-match: a confirm on is-this-yours, the printed identity matches her profile. existing-value: a duplicate on proposed values, each already in her record (same item, same day, equal value; documentation/CONVERSATION.md, A value she already has). Absent when she answered herself.",
                 "type": "string",
                 "enum": [
-                  "profile-match"
+                  "profile-match",
+                  "existing-value"
                 ]
               },
               "written": {
