@@ -519,7 +519,9 @@ When she confirms a `proposed-document`, her app updates the document event, wit
    `written` (a `written` entry is a value to delete on `not-mine`, never the document), then post the `answer`
    alert. The answer does not carry her correction; the document, which the contact reads, does.
 
-A retry finds the fields no longer pending and writes no second update. Her own edit of the document's date or kind
+A retry finds the fields no longer pending and writes no second update. When the document already holds the values
+this confirmation would write (the update went through, the answer did not), the retry writes the `confirm` (or
+`correct`) with `applied`; `not-pending` is only for fields set by someone else. Her own edit of the document's date or kind
 (her document viewer) removes that field from `hdsDocumentPending` the same way, so no contact's proposal overrides it.
 
 ## A value she already has

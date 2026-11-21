@@ -417,7 +417,8 @@ Schema: `json-schemas/hds-printed-in.json`. One key per document event id, value
   keys, not their contents, so it writes the whole `hdsPrintedIn` object, re-reading the event just before. The event's `modified`
   changes; nothing else of it does.
 - **Finding them.** The document's view queries `events.get` with
-  `clientData: [{ "path": "hdsPrintedIn.<document event id>", "eq": true }]` (one call; the ids are query paths).
+  `clientData: [{ "path": "hdsPrintedIn.<document event id>", "eq": true }]`, the same `clientData` filter as for
+  `related.<eventId>` and `sourceKey` above (one call; the ids are query paths).
 - **Removed** from the event when the document is `not-mine` (her app queries the key, then removes the document's
   entry, `null` when none is left). A reader ignores an entry whose document it cannot read or that is gone.
 - **Visible to every reader of the value**, like `related`: a document id, usually unreadable to them. It names no
