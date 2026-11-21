@@ -1,0 +1,13 @@
+manifestation:
+  label: Reaction manifestations
+  description: Search allergic-reaction manifestations (hives, anaphylaxis, wheezing…; SNOMED-CT) from datasets service, for an allergy's reactions[].manifestations[] (store label and codes)
+  endpoint: datasets://manifestation
+  queryParam: search
+  minQueryLength: 3
+  resultKey: manifestations
+  displayFields:
+    label: label
+    description: description
+  valueFields:
+    - label
+    - codes

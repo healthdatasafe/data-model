@@ -1,0 +1,13 @@
+# Labels of the allergy enums that no item option labels (ALLERGY.md § Reactions). `reactions` is not a form field,
+# so its `severity` has no item options; the entry UI and readers take its labels from here. `fhir` is the
+# AllergyIntolerance.reaction.severity code (required binding, no system), the stored value itself.
+
+allergy-reaction-severity:
+  fhirElement: AllergyIntolerance.reaction.severity
+  binds:
+    - { eventType: allergy/coded-v1, path: reactions.severity }
+    - { eventType: allergy/basic-v1, path: reactions.severity }
+  values:
+    mild: { label: { en: Mild, fr: Légère }, fhir: mild }
+    moderate: { label: { en: Moderate, fr: Modérée }, fhir: moderate }
+    severe: { label: { en: Severe, fr: Sévère }, fhir: severe }

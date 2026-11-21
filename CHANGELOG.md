@@ -2,8 +2,8 @@
 
 ## [Unreleased]
 
-Additive: two documented `settings/hds-webapp-diary` keys; no item, stream, eventType, option value or `fhir` block
-change. A minor release.
+Additive: two documented `settings/hds-webapp-diary` keys (plan 134); one datasource and one vocabulary for allergy
+reactions (plan 133). No item, stream, eventType, option value or `fhir` block change. A minor release.
 
 ### Added: `stars` and `rememberNever` documented on `settings/hds-webapp-diary`
 
@@ -21,6 +21,16 @@ event with `stars` (draft-07 and draft-04). Fable-reviewed (clean with edits, ap
 charting method). Later is not stored; an id names a prompt, never a value; a reader ignores an id it does not know.
 `methodLater`'s description now says it is the set-up's deferral only. The event's description counts prompt ids among
 its values.
+
+### Added: allergy reactions, what an entry UI needs to enter them (plan 133)
+
+- **Datasource `manifestation`** (`datasets://manifestation`, result key `manifestations`, value fields `label` and
+  `codes`): the coded choices for an allergy reaction's `manifestations[]` (ALLERGY.md § Datasource), served by
+  datasets-service 1.4.0. No item field names it.
+- **Vocabulary `allergy-reaction-severity`** (`definitions/vocabularies/allergy.yaml`): en/fr labels of
+  the binding path `reactions.severity` on `allergy/coded-v1` and `allergy/basic-v1`, FHIR code = the stored value.
+- The vocabulary loader resolves a path through an array of objects (`reactions.severity`), not only an array at
+  its end. Fable-reviewed (ship with fixes, applied).
 
 ## [4.22.0] - unreleased
 

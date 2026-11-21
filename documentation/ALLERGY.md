@@ -85,6 +85,27 @@ known). It is not federated with the `medication` datasource, which returns prod
 ingredient or a class; the `{ label, codes[] }` shape takes ATC and RxNorm too, so a merged search later needs no
 migration. The datasets-service side is its own task.
 
+`manifestation` (`definitions/datasources/manifestations.yaml`, endpoint `datasets://manifestation`, result key
+`manifestations`): what a reaction was (hives, anaphylaxis, wheezing), SNOMED CT clinical findings. An entry UI
+writes the selection's `label` and `codes` as one `manifestations[]` entry; a reaction the list does not have is a
+`text`. No item field names it (`reactions` is not a form field): it is there for the entry UI's reaction group and
+for an importer completing a coded manifestation.
+
+## Reactions
+
+The labels of a reaction's `severity` are the vocabulary `allergy-reaction-severity`
+(`definitions/vocabularies/allergy.yaml`): Mild / Légère, Moderate / Modérée, Severe / Sévère. Their FHIR code is
+the stored value (`AllergyIntolerance.reaction.severity`, a required binding). The binding path is
+`reactions.severity`, with no bracket: a path segment that is an array of objects steps into its items.
+
+What an entry UI must hold, since the schema refuses the alternative:
+
+- no reaction entered writes no `reactions` key, never `reactions: []` (at least one when present);
+- a reaction has at least one manifestation: a severity or notes alone is not a reaction;
+- a manifestation picked from the list is `{ label, codes }`; one typed is `{ text }` only (`codes` needs a `label`);
+- the list's labels are in English only, so a search in French finds little: offer the typed text too;
+- the search needs 3 characters (datasets-service answers 400 below that).
+
 ## FHIR
 
 An `AllergyIntolerance` under the bare scope key `AllergyIntolerance`, granted on `allergy`. Rendering and import
@@ -96,7 +117,5 @@ rules: [FHIR-MAPPING.md § AllergyIntolerance](FHIR-MAPPING.md#allergyintoleranc
   `716186003`, with a scope of all, drug, food or environment). Not an allergen: a negation has no onset, and must
   not carry a criticality or reactions, or appear in every allergen search. Until it ships, an import refuses a "no
   known allergy" code or name (FHIR-MAPPING.md § AllergyIntolerance, Import).
-- Labels for the reaction `severity` values (`mild`, `moderate`, `severe`): `reactions` is not a form field, so no
-  item option labels them. Deferred to the entry UI (plan 133 phase 5).
 - `presumed` (R5) as an additive `verificationStatus` value.
 - An abatement as `time + duration`.

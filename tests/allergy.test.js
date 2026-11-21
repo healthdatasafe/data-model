@@ -10,6 +10,7 @@ describe('[ALG] allergies and intolerances', () => {
   const { itemsById, fhirScopes, checkItemVsEvenType } = require('../src/items');
   const { eventTypesById } = require('../src/eventTypes');
   const { datasourcesById } = require('../src/datasources');
+  const { vocabulariesById, resolveEnum } = require('../src/vocabularies');
   const { streamsById } = require('../src/streams');
   const { checkItem } = require('../src/schemas/items');
   const { checkFhirMapping, checkFhirImportKeys, readLock, fhirMapping, ALLERGY_FIELDS, ALLERGY_REACTION_SEVERITIES } = require('../src/fhir');
@@ -131,6 +132,30 @@ describe('[ALG] allergies and intolerances', () => {
       assert.strictEqual(ds.resultKey, 'allergens');
       const declared = Object.keys(eventTypesById('allergy/coded-v1').properties.allergen.properties);
       for (const f of ds.valueFields) assert.ok(declared.includes(f), `allergen.${f}`);
+    });
+
+    it('[ALG-ET-8] the datasource manifestation, from datasets-service, every value field declared on a manifestation', () => {
+      const ds = datasourcesById.manifestation;
+      assert.strictEqual(ds.endpoint, 'datasets://manifestation');
+      assert.strictEqual(ds.resultKey, 'manifestations');
+      assert.deepStrictEqual(ds.valueFields, ['label', 'codes'], 'a new value field needs the eventType first');
+      for (const t of Object.values(TYPES)) {
+        const declared = Object.keys(eventTypesById(t).properties.reactions.items.properties.manifestations.items.properties);
+        for (const f of ds.valueFields) assert.ok(declared.includes(f), `${t} manifestation.${f}`);
+      }
+    });
+
+    it('[ALG-ET-9] the reaction severity labels: vocabulary allergy-reaction-severity, its FHIR code the stored value', () => {
+      const voc = vocabulariesById['allergy-reaction-severity'];
+      assert.strictEqual(voc.fhirElement, 'AllergyIntolerance.reaction.severity');
+      assert.deepStrictEqual(Object.keys(voc.values), ALLERGY_REACTION_SEVERITIES);
+      for (const [value, v] of Object.entries(voc.values)) {
+        assert.strictEqual(v.fhir, value);
+        assert.ok(v.label.en && v.label.fr, value);
+      }
+      assert.deepStrictEqual(voc.binds, Object.values(TYPES).map((eventType) => ({ eventType, path: 'reactions.severity' })));
+      for (const t of Object.values(TYPES)) assert.deepStrictEqual(resolveEnum(t, 'reactions.severity'), ALLERGY_REACTION_SEVERITIES, t);
+      assert.deepStrictEqual(resolveEnum('allergy/coded-v1', 'reactions.manifestations'), null, 'an array of objects is no enum');
     });
   });
 
