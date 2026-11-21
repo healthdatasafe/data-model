@@ -104,7 +104,7 @@ describe('[RDR] HDS Reader', () => {
         assert.strictEqual(s.additionalProperties, false, k);
         assert.ok(!PORTABLE.test(JSON.stringify(s)), k);
       }
-      assert.deepStrictEqual(Object.keys(keys.hdsSourceAnchor.properties), ['attachmentId', 'page', 'bbox']);
+      assert.deepStrictEqual(Object.keys(keys.hdsSourceAnchor.properties), ['eventId', 'attachmentId', 'page', 'bbox']);
       assert.deepStrictEqual(keys.hdsSourceAnchor.required, ['attachmentId', 'page']);
       assert.deepStrictEqual(Object.keys(keys.hdsExtraction.properties), ['engine', 'engineVersion', 'kbVersion', 'backend', 'confirmedBy', 'corrected']);
       assert.deepStrictEqual(keys.hdsExtraction.required, ['engine', 'engineVersion', 'kbVersion', 'backend', 'confirmedBy']);
@@ -321,7 +321,10 @@ describe('[RDR] HDS Reader', () => {
     });
 
     it('[RDR-ET-7] the inlined anchor and extraction fields are copies of the key schemas', () => {
-      assert.deepStrictEqual(strip(branch('reading').properties.anchor), strip(keys.hdsSourceAnchor));
+      // reader-v1 is superseded and unchanged: its anchor is the key's shape before 4.25.0 (no eventId)
+      const { eventId, ...before } = strip(keys.hdsSourceAnchor).properties;
+      assert.deepStrictEqual(strip(branch('reading').properties.anchor).properties, before);
+      assert.deepStrictEqual(strip(branch('reading').properties.anchor).required, keys.hdsSourceAnchor.required);
       for (const f of ['engine', 'engineVersion', 'kbVersion', 'backend']) {
         assert.deepStrictEqual(strip(branch('job').properties[f]), strip(keys.hdsExtraction.properties[f]), f);
       }

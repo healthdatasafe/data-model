@@ -247,7 +247,7 @@ can tell which program and knowledge base produced it. The HDS Reader is the fir
     "related": { "ckq3w8n1x0001": true },
     "hdsTimePrecision": "day",
     "hdsRefRange": { "lowerLimit": 30, "upperLimit": 400, "text": "30 - 400" },
-    "hdsSourceAnchor": { "attachmentId": "ckq3w8n1x0001a", "page": 1, "bbox": [8.5, 41.2, 83, 2.1] },
+    "hdsSourceAnchor": { "eventId": "ckq3w8n1x0001", "attachmentId": "ckq3w8n1x0001a", "page": 1, "bbox": [8.5, 41.2, 83, 2.1] },
     "hdsExtraction": { "engine": "hds-reader", "engineVersion": "0.2.0", "kbVersion": "0.4.0", "backend": "text-layer", "confirmedBy": "person" }
   }
 }
@@ -272,17 +272,26 @@ rule; never `hdsExtraction`.
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
+| `eventId` | string, `^[a-zA-Z0-9_-]+$`, ≤ 64 | no (4.25.0) | The id of the `file/xds-v1` document event: the one `clientData.related` names, which stays there for queries. Absent on anchors written before 4.25.0. |
 | `attachmentId` | string, `^[a-zA-Z0-9_-]+$`, ≤ 64 | yes | The id of the document event's attachment (Pryv `attachments[].id`) the value was read from. |
 | `page` | integer ≥ 1 | yes | The page **within that attachment**, from 1; an image is page 1. |
 | `bbox` | 4 numbers, each 0..100 | no | `[x, y, width, height]` of the printed line the value was read from, in **percent of the page as displayed**: `x` and `width` of the page width, `y` and `height` of its height, origin at the **top left**. For a PDF, the page as displayed is its CropBox after its `/Rotate`; for an image, the image after its orientation (EXIF) is applied. |
 
 The anchor names the attachment because a document event may hold its pages as several attachments.
 
+**One module, self-contained.** `{ eventId, attachmentId, page, bbox? }` says, on its own, which zone of which
+document a thing points at: whoever may read both the event that carries it and the document finds the zone from the
+anchor alone. Any event that points at a zone of a document uses this one shape, under this key: a value read from
+it, a note about it, a conversation item (CONVERSATION.md: a proposed value's `anchor`, an `is-this-yours` question's
+`context.anchor`).
+
 **Rules.**
 
 - **It points into the one document the event is related to.** Written only on an event whose `clientData.related`
-  names exactly one `file/xds-v1` event; the anchor is in that document's attachment `attachmentId`. An event linked
-  to no document, or to several, carries no anchor.
+  names exactly one `file/xds-v1` event; the anchor is in that document's attachment `attachmentId`. Writers set
+  `eventId` to that document (from 4.25.0), and `eventId` MUST be a key of `clientData.related`: a reader ignores an
+  anchor whose `eventId` is not, without fetching anything. A reader takes the document from `eventId` when present,
+  else from `related`. An event linked to no document, or to several, carries no anchor.
 - **A box only when the reader trusts it.** Without one, the anchor is `{ attachmentId, page }`: no box rather than a
   doubtful one. Writers keep `x + width ≤ 100` and `y + height ≤ 100`, width and height above 0, and round to two
   decimals.
