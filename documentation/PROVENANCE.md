@@ -28,6 +28,9 @@ conventions below are contracts between HDS apps, documented here so every write
 | `clientData.hdsDocumentUniqueId` | A document's `uniqueId` as `<system>\|<value>`, mirroring its content: the cross-writer key that recognises a document already held | [DOCUMENTS.md](DOCUMENTS.md#filexds-v1) |
 | `clientData.hdsSourceAnchor` | Where a value read from a document is printed in it: a page and a box, nothing of what is printed there | this page, [below](#clientdatahdssourceanchor--where-a-value-is-printed-in-its-document) |
 | `clientData.hdsExtraction` | Which program read a value from a document, with which knowledge base and backend, and the role of who confirmed it | this page, [below](#clientdatahdsextraction--which-program-read-a-value-and-who-confirmed-it) |
+| `clientData.hdsDocumentValues` (on a document event, 4.26.0) | Her value events read from the document, by id, with their role (`source`) | this page, [below](#clientdatahdsdocumentvalues--the-values-read-from-a-document) |
+| `clientData.hdsPrintedIn.<eventId>` (on a value event, 4.26.0) | The documents that print a value she already had, not its source | this page, [below](#clientdatahdsprintedineventid--a-document-that-prints-a-value-she-already-had) |
+| `clientData.hdsDocumentPending` (on a document event, 4.26.0) | The fields of a document she has not confirmed yet (`time`, `kind`): a placeholder waiting for its date and kind | [DOCUMENTS.md](DOCUMENTS.md#a-document-waiting-for-its-date-and-kind-4260) |
 
 A reader ignores any `clientData` key it does not know. A new key is `hds`-prefixed and documented here (or in
 its domain document, and indexed here) before an app ships it. `related` and `sourceKey` predate the prefix
@@ -118,8 +121,10 @@ was read from.
 
 **Rules.**
 
-- **The derived event points at its source**, never the other way: a lab report does not list the values
-  read from it. To find them, query events with `clientData.related.<reportId>` set.
+- **The derived event points at its source**, never the other way: `related` is never set on a lab report for the
+  values read from it. To find them, query events with `clientData.related.<reportId>` set. The document may also
+  carry an index of them, `hdsDocumentValues` (4.26.0, [below](#clientdatahdsdocumentvalues--the-values-read-from-a-document)),
+  for a reader that holds the document and wants its values without a query; `related` on each value stays the link.
 - **`true` is the only value.** The kind of link follows from the two events' types (a value and a
   document: read from it; an answer and a request: answers it; a procedure or a condition and the visit it
   happened during, `related` only: [ENCOUNTER.md](ENCOUNTER.md)). A link that needs more than that gets its
@@ -343,3 +348,80 @@ RFC 8118, and Media Fragments' `xywh` takes integers, so the percentages are rou
 
 **Cross-system.** A FHIR export may later render it as a `Provenance` (the program as an agent of type `assembler`, the
 role as a `verifier`); not exported today.
+
+### `clientData.hdsDocumentValues` — the values read from a document
+
+On a document event (`file/xds-v1`), 4.26.0: an index of her value events read from it, keyed by event id, each with
+its role. Her app writes it when a conversation settles values of the document
+([CONVERSATION.md](CONVERSATION.md#writing-a-value)), so the document's view lists them without a query. A value she
+already had that the document also prints is not listed here: it carries the link itself,
+[`hdsPrintedIn`](#clientdatahdsprintedineventid--a-document-that-prints-a-value-she-already-had).
+
+```json
+{
+  "streamIds": ["documents"],
+  "type": "file/xds-v1",
+  "clientData": {
+    "hdsDocumentValues": { "ckq3w8n1x0020": "source", "ckq3w8n1x0021": "source" }
+  }
+}
+```
+
+| Role | The event | Its own link |
+|---|---|---|
+| `source` | was read from this document and written from it: confirmed or corrected from a proposed value | `clientData.related.<document event id>`, its `sourceKey` (`<engine>:document:<document event id>:<candidateId>`) and its `hdsSourceAnchor` |
+
+Schema: `json-schemas/hds-document-values.json` (source `src/schemas/clientDataKeys.js`). Keys are event ids
+(`^[a-zA-Z0-9_-]{1,64}$`, a `clientData` query path), at most 1000 entries.
+
+**Rules.**
+
+- **An index, not the link.** `related` on the value is authoritative: when the two disagree, the value's `related`
+  wins and the entry is stale. A lost entry is rebuilt from the `written` entries of the document's answers, or by
+  querying `related.<document event id>`.
+- **Written by her app only**, with her token, never by a contact, and only for events of her account. It writes the
+  whole object (`events.update` merges `clientData` keys, not their contents), re-reading the document just before.
+- **Dangling ids are expected.** A value can be deleted, trashed or moved to another document after it was listed. A
+  reader skips an id it cannot read, one that is deleted or trashed, an entry whose event's `related` does not name the
+  document, and an entry whose role it does not know; none of these is an error. Her app drops the dangling entries it
+  finds the next time it writes the object; it does not sweep for them.
+- **Removed with what it lists.** When her app deletes values written from the document (a `not-mine`), it removes their
+  entries. A document's own deletion takes the index with it.
+- **Visible to every reader of the document**, including each contact it is shared with: ids of the values written
+  from it, which that contact already holds in her answers' `written`, and a role. Nothing new about her record.
+- **A role list that grows by addition.** A new role is a minor release; a reader skips one it does not know.
+
+### `clientData.hdsPrintedIn.<eventId>` — a document that prints a value she already had
+
+On a value event, 4.26.0: the documents that print this value, though it was not read from them. When her
+conversation finds that a proposed value is already in her record (an automatic `duplicate`, CONVERSATION.md § A value
+she already has), her app adds the document to the event it matched, so the document's view lists that value too:
+found in this document, not sourced from it.
+
+```json
+{
+  "streamIds": ["body-blood-serum-ferritin"],
+  "type": "concentration/ug-l",
+  "content": 48,
+  "clientData": { "hdsPrintedIn": { "ckq3w8n1x0001": true } }
+}
+```
+
+Schema: `json-schemas/hds-printed-in.json`. One key per document event id, value `true`, at most 100.
+
+**Rules.**
+
+- **Not its source.** The value keeps its own `related`, `sourceKey`, `hdsSourceAnchor` and `hdsExtraction`;
+  `hdsPrintedIn` never names the document it was read from, and a reader never shows it as read from these documents.
+- **Written by her app only**, with her token, on events of her own record; `events.update` merges `clientData`
+  keys, not their contents, so it writes the whole `hdsPrintedIn` object, re-reading the event just before. The event's `modified`
+  changes; nothing else of it does.
+- **Finding them.** The document's view queries `events.get` with
+  `clientData: [{ "path": "hdsPrintedIn.<document event id>", "eq": true }]` (one call; the ids are query paths).
+- **Removed** from the event when the document is `not-mine` (her app queries the key, then removes the document's
+  entry, `null` when none is left). A reader ignores an entry whose document it cannot read or that is gone.
+- **Visible to every reader of the value**, like `related`: a document id, usually unreadable to them. It names no
+  contact, and the document's own readers learn nothing of it: 4.25.0's "never which event" holds (CONVERSATION.md R3).
+
+**Cross-system.** FHIR has no reverse link on `DocumentReference`; the values' `Observation.derivedFrom` (from
+`related`) is the forward one. Neither `hdsDocumentValues` nor `hdsPrintedIn` is rendered today.

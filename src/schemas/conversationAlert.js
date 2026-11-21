@@ -38,9 +38,9 @@ const hdsConversationAlert = {
       eventId: { ...ID, description: 'The id of the question event (message/hds-conversation-v1) on the person\'s account.' },
       about: { ...ID, description: 'The event id of the document the question is about.' }
     }),
-    branch('proposed-values', 'contact to person: proposed-value events for one document were written on the received child. A wake-up only: the person\'s app lists the child by about, never trusts count.', ['about', 'count'], {
+    branch('proposed-values', 'contact to person: proposed-value (or proposed-document) events for one document were written on the received child. A wake-up only: the person\'s app lists the child by about, never trusts count.', ['about', 'count'], {
       about: { ...ID, description: 'The event id of the document.' },
-      count: { description: 'How many proposed-value events were written for it in this batch.', type: 'integer', minimum: 1 }
+      count: { description: 'How many proposed-value and proposed-document events were written for it in this batch.', type: 'integer', minimum: 1 }
     }),
     branch('answer', 'person to contact: an answer event was written on the sent child.', ['eventId', 'inReplyTo', 'about'], {
       eventId: { ...ID, description: 'The id of the answer event (message/hds-conversation-v1) on the person\'s account.' },

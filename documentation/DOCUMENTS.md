@@ -301,7 +301,8 @@ event time:
 - **A record kept up to date** (a vaccination booklet, an allergy pass, an emergency card, a medication list or plan)
   often prints no issue date: take the date of its last entry or update.
 - **Only a date from the document's body counts.** Never the fax header, the scan or print date, the upload date, the
-  e-mail it came with or the date of a later copy: these say when a copy moved, not when the care happened.
+  e-mail it came with or the date of a later copy: these say when a copy moved, not when the care happened. The one
+  exception is the placeholder below, which says it is one (`hdsDocumentPending`).
 - **When the kind's date is not printed,** use the other one (a lab report without a sampling date takes its report
   date). When no date can be read at all, ask the person; never fill one in. When the person does not know it either,
   the document is written with `hdsTimePrecision: unknown` (PARTIAL-DATES.md § A date nobody knows, 4.19.0): its
@@ -319,6 +320,45 @@ event time:
 - **A default for writers, not a claim readers can use.** A reader cannot infer from the kind which date an existing
   event carries: the fallbacks above leave no trace, and older documents predate the table. The date of the care as
   a field of its own (XDS `serviceStartTime` / `serviceStopTime`) is an open point below.
+
+### A document waiting for its date and kind (4.26.0)
+
+She may add a document without saying when it is from or what it is, and let a contact propose both in the
+conversation ([CONVERSATION.md](CONVERSATION.md#a-documents-date-and-kind-proposed-document-4260)). Her app then
+writes it as a placeholder, stored as one: the "held for review" state above, on her own account.
+
+```json
+{
+  "streamIds": ["documents"],
+  "type": "file/xds-v1",
+  "time": 1773842400,
+  "content": {
+    "class": { "system": "http://snomed.info/sct", "code": "419891008", "display": "Record artifact" },
+    "type": [{ "system": "http://snomed.info/sct", "code": "419891008", "display": "Record artifact" }],
+    "title": "IMG_2041.jpg",
+    "language": "und"
+  },
+  "clientData": { "hdsDocumentPending": ["time", "kind"] }
+}
+```
+
+- **`clientData.hdsDocumentPending`**: the fields she has not confirmed, `time`, `kind` or both, in any order, no
+  repeat (schema `json-schemas/hds-document-pending.json`). `time`: the event time is the moment she added the
+  document, not its date, and no `hdsTimePrecision` is written. `kind`: `class` and `type[0]` are the kind `other`'s.
+- **Readers show it as waiting:** "date not confirmed" for a pending `time` (never the upload moment as the date of the
+  care), "Other document" for a pending `kind`. The FHIR rendering omits `date` while `time` is pending, as for
+  `hdsTimePrecision: unknown` (FHIR-MAPPING.md).
+- **Any write that sets a field removes its entry:** her own edit of the date or the kind, or her confirmation of a
+  contact's proposal (CONVERSATION.md § Writing a document's date and kind). The last entry removed, the key is
+  written `null` (`events.update` merges `clientData`). A contact never writes it.
+- **A stale flag.** An app older than 4.26.0 may set the date or the kind and leave the flag. So `time` counts as
+  pending only while the event carries no `hdsTimePrecision`, and `kind` only while `class` and `type[0]` are still the
+  kind `other`'s. An entry that fails this is stale: ignored by readers and by the conversation (no contact's proposal
+  applies to it), and removed on the next write.
+- **Older readers** show a pending document as it is stored: the moment she added it as its date, and "Other
+  document". The flag is what tells a 4.26.0 reader otherwise.
+- **Not retroactive.** A document added before 4.26.0 carries no flag: its date and kind are hers, and nothing is ever
+  proposed onto it.
 
 ## Sharing one document: the `document-shares` root (3.37.0)
 
