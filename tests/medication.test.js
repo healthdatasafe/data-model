@@ -124,7 +124,7 @@ describe('[MED] Medication model pass (DM-4, 3.46.0)', () => {
     };
 
     it('[MED-VOC-1] each vocabulary binds the expected fields, and its values are their enum', () => {
-      assert.deepStrictEqual(Object.keys(vocabulariesById).sort(), Object.keys(expected).sort());
+      assert.deepStrictEqual(Object.keys(vocabulariesById).filter((k) => k.startsWith('medication-')).sort(), Object.keys(expected).sort());
       for (const [key, fields] of Object.entries(expected)) {
         const v = vocabulariesById[key];
         assert.deepStrictEqual(v.binds.map((b) => `${b.eventType} ${b.path}`), fields, key);

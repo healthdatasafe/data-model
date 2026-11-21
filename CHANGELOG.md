@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased]
+
+Allergy reactions, what an entry UI needs to enter them (plan 133). Additive: one datasource, one vocabulary; no
+eventType, item, stream or `fhir` block changes. Version set at release, coordinated with plan 128.
+
+### Added
+- **Datasource `manifestation`** (`datasets://manifestation`, result key `manifestations`, value fields `label` and
+  `codes`): the coded choices for an allergy reaction's `manifestations[]` (ALLERGY.md § Datasource), served by
+  datasets-service 1.4.0. No item field names it.
+- **Vocabulary `allergy-reaction-severity`** (`definitions/vocabularies/allergy.yaml`): en/fr labels of
+  the binding path `reactions.severity` on `allergy/coded-v1` and `allergy/basic-v1`, FHIR code = the stored value.
+
+### Changed
+- The vocabulary loader resolves a path through an array of objects (`reactions.severity`), not only an array at
+  its end.
+
 ## [4.22.0] - unreleased
 
 A conversation between a person and any contact (plan 128): the HDS Reader becomes a standard counterparty, and

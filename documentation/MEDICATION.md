@@ -136,7 +136,8 @@ medicine reads `codes`. `hdsId` is the result's own id (its primary code's). A w
 
 The labels and code mappings of the enum values are in the pack's **`vocabularies`** section
 (`definitions/vocabularies/medication.yaml`, `vocabularies.json`, schema `json-schemas/vocabulary.json`). The eventType
-enum is the contract: each vocabulary lists the fields it labels (`binds`: eventType + dotted path), and the loader
+enum is the contract: each vocabulary lists the fields it labels (`binds`: eventType + dotted path; a segment that is
+an array of objects steps into its items, with no bracket, as `reactions.severity` in ALLERGY.md § Reactions), and the loader
 refuses a vocabulary whose values differ from any bound enum (same values, same order). Each value has `label { en, fr
 }`, and `fhir` (the FHIR code of the bound element) and/or `snomed` (an SCTID verified active) when coded.
 

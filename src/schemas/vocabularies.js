@@ -1,7 +1,7 @@
 const Ajv = require('ajv');
 
 // A vocabulary labels the values of one or more eventType enums and carries their code mappings
-// (definitions/vocabularies/*.yaml, documentation/MEDICATION.md § Vocabularies). The schema checks the shape;
+// (definitions/vocabularies/*.yaml, documentation/MEDICATION.md § Vocabularies, ALLERGY.md § Reactions). The schema checks the shape;
 // src/vocabularies.js checks what it cannot: each bound field exists and its enum equals the vocabulary's values.
 
 module.exports = {
