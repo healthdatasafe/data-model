@@ -66,6 +66,12 @@ describe('[DSET] Display symbols and app settings types', () => {
         assert.ok(validate({ ...layout, visible: ['mood'], chartView: 'all', goals: ['cycle'] }), JSON.stringify(validate.errors));
         // v 2: the person's own cards (a composite's field as '<item key>#<field>')
         assert.ok(validate({ ...layout, v: 2, cards: [{ id: 'custom', name: '', items: ['body-weight', 'body-blood-pressure#rate'] }] }), JSON.stringify(validate.errors));
+        // ⭐ entries: the app's cycle entry replaced, and one of the person's own
+        assert.ok(validate({ ...layout, stars: [{ id: 'cycle', group: 'cycle', items: ['body-vulva-bleeding', 'body-vulva-mucus-inspect'] }, { id: 'star-a1b2c3d4', group: 'sym', name: 'Evening', items: ['symptom-pain-severity', 'wellbeing-mood'] }] }), JSON.stringify(validate.errors));
+        // ⭐ entries: the app's cycle entry taken off (no group needed)
+        assert.ok(validate({ ...layout, stars: [{ id: 'cycle', items: [] }] }), JSON.stringify(validate.errors));
+        // "remember it?" prompts declined for good (an id this reader does not know is kept)
+        assert.ok(validate({ ...layout, rememberNever: ['charting-method', 'some-later-prompt'] }), JSON.stringify(validate.errors));
       }
     });
   });
