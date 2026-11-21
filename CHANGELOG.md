@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+Documentation only: one `settings/hds-webapp-diary` key description. No key, item, stream, eventType, option value,
+schema or `fhir` block change.
+
+### Documented: two more `rememberNever` prompt ids
+
+`rememberNever` (4.23.0) gains two prompt ids (B-2026-11-20-17): `input-method:<item key>` (keep the method chosen in
+the entry form of a convertible item other than cervical fluid, such as mood) and `unit:<item key>` (keep the unit
+chosen in the entry form of an item with variations), each kept as the item's `preferred-input-` setting on Yes. The
+item key is everything after the first `:` and only names the prompt's item; a reader ignores an id whose item key it
+does not know. When the person asks for a prompt again, a writer removes only ids of the forms the description names
+and keeps every other. `[DSET-SET-2]` validates both forms. Fable-reviewed (clean with edits, applied).
+
+## [4.23.0] - 2026-11-21
+
 Additive: two documented `settings/hds-webapp-diary` keys (plan 134); one datasource and one vocabulary for allergy
 reactions (plan 133); cervical-fluid converter v1, the Creighton notation as the book's grammar generates it, with one
 converter pack per version (plan 131). No item, stream, option value or `fhir` block change; one eventType description
@@ -23,11 +37,7 @@ event with `stars` (draft-07 and draft-04). Fable-reviewed (clean with edits, ap
 (`charting-method`: the offer, in an entry form, to make the method of a cervical-fluid observation the person's
 charting method). Later is not stored; an id names a prompt, never a value; a reader ignores an id it does not know.
 `methodLater`'s description now says it is the set-up's deferral only. The event's description counts prompt ids among
-its values. Two more prompt ids (B-2026-11-20-17): `input-method:<item key>` (keep the method chosen in the entry form
-of a convertible item other than cervical fluid, such as mood) and `unit:<item key>` (keep the unit chosen in the entry
-form of an item with variations), each kept as the item's `preferred-input-` setting on Yes. The item key in an id only
-names the prompt's item. When the person asks for the prompts again, a writer removes only the ids of these forms.
-Fable-reviewed (clean with edits, applied).
+its values.
 
 ### Added: allergy reactions, what an entry UI needs to enter them (plan 133)
 
@@ -67,7 +77,7 @@ Fable-reviewed (clean with edits, applied).
   does not carry (Creighton `frequency`). Scoped to `source.key`; written at entry only; a reader that does not
   know it keeps it as is.
 
-## [4.22.0] - unreleased
+## [4.22.0] - 2026-11-21
 
 A conversation between a person and any contact (plan 128): the HDS Reader becomes a standard counterparty, and
 the contract is public so a third party can plug in its own. Additive: one root stream, one eventType, five alert
