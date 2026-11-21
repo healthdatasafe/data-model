@@ -17,7 +17,7 @@ in the conversation (notice `ready`, no `about`).
 - **Rendering.** Her app renders it at its place in time (first in a new relationship), as a fixed text with the
   contact's name. For a `vouched` app it adds the app's catalogue or manifest `description`; an unvouched description
   is never shown. en and fr examples are given. No text of the contact's travels (R6, R12).
-- Optional; listed before § The flow and in § What a counterparty implements. Test `[CNV-DOC-9]` registers it.
+- Optional; listed in § The flow (before the steps) and in § What a counterparty implements. Test `[CNV-DOC-9]` registers it.
   Reviewed by Fable: "ship with listed changes", all applied.
 
 ## [4.26.0] - 2026-11-21
