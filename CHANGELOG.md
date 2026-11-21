@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [4.25.0] - 2026-11-21
+
 Additive (plan 128): the conversation's automatic `duplicate`, a printed sampling time, and a self-contained document
 anchor. One enum value and two optional fields; no item, stream, alert or `fhir` change; a minor release.
 
