@@ -116,6 +116,7 @@ const VALID_ALERTS = [
   { kind: 'notice', code: 'typed-text-not-read' },
   { kind: 'notice', code: 'several-sampling-dates', about: DOC },
   { kind: 'notice', code: 'note-not-read', about: DOC },
+  { kind: 'notice', code: 'ready' },
   { kind: 'task-status', about: DOC, status: 'error', attempt: 1, errorCode: 'reading-failed' },
   { kind: 'question', eventId: 'ckq3w8n1x0011', about: DOC },
   { kind: 'proposed-values', about: DOC, count: 12 },
@@ -647,7 +648,7 @@ describe('[CNV] conversation', () => {
       // every code row is parsed: the rows starting with a code, less the two header rows
       const rows = section.split('\n').filter((l) => l.startsWith('| `')).length - 2;
       assert.strictEqual(notices.length + errors.length, rows, 'a table row matched neither pattern');
-      assert.deepStrictEqual(notices, [['no-result-found', 'the document'], ['several-sampling-dates', 'the document'], ['typed-text-not-read', 'none'], ['note-not-read', 'the document']]);
+      assert.deepStrictEqual(notices, [['no-result-found', 'the document'], ['several-sampling-dates', 'the document'], ['typed-text-not-read', 'none'], ['note-not-read', 'the document'], ['ready', 'none']]);
       assert.deepStrictEqual(errors, ['no-attachment', 'write-failed', 'reading-failed']);
       const validate = new AjvDraft04({ strict: false, logger: false }).compile(ALERT);
       for (const [code, about] of notices) {

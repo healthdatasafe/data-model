@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+## [4.27.0] - 2026-11-21
+
+Plan 128. Additive: one notice code; no schema, item, stream or alert-kind change; a minor release.
+
+### Added: the notice `ready` (CONVERSATION.md § Notice and error codes)
+
+perki's live test: a new connection's chat was empty, so she did not know what to do with it. A contact that reads
+documents now tells her once, right after it receives her accept, that it is ready to read the documents she shares
+in the conversation (notice `ready`, no `about`).
+- **Once per relationship.** A contact that starts sending it later sends it once to each relationship it already
+  has. It deletes its alert copies within 24 h (R10), so it keeps a marker per relationship (the relationship id and
+  the fact, nothing else) until the relationship ends.
+- **Rendering.** Her app renders it at its place in time (first in a new relationship), as a fixed text with the
+  contact's name. For a `vouched` app it adds the app's catalogue or manifest `description`; an unvouched description
+  is never shown. en and fr examples are given. No text of the contact's travels (R6, R12).
+- Optional; listed before § The flow and in § What a counterparty implements. Test `[CNV-DOC-9]` registers it.
+  Reviewed by Fable: "ship with listed changes", all applied.
+
 ## [4.26.0] - 2026-11-21
 
 Plan 128. Additive: one conversation kind, two question codes, one notice code, a basis value, two

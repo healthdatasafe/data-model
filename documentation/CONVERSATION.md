@@ -6,8 +6,8 @@ page defines, questions, proposed values and her answers. This page is the **wir
 implements it, and any person's app renders it, without knowing who is on the other side. The person's app
 dispatches on `hds.kind` and on `content.kind`, never on the contact's app code.
 
-**Normative** (4.22.0; 4.26.0 adds a document's date and kind, her `note`, and the specimen codes). "MUST" and "never"
-bind writers; readers follow § Writers validate, readers dispatch.
+**Normative** (4.22.0; 4.26.0 adds a document's date and kind, her `note`, and the specimen codes; 4.27.0 the notice
+`ready`). "MUST" and "never" bind writers; readers follow § Writers validate, readers dispatch.
 
 ## The principle: the conversation is standard, the content travels by reference
 
@@ -75,6 +75,9 @@ false`. The values she wrote stay: they are hers, on their items. A restore recr
 app deletes a child whose relationship no longer exists.
 
 ## The flow, for one document
+
+Before any document, once per relationship, a contact that reads documents may say it is ready (notice `ready`,
+4.27.0).
 
 1. She shares a document (`document-shared`, `eventId` = the document's event id). The contact reads the event and its
    attachment by id.
@@ -301,6 +304,15 @@ unknown code is shown with a generic text.
 | `several-sampling-dates` | the document | The document prints its results for several sampling days, one value column per day (a cumulative report), and the contact proposes no value from it: it does not tell which value was taken which day. Nothing is proposed, no question is asked, the work ends `done` with zero counts. Sent instead of `no-result-found`, never both for one read. A contact that reads each column under its own day sends neither. Not `which-date`, which asks for the one day all the waiting values share. The notice names no date (R6). |
 | `typed-text-not-read` | none | The contact does not read typed text (§ Chat). At most one per relationship per 24 h. |
 | `note-not-read` | the document | The contact does not read her notes (§ Her note, 4.26.0). At most one per document. The notice names no text of the note (R6). |
+| `ready` | none | The contact is ready to read the documents she shares in this conversation (4.27.0). Sent once per relationship, right after the contact receives her accept (a contact that starts sending it later sends it once to each relationship it already has). Optional: a contact that does not read documents does not send it. To know it sent one, the contact keeps a marker per relationship: the relationship id and the fact, nothing else, deleted when the relationship ends (R10). |
+
+**Rendering `ready`.** Her app shows it at its place in time (the first message of a new relationship), as a fixed
+text with the contact's name ([APP-DESCRIPTION.md](APP-DESCRIPTION.md) § The rule), for example en "{name} can read
+your documents: share one in this conversation", fr « {name} peut lire vos documents : partagez-en un dans cette
+conversation ». When the app holding the relationship is `vouched`, it adds the app's `description` as that rule gives
+it (the catalogue entry's, else the vouched manifest's), in her language, else `en`. An `unvouched` manifest's
+description is never shown here. Like every notice, it carries no text of the contact's (R6, R12); her app shows only
+the first `ready` of a relationship. An app that does not know the code shows the generic notice text (R8).
 
 | `task-status.errorCode` | Meaning |
 |---|---|
@@ -450,6 +462,8 @@ document. Deleted means deleted (twice), not only trashed.
   has removed her `note` (after `done`, or 24 h after the answer, § Her note).
 - **On the contact's account**, the delivered copies of the conversation alerts and of her chat messages, and its own
   copies of what it sent, are deleted once the work they are about is `done`, at the latest 24 h after they arrived.
+  The `ready` marker of a relationship (its id and the fact, § Notice and error codes) is kept until the relationship
+  ends.
 - **After a revoke**, her app deletes both children (§ Where it lives); the contact deletes everything it still holds
   about the relationship.
 
@@ -570,7 +584,8 @@ once per relationship per 24 h), and deletes what she typed within 24 h (R10).
 1. An HDS account and a CMC invite that declares the conversation (`features.chat` as wanted) and, for proposals, a
    vouched app (R9).
 2. Read a shared document by its event id on `document-shared`; stop and delete on `document-unshared` and on revoke.
-3. Post `task-status` for every document it takes.
+3. Post `task-status` for every document it takes (and, optionally, the notice `ready` once per relationship,
+   keeping its marker, R10).
 4. Write `proposed-value` and `question` events (and, optionally, one `proposed-document`) on the `received` child,
    validated against this type and following § What a writer MUST include (an anchor names its document:
    `anchor.eventId` = `about`), each followed by its alert, validated against `hds-conversation-alert.json`.
