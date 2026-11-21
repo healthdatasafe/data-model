@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [4.23.0] - 2026-11-21
+
 Additive: two documented `settings/hds-webapp-diary` keys (plan 134); one datasource and one vocabulary for allergy
 reactions (plan 133); cervical-fluid converter v1, the Creighton notation as the book's grammar generates it, with one
 converter pack per version (plan 131). No item, stream, option value or `fhir` block change; one eventType description
@@ -63,7 +65,7 @@ its values.
   does not carry (Creighton `frequency`). Scoped to `source.key`; written at entry only; a reader that does not
   know it keeps it as is.
 
-## [4.22.0] - unreleased
+## [4.22.0] - 2026-11-21
 
 A conversation between a person and any contact (plan 128): the HDS Reader becomes a standard counterparty, and
 the contract is public so a third party can plug in its own. Additive: one root stream, one eventType, five alert
