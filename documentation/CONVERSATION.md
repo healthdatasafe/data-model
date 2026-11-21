@@ -92,14 +92,15 @@ question (§ Notice and error codes).
 ## `message/hds-conversation-v1`
 
 One event per item, on a child of `conversation-items`. `content.kind` discriminates; each kind is a closed object
-(`additionalProperties: false`). Times are Unix seconds. Every event carries `about` (the document's event id) and
+(`additionalProperties: false`). Times are Unix seconds (`printed.samplingTime` is a printed time of day, display
+only). Every event carries `about` (the document's event id) and
 `clientData.related.<document event id>: true`.
 
 | `kind` | Child | Written by | Content |
 |---|---|---|---|
 | `question` | `received` | the contact | `about`, `code`, `candidateId?`, `options?` (codes), `context?` (`identity?`, `dates?`, `anchor?`) |
-| `proposed-value` | `received` | the contact | `about`, `candidateId`, `replaces?` (the candidateId it replaces), `printed` (`label`, `value`, `unit?`, `refRange?`, `flag?`, `section?`: the line as printed), `anchor?` (the shape of `hdsSourceAnchor`), `proposal?` (`itemKey`, `type`, `content`, `time?`, `clientData?`: the event proposed), `status` (`clear`, `check`, `unmapped`, `unit-missing`, `kept-aside`), `reason?`, `requestKey?`, `askOneByOne?`, `specimenImplied?`, `extraction` (`engine`, `engineVersion`, `kbVersion`, `backend`) |
-| `answer` | `sent` | the person's app | `inReplyTo`, `about`, `action` (`confirm`, `correct`, `not-mine`, `skip`, `choose`, `request-item`, `duplicate`), `candidateIds?`, `option?`, `time?`, `timePrecision?` (`day`, `month`, `year`, `unknown`), `basis?` (`profile-match`), `written?` (`[{ candidateId, eventId }]`) |
+| `proposed-value` | `received` | the contact | `about`, `candidateId`, `replaces?` (the candidateId it replaces), `printed` (`label`, `value`, `unit?`, `refRange?`, `flag?`, `section?`, `samplingTime?`: the line as printed; `samplingTime` is the time printed over the value's column, normalised to `HH:MM`, display only), `anchor?` (`hdsSourceAnchor`, with `eventId` = `about`), `proposal?` (`itemKey`, `type`, `content`, `time?`, `clientData?`: the event proposed), `status` (`clear`, `check`, `unmapped`, `unit-missing`, `kept-aside`), `reason?`, `requestKey?`, `askOneByOne?`, `specimenImplied?`, `extraction` (`engine`, `engineVersion`, `kbVersion`, `backend`) |
+| `answer` | `sent` | the person's app | `inReplyTo`, `about`, `action` (`confirm`, `correct`, `not-mine`, `skip`, `choose`, `request-item`, `duplicate`), `candidateIds?`, `option?`, `time?`, `timePrecision?` (`day`, `month`, `year`, `unknown`), `basis?` (`profile-match`, `existing-value`), `written?` (`[{ candidateId, eventId }]`) |
 
 `reason` is one of `no-item`, `unit-not-offered`, `no-coded-stream`, `timed-draw`, `implausible-value`,
 `ambiguous-label`, `qualitative-result`, `derived-index`. `requestKey` is the key of the item request for a metric no
@@ -143,14 +144,19 @@ shown, not answerable.
 
 | The answer is to | `action` | With |
 |---|---|---|
-| a proposed value | `confirm`, `correct`, `skip`, `request-item` (a kept-aside or unmapped one), `duplicate` | `candidateIds`; `written` with `confirm` and `correct` |
+| a proposed value | `confirm`, `correct`, `skip`, `request-item` (a kept-aside or unmapped one), `duplicate` | `candidateIds`; `written` with `confirm` and `correct`; `basis: existing-value` only on an automatic `duplicate` (§ R3) |
 | a `which-specimen`, `which-unit`, `which-analyte` or `is-fasting` question | `choose` | `option`, one of the question's `options`; `candidateIds` naming the question's `candidateId` |
 | a `which-date` question | `confirm` | `timePrecision`, and `time` unless `timePrecision` is `unknown`; `candidateIds` naming the question's `candidateId` when it has one |
-| an `is-this-yours` question | `confirm` or `not-mine` | `basis` only on an automatic `confirm` (§ R3) |
+| an `is-this-yours` question | `confirm` or `not-mine` | `basis: profile-match` only on an automatic `confirm` (§ R3) |
 
 Any question or proposed value may be answered with `skip`, which settles nothing. `not-mine` is always about the
 whole document and answers `is-this-yours` only. An answer whose `action` is not in this table for what it answers is
 ignored: never a confirmation, never a `not-mine`.
+
+**Which answer settles a proposed value.** A `written` entry (from a `confirm` or `correct`) settles it for good.
+Otherwise the latest answer that counts decides. A `duplicate`, automatic or tapped, may therefore be followed by a
+`confirm` or `correct` that adds the value anyway; that is the only case of a second answer settling a candidate (R5:
+an answer counts once per `candidateId` until a `written` entry ends it).
 
 **`correct`.** Her app writes the value as she corrected it (on any type and item the pack allows, § R9) with
 `hdsExtraction.corrected: true`. The answer carries exactly one `candidateIds` entry and its `written` entry: the
@@ -167,11 +173,13 @@ The schema cannot express conditions between fields, so writers check them befor
 | `answer` with `confirm` or `correct` on a proposed value | carry `written`, one entry per candidate whose value her app wrote; `correct` covers exactly one candidate |
 | `answer` with any other action, or to a question | carry no `written` |
 | `answer` to a `which-date` question | carry `timePrecision`; `time` unless `timePrecision` is `unknown`, and then no `time` |
-| `answer` with `basis` | be a `confirm` on an `is-this-yours` question (§ R3) |
+| `answer` with `basis: profile-match` | be a `confirm` on an `is-this-yours` question (§ R3) |
+| `answer` with `basis: existing-value` | be a `duplicate` on proposed values, each one already in her record (§ R3, § A value she already has) |
 | `question` | follow its row of § Question codes (`candidateId`, `options`, `context`) |
 | `question` or `answer` with a `candidateId` | name a `proposed-value` of the same document on the same relationship's `received` child |
 | `question` with `context.identity` or `context.anchor` | be `is-this-yours`; with `context.dates`, be `which-date` |
 | `proposed-value` with `replaces` | name a proposed value of the same document on the same child, one the person answered a question about and that has no `written` entry |
+| `proposed-value` with `anchor`, `question` with `context.anchor` (from 4.25.0) | carry `anchor.eventId` = `about` (PROVENANCE.md, a self-contained anchor) |
 | `proposed-value` with `status: kept-aside` or `unmapped` | carry `reason` |
 | `proposal` with `time` | carry `clientData.hdsTimePrecision`; `unknown` only on a re-proposal after she answered `which-date` with `unknown` |
 
@@ -230,13 +238,27 @@ this type outside the relationship's two children.
 - A batch answer's `inReplyTo` is the first proposed value of the batch; its `candidateIds` lists every one, that one
   included.
 - **`basis: profile-match`** (an answer her app gave without a tap): only with `confirm` on `is-this-yours`, and only
-  when all hold after normalisation (case, accents, hyphens and spaces, order of given and family name): the full
-  given name and the full family name both equal her profile's (an initial or a missing given name never matches),
-  and `context.identity.birthDay` is present and equal to her profile's birth date. A profile without a birth date is
-  never matched. At most one automatic answer per document; the card says "matched to your profile" and offers
-  `not-mine` until the work is `done`; the latest `is-this-yours` answer wins. A `not-mine` after values were written:
-  her app deletes them, from the `written` entries of the document's answers. An unknown `basis` is never a
-  confirmation.
+  when all hold after normalisation (case, accents, hyphens, commas and spaces, order of given and family name): the
+  full given name and the full family name both equal her profile's (an initial or a missing given name never
+  matches), and `context.identity.birthDay` is present and equal to her profile's birth date. A profile without a
+  birth date is never matched. At most one `profile-match` answer per document; the card says "matched to your
+  profile" and offers `not-mine` until the work is `done`; the latest `is-this-yours` answer wins. A `not-mine` after
+  values were written: her app deletes them, from the `written` entries of the document's answers. An unknown
+  `basis` is never a confirmation.
+- **`basis: existing-value`** (also without a tap): only with `duplicate`, on proposed values her app would offer to
+  confirm (an open candidate, a confirmable `status`, a proposal R9 accepts from a vouched engine), each already in
+  her record (§ A value she already has), and only while no `is-this-yours` of the document is open or answered
+  `not-mine`. Her app answers it for any contact's proposed values, never for one contact only. Each comparison run
+  writes one answer: `inReplyTo` the first matched candidate, `candidateIds` every matched one (as a batch answer
+  above). It writes nothing.
+  - **What the contact learns.** That she already holds a value equal to each of those candidates, never which event
+    or its value. This is a disclosure about her record to a contact she shares the document with, hence the
+    restriction to confirmable proposals of a vouched engine.
+  - **What she sees.** Her app shows these values as already in her record, from the answer's `candidateIds` (her
+    answers stay on `sent`), and offers to add each one anyway while its proposed value exists, that is until the
+    work is `done`: a later `confirm` or `correct` writes it (§ Answers, which answer settles a proposed value).
+  - **The contact** treats it as any `duplicate`: the value is settled, and deleted at `done` (R10). With every value
+    of a document matched, nothing waits and the work may end at once.
 
 **R4. The state of the work is the latest `task-status`** of the document by alert `time`; `attempt` labels it and
 breaks a tie, never orders it (the contact deletes its alert copies, R10, so after a restart it may not know the last
@@ -247,11 +269,14 @@ items on `received`, her answers on `sent`).
 record and the proposal: the same on every re-read while the proposal is the same, a new one only when it differs
 (PROVENANCE.md, "same source record, same key"). It is opaque, never parsed. On a re-read, an unanswered candidate is
 written again in place; a candidate found in an answer's `written` is never proposed again (this is why her answers
-stay on `sent`). An answer counts once per `candidateId`. The contact knows a candidate is written from
+stay on `sent`). An answer counts once per `candidateId`, until a `written` entry settles it (§ Answers). The record
+includes the column of a report printing one value column per day: two columns of one row are two candidates, even
+with equal values on one day. The contact knows a candidate is written from
 `answer.written`; her app knows it from the value's `sourceKey` (§ Writing a value).
 
 **R6. Never over CMC.** No alert, no chat message of the contact and no alert `title` or `body` carries a value, a
-printed line, a name, a birth date, a date of the document, an item key, a stream id or free text from a model. They
+printed line, a name, a birth date, a date or a time of the document, an item key, a stream id or free text from a
+model. They
 carry kinds, event ids, codes and counts. What the document prints is only on the person's account: in
 `proposed-value.printed`, `question.context`, and the values her app writes.
 
@@ -276,7 +301,7 @@ additive (a minor release); a breaking change is a `-v2` type. A value a reader 
 | `reason` | a generic "not saved" |
 | `question.code` (bare or `x-`) | shown, not answerable |
 | `answer.action` | ignored by the contact, never a confirmation |
-| `answer.basis` | never a confirmation |
+| `answer.basis` | never a confirmation; the answer does not count. On a `duplicate` with `existing-value`, a contact that does not know it sees the value still open and never reaches `done`, and an older app shows it open: a contact reads `existing-value` before any app sends it |
 | `context.dates[].role` | `other` |
 | `proposal.clientData.hdsComparator` | the proposal is not confirmable |
 | `timePrecision`, `proposal.clientData.hdsTimePrecision` | absent |
@@ -316,7 +341,9 @@ document. Deleted means deleted (twice), not only trashed.
 **R11. Pointers resolve only inside the relationship.** A `question` alert's `eventId` is read only on the
 relationship's `received` child, an `answer` alert's only on its `sent` child, and every `about` only among the
 documents shared in that relationship (its `document-shares` `shared` child) or covered by its grant. A pointer that
-resolves elsewhere is ignored: an alert never makes her app show any other event of her account.
+resolves elsewhere is ignored: an alert never makes her app show any other event of her account. The same holds for
+an item's anchor: her app shows the anchored view from `about` only, and ignores an `anchor` whose `eventId` is not
+`about` (it drops it, never rewrites it, when it writes the value).
 
 **R12. The alert's words are fixed and not rendered.** Every conversation alert carries the fixed `title` and `body`
 of its kind (the CMC plugin requires both), never anything about the document. Her app renders from `hds.kind`, never
@@ -334,12 +361,45 @@ Her app writes each confirmed value as an ordinary event on its item, with her t
   id>:<candidateId>` ([PROVENANCE.md](PROVENANCE.md#clientdatasourcekey--the-identity-of-an-imported-record)), so a
   retry finds it (`state: 'all'`; a trashed one is left trashed);
 - the proposal's `clientData` keys (`hdsRefRange`, `hdsFlag`, `hdsInterpretation`, `hdsComparator`,
-  `hdsTimePrecision`); `hdsSourceAnchor` = the proposed value's `anchor` when it has one; `hdsExtraction` = its
-  `extraction` plus `confirmedBy: 'person'`, and `corrected: true` after a correction
-  ([PROVENANCE.md](PROVENANCE.md#values-read-from-a-document-by-a-program)).
+  `hdsTimePrecision`); `hdsSourceAnchor` = the proposed value's `anchor` when it has one, with `eventId` = `about`
+  (set by her app when the contact left it out); `hdsExtraction` = its `extraction` plus `confirmedBy: 'person'`, and
+  `corrected: true` after a correction ([PROVENANCE.md](PROVENANCE.md#values-read-from-a-document-by-a-program)).
 
 Order: re-read (R3), write the values (looking each `sourceKey` up first), write the `answer` with `written`, post the
 `answer` alert. A retry after a failure finds the values by `sourceKey` and does not write them twice.
+
+## A value she already has
+
+The comparison behind `basis: existing-value` (R3), the same for every contact. A proposed value is compared only
+when its date is known at `day` precision: its `proposal.time` with `hdsTimePrecision: day`, or her `which-date` answer
+at `day`. Day D is that UTC calendar day (the proposal's time is 12:00 UTC on it); a proposal at `month`, `year` or
+`unknown` is never compared. It is already in her record when one of her events, not trashed, matches all three:
+
+- **Same item:** on the stream of `proposal.itemKey`, of one of the item's types, and not written from this document
+  by any engine (its `sourceKey` does not hold `:document:<about>:`), so a value she just added from the document never
+  makes another of its values a duplicate.
+- **Same day:**
+  - her event at `day` precision: on UTC day D;
+  - her event with an exact time (no `hdsTimePrecision`, or `minute`): in `[D 00:00 UTC − 14 h, D+1 00:00 UTC + 12 h)`,
+    every instant at which day D is running in some time zone; with `clientData.hdsTimeZone`, on day D in that zone;
+  - her event at `month`, `year`, `approx` or `unknown` precision never matches.
+- **Equal value:**
+  - **Same type:** equal content, numbers compared to 12 significant digits, and the same `hdsComparator` (absent
+    equals absent).
+  - **Another type of the same item:** her value converted with the data model's conversions into the proposal's
+    unit, then equal within a tolerance, with the same comparator. The tolerance is half a unit of the last digit
+    printed in `printed.value`, taken in the printed unit and scaled into the proposal's by `proposal.content` divided
+    by the printed number. `printed.value` is read as a plain number with one decimal separator, a comma or a point;
+    anything else (text, a limit such as `< 5`, a thousands separator) never matches across types.
+  - **`lab-result/coded-v1`:** an `analyte.codes` entry with the same `system` and `code`, and equal `content.value`,
+    `content.unit` and `content.comparator` (absent equals absent), or an equal `content.valueText`. No conversion.
+
+**One for one, per document.** Over one document, each of her events matches at most one candidate, so two equal
+values of one day, two draws, stay two. Candidates already answered `existing-value` for the document keep the event
+they matched (a later run, after a new batch or a late `which-date`, assigns only the events they leave). When an event
+fits several candidates, it goes to the one on its own UTC day first, then the nearest in time, then the first in the
+order of the candidates. Open candidates are never compared with each other. A contact may rely on this comparison: it need not hold back a value that the
+person may already have.
 
 ## Chat
 
@@ -356,8 +416,10 @@ once per relationship per 24 h), and deletes what she typed within 24 h (R10).
 2. Read a shared document by its event id on `document-shared`; stop and delete on `document-unshared` and on revoke.
 3. Post `task-status` for every document it takes.
 4. Write `proposed-value` and `question` events on the `received` child, validated against this type and following §
-   What a writer MUST include, each followed by its alert, validated against `hds-conversation-alert.json`.
-5. Read her answers on `sent`, and only there (R2); honour the binding and void rules (R3).
+   What a writer MUST include (an anchor names its document: `anchor.eventId` = `about`), each followed by its alert,
+   validated against `hds-conversation-alert.json`.
+5. Read her answers on `sent`, and only there (R2); honour the binding and void rules (R3), and read an automatic
+   `duplicate` (`basis: existing-value`) as settling its values.
 6. Never put a value, a name or a date in an alert or a chat message (R6, R12); resolve nothing outside the
    relationship (R11).
 7. Delete as R10 says, on her account and on its own.
@@ -379,7 +441,7 @@ A question with its context, on the `received` child:
     "code": "is-this-yours",
     "context": {
       "identity": { "name": "DUPONT Marie", "birthDate": "14.03.1985", "birthDay": "1985-03-14" },
-      "anchor": { "attachmentId": "ckq3w8n1x0001a", "page": 1, "bbox": [6, 8.2, 40, 4.5] }
+      "anchor": { "eventId": "ckq3w8n1x0001", "attachmentId": "ckq3w8n1x0001a", "page": 1, "bbox": [6, 8.2, 40, 4.5] }
     }
   },
   "clientData": { "related": { "ckq3w8n1x0001": true } }
@@ -397,7 +459,7 @@ A proposed value:
     "about": "ckq3w8n1x0001",
     "candidateId": "c-3f9a1e0b",
     "printed": { "label": "Ferritine", "value": "48", "unit": "ng/mL", "refRange": "30 - 400" },
-    "anchor": { "attachmentId": "ckq3w8n1x0001a", "page": 1, "bbox": [8.5, 41.2, 83, 2.1] },
+    "anchor": { "eventId": "ckq3w8n1x0001", "attachmentId": "ckq3w8n1x0001a", "page": 1, "bbox": [8.5, 41.2, 83, 2.1] },
     "proposal": {
       "itemKey": "body-blood-serum-ferritin",
       "type": "concentration/ug-l",
@@ -427,6 +489,25 @@ Her answer, on the `sent` child, after her app wrote the value:
     "written": [{ "candidateId": "c-3f9a1e0b", "eventId": "ckq3w8n1x0020" }]
   },
   "clientData": { "related": { "ckq3w8n1x0001": true, "ckq3w8n1x0012": true, "ckq3w8n1x0020": true } }
+}
+```
+
+Her app's automatic answer, before she saw them, for two proposed values already in her record (§ A value she
+already has); it writes nothing:
+
+```json
+{
+  "streamIds": ["conv-p0w4e8r2t6y1"],
+  "type": "message/hds-conversation-v1",
+  "content": {
+    "kind": "answer",
+    "inReplyTo": "ckq3w8n1x0013",
+    "about": "ckq3w8n1x0001",
+    "action": "duplicate",
+    "candidateIds": ["c-7a21d4c9", "c-90be3f12"],
+    "basis": "existing-value"
+  },
+  "clientData": { "related": { "ckq3w8n1x0001": true, "ckq3w8n1x0013": true } }
 }
 ```
 

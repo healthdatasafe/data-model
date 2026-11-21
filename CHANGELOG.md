@@ -1,5 +1,72 @@
 # Changelog
 
+## [Unreleased]
+
+## [4.25.0] - 2026-11-21
+
+Additive (plan 128): the conversation's automatic `duplicate`, a printed sampling time, and a self-contained document
+anchor. One enum value and two optional fields; no item, stream, alert or `fhir` change; a minor release.
+
+### Added: `basis: existing-value`, a value she already has (CONVERSATION.md, plan 128)
+
+perki, on a cumulative report read per column: "You should be able to process a multi day report (and skip duplicates)".
+A cumulative report repeats days already read from earlier reports, and the contact cannot see her record (D17).
+
+- **What her app does.** It answers `duplicate` itself, `basis: existing-value`, for proposed values already in her
+  record. One answer per comparison run (`inReplyTo` the first matched, `candidateIds` all), no tap.
+  - Any contact's proposals, never one contact's only.
+  - Only proposals she could confirm (vouched engine, R9), and only while no `is-this-yours` is open or `not-mine`.
+  - The disclosure to the contact is stated.
+- **What counts as already there**, new § A value she already has:
+  - **Same item,** and not written from this document (by `sourceKey`).
+  - **Same day,** only at `day` precision. An exact-time event in `[D 00:00 UTC − 14 h, D+1 00:00 UTC + 12 h)`, or on
+    day D in its `hdsTimeZone`.
+  - **Equal value.** Same type to 12 significant digits, with the comparator. Another type converted into the
+    proposal's unit, within half the last printed digit; an unreadable printed value never matches. Coded lab results
+    by the same `system` and `code`.
+  - **One for one, per document,** with a deterministic tie-break.
+- **What she sees.** The value is shown as already in her record and can be added anyway while it exists (until
+  `done`). § Answers now says a `written` entry settles for good, otherwise the latest answer that counts, so a later
+  `confirm` wins.
+- **Writer-MUST rows** split by basis. R3 gains the rule; the `profile-match` normalisation now also ignores commas
+  ("DUPONT, MARIE").
+- **R5:** a column is part of the record. **R6:** "a time" added. **R8:** an app or contact that does not know the
+  basis does not count the answer, which is why contacts read it before any app sends it. **§ minimum:** a contact reads
+  it.
+- A documented example of the automatic answer.
+
+### Added: `proposed-value.printed.samplingTime`
+
+`HH:MM` (24 h, normalised), display only: the sampling time printed over the value's column on a report with one
+column per sampling, so two same-day draws can be told apart. Never the value's time, never over CMC.
+
+### Added: `hdsSourceAnchor.eventId`, a self-contained anchor (PROVENANCE.md)
+
+perki: the anchor "should send the event.id + attachment id of the document, and the zone to highlight <= one module
+that can be reused for other purposes".
+
+- `hdsSourceAnchor` gains optional `eventId`, the `file/xds-v1` document; `related` keeps naming it for queries.
+- Whoever may read the event and the document finds the zone from the anchor alone.
+- One shape for any event pointing at a zone of a document: a value, a note, a conversation item (proposed value
+  `anchor`, `is-this-yours` `context.anchor`, which carry the same field).
+- Writers set it from 4.25.0. A reader takes the document from `eventId`, else from `related`, and ignores an anchor
+  whose `eventId` disagrees.
+- Her app sets it on every value it writes from a proposal.
+- `message/hds-reader-v1` (superseded) keeps its earlier shape.
+
+### Tests and review
+
+- **Tests:** the automatic `duplicate` per basis; `samplingTime` (valid, and `25:00`, `8h30`, a number rejected; the
+  pattern pinned); `eventId` in the anchor and its copies; the documented examples.
+- **Fable review, two rounds:** "ship with edits" each time, all taken, except published test vectors for the
+  comparison, which live in hds-lib's tests. The second round brought:
+  - a MUST row: a conversation anchor carries `eventId` = `about`;
+  - R11: an anchor whose `eventId` is not `about` is ignored, and dropped when the value is written;
+  - PROVENANCE.md: `eventId` must be a key of `related`;
+  - one for one across comparison runs;
+  - the cross-type tolerance scaled from the printed unit;
+  - the `sourceKey` exclusion for any engine.
+
 ## [4.24.0] - 2026-11-21
 
 Additive: two registered conversation codes (plan 128) and two more documented `rememberNever` prompt ids. No item,

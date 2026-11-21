@@ -29,11 +29,17 @@ function sourceAnchorSchema () {
   return {
     $id: 'https://model.datasafe.dev/json-schemas/hds-source-anchor.json',
     title: 'HDS clientData.hdsSourceAnchor',
-    description: 'Where the value was printed in the source document (the file/xds-v1 event in clientData.related): an attachment, a page and a box, nothing of what is printed there. See documentation/PROVENANCE.md.',
+    description: 'Where the value was printed in the source document (the file/xds-v1 event in clientData.related): the document, an attachment, a page and a box, nothing of what is printed there. Self-contained: whoever may read both the event and the document finds the zone from the anchor alone. See documentation/PROVENANCE.md.',
     type: 'object',
     additionalProperties: false,
     required: ['attachmentId', 'page'],
     properties: {
+      eventId: {
+        description: 'The id of the file/xds-v1 document event, the one clientData.related names (it stays there for queries). Absent on anchors written before 4.25.0: the document is then the one related names.',
+        type: 'string',
+        maxLength: 64,
+        pattern: '^[a-zA-Z0-9_-]+$'
+      },
       attachmentId: {
         description: 'The id of the document event\'s attachment (Pryv attachments[].id) the value was read from.',
         type: 'string',

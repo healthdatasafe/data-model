@@ -26,7 +26,7 @@ const strip = (schema) => { const s = structuredClone(schema); delete s.descript
 const ID_RE = '^[a-zA-Z0-9_-]+$';
 
 const DOC = 'ckq3w8n1x0001';
-const ANCHOR = { attachmentId: 'ckq3w8n1x0001a', page: 1, bbox: [8.5, 41.2, 83, 2.1] };
+const ANCHOR = { eventId: 'ckq3w8n1x0001', attachmentId: 'ckq3w8n1x0001a', page: 1, bbox: [8.5, 41.2, 83, 2.1] };
 const EXTRACTION = { engine: 'hds-reader', engineVersion: '0.3.0', kbVersion: '0.4.0', backend: 'text-layer' };
 const HDS_CODES = ['which-specimen', 'which-unit', 'which-analyte', 'which-date', 'is-fasting', 'is-this-yours'];
 
@@ -67,7 +67,8 @@ const VALID = {
     { kind: 'proposed-value', about: DOC, candidateId: 'c-77', printed: { label: 'Cholestérol HDL', value: '1,2', unit: 'mmol/l' }, status: 'kept-aside', reason: 'no-item', requestKey: 'serum-plasma|loinc:2085-9', extraction: EXTRACTION },
     { kind: 'proposed-value', about: DOC, candidateId: 'c-78', printed: { label: 'Hémoglobine', value: '13.5' }, anchor: { attachmentId: 'f2', page: 2 }, status: 'unit-missing', specimenImplied: true, extraction: { ...EXTRACTION, backend: 'ollama:qwen2.5vl:7b' } },
     { ...proposed, proposal: { itemKey: 'body-blood-coded', type: 'lab-result/coded-v1', content: { analyte: { label: { en: 'X' }, codes: [{ system: 'http://loinc.org', code: '2947-0' }] }, value: 140, unit: 'mmol/L' } } },
-    { ...proposed, candidateId: 'c-78b', replaces: 'c-78', printed: { label: 'Hémoglobine', value: '13.5' }, proposal: { itemKey: 'body-blood-serum-ferritin', type: 'concentration/ug-l', content: 13.5 }, status: 'check' }
+    { ...proposed, candidateId: 'c-78b', replaces: 'c-78', printed: { label: 'Hémoglobine', value: '13.5' }, proposal: { itemKey: 'body-blood-serum-ferritin', type: 'concentration/ug-l', content: 13.5 }, status: 'check' },
+    { ...proposed, candidateId: 'c-79', printed: { ...proposed.printed, samplingTime: '08:30' }, anchor: { ...proposed.anchor, eventId: DOC } }
   ],
   answer: [
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0012', about: DOC, action: 'confirm', candidateIds: ['c-3f9a1e0b', 'c-79'], written: [{ candidateId: 'c-3f9a1e0b', eventId: 'ckq3w8n1x0020' }, { candidateId: 'c-79', eventId: 'ckq3w8n1x0021' }] },
@@ -78,6 +79,7 @@ const VALID = {
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0016', about: DOC, action: 'confirm', time: 1773316800, timePrecision: 'day' },
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0016', about: DOC, action: 'confirm', timePrecision: 'unknown' },
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0017', about: DOC, action: 'duplicate', candidateIds: ['c-3f9a1e0b'] },
+    { kind: 'answer', inReplyTo: 'ckq3w8n1x0017', about: DOC, action: 'duplicate', candidateIds: ['c-3f9a1e0b', 'c-79'], basis: 'existing-value' },
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0018', about: DOC, action: 'skip', candidateIds: ['c-77'] }
   ]
 };
@@ -218,6 +220,12 @@ describe('[CNV] conversation', () => {
           { ...answer, action: 'correct', eventType: 'concentration/ug-l' },
           { ...answer, action: 'correct', itemKey: 'body-blood-serum-ferritin' },
           { ...answer, basis: 'name-match' },
+          { ...proposed, printed: { ...proposed.printed, time: '08:30' } },
+          { ...proposed, printed: { ...proposed.printed, samplingTime: '8.30 am' } },
+          { ...proposed, printed: { ...proposed.printed, samplingTime: '25:00' } },
+          { ...proposed, printed: { ...proposed.printed, samplingTime: '8h30' } },
+          { ...proposed, printed: { ...proposed.printed, samplingTime: 830 } },
+          { ...proposed, anchor: { ...proposed.anchor, eventId: 'not an id' } },
           { ...answer, eventIds: ['ckq3w8n1x0020'] },
           { ...answer, candidateIds: ['Ferritine 48'] },
           { ...answer, time: '2026-03-12', timePrecision: 'day' },
@@ -346,7 +354,7 @@ describe('[CNV] conversation', () => {
     it('[CNV-SHAPE-3] every enum is exactly this list', () => {
       assert.deepStrictEqual(branch(schema, 'answer').properties.action.enum, ['confirm', 'correct', 'not-mine', 'skip', 'choose', 'request-item', 'duplicate']);
       assert.deepStrictEqual(branch(schema, 'answer').properties.timePrecision.enum, ['day', 'month', 'year', 'unknown']);
-      assert.deepStrictEqual(branch(schema, 'answer').properties.basis.enum, ['profile-match']);
+      assert.deepStrictEqual(branch(schema, 'answer').properties.basis.enum, ['profile-match', 'existing-value']);
       assert.deepStrictEqual(branch(ALERT, 'task-status').properties.status.enum, ['received', 'reading', 'awaiting-answers', 'done', 'error']);
       assert.strictEqual(branch(schema, 'question').properties.code.enum, undefined, 'an open code');
       const codeRe = new RegExp(branch(schema, 'question').properties.code.pattern);
@@ -356,9 +364,13 @@ describe('[CNV] conversation', () => {
     it('[CNV-SHAPE-4] the copies are the same definitions as their sources', () => {
       const pv = branch(schema, 'proposed-value').properties;
       const rd = branch(reader, 'reading').properties;
-      for (const f of ['candidateId', 'printed', 'proposal', 'status', 'reason', 'requestKey', 'askOneByOne', 'specimenImplied']) {
+      for (const f of ['candidateId', 'proposal', 'status', 'reason', 'requestKey', 'askOneByOne', 'specimenImplied']) {
         assert.deepStrictEqual(strip(pv[f]), strip(rd[f]), 'proposed-value.' + f + ' = reader-v1 reading.' + f);
       }
+      // printed is reader-v1's plus the column's printed time (4.25.0), display only
+      const { samplingTime, ...printedV1 } = strip(pv.printed).properties;
+      assert.deepStrictEqual({ ...strip(pv.printed), properties: printedV1 }, strip(rd.printed), 'proposed-value.printed = reader-v1 reading.printed + samplingTime');
+      assert.deepStrictEqual([samplingTime.type, samplingTime.maxLength, samplingTime.pattern], ['string', 5, '^([01][0-9]|2[0-3]):[0-5][0-9]$']);
       assert.deepStrictEqual(strip(pv.anchor), strip(keys.hdsSourceAnchor));
       assert.deepStrictEqual(strip(branch(schema, 'question').properties.context.properties.anchor), strip(keys.hdsSourceAnchor));
       assert.deepStrictEqual(Object.keys(pv.extraction.properties), ['engine', 'engineVersion', 'kbVersion', 'backend']);
@@ -418,7 +430,9 @@ describe('[CNV] conversation', () => {
 
     it('[CNV-DOC-1] the CONVERSATION.md examples are valid events, related-mirrored, and the proposal is valid against its type and item', () => {
       const validate = new AjvDraft04({ strict: false, logger: false }).compile(schema);
-      assert.deepStrictEqual(docs.map((e) => e.content.kind), ['question', 'proposed-value', 'answer']);
+      assert.deepStrictEqual(docs.map((e) => e.content.kind), ['question', 'proposed-value', 'answer', 'answer']);
+      assert.strictEqual(docs[3].content.basis, 'existing-value', 'the automatic duplicate is documented');
+      assert.strictEqual(docs[1].content.anchor.eventId, docs[1].content.about, 'a self-contained anchor names its document');
       for (const e of docs) {
         assert.ok(validate(e.content), JSON.stringify(validate.errors));
         assert.strictEqual(e.streamIds.length, 1);
@@ -474,10 +488,17 @@ describe('[CNV] conversation', () => {
           assert.ok(['confirm', 'correct'].includes(m.action), 'written only with confirm or correct');
           for (const w of m.written) assert.ok(m.candidateIds.includes(w.candidateId), 'a written candidate is covered');
         }
-        if (m.basis) assert.ok(m.action === 'confirm' && !m.candidateIds && !m.written, 'basis only on an is-this-yours confirm');
+        if (m.basis === 'profile-match') assert.ok(m.action === 'confirm' && !m.candidateIds && !m.written, 'profile-match only on an is-this-yours confirm');
+        if (m.basis === 'existing-value') assert.ok(m.action === 'duplicate' && m.candidateIds?.length && !m.written, 'existing-value only on a duplicate of proposed values, writing nothing');
         if (m.timePrecision === 'unknown') assert.strictEqual(m.time, undefined, 'no time with unknown');
         else if (m.timePrecision) assert.strictEqual(typeof m.time, 'number');
       }
+      // a self-contained anchor (4.25.0) names the item's own document; a legacy one (c-78) has none
+      for (const m of messages) {
+        const anchor = m.anchor ?? m.context?.anchor;
+        if (anchor?.eventId !== undefined) assert.strictEqual(anchor.eventId, m.about, 'anchor.eventId = about');
+      }
+      assert.ok(messages.some((m) => (m.anchor ?? m.context?.anchor) !== undefined && (m.anchor ?? m.context?.anchor).eventId === undefined), 'a legacy anchor stays valid');
       for (const m of messages.filter((x) => x.kind === 'proposed-value')) {
         if (['kept-aside', 'unmapped'].includes(m.status)) assert.ok(m.reason, 'kept-aside / unmapped carries reason');
         if (m.proposal?.time !== undefined) assert.ok(m.proposal.clientData?.hdsTimePrecision, 'a proposal with time carries hdsTimePrecision');
