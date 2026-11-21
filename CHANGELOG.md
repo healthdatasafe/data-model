@@ -1,5 +1,27 @@
 # Changelog
 
+## [Unreleased]
+
+Additive: two documented `settings/hds-webapp-diary` keys; no item, stream, eventType, option value or `fhir` block
+change. A minor release.
+
+### Added: `stars` and `rememberNever` documented on `settings/hds-webapp-diary`
+
+hds-webapp's Add data offers ⭐ entries: several items entered together on one page, one event per item filled, all at
+the same time (plan 134). `stars`, an array of `{ id, group?, name?, items }`, is now a documented key. `id` is `cycle`
+(the app's cycle entry: mucus and vaginal bleeding) or `star-` and 8 base36 characters; `group` is the hds-webapp kind
+whose list shows the row (optional; else the app's own for its id, or the kind of the first item); `items` are item
+keys of this model, in order (a reader keeps the first 8), and an empty array hides the entry. An app-defined id absent
+from the key reads as the app's default, so the key is written only once the person changes something. A ⭐ entry id is
+not a card id. The event's description now counts ⭐ entry ids among its values and their names among the labels the
+person gave. Documentation only: the shape stays owned by hds-webapp (no `required`, open). `[DSET-SET-2]` validates an
+event with `stars` (draft-07 and draft-04). Fable-reviewed (clean with edits, applied).
+`rememberNever`, an array of prompt ids, holds the "remember it?" prompts the person declined for good
+(`charting-method`: the offer, in an entry form, to make the method of a cervical-fluid observation the person's
+charting method). Later is not stored; an id names a prompt, never a value; a reader ignores an id it does not know.
+`methodLater`'s description now says it is the set-up's deferral only. The event's description counts prompt ids among
+its values.
+
 ## [4.22.0] - unreleased
 
 A conversation between a person and any contact (plan 128): the HDS Reader becomes a standard counterparty, and
