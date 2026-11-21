@@ -1,4 +1,40 @@
 {
+  "allergy-reaction-severity": {
+    "fhirElement": "AllergyIntolerance.reaction.severity",
+    "binds": [
+      {
+        "eventType": "allergy/coded-v1",
+        "path": "reactions.severity"
+      },
+      {
+        "eventType": "allergy/basic-v1",
+        "path": "reactions.severity"
+      }
+    ],
+    "values": {
+      "mild": {
+        "label": {
+          "en": "Mild",
+          "fr": "Légère"
+        },
+        "fhir": "mild"
+      },
+      "moderate": {
+        "label": {
+          "en": "Moderate",
+          "fr": "Modérée"
+        },
+        "fhir": "moderate"
+      },
+      "severe": {
+        "label": {
+          "en": "Severe",
+          "fr": "Sévère"
+        },
+        "fhir": "severe"
+      }
+    }
+  },
   "medication-when": {
     "fhirElement": "Timing.repeat.when",
     "binds": [

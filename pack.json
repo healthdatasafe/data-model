@@ -1,6 +1,6 @@
 {
-  "version": "4.22.0",
-  "publicationDate": "2026-11-20T23:48:30.573Z",
+  "version": "4.23.0",
+  "publicationDate": "2026-11-21T11:53:06.686Z",
   "streams": [
     {
       "id": "activity",
@@ -24711,7 +24711,7 @@
             }
           },
           "source": {
-            "description": "Provenance: which method produced this vector. Absent = direct vector input.",
+            "description": "Provenance and method-specific qualifiers: which method produced this vector, and what qualifies its observation (`annotations`). Absent = direct vector input.",
             "type": "object",
             "properties": {
               "key": {
@@ -24728,6 +24728,13 @@
               "modelVersion": {
                 "type": "string",
                 "description": "Model definition version used"
+              },
+              "annotations": {
+                "type": "object",
+                "description": "Values that qualify the source observation without being part of it, keyed by the id of an annotation of the method's notation (converter pack `notation.annotations`), e.g. Creighton { \"frequency\": \"X2\" }. Scoped to the method named by `key`: a writer that changes `key` drops them. Not in the vector, never used by a conversion. Optional for validity: `requiredAtEntry` on the annotation is an entry-form rule only, so events stored before it, imported or converted from another method have none and stay valid. An editor that does not know annotations may drop them when it rewrites `source`.",
+                "additionalProperties": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -27195,7 +27202,7 @@
         }
       },
       "settings/hds-webapp-diary": {
-        "description": "Per-user layout and display state of the hds-webapp Diary, held as a single recurring event on the webapp-settings app stream and updated in place. The shape is owned by hds-webapp, not by this model, so the known keys below are documented rather than enforced: no 'required', and additional properties are permitted on purpose, as for settings/hds-react-timeline. Holds no observation: every value is a Diary card or feature id, an item key, a UI flag, a label the person gave (the name of one of the person's cards) or a chart line's id. Item keys and card names can still say what the person tracks, so the event is personal data, as the account's other settings are, and no care grant needs to cover the webapp-settings stream it lives on. An observation belongs on its own item (the fertility intention on fertility-ttc-tta, the charting method on its own item or setting), and a display preference shared across apps belongs in HDSSettings. Card ids are defined by hds-webapp; a measure's card id is its item key.",
+        "description": "Per-user layout and display state of the hds-webapp Diary, held as a single recurring event on the webapp-settings app stream and updated in place. The shape is owned by hds-webapp, not by this model, so the known keys below are documented rather than enforced: no 'required', and additional properties are permitted on purpose, as for settings/hds-react-timeline. Holds no observation: every value is a Diary card, feature, kind, ⭐ entry or prompt id, an item key, a UI flag, a label the person gave (the name of one of the person's cards or ⭐ entries) or a chart line's id. Item keys and the names the person gave can still say what the person tracks, so the event is personal data, as the account's other settings are, and no care grant needs to cover the webapp-settings stream it lives on. An observation belongs on its own item (the fertility intention on fertility-ttc-tta, the charting method on its own item or setting), and a display preference shared across apps belongs in HDSSettings. Card ids are defined by hds-webapp; a measure's card id is its item key.",
         "type": "object",
         "properties": {
           "v": {
@@ -27290,7 +27297,7 @@
             "type": "boolean"
           },
           "methodLater": {
-            "description": "UI deferral: the person chose to pick a charting method later, so the method choice is not shown. Not the method itself.",
+            "description": "UI deferral: the person chose, at set-up, to pick a charting method later, so set-up does not ask again. Not the method itself, and not rememberNever: an entry form may still offer it.",
             "type": "boolean"
           },
           "learnt": {
@@ -27311,6 +27318,37 @@
               "array",
               "null"
             ]
+          },
+          "stars": {
+            "description": "The person's ⭐ entries: sets of items entered together on one page of Add data. Each: id (one the app defines, today only 'cycle', its cycle entry; else 'star-' and 8 base36 characters for one the person made); group (the hds-webapp kind of data whose list shows it, as 'cycle'; absent or not a kind the reader knows: the app's own for an id it defines, else the kind of its first item); name (the person's label; empty, blank or absent: a label the app makes); items (item keys of this model, whole items, in the order shown). An entry whose id the app defines replaces the app's default for that id, and such an id absent here reads as that default, so the key is written only once the person changes something; an empty stars array reads as an absent key. An empty items array hides the entry: this is how an app-defined entry is taken off; one of the person's own is removed from the array. The person's own entries are in the order the person made them. A ⭐ entry id is not a card id: it has no place in order, visible, collapsed or hiddenLines. A reader skips an entry whose id is of neither form or that has no items array, reads a repeated id once and a repeated item key once, keeps the first 8 items and ignores an item key it does not know. A writer keeps the entries it skipped.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "group": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "rememberNever": {
+            "description": "The \"remember it?\" prompts the person said never to show again, as prompt ids. A prompt offers, in an entry form, to keep a choice just made there as the person's setting: Yes sets it, Later hides the prompt in that form only (stored nowhere), Never adds its id here. Ids are defined by hds-webapp; today 'charting-method' (the offer to make the method of a cervical-fluid observation the person's charting method). An id names a prompt, never the value offered or declined. Absent, empty or not an array: none. A reader ignores an id it does not know and reads a repeated id once; a writer keeps the ids it does not know. An id stays once the setting is set elsewhere. Holds no observation and no choice: the setting itself lives where it always does (the charting method in HDSSettings).",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -32363,6 +32401,42 @@
     }
   },
   "vocabularies": {
+    "allergy-reaction-severity": {
+      "fhirElement": "AllergyIntolerance.reaction.severity",
+      "binds": [
+        {
+          "eventType": "allergy/coded-v1",
+          "path": "reactions.severity"
+        },
+        {
+          "eventType": "allergy/basic-v1",
+          "path": "reactions.severity"
+        }
+      ],
+      "values": {
+        "mild": {
+          "label": {
+            "en": "Mild",
+            "fr": "Légère"
+          },
+          "fhir": "mild"
+        },
+        "moderate": {
+          "label": {
+            "en": "Moderate",
+            "fr": "Modérée"
+          },
+          "fhir": "moderate"
+        },
+        "severe": {
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère"
+          },
+          "fhir": "severe"
+        }
+      }
+    },
     "medication-when": {
       "fhirElement": "Timing.repeat.when",
       "binds": [
@@ -33818,6 +33892,26 @@
         "hdsId"
       ]
     },
+    "manifestation": {
+      "label": {
+        "en": "Reaction manifestations"
+      },
+      "description": {
+        "en": "Search allergic-reaction manifestations (hives, anaphylaxis, wheezing…; SNOMED-CT) from datasets service, for an allergy's reactions[].manifestations[] (store label and codes)"
+      },
+      "endpoint": "datasets://manifestation",
+      "queryParam": "search",
+      "minQueryLength": 3,
+      "resultKey": "manifestations",
+      "displayFields": {
+        "label": "label",
+        "description": "description"
+      },
+      "valueFields": [
+        "label",
+        "codes"
+      ]
+    },
     "medication": {
       "label": {
         "en": "Medications"
@@ -33925,11 +34019,18 @@
   },
   "converters": {
     "cervical-fluid": {
-      "latestVersion": "v0",
-      "updatedAt": "2026-11-12T15:50:18.000Z"
+      "latestVersion": "v1",
+      "versions": [
+        "v0",
+        "v1"
+      ],
+      "updatedAt": "2026-11-21T10:50:10.000Z"
     },
     "mood": {
       "latestVersion": "v0",
+      "versions": [
+        "v0"
+      ],
       "updatedAt": "2026-11-13T09:47:38.000Z"
     }
   },

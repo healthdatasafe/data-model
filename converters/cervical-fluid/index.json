@@ -4,6 +4,10 @@
     "v0": {
       "status": "active",
       "updatedAt": "2026-10-28T09:29:08.000Z"
+    },
+    "v1": {
+      "status": "active",
+      "updatedAt": "2026-11-21T10:50:10.000Z"
     }
   }
 }

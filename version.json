@@ -1,9 +1,9 @@
 {
-  "commit": "b3aeaf133fa17c876ceac8089e68007e8600a519",
-  "commitShort": "b3aeaf1",
+  "commit": "dd7be0255cce30ca6f0c536a0d948a1d9ee6d45f",
+  "commitShort": "dd7be02",
   "branch": "main",
-  "buildDate": "2026-11-20T23:48:42Z",
-  "publicationDate": "2026-11-20T23:48:30.573Z",
+  "buildDate": "2026-11-21T11:53:22Z",
+  "publicationDate": "2026-11-21T11:53:06.686Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -82,7 +82,15 @@
       "file": "converters/cervical-fluid/index.json"
     },
     {
-      "title": "Converter: cervical-fluid — latest pack",
+      "title": "Converter: cervical-fluid — pack v0",
+      "file": "converters/cervical-fluid/pack-v0.json"
+    },
+    {
+      "title": "Converter: cervical-fluid — pack v1",
+      "file": "converters/cervical-fluid/pack-v1.json"
+    },
+    {
+      "title": "Converter: cervical-fluid — pack v0 (legacy URL)",
       "file": "converters/cervical-fluid/pack-latest.json"
     },
     {
@@ -90,7 +98,11 @@
       "file": "converters/mood/index.json"
     },
     {
-      "title": "Converter: mood — latest pack",
+      "title": "Converter: mood — pack v0",
+      "file": "converters/mood/pack-v0.json"
+    },
+    {
+      "title": "Converter: mood — pack v0 (legacy URL)",
       "file": "converters/mood/pack-latest.json"
     },
     {
@@ -106,7 +118,7 @@
       "file": "appStreams.json"
     }
   ],
-  "version": "4.22.0",
+  "version": "4.23.0",
   "license": "CC-BY-4.0",
-  "attribution": "HDS Data Model 4.22.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
+  "attribution": "HDS Data Model 4.23.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
 }
