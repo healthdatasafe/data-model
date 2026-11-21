@@ -1,0 +1,197 @@
+# Cervical fluid converter configuration — v1 (same dimensions, weights and rules as v0; its pack carries Creighton model v1)
+# Engine: euclidian-distance
+# 9 dimensions with weighted Euclidean distance for cross-method conversion
+
+engine: euclidian-distance
+version: v1
+itemKey: cervical-fluid
+eventType: vulva-mucus-inspect/9d-vector
+
+dimensionNames:
+  - threadiness
+  - stretchability
+  - lubricative
+  - transparency
+  - wetness
+  - densityFluidity
+  - sensation
+  - mucusVolume
+  - color
+
+dimensions:
+  threadiness:
+    label: { en: Threadiness, fr: Capacité filante }
+    shortLabel: { en: Thread, fr: Filanc }
+    description:
+      en: The tendency of the fluid to form thin filaments or strings when gently separated.
+      fr: La tendance du fluide à former des filaments ou fils fins lorsqu'il est doucement séparé.
+    weight: 0.20
+    stops:
+      - { value: 0.0, label: { en: None, fr: Aucune } }
+      - { value: 0.15, label: { en: Minimal, fr: Minimale } }
+      - { value: 0.30, label: { en: Slight, fr: Légère } }
+      - { value: 0.50, label: { en: Moderate, fr: Modérée } }
+      - { value: 0.70, label: { en: Stringy, fr: Filante } }
+      - { value: 0.85, label: { en: Very stringy, fr: Très filante } }
+      - { value: 1.0, label: { en: Maximum, fr: Maximale } }
+
+  stretchability:
+    label: { en: Stretchability, fr: Étirabilité }
+    shortLabel: { en: Stretch, fr: Étir }
+    description:
+      en: The maximum distance the fluid can be stretched between fingers before breaking.
+      fr: La distance maximale à laquelle le fluide peut être étiré entre les doigts avant de se rompre.
+    weight: 0.18
+    stops:
+      - { value: 0.0, label: { en: None, fr: Aucune } }
+      - { value: 0.15, label: { en: Minimal, fr: Minimale } }
+      - { value: 0.30, label: { en: Short, fr: Courte } }
+      - { value: 0.50, label: { en: Medium, fr: Moyenne } }
+      - { value: 0.70, label: { en: Long, fr: Longue } }
+      - { value: 0.85, label: { en: Very long, fr: Très longue } }
+      - { value: 1.0, label: { en: "Maximum (>3 cm)", fr: "Maximale (>3 cm)" } }
+
+  lubricative:
+    label: { en: Lubricative, fr: Lubrification }
+    shortLabel: { en: Lubric, fr: Lubri }
+    description:
+      en: The degree to which the fluid creates a slippery, gliding sensation that reduces friction.
+      fr: Le degré auquel le fluide crée une sensation glissante qui réduit la friction.
+    weight: 0.15
+    stops:
+      - { value: 0.0, label: { en: None, fr: Aucune } }
+      - { value: 0.20, label: { en: Slightly, fr: Légèrement } }
+      - { value: 0.40, label: { en: Moderate, fr: Modérée } }
+      - { value: 0.60, label: { en: Slippery, fr: Glissante } }
+      - { value: 0.80, label: { en: Very slippery, fr: Très glissante } }
+      - { value: 1.0, label: { en: Extremely slippery, fr: Extrêmement glissante } }
+
+  transparency:
+    label: { en: Transparency, fr: Transparence }
+    shortLabel: { en: Transp, fr: Transp }
+    description:
+      en: How much light passes through the fluid, from fully opaque to fully transparent.
+      fr: La quantité de lumière traversant le fluide, de totalement opaque à totalement transparent.
+    weight: 0.12
+    stops:
+      - { value: 0.0, label: { en: Opaque, fr: Opaque } }
+      - { value: 0.25, label: { en: Cloudy, fr: Trouble } }
+      - { value: 0.50, label: { en: Translucent, fr: Translucide } }
+      - { value: 0.75, label: { en: Nearly clear, fr: Presque clair } }
+      - { value: 1.0, label: { en: Transparent, fr: Transparent } }
+
+  wetness:
+    label: { en: Wetness, fr: Humidité }
+    shortLabel: { en: Wet, fr: Humid }
+    description:
+      en: The overall moisture content and water-like quality at the vulva.
+      fr: Le taux d'humidité général et la qualité aqueuse à la vulve.
+    weight: 0.10
+    stops:
+      - { value: 0.0, label: { en: Dry, fr: Sec } }
+      - { value: 0.20, label: { en: Barely moist, fr: À peine humide } }
+      - { value: 0.40, label: { en: Moist, fr: Humide } }
+      - { value: 0.60, label: { en: Wet, fr: Mouillé } }
+      - { value: 0.80, label: { en: Very wet, fr: Très mouillé } }
+      - { value: 1.0, label: { en: Dripping, fr: Ruisselant } }
+
+  densityFluidity:
+    label: { en: Density / Fluidity, fr: Densité / Fluidité }
+    shortLabel: { en: Fluid, fr: Fluid }
+    description:
+      en: The viscosity spectrum from thick and dense to thin and fluid.
+      fr: Le spectre de viscosité allant d'épais et dense à fin et fluide.
+    weight: 0.09
+    stops:
+      - { value: 0.0, label: { en: Thick / Pasty, fr: Épais / Pâteux } }
+      - { value: 0.20, label: { en: Dense, fr: Dense } }
+      - { value: 0.40, label: { en: Creamy, fr: Crémeux } }
+      - { value: 0.60, label: { en: Fluid, fr: Fluide } }
+      - { value: 0.80, label: { en: Thin, fr: Fin } }
+      - { value: 1.0, label: { en: Watery, fr: Aqueux } }
+
+  sensation:
+    label: { en: Sensation, fr: Sensation }
+    shortLabel: { en: Sense, fr: Sens }
+    description:
+      en: The subjective vulvar perception felt during walking or daily movement.
+      fr: La perception vulvaire subjective ressentie pendant la marche ou les mouvements quotidiens.
+    weight: 0.07
+    stops:
+      - { value: 0.0, label: { en: Dry, fr: Sec } }
+      - { value: 0.25, label: { en: Nothing felt, fr: Rien ressenti } }
+      - { value: 0.50, label: { en: Damp, fr: Moite } }
+      - { value: 0.75, label: { en: Wet, fr: Mouillé } }
+      - { value: 1.0, label: { en: Slippery, fr: Glissant } }
+
+  mucusVolume:
+    label: { en: Mucus Volume, fr: Volume de glaire }
+    shortLabel: { en: M.Vol, fr: V.Gla }
+    description:
+      en: The quantity of cervical mucus observed, from none to profuse.
+      fr: La quantité de glaire cervicale observée, de nulle à abondante.
+    weight: 0.05
+    stops:
+      - { value: 0.0, label: { en: None, fr: Aucun } }
+      - { value: 0.10, label: { en: Scanty, fr: Infime } }
+      - { value: 0.25, label: { en: Light, fr: Léger } }
+      - { value: 0.50, label: { en: Medium, fr: Moyen } }
+      - { value: 0.75, label: { en: Heavy, fr: Abondant } }
+      - { value: 1.0, label: { en: Profuse, fr: Très abondant } }
+
+  color:
+    label: { en: Color, fr: Couleur }
+    shortLabel: { en: Color, fr: Coul }
+    description:
+      en: The color of the fluid on a non-linear spectrum. Not a fertility gradient.
+      fr: La couleur du fluide sur un spectre non linéaire. Ce n'est pas un gradient de fertilité.
+    renderHint: color
+    weight: 0.04
+    stops:
+      - { value: 0.0, label: { en: White, fr: Blanc } }
+      - { value: 0.20, label: { en: Off-white, fr: Blanc cassé } }
+      - { value: 0.40, label: { en: Yellow, fr: Jaune } }
+      - { value: 0.50, label: { en: Clear, fr: Clair } }
+      - { value: 0.60, label: { en: Pink, fr: Rose } }
+      - { value: 0.80, label: { en: Red, fr: Rouge } }
+      - { value: 1.0, label: { en: Brown, fr: Brun } }
+
+# Temperature coverline rule of each method (3.24.0). Data only: which rule a method charts the
+# basal temperature by; the rule's parameters and its computation live in model-cervical-fluid
+# (references/rules/coverline-rules.json, the method specification) and hds-lib. Published on
+# every method of pack-v1 as `temperatureRule`, a key of `temperatureRules` or `none`
+# (the method draws no coverline). The loader requires one entry per method, no more.
+temperatureRules:
+  sympto-thermal:
+    label: { en: "STM / TCOYF", fr: "MST / TCOYF" }
+    source: model-cervical-fluid references/rules/coverline-rules.json (version 2026-10-28), methods.sympto-thermal
+  sensiplan:
+    label: { en: "Sensiplan (3 over 6)", fr: "Sensiplan (3 sur 6)" }
+    source: model-cervical-fluid references/rules/coverline-rules.json (version 2026-10-28), methods.sensiplan
+  manual:
+    label: { en: "Drawn by the person", fr: "Tracée par la personne" }
+    source: model-cervical-fluid references/rules/coverline-rules.json (version 2026-10-28), methods.justisse (kind manual)
+
+methodTemperatureRule:
+  sympto-thermal: sympto-thermal
+  sensiplan: sensiplan
+  chartneo: sensiplan        # coverline-rules.json methods.chartneo: sameAs sensiplan
+  justisse: manual           # no calculation published: the person draws the line
+  billings: none
+  creighton: none
+  marquette: none            # temperature rule not published
+  femm: none
+  appleHealth: none
+  mira: none
+  bigelow: none
+  descriptive: none
+
+# Helper: color dimension value to RGB mapping for UI rendering
+colorToRGB:
+  0.0: "#FFFFFF"
+  0.20: "#F5F0E0"
+  0.40: "#E8D44D"
+  0.50: "#C0E0F0"
+  0.60: "#FFB0B0"
+  0.80: "#CC0000"
+  1.0: "#6B3A2A"
