@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.24.0] - 2026-11-21
 
 Additive: two registered conversation codes (plan 128) and two more documented `rememberNever` prompt ids. No item,
 stream, eventType, option value, schema or `fhir` block change; a minor release.
