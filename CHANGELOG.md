@@ -23,7 +23,11 @@ event with `stars` (draft-07 and draft-04). Fable-reviewed (clean with edits, ap
 (`charting-method`: the offer, in an entry form, to make the method of a cervical-fluid observation the person's
 charting method). Later is not stored; an id names a prompt, never a value; a reader ignores an id it does not know.
 `methodLater`'s description now says it is the set-up's deferral only. The event's description counts prompt ids among
-its values.
+its values. Two more prompt ids (B-2026-11-20-17): `input-method:<item key>` (keep the method chosen in the entry form
+of a convertible item other than cervical fluid, such as mood) and `unit:<item key>` (keep the unit chosen in the entry
+form of an item with variations), each kept as the item's `preferred-input-` setting on Yes. The item key in an id only
+names the prompt's item. When the person asks for the prompts again, a writer removes only the ids of these forms.
+Fable-reviewed (clean with edits, applied).
 
 ### Added: allergy reactions, what an entry UI needs to enter them (plan 133)
 
