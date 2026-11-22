@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.28.0] - 2026-11-22
 
 Plan 133. Additive: one item, one eventType, one code source; no new stream and no new scope key; a minor release.
 
