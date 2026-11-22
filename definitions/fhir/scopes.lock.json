@@ -641,6 +641,13 @@
         "body-blood-serum-protein-total"
       ]
     },
+    "body-blood-serum-psa-total": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood-serum",
+      "items": [
+        "body-blood-serum-psa-total"
+      ]
+    },
     "body-blood-serum-pth": {
       "pair": "Observation|laboratory",
       "parent": "body-blood-serum",
@@ -884,6 +891,13 @@
       "parent": "body-semen",
       "items": [
         "body-semen-volume"
+      ]
+    },
+    "body-urine-chemistry-creatinine": {
+      "pair": "Observation|laboratory",
+      "parent": "body-urine-chemistry",
+      "items": [
+        "body-urine-chemistry-creatinine"
       ]
     },
     "body-urine-hormones-e3g": {
