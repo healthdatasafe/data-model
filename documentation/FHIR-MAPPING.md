@@ -1098,7 +1098,7 @@ for these codes only:
   `medication`, the rest → `all`.
 
 Still refused, each with its own reason:
-- latex `716220001`, the retired `716184000`, `428197003` and `1003774007`: stored as `all` they would state a wider
+- animal `716220001`, insect `428197003`, latex `1003774007` and the retired latex `716184000`: stored as `all` they would state a wider
   negation than the source, and no scope is narrower than a category yet;
 - `no-allergy-info`: it says there is no information, not that there is no allergy;
 - a no-known code beside an allergen coding: the resource contradicts itself;
