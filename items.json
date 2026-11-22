@@ -738,7 +738,7 @@
         "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/AllergyIntolerance-uv-ips"
       }
     },
-    "devNotes": "event.time is the onset, at its precision (PARTIAL-DATES.md); hdsTimePrecision: unknown when the person does not know it. No duration in v1: time + duration is reserved for an abatement, as on condition-coded, and an event that carries one is refused by the FHIR rendering. `status` is required: the item format has no default value, so the entry UI presets it to active; a writer that is not a form (a bridge, the MCP import) states it and never defaults it. `verificationStatus` absent = not stated; never defaulted to confirmed. `reactions` (allergy/coded-v1) is not a form field: an array of objects, which no composite field type holds (as procedure `findings`); a writer that has reactions writes them itself, and the entry UI adds a repeating group later, the stored shape being fixed now. At least one code (`allergen.codes` minItems 1): an allergen no code was found for is allergy-basic. The entry UI must write no `categories` key for an empty multi-select, never `categories: []` (minItems 1), and must write `lastOccurrence` as YYYY, YYYY-MM or YYYY-MM-DD, never a full ISO datetime, with a way to enter a year or a month alone (a plain date widget allows neither). An allergy pass as a document is the `allergy-record` document kind (documentKinds.yaml), on `documents`, not here. \"No known allergy\" is a later item (allergy-none-known), never an allergen. See documentation/ALLERGY.md."
+    "devNotes": "event.time is the onset, at its precision (PARTIAL-DATES.md); hdsTimePrecision: unknown when the person does not know it. No duration in v1: time + duration is reserved for an abatement, as on condition-coded, and an event that carries one is refused by the FHIR rendering. `status` is required: the item format has no default value, so the entry UI presets it to active; a writer that is not a form (a bridge, the MCP import) states it and never defaults it. `verificationStatus` absent = not stated; never defaulted to confirmed. `reactions` (allergy/coded-v1) is not a form field: an array of objects, which no composite field type holds (as procedure `findings`); a writer that has reactions writes them itself, and the entry UI adds a repeating group later, the stored shape being fixed now. At least one code (`allergen.codes` minItems 1): an allergen no code was found for is allergy-basic. The entry UI must write no `categories` key for an empty multi-select, never `categories: []` (minItems 1), and must write `lastOccurrence` as YYYY, YYYY-MM or YYYY-MM-DD, never a full ISO datetime, with a way to enter a year or a month alone (a plain date widget allows neither). An allergy pass as a document is the `allergy-record` document kind (documentKinds.yaml), on `documents`, not here. \"No known allergy\" is its own item (allergy-none-known), never an allergen. See documentation/ALLERGY.md."
   },
   "allergy-basic": {
     "version": "v1",
@@ -938,6 +938,126 @@
       }
     },
     "devNotes": "The uncoded twin of allergy-coded: a name no code was found for (an allergen coded only in a system outside fhirMapping.systems, UNII or NDF-RT, imports here and loses its code), never a coded event with codes: []. Same stream, so one consent unit covers both. Every other field, and every rule of allergy-coded's devNotes (onset, no duration in v1, status stated by every writer, verification never defaulted to confirmed, reactions not a form field, no empty `categories` and `lastOccurrence` written as YYYY, YYYY-MM or YYYY-MM-DD by the entry UI), applies unchanged."
+  },
+  "allergy-none-known": {
+    "version": "v1",
+    "label": {
+      "en": "No known allergy",
+      "fr": "Aucune allergie connue"
+    },
+    "description": {
+      "en": "State that you have no known allergy, in general or to one kind of allergen.",
+      "fr": "Indiquez que vous n'avez aucune allergie connue, en général ou pour un type d'allergène."
+    },
+    "streamId": "allergy",
+    "eventType": "allergy/none-known-v1",
+    "type": "composite",
+    "composite": {
+      "scope": {
+        "label": {
+          "en": "Applies to",
+          "fr": "Concerne"
+        },
+        "type": "select",
+        "options": [
+          {
+            "value": "all",
+            "label": {
+              "en": "All allergens",
+              "fr": "Tous les allergènes"
+            }
+          },
+          {
+            "value": "medication",
+            "label": {
+              "en": "Medications",
+              "fr": "Médicaments"
+            }
+          },
+          {
+            "value": "food",
+            "label": {
+              "en": "Food",
+              "fr": "Aliments"
+            }
+          },
+          {
+            "value": "environment",
+            "label": {
+              "en": "Environment (pollen, animals, dust…)",
+              "fr": "Environnement (pollens, animaux, poussière…)"
+            }
+          }
+        ]
+      },
+      "verificationStatus": {
+        "label": {
+          "en": "Verification",
+          "fr": "Vérification"
+        },
+        "type": "select",
+        "canBeNull": true,
+        "options": [
+          {
+            "value": "unconfirmed",
+            "label": {
+              "en": "Not confirmed",
+              "fr": "Non confirmé"
+            }
+          },
+          {
+            "value": "confirmed",
+            "label": {
+              "en": "Confirmed by a test or a doctor",
+              "fr": "Confirmé par un test ou un médecin"
+            }
+          }
+        ]
+      },
+      "notes": {
+        "label": {
+          "en": "Notes",
+          "fr": "Notes"
+        },
+        "type": "text",
+        "canBeNull": true
+      }
+    },
+    "repeatable": "unlimited",
+    "fhir": {
+      "resourceType": "AllergyIntolerance",
+      "code": {
+        "from": "enum",
+        "field": "scope",
+        "codings": {
+          "all": {
+            "system": "http://snomed.info/sct",
+            "code": "716186003",
+            "display": "No known allergy"
+          },
+          "medication": {
+            "system": "http://snomed.info/sct",
+            "code": "409137002",
+            "display": "No known drug allergy"
+          },
+          "food": {
+            "system": "http://snomed.info/sct",
+            "code": "429625007",
+            "display": "No known food allergy"
+          },
+          "environment": {
+            "system": "http://snomed.info/sct",
+            "code": "428607008",
+            "display": "No known environmental allergy"
+          }
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-allergyintolerance",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/AllergyIntolerance-uv-ips"
+      }
+    },
+    "devNotes": "A statement that she has no known allergy (`scope` all) or none of one kind (medication, food, environment), never an allergen and never an allergy with a status. event.time is when the statement was made (its assertion), never an onset: the precision is normal, never unknown, and no onset renders. No duration. `scope` is required and has no default: the entry UI asks for it. `verificationStatus` absent = not stated; never defaulted to confirmed; an import keeps the source's value. No status, categories, type, criticality, lastOccurrence or reactions: the eventType refuses them. Whether a statement is still current (the latest one for its scope, and no active allergy within its scope) is judged by readers, by one shared function in hds-fhir-js, never stored here. See documentation/ALLERGY.md."
   },
   "body-skin-acne": {
     "version": "v1",

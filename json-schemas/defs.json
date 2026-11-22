@@ -131,7 +131,8 @@
               "datasource",
               "eventType",
               "content",
-              "text"
+              "text",
+              "enum"
             ]
           }
         },
@@ -139,6 +140,36 @@
           "from"
         ],
         "allOf": [
+          {
+            "if": {
+              "properties": {
+                "from": {
+                  "const": "enum"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "from": true,
+                "field": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-zA-Z0-9]*$"
+                },
+                "codings": {
+                  "type": "object",
+                  "minProperties": 2,
+                  "additionalProperties": {
+                    "$ref": "defs.json#/definitions/fhirCoding"
+                  }
+                }
+              },
+              "required": [
+                "field",
+                "codings"
+              ],
+              "additionalProperties": false
+            }
+          },
           {
             "if": {
               "properties": {
