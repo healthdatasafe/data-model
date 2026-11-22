@@ -1,6 +1,6 @@
 # Changelog
 
-## [4.28.0] - 2026-11-22
+## [4.29.0] - 2026-11-22
 
 Plan 128 (HDS Reader reading coverage, package 7). Additive: two items, three streams; no new eventType.
 
@@ -21,7 +21,9 @@ Two analytes a hospital report prints often and the model had no item for (they 
   sibling. BLOOD-CHEMISTRY.md § Stream tree.
 - **For consumers:** results already stored as `lab-result/coded-v1` under `2857-1`, `2161-8` or `14683-7` are now
   owned by an item and can move to it (BLOOD-CHEMISTRY.md § Moving a result to its item).
-- Tests `[LAB428-1]` to `[LAB428-4]`.
+- Tests `[LAB429-1]` to `[LAB429-4]`.
+
+## [4.28.0] - 2026-11-22
 
 Plan 133. Additive: one item, one eventType, one code source; no new stream and no new scope key; a minor release.
 

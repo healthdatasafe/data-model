@@ -21,7 +21,7 @@ body/
     body-blood-coded           ← results with no item of their own (lab-result/coded-v1)
   body-urine/
     body-urine-hormones/       ← urine hormone assays
-    body-urine-chemistry/      ← spot urine chemistry (4.28.0): creatinine
+    body-urine-chemistry/      ← spot urine chemistry (4.29.0): creatinine
     body-urine-coded           ← results with no item of their own
   body-csf/
     body-csf-coded             ← cerebrospinal fluid results (lab-result/coded-v1)
@@ -33,7 +33,7 @@ is precisely why specimen is in the key (below).
 
 `body-blood` follows the existing specimen-rooted pattern (`body-urine`, `body-semen`).
 
-**Urine chemistry (4.28.0).** `body-urine-chemistry-creatinine` is the first urine item that is not a hormone. It
+**Urine chemistry (4.29.0).** `body-urine-chemistry-creatinine` is the first urine item that is not a hormone. It
 sits in a `body-urine-chemistry/` group, like `body-urine-hormones/`, so the urine chemistry to come (sodium,
 potassium, osmolality, albumin, protein) joins it, and a grant on the group covers the denominator of every urine
 ratio. It is a **spot** (random) urine concentration, in mg/dL (`2161-8`) or mmol/L (`14683-7`). Any timed

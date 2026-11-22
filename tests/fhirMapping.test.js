@@ -1386,7 +1386,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
     it('[FHIR-SCOPE-11] the model\'s table; the committed lock is up to date (run npm run fhir:lock)', () => {
       const labBlocks = Object.entries(itemsById).filter(([, i]) => i.fhir?.category === 'laboratory');
       // 135 active items, plus the two legacy urine-hormone items (LH, PdG) whose stream is their replacement's. The
-      // eight differential streams hold two items each (the percentage and the absolute count). 4.28.0 adds PSA total
+      // eight differential streams hold two items each (the percentage and the absolute count). 4.29.0 adds PSA total
       // and urine creatinine.
       assert.strictEqual(labBlocks.length, 137);
       const lab = [...new Set(labBlocks.map(([, i]) => i.streamId))].sort();
