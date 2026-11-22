@@ -10822,6 +10822,49 @@
       }
     }
   },
+  "body-blood-serum-psa-total": {
+    "version": "v1",
+    "label": {
+      "en": "Total PSA",
+      "fr": "PSA total"
+    },
+    "description": {
+      "en": "A protein made by the prostate, measured in your blood.",
+      "fr": "Une protéine produite par la prostate, mesurée dans votre sang."
+    },
+    "streamId": "body-blood-serum-psa-total",
+    "eventType": "concentration/ug-l",
+    "type": "number",
+    "repeatable": "any",
+    "references": {
+      "snomed": [
+        "63476009"
+      ],
+      "loinc": [
+        "2857-1"
+      ]
+    },
+    "devNotes": "Total PSA only. Free PSA (10886-0) and the free/total ratio (12841-3) are other observations: they stay lab-result/coded-v1 on body-blood-coded until they get items of their own. ng/mL and µg/L are one unit, so a value printed in ng/mL is stored as printed.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "system": "http://loinc.org",
+        "code": "2857-1",
+        "display": "Prostate specific Ag [Mass/volume] in Serum or Plasma"
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/ug-l": "ug/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
+  },
   "body-blood-serum-pth": {
     "version": "v1",
     "label": {
@@ -11013,6 +11056,97 @@
     "streamId": "body-blood-coded",
     "eventType": "lab-result/coded-v1",
     "repeatable": "unlimited"
+  },
+  "body-urine-chemistry-creatinine": {
+    "version": "v1",
+    "label": {
+      "en": "Creatinine (urine)",
+      "fr": "Créatinine (urine)"
+    },
+    "description": {
+      "en": "A waste product from your muscles, measured in your urine.",
+      "fr": "Un déchet produit par vos muscles, mesuré dans vos urines."
+    },
+    "streamId": "body-urine-chemistry-creatinine",
+    "type": "number",
+    "repeatable": "any",
+    "variations": {
+      "eventType": {
+        "label": {
+          "en": "Unit",
+          "fr": "Unité"
+        },
+        "options": [
+          {
+            "value": "concentration/mg-dl",
+            "label": {
+              "en": "mg/dL",
+              "fr": "mg/dL"
+            },
+            "loinc": "2161-8"
+          },
+          {
+            "value": "concentration/mmol-l",
+            "label": {
+              "en": "mmol/L",
+              "fr": "mmol/L"
+            },
+            "loinc": "14683-7"
+          }
+        ]
+      }
+    },
+    "unitConversions": {
+      "factors": [
+        {
+          "from": "concentration/mg-dl",
+          "to": "concentration/mmol-l",
+          "factor": 0.0884,
+          "molarMass": 113.12,
+          "source": "Molar mass of creatinine, C4H7N3O, 113.12 g/mol (PubChem CID 588; IUPAC standard atomic weights)"
+        }
+      ]
+    },
+    "references": {
+      "snomed": [
+        "271260009"
+      ],
+      "loinc": [
+        "2161-8",
+        "14683-7"
+      ]
+    },
+    "devNotes": "A spot (random) urine sample only. Any timed collection is another observation and stays lab-result/coded-v1 on body-urine-coded: the 24-hour rate (2162-6 mass, 14684-5 moles) and the 24-hour concentration (20624-3 mass, 25886-3 moles), which a report prints in the same units as a spot sample. Ratios to creatinine (albumin/creatinine, protein/creatinine) are other observations too.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "eventType",
+        "codings": {
+          "concentration/mg-dl": {
+            "system": "http://loinc.org",
+            "code": "2161-8",
+            "display": "Creatinine [Mass/volume] in Urine"
+          },
+          "concentration/mmol-l": {
+            "system": "http://loinc.org",
+            "code": "14683-7",
+            "display": "Creatinine [Moles/volume] in Urine"
+          }
+        }
+      },
+      "value": {
+        "kind": "quantity",
+        "units": {
+          "concentration/mg-dl": "mg/dL",
+          "concentration/mmol-l": "mmol/L"
+        }
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-urine-coded": {
     "version": "v1",

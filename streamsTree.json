@@ -514,6 +514,11 @@
                 "parentId": "body-blood-serum"
               },
               {
+                "id": "body-blood-serum-psa-total",
+                "name": "Total PSA",
+                "parentId": "body-blood-serum"
+              },
+              {
                 "id": "body-blood-serum-pth",
                 "name": "PTH",
                 "parentId": "body-blood-serum"
@@ -965,6 +970,22 @@
                 "id": "body-urine-hormones-hcg",
                 "name": "hCG",
                 "parentId": "body-urine-hormones"
+              }
+            ],
+            "parentId": "body-urine"
+          },
+          {
+            "id": "body-urine-chemistry",
+            "name": "Urine chemistry",
+            "label": {
+              "en": "Urine chemistry",
+              "fr": "Chimie urinaire"
+            },
+            "children": [
+              {
+                "id": "body-urine-chemistry-creatinine",
+                "name": "Creatinine",
+                "parentId": "body-urine-chemistry"
               }
             ],
             "parentId": "body-urine"
