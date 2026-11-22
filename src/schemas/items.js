@@ -88,14 +88,27 @@ const defsSchema = {
     // first of them the table knows (`"<system>|<code>"` → coding, the terminology the resource's binding
     // requires), else by `unknown`, or `{ from: text, field }`: no coding at all, the concept is the text the
     // content holds at `field` (a medication, a procedure or an allergen entered by its name; a MedicationStatement, a
-    // MedicationRequest, a Procedure or an AllergyIntolerance).
+    // MedicationRequest, a Procedure or an AllergyIntolerance), or `{ from: enum, field, codings }`: one coding per
+    // value of the string enum the content holds at `field` (the scope of a "no known allergy"; an AllergyIntolerance).
     fhirCode: {
       if: { type: 'object', required: ['from'] },
       then: {
         type: 'object',
-        properties: { from: { enum: ['datasource', 'eventType', 'content', 'text'] } },
+        properties: { from: { enum: ['datasource', 'eventType', 'content', 'text', 'enum'] } },
         required: ['from'],
         allOf: [
+          {
+            if: { properties: { from: { const: 'enum' } } },
+            then: {
+              properties: {
+                from: true,
+                field: { type: 'string', pattern: '^[a-z][a-zA-Z0-9]*$' },
+                codings: { type: 'object', minProperties: 2, additionalProperties: { $ref: 'defs.json#/definitions/fhirCoding' } }
+              },
+              required: ['field', 'codings'],
+              additionalProperties: false
+            }
+          },
           {
             if: { properties: { from: { const: 'text' } } },
             then: {

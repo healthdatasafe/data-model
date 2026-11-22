@@ -27,7 +27,7 @@ const PROCEDURE_TYPE = 'Procedure';
 
 /**
  * The resourceType whose block maps an allergy item (ALLERGY.md, FHIR-MAPPING.md § AllergyIntolerance): a datasource or
- * text code, no category, no value, no split. The renderer reads these content properties by name: each has this JSON
+ * text code (an enum code for a "no known allergy", below), no category, no value, no split. The renderer reads these content properties by name: each has this JSON
  * type, and an enum held equal to this one (every value renders as its FHIR code, so a value is added here and in the
  * renderer first); on a composite, each is a field of this type, counted as mapped. `reactions` is never a form field.
  */
@@ -44,6 +44,17 @@ const ALLERGY_FIELDS = {
 };
 /** The `reactions[].severity` enum of an AllergyIntolerance eventType (reaction.severity), held equal as above. */
 const ALLERGY_REACTION_SEVERITIES = ['mild', 'moderate', 'severe'];
+/**
+ * A "no known allergy" (ALLERGY.md § No known allergy) is the AllergyIntolerance block whose code comes from an enum
+ * (`code: { from: enum, field, codings }`): a statement, not an allergy. Of `ALLERGY_FIELDS` it carries these only;
+ * the others describe an allergen and are refused on its eventType and its composite. Its scope values are `all` or
+ * an allergy category, so a reader can tell which allergies a statement covers.
+ */
+const ALLERGY_NONE_KNOWN_FIELDS = ['verificationStatus', 'notes'];
+const ALLERGY_NONE_KNOWN_ALL = 'all';
+/** What names an allergen on the two allergy items: never on a "no known allergy" (its eventType refuses both). */
+const ALLERGY_NONE_KNOWN_NO_ALLERGEN = ['allergen', 'name'];
+const SNOMED_SYSTEM = 'http://snomed.info/sct';
 
 /**
  * The resourceType whose block maps the questionnaire answer item (QUESTIONNAIRE.md § FHIR): no code, no category, no
@@ -108,6 +119,7 @@ module.exports = {
   MEDICATION_TYPES,
   ALLERGY_FIELDS,
   ALLERGY_REACTION_SEVERITIES,
+  ALLERGY_NONE_KNOWN_FIELDS,
   PATIENT_ELEMENTS,
   QUESTION_KEY_PATTERN,
   QUESTIONNAIRE_SUB_FIELD_TYPES,
@@ -225,6 +237,7 @@ function checkFhirMapping (key, item, itemEventTypes) {
   const isDatasourceCode = f.code.from === 'datasource';
   const isContentCode = f.code.from === 'content';
   const isTextCode = f.code.from === 'text';
+  const isEnumCode = f.code.from === 'enum';
   const isMedication = MEDICATION_TYPES.includes(f.resourceType);
   const isProcedure = f.resourceType === PROCEDURE_TYPE;
   const isAllergy = f.resourceType === ALLERGY_TYPE;
@@ -239,7 +252,9 @@ function checkFhirMapping (key, item, itemEventTypes) {
     }
     return [...byKey.values()];
   };
-  const codeCodings = f.code.from === 'eventType' ? distinctCodings(Object.values(f.code.codings)) : isDatasourceCode || isContentCode || isTextCode ? [] : [f.code];
+  const codeCodings = f.code.from === 'eventType'
+    ? distinctCodings(Object.values(f.code.codings))
+    : isEnumCode ? Object.values(f.code.codings) : isDatasourceCode || isContentCode || isTextCode ? [] : [f.code];
   // The HDS item coding names the item that carries it, never another one (whose generic rendering has that coding).
   // A deprecated alias keeps its replacement's block, the replacement's key with it.
   if (!item.deprecated) {
@@ -257,14 +272,19 @@ function checkFhirMapping (key, item, itemEventTypes) {
   if (isMedication && !isDatasourceCode && !isTextCode) fail(`a ${f.resourceType} takes its medication from the content: code: { from: datasource, field } (the coded medicine) or { from: text, field } (the name as written)`);
   // A procedure is the coded procedure datasets-service returned, or a name as written (TREATMENT-PROCEDURE.md).
   if (isProcedure && !isDatasourceCode && !isTextCode) fail('a Procedure takes its code from the content: code: { from: datasource, field } (the coded procedure) or { from: text, field } (the name as written)');
-  // An allergen is the coded substance datasets-service returned, or a name as written (ALLERGY.md).
-  if (isAllergy && !isDatasourceCode && !isTextCode) fail('an AllergyIntolerance takes its code from the content: code: { from: datasource, field } (the coded allergen) or { from: text, field } (the name as written)');
+  // An allergen is the coded substance datasets-service returned, or a name as written; a "no known allergy" is the
+  // SNOMED CT code of its scope (ALLERGY.md).
+  if (isAllergy && !isDatasourceCode && !isTextCode && !isEnumCode) fail('an AllergyIntolerance takes its code from the content: code: { from: datasource, field } (the coded allergen), { from: text, field } (the name as written) or { from: enum, field, codings } (a "no known allergy", by scope)');
   if (isTextCode && !isMedication && !isProcedure && !isAllergy) fail('a text code source applies to a MedicationStatement, a MedicationRequest, a Procedure or an AllergyIntolerance only (the renderer places it as medication[x].text or code.text)');
+  if (isEnumCode && !isAllergy) fail('an enum code source applies to an AllergyIntolerance only (a "no known allergy", one SNOMED CT code per scope)');
   if (isProcedure) {
     checkProcedure(item, f, itemEventTypes, fail);
     if (composite?.notes != null) mappedFields.add('notes');
   }
-  if (isAllergy) {
+  if (isAllergy && isEnumCode) {
+    checkNoKnownAllergy(item, f, itemEventTypes, fail);
+    for (const k of ALLERGY_NONE_KNOWN_FIELDS) if (composite?.[k] != null) mappedFields.add(k);
+  } else if (isAllergy) {
     checkAllergyIntolerance(item, itemEventTypes, fail);
     for (const [k, spec] of Object.entries(ALLERGY_FIELDS)) if (spec.field != null && composite?.[k] != null) mappedFields.add(k);
   }
@@ -287,6 +307,11 @@ function checkFhirMapping (key, item, itemEventTypes) {
   } else if (isContentCode) {
     checkContentField(item, f.code, itemEventTypes, fail);
     if (f.alsoMatch != null) fail('"alsoMatch" applies to a static or eventType code only');
+  } else if (isEnumCode) {
+    checkEnumField(item, f.code, itemEventTypes, fail, sameSet);
+    if (f.alsoMatch != null) fail('"alsoMatch" applies to a static or eventType code only');
+    unique('code.codings', codeCodings);
+    mappedFields.add(f.code.field);
   } else if (f.code.from === 'eventType') {
     // Each eventType renders its own code, and an imported code names its eventType back; so does an import-only
     // code, keyed by the eventType it names (a mass code never imports a moles quantity). Two units of one property
@@ -599,6 +624,63 @@ function checkAllergyIntolerance (item, itemEventTypes, fail) {
 }
 
 /**
+ * A `code: { from: enum, field, codings }` names a required string enum in the content of the item's one eventType,
+ * entered in a `select` field of the composite whose options are the enum: each value renders as its own coding, so
+ * the `codings` keys are exactly the enum, and an imported coding maps back to one value.
+ */
+function checkEnumField (item, code, itemEventTypes, fail, sameSet) {
+  if (itemEventTypes.length !== 1) fail('an enum code source needs an item with exactly one eventType');
+  const et = itemEventTypes[0];
+  const prop = contentProperty(et, code.field);
+  if (prop == null) fail(`code.field "${code.field}" is not a content property of eventType "${et}"`);
+  if (prop.type !== 'string' || !Array.isArray(prop.enum)) fail(`code.field "${code.field}" is not a string enum of eventType "${et}"`);
+  if (!eventTypesById(et)?.required?.includes(code.field)) fail(`eventType "${et}" must require "${code.field}": it is the resource's code`);
+  sameSet(`code.codings keys vs the "${code.field}" enum`, Object.keys(code.codings), prop.enum);
+  const def = item.composite?.[code.field];
+  if (def?.type !== 'select') fail(`code.field "${code.field}" is not a select field of the composite`);
+  if (def.canBeNull === true) fail(`composite field "${code.field}" cannot be null: it is the resource's code`);
+  sameSet(`the "${code.field}" options vs its enum`, (def.options || []).map((o) => String(o.value)), prop.enum);
+}
+
+/**
+ * A "no known allergy" block (FHIR-MAPPING.md § AllergyIntolerance, "No known allergy"): the AllergyIntolerance whose
+ * code comes from an enum. It sits on an item with one eventType and no `duration`; it has no `status` (it renders as
+ * clinicalStatus active, ait-1), so its eventType declares none and none of the other allergen properties
+ * (`categories`, `type`, `criticality`, `lastOccurrence`, `reactions`); the composite has none of them either. What it
+ * does carry (`ALLERGY_NONE_KNOWN_FIELDS`) keeps the type and the enum the renderer reads by name. Every coding is a
+ * SNOMED CT code, and every scope value is `all` or an allergy category.
+ */
+function checkNoKnownAllergy (item, f, itemEventTypes, fail) {
+  if (itemEventTypes.length !== 1) fail('an AllergyIntolerance block needs an item with exactly one eventType');
+  if (item.duration != null) fail('a "no known allergy" item declares no "duration": the event time is when the statement was made');
+  const et = itemEventTypes[0];
+  const sameEnum = (values, expected) => Array.isArray(values) && values.length === expected.length && expected.every((v) => values.includes(v));
+  for (const [name, spec] of Object.entries(ALLERGY_FIELDS)) {
+    const prop = contentProperty(et, name);
+    const field = item.composite?.[name];
+    if (!ALLERGY_NONE_KNOWN_FIELDS.includes(name)) {
+      if (prop != null) fail(`eventType "${et}" of a "no known allergy" declares "${name}": a statement has no ${name} (it describes an allergen)`);
+      if (field != null) fail(`composite field "${name}" has no place on a "no known allergy" item (it describes an allergen)`);
+      continue;
+    }
+    if (prop != null) {
+      if (prop.type !== spec.type) fail(`content property "${name}" of eventType "${et}" is not of type ${spec.type} (the renderer reads it by name)`);
+      if (spec.enum != null && !sameEnum(prop.enum, spec.enum)) fail(`content property "${name}" of eventType "${et}": the enum must be exactly ${spec.enum.join(', ')}`);
+    }
+    if (field != null && field.type !== spec.field) fail(`composite field "${name}" is not a ${spec.field} field (the renderer reads it by name)`);
+  }
+  // Nor what names an allergen: a statement that there is none never carries one
+  for (const name of ALLERGY_NONE_KNOWN_NO_ALLERGEN) {
+    if (contentProperty(et, name) != null) fail(`eventType "${et}" of a "no known allergy" declares "${name}": a statement that there is no allergy names no allergen`);
+    if (item.composite?.[name] != null) fail(`composite field "${name}" has no place on a "no known allergy" item (it names an allergen)`);
+  }
+  for (const [value, c] of Object.entries(f.code.codings)) {
+    if (c.system !== SNOMED_SYSTEM) fail(`code.codings "${value}": ${c.system}|${c.code} is not a SNOMED CT code (a "no known allergy" is a SNOMED CT situation)`);
+    if (value !== ALLERGY_NONE_KNOWN_ALL && !ALLERGY_FIELDS.categories.enum.includes(value)) fail(`code.codings "${value}": a scope is "${ALLERGY_NONE_KNOWN_ALL}" or an allergy category (${ALLERGY_FIELDS.categories.enum.join(', ')})`);
+  }
+}
+
+/**
  * The `dosage` of a medication block names the regimen object (MEDICATION.md § The regimen) in the content of the
  * item's one eventType, and covers its two coded enums exactly: every `doseUnit` value renders in a UCUM code of its
  * own (compared as written: the annotation is the meaning of a count unit), every `route` value as one coding (or a
@@ -881,7 +963,7 @@ function ancestorsIn (parentOf, id) {
 
 /**
  * Import match keys are unique across active items: a resource matches an item by (resourceType, static code, an
- * eventType's code or alsoMatch coding), or by (resourceType, category, datasource or content code source) for each
+ * eventType's or an enum value's code, or alsoMatch coding), or by (resourceType, category, datasource or content code source) for each
  * category the block accepts (its own and its `alsoMatchCategories`), and must match one item only. A LOINC import key is never a
  * code another active item owns (`references.loinc` or `references.loincMethod`, `[LABC-LOINC-1]`). A Patient element
  * is claimed by one active item only, so an imported Patient places each element in one item. A resource that states
@@ -925,7 +1007,7 @@ function checkFhirImportKeys (items) {
         claim(`${f.resourceType}${c != null ? `|${c}` : ''} from ${f.code.from}`, key);
       }
     } else {
-      const own = f.code.from === 'eventType' ? Object.values(f.code.codings) : [f.code];
+      const own = f.code.from === 'eventType' || f.code.from === 'enum' ? Object.values(f.code.codings) : [f.code];
       for (const c of [...own, ...alsoMatchCodingsOf(f)]) claimCoding(f, c, key);
     }
   }

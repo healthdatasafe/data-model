@@ -2242,6 +2242,80 @@
         }
       }
     },
+    "allergy/none-known-v1": {
+      "description": "No known allergy (FHIR AllergyIntolerance with a SNOMED CT 'no known allergy' code): to anything (scope all) or to one kind of allergen. event.time is when the statement was made, never an onset; no duration. Not an allergy: no status, categories, type, criticality, lastOccurrence or reactions.",
+      "type": "object",
+      "required": [
+        "scope"
+      ],
+      "properties": {
+        "scope": {
+          "description": "What the statement covers: all (no known allergy), medication, food or environment (no known allergy of that kind). Each renders as its own SNOMED CT code.",
+          "type": "string",
+          "enum": [
+            "all",
+            "medication",
+            "food",
+            "environment"
+          ]
+        },
+        "verificationStatus": {
+          "description": "AllergyIntolerance.verificationStatus code (FHIR allergyintolerance-verification); absent = not stated, never defaulted to confirmed.",
+          "type": "string",
+          "enum": [
+            "unconfirmed",
+            "confirmed"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "not": {
+        "anyOf": [
+          {
+            "required": [
+              "status"
+            ]
+          },
+          {
+            "required": [
+              "categories"
+            ]
+          },
+          {
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "required": [
+              "criticality"
+            ]
+          },
+          {
+            "required": [
+              "lastOccurrence"
+            ]
+          },
+          {
+            "required": [
+              "reactions"
+            ]
+          },
+          {
+            "required": [
+              "allergen"
+            ]
+          },
+          {
+            "required": [
+              "name"
+            ]
+          }
+        ]
+      }
+    },
     "finding/coded-v1": {
       "description": "Coded clinical finding. 'finding' is the coded identity from datasets-service. Records what was FOUND at surgery or on imaging (e.g. hydrosalpinx, ovarian endometrioma) — neither a procedure, a symptom, nor quite a diagnosis.",
       "type": "object",
