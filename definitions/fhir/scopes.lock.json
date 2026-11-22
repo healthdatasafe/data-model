@@ -6,7 +6,8 @@
       "parent": null,
       "items": [
         "allergy-basic",
-        "allergy-coded"
+        "allergy-coded",
+        "allergy-none-known"
       ]
     },
     "body-blood-cbc-basophils": {
@@ -1031,7 +1032,12 @@
     }
   },
   "reviewed": {
-    "items": {},
+    "items": {
+      "allergy-none-known": {
+        "under": "allergy",
+        "why": "2026-11-22 a no known allergy statement (plan 133); a reader of AllergyIntolerance may see it, as US Core and IPS place it under that resourceType"
+      }
+    },
     "streams": {}
   }
 }

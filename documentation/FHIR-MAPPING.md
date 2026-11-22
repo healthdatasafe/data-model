@@ -220,7 +220,7 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 | `resourceType` | yes | `Observation`, `Condition`, `DocumentReference` ([documents](#documentreference-documents)), `MedicationStatement` or `MedicationRequest` ([medications](#medications-medicationstatement-and-medicationrequest)), `Procedure` ([procedures](#procedures-procedure)), `QuestionnaireResponse` ([questionnaire answers](#questionnaireresponse-questionnaire-answers)), `Questionnaire` ([questionnaire requests](#questionnaire-questionnaire-requests)), `AllergyIntolerance` ([allergies](#allergyintolerance-allergies); `Patient` is an [element block](#patient-elements)). *Permanent.* |
 | `category` | per resourceType (table above) | Category key. *Permanent.* |
 | `alsoMatchCategories` | no | Further category keys of the same table that a resource may carry and still import into this item, **on import only**, never emitted (smoking status filed under `survey` by older sources). Never the block's own category. |
-| `code` | yes; none on a `QuestionnaireResponse` or a `Questionnaire` | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }`, `{ from: eventType, codings }`, `{ from: content, field, translate, unknown }` or `{ from: text, field }` (below). |
+| `code` | yes; none on a `QuestionnaireResponse` or a `Questionnaire` | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }`, `{ from: eventType, codings }`, `{ from: content, field, translate, unknown }`, `{ from: text, field }` or `{ from: enum, field, codings }` (below). |
 | `alsoMatch` | no | Extra codings accepted **on import only**, never emitted. With a static code, a list; with an eventType code, keyed by the eventType each names (`{ concentration/mg-dl: [codings] }`). Never with a datasource code. |
 | `alsoEmit` | no | Extra codings **emitted only**, after the static code in `code.coding`, never an import key: the second code a profile requires (US Core pulse oximetry wants 2708-6 beside 59408-5). A list, with a static code only. A resource that carries an `alsoEmit` coding without the code does not match the item. |
 | `value` | no | FHIR `value[x]`, by `kind` (below). Absent on a Condition, a DocumentReference, a medication, a Procedure and an AllergyIntolerance, which have no `value[x]`. |
@@ -234,6 +234,9 @@ non-empty `code` and a `display`. The display is the code system's official disp
 reviewer checks the code against and what a reader falls back on.
 
 ### `code`: static, from a datasource, from the eventType or from the content
+
+The code comes from one of six sources: static, a datasource, the eventType, the content's own codings, a text field
+(`from: text`), or an enum of the content (`from: enum`, the "no known allergy" only).
 
 - **Static:** `code: { system: http://loinc.org, code: 72166-2, display: Tobacco smoking status }`. Every event of the
   item has this code. When no LOINC or SNOMED CT code exists for the analyte, the static code is the **HDS item
@@ -299,6 +302,24 @@ reviewer checks the code against and what a reader falls back on.
   name alone to `procedure-basic`). **So does an `AllergyIntolerance`** (4.21.0): `code: { from: text, field: name }`
   on `allergy-basic` renders `AllergyIntolerance.code` as `{ text: <name> }`, with the same import rule (a coding with
   a datasource label goes to `allergy-coded`, a name alone to `allergy-basic`). Any other resourceType refuses it.
+- **From an enum of the content** (an `AllergyIntolerance` only, the "no known allergy" of plan 133): `code: { from:
+  enum, field: scope, codings }`. The content at `field` is a required string enum, and each of its values renders as
+  its own coding:
+  ```yaml
+  code:
+    from: enum
+    field: scope
+    codings:
+      all: { system: http://snomed.info/sct, code: "716186003", display: No known allergy }
+      medication: { system: http://snomed.info/sct, code: "409137002", display: No known drug allergy }
+      …
+  ```
+  Modelled on the code from the eventType, keyed by the enum value instead. The table sits in the block, not on the
+  form options (no item option carries codes). The `codings` keys are exactly the eventType's enum at `field` (a
+  `select` field of the composite whose options are that enum, never `canBeNull`), each a SNOMED CT coding, unique.
+  No `alsoMatch`, no `alsoEmit`. On import each coding is a match key, like a code from the eventType, and names its
+  value back; the import-only codes (a retired concept, the IPS `absent-unknown-uv-ips` codes) are hds-fhir-js rules,
+  never block entries. Any other resourceType refuses it.
 
 ### Value kinds
 
@@ -899,8 +920,9 @@ procedure as the fallback. Treatment tallies are most of the intake data, so the
 
 ## AllergyIntolerance: allergies
 
-The two items of the `allergy` root ([ALLERGY.md](ALLERGY.md)) carry an `AllergyIntolerance` block each (4.21.0, plan
-133). One event renders as one `AllergyIntolerance`.
+The two allergen items of the `allergy` root ([ALLERGY.md](ALLERGY.md)) carry an `AllergyIntolerance` block each
+(4.21.0, plan 133), and so does the "no known allergy" item `allergy-none-known` (below, [No known
+allergy](#no-known-allergy-allergy-none-known)). One event renders as one `AllergyIntolerance`.
 
 ```yaml
 allergy-coded:
@@ -941,7 +963,8 @@ zero or more codes, one allergy (a drug that is also a food additive) can be in 
 for the type, and the content `categories` is never a scope category.
 
 **Reserved names.** `status`, `verificationStatus`, `categories`, `type`, `criticality`, `lastOccurrence`, `notes` and
-`reactions` are read by name on every eventType an item maps to `AllergyIntolerance`; the build pins their types and
+`reactions` are read by name on every eventType an item maps to `AllergyIntolerance` (a "no known allergy" carries
+`verificationStatus` and `notes` only, below); the build pins their types and
 their enums (`ALLERGY_FIELDS`, `ALLERGY_REACTION_SEVERITIES` in `src/fhir.js`), so a new value (R5's `presumed`) is
 added in the renderer first, then here. `reactions` is never a form field (no composite field holds an array of
 objects): a writer that has reactions writes them itself, until the entry UI gains a repeating group.
@@ -960,24 +983,24 @@ Decided 2026-11-20 (perki): the status, out-of-set, `onsetPeriod` and no-known-a
 text "no known allergy", the anchor of an unknown onset, no `patient` check, an unreadable onset date, the reaction
 notes, the fallback above).
 
-- **No known allergy first.** Before placement, a resource whose `code` carries a "no known allergy" concept is
-  refused, whatever else it carries (an allergen coding beside it included). A fixed list (hds-fhir-js
-  `NO_KNOWN_ALLERGY`): SNOMED CT `716186003` (No known allergy), `409137002` (No known drug allergy), `429625007` (No
-  known food allergy), `428607008` (No known environmental allergy), the other active children of `716186003`
-  (`716220001`, `428197003`, `1003774007`), all active in the 20260201 International Edition; two retired predecessors
-  still found in older records, refused on import only: `160244002` "No known allergies" and `716184000` "No known
-  latex allergy", both inactive in 20260201; and five codes of
-  `http://hl7.org/fhir/uv/ips/CodeSystem/absent-unknown-uv-ips` (`no-known-allergies`,
+- **No known allergy first.** Before placement, a resource whose `code` carries a "no known allergy" concept never
+  reaches the allergen items. A fixed list (hds-fhir-js `NO_KNOWN_ALLERGY`) names the concepts; since the
+  `allergy-none-known` item (plan 133), some place there and the rest stay refused, each with its own reason
+  ([No known allergy](#no-known-allergy-allergy-none-known), Import). The list: SNOMED CT `716186003` (No known
+  allergy), `409137002` (No known drug allergy), `429625007` (No known food allergy), `428607008` (No known
+  environmental allergy), the other active children of `716186003` (`716220001`, `428197003`, `1003774007`), all
+  active in the 20260201 International Edition; two retired predecessors still found in older records, read on import
+  only: `160244002` "No known allergies" and `716184000` "No known latex allergy", both inactive in 20260201; and five
+  codes of `http://hl7.org/fhir/uv/ips/CodeSystem/absent-unknown-uv-ips` (`no-known-allergies`,
   `no-known-medication-allergies`, `no-known-environmental-allergies`, `no-known-food-allergies`, `no-allergy-info`).
   The IPS 2.0.1 value set `allergies-intolerances-uv-ips` takes absent allergies as `is-a 716186003`; the five
-  `absent-unknown-uv-ips` codes are listed from IPS 1.1.0 and not verified against 2.0.1. `no-allergy-info` says there
-  is no information, not that there is no allergy: refused all the same, with its own reason. **The same as a name
-  (Q1):** a `code.text`, or any display of the `code`, equal after trim, lowercase and the removal of trailing dots to
-  one of a short list (`NO_KNOWN_ALLERGY_TEXTS`: `nka`, `nkda`, `no known allergy`, `no known
-  allergies`, `no known drug allergy`, `no known drug allergies`, `none known`, `aucune allergie connue`, `pas
-  d'allergie connue`, `keine bekannten allergien`, `keine allergien bekannt`), is refused with the same report. An
-  exact match, never a substring: "No known allergies except latex" is a name. The check runs before the item is
-  chosen, so such a resource never lands in `allergy-basic` as a name. It has its own item later (below).
+  `absent-unknown-uv-ips` codes are listed from IPS 1.1.0 and not verified against 2.0.1 (the 2.0.1 package has no
+  such code system, so they are import-only). **The same as a name (Q1):** a `code.text`, or any display of the
+  `code`, equal after trim, lowercase and the removal of trailing dots to one of a short list (`NO_KNOWN_ALLERGY_TEXTS`:
+  `nka`, `nkda`, `no known allergy`, `no known allergies`, `no known drug allergy`, `no known drug allergies`, `none
+  known`, `aucune allergie connue`, `pas d'allergie connue`, `keine bekannten allergien`, `keine allergien bekannt`),
+  is treated as the code it names. An exact match, never a substring: "No known allergies except latex" is a name. The
+  check runs before the item is chosen, so such a resource never lands in `allergy-basic` as a name.
 - **Status.** `clinicalStatus` imports as `status` when it carries exactly one code of `allergyintolerance-clinical`
   and that code is one of the three. Every code of that system counts: `active` beside another code of it is two
   statuses and is refused; a coding in another system is ignored. A resource without one is refused and reported per
@@ -1020,10 +1043,78 @@ notes, the fallback above).
 - `note[].text` are joined into `notes`, an onset text after them; `recorder`, `asserter`, `patient` and `encounter`
   are not kept.
 
-**No known allergies** is not an allergen and has no place in these two items: it is a dedicated item,
-`allergy-none-known`, on the same stream, in a later minor (a static code, `716186003` "No known allergy", with a
-scope of all, drug, food or environment). Until it ships, such a resource is refused (the first rule above), never
-imported as an allergen.
+### No known allergy: `allergy-none-known`
+
+**No known allergies** is not an allergen and has no place in the two allergen items: it is a dedicated item,
+`allergy-none-known` (eventType `allergy/none-known-v1`, plan 133), on the same stream and under the same bare scope
+key, so no new consent unit. Its content is `{ scope, verificationStatus?, notes? }`, `scope` one of `all`,
+`medication`, `food`, `environment` ([ALLERGY.md § No known allergy](ALLERGY.md#no-known-allergy)). The code comes
+from the scope, a code from an enum ([`code`](#code-static-from-a-datasource-from-the-eventtype-or-from-the-content)):
+
+```yaml
+allergy-none-known:
+  fhir:
+    resourceType: AllergyIntolerance
+    code:
+      from: enum
+      field: scope
+      codings:
+        all: { system: http://snomed.info/sct, code: "716186003", display: No known allergy }
+        medication: { system: http://snomed.info/sct, code: "409137002", display: No known drug allergy }
+        food: { system: http://snomed.info/sct, code: "429625007", display: No known food allergy }
+        environment: { system: http://snomed.info/sct, code: "428607008", display: No known environmental allergy }
+    profiles: { us: …, ips: … }    # the allergy profiles: US Core 6.1.0, IPS 2.0.1
+```
+
+The four are SNOMED CT alone on both flavours, all active in the 20260201 International Edition (the displays are
+their preferred terms; "drug" is SNOMED's wording, the HDS scope is `medication`). IPS 2.0.1 binds `code`
+(preferred) to a value set that includes `is-a 716186003`.
+
+**Release order:** the pack may ship first (§ Forward compatibility, a new code source on a new item). Until the
+hds-fhir-js release that renders `from: enum`, a "no known allergy" is served as a generic Observation and no
+AllergyIntolerance search returns it; hds-fhir-js `check:pack` stays red until then.
+
+| Event | AllergyIntolerance (hds-fhir-js `toFhir`) |
+|---|---|
+| `scope` (required) | `code`: the SNOMED CT coding of the scope, nothing else |
+| (no `status`) | `clinicalStatus` `active` (ait-1): the statement is made; a "no longer current" one is a reader's judgement (below), never a stored status |
+| `verificationStatus` | as on the allergies: rendered only when stated, never `confirmed` by default |
+| event `time` | `recordedDate`: when the statement was made, at normal precision (never `unknown`); no `onset[x]` |
+| `notes` | `note[0].text` |
+| the writer | `recorder` and `asserter` as on the allergies |
+
+The resource carries no `onset[x]`, `category`, `type`, `criticality`, `reaction` or `lastOccurrence`; the eventType
+refuses the matching content (`status`, `categories`, `type`, `criticality`, `lastOccurrence`, `reactions`) and the
+build refuses them on the eventType and the composite. The facade's `date` search applies to it on `recordedDate`
+(it stays unsupported for the allergen items, which do not render one).
+
+**Import** (`fromFhir`): the "No known allergy first" rule above now places the resource on `allergy-none-known`,
+for these codes only:
+- `716186003` → `all`; `409137002` → `medication`; `429625007` → `food`; `428607008` → `environment`;
+- the retired `160244002` "No known allergies" → `all`;
+- the IPS codes `no-known-allergies`, `no-known-medication-allergies`, `no-known-food-allergies` and
+  `no-known-environmental-allergies` → their scope;
+- a text match (`NO_KNOWN_ALLERGY_TEXTS`): `nkda`, `no known drug allergy` and `no known drug allergies` →
+  `medication`, the rest → `all`.
+
+Still refused, each with its own reason:
+- animal `716220001`, insect `428197003`, latex `1003774007` and the retired latex `716184000`: stored as `all` they would state a wider
+  negation than the source, and no scope is narrower than a category yet;
+- `no-allergy-info`: it says there is no information, not that there is no allergy;
+- a no-known code beside an allergen coding: the resource contradicts itself;
+- a `verificationStatus` of `refuted` or `entered-in-error`, as for an allergy;
+- a `clinicalStatus` of `inactive` or `resolved` (absent or `active` is accepted).
+
+**Time:** a readable `recordedDate` that is not in the future, else the import moment; never `onset`. `verificationStatus`
+keeps the source's value (`unconfirmed`, `confirmed`, or none).
+
+**Is it current?** No status: "an inactive no known allergy" would be a double negative. A reader holds one rule, in
+one function of hds-fhir-js: a no known allergy is current only if it is the latest one for its scope (by `created`)
+**and** no `active` allergy within its scope exists (for `all`, any active allergy; for another scope, an active
+allergy whose `categories` include it or that has none). It is judged on what exists, not on onset times: an
+allergy's `time` is its onset, so a childhood allergy entered today would otherwise never end it. The facade filters
+`clinical-status` on the rendered value (an NKA matches `active`), and a type search leaves out an NKA that is not
+current (still readable by `_id`).
 
 ## QuestionnaireResponse: questionnaire answers
 
@@ -1333,7 +1424,10 @@ first**: implement and validate
 it in hds-fhir-js, release that, then add the first block that uses it here. A block the deployed renderer skips is
 data a SMART app does not see. **One case may ship pack first:** a new resourceType on an item whose events an
 older renderer already serves generically (hds-fhir-js 0.8.0 and later, paragraph above), as `QuestionnaireResponse`
-(4.12.0), `Questionnaire` (4.13.0) and `AllergyIntolerance` (4.21.0) did. The older renderer keeps serving the generic Observation, the facade pins
+(4.12.0), `Questionnaire` (4.13.0) and `AllergyIntolerance` (4.21.0) did; and, the same way, **a new code source on a
+new item**, as `from: enum` on `allergy-none-known`: a renderer that does not know the source skips the block and
+serves the item's events as generic Observations, so until the hds-fhir-js release that renders it (release order) no
+AllergyIntolerance search returns a "no known allergy". The older renderer keeps serving the generic Observation, the facade pins
 the pack by hash, and the library's `check:pack` stays red until the pack is published. **A new value of a medication vocabulary needs the renderer first in the same way**
 (`when`, the intake and prescription statuses, the skip and stop reasons; MEDICATION.md § Vocabularies): hds-fhir-js
 renders them from a checked copy of `pack.vocabularies` (`check:pack`), so a deployed renderer refuses an event
@@ -1578,6 +1672,13 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   `reactions[].severity` enum, `ALLERGY_REACTION_SEVERITIES`); on a composite each but `reactions` is a field of its
   type (`select`, `multi-select` for `categories`, `date`, `text`), counted as mapped, and a `reactions` field is
   refused. Import keys: one datasource-coded and one text-coded item for the bare key.
+- **No known allergy (`[ALG-NKA-*]`):** an `AllergyIntolerance` with `{ from: enum }` is a "no known allergy" and is
+  exempt from the `status` rule: its one eventType declares none of `status`, `categories`, `type`, `criticality`,
+  `lastOccurrence` and `reactions`, nor does its composite, and its `verificationStatus` and `notes`
+  (`ALLERGY_NONE_KNOWN_FIELDS`) keep their type and enum. The `code.field` is a required string enum of the eventType,
+  a `select` field of the composite (never `canBeNull`) whose options are that enum; the `codings` keys are exactly the
+  enum, each a SNOMED CT coding, unique, each key `all` or an allergy category. `{ from: enum }` on any other
+  resourceType is refused. Import keys: each coding, as for a code from eventType.
 - **Questionnaire answers (`[FHIR-MAP-26]`):** a `QuestionnaireResponse` block holds `resourceType` and `profiles`
   only (`profiles` may be empty; no `code`, which every other mapping requires; no `category`, `value`, `split`, `ignore` or `dosage`), on a
   `system` item with one eventType whose content has a string `requestEventId` and an object `answers`, the two

@@ -226,7 +226,7 @@ describe('[ALG] allergies and intolerances', () => {
       assert.deepStrictEqual(itemsById['allergy-basic'].fhir, { resourceType: 'AllergyIntolerance', code: { from: 'text', field: 'name' }, profiles });
       assert.strictEqual(fhirMapping.categories.AllergyIntolerance, undefined, 'no category table: a bare scope key, for good');
       assert.deepStrictEqual(fhirScopes.AllergyIntolerance, ['allergy']);
-      assert.deepStrictEqual(readLock().streams.allergy, { pair: 'AllergyIntolerance', parent: null, items: ['allergy-basic', 'allergy-coded'] });
+      assert.deepStrictEqual(readLock().streams.allergy, { pair: 'AllergyIntolerance', parent: null, items: ['allergy-basic', 'allergy-coded', 'allergy-none-known'] });
       assert.deepStrictEqual(ALLERGY_REACTION_SEVERITIES, eventTypesById('allergy/coded-v1').properties.reactions.items.properties.severity.enum);
     });
 
@@ -301,6 +301,157 @@ describe('[ALG] allergies and intolerances', () => {
     it('[ALG-FHIR-5] import keys: one datasource-coded and one text-coded item for the bare key', () => {
       checkFhirImportKeys({ a: { fhir: item('allergy-coded').fhir }, b: { fhir: item('allergy-basic').fhir } });
       assert.throws(() => checkFhirImportKeys({ a: { fhir: item('allergy-basic').fhir }, b: { fhir: item('allergy-basic').fhir } }), /fhir import key AllergyIntolerance from text is claimed by both "a" and "b"/);
+    });
+  });
+
+  // "No known allergy" (plan 133, DESIGN-ALLERGY-NKA.md v2): `allergy-none-known` on the same stream and scope key, an
+  // AllergyIntolerance whose code is the SNOMED CT situation of its scope (`code: { from: enum }`). ALLERGY.md § No known allergy.
+  describe('[ALG-NKA] no known allergy', () => {
+    const NKA = 'allergy/none-known-v1';
+    const SCOPES = ['all', 'medication', 'food', 'environment'];
+    const CODES = { all: '716186003', medication: '409137002', food: '429625007', environment: '428607008' };
+    const item = () => structuredClone(itemsById['allergy-none-known']);
+    const check = (it) => checkFhirMapping('allergy-none-known', it, [it.eventType]);
+    let nka;
+    before(() => {
+      nka = [new Ajv({ strict: false, allErrors: true, logger: false }).compile(eventTypesById(NKA)), new AjvDraft04({ strict: false, allErrors: true, logger: false }).compile(eventTypesById(NKA))];
+    });
+    const validNka = (content) => {
+      const [a, b] = nka.map((v) => v(content));
+      assert.strictEqual(a, b, `draft-07 and draft-04 disagree on ${JSON.stringify(content)}`);
+      return a;
+    };
+
+    it('[ALG-NKA-1] the item: composite on the allergy root, unlimited, no duration; scope required with en and fr labels, verificationStatus with the allergies\' values and its own labels, notes shared', () => {
+      const it = itemsById['allergy-none-known'];
+      assert.deepStrictEqual([it.streamId, it.eventType, it.type, it.repeatable], ['allergy', NKA, 'composite', 'unlimited']);
+      assert.strictEqual(it.duration, undefined);
+      assert.ok(it.label.fr && it.description.fr);
+      assert.deepStrictEqual(Object.keys(it.composite), ['scope', 'verificationStatus', 'notes']);
+      assert.strictEqual(it.composite.scope.type, 'select');
+      assert.strictEqual(it.composite.scope.canBeNull, undefined, 'scope is required');
+      assert.deepStrictEqual(it.composite.scope.options.map((o) => o.value), SCOPES);
+      for (const o of it.composite.scope.options) assert.ok(o.label.en && o.label.fr, o.value);
+      assert.ok(it.composite.scope.label.fr);
+      const values = (f) => f.options.map((o) => o.value);
+      assert.deepStrictEqual(values(it.composite.verificationStatus), values(itemsById['allergy-coded'].composite.verificationStatus), 'same values, own labels');
+      assert.ok(!JSON.stringify(it.composite.verificationStatus).includes('Suspect'), 'no "suspected" on a negation');
+      assert.deepStrictEqual(it.composite.notes, itemsById['allergy-coded'].composite.notes);
+      checkItem(item(), 'allergy-none-known');
+    });
+
+    it('[ALG-NKA-2] the eventType: scope required, one of four; verificationStatus as on the allergies; no allergen property, and refuses one', () => {
+      const et = eventTypesById(NKA);
+      assert.deepStrictEqual(et.required, ['scope']);
+      assert.deepStrictEqual(et.properties.scope.enum, SCOPES);
+      assert.deepStrictEqual(Object.keys(et.properties), ['scope', 'verificationStatus', 'notes']);
+      assert.deepStrictEqual(et.properties.verificationStatus, eventTypesById('allergy/coded-v1').properties.verificationStatus);
+      for (const scope of SCOPES) assert.ok(validNka({ scope }), scope);
+      assert.ok(validNka({ scope: 'food', verificationStatus: 'confirmed', notes: 'Tested 2024' }));
+      assert.ok(!validNka({}), 'no scope');
+      for (const scope of ['biologic', 'latex', 'none', '', null]) assert.ok(!validNka({ scope }), String(scope));
+      assert.ok(!validNka({ scope: 'all', name: 'peanut' }), 'a name: a statement that there is no allergy names none');
+      assert.ok(!validNka({ scope: 'all', allergen: ALLERGEN }), 'an allergen likewise');
+      for (const v of ['refuted', 'entered-in-error', 'presumed']) assert.ok(!validNka({ scope: 'all', verificationStatus: v }), v);
+      assert.ok(!validNka({ scope: 'all', notes: 1 }), 'notes a string');
+      const refused = { status: 'active', categories: ['food'], type: 'allergy', criticality: 'low', lastOccurrence: '2020', reactions: [{ manifestations: [{ text: 'hives' }] }] };
+      for (const [k, v] of Object.entries(refused)) assert.ok(!validNka({ scope: 'all', [k]: v }), `refuses ${k}`);
+    });
+
+    it('[ALG-NKA-3] the block: AllergyIntolerance, the allergy profiles, a SNOMED CT code per scope (all four active, 20260201)', () => {
+      const f = itemsById['allergy-none-known'].fhir;
+      assert.strictEqual(f.resourceType, 'AllergyIntolerance');
+      assert.deepStrictEqual(f.profiles, itemsById['allergy-coded'].fhir.profiles);
+      assert.strictEqual(f.code.from, 'enum');
+      assert.strictEqual(f.code.field, 'scope');
+      assert.deepStrictEqual(Object.keys(f.code.codings), SCOPES);
+      for (const [scope, c] of Object.entries(f.code.codings)) {
+        assert.deepStrictEqual([c.system, c.code], ['http://snomed.info/sct', CODES[scope]], scope);
+        assert.ok(c.display, scope);
+      }
+      assert.deepStrictEqual(fhirScopes.AllergyIntolerance, ['allergy'], 'the same bare scope key: no new consent unit');
+      check(item());
+    });
+
+    it('[ALG-NKA-4] the checker refuses: codings keys other than the enum, a coding outside SNOMED CT, a scope that is not an allergy category', () => {
+      const a = item();
+      delete a.fhir.code.codings.environment;
+      assert.throws(() => check(a), /code\.codings keys vs the "scope" enum must match exactly; missing \[environment\]/);
+      const b = item();
+      b.fhir.code.codings.latex = { system: 'http://snomed.info/sct', code: '716220001', display: 'No known latex allergy' };
+      assert.throws(() => check(b), /code\.codings "latex": a scope is "all" or an allergy category/);
+      const b2 = item();
+      b2.fhir.code.codings.biologic = { system: 'http://snomed.info/sct', code: '1', display: 'x' };
+      assert.throws(() => check(b2), /code\.codings keys vs the "scope" enum must match exactly; missing \[\], unknown \[biologic\]/);
+      const c = item();
+      c.fhir.code.codings.food = { system: 'http://hl7.org/fhir/uv/ips/CodeSystem/absent-unknown-uv-ips', code: 'no-known-food-allergies', display: 'No known food allergies' };
+      assert.throws(() => check(c), /code\.codings "food": .* is not a SNOMED CT code/);
+      const d = item();
+      d.fhir.code.codings.food = { ...d.fhir.code.codings.all };
+      assert.throws(() => check(d), /the coding http:\/\/snomed\.info\/sct\|716186003 appears more than once/);
+      const e = item();
+      e.fhir.code.field = 'notes';
+      assert.throws(() => check(e), /code\.field "notes" is not a string enum/);
+      const f = item();
+      f.fhir.alsoMatch = [{ system: 'http://snomed.info/sct', code: '160244002', display: 'No known allergies' }];
+      assert.throws(() => check(f), /"alsoMatch" applies to a static or eventType code only/);
+      const g = item();
+      g.composite.scope.canBeNull = true;
+      assert.throws(() => check(g), /composite field "scope" cannot be null/);
+      const h = item();
+      h.composite.scope.options.pop();
+      assert.throws(() => check(h), /the "scope" options vs its enum must match exactly; missing \[environment\]/);
+    });
+
+    it('[ALG-NKA-5] the checker refuses from: enum on another resourceType, and keeps the allergen items as they were', () => {
+      const a = item();
+      a.fhir.resourceType = 'Condition';
+      a.fhir.category = 'problem-list-item';
+      assert.throws(() => check(a), /an enum code source applies to an AllergyIntolerance only/);
+      const b = structuredClone(itemsById['allergy-basic']);
+      b.fhir.code = { from: 'enum', field: 'status', codings: { active: { system: 'http://snomed.info/sct', code: '1', display: 'x' }, inactive: { system: 'http://snomed.info/sct', code: '2', display: 'y' }, resolved: { system: 'http://snomed.info/sct', code: '3', display: 'z' } } };
+      assert.throws(() => checkFhirMapping('b', b, [b.eventType]), /eventType "allergy\/basic-v1" of a "no known allergy" declares "status"/);
+    });
+
+    it('[ALG-NKA-6] no status required, and none of the allergen fields: on the eventType or the composite, each fails the build', () => {
+      const et = eventTypesById(NKA);
+      const mutate = (fn, re) => {
+        const saved = structuredClone(et);
+        try {
+          fn(et);
+          assert.throws(() => check(item()), re);
+        } finally {
+          for (const k of Object.keys(et)) delete et[k];
+          Object.assign(et, saved);
+        }
+      };
+      for (const name of ['status', 'categories', 'type', 'criticality', 'lastOccurrence', 'reactions']) {
+        mutate((t) => { t.properties[name] = structuredClone(eventTypesById('allergy/coded-v1').properties[name]); }, new RegExp(`declares "${name}": a statement has no ${name}`));
+        const c = item();
+        c.composite[name] = structuredClone(itemsById['allergy-coded'].composite[name] ?? { label: { en: 'x' }, type: 'text' });
+        assert.throws(() => check(c), new RegExp(`composite field "${name}" has no place on a "no known allergy" item`), name);
+      }
+      for (const name of ['allergen', 'name']) {
+        mutate((t) => { t.properties[name] = { type: 'string' }; }, new RegExp(`declares "${name}": a statement that there is no allergy names no allergen`));
+        const c = item();
+        c.composite[name] = { label: { en: 'x' }, type: 'text' };
+        assert.throws(() => check(c), new RegExp(`composite field "${name}" has no place on a "no known allergy" item \\(it names an allergen\\)`), name);
+      }
+      mutate((t) => t.properties.verificationStatus.enum.push('refuted'), /content property "verificationStatus" .* the enum must be exactly unconfirmed, confirmed/);
+      mutate((t) => { t.required = []; }, /must require "scope"/);
+      mutate((t) => t.properties.scope.enum.push('biologic'), /code\.codings keys vs the "scope" enum must match exactly; missing \[biologic\]/);
+      const d = item();
+      d.duration = { mandatory: false, canBeNull: false };
+      assert.throws(() => check(d), /a "no known allergy" item declares no "duration"/);
+      const s = item();
+      s.composite.verificationStatus.type = 'text';
+      assert.throws(() => check(s), /composite field "verificationStatus" is not a select field/);
+    });
+
+    it('[ALG-NKA-7] import keys: each SNOMED CT code places on the item, beside the datasource and text allergen items', () => {
+      const blocks = { a: { fhir: itemsById['allergy-coded'].fhir }, b: { fhir: itemsById['allergy-basic'].fhir }, n: { fhir: item().fhir } };
+      checkFhirImportKeys(blocks);
+      assert.throws(() => checkFhirImportKeys({ ...blocks, m: { fhir: item().fhir } }), /fhir import key AllergyIntolerance http:\/\/snomed\.info\/sct\|716186003 is claimed by both "n" and "m"/);
     });
   });
 });

@@ -4,12 +4,15 @@ What the `allergy` domain covers (4.21.0, plan 133), and how it sits beside its 
 
 ## What exists
 
-Two items, on the root stream itself:
+Three items, on the root stream itself:
 
 | item | eventType | type | repeatable | stream |
 |---|---|---|---|---|
 | `allergy-coded` | `allergy/coded-v1` | composite, `allergen` a `datasource-search` field (datasource `allergen`) | unlimited | `allergy` |
 | `allergy-basic` | `allergy/basic-v1` | composite, `name` a `text` field | unlimited | `allergy` |
+| `allergy-none-known` | `allergy/none-known-v1` | composite, `scope` a `select` field | unlimited | `allergy` |
+
+The first two are an allergen; the third is the statement "no known allergy" ([No known allergy](#no-known-allergy)).
 
 As for `condition`, the root has **no children**: an allergy is identified by its allergen's code, not by a place in
 the stream tree. A grant on `allergy` reads every allergy and intolerance of the person; a code filter narrows it.
@@ -106,6 +109,37 @@ What an entry UI must hold, since the schema refuses the alternative:
 - the list's labels are in English only, so a search in French finds little: offer the typed text too;
 - the search needs 3 characters (datasets-service answers 400 below that).
 
+## No known allergy
+
+"No known allergy" is a statement clinicians rely on: a blank allergy list is not the same as "none". It is the item
+**`allergy-none-known`** (eventType `allergy/none-known-v1`, plan 133), on the same stream, so one consent unit
+covers it with the allergies. It is not an allergen: a negation has no onset, carries no criticality or reactions, and
+never appears in an allergen search.
+
+| Field | Values | FHIR |
+|---|---|---|
+| `scope` (required) | `all`, `medication`, `food`, `environment` | `code`: SNOMED CT `716186003` No known allergy, `409137002` No known drug allergy, `429625007` No known food allergy, `428607008` No known environmental allergy |
+| `verificationStatus` | `unconfirmed`, `confirmed`; absent = not stated | `verificationStatus` |
+| `notes` | string | `note` |
+
+- **`scope`** says what the statement covers: anything (`all`), or one kind of allergen, with the same words as the
+  allergy `categories`. `biologic` is left out: SNOMED CT has no concept for it. A narrower scope (latex, insect,
+  animal) can be added later as an additive enum value. The form asks for it, with no default.
+- **`verificationStatus`** is the allergies' field, with the same rule: absent means not stated, never defaulted to
+  `confirmed`; an import keeps the source's value.
+- **No `status`, `categories`, `type`, `criticality`, `lastOccurrence` or `reactions`, and no `allergen` or `name`**:
+  the eventType refuses them, and the build refuses them on the item. A statement that there is no allergy names none.
+- **Time.** `event.time` is when the statement was made (its assertion), never an onset. Its precision is normal,
+  never `unknown`. No duration.
+- **Is it current?** There is no status: "an inactive no known allergy" would be a double negative. A reader judges
+  it on what exists: it is current only if it is the latest one for its scope **and** no active allergy within its
+  scope exists (for `all`, any active allergy; for another scope, an active allergy whose `categories` include it, or
+  that has no `categories`). One function in hds-fhir-js holds the rule, shared by every reader.
+
+The code of each scope sits in the mapping block, as a code from an enum
+([FHIR-MAPPING.md § No known allergy](FHIR-MAPPING.md#no-known-allergy-allergy-none-known)), which also gives the
+rendering and the import rules: which "no known allergy" codes and names place here, and which stay refused.
+
 ## FHIR
 
 An `AllergyIntolerance` under the bare scope key `AllergyIntolerance`, granted on `allergy`. Rendering and import
@@ -113,9 +147,6 @@ rules: [FHIR-MAPPING.md § AllergyIntolerance](FHIR-MAPPING.md#allergyintoleranc
 
 ## Later
 
-- **`allergy-none-known`**, a dedicated item on the same stream, in a later minor: "no known allergy" (SNOMED CT
-  `716186003`, with a scope of all, drug, food or environment). Not an allergen: a negation has no onset, and must
-  not carry a criticality or reactions, or appear in every allergen search. Until it ships, an import refuses a "no
-  known allergy" code or name (FHIR-MAPPING.md § AllergyIntolerance, Import).
 - `presumed` (R5) as an additive `verificationStatus` value.
+- Other "no known allergy" scopes: `biologic`, latex, insect, animal.
 - An abatement as `time + duration`.

@@ -2,6 +2,32 @@
 
 ## [Unreleased]
 
+Plan 133. Additive: one item, one eventType, one code source; no new stream and no new scope key; a minor release.
+
+### Added: "no known allergy" (ALLERGY.md § No known allergy, FHIR-MAPPING.md § No known allergy)
+
+A blank allergy list is not the same as "none", and HDS had no way to say it (an import refused it).
+- **Item `allergy-none-known`** (`definitions/items/allergy.yaml`), eventType **`allergy/none-known-v1`**, on the
+  `allergy` stream, under the same bare scope key `AllergyIntolerance`: no new consent unit (the scope lock
+  acknowledges the item under `allergy`). A composite, `repeatable: unlimited`, no duration. Content
+  `{ scope, verificationStatus?, notes? }`: `scope` required, one of `all`, `medication`, `food`, `environment`
+  (en and fr labels); `verificationStatus` and `notes` shared with the allergies. The eventType refuses `status`,
+  `categories`, `type`, `criticality`, `lastOccurrence` and `reactions`. `event.time` is when the statement was made,
+  never an onset.
+- **Code source `{ from: enum, field, codings }`** (an `AllergyIntolerance` only): one coding per value of a
+  required string enum of the content. The block gives each scope its SNOMED CT code: `716186003`, `409137002`,
+  `429625007`, `428607008` (all active in the 20260201 International Edition). The build requires the `codings` keys
+  to equal the enum and the `select` field's options, each a SNOMED CT coding, unique, each key `all` or an allergy
+  category; it refuses the source on any other resourceType.
+- **Checker:** an `AllergyIntolerance` with a code from an enum is a "no known allergy": exempt from the `status`
+  rule, checked against its own field set (`ALLERGY_NONE_KNOWN_FIELDS`), and refused if its eventType or composite
+  declares an allergen field. The allergen items keep every existing check. Tests `[ALG-NKA-1]` to `[ALG-NKA-7]`.
+- **Rendering and import** are hds-fhir-js work, documented here: `code` from the scope, `clinicalStatus` active,
+  `recordedDate` the event time, no onset; the "No known allergy first" import rule now places the four codes, the
+  retired `160244002` and the IPS no-known codes on the item, and still refuses latex and the other narrower
+  concepts, `no-allergy-info`, a contradicting allergen coding and an `inactive` or `resolved` clinical status.
+- Docs: ALLERGY.md and FHIR-MAPPING.md no longer say "drug" for the medication scope or "static code" for its code.
+
 ## [4.27.0] - 2026-11-21
 
 Plan 128. Additive: one notice code; no schema, item, stream or alert-kind change; a minor release.
