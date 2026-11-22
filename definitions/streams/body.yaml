@@ -202,6 +202,8 @@ children:
             name: Cortisol
           - id: body-blood-serum-ca-125
             name: CA-125
+          - id: body-blood-serum-psa-total
+            name: Total PSA
           - id: body-blood-serum-pth
             name: PTH
           - id: body-blood-serum-acth
@@ -423,6 +425,14 @@ children:
             name: FSH
           - id: body-urine-hormones-hcg
             name: hCG
+      - id: body-urine-chemistry
+        name: Urine chemistry
+        label:
+          en: "Urine chemistry"
+          fr: "Chimie urinaire"
+        children:
+          - id: body-urine-chemistry-creatinine
+            name: Creatinine
       - id: body-urine-coded
         name: Other urine results
   - id: body-csf

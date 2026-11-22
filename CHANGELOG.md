@@ -1,5 +1,28 @@
 # Changelog
 
+## [4.29.0] - 2026-11-22
+
+Plan 128 (HDS Reader reading coverage, package 7). Additive: two items, three streams; no new eventType.
+
+### Added: total PSA and urine creatinine
+
+Two analytes a hospital report prints often and the model had no item for (they went to `lab-result/coded-v1`):
+- **`body-blood-serum-psa-total`** "Total PSA" (stream under `body-blood-serum`), `concentration/ug-l` (ng/mL is the
+  same unit), LOINC `2857-1`, SNOMED CT `63476009` *Prostate specific antigen measurement*. Total PSA only: free PSA
+  (`10886-0`) and the free/total ratio (`12841-3`) stay coded.
+- **`body-urine-chemistry-creatinine`**, in a new group **`body-urine-chemistry`** ("Urine chemistry" / "Chimie
+  urinaire") under `body-urine`, beside `body-urine-hormones`: a spot urine concentration, `concentration/mg-dl`
+  (LOINC `2161-8`) first and `concentration/mmol-l` (`14683-7`) second, with the molar-mass factor mg/dL → mmol/L
+  0.0884 (113.12 g/mol); SNOMED CT `271260009` *Urine creatinine measurement*. Any timed collection stays coded: the
+  24-hour rate (`2162-6`, `14684-5`) and the 24-hour concentration (`20624-3`, `25886-3`).
+- Codes checked in loinc-db (LOINC 2.83, ACTIVE, property and system) and snomed-db (20260201, active). Fable review:
+  ship with edits, all applied (the group and key, the option order, the label, devNotes, the 24-hour codes).
+- The FHIR scope lock gains the two leaf streams, each its own `Observation|laboratory` grant root, like every
+  sibling. BLOOD-CHEMISTRY.md § Stream tree.
+- **For consumers:** results already stored as `lab-result/coded-v1` under `2857-1`, `2161-8` or `14683-7` are now
+  owned by an item and can move to it (BLOOD-CHEMISTRY.md § Moving a result to its item).
+- Tests `[LAB429-1]` to `[LAB429-4]`.
+
 ## [4.28.0] - 2026-11-22
 
 Plan 133. Additive: one item, one eventType, one code source; no new stream and no new scope key; a minor release.
