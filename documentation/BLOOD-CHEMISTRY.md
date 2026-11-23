@@ -474,7 +474,10 @@ Lymphocyte subsets by flow cytometry (*immunophénotypage lymphocytaire*):
 **Consent.** The coded streams sit under their specimen, so a grant on `body-blood` (or `body-urine`, or `body`)
 covers every result of that specimen, including infectious serology, viral loads and drug levels. Consent screens name
 such a grant "Blood and everything under it" (hds-lib `permissionLabels`); an app that needs fewer results requests
-the item streams it needs, never the specimen.
+the item streams it needs, never the specimen. **Under SMART** (4.31.0 planned, plan 133, perki's decision): the three
+streams are in `Observation|laboratory`, so a laboratory grant covers them too; their stream `description` says what
+they hold (infectious disease tests, viral loads, drug levels and screening), and the consent screen shows it under
+their row.
 
 ### Moving a result to its item
 
@@ -505,12 +508,19 @@ older build lists an `imported` item in its pickers, breaks its form, and shows 
 a bare number. A writer that restated the items in its overload under 3.27.0 can drop the restatement; until it does,
 the overload keeps loading (its immutable fields are identical).
 
-**Cross-system.** FHIR `Observation`: `code.coding` ← `analyte.codes`, `code.text` ← `analyte.label`;
-`valueQuantity` ← `value`, `comparator`, `unit` as `code` with system `http://unitsofmeasure.org`, `unitText` (or the
-readable code) as `unit`; else `valueCodeableConcept` ← `valueCodes` with `valueText` as its `text`, else
-`valueString` ← `valueText`. A semi-quantitative result exports its `valueQuantity`, and its `valueText` as a `note`;
-`note` ← `notes`; `category` `laboratory`; `referenceRange` / `interpretation` from `clientData` as above.
-`Observation.specimen` is a Reference, not exported: the LOINC System axis carries the specimen.
+**Cross-system.** FHIR `Observation`, the `fhir:` block of the three items (`code: { from: concept, field: analyte }`,
+`value: { kind: lab-result }`, 4.31.0 planned; FHIR-MAPPING.md): `code.coding` ← `analyte.codes` (a LOINC coding
+first), `code.text` ← `analyte.label.en`, `fr` / `es` as its `translation` extension; `valueQuantity` ← `value`,
+`comparator`, `unit` as `code` with system `http://unitsofmeasure.org`, `unitText` (else the UCUM code itself, so it
+reads back unchanged) as `unit`; else `valueCodeableConcept` ← `valueCodes` with `valueText` as its `text`, else
+`valueString` ← `valueText`. A semi-quantitative result (`value` and `valueText`) exports its `valueQuantity`, and
+its printed result in the extension `https://hds.ngo/fhir/StructureDefinition/printed-result` (a
+`valueCodeableConcept`: `valueCodes`, `valueText` as text), with a readable copy in `note` for a reader that ignores
+the extension; `note` ← `notes`; `category` `laboratory`; `referenceRange` / `interpretation` from `clientData` as
+above (only the range text when there is no `value`: its limits would have no unit); the item key as `meta.tag`. The
+US Core and IPS lab profiles are claimed only when the analyte has a LOINC coding (both bind the code to LOINC).
+`Observation.specimen` is a Reference, not exported: the LOINC System axis carries the specimen, and an importer
+names the item (FHIR-MAPPING.md § Import).
 
 ## Sample context
 

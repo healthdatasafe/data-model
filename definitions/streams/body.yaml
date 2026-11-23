@@ -324,6 +324,12 @@ children:
       # Results with no item of their own (lab-result/coded-v1), see BLOOD-CHEMISTRY.md
       - id: body-blood-coded
         name: Other blood results
+        label:
+          en: "Other blood results"
+          fr: "Autres résultats sanguins"
+        description:
+          en: "Blood test results that have no field of their own, which can include infectious disease tests (such as HIV or hepatitis), viral loads and drug levels."
+          fr: "Résultats d'analyses de sang qui n'ont pas de champ dédié, pouvant inclure des analyses de maladies infectieuses (comme le VIH ou les hépatites), des charges virales et des dosages de médicaments."
   - id: body-vulva
     name: Vulva
     label:
@@ -435,6 +441,12 @@ children:
             name: Creatinine
       - id: body-urine-coded
         name: Other urine results
+        label:
+          en: "Other urine results"
+          fr: "Autres résultats urinaires"
+        description:
+          en: "Urine test results that have no field of their own, which can include infectious disease tests and drug screening."
+          fr: "Résultats d'analyses d'urine qui n'ont pas de champ dédié, pouvant inclure des analyses de maladies infectieuses et des dépistages de drogues ou de médicaments."
   - id: body-csf
     name: Cerebrospinal fluid
     label:
@@ -443,6 +455,12 @@ children:
     children:
       - id: body-csf-coded
         name: Cerebrospinal fluid results
+        label:
+          en: "Cerebrospinal fluid results"
+          fr: "Résultats du liquide céphalorachidien"
+        description:
+          en: "Results of a cerebrospinal fluid test, which can include tests for infections."
+          fr: "Résultats d'une analyse du liquide céphalorachidien, pouvant inclure la recherche d'infections."
   - id: body-semen
     name: Semen
     label:

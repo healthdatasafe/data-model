@@ -24,6 +24,18 @@ const MEDICATION_TYPES = ['MedicationStatement', 'MedicationRequest'];
  * value, the content's `notes` as `Procedure.note`; an event carrying `count` is a lifetime tally and never a Procedure.
  */
 const PROCEDURE_TYPE = 'Procedure';
+/**
+ * A lab result with no item of its own (BLOOD-CHEMISTRY.md § Results with no item of their own) and the keys the
+ * `lab-result` value kind reads, at every level of the content.
+ */
+const LAB_RESULT_CODED = 'lab-result/coded-v1';
+const LAB_RESULT_FIELDS = ['analyte', 'value', 'comparator', 'unit', 'unitText', 'valueText', 'valueCodes', 'notes'];
+const LAB_RESULT_ANALYTE_FIELDS = ['label', 'codes'];
+const LAB_RESULT_LABEL_LANGS = ['en', 'fr', 'es'];
+const LAB_RESULT_ANALYTE_CODING_FIELDS = ['system', 'version', 'code', 'display', 'hdsId'];
+const LAB_RESULT_VALUE_CODING_FIELDS = ['system', 'version', 'code', 'display'];
+// FHIR Quantity.comparator, which `comparator` renders as is.
+const LAB_RESULT_COMPARATORS = ['<', '<=', '>', '>='];
 
 /**
  * The resourceType whose block maps an allergy item (ALLERGY.md, FHIR-MAPPING.md § AllergyIntolerance): a datasource or
@@ -238,6 +250,7 @@ function checkFhirMapping (key, item, itemEventTypes) {
   const isContentCode = f.code.from === 'content';
   const isTextCode = f.code.from === 'text';
   const isEnumCode = f.code.from === 'enum';
+  const isConceptCode = f.code.from === 'concept';
   const isMedication = MEDICATION_TYPES.includes(f.resourceType);
   const isProcedure = f.resourceType === PROCEDURE_TYPE;
   const isAllergy = f.resourceType === ALLERGY_TYPE;
@@ -254,7 +267,7 @@ function checkFhirMapping (key, item, itemEventTypes) {
   };
   const codeCodings = f.code.from === 'eventType'
     ? distinctCodings(Object.values(f.code.codings))
-    : isEnumCode ? Object.values(f.code.codings) : isDatasourceCode || isContentCode || isTextCode ? [] : [f.code];
+    : isEnumCode ? Object.values(f.code.codings) : isDatasourceCode || isContentCode || isTextCode || isConceptCode ? [] : [f.code];
   // The HDS item coding names the item that carries it, never another one (whose generic rendering has that coding).
   // A deprecated alias keeps its replacement's block, the replacement's key with it.
   if (!item.deprecated) {
@@ -277,6 +290,14 @@ function checkFhirMapping (key, item, itemEventTypes) {
   if (isAllergy && !isDatasourceCode && !isTextCode && !isEnumCode) fail('an AllergyIntolerance takes its code from the content: code: { from: datasource, field } (the coded allergen), { from: text, field } (the name as written) or { from: enum, field, codings } (a "no known allergy", by scope)');
   if (isTextCode && !isMedication && !isProcedure && !isAllergy) fail('a text code source applies to a MedicationStatement, a MedicationRequest, a Procedure or an AllergyIntolerance only (the renderer places it as medication[x].text or code.text)');
   if (isEnumCode && !isAllergy) fail('an enum code source applies to an AllergyIntolerance only (a "no known allergy", one SNOMED CT code per scope)');
+  // A lab result with no item of its own carries its analyte and its value in content (BLOOD-CHEMISTRY.md): the two
+  // go together, so a renderer that knows neither, or one of them only, skips the block.
+  if (isConceptCode && f.resourceType !== 'Observation') fail('a concept code source applies to an Observation only (a lab-result/coded-v1 analyte)');
+  if (isConceptCode !== (f.value?.kind === 'lab-result')) fail('a concept code source and value.kind "lab-result" go together: the analyte and the result are both read from the content');
+  if (isConceptCode) {
+    checkLabResultContent(item, f, itemEventTypes, fail);
+    if (f.alsoMatch != null) fail('"alsoMatch" applies to a static or eventType code only');
+  }
   if (isProcedure) {
     checkProcedure(item, f, itemEventTypes, fail);
     if (composite?.notes != null) mappedFields.add('notes');
@@ -391,6 +412,9 @@ function checkFhirMapping (key, item, itemEventTypes) {
         }
         // One coding, one option: an import-only coding never repeats an option coding or another alsoMatch.
         unique('value.options and value.alsoMatch', [...Object.values(v.options), ...Object.values(v.alsoMatch || {}).flat()]);
+        break;
+      case 'lab-result':
+        // Held with the concept code above (checkLabResultContent): the content is the value.
         break;
       case 'components':
         if (composite == null) fail('value.kind "components" needs a composite item');
@@ -542,6 +566,42 @@ function checkContentField (item, code, itemEventTypes, fail) {
     const [system, value] = [k.slice(0, k.indexOf('|')), k.slice(k.indexOf('|') + 1)];
     if (!/^(https?:|urn:)/.test(system) || value === '') fail(`code.translate "${k}": a key is "<canonical system>|<code>"`);
     if (c.system === system && c.code === value) fail(`code.translate "${k}" translates to itself`);
+  }
+}
+
+/**
+ * A `code: { from: concept, field }` with `value: { kind: lab-result }` sits on an item whose one eventType is
+ * `lab-result/coded-v1`: `field` holds the labelled concept `{ label: { en, … }, codes: [Coding] }`, and the renderer
+ * reads every other property by name (LAB_RESULT_FIELDS). The eventType's properties are exactly those, so a property
+ * added to it later fails the build until the renderers place it (the composite check does not see an eventType).
+ */
+function checkLabResultContent (item, f, itemEventTypes, fail) {
+  if (item.type !== 'imported') fail(`a concept code source sits on an "imported" item (a result written by importers); item type is "${item.type}"`);
+  if (itemEventTypes.length !== 1 || itemEventTypes[0] !== LAB_RESULT_CODED) fail(`a concept code source needs an item whose one eventType is "${LAB_RESULT_CODED}"`);
+  if (f.code.field !== 'analyte') fail(`code.field "${f.code.field}" is not the analyte of "${LAB_RESULT_CODED}" ("analyte")`);
+  // Never matched on import: nothing may make it an import key or an owner of a code (that would invert the
+  // importer's owned-analyte guard).
+  if (f.alsoMatchCategories != null) fail('a concept code source claims no import key: no "alsoMatchCategories"');
+  if (item.references?.loinc != null || item.references?.loincMethod != null) fail('a concept-coded item owns no LOINC code (references.loinc, references.loincMethod): its analyte is per event');
+  // Every key the renderer meets, at every level, is one it places.
+  const et = eventTypesById(itemEventTypes[0]);
+  const keysOf = (what, prop, expected) => {
+    const props = Object.keys(prop?.properties || {});
+    const missing = expected.filter((k) => !props.includes(k));
+    const unplaced = props.filter((k) => !expected.includes(k));
+    if (prop?.type !== 'object' || missing.length > 0 || unplaced.length > 0) {
+      fail(`value.kind "lab-result" reads ${what} { ${expected.join(', ')} }; eventType "${itemEventTypes[0]}"${prop?.type !== 'object' ? ' has no such object' : ''}${unplaced.length > 0 ? ` adds ${unplaced.join(', ')}, which no renderer places` : ''}${missing.length > 0 ? ` lacks ${missing.join(', ')}` : ''}`);
+    }
+  };
+  keysOf('the content', et, LAB_RESULT_FIELDS);
+  const analyte = et.properties.analyte;
+  keysOf('analyte', analyte, LAB_RESULT_ANALYTE_FIELDS);
+  keysOf('analyte.label', analyte.properties.label, LAB_RESULT_LABEL_LANGS);
+  keysOf('analyte.codes[]', analyte.properties.codes?.items, LAB_RESULT_ANALYTE_CODING_FIELDS);
+  keysOf('valueCodes[]', et.properties.valueCodes?.items, LAB_RESULT_VALUE_CODING_FIELDS);
+  const comparators = et.properties.comparator?.enum || [];
+  if (comparators.length !== LAB_RESULT_COMPARATORS.length || comparators.some((c) => !LAB_RESULT_COMPARATORS.includes(c))) {
+    fail(`value.kind "lab-result" renders comparator as Quantity.comparator (${LAB_RESULT_COMPARATORS.join(' ')}); eventType "${itemEventTypes[0]}" allows ${comparators.join(' ')}`);
   }
 }
 
@@ -1000,6 +1060,11 @@ function checkFhirImportKeys (items) {
       // A Questionnaire is never imported: its claim is kept so the refusal names one item, and it can be lifted when
       // a second item maps the type.
       claim(f.resourceType, key);
+    } else if (f.code.from === 'concept') {
+      // The code is per event and nothing in a resource names the specimen for sure, so a concept-coded item (one per
+      // specimen) claims no import key and is never matched by code or category: the importer is told the item
+      // (FHIR-MAPPING.md § Import), or reads it back from the `meta.tag` of an HDS export.
+      continue;
     } else if (f.code.from === 'datasource' || f.code.from === 'content' || f.code.from === 'text') {
       // The resource's code is content, so the item is matched by (resourceType, category) alone: one per category
       // and per source (a coded medicine goes to the datasource item, a name alone to the text item).
