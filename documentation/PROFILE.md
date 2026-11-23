@@ -60,6 +60,25 @@ grant on it places it under `profile`: consent provisioning creates only the str
 otherwise the core created it from the permission's `defaultName` at the root of the account (a practitioner's
 invite asks `read` on it for the patient's time zone, doctor-dashboard `withPatientTimeZonePermission`).
 
+## Not modelled: emergency contacts, trusted person, advance directives
+
+A national record's profile summary (France's Mon espace santé, site-agents#61 to #63) also lists emergency contacts, a
+trusted person for health decisions (*personne de confiance*), whether the person wrote advance directives, and an
+organ donation statement. **None of them is a profile item** (decision 2026-11-23):
+
+- **Emergency contacts and the trusted person** are another person's name, relationship, phone and address. The
+  model keeps contact details out (site-agents#4: phone and email are account- or app-level, not clinical facts), and
+  it holds no structured contact details of a private third person (care providers are on `encounter-provider-*`).
+  An importer leaves them in the source document and tells the person; a document the person stores, such as an
+  emergency card, may name them.
+- **Advance directives and organ donation** are documents: store the document itself under the document kinds
+  `advance-directive` and `organ-donor-card` (`definitions/documentKinds.yaml`, DOCUMENTS.md), and an emergency card
+  under `emergency-card`. A summary line that only says "advance directives: yes" or "informed about organ donation",
+  with no document, is not stored.
+
+Reopen with a specific case (a reader that needs a status without the document), not by adding an item for a
+summary line.
+
 ## Known gap
 
 The stream `profile-location` is declared in `definitions/streams/profile.yaml` but carries **no item**
