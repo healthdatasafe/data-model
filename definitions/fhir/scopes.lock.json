@@ -214,6 +214,13 @@
         "body-blood-coagulation-prothrombin-time"
       ]
     },
+    "body-blood-coded": {
+      "pair": "Observation|laboratory",
+      "parent": "body-blood",
+      "items": [
+        "body-blood-coded"
+      ]
+    },
     "body-blood-esr": {
       "pair": "Observation|laboratory",
       "parent": "body-blood",
@@ -816,6 +823,13 @@
         "body-blood-serum-zinc"
       ]
     },
+    "body-csf-coded": {
+      "pair": "Observation|laboratory",
+      "parent": "body-csf",
+      "items": [
+        "body-csf-coded"
+      ]
+    },
     "body-heart-rate": {
       "pair": "Observation|vital-signs",
       "parent": "body",
@@ -898,6 +912,13 @@
       "parent": "body-urine-chemistry",
       "items": [
         "body-urine-chemistry-creatinine"
+      ]
+    },
+    "body-urine-coded": {
+      "pair": "Observation|laboratory",
+      "parent": "body-urine",
+      "items": [
+        "body-urine-coded"
       ]
     },
     "body-urine-hormones-e3g": {

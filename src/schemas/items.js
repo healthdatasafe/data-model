@@ -89,14 +89,27 @@ const defsSchema = {
     // requires), else by `unknown`, or `{ from: text, field }`: no coding at all, the concept is the text the
     // content holds at `field` (a medication, a procedure or an allergen entered by its name; a MedicationStatement, a
     // MedicationRequest, a Procedure or an AllergyIntolerance), or `{ from: enum, field, codings }`: one coding per
-    // value of the string enum the content holds at `field` (the scope of a "no known allergy"; an AllergyIntolerance).
+    // value of the string enum the content holds at `field` (the scope of a "no known allergy"; an AllergyIntolerance),
+    // or `{ from: concept, field }`: the labelled concept `{ label: { en, … }, codes: [Coding] }` the content holds at
+    // `field`, its codings as stored and `label.en` as the text (a `lab-result/coded-v1` analyte; an Observation).
     fhirCode: {
       if: { type: 'object', required: ['from'] },
       then: {
         type: 'object',
-        properties: { from: { enum: ['datasource', 'eventType', 'content', 'text', 'enum'] } },
+        properties: { from: { enum: ['datasource', 'eventType', 'content', 'text', 'enum', 'concept'] } },
         required: ['from'],
         allOf: [
+          {
+            if: { properties: { from: { const: 'concept' } } },
+            then: {
+              properties: {
+                from: true,
+                field: { type: 'string', pattern: '^[a-z][a-zA-Z0-9]*$' }
+              },
+              required: ['field'],
+              additionalProperties: false
+            }
+          },
           {
             if: { properties: { from: { const: 'enum' } } },
             then: {
@@ -181,10 +194,16 @@ const defsSchema = {
     fhirValue: {
       type: 'object',
       properties: {
-        kind: { enum: ['quantity', 'scaled-quantity', 'ratio-quantity', 'coded', 'components'] }
+        kind: { enum: ['quantity', 'scaled-quantity', 'ratio-quantity', 'coded', 'components', 'lab-result'] }
       },
       required: ['kind'],
       allOf: [
+        { // lab-result: no fields; the value is read from a `lab-result/coded-v1` content (value, comparator, unit,
+          // unitText, valueText, valueCodes), with a `concept` code. Its own kind: a renderer that does not know it
+          // skips the block instead of reading the content object as a value.
+          if: { properties: { kind: { const: 'lab-result' } } },
+          then: { properties: { kind: {} }, additionalProperties: false }
+        },
         { // quantity: eventType → UCUM unit; renders valueQuantity
           if: { properties: { kind: { const: 'quantity' } } },
           then: {

@@ -18,13 +18,17 @@ the LOINC code becomes the block's `code` and the item coding its `alsoMatch`. T
 (`references.loincMethod`) are the block's `alsoMatch`. **Reach of the grant (decided 2026-11-02):** FHIR has no
 category finer than `laboratory`, so `patient/Observation.rs?category=laboratory` reaches every mapped lab item, the
 lipid panel as much as urine hCG (a pregnancy test), the semen analysis and the reproductive hormones; the patient
-narrows it per stream on the consent screen, as for vital signs. A lab event's printed range, flag and comparator
+narrows it per stream on the consent screen, as for vital signs. Since the plan 133 slice (4.31.0) it also
+reaches the three `*-coded` streams, the results with no item of their own, which hold infectious serology, viral
+loads and drug levels; their stream descriptions say so on the consent screen. A lab event's printed range, flag and comparator
 (`hdsRefRange`, `hdsInterpretation`, `hdsFlag`, `hdsComparator`) render as `referenceRange`, `interpretation` and the
 Quantity `comparator` (BLOOD-CHEMISTRY.md § Cross-system). The `ratio/proportion` percentages render in `%` through
 the `scaled-quantity` kind (factor 100): HbA1c, transferrin saturation, hematocrit, RDW, myelocytes and metamyelocytes,
 and the percentages of the labs slice.
-**Not mapped yet:** the `lab-result/coded-v1` items (the result carries its own code and unit: its own design). Urine
-LH was unmapped until 4.0.0 because its stream holds the
+**The `lab-result/coded-v1` items** (`body-blood-coded`, `body-urine-coded`, `body-csf-coded`; plan 133, since
+4.31.0) carry the result's own code and unit, so their block reads both from the content: `code: { from: concept }`
+and `value: { kind: lab-result }` (§ code, § Value kinds). They claim no import key (§ Import), and their release
+order is renderer first (§ Forward compatibility). Urine LH was unmapped until 4.0.0 because its stream holds the
 legacy urine LH typed mg/L: that item now carries the same block, rendering its IU/L numbers in `[IU]/L`.
 
 **The labs slice (4.5.0, plan 115):** every numeric lab item now carries a block. **Release order: data-model
@@ -220,7 +224,7 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 | `resourceType` | yes | `Observation`, `Condition`, `DocumentReference` ([documents](#documentreference-documents)), `MedicationStatement` or `MedicationRequest` ([medications](#medications-medicationstatement-and-medicationrequest)), `Procedure` ([procedures](#procedures-procedure)), `QuestionnaireResponse` ([questionnaire answers](#questionnaireresponse-questionnaire-answers)), `Questionnaire` ([questionnaire requests](#questionnaire-questionnaire-requests)), `AllergyIntolerance` ([allergies](#allergyintolerance-allergies); `Patient` is an [element block](#patient-elements)). *Permanent.* |
 | `category` | per resourceType (table above) | Category key. *Permanent.* |
 | `alsoMatchCategories` | no | Further category keys of the same table that a resource may carry and still import into this item, **on import only**, never emitted (smoking status filed under `survey` by older sources). Never the block's own category. |
-| `code` | yes; none on a `QuestionnaireResponse` or a `Questionnaire` | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }`, `{ from: eventType, codings }`, `{ from: content, field, translate, unknown }`, `{ from: text, field }` or `{ from: enum, field, codings }` (below). |
+| `code` | yes; none on a `QuestionnaireResponse` or a `Questionnaire` | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }`, `{ from: eventType, codings }`, `{ from: content, field, translate, unknown }`, `{ from: text, field }`, `{ from: enum, field, codings }` or `{ from: concept, field }` (below). |
 | `alsoMatch` | no | Extra codings accepted **on import only**, never emitted. With a static code, a list; with an eventType code, keyed by the eventType each names (`{ concentration/mg-dl: [codings] }`). Never with a datasource code. |
 | `alsoEmit` | no | Extra codings **emitted only**, after the static code in `code.coding`, never an import key: the second code a profile requires (US Core pulse oximetry wants 2708-6 beside 59408-5). A list, with a static code only. A resource that carries an `alsoEmit` coding without the code does not match the item. |
 | `value` | no | FHIR `value[x]`, by `kind` (below). Absent on a Condition, a DocumentReference, a medication, a Procedure and an AllergyIntolerance, which have no `value[x]`. |
@@ -235,8 +239,9 @@ reviewer checks the code against and what a reader falls back on.
 
 ### `code`: static, from a datasource, from the eventType or from the content
 
-The code comes from one of six sources: static, a datasource, the eventType, the content's own codings, a text field
-(`from: text`), or an enum of the content (`from: enum`, the "no known allergy" only).
+The code comes from one of seven sources: static, a datasource, the eventType, the content's own codings, a text field
+(`from: text`), an enum of the content (`from: enum`, the "no known allergy" only), or a labelled concept of the
+content (`from: concept`, a lab result with no item of its own).
 
 - **Static:** `code: { system: http://loinc.org, code: 72166-2, display: Tobacco smoking status }`. Every event of the
   item has this code. When no LOINC or SNOMED CT code exists for the analyte, the static code is the **HDS item
@@ -320,6 +325,19 @@ The code comes from one of six sources: static, a datasource, the eventType, the
   No `alsoMatch`, no `alsoEmit`. On import each coding is a match key, like a code from the eventType, and names its
   value back; the import-only codes (a retired concept, the IPS `absent-unknown-uv-ips` codes) are hds-fhir-js rules,
   never block entries. Any other resourceType refuses it.
+- **From a labelled concept of the content** (an `Observation` only, the `lab-result/coded-v1` items of plan 133):
+  `code: { from: concept, field: analyte }`, always with `value: { kind: lab-result }`. The content at `field` is
+  `{ label: { en, fr?, es? }, codes: [Coding] }`: every entry of `codes` is a coding as stored (the systems are
+  already canonical URIs, no `fhirMapping.systems` translation), `version` and `display` kept, `hdsId` dropped, a
+  LOINC coding first; `code.text` is `label.en`, with `fr` and `es` as the `translation` extension. Named by its
+  shape, not by the domain: unlike a datasource selection, also `{ label, codes[] }`, its label is localised, its
+  systems are canonical URIs as stored and no datasource stands behind it; `from: content` stays the
+  DocumentReference source (a Coding list, not a labelled concept). The item's one eventType is `lab-result/coded-v1`
+  and `field` is its `analyte`. No `alsoMatch`, no `alsoEmit`, no `alsoMatchCategories`, and the item owns no LOINC
+  code. **A renderer supports the pair**, the `concept` code with the `lab-result` kind, never either alone: a later
+  `lab-result/coded-v2`, or a `concept` code on another resourceType, takes a new kind. **It claims no import key** and is never matched by code or category: the three items share
+  (Observation, laboratory), one per specimen, and nothing in a resource states the specimen for sure, so the
+  importer is told the item (§ Import). Since 4.31.0.
 
 ### Value kinds
 
@@ -330,6 +348,22 @@ The code comes from one of six sources: static, a datasource, the eventType, the
 | `ratio-quantity` | `number`, every eventType an object `{ value, relativeTo }` (`ratio/generic`) | `units`: every eventType of the item → UCUM code, distinct as for `quantity`; `relativeTo`: the item's fixed denominator (`ratioRelativeTo`) | `valueQuantity` of `content.value` in the unit, with the lab extras as for `quantity`; an event whose `relativeTo` is not the block's is refused. On import the content is `{ value, relativeTo }` with the block's denominator |
 | `coded` | `select` | `options`: every option value → coding, each coding once; optional `alsoMatch`: option value → extra codings accepted for that option on import only | `valueCodeableConcept` (the option coding, never an `alsoMatch` one) |
 | `components` | `composite` | `components`: numeric composite field → `{ code, unit }` | `component[]`, one per field present |
+| `lab-result` | `imported`, eventType `lab-result/coded-v1`, with a `concept` code | none | from the content (BLOOD-CHEMISTRY.md § The three items, Cross-system): `valueQuantity` (`value`, `comparator`, `unit` as the UCUM `code`, `unitText` else the code itself as `unit`), else `valueCodeableConcept` (`valueCodes`, `valueText` as text), else `valueString` (`valueText`); the printed text of a semi-quantitative result in the `https://hds.ngo/fhir/StructureDefinition/printed-result` extension, with a readable copy in `note`; `notes` as a `note`; the range and interpretation from `clientData` (the range text only when there is no `value`; `clientData.hdsComparator` is not read); the item's key as `meta.tag` in `https://hds.ngo/fhir/CodeSystem/item`; the lab profiles only when the analyte has a LOINC coding |
+
+**`lab-result`** reads an object eventType, not a composite, so the composite accounting of the next section does not
+see it: the build holds instead that the keys of `lab-result/coded-v1` are exactly the ones the kind reads, at every
+level (the content: `analyte`, `value`, `comparator`, `unit`, `unitText`, `valueText`, `valueCodes`, `notes`;
+`analyte`: `label`, `codes`; `label`: `en`, `fr`, `es`; a Coding: `system`, `version`, `code`, `display`, and `hdsId`
+in `analyte.codes`), and that `comparator` allows `<`, `<=`, `>`, `>=` only (it renders as `Quantity.comparator`), so
+a key or a value added to the eventType fails the build until the renderers place it.
+
+Published with the first rendering, in hds-fhir-js and not in the pack, and permanent from then on: the extension
+`https://hds.ngo/fhir/StructureDefinition/printed-result` (a `valueCodeableConcept`; no StructureDefinition is
+served, the URL does not resolve), the `meta.tag` coding `https://hds.ngo/fhir/CodeSystem/item|<item key>` (a
+forged or stripped tag only falls back to the caller-named import, with its guards), a LOINC coding first in
+`code.coding`, and the lab profiles claimed only when there is one. It is a kind of its own, and the `concept` code a source
+of its own, for [forward compatibility](#forward-compatibility): a renderer that knows neither, or only one of them,
+skips the block and keeps the generic Observation.
 
 The schema discriminates by kind: a kind's fields are refused on another kind. `coded` is refused on a
 `multi-select`: one resource with several answer codings would state one answer with several codes, not several
@@ -1428,7 +1462,16 @@ older renderer already serves generically (hds-fhir-js 0.8.0 and later, paragrap
 new item**, as `from: enum` on `allergy-none-known`: a renderer that does not know the source skips the block and
 serves the item's events as generic Observations, so until the hds-fhir-js release that renders it (release order) no
 AllergyIntolerance search returns a "no known allergy". The older renderer keeps serving the generic Observation, the facade pins
-the pack by hash, and the library's `check:pack` stays red until the pack is published. **A new value of a medication vocabulary needs the renderer first in the same way**
+the pack by hash, and the library's `check:pack` stays red until the pack is published. **Not so for the `concept`
+code and the `lab-result` kind** on the three `*-coded` lab items (plan 133): their events are served generically
+today, but the blocks add their streams to `Observation|laboratory`, and a facade `category=laboratory` search
+reads that table's streams and keeps what renders in the category. With the new pack and an older library, those
+events are scanned (they count toward the scan cap) and dropped, never shown. So, in order: (1) hds-fhir-js with
+the renderer is released (its `check:pack` stays red until step 2, as for any library released first); (2) data-model
+4.31.0 is published to model.datasafe.dev; (3) the facade is re-pinned to both; (4) each core's extension is
+re-pinned, its `fhirScopes` option pinned by hash with the pack. The consent offer and the scope widen at step 4,
+never before: the core extension's `fhirScopes` is what a grant expands to, and a token reads the streams raw at the
+Pryv API as well. **A new value of a medication vocabulary needs the renderer first in the same way**
 (`when`, the intake and prescription statuses, the skip and stop reasons; MEDICATION.md § Vocabularies): hds-fhir-js
 renders them from a checked copy of `pack.vocabularies` (`check:pack`), so a deployed renderer refuses an event
 carrying a value it does not know until it is released with it. A new dose unit or route, by contrast, rides in the
@@ -1476,6 +1519,16 @@ its `code` ([procedures](#procedures-procedure)). **Deprecated items are not imp
 keys:** the importer matches against active items only, so a legacy item that keeps its replacement's block for its
 past events (`fertility-hormone-lh`, `fertility-hormone-pdg`) never makes a code match two items, and an imported
 resource always lands on the active item, in its current eventType.
+
+**Concept-coded lab items are never matched** (`body-blood-coded`, `body-urine-coded`, `body-csf-coded`; plan 133).
+They claim no import key. A laboratory Observation whose codes match no item is reported with the three as
+candidates and the specimen as what is missing, and nothing is imported; the caller names the item
+(`fromFhir(resource, mapping, { item })`), from the LOINC System axis or the source report. An HDS export carries
+the item key as `meta.tag` (`https://hds.ngo/fhir/CodeSystem/item`), which names the item back on its own re-import.
+Into such an item the importer also requires an explicit `laboratory` category, and refuses an analyte an active item
+owns (its static, eventType or `alsoMatch` code, `references.loincMethod` included) unless the owning item lacks the
+printed unit (BLOOD-CHEMISTRY.md § Rules, the interim case) or the result is not a quantity (an item event has no
+place for a printed text), and then only into the coded item of the owner's specimen.
 
 - **Category.** The resource's categories are its `category` codings in the systems of the resourceType's table
   (`fhirMapping.categories`); a coding in another system (a local category, another IG's) says nothing checkable and

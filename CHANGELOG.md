@@ -1,5 +1,36 @@
 # Changelog
 
+## [4.31.0] - 2026-11-23
+
+Plan 133 (FHIR after plan 115, Part A): the FHIR mapping of the lab results with no item of their own. Additive in
+the pack; the SMART grant table widens (below).
+
+### Added: FHIR blocks on `body-blood-coded`, `body-urine-coded` and `body-csf-coded`
+
+- **Code source `{ from: concept, field }`** (Observation only): the content's labelled concept `{ label, codes }`,
+  its codings as stored, `label.en` as text. **Value kind `lab-result`** (no fields): the value read from a
+  `lab-result/coded-v1` content. The two go together (build check), on `lab-result/coded-v1` and its `analyte` only;
+  the eventType's properties must be the ones the kind reads, so a property added later fails the build.
+- The three items render as `Observation|laboratory` (US Core and IPS lab profiles when the analyte has a LOINC
+  coding), as BLOOD-CHEMISTRY.md § The three items, Cross-system, now states it in full: the printed result of a
+  semi-quantitative result in the `printed-result` extension, the UCUM code itself as `unit` when there is no
+  `unitText`, the item key as `meta.tag`.
+- **No import key:** a concept-coded item is never matched by code or category; the importer names the item (the
+  specimen) or reads it from the `meta.tag` of an HDS export (FHIR-MAPPING.md § Import). `checkFhirImportKeys` skips
+  the source.
+- Tests `[FHIR-LABC-1]` to `[FHIR-LABC-5]`; `[FHIR-SCOPE-11]` counts 140 lab blocks on 130 streams.
+
+### Changed: SMART grant table and consent text
+
+- `pack.fhirScopes['Observation|laboratory']` gains the three streams (lock updated with `npm run fhir:lock`), so a
+  laboratory grant covers infectious serology, viral loads and drug levels. Their stream `label` and `description`
+  (en, fr) say so on the consent screen (perki, 2026-11-23).
+- **Release order:** hds-fhir-js that renders the source and the kind, then this pack, then the facade re-pin, then
+  each core's extension re-pin, where the scope widens; never the pack ahead of the renderer (FHIR-MAPPING.md §
+  Forward compatibility). A concept block admits no `alsoMatch` or `alsoMatchCategories`, its item no LOINC
+  ownership; the build pins every key of `lab-result/coded-v1`, at every level, and the comparator enum (`[FHIR-LABC-4]`,
+  `[FHIR-LABC-6]`).
+
 ## [4.30.0] - 2026-11-23
 
 Data-model gaps reported through the HDS MCP (site-agents#54 to #63). Additive: one unit option on three items, a

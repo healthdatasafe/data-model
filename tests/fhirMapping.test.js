@@ -1147,6 +1147,105 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
     });
   });
 
+  describe('[FHIR-LABC] lab results with no item of their own: a concept code and value kind lab-result (plan 133)', () => {
+    const CODED = ['body-blood-coded', 'body-urine-coded', 'body-csf-coded'];
+    const { eventTypesById } = require('../src/eventTypes');
+
+    it('[FHIR-LABC-1] the three items carry the same block: the analyte as code, the content as value, lab profiles', () => {
+      for (const k of CODED) {
+        assert.deepStrictEqual(itemsById[k].fhir, {
+          resourceType: 'Observation',
+          category: 'laboratory',
+          code: { from: 'concept', field: 'analyte' },
+          value: { kind: 'lab-result' },
+          profiles: {
+            us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab',
+            ips: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips'
+          }
+        }, k);
+        assert.ok(fhirScopes['Observation|laboratory'].includes(itemsById[k].streamId), k);
+      }
+    });
+
+    it('[FHIR-LABC-2] the schema: a concept code takes a field only, value kind lab-result no field', () => {
+      const a = item('body-blood-coded');
+      a.fhir.code.translate = { 'http://loinc.org|1': coding('2') };
+      assert.throws(() => checkItem(a, 'c'), /additional properties/);
+      const b = item('body-blood-coded');
+      delete b.fhir.code.field;
+      assert.throws(() => checkItem(b, 'c'), /required property 'field'/);
+      const c = item('body-blood-coded');
+      c.fhir.value.units = { 'lab-result/coded-v1': 'mg/dL' };
+      assert.throws(() => checkItem(c, 'c'), /additional properties/);
+    });
+
+    it('[FHIR-LABC-3] the two go together, on an Observation, on lab-result/coded-v1 and its analyte', () => {
+      check(item('body-blood-coded'), 'body-blood-coded');
+      const a = item('body-blood-coded');
+      a.fhir.value = { kind: 'quantity', units: { 'lab-result/coded-v1': 'mg/dL' } };
+      assert.throws(() => check(a), /a concept code source and value.kind "lab-result" go together/);
+      const b = item('body-blood-serum-ferritin');
+      b.fhir.value = { kind: 'lab-result' };
+      assert.throws(() => check(b), /a concept code source and value.kind "lab-result" go together/);
+      const c = item('body-blood-coded');
+      c.fhir.resourceType = 'Condition';
+      c.fhir.category = 'problem-list-item';
+      delete c.fhir.value;
+      assert.throws(() => check(c), /a concept code source applies to an Observation only/);
+      const d = item('body-blood-coded');
+      d.fhir.code.field = 'notes';
+      assert.throws(() => check(d), /code.field "notes" is not the analyte of "lab-result\/coded-v1"/);
+      const e = item('body-blood-coded');
+      e.eventType = 'genetic-variant/coded-v1';
+      assert.throws(() => check(e), /needs an item whose one eventType is "lab-result\/coded-v1"/);
+      const g = item('body-blood-coded');
+      g.type = 'number';
+      assert.throws(() => check(g), /a concept code source sits on an "imported" item/);
+    });
+
+    it('[FHIR-LABC-4] a key added or removed at any level of lab-result/coded-v1 fails the build until the renderers place it', () => {
+      const et = eventTypesById('lab-result/coded-v1');
+      const tamper = (change, re) => {
+        const saved = structuredClone(et);
+        change(et);
+        try {
+          assert.throws(() => check(item('body-blood-coded')), re);
+        } finally {
+          for (const k of Object.keys(et)) delete et[k];
+          Object.assign(et, saved);
+        }
+      };
+      tamper((t) => { t.properties.specimen = { type: 'string' }; }, /reads the content \{ .* \}; eventType "lab-result\/coded-v1" adds specimen, which no renderer places/);
+      tamper((t) => { delete t.properties.notes; }, /reads the content .* lacks notes/);
+      tamper((t) => { t.properties.analyte.properties.method = { type: 'string' }; }, /reads analyte \{ label, codes \}; .* adds method/);
+      tamper((t) => { t.properties.analyte.properties.label.properties.de = { type: 'string' }; }, /reads analyte.label \{ en, fr, es \}; .* adds de/);
+      tamper((t) => { t.properties.analyte.properties.codes.items.properties.userSelected = { type: 'boolean' }; }, /reads analyte.codes\[\] .* adds userSelected/);
+      tamper((t) => { t.properties.valueCodes.items.properties.hdsId = { type: 'string' }; }, /reads valueCodes\[\] .* adds hdsId/);
+      tamper((t) => { t.properties.comparator.enum.push('~'); }, /renders comparator as Quantity.comparator \(< <= > >=\); .* allows < <= > >= ~/);
+      check(item('body-blood-coded'));
+    });
+
+    it('[FHIR-LABC-6] nothing makes a concept-coded item an import key or a code owner', () => {
+      const a = item('body-blood-coded');
+      a.fhir.alsoMatch = [coding('20447-9')];
+      assert.throws(() => check(a), /"alsoMatch" applies to a static or eventType code only/);
+      const b = item('body-blood-coded');
+      b.fhir.alsoMatchCategories = ['vital-signs'];
+      assert.throws(() => check(b), /a concept code source claims no import key: no "alsoMatchCategories"/);
+      const c = item('body-blood-coded');
+      c.references = { loinc: ['20447-9'] };
+      assert.throws(() => check(c), /a concept-coded item owns no LOINC code/);
+    });
+
+    it('[FHIR-LABC-5] the concept-coded items claim no import key: the importer is told the specimen', () => {
+      const { checkFhirImportKeys } = require('../src/fhir');
+      // Three items of one (resourceType, category) would otherwise clash on one key.
+      const three = Object.fromEntries(CODED.map((k) => [k, item(k)]));
+      checkFhirImportKeys(three);
+      checkFhirImportKeys(itemsById);
+    });
+  });
+
   describe('[FHIR-SCOPE] the SMART scope grant table', () => {
     const obs = (category, code = '1') => ({ resourceType: 'Observation', category, code: coding(code), value: { kind: 'quantity', units: { 'mass/kg': 'kg' } }, profiles: {} });
     const it_ = (streamId, fhir, extra = {}) => ({ streamId, ...(fhir ? { fhir } : {}), ...extra });
@@ -1387,10 +1486,10 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const labBlocks = Object.entries(itemsById).filter(([, i]) => i.fhir?.category === 'laboratory');
       // 135 active items, plus the two legacy urine-hormone items (LH, PdG) whose stream is their replacement's. The
       // eight differential streams hold two items each (the percentage and the absolute count). 4.29.0 adds PSA total
-      // and urine creatinine.
-      assert.strictEqual(labBlocks.length, 137);
+      // and urine creatinine. The three lab-result/coded-v1 items (blood, urine, cerebrospinal fluid), one stream each.
+      assert.strictEqual(labBlocks.length, 140);
       const lab = [...new Set(labBlocks.map(([, i]) => i.streamId))].sort();
-      assert.strictEqual(lab.length, 127);
+      assert.strictEqual(lab.length, 130);
       assert.deepStrictEqual(fhirScopes, {
         AllergyIntolerance: ['allergy'],
         'Condition|problem-list-item': ['condition'],
