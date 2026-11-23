@@ -1,6 +1,6 @@
 {
-  "version": "4.30.0",
-  "publicationDate": "2026-11-23T10:26:35.905Z",
+  "version": "4.31.0",
+  "publicationDate": "2026-11-23T18:21:17.121Z",
   "streams": [
     {
       "id": "activity",
@@ -762,6 +762,14 @@
             {
               "id": "body-blood-coded",
               "name": "Other blood results",
+              "label": {
+                "en": "Other blood results",
+                "fr": "Autres résultats sanguins"
+              },
+              "description": {
+                "en": "Blood test results that have no field of their own, which can include infectious disease tests (such as HIV or hepatitis), viral loads and drug levels.",
+                "fr": "Résultats d'analyses de sang qui n'ont pas de champ dédié, pouvant inclure des analyses de maladies infectieuses (comme le VIH ou les hépatites), des charges virales et des dosages de médicaments."
+              },
               "parentId": "body-blood"
             }
           ],
@@ -996,6 +1004,14 @@
             {
               "id": "body-urine-coded",
               "name": "Other urine results",
+              "label": {
+                "en": "Other urine results",
+                "fr": "Autres résultats urinaires"
+              },
+              "description": {
+                "en": "Urine test results that have no field of their own, which can include infectious disease tests and drug screening.",
+                "fr": "Résultats d'analyses d'urine qui n'ont pas de champ dédié, pouvant inclure des analyses de maladies infectieuses et des dépistages de drogues ou de médicaments."
+              },
               "parentId": "body-urine"
             }
           ],
@@ -1012,6 +1028,14 @@
             {
               "id": "body-csf-coded",
               "name": "Cerebrospinal fluid results",
+              "label": {
+                "en": "Cerebrospinal fluid results",
+                "fr": "Résultats du liquide céphalorachidien"
+              },
+              "description": {
+                "en": "Results of a cerebrospinal fluid test, which can include tests for infections.",
+                "fr": "Résultats d'une analyse du liquide céphalorachidien, pouvant inclure la recherche d'infections."
+              },
               "parentId": "body-csf"
             }
           ],
@@ -13399,7 +13423,23 @@
       },
       "streamId": "body-blood-coded",
       "eventType": "lab-result/coded-v1",
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "devNotes": "The analyte and the result are content, so the block reads both from it (`code: { from: concept }`, value kind `lab-result`; FHIR-MAPPING.md). It claims no import key: the importer names the item (the specimen), or reads it from the `meta.tag` of an HDS export. The lab profiles are claimed only when the analyte has a LOINC coding.",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "laboratory",
+        "code": {
+          "from": "concept",
+          "field": "analyte"
+        },
+        "value": {
+          "kind": "lab-result"
+        },
+        "profiles": {
+          "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+          "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+        }
+      }
     },
     "body-urine-chemistry-creatinine": {
       "version": "v1",
@@ -13507,7 +13547,23 @@
       },
       "streamId": "body-urine-coded",
       "eventType": "lab-result/coded-v1",
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "devNotes": "As body-blood-coded, for a urine specimen.",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "laboratory",
+        "code": {
+          "from": "concept",
+          "field": "analyte"
+        },
+        "value": {
+          "kind": "lab-result"
+        },
+        "profiles": {
+          "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+          "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+        }
+      }
     },
     "body-csf-coded": {
       "version": "v1",
@@ -13524,7 +13580,23 @@
       },
       "streamId": "body-csf-coded",
       "eventType": "lab-result/coded-v1",
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "devNotes": "As body-blood-coded, for a cerebrospinal fluid specimen.",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "laboratory",
+        "code": {
+          "from": "concept",
+          "field": "analyte"
+        },
+        "value": {
+          "kind": "lab-result"
+        },
+        "profiles": {
+          "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+          "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+        }
+      }
     },
     "condition-coded": {
       "version": "v1",
@@ -21689,6 +21761,7 @@
       "body-blood-coagulation-inr",
       "body-blood-coagulation-prothrombin-activity",
       "body-blood-coagulation-prothrombin-time",
+      "body-blood-coded",
       "body-blood-esr",
       "body-blood-hba1c",
       "body-blood-rbc-magnesium",
@@ -21774,6 +21847,7 @@
       "body-blood-serum-vitamin-d-125oh",
       "body-blood-serum-vitamin-d-25oh",
       "body-blood-serum-zinc",
+      "body-csf-coded",
       "body-semen-concentration",
       "body-semen-dna-fragmentation",
       "body-semen-morphology-normal",
@@ -21783,6 +21857,7 @@
       "body-semen-vitality",
       "body-semen-volume",
       "body-urine-chemistry-creatinine",
+      "body-urine-coded",
       "body-urine-hormones-e3g",
       "body-urine-hormones-fsh",
       "body-urine-hormones-hcg",

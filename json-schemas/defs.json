@@ -132,7 +132,8 @@
               "eventType",
               "content",
               "text",
-              "enum"
+              "enum",
+              "concept"
             ]
           }
         },
@@ -140,6 +141,28 @@
           "from"
         ],
         "allOf": [
+          {
+            "if": {
+              "properties": {
+                "from": {
+                  "const": "concept"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "from": true,
+                "field": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-zA-Z0-9]*$"
+                }
+              },
+              "required": [
+                "field"
+              ],
+              "additionalProperties": false
+            }
+          },
           {
             "if": {
               "properties": {
@@ -313,7 +336,8 @@
             "scaled-quantity",
             "ratio-quantity",
             "coded",
-            "components"
+            "components",
+            "lab-result"
           ]
         }
       },
@@ -321,6 +345,21 @@
         "kind"
       ],
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "lab-result"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "kind": {}
+            },
+            "additionalProperties": false
+          }
+        },
         {
           "if": {
             "properties": {

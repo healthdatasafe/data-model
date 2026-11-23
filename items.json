@@ -11166,7 +11166,23 @@
     },
     "streamId": "body-blood-coded",
     "eventType": "lab-result/coded-v1",
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "devNotes": "The analyte and the result are content, so the block reads both from it (`code: { from: concept }`, value kind `lab-result`; FHIR-MAPPING.md). It claims no import key: the importer names the item (the specimen), or reads it from the `meta.tag` of an HDS export. The lab profiles are claimed only when the analyte has a LOINC coding.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "concept",
+        "field": "analyte"
+      },
+      "value": {
+        "kind": "lab-result"
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-urine-chemistry-creatinine": {
     "version": "v1",
@@ -11274,7 +11290,23 @@
     },
     "streamId": "body-urine-coded",
     "eventType": "lab-result/coded-v1",
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "devNotes": "As body-blood-coded, for a urine specimen.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "concept",
+        "field": "analyte"
+      },
+      "value": {
+        "kind": "lab-result"
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "body-csf-coded": {
     "version": "v1",
@@ -11291,7 +11323,23 @@
     },
     "streamId": "body-csf-coded",
     "eventType": "lab-result/coded-v1",
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "devNotes": "As body-blood-coded, for a cerebrospinal fluid specimen.",
+    "fhir": {
+      "resourceType": "Observation",
+      "category": "laboratory",
+      "code": {
+        "from": "concept",
+        "field": "analyte"
+      },
+      "value": {
+        "kind": "lab-result"
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips"
+      }
+    }
   },
   "condition-coded": {
     "version": "v1",
