@@ -105,7 +105,7 @@ no value. Every analyte stores the number as the lab prints it.
 | Concern | Decision |
 |---|---|
 | **Cell counts** | `concentration/megacount-ml` (10⁶/mL) carries WBC and platelets — × 10⁹/L is × 10⁶/mL, so 3.4–10.8 and 150–400 store as printed. RBC is × 10¹²/L ≡ × 10⁹/mL, which would be 4300–4800 on that unit, so **`concentration/gigacount-ml`** exists for it: 4.3–4.8. The mixed-unit panel *mirrors the report*, which genuinely prints RBC in × 10¹²/L and WBC in × 10⁹/L. The display symbols follow the report too: `megacount-ml` shows `G/L`, `gigacount-ml` shows `T/L`. |
-| **Absolute counts in /μL** | US reports print some counts as cells per μL (4500/μL for 4.5 × 10⁹/L). That is not the number `megacount-ml` stores, so **`concentration/count-ul`** (symbol `/μL`) exists for it, as option 2 of the eight `-count` items; 10⁹/L is option 1, as on WBC; the factor is × 1000, exact. `count-ml` (#/mL) would store 4 500 000. |
+| **Absolute counts in /μL** | US reports print some counts as cells per μL (4500/μL for 4.5 × 10⁹/L). That is not the number `megacount-ml` stores, so **`concentration/count-ul`** (symbol `/μL`) exists for it, as option 2 of the eight `-count` items; 10⁹/L is option 1, as on WBC; the factor is × 1000, exact. `count-ml` (#/mL) would store 4 500 000. **Per mm³ is per μL** (1 mm³ = 1 μL): French reports print counts per mm³ (6 500/mm³, 250 000/mm³), stored as printed on `count-ul`, whose options read "/μL (/mm³)". Since 4.30.0 the WBC, platelet and RBC items offer it too, as option 2 (site-agents#60): WBC and platelets × 1000 from 10⁹/L, RBC × 10⁶ from 10¹²/L (4 500 000/mm³ is 4.5 × 10¹²/L). **Only a full count goes to `count-ul`:** a scaled count is option 1's number, so 6,5 10³/mm³ (or G/L) stores 6.5 on `megacount-ml`, and 4,50 10⁶/mm³ (or M/mm³, T/L) stores 4.5 on `gigacount-ml`. Keying on "/mm³" alone stores 6.5 per μL, 1000 times too low. |
 | **Percentages** | Lab percentages are genuine fractions (HbA1c is the glycated fraction of total hemoglobin; hematocrit the packed-cell fraction), so they store `0..1` on `ratio/proportion` and render via `number.display.multiplier: 100`. The `0..1` bound is enforced, and fractions match Apple HealthKit's `HKUnit.percent()`. FHIR/LOINC export applies the × 100 in the mapper. **The rule: a part of a whole is `ratio/proportion`, 0..1; a ratio to a reference, which can exceed 100 %, is the legacy `ratio/percent`, stored as printed** (plan 114 Q16): Quick % (`body-blood-coagulation-prothrombin-activity`, up to about 130 %) and nucleated red cells per 100 white cells. `ratio/percent` has no symbol, so every item on it declares `number.display.suffix` (`[LAB27-PCT-1]`). |
 | **ng/mL** | Not a unit here: **1 ng/mL = 1 μg/L**, so ferritin, folate, 25-OH-D, C-peptide, AMH, thyroglobulin, progesterone, prolactin and total testosterone (its third option) use the legacy `concentration/ug-l` with the identical stored number. Adding `ng-ml` would have split one measurement across two type names. See the no-equivalent-types rule in `AGENTS.md`. Likewise **1 ng/L = 1 pg/mL**: a PTH printed in ng/L stores its number unchanged on `concentration/pg-ml`. |
 | **SI units as variations** | An analyte that labs print in two units offers both as `variations.eventType` options, conventional unit first (the unit the item had), SI unit second: `body-blood-serum-glucose-fasting` from the start; since the lab-units release (3.21.0) the lipids, calcium, creatinine, the reproductive, adrenal and thyroid hormones, vitamin D (both forms), B12 and folate (site-agents#20); since 3.30.0 magnesium, total bilirubin, iron, TIBC, zinc, copper, vitamin A, C-peptide, PTH (pmol/L), hemoglobin, albumin, total protein and globulin (g/L), hs-CRP (mg/dL), ceruloplasmin (mg/L) and urea on `body-blood-serum-bun` (below); the items added in 3.32.0
@@ -409,6 +409,67 @@ false`): a misspelt `comparitor` fails validation instead of silently dropping i
   `33037-3` "by calculation" (`1863-0` with potassium, `10466-1` without); calculated osmolality `18182-6` (UCUM
   `mosm/kg`); a measured osmolality is `2692-2`; total/HDL cholesterol `9830-1`, LDL/HDL `11054-4` (UCUM `{ratio}`).
 - hds-lib `checkLabResultCoded` warns about `owned-by-item`, `no-loinc` and `invalid-loinc` (check digit).
+
+### Verified codes for frequent coded results
+
+Results that importers met on French lab reports and kept aside for want of a code (site-agents#54 to #59). Each code
+was checked in loinc-db (LOINC 2.83, 2026-11-23): ACTIVE, not replaced, Long Common Name matching the result, and
+owned by no item (`[LAB54-TBL-1]` keeps it so). A writer may code these results from these tables; they are curated
+tables in the sense of the rule above. `unit` is the UCUM code of the printed unit; the value is stored as printed.
+
+Single results:
+
+| Result (as printed in French) | Printed unit → `unit` | LOINC |
+|---|---|---|
+| Indirect (unconjugated) bilirubin, calculated by the lab (*bilirubine libre*, *non conjuguée*) | mg/L → `mg/L`, mg/dL → `mg/dL` | `1971-1` |
+| Indirect (unconjugated) bilirubin, calculated by the lab | µmol/L → `umol/L` | `14630-8` |
+| Prealbumin, transthyretin (*préalbumine*, *transthyrétine*) | g/L → `g/L`, mg/L → `mg/L`, mg/dL → `mg/dL` | `14338-8` |
+| Prealbumin, transthyretin | µmol/L → `umol/L` | `77192-3` |
+| Albumin/globulin ratio (*rapport albumine/globulines*), from the electrophoresis | `{ratio}` | `44429-9` |
+| Albumin/globulin ratio, from a chemistry albumin and total protein | `{ratio}` | `1759-0` |
+| CD4/CD8 ratio (*rapport CD4/CD8*) | `{ratio}` | `54218-3` |
+
+Serum protein electrophoresis (*électrophorèse des protéines sériques*), each fraction:
+
+| Fraction | LOINC, printed in % (`unit` `%`) | LOINC, printed in g/L (`unit` `g/L`) |
+|---|---|---|
+| Albumin (*albumine*) | `13980-8` | `2862-1` |
+| Alpha-1 globulins (*alpha-1 globulines*) | `13978-2` | `2865-4` |
+| Alpha-2 globulins (*alpha-2 globulines*) | `13981-6` | `2868-8` |
+| Beta globulins, undivided (*bêta globulines*) | `13982-4` | `2871-2` |
+| Beta-1 globulins (*bêta-1 globulines*) | `32732-0` | `32730-4` |
+| Beta-2 globulins (*bêta-2 globulines*) | `32733-8` | `32731-2` |
+| Gamma globulins (*gamma globulines*) | `13983-2` | `2874-6` |
+
+Lymphocyte subsets by flow cytometry (*immunophénotypage lymphocytaire*):
+
+| Subset | LOINC, % of lymphocytes (`unit` `%`) | LOINC, count per mm³ or µL (`unit` `/uL`) |
+|---|---|---|
+| CD3+ T lymphocytes (*lymphocytes T CD3+*) | `8124-0` | `8122-4` |
+| CD3+CD4+ helper T lymphocytes (*lymphocytes T CD4+*) | `8123-2` | `24467-3` |
+| CD3+CD8+ T lymphocytes (*lymphocytes T CD8+*) | `8101-8` | `14135-8` |
+
+- **Ratios are written `{ratio}`**, never `1`, so one series keeps one `unit` (hds-lib `labSeriesKey`).
+- **Lymphocyte percentages are of the lymphocytes.** LOINC names these codes "…cells/cells in Blood" (a number
+  fraction, `NFr`); labs print them as a % of the lymphocytes. A CD4 printed as a % of CD3 or of the leukocytes is not
+  this code: it stays in the source document.
+- **The count code is per volume, whatever the scale:** 650/mm³ stores `value: 650`, `unit: "/uL"`; a count printed
+  in 10³/mm³ (0,65 10³/mm³) takes the same code as printed, `value: 0.65`, `unit: "10*3/uL"`. Never rescaled.
+- **A percentage stays as printed here:** `value: 62.5` with `unit: "%"`, never the fraction 0.625. The fraction rule
+  (§ Units) is for items on `ratio/proportion`; a coded result is never converted.
+- **Pick the code by the printed unit:** a fraction printed in % takes the % code, in g/L the g/L code. Labs print
+  both: two results, two events, as the report has two lines.
+- **The electrophoretic albumin is not `body-blood-serum-albumin`.** The item stores a chemistry assay (the dye-binding
+  methods); the electrophoresis gives albumin as its share of the total protein, a different method and a different
+  number. It stays with its panel, under `13980-8` / `2862-1`. Likewise the gamma globulins are not
+  `body-blood-serum-globulin` (all globulins, total protein minus albumin). The panel's total protein line is a
+  chemistry assay: it goes to the total-protein item (never an analyte an item owns).
+- **Beta:** a report that splits beta-1 and beta-2 takes their codes; one that prints a single beta line takes the
+  undivided one. A monoclonal peak (*pic monoclonal*) is not in this table: it stays in the source document.
+- **Derived indices** (indirect bilirubin, the A/G and CD4/CD8 ratios) are stored only when the lab printed them, as
+  the rule above says, never computed from other results.
+- A code missing from this table and from the items is coded only after the same check (§ Codes); until then the
+  result stays in the source document and the importer reports the gap.
 
 **Consent.** The coded streams sit under their specimen, so a grant on `body-blood` (or `body-urine`, or `body`)
 covers every result of that specimen, including infectious serology, viral loads and drug levels. Consent screens name

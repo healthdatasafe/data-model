@@ -1258,15 +1258,29 @@ body-blood-cbc-rbc:
     en: How many red blood cells you have.
     fr: Le nombre de vos globules rouges.
   streamId: body-blood-cbc-rbc
-  eventType: concentration/gigacount-ml
   type: number
   repeatable: any
   # × 10¹²/L ≡ × 10⁹/mL — stores 4.3–4.8, as the report prints it. WBC and platelets are
   # × 10⁹/L ≡ × 10⁶/mL and sit on megacount-ml; the split mirrors the printed panel.
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/gigacount-ml, label: { en: "10¹²/L", fr: "10¹²/L" }, loinc: "26453-1" }
+        - { value: concentration/count-ul, label: { en: "/μL (/mm³)", fr: "/μL (/mm³)" }, loinc: "26453-1" }
+  unitConversions:
+    factors:
+      - from: concentration/gigacount-ml
+        to: concentration/count-ul
+        factor: 1000000
+        source: "Exact by the definition of the units: 10⁹/mL = 10¹²/L = 10⁶/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
   references:
     snomed: ["14089001"]
     loinc: ["26453-1"]
     loincMethod: ["789-8"]
+  devNotes: >-
+    Option 2 is the count per μL, which French reports print per mm³ (1 mm³ = 1 μL): 4 500 000/mm³ is
+    4.5 × 10¹²/L (site-agents#60). A scaled count, 4,50 10⁶/mm³ or M/mm³, is option 1's 4.5.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -1278,6 +1292,7 @@ body-blood-cbc-rbc:
       kind: quantity
       units:
         concentration/gigacount-ml: "10*9/mL"
+        concentration/count-ul: /uL
     profiles:
       us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
       ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
@@ -1289,13 +1304,27 @@ body-blood-cbc-wbc:
     en: How many white blood cells you have — the cells that fight infection.
     fr: Le nombre de vos globules blancs, les cellules qui combattent les infections.
   streamId: body-blood-cbc-wbc
-  eventType: concentration/megacount-ml
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/megacount-ml, label: { en: "10⁹/L", fr: "10⁹/L" }, loinc: "26464-8" }
+        - { value: concentration/count-ul, label: { en: "/μL (/mm³)", fr: "/μL (/mm³)" }, loinc: "26464-8" }
+  unitConversions:
+    factors:
+      - from: concentration/megacount-ml
+        to: concentration/count-ul
+        factor: 1000
+        source: "Exact by the definition of the units: 10⁶/mL = 10⁹/L = 10³/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
   references:
     snomed: ["767002"]
     loinc: ["26464-8"]
     loincMethod: ["6690-2"]
+  devNotes: >-
+    Option 2 is the count per μL, which French reports print per mm³ (1 mm³ = 1 μL): 6 500/mm³ is
+    6.5 × 10⁹/L (site-agents#60). A scaled count, 6,5 10³/mm³, is option 1's 6.5.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -1307,6 +1336,7 @@ body-blood-cbc-wbc:
       kind: quantity
       units:
         concentration/megacount-ml: "10*6/mL"
+        concentration/count-ul: /uL
     profiles:
       us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
       ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
@@ -1318,13 +1348,27 @@ body-blood-cbc-platelets:
     en: The cells that help your blood clot.
     fr: Les cellules qui aident votre sang à coaguler.
   streamId: body-blood-cbc-platelets
-  eventType: concentration/megacount-ml
   type: number
   repeatable: any
+  variations:
+    eventType:
+      label: { en: Unit, fr: Unité }
+      options:
+        - { value: concentration/megacount-ml, label: { en: "10⁹/L", fr: "10⁹/L" }, loinc: "26515-7" }
+        - { value: concentration/count-ul, label: { en: "/μL (/mm³)", fr: "/μL (/mm³)" }, loinc: "26515-7" }
+  unitConversions:
+    factors:
+      - from: concentration/megacount-ml
+        to: concentration/count-ul
+        factor: 1000
+        source: "Exact by the definition of the units: 10⁶/mL = 10⁹/L = 10³/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
   references:
     snomed: ["61928009"]
     loinc: ["26515-7"]
     loincMethod: ["777-3"]
+  devNotes: >-
+    Option 2 is the count per μL, which French reports print per mm³ (1 mm³ = 1 μL): 250 000/mm³ is
+    250 × 10⁹/L (site-agents#60). A scaled count, 250 10³/mm³, is option 1's 250.
   fhir:
     resourceType: Observation
     category: laboratory
@@ -1336,6 +1380,7 @@ body-blood-cbc-platelets:
       kind: quantity
       units:
         concentration/megacount-ml: "10*6/mL"
+        concentration/count-ul: /uL
     profiles:
       us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
       ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
@@ -1930,7 +1975,7 @@ body-blood-cbc-lymphocytes-count:
       label: { en: Unit, fr: Unité }
       options:
         - { value: concentration/megacount-ml, label: { en: "10⁹/L", fr: "10⁹/L" }, loinc: "26474-7" }
-        - { value: concentration/count-ul, label: { en: "/μL", fr: "/μL" }, loinc: "26474-7" }
+        - { value: concentration/count-ul, label: { en: "/μL (/mm³)", fr: "/μL (/mm³)" }, loinc: "26474-7" }
   unitConversions:
     factors:
       - from: concentration/megacount-ml
@@ -1975,7 +2020,7 @@ body-blood-cbc-neutrophils-count:
       label: { en: Unit, fr: Unité }
       options:
         - { value: concentration/megacount-ml, label: { en: "10⁹/L", fr: "10⁹/L" }, loinc: "26499-4" }
-        - { value: concentration/count-ul, label: { en: "/μL", fr: "/μL" }, loinc: "26499-4" }
+        - { value: concentration/count-ul, label: { en: "/μL (/mm³)", fr: "/μL (/mm³)" }, loinc: "26499-4" }
   unitConversions:
     factors:
       - from: concentration/megacount-ml
@@ -2020,7 +2065,7 @@ body-blood-cbc-neutrophils-segmented-count:
       label: { en: Unit, fr: Unité }
       options:
         - { value: concentration/megacount-ml, label: { en: "10⁹/L", fr: "10⁹/L" }, loinc: "30451-9" }
-        - { value: concentration/count-ul, label: { en: "/μL", fr: "/μL" }, loinc: "30451-9" }
+        - { value: concentration/count-ul, label: { en: "/μL (/mm³)", fr: "/μL (/mm³)" }, loinc: "30451-9" }
   unitConversions:
     factors:
       - from: concentration/megacount-ml
@@ -2065,7 +2110,7 @@ body-blood-cbc-neutrophils-band-count:
       label: { en: Unit, fr: Unité }
       options:
         - { value: concentration/megacount-ml, label: { en: "10⁹/L", fr: "10⁹/L" }, loinc: "26507-4" }
-        - { value: concentration/count-ul, label: { en: "/μL", fr: "/μL" }, loinc: "26507-4" }
+        - { value: concentration/count-ul, label: { en: "/μL (/mm³)", fr: "/μL (/mm³)" }, loinc: "26507-4" }
   unitConversions:
     factors:
       - from: concentration/megacount-ml
@@ -2110,7 +2155,7 @@ body-blood-cbc-monocytes-count:
       label: { en: Unit, fr: Unité }
       options:
         - { value: concentration/megacount-ml, label: { en: "10⁹/L", fr: "10⁹/L" }, loinc: "26484-6" }
-        - { value: concentration/count-ul, label: { en: "/μL", fr: "/μL" }, loinc: "26484-6" }
+        - { value: concentration/count-ul, label: { en: "/μL (/mm³)", fr: "/μL (/mm³)" }, loinc: "26484-6" }
   unitConversions:
     factors:
       - from: concentration/megacount-ml
@@ -2155,7 +2200,7 @@ body-blood-cbc-eosinophils-count:
       label: { en: Unit, fr: Unité }
       options:
         - { value: concentration/megacount-ml, label: { en: "10⁹/L", fr: "10⁹/L" }, loinc: "26449-9" }
-        - { value: concentration/count-ul, label: { en: "/μL", fr: "/μL" }, loinc: "26449-9" }
+        - { value: concentration/count-ul, label: { en: "/μL (/mm³)", fr: "/μL (/mm³)" }, loinc: "26449-9" }
   unitConversions:
     factors:
       - from: concentration/megacount-ml
@@ -2200,7 +2245,7 @@ body-blood-cbc-basophils-count:
       label: { en: Unit, fr: Unité }
       options:
         - { value: concentration/megacount-ml, label: { en: "10⁹/L", fr: "10⁹/L" }, loinc: "26444-0" }
-        - { value: concentration/count-ul, label: { en: "/μL", fr: "/μL" }, loinc: "26444-0" }
+        - { value: concentration/count-ul, label: { en: "/μL (/mm³)", fr: "/μL (/mm³)" }, loinc: "26444-0" }
   unitConversions:
     factors:
       - from: concentration/megacount-ml
@@ -2245,7 +2290,7 @@ body-blood-cbc-reticulocytes-count:
       label: { en: Unit, fr: Unité }
       options:
         - { value: concentration/megacount-ml, label: { en: "10⁹/L", fr: "10⁹/L" }, loinc: "14196-0" }
-        - { value: concentration/count-ul, label: { en: "/μL", fr: "/μL" }, loinc: "14196-0" }
+        - { value: concentration/count-ul, label: { en: "/μL (/mm³)", fr: "/μL (/mm³)" }, loinc: "14196-0" }
         - { value: concentration/gigacount-ml, label: { en: "10¹²/L", fr: "10¹²/L" }, loinc: "14196-0" }
   unitConversions:
     factors:

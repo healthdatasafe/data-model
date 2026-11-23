@@ -1,5 +1,36 @@
 # Changelog
 
+## [4.30.0] - 2026-11-23
+
+Data-model gaps reported through the HDS MCP (site-agents#54 to #63). Additive: one unit option on three items, a
+verified-codes table, docs; no new item, stream or eventType; a minor release.
+
+### Added: counts per mm³ on WBC, platelets and RBC (site-agents#60)
+
+French reports print counts per mm³, which is per μL (1 mm³ = 1 μL).
+- `body-blood-cbc-wbc`, `body-blood-cbc-platelets` and `body-blood-cbc-rbc` move from an item-level `eventType` to
+  `variations.eventType`: their unit stays option 1 (10⁹/L, 10⁹/L, 10¹²/L), **`concentration/count-ul`** is option 2,
+  same LOINC per option. Factors: × 1000 (WBC, platelets), × 10⁶ (RBC), exact. FHIR exports the count in UCUM `/uL`.
+  Stored events keep resolving: the `streamId:eventType` pair of option 1 is the old one. **Consumers:** the three
+  items no longer carry a top-level `eventType`, so a writer picks the option (hds-lib `eventTemplate()` needs an
+  explicit choice). Only a full count per mm³ goes to option 2: a scaled count (6,5 10³/mm³) is option 1's number.
+- Every `count-ul` option (the eight `-count` items too) is labelled "/μL (/mm³)".
+- Tests `[LAB60-OPT-1]`, `[LAB60-CNV-1]`, `[LAB60-LBL-1]`, `[LAB60-FHIR-1]`.
+
+### Added: verified codes for frequent coded results (site-agents#54 to #59)
+
+BLOOD-CHEMISTRY.md § Verified codes for frequent coded results: 27 LOINC codes, checked in loinc-db (LOINC 2.83), for
+results that importers kept aside for want of a code: indirect bilirubin, prealbumin, the serum protein electrophoresis
+fractions (% and g/L), the albumin/globulin ratio, the CD3, CD4 and CD8 lymphocyte subsets (% and count) and the
+CD4/CD8 ratio. They stay `lab-result/coded-v1` results, as the long-tail and derived-index rules already said; no item
+is added. A coded percentage is stored as printed, never as a fraction; ratios are written `{ratio}`. Test
+`[LAB54-TBL-1]` keeps the table's codes valid and owned by no item.
+
+### Docs: emergency contacts, trusted person, advance directives (site-agents#61 to #63)
+
+PROFILE.md § Not modelled: emergency contacts and the trusted person are a third person's contact details, kept out;
+advance directives and organ donation are stored as documents (`advance-directive`, `organ-donor-card`).
+
 ## [4.29.0] - 2026-11-22
 
 Plan 128 (HDS Reader reading coverage, package 7). Additive: two items, three streams; no new eventType.
