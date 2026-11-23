@@ -3693,9 +3693,44 @@
       "fr": "Le nombre de vos globules rouges."
     },
     "streamId": "body-blood-cbc-rbc",
-    "eventType": "concentration/gigacount-ml",
     "type": "number",
     "repeatable": "any",
+    "variations": {
+      "eventType": {
+        "label": {
+          "en": "Unit",
+          "fr": "Unité"
+        },
+        "options": [
+          {
+            "value": "concentration/gigacount-ml",
+            "label": {
+              "en": "10¹²/L",
+              "fr": "10¹²/L"
+            },
+            "loinc": "26453-1"
+          },
+          {
+            "value": "concentration/count-ul",
+            "label": {
+              "en": "/μL (/mm³)",
+              "fr": "/μL (/mm³)"
+            },
+            "loinc": "26453-1"
+          }
+        ]
+      }
+    },
+    "unitConversions": {
+      "factors": [
+        {
+          "from": "concentration/gigacount-ml",
+          "to": "concentration/count-ul",
+          "factor": 1000000,
+          "source": "Exact by the definition of the units: 10⁹/mL = 10¹²/L = 10⁶/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
+        }
+      ]
+    },
     "references": {
       "snomed": [
         "14089001"
@@ -3707,6 +3742,7 @@
         "789-8"
       ]
     },
+    "devNotes": "Option 2 is the count per μL, which French reports print per mm³ (1 mm³ = 1 μL): 4 500 000/mm³ is 4.5 × 10¹²/L (site-agents#60). A scaled count, 4,50 10⁶/mm³ or M/mm³, is option 1's 4.5.",
     "fhir": {
       "resourceType": "Observation",
       "category": "laboratory",
@@ -3725,7 +3761,8 @@
       "value": {
         "kind": "quantity",
         "units": {
-          "concentration/gigacount-ml": "10*9/mL"
+          "concentration/gigacount-ml": "10*9/mL",
+          "concentration/count-ul": "/uL"
         }
       },
       "profiles": {
@@ -3745,9 +3782,44 @@
       "fr": "Le nombre de vos globules blancs, les cellules qui combattent les infections."
     },
     "streamId": "body-blood-cbc-wbc",
-    "eventType": "concentration/megacount-ml",
     "type": "number",
     "repeatable": "any",
+    "variations": {
+      "eventType": {
+        "label": {
+          "en": "Unit",
+          "fr": "Unité"
+        },
+        "options": [
+          {
+            "value": "concentration/megacount-ml",
+            "label": {
+              "en": "10⁹/L",
+              "fr": "10⁹/L"
+            },
+            "loinc": "26464-8"
+          },
+          {
+            "value": "concentration/count-ul",
+            "label": {
+              "en": "/μL (/mm³)",
+              "fr": "/μL (/mm³)"
+            },
+            "loinc": "26464-8"
+          }
+        ]
+      }
+    },
+    "unitConversions": {
+      "factors": [
+        {
+          "from": "concentration/megacount-ml",
+          "to": "concentration/count-ul",
+          "factor": 1000,
+          "source": "Exact by the definition of the units: 10⁶/mL = 10⁹/L = 10³/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
+        }
+      ]
+    },
     "references": {
       "snomed": [
         "767002"
@@ -3759,6 +3831,7 @@
         "6690-2"
       ]
     },
+    "devNotes": "Option 2 is the count per μL, which French reports print per mm³ (1 mm³ = 1 μL): 6 500/mm³ is 6.5 × 10⁹/L (site-agents#60). A scaled count, 6,5 10³/mm³, is option 1's 6.5.",
     "fhir": {
       "resourceType": "Observation",
       "category": "laboratory",
@@ -3777,7 +3850,8 @@
       "value": {
         "kind": "quantity",
         "units": {
-          "concentration/megacount-ml": "10*6/mL"
+          "concentration/megacount-ml": "10*6/mL",
+          "concentration/count-ul": "/uL"
         }
       },
       "profiles": {
@@ -3797,9 +3871,44 @@
       "fr": "Les cellules qui aident votre sang à coaguler."
     },
     "streamId": "body-blood-cbc-platelets",
-    "eventType": "concentration/megacount-ml",
     "type": "number",
     "repeatable": "any",
+    "variations": {
+      "eventType": {
+        "label": {
+          "en": "Unit",
+          "fr": "Unité"
+        },
+        "options": [
+          {
+            "value": "concentration/megacount-ml",
+            "label": {
+              "en": "10⁹/L",
+              "fr": "10⁹/L"
+            },
+            "loinc": "26515-7"
+          },
+          {
+            "value": "concentration/count-ul",
+            "label": {
+              "en": "/μL (/mm³)",
+              "fr": "/μL (/mm³)"
+            },
+            "loinc": "26515-7"
+          }
+        ]
+      }
+    },
+    "unitConversions": {
+      "factors": [
+        {
+          "from": "concentration/megacount-ml",
+          "to": "concentration/count-ul",
+          "factor": 1000,
+          "source": "Exact by the definition of the units: 10⁶/mL = 10⁹/L = 10³/μL, as 1 mL = 1000 μL (SI Brochure, 9th edition, BIPM 2019)"
+        }
+      ]
+    },
     "references": {
       "snomed": [
         "61928009"
@@ -3811,6 +3920,7 @@
         "777-3"
       ]
     },
+    "devNotes": "Option 2 is the count per μL, which French reports print per mm³ (1 mm³ = 1 μL): 250 000/mm³ is 250 × 10⁹/L (site-agents#60). A scaled count, 250 10³/mm³, is option 1's 250.",
     "fhir": {
       "resourceType": "Observation",
       "category": "laboratory",
@@ -3829,7 +3939,8 @@
       "value": {
         "kind": "quantity",
         "units": {
-          "concentration/megacount-ml": "10*6/mL"
+          "concentration/megacount-ml": "10*6/mL",
+          "concentration/count-ul": "/uL"
         }
       },
       "profiles": {
@@ -4993,8 +5104,8 @@
           {
             "value": "concentration/count-ul",
             "label": {
-              "en": "/μL",
-              "fr": "/μL"
+              "en": "/μL (/mm³)",
+              "fr": "/μL (/mm³)"
             },
             "loinc": "26474-7"
           }
@@ -5082,8 +5193,8 @@
           {
             "value": "concentration/count-ul",
             "label": {
-              "en": "/μL",
-              "fr": "/μL"
+              "en": "/μL (/mm³)",
+              "fr": "/μL (/mm³)"
             },
             "loinc": "26499-4"
           }
@@ -5171,8 +5282,8 @@
           {
             "value": "concentration/count-ul",
             "label": {
-              "en": "/μL",
-              "fr": "/μL"
+              "en": "/μL (/mm³)",
+              "fr": "/μL (/mm³)"
             },
             "loinc": "30451-9"
           }
@@ -5260,8 +5371,8 @@
           {
             "value": "concentration/count-ul",
             "label": {
-              "en": "/μL",
-              "fr": "/μL"
+              "en": "/μL (/mm³)",
+              "fr": "/μL (/mm³)"
             },
             "loinc": "26507-4"
           }
@@ -5349,8 +5460,8 @@
           {
             "value": "concentration/count-ul",
             "label": {
-              "en": "/μL",
-              "fr": "/μL"
+              "en": "/μL (/mm³)",
+              "fr": "/μL (/mm³)"
             },
             "loinc": "26484-6"
           }
@@ -5438,8 +5549,8 @@
           {
             "value": "concentration/count-ul",
             "label": {
-              "en": "/μL",
-              "fr": "/μL"
+              "en": "/μL (/mm³)",
+              "fr": "/μL (/mm³)"
             },
             "loinc": "26449-9"
           }
@@ -5527,8 +5638,8 @@
           {
             "value": "concentration/count-ul",
             "label": {
-              "en": "/μL",
-              "fr": "/μL"
+              "en": "/μL (/mm³)",
+              "fr": "/μL (/mm³)"
             },
             "loinc": "26444-0"
           }
@@ -5616,8 +5727,8 @@
           {
             "value": "concentration/count-ul",
             "label": {
-              "en": "/μL",
-              "fr": "/μL"
+              "en": "/μL (/mm³)",
+              "fr": "/μL (/mm³)"
             },
             "loinc": "14196-0"
           },
