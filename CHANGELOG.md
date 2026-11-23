@@ -1,9 +1,9 @@
 # Changelog
 
-## [Unreleased]
+## [4.31.0] - 2026-11-23
 
 Plan 133 (FHIR after plan 115, Part A): the FHIR mapping of the lab results with no item of their own. Additive in
-the pack; the SMART grant table widens (below). Planned as 4.31.0, coordinated at release.
+the pack; the SMART grant table widens (below).
 
 ### Added: FHIR blocks on `body-blood-coded`, `body-urine-coded` and `body-csf-coded`
 

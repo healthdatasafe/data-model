@@ -18,15 +18,15 @@ the LOINC code becomes the block's `code` and the item coding its `alsoMatch`. T
 (`references.loincMethod`) are the block's `alsoMatch`. **Reach of the grant (decided 2026-11-02):** FHIR has no
 category finer than `laboratory`, so `patient/Observation.rs?category=laboratory` reaches every mapped lab item, the
 lipid panel as much as urine hCG (a pregnancy test), the semen analysis and the reproductive hormones; the patient
-narrows it per stream on the consent screen, as for vital signs. Since the plan 133 slice (4.31.0 planned) it also
+narrows it per stream on the consent screen, as for vital signs. Since the plan 133 slice (4.31.0) it also
 reaches the three `*-coded` streams, the results with no item of their own, which hold infectious serology, viral
 loads and drug levels; their stream descriptions say so on the consent screen. A lab event's printed range, flag and comparator
 (`hdsRefRange`, `hdsInterpretation`, `hdsFlag`, `hdsComparator`) render as `referenceRange`, `interpretation` and the
 Quantity `comparator` (BLOOD-CHEMISTRY.md § Cross-system). The `ratio/proportion` percentages render in `%` through
 the `scaled-quantity` kind (factor 100): HbA1c, transferrin saturation, hematocrit, RDW, myelocytes and metamyelocytes,
 and the percentages of the labs slice.
-**The `lab-result/coded-v1` items** (`body-blood-coded`, `body-urine-coded`, `body-csf-coded`; plan 133, 4.31.0
-planned) carry the result's own code and unit, so their block reads both from the content: `code: { from: concept }`
+**The `lab-result/coded-v1` items** (`body-blood-coded`, `body-urine-coded`, `body-csf-coded`; plan 133, since
+4.31.0) carry the result's own code and unit, so their block reads both from the content: `code: { from: concept }`
 and `value: { kind: lab-result }` (§ code, § Value kinds). They claim no import key (§ Import), and their release
 order is renderer first (§ Forward compatibility). Urine LH was unmapped until 4.0.0 because its stream holds the
 legacy urine LH typed mg/L: that item now carries the same block, rendering its IU/L numbers in `[IU]/L`.
@@ -337,7 +337,7 @@ content (`from: concept`, a lab result with no item of its own).
   code. **A renderer supports the pair**, the `concept` code with the `lab-result` kind, never either alone: a later
   `lab-result/coded-v2`, or a `concept` code on another resourceType, takes a new kind. **It claims no import key** and is never matched by code or category: the three items share
   (Observation, laboratory), one per specimen, and nothing in a resource states the specimen for sure, so the
-  importer is told the item (§ Import). Since 4.31.0 (planned).
+  importer is told the item (§ Import). Since 4.31.0.
 
 ### Value kinds
 

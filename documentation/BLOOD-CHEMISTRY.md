@@ -474,7 +474,7 @@ Lymphocyte subsets by flow cytometry (*immunophénotypage lymphocytaire*):
 **Consent.** The coded streams sit under their specimen, so a grant on `body-blood` (or `body-urine`, or `body`)
 covers every result of that specimen, including infectious serology, viral loads and drug levels. Consent screens name
 such a grant "Blood and everything under it" (hds-lib `permissionLabels`); an app that needs fewer results requests
-the item streams it needs, never the specimen. **Under SMART** (4.31.0 planned, plan 133, perki's decision): the three
+the item streams it needs, never the specimen. **Under SMART** (since 4.31.0, plan 133, perki's decision): the three
 streams are in `Observation|laboratory`, so a laboratory grant covers them too; their stream `description` says what
 they hold (infectious disease tests, viral loads, drug levels and screening), and the consent screen shows it under
 their row.
@@ -509,7 +509,7 @@ a bare number. A writer that restated the items in its overload under 3.27.0 can
 the overload keeps loading (its immutable fields are identical).
 
 **Cross-system.** FHIR `Observation`, the `fhir:` block of the three items (`code: { from: concept, field: analyte }`,
-`value: { kind: lab-result }`, 4.31.0 planned; FHIR-MAPPING.md): `code.coding` ← `analyte.codes` (a LOINC coding
+`value: { kind: lab-result }`, since 4.31.0; FHIR-MAPPING.md): `code.coding` ← `analyte.codes` (a LOINC coding
 first), `code.text` ← `analyte.label.en`, `fr` / `es` as its `translation` extension; `valueQuantity` ← `value`,
 `comparator`, `unit` as `code` with system `http://unitsofmeasure.org`, `unitText` (else the UCUM code itself, so it
 reads back unchanged) as `unit`; else `valueCodeableConcept` ← `valueCodes` with `valueText` as its `text`, else
