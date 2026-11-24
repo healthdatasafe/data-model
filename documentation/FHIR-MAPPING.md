@@ -361,7 +361,8 @@ Published with the first rendering, in hds-fhir-js and not in the pack, and perm
 `https://hds.ngo/fhir/StructureDefinition/printed-result` (a `valueCodeableConcept`; no StructureDefinition is
 served, the URL does not resolve), the `meta.tag` coding `https://hds.ngo/fhir/CodeSystem/item|<item key>` (a
 forged or stripped tag only falls back to the caller-named import, with its guards), a LOINC coding first in
-`code.coding`, and the lab profiles claimed only when there is one. It is a kind of its own, and the `concept` code a source
+`code.coding`, and the lab profiles claimed only when there is one (the US Core one only with a date known to the day
+too, § Time). It is a kind of its own, and the `concept` code a source
 of its own, for [forward compatibility](#forward-compatibility): a renderer that knows neither, or only one of them,
 skips the block and keeps the generic Observation.
 
@@ -1660,11 +1661,13 @@ or `day`. Export is the reverse: the date is truncated to the event's precision 
 with `hdsTimeText`; `unknown`, 4.19.0, gives no date: the date element carries only the `data-absent-reason`
 extension, code `asked-unknown` (none at all for an allergy's onset or a DocumentReference's `date`), and the recording
 moment is never exported as the date; an event of a vital-sign,
-laboratory or US Core screening item that carries `unknown` is refused, as a month or year one is, since PARTIAL-DATES.md
+laboratory or US Core screening item that carries `unknown` is refused, since PARTIAL-DATES.md
 never allows `unknown` there; the generic Observation of an unmapped item, such as `finding-coded`, `treatment-*` or
 `encounter-visit`, takes `_effectiveDateTime` the same way). A vital sign known only to the month or the year cannot be exported, since FHIR requires a
-vital sign's date to the day (vs-1), and is refused rather than padded to a day; so is a US Core screening answer
-(us-core-1).
+vital sign's date to the day (vs-1), and is refused rather than padded to a day. A
+laboratory result or a US Core screening answer known only to the month or the year (`approx` included) is exported with
+that date and without its US Core profile claim, since that profile requires the day (us-core-1; hds-fhir-js,
+B-2026-11-23-15). The IPS laboratory profile has no such rule, so its claim stays.
 
 **Abatement** (4.1.0, `condition-coded` only). `abatementDateTime`, else `abatementPeriod.end`, becomes
 `event.duration` = abatement − `time`, in seconds; a truncated abatement is anchored at 12:00 UTC on the **last** day

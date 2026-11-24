@@ -518,7 +518,8 @@ its printed result in the extension `https://hds.ngo/fhir/StructureDefinition/pr
 `valueCodeableConcept`: `valueCodes`, `valueText` as text), with a readable copy in `note` for a reader that ignores
 the extension; `note` ← `notes`; `category` `laboratory`; `referenceRange` / `interpretation` from `clientData` as
 above (only the range text when there is no `value`: its limits would have no unit); the item key as `meta.tag`. The
-US Core and IPS lab profiles are claimed only when the analyte has a LOINC coding (both bind the code to LOINC).
+US Core and IPS lab profiles are claimed only when the analyte has a LOINC coding (both bind the code to LOINC), the
+US Core one only when the date is known to the day too (FHIR-MAPPING.md § Time).
 `Observation.specimen` is a Reference, not exported: the LOINC System axis carries the specimen, and an importer
 names the item (FHIR-MAPPING.md § Import).
 
