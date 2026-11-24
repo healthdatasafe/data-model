@@ -39,7 +39,31 @@ const coding = {
   }
 };
 
+// The second entry of a document's `type` (4.32.0), for a kind no CH Term row names; its code is the kind's key
+const detail = {
+  type: 'object',
+  required: ['system', 'code', 'display'],
+  additionalProperties: false,
+  properties: {
+    system: { const: 'https://hds.ngo/fhir/CodeSystem/document-kind' },
+    code: { type: 'string', pattern: '^[a-z][a-z0-9]*(-[a-z0-9]+)*$' },
+    display: { type: 'string', minLength: 1 }
+  }
+};
+
 const uri = { type: 'string', pattern: '^https?://' };
+
+const kindProperties = {
+  label,
+  description: label,
+  class: coding,
+  type: coding,
+  // the writer's default for which printed date is the event time: the care reported, or `creation`
+  timeBasis: { enum: ['service', 'creation'] },
+  // a pair a later CH Term release dropped: kept, so a stored document still reads back, never offered
+  deprecated: { const: true }
+};
+const kindKey = { pattern: '^[a-z][a-z0-9]*(-[a-z0-9]+)*$' };
 
 const documentKindsSchema = {
   $id: 'https://model.datasafe.dev/json-schemas/documentKinds.json',
@@ -62,21 +86,23 @@ const documentKindsSchema = {
     kinds: {
       type: 'object',
       minProperties: 1,
-      propertyNames: { pattern: '^[a-z][a-z0-9]*(-[a-z0-9]+)*$' },
+      propertyNames: kindKey,
       additionalProperties: {
         type: 'object',
         required: ['label', 'description', 'class', 'type', 'timeBasis'],
         additionalProperties: false,
-        properties: {
-          label,
-          description: label,
-          class: coding,
-          type: coding,
-          // the writer's default for which printed date is the event time: the care reported, or `creation`
-          timeBasis: { enum: ['service', 'creation'] },
-          // a pair a later CH Term release dropped: kept, so a stored document still reads back, never offered
-          deprecated: { const: true }
-        }
+        properties: kindProperties
+      }
+    },
+    // kinds no CH Term row names (4.32.0), in a section an earlier reader does not see
+    detailKinds: {
+      type: 'object',
+      propertyNames: kindKey,
+      additionalProperties: {
+        type: 'object',
+        required: ['label', 'description', 'class', 'type', 'detail', 'timeBasis'],
+        additionalProperties: false,
+        properties: { ...kindProperties, detail }
       }
     }
   }

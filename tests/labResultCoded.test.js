@@ -95,8 +95,9 @@ describe('[LABC] Coded lab results', () => {
       }
       assert.strictEqual(findItemForEvent('lab-result/coded-v1', 'body-blood-serum'), null);
       const imported = Object.entries(itemsById).filter(([, i]) => i.type === 'imported').map(([k]) => k).sort();
-      // genetics-variant (3.43.0) is the other imported item, on genetic-variant/coded-v1: tests/genetics.test.js
-      assert.deepStrictEqual(imported, [...Object.keys(CODED), 'genetics-variant'].sort(), 'the three coded items and genetics-variant are the only imported items');
+      // the other imported items: genetics-variant (3.43.0, tests/genetics.test.js) and fertility-cycles-chart-stamp
+      // (4.32.0, tests/cycleItems.test.js)
+      assert.deepStrictEqual(imported, [...Object.keys(CODED), 'genetics-variant', 'fertility-cycles-chart-stamp'].sort(), 'the only imported items');
     });
 
     it('[LABC-ITM-2] the three items pass the item checks', () => {

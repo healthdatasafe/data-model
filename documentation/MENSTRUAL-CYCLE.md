@@ -206,6 +206,45 @@ peak. There is no recalled average for the LH peak; it would be a new item, neve
 **Not a fertility statement.** Both are chart notation the person or her method records. HDS apps show them as
 recorded; they do not derive fertile or infertile days from them.
 
+## Charted stamp (4.32.0, site-agents#67)
+
+`fertility-cycles-chart-stamp` is the stamp (sticker) put on one day of a stamp-based chart (Creighton, Billings), as the
+person or her instructor charted it: `fertility/chart-stamp-v1`, `{ method, stamp }`, one event per day and method, `time`
+anywhere on the calendar day, no duration, on its own stream under `fertility-cycles` (so a permission on a sibling never
+grants it).
+
+| `stamp` | On the chart |
+|---|---|
+| `red` | red |
+| `green` | plain green |
+| `green-baby` | green with a baby |
+| `white-baby` | white with a baby |
+| `yellow` | plain yellow |
+| `yellow-baby` | yellow with a baby |
+
+`method` is the charting method's id, as `content.source.key` of a mucus observation. A method uses some of the six; which
+ones is the drawing library's, not the model's. The list is closed and may grow: a reader that meets a stamp or a method it
+does not know draws its own stamp, and shows the stored one as text.
+
+- **An item, not an annotation of the mucus observation.** The stamp belongs to the day: a bleeding day may have a stamp and
+  no mucus code, a day may hold several observations, and an annotation is dropped when the method of its observation
+  changes or an older editor rewrites it. `frequency` qualifies one observation, so it stays an annotation.
+- **It wins over the drawing rule.** A reader drawing a chart of `method` shows the charted stamp in place of the one it
+  would draw from the code. It changes no chart of another method. Two events of one method on one day: the one modified
+  last. Deleting the event brings the drawn stamp back.
+- **Never a stamp the app drew.** Only a stamp the person picked, or one an import read, is stored: a stored drawing would
+  outlive a corrected code.
+- **Yellow is on the instructor's instruction.** An app offers `yellow` and `yellow-baby` only to a person who asked for
+  them (a preference of the app, not a model item), and never proposes a stamp. A stored yellow stamp is shown whatever
+  the preference.
+- **The peak and the count are not part of it.** A `P` on a stamp is `fertility-cycles-peak-day`; the 1, 2, 3 after it are
+  derived.
+- **`type: imported`**: shown wherever data is read, left out of generic pickers and forms. A person enters it in a chart's
+  own stamp control.
+
+**Not a fertility statement.** It is chart notation. No app derives a fertile or infertile day from it, words it as one, or
+feeds it to a conversion or a score. No `fhir` block, and no code: none was found.
+
 ## Recalled summaries
 
 An intake asks for summaries a person recalls rather than charts: the `fertility-cycles-average-*` items, cycle

@@ -358,10 +358,10 @@ data-model/
 ├── package.json, eslint.config.mjs, etc.
 │
 ├── definitions/                           # THE SOURCE OF TRUTH
-│   ├── items/*.yaml                       # Health data point definitions (352 items, 287 active, 23 YAML files)
-│   ├── streams/*.yaml                     # Clinical-domain tree (22 top-level roots, 335 streams in all)
+│   ├── items/*.yaml                       # Health data point definitions (363 items, 296 active, 25 YAML files)
+│   ├── streams/*.yaml                     # Clinical-domain tree (22 top-level roots, 346 streams in all)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (87)
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (92)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)
@@ -567,8 +567,8 @@ exposes this as `HDSItemDef.isSystem`, and `getAllActive()` excludes it. The con
 
 ## `type: imported` items
 
-An item of `type: imported` (3.27.0) holds an **object written by an importer from a coded source**, never entered
-in a form: today the coded lab results on `lab-result/coded-v1` ([`documentation/BLOOD-CHEMISTRY.md`](documentation/BLOOD-CHEMISTRY.md#results-with-no-item-of-their-own-lab-resultcoded-v1)).
+An item of `type: imported` (3.27.0) holds an **object written by an importer from a coded source, or by a control made
+for that item alone** (4.32.0: `fertility-cycles-chart-stamp`), never entered in a generic form: the coded lab results on `lab-result/coded-v1` ([`documentation/BLOOD-CHEMISTRY.md`](documentation/BLOOD-CHEMISTRY.md#results-with-no-item-of-their-own-lab-resultcoded-v1)).
 Its eventType must be an object (`src/items.js`), and like `system` it is an item type only. Unlike `system`, it is
 **shown everywhere data is read** (timelines, diaries, dashboards, exports); like `system` and `attachments`, it is
 left out of pickers and form sections. hds-lib exposes `HDSItemDef.isImported`, and since 2.28.0 `getAllActive()` is a

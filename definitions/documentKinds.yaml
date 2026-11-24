@@ -1,7 +1,7 @@
 # Document kinds: the class and first type of a `file/xds-v1` document, by kind (pack.documentKinds, 4.17.0,
 # documentation/DOCUMENTS.md § Document kinds). From site-agents#36 A9.
 #
-# One kind per row of the CH Term ConceptMap below, never made up: a type belongs to one class, and "Record artifact"
+# `kinds`: one per row of the CH Term ConceptMap below, never made up: a type belongs to one class, and "Record artifact"
 # (419891008) is the type of a document whose class has no more specific type. All codes come from the CH Term value
 # sets; the three Swiss-extension concepts carry the Swiss edition as `version`, the others are active in the SNOMED CT
 # International Edition (checked in reference/snomed-db, 2026-02-01 release, 2026-11-18). Displays are the
@@ -406,4 +406,18 @@ kinds:
       fr: Un document médical d'aucun autre type, ou dont le type ne peut pas être déterminé.
     class: { system: http://snomed.info/sct, code: '419891008', display: Record artifact }
     type: *other
+    timeBasis: creation
+
+# Kinds no CH Term row names, nor any SNOMED CT or LOINC concept (4.32.0): the class and type of one of the kinds above,
+# and `detail`, a Coding of an HDS code system whose code is the kind's key, for the second entry of a document's `type`.
+# A section of their own, so that a reader older than it never offers one: it would store the other kind.
+detailKinds:
+  menstrual-cycle-chart:
+    label: { en: Menstrual cycle chart, fr: Tableau de cycle menstruel, de: Zyklusblatt, it: Scheda del ciclo mestruale }
+    description:
+      en: A day-by-day chart of menstrual cycles kept by the person, on paper or exported from an app, whatever the charting method.
+      fr: Un tableau (ou cyclogramme) des cycles menstruels tenu jour par jour par la personne, sur papier ou exporté d'une application, quelle que soit la méthode.
+    class: *patientrecord
+    type: *other
+    detail: { system: https://hds.ngo/fhir/CodeSystem/document-kind, code: menstrual-cycle-chart, display: Menstrual cycle chart }
     timeBasis: creation

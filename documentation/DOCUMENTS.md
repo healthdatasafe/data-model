@@ -258,14 +258,22 @@ the wrong classes.
 - **Pick a kind by its `description`,** which says when it applies and how it differs from its neighbours (a
   medication list, a medication plan and a medication treatment decision; a referral letter and a transfer summary).
   When even the class is unclear, use `other`.
-- **Copy the Codings as they are** into `class` and `type[0]`. `display` is the International Edition preferred term.
+- **A detail kind (`documentKinds.detailKinds`, 4.32.0)** is for a document no CH Term row names, and no SNOMED CT or LOINC
+  concept: it has the `class` and `type` of one of `kinds`, plus `detail`, a Coding of
+  `https://hds.ngo/fhir/CodeSystem/document-kind` whose code is the kind's key. One today: `menstrual-cycle-chart`, beside
+  `other-patient-record` (site-agents#67). A new one needs a use that routes on the kind; none is added to name a document
+  more finely. It is a section of its own so that a reader of `kinds` alone never offers it: it would store the other
+  kind. An app offers a detail kind only once it writes `detail` (hds-lib `documentKinds.codingsFor`).
+- **Copy the Codings as they are** into `class` and `type[0]`, and `detail`, when the kind has one, into `type[1]`. `display` is the International Edition preferred term.
 - **Swiss extension.** Three concepts are in the SNOMED CT Swiss extension, not the International Edition: class
   `2171000195109` Obstetrical record, types `2161000195103` Imaging order and `82291000195104` Medication dispense
   document. Their Coding carries `version: http://snomed.info/sct/2011000195101`, as the value sets list them; a
   terminology lookup against the International Edition does not find them. The other 42 codes are active in the
   International Edition (2026-02-01 release).
 - **Reading a kind back.** Take the first `http://snomed.info/sct` coding in `type` (another writer may lead with a
-  LOINC one) and `class`: the type identifies the kind, except Record artifact, where the class does. A document whose
+  LOINC one) and `class`: the type identifies the kind, except Record artifact, where the class does. Among the kinds these codes fit, one whose
+  `detail` (system and code) is also in `type` wins; without it, the one that has no `detail`. A reader that does not know
+  `detail` reads the kind it shares its codes with. A document whose
   codes are in no kind keeps its codes; a reader shows it by its class `display` (its type would only say "Record
   artifact"), or as `other`.
 - **Labels** are based on the CH Term designations (en-US, fr-CH, de-CH, it-CH), edited: typos fixed, a few

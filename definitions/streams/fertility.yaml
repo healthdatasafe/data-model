@@ -28,6 +28,8 @@ children:
         name: LH Peak Day
       - id: fertility-cycles-coverline
         name: Coverline
+      - id: fertility-cycles-chart-stamp
+        name: Cycle chart stamp
       - id: fertility-cycles-charted-estimation
         name: Cycles charted estimation
         label:
