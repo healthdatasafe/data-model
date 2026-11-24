@@ -81,12 +81,13 @@ every event needs a `time`, and it says nothing about when the event happened.
 
 - **Only from the person's answer.** `unknown` records that the person was asked and does not know. A source that
   prints no date is not a person saying "I don't know": an importer that cannot ask still holds the event for review
-  (§ Rules) and never writes `unknown` on its own.
+  (§ Rules) and never writes `unknown` on its own. One exception, since 4.21.0: on an allergen item (`allergy-coded`,
+  `allergy-basic`), an import whose source states no readable onset date writes `unknown` too (ALLERGY.md, Time).
 - **A rough answer is not `unknown`.** "About ten years ago" or "in my twenties" is written at `year` or `approx`
   with `hdsTimeText`, as § Rules says.
 - **On these items only (4.19.0):** `condition-coded`, `finding-coded`, `procedure-basic`, `procedure-coded`,
   `treatment-basic`, `treatment-coded`, `encounter-visit`, `medication-intake-basic`, `medication-intake-coded` and
-  `document`: the person's history. Any other item is an addition to this list, made in a later release. A measured
+  `document`: the person's history; since 4.21.0 also `allergy-coded` and `allergy-basic`. Any other item is an addition to this list, made in a later release. A measured
   value (a lab result, a vital sign, a body measure) with no date cannot be compared with anything: it is not written
   as an event, and stays with its document or with the importer's review. A prescription is never written with
   `unknown`.
@@ -130,7 +131,8 @@ the value.
   diagnosis, an operation with no year), ask the person. The document's date is never used in its place: on the event
   it would read as the onset, the operation or the intake. What the person answers, even roughly ("about ten years
   ago"), is written at `year` or `approx` with `hdsTimeText`; a person who does not know at all gets `unknown`
-  (§ A date nobody knows). An importer that cannot ask holds the event for review.
+  (§ A date nobody knows). An importer that cannot ask holds the event for review (an allergen item excepted, as
+  there).
   This extends to events the rule DOCUMENTS.md § Which date is a document's date states for a document; unlike a
   document, an event never takes a date derived from the document.
 - **`hdsTimeText` is visible to everyone who can read the event.** It is copied from the source as written;
@@ -148,8 +150,8 @@ the value.
 | `day` | `YYYY-MM-DD` | `startDate` (the precision is lost) |
 | `month` | `YYYY-MM` | `startDate` (the precision is lost) |
 | `year` | `YYYY` | `startDate` (the precision is lost) |
-| `approx` | `hdsTimeText` as a string where the element allows one (`Condition.onsetString`, R4 `Procedure.performedString`); otherwise `YYYY` of `time`, with `hdsTimeText` as a note (`dateTime` has no approximate form) | `startDate` (the precision is lost) |
-| `unknown` | No date: the date element carries only the `data-absent-reason` extension (`http://hl7.org/fhir/StructureDefinition/data-absent-reason`), code `asked-unknown` (`_onsetDateTime`, `_performedDateTime`, `_effectiveDateTime`; in a period, `effectivePeriod._start` with the known `end`); a DocumentReference has no `date` (FHIR-MAPPING.md § DocumentReference) | not exported (a sample needs a date) |
+| `approx` | `YYYY` of `time`, with `hdsTimeText` as a note ("Date: about …"; `dateTime` has no approximate form, and `Condition.onsetString` / R4 `Procedure.performedString` would leave no date). A resource with no note has no such form: FHIR-MAPPING.md says where the date is refused (`QuestionnaireResponse.authored`) or left out (`Questionnaire.date`); a document's `creation`, when its content states none, is the year alone, with no note (its `DocumentReference.date` is the `time` as an instant) | `startDate` (the precision is lost) |
+| `unknown` | No date: the date element carries only the `data-absent-reason` extension (`http://hl7.org/fhir/StructureDefinition/data-absent-reason`), code `asked-unknown` (`_onsetDateTime`, `_performedDateTime`, `_effectiveDateTime`; in a period, `effectivePeriod._start` with the known `end`); a DocumentReference has no `date` (FHIR-MAPPING.md § DocumentReference), and an allergy (`allergy-coded`, `allergy-basic`) no `onset[x]` at all, with no such extension (FHIR-MAPPING.md § AllergyIntolerance). An event of an item `unknown` is not allowed on is refused where FHIR-MAPPING.md says so | not exported (a sample needs a date) |
 | span | `Period.start` / `Period.end`, each truncated to its own precision | `startDate` / `endDate` |
 | span of an abated condition (`condition-coded`, 4.1.0) | `Condition.onsetDateTime` = `time`, `Condition.abatementDateTime` = `time + duration`, each truncated to its own precision (`hdsEndPrecision`, else the start's) | n/a |
 
@@ -158,4 +160,8 @@ precision; a full `dateTime` sets `minute`; a truncated end (`abatementDateTime`
 day of its period, as "Spans" says, and sets `hdsEndPrecision` when it differs from the start's. FHIR's offset is not
 a zone, so a round trip through FHIR keeps the moment and loses `hdsTimeZone`. A resource with no date, including
 one whose date element carries only a `data-absent-reason`, is still refused on import (FHIR-MAPPING.md § Time):
-reading `asked-unknown` back as `unknown` is an open point, since the import has no person to confirm it.
+reading `asked-unknown` back as `unknown` is an open point, since the import has no person to confirm it. An
+allergen item is the exception: an AllergyIntolerance with no readable onset date (none, an unreadable one, an age, a
+range or a text) imports as `unknown` and is not refused for it (FHIR-MAPPING.md § AllergyIntolerance, Onset and An
+unknown onset). A "no known allergy" has no onset: it is dated by its `recordedDate`, else the import moment, never
+`unknown`.
