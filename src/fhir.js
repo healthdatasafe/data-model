@@ -142,6 +142,7 @@ module.exports = {
   checkFhirMapping,
   scopePairOf,
   ucumKey,
+  ucumUnitKey,
   computeFhirScopes,
   checkFhirScopes,
   checkFhirImportKeys,
@@ -158,6 +159,33 @@ module.exports = {
  */
 function ucumKey (unit) {
   return unit.replace(/\{[^}]*\}/g, '') || '1';
+}
+
+const UCUM_PREFIX = { k: 3, '': 0, d: -1, c: -2, m: -3, u: -6, n: -9, p: -12, f: -15 };
+const UCUM_TEN = /^10[*^]([+-]?\d{1,2})?$/;
+const UCUM_UNIT = /^(k|d|c|m|u|n|p|f)?(g|L|l|mol|eq|U|\[IU\]|\[iU\])$/;
+
+/**
+ * The unit a UCUM code stands for, as the importer compares it (hds-fhir-js `sameUcum`, same rule): annotations
+ * dropped, and one unit written with other powers of ten is one unit (`10*3/uL` is `10*6/mL`, `ug/L` is `ng/mL`). Only
+ * products and quotients of a power of ten and of `g L mol eq U [IU]` with a prefix are read so; anything else is the
+ * code as written. Units are never cancelled (`mg/g` is `ug/mg`, not `10*-3`) and nothing is converted.
+ */
+function ucumUnitKey (unit) {
+  const bare = ucumKey(unit);
+  let exponent = 0;
+  const over = [];
+  const under = [];
+  for (const [, sign, term] of (bare.startsWith('/') ? bare : `.${bare}`).matchAll(/([/.])([^/.]*)/g)) {
+    const s = sign === '/' ? -1 : 1;
+    const ten = UCUM_TEN.exec(term);
+    if (ten != null) { exponent += s * Number(ten[1] ?? 1); continue; }
+    const m = UCUM_UNIT.exec(term);
+    if (m == null) return `as written: ${bare}`;
+    exponent += s * UCUM_PREFIX[m[1] ?? ''];
+    (s === 1 ? over : under).push(m[2] === 'l' ? 'L' : m[2] === '[iU]' ? '[IU]' : m[2]);
+  }
+  return `10^${exponent} ${over.sort().join('.')}/${under.sort().join('.')}`;
 }
 
 function checkMappingTable (t) {
@@ -445,13 +473,16 @@ function checkFhirMapping (key, item, itemEventTypes) {
   }
 }
 
-/** The unit picks the eventType on import, so two eventTypes of one block never share a UCUM unit (annotations aside). */
+/**
+ * The unit picks the eventType on import, so two eventTypes of one block never share a UCUM unit: annotations aside, and
+ * one unit written with other powers of ten is one (`ucumUnitKey`).
+ */
 function distinctUnits (pairs, fail) {
   const byUnit = new Map();
   for (const [t, u] of pairs) {
-    const other = byUnit.get(ucumKey(u));
-    if (other != null) fail(`value.units: eventTypes "${other}" and "${t}" share the UCUM unit "${ucumKey(u)}" (annotations aside); an imported quantity would map back to two eventTypes`);
-    byUnit.set(ucumKey(u), t);
+    const other = byUnit.get(ucumUnitKey(u));
+    if (other != null) fail(`value.units: eventTypes "${other.t}" and "${t}" share the UCUM unit "${ucumKey(u)}"${ucumKey(other.u) === ucumKey(u) ? '' : ` ("${ucumKey(other.u)}", powers of ten alike)`} (annotations aside); an imported quantity would map back to two eventTypes`);
+    byUnit.set(ucumUnitKey(u), { t, u });
   }
 }
 

@@ -343,7 +343,7 @@ content (`from: concept`, a lab result with no item of its own).
 
 | `kind` | Item | Block fields | Renders |
 |---|---|---|---|
-| `quantity` | `number`, every eventType numeric | `units`: every eventType of the item (its unit variants) → UCUM code, none empty, no two the same (annotations such as `{beats}` aside: they carry no meaning in UCUM) | `valueQuantity` (`system` UCUM, `code` = `unit`); a lab event's `hdsComparator` as its `comparator`, `hdsRefRange` as `referenceRange` (limits in the same unit), `hdsInterpretation` and `hdsFlag` as `interpretation`, and back on import (BLOOD-CHEMISTRY.md § Cross-system) |
+| `quantity` | `number`, every eventType numeric | `units`: every eventType of the item (its unit variants) → UCUM code, none empty, no two the same (annotations such as `{beats}` aside: they carry no meaning in UCUM; one unit written with other powers of ten is the same one) | `valueQuantity` (`system` UCUM, `code` = `unit`); a lab event's `hdsComparator` as its `comparator`, `hdsRefRange` as `referenceRange` (limits in the same unit), `hdsInterpretation` and `hdsFlag` as `interpretation`, and back on import (BLOOD-CHEMISTRY.md § Cross-system) |
 | `scaled-quantity` | `number`, every eventType numeric | `units`: every eventType of the item → `{ unit, factor }`: the UCUM code it renders in and the factor from the stored number to the rendered one (`factor > 0`); units distinct as for `quantity` | `valueQuantity` of the stored number × `factor` in `unit`; the lab extras as for `quantity`, the range limits × `factor` too. On import the value and the limits are divided by `factor` |
 | `ratio-quantity` | `number`, every eventType an object `{ value, relativeTo }` (`ratio/generic`) | `units`: every eventType of the item → UCUM code, distinct as for `quantity`; `relativeTo`: the item's fixed denominator (`ratioRelativeTo`) | `valueQuantity` of `content.value` in the unit, with the lab extras as for `quantity`; an event whose `relativeTo` is not the block's is refused. On import the content is `{ value, relativeTo }` with the block's denominator |
 | `coded` | `select` | `options`: every option value → coding, each coding once; optional `alsoMatch`: option value → extra codings accepted for that option on import only | `valueCodeableConcept` (the option coding, never an `alsoMatch` one) |
@@ -1527,7 +1527,8 @@ candidates and the specimen as what is missing, and nothing is imported; the cal
 the item key as `meta.tag` (`https://hds.ngo/fhir/CodeSystem/item`), which names the item back on its own re-import.
 Into such an item the importer also requires an explicit `laboratory` category, and refuses an analyte an active item
 owns (its static, eventType or `alsoMatch` code, `references.loincMethod` included) unless the owning item lacks the
-printed unit (BLOOD-CHEMISTRY.md § Rules, the interim case) or the result is not a quantity (an item event has no
+printed unit in any spelling (an HDS export tagged with the coded item comes back when only another spelling is
+the owner's; BLOOD-CHEMISTRY.md § Rules, the interim case) or the result is not a quantity (an item event has no
 place for a printed text), and then only into the coded item of the owner's specimen.
 
 - **Category.** The resource's categories are its `category` codings in the systems of the resourceType's table
@@ -1562,7 +1563,12 @@ place for a printed text), and then only into the coded item of the owner's spec
 
 **Values.**
 - `quantity`: the `valueQuantity` must have system `http://unitsofmeasure.org` and a `code` equal to one of the
-  block's units, annotations aside (`{beats}/min` is `/min`); that unit picks the eventType (`[lb_av]` → `mass/lb`), and the value is stored as printed. Units are
+  block's units, annotations aside (`{beats}/min` is `/min`), or the same unit written with other powers of ten
+  (`10*3/uL` and `10*9/L` are `10*6/mL`, `m[IU]/L` is `u[IU]/mL`: the number is the same, nothing is converted; the
+  block's own code first; hds-fhir-js `sameUcum` from the release after 0.13.1). Read so: products and quotients of
+  powers of ten and of `g`, `L`, `mol`, `eq`, `U` and `[IU]`, with or without one of the prefixes `k d c m u n p f`; any
+  other code is compared as written, and units are never cancelled. That unit picks the eventType (`[lb_av]` → `mass/lb`), and the value is
+  stored as printed. Units are
   **converted only through the item's declared `unitConversions`**. Those relate the item's own eventTypes, and every
   one of them already has its UCUM unit in the block, so in practice a value in one of the block's units is taken as
   printed in that eventType, and a unit outside them (`g` for body weight, `[ft_i]` for body height) has no declared
@@ -1575,12 +1581,12 @@ place for a printed text), and then only into the coded item of the owner's spec
   the INR with the unity `1`, or `{ratio}`, imports too.
 - **A code from the eventType** names the eventTypes that carry it (one, or the units of one property); the quantity's
   unit must be one of theirs, and picks among them.
-- **Import limits known today** (one UCUM spelling per eventType; each is a refusal, never a wrong value; for the
+- **Import limits known today** (each is a refusal, never a wrong value; for the
   importing bridge of phase 4 to normalise, no block change): **eGFR under `69405-9` in `mL/min`** (the example unit
   LOINC lists for that code) is refused, as are `mL/min/1.73m2` and `mL/min/1.73.m2`: only `mL/min/{1.73_m2}`
   imports (the annotation-stripping comparison leaves a trailing `/`, so `mL/min` differs, although under a code
-  that says "based on 1.73 sq M" the unit adds nothing); a count in `10*3/uL` or `10*9/L` (only `10*6/mL` and `/uL`);
-  `ng/mL` for testosterone and C-peptide (only `ug/L`); an INR without a UCUM code.
+  that says "based on 1.73 sq M" the unit adds nothing); an INR without a UCUM code; with hds-fhir-js up to 0.13.1, also
+  any other spelling of a block's unit (`10*3/uL` or `10*9/L` for `10*6/mL`, `ng/mL` for `ug/L`).
 - **eGFR: one result per time** (B-2026-11-16-17, B-2026-11-19-34): `body-blood-serum-egfr` imports every eGFR code
   it lists, per equation and per population, while keeping no equation and no population, so a report that states
   several eGFR results for one subject and time would give several eGFR events at that time with different values.
@@ -1762,7 +1768,8 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   pulse). An `alsoEmit` coding is not an import key either, and is never another active item's import key or a LOINC
   code another item owns: the rendered resource would import back into that item.
 - **Units:** two eventTypes of one `quantity`, `scaled-quantity` or `ratio-quantity` block never share a UCUM unit,
-  annotations aside (`{beats}/min` is `/min`): the unit picks the eventType on import.
+  annotations aside (`{beats}/min` is `/min`) and powers of ten alike (`ug/L` is `ng/mL`): the unit picks the eventType
+  on import.
 - **Scopes:** companions valid (never of a Patient element); the one-pair invariant; the lock (no locked stream
   removed, re-parented or re-paired, no locked item removed or moved, no new item or stream under a locked stream
   without a `reviewed` entry naming that locked stream).

@@ -6,7 +6,7 @@ const Ajv = require('ajv');
 describe('[FHIR] item fhir blocks (plan 115)', () => {
   const { itemsById, fhirScopes, toBePublished } = require('../src/items');
   const { checkItem, toBePublished: schemasToBePublished } = require('../src/schemas/items');
-  const { checkMappingTable, checkFhirMapping, checkFhirScopes, computeFhirScopes, readLock, emptyLock, lockEntries, mergeLock, ucumKey, fhirMapping, UNMAPPED, PATIENT_ELEMENTS } = require('../src/fhir');
+  const { checkMappingTable, checkFhirMapping, checkFhirScopes, computeFhirScopes, readLock, emptyLock, lockEntries, mergeLock, ucumKey, ucumUnitKey, fhirMapping, UNMAPPED, PATIENT_ELEMENTS } = require('../src/fhir');
 
   const MAPPED = ['body-weight', 'body-blood-pressure', 'body-heart-rate', 'lifestyle-tobacco-smoking', 'condition-coded', 'wellbeing-general-health'];
   const item = (k) => structuredClone(itemsById[k]);
@@ -509,7 +509,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => check(c), /applies to "number" items only/);
     });
 
-    it('[FHIR-MAP-16] two eventTypes of one quantity block never share a UCUM unit, annotations aside', () => {
+    it('[FHIR-MAP-16] two eventTypes of one quantity block never share a UCUM unit, annotations aside and powers of ten alike', () => {
       assert.deepStrictEqual(['{beats}/min', '/min', '{score}', '1', 'kg'].map(ucumKey), ['/min', '/min', '1', '1', 'kg']);
       const a = item('body-weight');
       a.fhir.value.units['mass/lb'] = 'kg';
@@ -518,6 +518,18 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       b.fhir.value.units['mass/kg'] = '{net}kg';
       b.fhir.value.units['mass/lb'] = 'kg{gross}';
       assert.throws(() => check(b), /share the UCUM unit "kg" \(annotations aside\)/);
+      // one unit written with other powers of ten is one, as the importer reads it (hds-fhir-js `sameUcum`)
+      for (const [x, y] of [['10*3/uL', '10*6/mL'], ['10*9/L', '10*6/mL'], ['10*12/l', '10*9/mL'], ['/uL', '10*6/L'], ['m[IU]/L', 'u[IU]/mL'], ['[iU]/L', 'm[IU]/mL'], ['ug/L', 'ng/mL'], ['ug/mg', 'mg/g'], ['10*-3.g/L', 'mg/L'], ['10^3/uL', '10*6/mL'], ['10*/L', '10*1/L'], ['10*+3/uL', '10*6/mL'], ['{cells}/uL', '10*6/L'], ['meq/L', 'ueq/mL'], ['mol/L', 'mmol/mL'], ['kU/L', 'U/mL']]) {
+        assert.strictEqual(ucumUnitKey(x), ucumUnitKey(y), `${x} is ${y}`);
+      }
+      for (const [x, y] of [['10*3/uL', '10*9/mL'], ['mg/dL', 'mg/L'], ['mmol/L', 'mg/dL'], ['U/L', '[IU]/L'], ['meq/L', 'mmol/L'], ['mg/g', '10*-3'], ['mg/ML', 'pg/mL'], ['mg//L', 'mg/L'], ['10*123/L', '10*123/l'], ['g/L.g', 'g/L/g'], ['mm[Hg]', 'cm[Hg]'], ['mL/min', 'mL/min/{1.73_m2}']]) {
+        assert.notStrictEqual(ucumUnitKey(x), ucumUnitKey(y), `${x} is not ${y}`);
+      }
+      const c = item('body-blood-cbc-wbc');
+      c.fhir.value.units['concentration/count-ul'] = '10*9/L';
+      assert.throws(() => check(c), /eventTypes "concentration\/megacount-ml" and "concentration\/count-ul" share the UCUM unit "10\*9\/L" \("10\*6\/mL", powers of ten alike\)/);
+      // a code read as powers of ten and one compared as written are never one, whatever they look like
+      assert.notStrictEqual(ucumUnitKey('10^3 g/L'), ucumUnitKey('kg/L'));
     });
 
     it('[FHIR-MAP-2] coded options match the item options and codings are unique within the item', () => {

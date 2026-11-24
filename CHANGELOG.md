@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+Build check and documentation; the published pack is unchanged.
+
+- **Two eventTypes of one FHIR block never share a unit written with other powers of ten** (B-2026-11-23-14): the
+  `distinctUnits` build check reads `ug/L` and `ng/mL`, or `10*9/L` and `10*6/mL`, as one unit (`ucumUnitKey`), as
+  hds-fhir-js `sameUcum` does on import. No block of the pack is affected. FHIR-MAPPING.md § Import states the rule.
+
 ## [4.31.0] - 2026-11-23
 
 Plan 133 (FHIR after plan 115, Part A): the FHIR mapping of the lab results with no item of their own. Additive in
