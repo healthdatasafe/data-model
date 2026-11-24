@@ -1044,5 +1044,35 @@
       },
       "timeBasis": "creation"
     }
+  },
+  "detailKinds": {
+    "menstrual-cycle-chart": {
+      "label": {
+        "en": "Menstrual cycle chart",
+        "fr": "Tableau de cycle menstruel",
+        "de": "Zyklusblatt",
+        "it": "Scheda del ciclo mestruale"
+      },
+      "description": {
+        "en": "A day-by-day chart of menstrual cycles kept by the person, on paper or exported from an app, whatever the charting method.",
+        "fr": "Un tableau (ou cyclogramme) des cycles menstruels tenu jour par jour par la personne, sur papier ou exporté d'une application, quelle que soit la méthode."
+      },
+      "class": {
+        "system": "http://snomed.info/sct",
+        "code": "184216000",
+        "display": "Patient record type"
+      },
+      "type": {
+        "system": "http://snomed.info/sct",
+        "code": "419891008",
+        "display": "Record artifact"
+      },
+      "detail": {
+        "system": "https://hds.ngo/fhir/CodeSystem/document-kind",
+        "code": "menstrual-cycle-chart",
+        "display": "Menstrual cycle chart"
+      },
+      "timeBasis": "creation"
+    }
   }
 }

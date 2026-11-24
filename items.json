@@ -11862,6 +11862,22 @@
     "repeatable": "P1D",
     "devNotes": "The basal-temperature coverline of one cycle, in °C. One event per cycle, `time` on the\ncalendar day of that cycle's `fertility-cycles-start` (the patient's time zone), no duration.\n`clientData.hdsBasis` says where the value comes from: 'manual' (the person drew or moved the\nline) or 'auto' (computed by the method's coverline rule, see the converter's\n`temperatureRule`, and stored as computed); absent = not stated. Precedence, one rule: a\nreader that computes the line shows a 'manual' event if there is one, otherwise its own\ncomputation, never a stored 'auto'; a reader that cannot compute shows whichever event exists.\nAn 'auto' event is written only by the writer that owns the cycle's data (an import), and\nreplaced by that writer; apps that compute never store 'auto'. Going back to the method's rule\ndeletes the event. Recommended: `clientData.related.<cycleStartEventId>: true`, so a moved\nstart does not orphan the line; if the cycle start moves, the writer moves the coverline with\nit. Chart notation, never a fertility verdict. Added in 3.24.0; see\ndocumentation/MENSTRUAL-CYCLE.md \"Coverline\"."
   },
+  "fertility-cycles-chart-stamp": {
+    "version": "v1",
+    "label": {
+      "en": "Cycle chart stamp",
+      "fr": "Timbre du tableau de cycle"
+    },
+    "description": {
+      "en": "The stamp put on your chart for this day.",
+      "fr": "Le timbre posé sur votre tableau pour ce jour."
+    },
+    "streamId": "fertility-cycles-chart-stamp",
+    "eventType": "fertility/chart-stamp-v1",
+    "type": "imported",
+    "repeatable": "P1D",
+    "devNotes": "The stamp (sticker) a person or her instructor put on a day of a stamp-based chart (Creighton,\nBillings), kept as charted (site-agents#67). One event per day and method, `time` anywhere on that\ncalendar day, no duration. `method` is the charting method's id, as `content.source.key` of a mucus\nobservation; `stamp` names the whole stamp.\nChart notation, never a fertility verdict: no reader derives a fertile or infertile day from it, and\nit is never an input of a conversion or a score. A reader that does not know the method or the stamp\ndraws its own. It belongs to the day, not to one observation: a day\nmay hold a stamp and no code. A reader drawing a chart of `method` shows it in place of the stamp it\nwould draw; it changes no other method's chart. Deleting the event brings the drawn stamp back.\nAn app never stores a stamp it drew itself (a corrected code would keep the old stamp): only one the\nperson picked or an import read. `yellow` and `yellow-baby` are used on the instructor's\ninstruction only, so an app offers them only to a person who asked for them, and never proposes one.\nThe peak mark (`fertility-cycles-peak-day`) and the count days (derived) are not part of it.\n`type: imported` keeps it out of generic pickers and forms: a person enters it in a chart's own\nstamp control. Added in 4.32.0; see documentation/MENSTRUAL-CYCLE.md \"Charted stamp\"."
+  },
   "fertility-miscarriages-count": {
     "version": "temporary",
     "deprecated": true,
