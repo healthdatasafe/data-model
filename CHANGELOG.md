@@ -4,6 +4,12 @@
 
 Build check and documentation; the published pack is unchanged.
 
+- **PARTIAL-DATES.md and FHIR-MAPPING.md § Time name the allergy exceptions** (B-2026-11-21-7): with `unknown`, an
+  allergen item (`allergy-coded`, `allergy-basic`) renders no `onset[x]` (not a `data-absent-reason`), an import with no
+  readable onset date writes `unknown` and is not refused for it, and the two items are in the list of items that may
+  carry `unknown` (since 4.21.0); a "no known allergy" never does. As ALLERGY.md and hds-fhir-js already had it.
+- **PARTIAL-DATES.md, `approx` in FHIR**: the year and a note, as FHIR-MAPPING.md and hds-fhir-js have it; the row said
+  `onsetString` / `performedString`.
 - **Two eventTypes of one FHIR block never share a unit written with other powers of ten** (B-2026-11-23-14): the
   `distinctUnits` build check reads `ug/L` and `ng/mL`, or `10*9/L` and `10*6/mL`, as one unit (`ucumUnitKey`), as
   hds-fhir-js `sameUcum` does on import. No block of the pack is affected. FHIR-MAPPING.md § Import states the rule.

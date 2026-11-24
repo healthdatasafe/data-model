@@ -1650,14 +1650,16 @@ not when someone wrote it down, as for the "March 1999" diagnosis of [PARTIAL-DA
 rendering states it as `onsetDateTime`, and the import prefers the onset. An `onsetPeriod`'s end is not kept (the
 onset is a moment). An Observation's `effectivePeriod.end` is not kept either: the mapped Observation items are point
 events. A missing or unreadable date is rejected (a text onset such as `onsetString` included, and a date element
-carrying only a `data-absent-reason`: reading it back as `unknown` is an open point of PARTIAL-DATES.md). An onset
+carrying only a `data-absent-reason`: reading it back as `unknown` is an open point of PARTIAL-DATES.md); an
+AllergyIntolerance is never refused for its date (§ AllergyIntolerance, Onset). A Condition's onset
 stated absent does not fall through to `recordedDate`: the resource is refused, since the recorded date would read
 as the onset. Precision follows
 [PARTIAL-DATES.md](PARTIAL-DATES.md): a full dateTime is the exact moment, `clientData.hdsTimePrecision: minute`; a
 truncated one (`YYYY`, `YYYY-MM`, `YYYY-MM-DD`) is the start of its period at 12:00 UTC with precision `year`, `month`
 or `day`. Export is the reverse: the date is truncated to the event's precision (`approx` gives the year and a note
 with `hdsTimeText`; `unknown`, 4.19.0, gives no date: the date element carries only the `data-absent-reason`
-extension, code `asked-unknown`, and the recording moment is never exported as the date; an event of a vital-sign,
+extension, code `asked-unknown` (none at all for an allergy's onset or a DocumentReference's `date`), and the recording
+moment is never exported as the date; an event of a vital-sign,
 laboratory or US Core screening item that carries `unknown` is refused, as a month or year one is, since PARTIAL-DATES.md
 never allows `unknown` there; the generic Observation of an unmapped item, such as `finding-coded`, `treatment-*` or
 `encounter-visit`, takes `_effectiveDateTime` the same way). A vital sign known only to the month or the year cannot be exported, since FHIR requires a
