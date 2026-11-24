@@ -2,7 +2,21 @@
 
 ## [Unreleased]
 
-Build check and documentation; the published pack is unchanged.
+Plan 141 (site-agents#67). Additive.
+
+- **Item `fertility-cycles-chart-stamp`** on the new stream of that name under `fertility-cycles` and the new eventType
+  `fertility/chart-stamp-v1` (`{ method, stamp }`): the stamp put on one day of a stamp-based chart (Creighton, Billings),
+  as charted; `stamp` is one of `red`, `green`, `green-baby`, `white-baby`, `yellow`, `yellow-baby`. Chart notation, never a
+  fertility verdict. `type: imported`, `repeatable: P1D`, no `fhir` block. **Consent:** stream permissions are recursive, so
+  an app holding `fertility` or `fertility-cycles` also receives it. MENSTRUAL-CYCLE.md § Charted stamp; tests `[CYC-STAMP]`.
+- **Document kind `menstrual-cycle-chart`**, the first of the new section `documentKinds.detailKinds`: the class and type of
+  `other-patient-record` plus `detail`, a Coding of `https://hds.ngo/fhir/CodeSystem/document-kind`, the second entry of a
+  document's `type`. `documentKinds.kinds` is unchanged (45). A reader of `kinds` alone (hds-lib before
+  `documentKinds.codingsFor`) never offers it and reads a chart as `other-patient-record`. DOCUMENTS.md § Document kinds;
+  tests `[DKND-8]`, `[DKND-9]`.
+- `type: imported` also covers an object entered in a control made for that item alone.
+
+Build check and documentation; the published pack is unchanged by these:
 
 - **PARTIAL-DATES.md and FHIR-MAPPING.md § Time name the allergy exceptions** (B-2026-11-21-7): with `unknown`, an
   allergen item (`allergy-coded`, `allergy-basic`) renders no `onset[x]` (not a `data-absent-reason`), an import with no

@@ -157,6 +157,33 @@
         "on-break"
       ]
     },
+    "fertility/chart-stamp-v1": {
+      "description": "The stamp (sticker) put on one day of a stamp-based fertility-awareness chart, as charted by the person or her instructor. Chart notation: HDS reads no fertility statement from it, and an HDS app never stores a stamp it computed.",
+      "type": "object",
+      "properties": {
+        "method": {
+          "description": "Identifier of the charting method the stamp belongs to, as `source.key` of a mucus observation (e.g. creighton, billings).",
+          "type": "string",
+          "minLength": 1
+        },
+        "stamp": {
+          "description": "The whole stamp: its colour, `-baby` when it carries a baby.",
+          "type": "string",
+          "enum": [
+            "red",
+            "green",
+            "green-baby",
+            "white-baby",
+            "yellow",
+            "yellow-baby"
+          ]
+        }
+      },
+      "required": [
+        "method",
+        "stamp"
+      ]
+    },
     "fertility/tracking-method-v1": {
       "description": "Fertility-awareness charting methods or devices in use. Determines how the person's cycle observations should be interpreted. Array: several methods run concurrently (a method plus a monitor plus BBT). Each event is a complete dated snapshot of the methods active at that time — a method that stops simply does not appear in the next snapshot.",
       "type": "array",

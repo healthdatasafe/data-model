@@ -510,8 +510,8 @@ const itemSchema = {
     // content. Not entered field by field (forms show it as not editable); its eventType
     // must declare `attachmentRequired` (checked in src/items.js). Item-only, like `system`.
     //
-    // `imported` is an object written by an importer from a coded source (`lab-result/coded-v1`),
-    // never entered in a form: read, shown and requested like any item (unlike `system`), left out
+    // `imported` is an object written by an importer from a coded source (`lab-result/coded-v1`) or by a
+    // control made for that item alone (`fertility/chart-stamp-v1`), never entered in a generic form: read, shown and requested like any item (unlike `system`), left out
     // of pickers and form sections. Its eventType must be an object (checked in src/items.js).
     // Item-only, like `system`.
     type: {

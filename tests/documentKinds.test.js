@@ -68,8 +68,9 @@ describe('[DKND] Document kinds', () => {
     const ajv = new AjvDraft04({ strict: false, allErrors: true, coerceTypes: false, validateFormats: true, logger: false });
     addFormats(ajv);
     const validate = ajv.compile(eventTypesById('file/xds-v1'));
-    for (const [key, kind] of kinds) {
-      assert.ok(validate({ class: kind.class, type: [kind.type], title: kind.label.en, language: 'en' }), `${key}: ${JSON.stringify(validate.errors)}`);
+    for (const [key, kind] of [...kinds, ...Object.entries(documentKinds.detailKinds)]) {
+      const type = kind.detail ? [kind.type, kind.detail] : [kind.type];
+      assert.ok(validate({ class: kind.class, type, title: kind.label.en, language: 'en' }), `${key}: ${JSON.stringify(validate.errors)}`);
     }
   });
 
@@ -101,6 +102,42 @@ describe('[DKND] Document kinds', () => {
     otherSystem.kinds['imaging-order'].type.system = 'urn:oid:2.16.840.1.113883.6.96';
     assert.throws(() => checkDocumentKindsTable(otherSystem), /invalid/);
     assert.doesNotThrow(() => checkDocumentKindsTable(copy()));
+  });
+
+  it('[DKND-8] a detail kind has the codes of one of kinds, and its own detail (4.32.0)', () => {
+    const copy = () => JSON.parse(JSON.stringify(documentKinds));
+    assert.deepStrictEqual(Object.keys(documentKinds.detailKinds), ['menstrual-cycle-chart']);
+    const chart = documentKinds.detailKinds['menstrual-cycle-chart'];
+    const plain = documentKinds.kinds['other-patient-record'];
+    assert.deepStrictEqual([chart.class, chart.type], [plain.class, plain.type]);
+    assert.deepStrictEqual(chart.detail, { system: 'https://hds.ngo/fhir/CodeSystem/document-kind', code: 'menstrual-cycle-chart', display: 'Menstrual cycle chart' });
+    const refused = (change, error) => {
+      const table = copy();
+      change(table.detailKinds['menstrual-cycle-chart'], table);
+      assert.throws(() => checkDocumentKindsTable(table), error);
+    };
+    refused((k, table) => { delete table.kinds['other-patient-record']; }, /no kind has the same class and type/);
+    refused((k, table) => { k.type = table.kinds['laboratory-report'].type; }, /no kind has the same class and type/);
+    refused((k) => { k.detail.code = 'cycle-chart'; }, /not its key/);
+    refused((k) => { k.detail.display = 'Chart'; }, /not its English label/);
+    refused((k) => { delete k.detail; }, /invalid/);
+    refused((k) => { k.detail.system = 'http://snomed.info/sct'; }, /invalid/);
+    refused((k, table) => { k.label = table.kinds.consent.label; }, /share the en label/);
+    refused((k, table) => { table.kinds['menstrual-cycle-chart'] = table.kinds.consent; delete table.kinds.consent; }, /both kinds and detailKinds/);
+    refused((k, table) => { table.kinds['other-patient-record'].detail = k.detail; }, /invalid/);
+    const none = copy();
+    delete none.detailKinds;
+    assert.doesNotThrow(() => checkDocumentKindsTable(none));
+  });
+
+  it('[DKND-9] a reader of `kinds` alone offers no detail kind, and reads one as the kind it shares codes with', () => {
+    const { kinds: published, detailKinds } = require('../src/documentKinds').toBePublished()[0].content;
+    for (const [key, { class: cls, type }] of Object.entries(detailKinds)) {
+      assert.strictEqual(published[key], undefined);
+      const same = Object.entries(published).filter(([, k]) => k.type.code === type.code && k.class.code === cls.code).map(([k]) => k);
+      assert.strictEqual(same.length, 1, key);
+    }
+    assert.deepStrictEqual(Object.values(published).filter(k => k.detail), []);
   });
 
   it('[DKND-7] is published in the pack', () => {

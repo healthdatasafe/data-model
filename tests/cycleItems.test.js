@@ -13,6 +13,7 @@ describe('[CYC] Cycle items (3.24.0)', () => {
 
   const PAIRS = {
     'fertility-cycles-coverline': ['fertility-cycles-coverline', 'temperature/c'],
+    'fertility-cycles-chart-stamp': ['fertility-cycles-chart-stamp', 'fertility/chart-stamp-v1'],
     'fertility-cycles-lh-peak-day': ['fertility-cycles-lh-peak-day', 'activity/plain'],
     'fertility-cycles-peak-day': ['fertility-cycles-peak-day', 'activity/plain']
   };
@@ -64,6 +65,32 @@ describe('[CYC] Cycle items (3.24.0)', () => {
     });
   });
 
+  describe('[CYC-STAMP] fertility-cycles-chart-stamp (4.32.0, site-agents#67)', () => {
+    it('[CYC-STAMP-1] one per day, under fertility-cycles, out of generic pickers, with no FHIR block', () => {
+      const item = itemsById['fertility-cycles-chart-stamp'];
+      assert.strictEqual(item.type, 'imported');
+      assert.strictEqual(item.repeatable, 'P1D');
+      assert.strictEqual(item.fhir, undefined);
+      assert.strictEqual(streams.streamsById['fertility-cycles-chart-stamp'].parentId, 'fertility-cycles');
+    });
+
+    it('[CYC-STAMP-2] the method and one of six whole stamps', () => {
+      const type = eventTypesById('fertility/chart-stamp-v1');
+      assert.deepStrictEqual(type.required, ['method', 'stamp']);
+      assert.deepStrictEqual(type.properties.stamp.enum, ['red', 'green', 'green-baby', 'white-baby', 'yellow', 'yellow-baby']);
+    });
+
+    it('[CYC-STAMP-3] no text names a fertile or infertile day, and the reading rules are on the item', () => {
+      const item = itemsById['fertility-cycles-chart-stamp'];
+      for (const text of [...Object.values(item.label), ...Object.values(item.description)]) {
+        assert.doesNotMatch(text, /fertil/i);
+      }
+      assert.match(item.devNotes, /never a fertility verdict/);
+      assert.match(item.devNotes, /never stores a stamp it drew itself/);
+      assert.match(item.devNotes, /on the instructor's\s+instruction only/);
+    });
+  });
+
   describe('[CYC-PEAK] two peaks, two items (B-2026-10-26-19)', () => {
     it('[CYC-PEAK-1] the mucus Peak Day and the LH peak day are sibling streams', () => {
       for (const id of ['fertility-cycles-peak-day', 'fertility-cycles-lh-peak-day']) {
@@ -98,6 +125,10 @@ describe('[CYC] Cycle items (3.24.0)', () => {
     };
     const CASES = {
       'fertility-cycles-coverline': { valid: [36.5, 36.45], invalid: ['36.5', null, { value: 36.5 }] },
+      'fertility-cycles-chart-stamp': {
+        valid: [{ method: 'creighton', stamp: 'yellow' }, { method: 'billings', stamp: 'white-baby' }],
+        invalid: ['yellow', null, { stamp: 'yellow' }, { method: 'creighton' }, { method: '', stamp: 'red' }, { method: 'creighton', stamp: 'red-baby' }]
+      },
       'fertility-cycles-lh-peak-day': { valid: [null], invalid: [true, 1] },
       'fertility-cycles-peak-day': { valid: [null], invalid: [true, 1] }
     };
