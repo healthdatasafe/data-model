@@ -78,6 +78,8 @@ newest `models/<method>/vM.json` with M ≤ N, each tagged `modelVersion`. The i
 `versions`; hds-lib 2.60.0+ fetches the highest it supports (its `SUPPORTED_CONVERTER_VERSIONS`), never a newer one.
 `pack-latest.json` is the v0 pack without `modelVersion`, frozen: hds-lib before 2.60.0 reads only that URL.
 
+- Translations of a method are not in the packs: `converters/{key}/l10n-{locale}.json` (`documentation/L10N.md`) holds them
+  and may change; `en` and `fr` stay frozen with the pack.
 - **A published pack never changes.** `tests/fixtures/converter-packs.sha256.json` pins each one and `scripts/deploy.sh`
   refuses a build that changes a deployed pack. So any method change (a label, a new option, a vector, a new method) is
   a new model version **and** a new converter version of the same name, never an edit of a published file; the build

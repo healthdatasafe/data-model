@@ -1,5 +1,9 @@
 const fs = require('fs');
 const path = require('path');
+const { loadLocales, localise, converterSidecars, checkPublished, checkConsentLabels } = require('./l10n');
+const { checkDocumentKindsTable } = require('./documentKinds');
+const { checkItem } = require('./schemas/items');
+const { checkVocabulary } = require('./schemas/vocabularies');
 
 const basePath = path.resolve(__dirname, '../dist');
 
@@ -38,8 +42,18 @@ const htmlTableSrc = [{
   linkTxt: 'pack.json'
 }];
 
+const { locales, doNotTranslate } = loadLocales();
+const publishedFiles = [];
+
 for (const source of sources) {
-  for (const file of source()) {
+  for (const published of source()) {
+    const fileName = published.path.replace(/^\.\//, '').replace(/([^/])$/, '$1/') + published.filename;
+    const file = { ...published, content: localise(fileName, published.content, locales) };
+    // what the definitions were checked for must hold in every language of the pack
+    if (file.includeInPack === 'documentKinds') checkDocumentKindsTable(file.content);
+    if (file.includeInPack === 'items') for (const [key, item] of Object.entries(file.content)) checkItem(item, key);
+    if (file.includeInPack === 'vocabularies') for (const [key, vocabulary] of Object.entries(file.content)) checkVocabulary(vocabulary, key);
+    publishedFiles.push({ fileName, content: file.content });
     const dirPath = path.resolve(basePath, file.path);
     const filePath = path.resolve(dirPath, file.filename);
     if (file.type !== 'json') throw new Error('Can only publish json files');
@@ -54,6 +68,14 @@ for (const source of sources) {
     });
   }
 }
+
+checkPublished(publishedFiles, locales, doNotTranslate);
+for (const [name, content] of Object.entries(converterSidecars(publishedFiles, locales))) {
+  fs.writeFileSync(path.resolve(basePath, name), JSON.stringify(content, null, 2), 'utf-8');
+  htmlTableSrc.push({ title: `Translations: ${name}`, link: `./${name}`, linkTxt: name });
+}
+
+checkConsentLabels(pack.streams, pack.items, locales);
 
 const packFilePath = path.resolve(basePath, 'pack.json');
 fs.writeFileSync(packFilePath, JSON.stringify(pack, null, 2), 'utf-8');

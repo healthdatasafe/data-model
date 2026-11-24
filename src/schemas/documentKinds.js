@@ -19,7 +19,9 @@ const label = {
     fr: { type: 'string', minLength: 1 },
     de: { type: 'string', minLength: 1 },
     it: { type: 'string', minLength: 1 },
-    es: { type: 'string', minLength: 1 }
+    es: { type: 'string', minLength: 1 },
+    pt: { type: 'string', minLength: 1 },
+    'pt-BR': { type: 'string', minLength: 1 }
   },
   additionalProperties: false
 };

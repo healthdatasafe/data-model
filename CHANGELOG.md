@@ -14,6 +14,13 @@ Build check and documentation; the published pack is unchanged.
   `distinctUnits` build check reads `ug/L` and `ng/mL`, or `10*9/L` and `10*6/mL`, as one unit (`ucumUnitKey`), as
   hds-fhir-js `sameUcum` does on import. No block of the pack is affected. FHIR-MAPPING.md § Import states the rule.
 
+Plan 138: a place for more languages. No text is added: the pack is unchanged.
+
+- `definitions/l10n/{locale}.json`: reviewed translations (`es`, `it`, `pt`, `pt-BR`) added by the build, checked against the
+  English they translate (`documentation/L10N.md`). Converter packs stay frozen: their texts go to
+  `converters/{key}/l10n-{locale}.json`.
+- `json-schemas/vocabulary.json` and `documentKinds.json`: labels accept `pt` and `pt-BR` (vocabularies also `de`, `it`).
+
 ## [4.31.0] - 2026-11-23
 
 Plan 133 (FHIR after plan 115, Part A): the FHIR mapping of the lab results with no item of their own. Additive in
