@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.32.0] - 2026-11-24
 
 Plan 141 (site-agents#67). Additive.
 
