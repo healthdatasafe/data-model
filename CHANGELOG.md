@@ -8,6 +8,8 @@ Build check and documentation; the published pack is unchanged.
   allergen item (`allergy-coded`, `allergy-basic`) renders no `onset[x]` (not a `data-absent-reason`), an import with no
   readable onset date writes `unknown` and is not refused for it, and the two items are in the list of items that may
   carry `unknown` (since 4.21.0); a "no known allergy" never does. As ALLERGY.md and hds-fhir-js already had it.
+- **FHIR-MAPPING.md § Time, a laboratory result or US Core screening answer known only to the month or the year**
+  (B-2026-11-23-15): exported with that date and without its US Core profile claim (us-core-1), not refused.
 - **PARTIAL-DATES.md, `approx` in FHIR**: the year and a note, as FHIR-MAPPING.md and hds-fhir-js have it; the row said
   `onsetString` / `performedString`.
 - **Two eventTypes of one FHIR block never share a unit written with other powers of ten** (B-2026-11-23-14): the
