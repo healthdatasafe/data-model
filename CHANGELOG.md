@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased]
+## [4.36.0] - 2026-11-25
 
-Plan 128 (D59), for 4.36.0. Additive in the pack.
+Plan 128 (D59). Additive in the pack.
 
 - **A dated grid (a paper cycle chart), CONVERSATION.md § A dated grid.** `grid` (`row`, `column`) on a proposed value: its box. Reason
   `not-read` on an `unmapped` one: the contact sees writing in a box and proposes nothing from it; `printed.value` is then absent
