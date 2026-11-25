@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+## [4.37.0] - 2026-11-25
+
+Plan 138. Additive in the pack: more languages in the text maps, no key, path or English changed.
+
+- **Brazilian Portuguese (`pt-BR`), Italian (`it`) and Spanish (`es`)**, machine drafts not reviewed yet, in
+  `definitions/l10n/{locale}.json`: 3,123 `pt-BR`, 3,077 `it`, 3,111 `es` texts (streams, items, eventTypes, vocabularies,
+  document kinds, app streams). The texts of the frozen converter packs (cervical fluid, mood) are in the new
+  `converters/{key}/l10n-{locale}.json`, which hds-lib 2.70.0 and later read. `pack.json` grows from 1.13 MB to 1.39 MB (151 KB
+  to 199 KB gzip).
+- **A draft may be published when marked** (L10N.md): an entry is reviewed (`reviewedBy`, `reviewedOn`) or `"status": "draft"`
+  with no reviewer; the build refuses any other shape. A reviewed text replaces the draft.
+- **`definitions/l10n/do-not-translate.json`**: the 58 texts of licensed or validated questionnaires on nine items (the
+  EQ-5D-5L dimensions, alcohol frequency, pain severity, mental distress, self-rated and general health), left in English in
+  these languages until an official wording is given.
 - **Documentation: a lifetime tally in FHIR** (plan 133, no pack change): FHIR-MAPPING.md § A lifetime tally, TREATMENT-PROCEDURE.md
   § FHIR. An event carrying `count` is an Observation of the count (hds-fhir-js after 0.14.0); as before, never a Procedure.
 
