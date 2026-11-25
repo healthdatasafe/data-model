@@ -67,6 +67,10 @@
             "dropped": {
               "type": "integer",
               "minimum": 0
+            },
+            "notRead": {
+              "type": "integer",
+              "minimum": 0
             }
           }
         },
