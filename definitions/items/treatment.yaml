@@ -26,6 +26,18 @@ treatment-basic:
       type: text
       canBeNull: true
   repeatable: unlimited
+  # A Procedure over a period (documentation/TREATMENT-PROCEDURE.md § FHIR): the name as written is `code.text`, `notes`
+  # the `note`, and `status` comes from the span (open: in-progress; ended: completed; a point: unknown). `count` is never
+  # rendered, and an event that carries one is a lifetime tally, no Procedure at all. Imported by the `meta.tag` of an HDS
+  # export or by a named item only: any other Procedure is a procedure.
+  fhir:
+    resourceType: Procedure
+    code: { from: text, field: name }
+    status: { from: span }
+    ignore: [count]
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-procedure
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips
   devNotes: >-
     Examples: IVF, chemotherapy, CBT, dialysis.
 
@@ -46,3 +58,12 @@ treatment-coded:
   type: datasource-search
   datasource: treatment
   repeatable: unlimited
+  # The coded regimen (`regimen.codes`, through fhirMapping.systems) is `Procedure.code`; the rest as the basic twin. The
+  # scope key is the bare `Procedure`, as the procedure items: this root is its second grant root.
+  fhir:
+    resourceType: Procedure
+    code: { from: datasource, field: regimen }
+    status: { from: span }
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-procedure
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips

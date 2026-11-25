@@ -326,6 +326,7 @@ function checkFhirMapping (key, item, itemEventTypes) {
     checkLabResultContent(item, f, itemEventTypes, fail);
     if (f.alsoMatch != null) fail('"alsoMatch" applies to a static or eventType code only');
   }
+  if (f.status != null && !isProcedure) fail('"status" applies to a Procedure only (the status of a course, from the event\'s span)');
   if (isProcedure) {
     checkProcedure(item, f, itemEventTypes, fail);
     if (composite?.notes != null) mappedFields.add('notes');
@@ -669,9 +670,16 @@ function checkTextField (item, field, itemEventTypes, fail) {
  * reads by name: `notes`, a string, is `Procedure.note`; `count`, a number, marks a lifetime tally ("had it N times"),
  * which is not one dated procedure and never renders as a Procedure. Either may be absent from the eventType; one
  * that is there has that type, so a renderer holding the block alone never meets another shape under these names.
+ *
+ * `status: { from: span }` is on an item whose events may be a span still running (`duration.canBeNull`), and only
+ * there: without it an open span has no rendering (a procedure that took place is `completed`), and without an open
+ * span there is no status to take from it.
  */
 function checkProcedure (item, f, itemEventTypes, fail) {
   if (itemEventTypes.length !== 1) fail('a Procedure block needs an item with exactly one eventType');
+  const openSpan = item.duration?.canBeNull === true;
+  if (openSpan && f.status == null) fail('an item whose duration may be null (a span still running) needs "status: { from: span }" on its Procedure block: without it the Procedure is completed, and an open span has no rendering');
+  if (!openSpan && f.status != null) fail('"status: { from: span }" needs an item whose duration may be null (duration.canBeNull: a span still running)');
   const notes = contentProperty(itemEventTypes[0], 'notes');
   if (notes != null && notes.type !== 'string') fail(`content property "notes" of eventType "${itemEventTypes[0]}" is not a string (it renders as Procedure.note)`);
   const count = contentProperty(itemEventTypes[0], 'count');
@@ -1095,6 +1103,11 @@ function checkFhirImportKeys (items) {
       // The code is per event and nothing in a resource names the specimen for sure, so a concept-coded item (one per
       // specimen) claims no import key and is never matched by code or category: the importer is told the item
       // (FHIR-MAPPING.md § Import), or reads it back from the `meta.tag` of an HDS export.
+      continue;
+    } else if (f.status?.from === 'span') {
+      // Nothing in a Procedure tells a course from one act (not its code, not the shape of its date), so a treatment
+      // item claims no import key either: the importer is told the item, or reads it back from the `meta.tag` of an
+      // HDS export. Any other Procedure is a procedure.
       continue;
     } else if (f.code.from === 'datasource' || f.code.from === 'content' || f.code.from === 'text') {
       // The resource's code is content, so the item is matched by (resourceType, category) alone: one per category

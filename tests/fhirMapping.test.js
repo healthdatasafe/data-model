@@ -272,7 +272,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.deepStrictEqual(fhirMapping.productSystems, { Swissmedic: 'https://hds.ngo/fhir/sid/swissmedic', CIS: 'https://smt.esante.gouv.fr/terminologie-bdpm' });
     });
 
-    it('[FHIR-ITEM-13] procedures (plan 115): both procedure items are a Procedure under a bare scope key; the coded item takes its code from the datasource, the basic one the name as text; count is never rendered; the treatment items stay unmapped', () => {
+    it('[FHIR-ITEM-13] procedures (plan 115): both procedure items are a Procedure under a bare scope key; the coded item takes its code from the datasource, the basic one the name as text; count is never rendered', () => {
       const profiles = {
         us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-procedure',
         ips: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips'
@@ -287,7 +287,16 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         assert.strictEqual(itemsById[k].streamId, 'procedure');
         assert.strictEqual(itemsById[k].duration, undefined, `${k}: a point event, no duration declared`);
       }
-      for (const k of ['treatment-basic', 'treatment-coded']) assert.strictEqual(itemsById[k].fhir, undefined, `${k} is mapped`);
+    });
+
+    it('[FHIR-ITEM-15] treatments (plan 133): both treatment items are a Procedure under the same bare key, with their status from the span; count is never rendered', () => {
+      const profiles = itemsById['procedure-coded'].fhir.profiles;
+      assert.deepStrictEqual(itemsById['treatment-coded'].fhir, { resourceType: 'Procedure', code: { from: 'datasource', field: 'regimen' }, status: { from: 'span' }, profiles });
+      assert.deepStrictEqual(itemsById['treatment-basic'].fhir, { resourceType: 'Procedure', code: { from: 'text', field: 'name' }, status: { from: 'span' }, ignore: ['count'], profiles });
+      for (const k of ['treatment-basic', 'treatment-coded']) {
+        assert.strictEqual(itemsById[k].streamId, 'treatment');
+        assert.strictEqual(itemsById[k].duration.canBeNull, true, `${k}: a span may still run`);
+      }
     });
 
     it('[FHIR-ITEM-14] questionnaire answers (plan 115): the answer item is a QuestionnaireResponse under a bare scope key, with no code and no profile claimed; the request item is a Questionnaire under a bare scope key of its own, on a sibling stream; the root is explicitGrantOnly and the consent text names everything a grant shows', () => {
@@ -1021,6 +1030,44 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => checkFhirImportKeys({ a: { fhir: proc('procedure-coded').fhir }, b: { fhir: proc('procedure-coded').fhir } }), /fhir import key Procedure from datasource is claimed by both "a" and "b"/);
     });
 
+    it('[FHIR-MAP-28] a Procedure whose status comes from the span: exactly on an item whose duration may be null, on a Procedure only, from: span only, and with no import key (plan 133)', () => {
+      const treat = (k = 'treatment-basic') => item(k);
+      for (const k of ['treatment-basic', 'treatment-coded']) {
+        checkItem(treat(k), k);
+        check(treat(k), k);
+      }
+      const a = treat();
+      delete a.fhir.status;
+      assert.throws(() => check(a, 't'), /needs "status: \{ from: span \}" on its Procedure block/);
+      for (const duration of [undefined, { mandatory: false, canBeNull: false }, { mandatory: false }]) {
+        const b = treat();
+        b.duration = duration;
+        assert.throws(() => check(b, 't'), /needs an item whose duration may be null/);
+      }
+      // a duration that is never null keeps the procedure rendering
+      const c = item('procedure-basic');
+      c.duration = { mandatory: false, canBeNull: false };
+      check(c, 'p');
+      const d = item('procedure-basic');
+      d.fhir.status = { from: 'span' };
+      assert.throws(() => check(d, 'p'), /needs an item whose duration may be null/);
+      const e = item('condition-coded');
+      e.fhir.status = { from: 'span' };
+      assert.throws(() => check(e, 'c'), /"status" applies to a Procedure only/);
+      for (const status of [{ from: 'field' }, {}, { from: 'span', field: 'x' }, 'span', true]) {
+        const g = treat();
+        g.fhir.status = status;
+        assert.throws(() => checkItem(g, 't'), JSON.stringify(status));
+      }
+      const h = treat();
+      delete h.fhir.ignore;
+      assert.throws(() => check(h, 't'), /composite field "count" is neither mapped nor listed in "ignore"/);
+      // no import key: the procedure items stay the only ones a Procedure is matched to
+      const { checkFhirImportKeys } = require('../src/fhir');
+      checkFhirImportKeys({ a: { fhir: item('procedure-coded').fhir }, b: { fhir: item('procedure-basic').fhir }, c: { fhir: treat('treatment-coded').fhir }, d: { fhir: treat().fhir } });
+      assert.throws(() => checkFhirImportKeys({ a: { fhir: item('procedure-coded').fhir }, c: { fhir: { ...treat('treatment-coded').fhir, status: undefined } } }), /fhir import key Procedure from datasource is claimed by both/);
+    });
+
     it('[FHIR-MAP-26] a QuestionnaireResponse block: resourceType and profiles only (no code, no category, no value), on a system item whose one eventType holds requestEventId and answers; one item maps the resourceType (plan 115)', () => {
       const qr = () => item('questionnaire-answer');
       checkItem(qr(), 'questionnaire-answer');
@@ -1513,7 +1560,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         'Observation|survey': ['wellbeing-general-health'],
         'Observation|vital-signs': ['body-blood-pressure', 'body-heart-rate', 'body-height', 'body-oxygen-saturation', 'body-weight'],
         Patient: ['profile-address', 'profile-date-of-birth', 'profile-name', 'profile-sex'],
-        Procedure: ['procedure'],
+        Procedure: ['procedure', 'treatment'],
         Questionnaire: ['questionnaire-request'],
         QuestionnaireResponse: ['questionnaire-answer']
       });
@@ -1523,6 +1570,9 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.strictEqual(readLock().streams.questionnaire, undefined);
       // the Procedure grant reaches the context stream under its root, which holds no item of its own
       assert.deepStrictEqual(readLock().streams['procedure-fertility'], { pair: 'Procedure', parent: 'procedure', items: [] });
+      // the treatment root is its second grant root, context stream included
+      assert.deepStrictEqual(readLock().streams.treatment, { pair: 'Procedure', parent: null, items: ['treatment-basic', 'treatment-coded'] });
+      assert.deepStrictEqual(readLock().streams['treatment-fertility'], { pair: 'Procedure', parent: 'treatment', items: [] });
       assert.deepStrictEqual(mergeLock(readLock(), lockEntries(itemsById, fhirScopes)), readLock(), 'definitions/fhir/scopes.lock.json is not up to date');
       assert.ok(!JSON.stringify(fhirScopes).includes(UNMAPPED));
     });

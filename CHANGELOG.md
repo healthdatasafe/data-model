@@ -1,5 +1,21 @@
 # Changelog
 
+## [4.34.0] - 2026-11-25
+
+Plan 133 (FHIR after plan 115, Part A): the treatment items. Additive in the pack; the SMART grant table widens.
+
+- **`treatment-basic` and `treatment-coded` carry a `Procedure` block** with the new block field `status: { from: span }`: the
+  status comes from the event's span (open `in-progress`, ended `completed`, a planned end `in-progress`, a point `unknown`).
+  A tally (`count`) is still no Procedure. FHIR-MAPPING.md § Treatments.
+- **SMART grant table and consent:** `fhirScopes.Procedure` is `[procedure, treatment]`, for good (`treatment-fertility`, later
+  context streams and the tallies included). A new consent to `patient/Procedure.rs` offers the treatments; a grant already
+  issued does not follow.
+- **No import key:** a Procedure is imported into a treatment item by the `meta.tag` of an HDS export or by name only.
+- Build: `status` on a Procedure only, required when the item's duration may be null and refused otherwise. Tests
+  `[FHIR-ITEM-15]`, `[FHIR-MAP-28]`.
+- **Needs hds-fhir-js 0.14.0 to render:** an older one skips the two blocks and keeps serving the events as generic
+  Observations. The facade is re-pinned only with that renderer.
+
 ## [4.33.0] - 2026-11-25
 
 Plan 128. Additive.

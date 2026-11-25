@@ -100,7 +100,12 @@ block renders nothing), which the pinned pack hash keeps from production until t
 order: data-model first, then
 hds-fhir-js, then the facade pin and the extension options, then hds-webapp and doctor-dashboard on the new library
 tag** (their export indexes the live pack, [Forward compatibility](#forward-compatibility)). The `treatment`
-items stay unmapped ([Procedures](#procedures-procedure), last paragraph).
+items joined the key later ([Treatments](#treatments-procedure-over-a-period)).
+
+**Treatments (4.34.0, plan 133):** the two treatment items carry a `Procedure` block too, with `status: { from: span }`, a new
+block field: the status comes from the event's span, and the item has no import key
+([Treatments](#treatments-procedure-over-a-period)). An older renderer does not know the field, skips the block and keeps
+serving the events as generic Observations. Needs hds-fhir-js 0.14.0 to render.
 
 **Questionnaire answers (4.12.0, plan 115):** the `questionnaire-answer` item carries a `QuestionnaireResponse`
 block, a **bare scope key**, the first block with no `code` (the resource has none, and its content is read by
@@ -204,8 +209,8 @@ block emit a `category` coding without a table: if a profile ever requires one (
 `MedicationRequest.category` Must Support), it is a renderer-side constant, never the pack. The medication types hold
 one item set each, so `patient/MedicationRequest.rs` is the whole of it and a `?category=` on them grants nothing,
 now and for good. So does `Procedure` ([Procedures](#procedures-procedure) gives the reasons): `patient/Procedure.rs`
-is every procedure, and a stream mapped to `Procedure` later (the `treatment` root, if it comes to that) joins the
-same key as a new grant root, never a category of it. `QuestionnaireResponse` is a bare key too
+is every procedure and every treatment (the `treatment` root is the key's second grant root, plan 133; any stream mapped
+to `Procedure` later joins the same key the same way, never a category of it). `QuestionnaireResponse` is a bare key too
 ([QuestionnaireResponse](#questionnaireresponse-questionnaire-answers)), and so is `Questionnaire`
 ([Questionnaire](#questionnaire-questionnaire-requests)). So is `AllergyIntolerance` (4.21.0,
 [AllergyIntolerance](#allergyintolerance-allergies)): `patient/AllergyIntolerance.rs` is every allergy, and the
@@ -231,6 +236,7 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 | `split` | no | Extra resources, one per numeric composite field (below). |
 | `ignore` | no | Composite fields deliberately left out of the FHIR rendering. |
 | `dosage` | on a medication | `{ field, doseUnits, routes }`: the regimen as a FHIR `Dosage` ([medications](#medications-medicationstatement-and-medicationrequest)). Required on a `MedicationStatement` or `MedicationRequest`, refused elsewhere. |
+| `status` | on a treatment | `{ from: span }`: a Procedure's status from the event's span ([treatments](#treatments-procedure-over-a-period)). Required on a Procedure item whose `duration` may be null, refused elsewhere. |
 | `profiles` | yes | Profile per flavour; `{}` claims none (below). |
 
 **Codings** always have a canonical system URI (`http://loinc.org`, `http://snomed.info/sct`), never a label, a
@@ -614,8 +620,8 @@ Keys are `ResourceType|category` for a resourceType with a category table, and t
 without (`Patient`, `MedicationStatement`, `MedicationRequest`, `Procedure`, `QuestionnaireResponse`,
 `Questionnaire`, `AllergyIntolerance`); values are sorted stream ids.
 `patient/Patient.rs` and `patient/*.rs` reach the `Patient` key, `patient/MedicationStatement.rs` the
-`MedicationStatement` key, `patient/Procedure.rs` the `Procedure` key (the `procedure` root, its context stream
-`procedure-fertility` with it); a scope with `?category=` never reaches a bare key. **A grant root under an `explicitGrantOnly` root is offered unticked**
+`MedicationStatement` key, `patient/Procedure.rs` the `Procedure` key (the `procedure` and `treatment` roots, their context streams
+`procedure-fertility` and `treatment-fertility` with them); a scope with `?category=` never reaches a bare key. **A grant root under an `explicitGrantOnly` root is offered unticked**
 ([GENETICS.md](GENETICS.md#explicitgrantonly)): `questionnaire-answer` is in the offer of `patient/*.rs`, of
 `patient/QuestionnaireResponse.rs` and of the native `hds/stream/questionnaire-answer.read` alike, and in each the
 person has to tick it. The same holds for `questionnaire-request` (4.13.0): `patient/*.rs`, `patient/Questionnaire.rs`
@@ -869,7 +875,7 @@ second stream that renders as `Procedure` joins the key as another grant root.
    uncategorised Observation (which is what the generic rendering is), never through a pack category.
 2. **`count` and `notes` are reserved names on every eventType an item maps to `Procedure`.** The block does not
    name them (unlike `dosage.field`): the renderer reads them by name and the build only pins their types. On any
-   item ever mapped to `Procedure` (the treatment items next), a non-null `count` means "a lifetime tally, not a
+   item ever mapped to `Procedure` (the treatment items included), a non-null `count` means "a lifetime tally, not a
    Procedure" and a string `notes` is the note. A future Procedure item that wants a `count` with another meaning
    (embryos transferred) cannot have it under that name.
 
@@ -938,20 +944,81 @@ approximate date renders, "Date: about …", comes back there too). Everything e
 but `duration` is a native event field any writer can set, and an imported operation states a start and an end. The
 block honours it both ways rather than drop an end the source stated; no form surfaces it today.
 
-**`treatment` is not mapped in this slice.** `treatment-basic` and `treatment-coded` hold a regimen or a course
-over time (IVF, chemotherapy, dialysis, CBT), with an optional span and, again, lifetime tallies. In FHIR R4 that is
-a `Procedure` too (the resource covers long-running care: "counselling, physiotherapy, …", with `performedPeriod`
-and `status: in-progress` while it runs), not a `CarePlan` (an intention; the event records what was undergone, not
-what is planned) and not a `MedicationStatement` (no substance). The seeded regimens are SNOMED CT procedures
-(`52637005` Test tube ovum fertilization (procedure), `61285001` Ovulation induction (procedure), …). Mapping it
-means: the `treatment` root as a second grant root of the `Procedure` key; `status` from the span (open: `in-progress`,
-ended: `completed`), the duration being `null` while ongoing and no duration for a point event (PARTIAL-DATES.md
-§ The rule), so an absent duration maps to `unknown`; and an import rule that tells the two
-datasource-coded Procedure items apart, which the build refuses today (one datasource-coded item per bare key) and
-no category can supply. That rule is the design to make first. It cannot be the shape of the date (an operation
-with a start and an end is a period and no treatment, and imports here as a procedure with a duration): route by
-code, on which datasets-service dataset holds the coding, the bridge resolving it as it completes `hdsId`, with
-procedure as the fallback. Treatment tallies are most of the intake data, so the tally rendering matters more there.
+### Treatments: Procedure over a period
+
+`treatment-basic` and `treatment-coded` hold a regimen or a course over time (IVF, chemotherapy, dialysis, CBT), with an
+optional span ([TREATMENT-PROCEDURE.md](TREATMENT-PROCEDURE.md)). In FHIR R4 that is a `Procedure` too (the resource covers
+long-running care), not a `CarePlan` (an intention; the event records what was undergone) and not a `MedicationStatement`
+(no substance). Plan 133.
+
+```yaml
+treatment-coded:
+  fhir:
+    resourceType: Procedure
+    code: { from: datasource, field: regimen }
+    status: { from: span }
+    profiles: { us: …, ips: … }          # as the procedure items
+treatment-basic:
+  fhir:
+    resourceType: Procedure
+    code: { from: text, field: name }
+    status: { from: span }
+    ignore: [count]
+    profiles: { us: …, ips: … }
+```
+
+Everything is as on a procedure item (`code`, `notes`, dates and their precision, the profiles, a tally, the refusal of a
+start in the future) except the status, the open span and the import.
+
+| Event | `status` | `performed[x]` |
+|---|---|---|
+| `count != null` | no Procedure: a lifetime tally, the generic Observation | |
+| `duration: null` (still running) | `in-progress` | `performedPeriod { start }` |
+| a positive `duration`, its end not in the future | `completed` | `performedPeriod { start, end }` |
+| a positive `duration`, its end in the future | `in-progress` | `performedPeriod { start, end }` (R4: a future end is a planned one) |
+| no `duration`, `0`, or a span within one period: a point | `unknown` | `performedDateTime` |
+| a start in the future; a legacy `period` key | refused | |
+
+- **A point is `unknown`**, never `completed`: in the common case the event does not say whether the course is over. A few
+  points are known to be over (a span within one period; a course of unknown start that ended before it was recorded,
+  PARTIAL-DATES.md); they cannot be told apart, so that fact is not stated. `unknown` is a code of the required binding,
+  and `performed[x]` is stated with it.
+- **An ended span is `completed`** (R4: "the event has now concluded"). Whether it was stopped early is not stored.
+- **"In the future"** is the UTC rule of a procedure: an end known as November 2026 has passed from 1 November. So a course
+  whose end is known to the current month or year only reads `completed` before that period closes (recorded as ended "this
+  month", or planned to end then: the event does not say which).
+- **A date nobody knows** (`hdsTimePrecision: unknown`): `_performedDateTime` `asked-unknown` on a point,
+  `performedPeriod._start` `asked-unknown` on a span, its end stated when known, as on a MedicationStatement.
+- **`meta.tag`** names the item (`https://hds.ngo/fhir/CodeSystem/item`), always: it is what brings the export back.
+
+**Import: by name, never by guess.** A Procedure goes to a treatment item when its `meta.tag` names it (an HDS export) or
+when the caller names it. Any other Procedure is a procedure, as before.
+It is not routed by its code: SNOMED CT calls a course and a single act alike `(procedure)`, and the datasets-service lists
+do not draw the line the items draw (B-2026-11-24-13). Nor by the shape of its date: an operation with a start and an end
+is a period and no treatment. A tag that names no active item a Procedure imports into (a renamed key included: an alias is resolved the day one
+exists) is reported, never sent to a procedure item.
+A tag stripped on the way costs the route: a `completed` treatment then lands on a procedure item, and any other status is
+refused. Into a treatment item:
+
+| Source | Event |
+|---|---|
+| `in-progress`, a start (or a date) and no end | `duration: null` |
+| `in-progress` with an end, passed or not | that `duration` (a planned end read after it passed is the same event, and renders `completed` once the end's period has begun) |
+| `in-progress` with an end within the start's period | a point: the model keeps no span within one period, so `in-progress` is kept as `unknown` |
+| `completed` with a start and an end | that `duration`; an end in the future is refused |
+| `completed` or `unknown`, a date or a start only, or a span within one period | a point (a `completed` point is kept as `unknown`: less, not false) |
+| `unknown` with an end beyond the start's period | refused: the span would render as more than the source says |
+| `preparation`, `on-hold`, `stopped` | refused: no status is stored |
+| `entered-in-error`, `not-done`; a start in the future; an end before the start | refused |
+
+Not read back, as elsewhere: a date stated as a `data-absent-reason` (refused), `approx` (comes back as a year, its text in
+`notes`), `hdsTimeZone`, a tally, a coded treatment none of whose codes has a datasource label (refused).
+
+**One-way doors.** The `treatment` root is in the `Procedure` grant for good, `treatment-fertility` and any later context
+stream under it included (the lock asks for a `reviewed` entry), and so are its tallies, which a reader of the grant sees
+as generic Observations. Nothing under it can be a category-scoped Observation. The item keys are in exported files. A
+grant issued before does not follow. A faithful rendering of a tally is its own design (above), and matters more here:
+most treatment intake data are tallies.
 
 ## AllergyIntolerance: allergies
 
@@ -1516,7 +1583,7 @@ Observation goes to `body-heart-rate`, not to the blood-pressure pulse. The buil
 accepts (`hds-fhir-js`: `matchResource`, which also says why nothing matched). A medication is matched on its
 `medicationCodeableConcept`: a coding with a datasource label goes to the datasource-coded item, a name alone to the
 text-coded one ([medications](#medications-medicationstatement-and-medicationrequest)); a Procedure the same way on
-its `code` ([procedures](#procedures-procedure)). **Deprecated items are not import
+its `code` ([procedures](#procedures-procedure)), never to a treatment item unless a tag names it (below). **Deprecated items are not import
 keys:** the importer matches against active items only, so a legacy item that keeps its replacement's block for its
 past events (`fertility-hormone-lh`, `fertility-hormone-pdg`) never makes a code match two items, and an imported
 resource always lands on the active item, in its current eventType.
@@ -1532,6 +1599,10 @@ printed unit in any spelling (an HDS export tagged with the coded item comes bac
 the owner's; BLOOD-CHEMISTRY.md § Rules, the interim case) or the result is not a quantity (an item event has no
 place for a printed text), and then only into the coded item of the owner's specimen.
 
+**Treatment items are never matched either** (`treatment-basic`, `treatment-coded`; plan 133). They claim no import key: the
+caller names the item, or the `meta.tag` of an HDS export does. Any other Procedure is a procedure
+([treatments](#treatments-procedure-over-a-period)).
+
 - **Category.** The resource's categories are its `category` codings in the systems of the resourceType's table
   (`fhirMapping.categories`); a coding in another system (a local category, another IG's) says nothing checkable and
   is ignored. A resource with none matches by code alone. Otherwise one of them must be the block's `category` or one
@@ -1544,7 +1615,8 @@ place for a printed text), and then only into the coded item of the owner's spec
   `entered-in-error`, `cancelled` or `draft` (never an order), a Procedure `entered-in-error` or `not-done`, an
   AllergyIntolerance whose `verificationStatus` is `refuted` or `entered-in-error` ([allergies](#allergyintolerance-allergies)). Placing
   them would state as fact what the source retracted. Every other status imports as it is (`preliminary`, `amended`,
-  …), except on a Procedure, where only `completed` has a place ([procedures](#procedures-procedure)), and on a
+  …), except on a Procedure, where only `completed` has a place on a procedure item ([procedures](#procedures-procedure))
+  and `in-progress` and `unknown` too on a treatment item ([treatments](#treatments-procedure-over-a-period)), and on a
   Condition (next point).
 - **A qualified Condition is refused too** (hds-fhir-js 0.10.3), though nothing was withdrawn: a `verificationStatus`
   of `provisional`, `differential` or `unconfirmed`, and any other stated value but `confirmed` (another code, a coding
@@ -1662,7 +1734,7 @@ with `hdsTimeText`; `unknown`, 4.19.0, gives no date: the date element carries o
 extension, code `asked-unknown` (none at all for an allergy's onset or a DocumentReference's `date`), and the recording
 moment is never exported as the date; an event of a vital-sign,
 laboratory or US Core screening item that carries `unknown` is refused, since PARTIAL-DATES.md
-never allows `unknown` there; the generic Observation of an unmapped item, such as `finding-coded`, `treatment-*` or
+never allows `unknown` there; the generic Observation of an unmapped item, such as `finding-coded` or
 `encounter-visit`, takes `_effectiveDateTime` the same way). A vital sign known only to the month or the year cannot be exported, since FHIR requires a
 vital sign's date to the day (vs-1), and is refused rather than padded to a day. A
 laboratory result or a US Core screening answer known only to the month or the year (`approx` included) is exported with
@@ -1728,7 +1800,9 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   eventType, whose `notes`, when declared, is a string (a `text` field on a composite, counted as mapped: it renders
   as `Procedure.note`) and whose `count`, when declared, is a number (on a composite it is listed in `ignore`). The
   two names are reserved on every Procedure-mapped eventType: the renderer reads them by name
-  ([Procedures](#procedures-procedure), one-way doors).
+  ([Procedures](#procedures-procedure), one-way doors). `status` is `{ from: span }` and nothing else, on a Procedure only
+  (`[FHIR-MAP-28]`): required when the item's `duration.canBeNull` is true, refused otherwise. Such a block claims no
+  import key.
 - **Allergies (`[ALG-FHIR-*]`):** an `AllergyIntolerance` takes `{ from: datasource }` or `{ from: text }`, no
   `category`, no `value`, no `split`, no `dosage`, and its item declares no `duration`; one eventType, which declares
   and requires `status` (on a composite never `canBeNull`), and whose `status`, `verificationStatus`, `categories`, `type`, `criticality`, `lastOccurrence`, `notes`

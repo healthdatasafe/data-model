@@ -1058,6 +1058,19 @@
         "questionnaire-request"
       ]
     },
+    "treatment": {
+      "pair": "Procedure",
+      "parent": null,
+      "items": [
+        "treatment-basic",
+        "treatment-coded"
+      ]
+    },
+    "treatment-fertility": {
+      "pair": "Procedure",
+      "parent": "treatment",
+      "items": []
+    },
     "wellbeing-general-health": {
       "pair": "Observation|survey",
       "parent": "wellbeing",

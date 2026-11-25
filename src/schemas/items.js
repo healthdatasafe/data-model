@@ -360,6 +360,14 @@ const defsSchema = {
         ignore: { type: 'array', minItems: 1, uniqueItems: true, items: { type: 'string', minLength: 1 } },
         // The regimen as a FHIR Dosage: required on a MedicationStatement or MedicationRequest, refused elsewhere.
         dosage: { $ref: 'defs.json#/definitions/fhirDosage' },
+        // Where a Procedure's status comes from: the event's span (a course over time, the treatment items). Without it
+        // the status is `completed` (the procedure items). TREATMENT-PROCEDURE.md § FHIR.
+        status: {
+          type: 'object',
+          properties: { from: { type: 'string', enum: ['span'] } },
+          required: ['from'],
+          additionalProperties: false
+        },
         profiles: { $ref: 'defs.json#/definitions/fhirProfiles' }
       },
       required: ['resourceType', 'profiles'],
