@@ -8,7 +8,8 @@ implementation of what follows.
 ## The request
 
 Schema: `json-schemas/hds-eligibility-request.json` (`src/schemas/eligibilityRequest.js`). It is not an event and not an
-item: a study publishes it, the app evaluates it. How it reaches the app is not defined here.
+item: a study publishes it, the app evaluates it. It reaches the app by id, through a `research-eligibility-request` alert
+([`RESEARCH.md`](RESEARCH.md) § Alert kinds).
 
 ```json
 {
@@ -111,4 +112,5 @@ meets), two criteria asking the same thing, or two requests of one study read to
 
 One event per request, updated when she sends again (earlier content may stay in the event's history, if the platform
 keeps one). Closed: no score, value, answer, criterion or mark of what was
-asked. It is not an item and sits on no model stream.
+asked. It is not an item. It is written on `hds-research-eligibility`, where HDS reads it through the research
+relationship's grant ([`RESEARCH.md`](RESEARCH.md)).

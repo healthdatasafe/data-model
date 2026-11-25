@@ -1,0 +1,24 @@
+# Labels of the research topics a person can choose (documentation/RESEARCH.md § Topics). Uncoded on purpose: a topic
+# is a broad area a study recruits in, not a clinical concept, so it carries no SNOMED CT or FHIR code. One area per
+# key, so that no key ever needs splitting. The eventType enum is the contract (src/vocabularies.js checks that these
+# values equal it, in order). Append-only: a new topic is a minor release; a key is never renamed or removed.
+
+research-topic:
+  binds:
+    - { eventType: research/topics-v1, path: topics }
+  values:
+    cardiovascular: { label: { en: Heart and blood vessels, fr: Cœur et vaisseaux } }
+    metabolic: { label: { en: Diabetes and metabolism, fr: Diabète et métabolisme } }
+    mental-health: { label: { en: Mental health, fr: Santé mentale } }
+    neurology: { label: { en: Brain and nervous system, fr: Cerveau et système nerveux } }
+    cancer: { label: { en: Cancer, fr: Cancer } }
+    respiratory: { label: { en: Lungs and breathing, fr: Poumons et respiration } }
+    reproductive-health: { label: { en: Fertility and reproductive health, fr: Fertilité et santé reproductive } }
+    womens-health: { label: { en: Women's health, fr: Santé des femmes } }
+    pregnancy: { label: { en: Pregnancy, fr: Grossesse } }
+    sleep: { label: { en: Sleep, fr: Sommeil } }
+    nutrition: { label: { en: Nutrition, fr: Nutrition } }
+    physical-activity: { label: { en: Physical activity, fr: Activité physique } }
+    musculoskeletal: { label: { en: "Bones, joints and muscles", fr: "Os, articulations et muscles" } }
+    infectious-diseases: { label: { en: Infections and vaccines, fr: Infections et vaccins } }
+    rare-diseases: { label: { en: Rare diseases, fr: Maladies rares } }

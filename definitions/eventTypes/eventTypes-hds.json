@@ -5031,6 +5031,24 @@
         "band": { "description": "Band of the unrounded score, in %.", "type": "string", "enum": ["0-49", "50-100"] }
       }
     },
+    "research/topics-v1": {
+      "description": "The research topics a person chose, to receive the research invitations that concern them: one event, updated in place. An empty list means none chosen. Keys of the research-topic vocabulary only, no free text. See documentation/RESEARCH.md.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["topics"],
+      "properties": {
+        "topics": {
+          "description": "Chosen topics, each once.",
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 32,
+          "items": {
+            "type": "string",
+            "enum": ["cardiovascular", "metabolic", "mental-health", "neurology", "cancer", "respiratory", "reproductive-health", "womens-health", "pregnancy", "sleep", "nutrition", "physical-activity", "musculoskeletal", "infectious-diseases", "rare-diseases"]
+          }
+        }
+      }
+    },
     "support/conversation-v1": {
       "description": "State of one support conversation, kept on the support group's account: one event per conversation, updated in place by the support service and the team's members; times are Unix seconds. Holds no health data, no message text and no email address. See documentation/SUPPORT.md.",
       "type": "object",

@@ -6,7 +6,14 @@ Additive in the pack.
 
 - **Eligibility test of a study:** eventType `research/eligibility-band-v1` (`requestId` and `band`, `0-49` or `50-100`,
   closed) and the published schema `json-schemas/hds-eligibility-request.json` (criteria with a requester-set weight, a
-  declarative rule, an optional question). No item, no stream. documentation/ELIGIBILITY.md; tests `[ELIG-*]`.
+  declarative rule, an optional question). No item. documentation/ELIGIBILITY.md; tests `[ELIG-*]`.
+- **The research relationship (documentation/RESEARCH.md):** root `hds-research`, `explicitGrantOnly` (the research
+  invite's one `read` permission; holds no event; exactly two children, for good) with `hds-research-eligibility` (the
+  band events) and `hds-research-topics`. eventType `research/topics-v1` (`topics`, keys of the new append-only
+  `research-topic` vocabulary, uncoded, closed). `notification/alert-cmc` kinds `research-invitation` (`studyId`) and
+  `research-eligibility-request` (`requestId`), ids only, schema `json-schemas/hds-research-alert.json`. Tests `[RES-*]`.
+- **Before the first write** to `hds-research`, consumers honour its marker as for `genetics`, and existing `*` accesses
+  on each core get the `level: none` mask. Needs CONSENTS.md § Optional choices (`declined`) released first.
 
 - **`consent/record-v1` action `declined`**: the user was asked an optional choice and said no. CONSENTS.md § Optional
   choices: a document the account does not depend on (the research opt-in first). Yes is `given`; no is `withdrawn`
