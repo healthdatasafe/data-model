@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.34.0] - 2026-11-25
 
 Plan 133 (FHIR after plan 115, Part A): the treatment items. Additive in the pack; the SMART grant table widens.
 
@@ -14,6 +14,17 @@ Plan 133 (FHIR after plan 115, Part A): the treatment items. Additive in the pac
 - Build: `status` on a Procedure only, required when the item's duration may be null and refused otherwise. Tests
   `[FHIR-ITEM-15]`, `[FHIR-MAP-28]`.
 - **Needs the renderer first** (hds-fhir-js): an older one skips the two blocks and serves the events as generic Observations.
+
+## [4.33.0] - 2026-11-25
+
+Plan 128. Additive.
+
+- **`task-status.status` `on-hold`.** The contact has the document and cannot work on it now; she has nothing to do; posted only
+  while none of her answers is awaited; it carries the attempt of the work it holds back, no `counts`, no `errorCode`. A later
+  `task-status` supersedes it (R4). An app that does not know it reads it as in progress, not settled (R8). Posted again at
+  least once per 24 h while it lasts, any current status at most twice per 24 h per document. CONVERSATION.md § The flow;
+  tests `[CNV-SHAPE-3]`, `[CNV-DOC-STATUS]`. hds-lib mirrors the enum (`TASK_STATUSES`) and must follow at once: its `CNV10` compares with
+  the published schema.
 
 ## [4.32.0] - 2026-11-24
 

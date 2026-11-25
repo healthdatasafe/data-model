@@ -358,8 +358,8 @@ Written by the sender on its own `<scope>:collectors:<peerSlug>` stream; the plu
   on the person's account. Every id matches `^[a-zA-Z0-9_-]+$`, at most 64 characters. The `hds` block is closed per
   kind and published as `json-schemas/hds-conversation-alert.json`; every writer validates against it (the cores do
   not validate `hds`).
-- `status` is one of `received`, `reading`, `awaiting-answers`, `done`, `error`; the state of a document is its latest
-  `task-status` by alert `time`, `attempt` (from 1) only labelling it and breaking a tie: a contact that restarts may
+- `status` is one of `received`, `reading`, `on-hold` (4.33.0), `awaiting-answers`, `done`, `error`; the state of a document
+  is its latest `task-status` by alert `time`, `attempt` (from 1) only labelling it and breaking a tie: a contact that restarts may
   not know the last attempt. `counts` holds `proposed`, `questions`, `keptAside`, `dropped`, integers only.
   `errorCode` is a code, MUST with `error`. `notice.code` and `errorCode` are codes, bare for HDS's and `x-<vendor>-`
   for a third party's (CONVERSATION.md § Notice and error codes).

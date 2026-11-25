@@ -9,7 +9,7 @@ const ID = { type: 'string', maxLength: 64, pattern: '^[a-zA-Z0-9_-]+$' };
 const CODE = { type: 'string', pattern: '^[a-z0-9][a-z0-9-]{0,63}$' };
 const COUNT = { type: 'integer', minimum: 0 };
 
-const STATUSES = ['received', 'reading', 'awaiting-answers', 'done', 'error'];
+const STATUSES = ['received', 'reading', 'on-hold', 'awaiting-answers', 'done', 'error'];
 
 const hdsConversationAlert = {
   $id: 'https://model.datasafe.dev/json-schemas/hds-conversation-alert.json',
@@ -20,7 +20,7 @@ const hdsConversationAlert = {
   oneOf: [
     branch('task-status', 'contact to person: the state of the work on one document. Alerts are immutable: the state is the latest by alert time, attempt breaking a tie.', ['about', 'status', 'attempt'], {
       about: { ...ID, description: 'The event id of the document.' },
-      status: { type: 'string', enum: STATUSES },
+      status: { type: 'string', enum: STATUSES, description: 'on-hold (4.33.0): the contact has the document and cannot work on it now.' },
       attempt: { description: 'Attempt on this document, from 1: a label and a tie-break, never the order (a restarted contact may not know the last one).', type: 'integer', minimum: 1 },
       counts: {
         description: 'Counts only, never what was counted.',
