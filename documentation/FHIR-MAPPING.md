@@ -871,8 +871,8 @@ second stream that renders as `Procedure` joins the key as another grant root.
 1. **Nothing under `procedure` can ever be a category-scoped Observation.** The lock holds `procedure` and
    `procedure-fertility` under the pair `Procedure`, and one subtree holds one pair. So `findings` can never be
    mapped as Observations from these streams, and a tally can never be served under `Observation|survey` or any
-   other category key. A faithful rendering of a tally is therefore reachable only on the renderer's side, as an
-   uncategorised Observation (which is what the generic rendering is), never through a pack category.
+   other category key. A tally is therefore rendered on the renderer's side only, as an uncategorised Observation
+   ([below](#a-lifetime-tally-an-observation)), never through a pack category.
 2. **`count` and `notes` are reserved names on every eventType an item maps to `Procedure`.** The block does not
    name them (unlike `dosage.field`): the renderer reads them by name and the build only pins their types. On any
    item ever mapped to `Procedure` (the treatment items included), a non-null `count` means "a lifetime tally, not a
@@ -902,13 +902,10 @@ never served as a Procedure and never silently dropped.
 **A lifetime tally is not a Procedure.** An event whose content carries `count` (TREATMENT-PROCEDURE.md, Flavour A:
 "had it 2 times", `0` meaning never, recorded on an intake form) states no date of any procedure: its `time` is when
 the question was answered. Rendering it as a Procedure would state a performed date that is not one, state several
-procedures as one, and, for `0`, state a procedure that never happened. So `count != null` means **no Procedure**:
-hds-fhir-js renders such an event as the generic Observation of its item (the HDS item coding, no value), exactly
-what every procedure event rendered as before this block, so it stays visible to a reader of the grant and claims
-nothing. It does not answer a Procedure search. Rendering a tally faithfully is its own design, decided in principle
-(2026-11-15): an uncategorised Observation on the renderer's side, the count as its value and the procedure named
-in its code beside the item coding; never a Procedure (us-core-7 wants a date for `completed`, and `not-done` for a
-`0` would enter procedure lists as an event), never a pack category (above).
+procedures as one, and, for `0`, state a procedure that never happened. So `count != null` means **no Procedure** (us-core-7
+wants a date for `completed`, and `not-done` for a `0` would enter procedure lists as an event): it does not answer a
+Procedure search. It is an Observation of the count ([A lifetime tally](#a-lifetime-tally-an-observation)), so it stays
+visible to a reader of the grant.
 
 **The writer's side of that rule: a Flavour A event MUST carry `count`** (`0` included). The split is `count !=
 null` and nothing else, so an intake answer written without it (`{ name: "HSG" }`, at the time of the form) is read
@@ -972,7 +969,7 @@ start in the future) except the status, the open span and the import.
 
 | Event | `status` | `performed[x]` |
 |---|---|---|
-| `count != null` | no Procedure: a lifetime tally, the generic Observation | |
+| `count != null` | no Procedure: a lifetime tally, an Observation of the count ([below](#a-lifetime-tally-an-observation)) | |
 | `duration: null` (still running) | `in-progress` | `performedPeriod { start }` |
 | a positive `duration`, its end not in the future | `completed` | `performedPeriod { start, end }` |
 | a positive `duration`, its end in the future | `in-progress` | `performedPeriod { start, end }` (R4: a future end is a planned one) |
@@ -1012,13 +1009,45 @@ refused. Into a treatment item:
 | `entered-in-error`, `not-done`; a start in the future; an end before the start | refused |
 
 Not read back, as elsewhere: a date stated as a `data-absent-reason` (refused), `approx` (comes back as a year, its text in
-`notes`), `hdsTimeZone`, a tally, a coded treatment none of whose codes has a datasource label (refused).
+`notes`), `hdsTimeZone`, a coded treatment none of whose codes has a datasource label (refused).
 
 **One-way doors.** The `treatment` root is in the `Procedure` grant for good, `treatment-fertility` and any later context
 stream under it included (the lock asks for a `reviewed` entry), and so are its tallies, which a reader of the grant sees
-as generic Observations. Nothing under it can be a category-scoped Observation. The item keys are in exported files. A
-grant issued before does not follow. A faithful rendering of a tally is its own design (above), and matters more here:
-most treatment intake data are tallies.
+as Observations. Nothing under it can be a category-scoped Observation. The item keys are in exported files. A
+grant issued before does not follow.
+
+### A lifetime tally: an Observation
+
+An event of a procedure or treatment item whose content carries `count` ("had it N times", `0`: never). The renderer's alone:
+no block, scope or lock entry (plan 133, hds-fhir-js after 0.14.0; an earlier one serves the generic Observation of the item,
+without what was counted, the count or the notes).
+
+| Observation | From |
+|---|---|
+| `code` | the HDS item coding alone (`https://hds.ngo/fhir/CodeSystem/item`), as the generic rendering, and the text `<what was counted>: number of times (lifetime)` |
+| `valueInteger` | `count`; `0` is never |
+| `component` (one) | `code` `https://hds.ngo/fhir/CodeSystem/tally` `counted`; `valueCodeableConcept` the selection's codings and label, or the name as text |
+| `effectiveDateTime`, `note`, `performer`, `identifier` | the event's date at its precision (`unknown`: `asked-unknown`), `notes`, as on a generic Observation and a Procedure |
+| `category`, `meta` | the HDS-only category `hds-item` (no category search or scope reaches it), no profile, the tags `https://hds.ngo/fhir/CodeSystem/rendering` `tally` and the item |
+
+- **Why the procedure is not in `code`:** codings of one CodeableConcept say the same concept, and "IVF" is not "number of IVF".
+  At `0`, a reader of the codes alone would see a procedure the person never had. The price: `code=<SNOMED code>` does not find a
+  tally, and the tallies of an item share one `code` coding, so a reader that groups by coding mixes them (`code.text` tells them
+  apart). No SNOMED CT or LOINC code states the count for a procedure named elsewhere in the resource; the few
+  that exist count one named procedure each.
+- **Never less than the generic Observation.** Content that does not fit (a `count` that is not an integer from 0 to 2147483647,
+  no name or selection, `notes` that is no string, a `duration` beside the count, a legacy `performed` or `period`) is served as the
+  generic Observation, never refused.
+- **The text is derived**, in English whatever the language of the name, and never read back.
+- **Import:** an Observation with the `tally` tag and one item tag naming a procedure or treatment item comes back as its event, by
+  those tags alone (`count`, the selection or the name, `notes`, the date). Any other Observation is not a tally: no code is
+  claimed. Refused: a tag naming no such item, or several, or another than the item the caller names by its key; a status other than `final`; a value that is not one `valueInteger` from 0;
+  any other component; a date that is no `effectiveDateTime` (an `unknown` one included); a coded item with no coding that has a
+  datasource label.
+- **What a grant shows.** A tally is in the streams of every `Procedure` grant, and is read by an Observation search without a
+  category, or by id. Grants issued before this rendering show its content too, notes included: what a person consented to at
+  stream level is readable in FHIR.
+- **Permanent:** the two tags, the CodeSystem and code of the component, the value type, and no clinical coding in `code`.
 
 ## AllergyIntolerance: allergies
 
