@@ -166,7 +166,8 @@
     "profile-sex"
   ],
   "Procedure": [
-    "procedure"
+    "procedure",
+    "treatment"
   ],
   "Questionnaire": [
     "questionnaire-request"

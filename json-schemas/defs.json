@@ -681,6 +681,21 @@
         "dosage": {
           "$ref": "defs.json#/definitions/fhirDosage"
         },
+        "status": {
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "string",
+              "enum": [
+                "span"
+              ]
+            }
+          },
+          "required": [
+            "from"
+          ],
+          "additionalProperties": false
+        },
         "profiles": {
           "$ref": "defs.json#/definitions/fhirProfiles"
         }

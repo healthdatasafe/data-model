@@ -18742,6 +18742,23 @@
       }
     },
     "repeatable": "unlimited",
+    "fhir": {
+      "resourceType": "Procedure",
+      "code": {
+        "from": "text",
+        "field": "name"
+      },
+      "status": {
+        "from": "span"
+      },
+      "ignore": [
+        "count"
+      ],
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-procedure",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips"
+      }
+    },
     "devNotes": "Examples: IVF, chemotherapy, CBT, dialysis."
   },
   "treatment-coded": {
@@ -18763,7 +18780,21 @@
     },
     "type": "datasource-search",
     "datasource": "treatment",
-    "repeatable": "unlimited"
+    "repeatable": "unlimited",
+    "fhir": {
+      "resourceType": "Procedure",
+      "code": {
+        "from": "datasource",
+        "field": "regimen"
+      },
+      "status": {
+        "from": "span"
+      },
+      "profiles": {
+        "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-procedure",
+        "ips": "http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips"
+      }
+    }
   },
   "wellbeing-mood": {
     "version": "v2",
