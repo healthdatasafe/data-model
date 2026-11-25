@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- **Documentation: a lifetime tally in FHIR** (plan 133, no pack change): FHIR-MAPPING.md § A lifetime tally, TREATMENT-PROCEDURE.md
+  § FHIR. An event carrying `count` is an Observation of the count (hds-fhir-js after 0.14.0); as before, never a Procedure.
+
 ## [4.36.0] - 2026-11-25
 
 Plan 128 (D59). Additive in the pack.
