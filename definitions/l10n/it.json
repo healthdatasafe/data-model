@@ -3414,7 +3414,7 @@
     },
     "body-blood-serum-crp/label": {
       "en": "CRP",
-      "text": "PCR",
+      "text": "Proteina C reattiva (PCR)",
       "status": "draft"
     },
     "body-blood-serum-crp/description": {
@@ -3439,7 +3439,7 @@
     },
     "body-blood-serum-crp-hs/label": {
       "en": "hs-CRP",
-      "text": "PCR ad alta sensibilità",
+      "text": "Proteina C reattiva ad alta sensibilità (hs-PCR)",
       "status": "draft"
     },
     "body-blood-serum-crp-hs/description": {
@@ -9092,7 +9092,7 @@
     },
     "methods[1]/name": {
       "en": "Bigelow Mucus Score",
-      "text": "Punteggio del muco Bigelow",
+      "text": "Bigelow Mucus Score",
       "status": "draft"
     },
     "methods[1]/description": {
@@ -10519,7 +10519,7 @@
     },
     "methods[1]/name": {
       "en": "Bigelow Mucus Score",
-      "text": "Punteggio del muco Bigelow",
+      "text": "Bigelow Mucus Score",
       "status": "draft"
     },
     "methods[1]/description": {
@@ -12431,7 +12431,7 @@
     },
     "methods[1]/name": {
       "en": "Bigelow Mucus Score",
-      "text": "Punteggio del muco Bigelow",
+      "text": "Bigelow Mucus Score",
       "status": "draft"
     },
     "methods[1]/description": {

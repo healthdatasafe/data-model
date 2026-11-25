@@ -117,7 +117,7 @@
     },
     "[id=\"body\"]/children[id=\"body-vulva\"]/children[id=\"body-vulva-mucus\"]/label": {
       "en": "Vulva Mucus",
-      "text": "Muco vulvar",
+      "text": "Muco cervical",
       "status": "draft"
     },
     "[id=\"body\"]/children[id=\"body-vulva\"]/children[id=\"body-vulva-mucus\"]/children[id=\"body-vulva-mucus-inspect\"]/label": {
@@ -3414,7 +3414,7 @@
     },
     "body-blood-serum-crp/label": {
       "en": "CRP",
-      "text": "PCR",
+      "text": "Proteína C reativa (PCR)",
       "status": "draft"
     },
     "body-blood-serum-crp/description": {
@@ -3439,7 +3439,7 @@
     },
     "body-blood-serum-crp-hs/label": {
       "en": "hs-CRP",
-      "text": "PCR ultrassensível",
+      "text": "Proteína C reativa ultrassensível (PCR-us)",
       "status": "draft"
     },
     "body-blood-serum-crp-hs/description": {
@@ -8233,7 +8233,7 @@
     },
     "medication-when/values/evening/label": {
       "en": "In the evening",
-      "text": "À noite",
+      "text": "No início da noite",
       "status": "draft"
     },
     "medication-when/values/night/label": {
@@ -9267,7 +9267,7 @@
     },
     "temperatureRules/sympto-thermal/label": {
       "en": "STM / TCOYF",
-      "text": "Sintotérmico / TCOYF",
+      "text": "STM / TCOYF",
       "status": "draft"
     },
     "temperatureRules/sensiplan/label": {
@@ -9322,7 +9322,7 @@
     },
     "methods[1]/name": {
       "en": "Bigelow Mucus Score",
-      "text": "Escore de muco Bigelow",
+      "text": "Bigelow Mucus Score",
       "status": "draft"
     },
     "methods[1]/description": {
@@ -10242,7 +10242,7 @@
     },
     "methods[11]/name": {
       "en": "STM / TCOYF",
-      "text": "Sintotérmico / TCOYF",
+      "text": "STM / TCOYF",
       "status": "draft"
     },
     "methods[11]/description": {
@@ -10694,7 +10694,7 @@
     },
     "temperatureRules/sympto-thermal/label": {
       "en": "STM / TCOYF",
-      "text": "Sintotérmico / TCOYF",
+      "text": "STM / TCOYF",
       "status": "draft"
     },
     "temperatureRules/sensiplan/label": {
@@ -10749,7 +10749,7 @@
     },
     "methods[1]/name": {
       "en": "Bigelow Mucus Score",
-      "text": "Escore de muco Bigelow",
+      "text": "Bigelow Mucus Score",
       "status": "draft"
     },
     "methods[1]/description": {
@@ -12154,7 +12154,7 @@
     },
     "methods[11]/name": {
       "en": "STM / TCOYF",
-      "text": "Sintotérmico / TCOYF",
+      "text": "STM / TCOYF",
       "status": "draft"
     },
     "methods[11]/description": {
@@ -12606,7 +12606,7 @@
     },
     "temperatureRules/sympto-thermal/label": {
       "en": "STM / TCOYF",
-      "text": "Sintotérmico / TCOYF",
+      "text": "STM / TCOYF",
       "status": "draft"
     },
     "temperatureRules/sensiplan/label": {
@@ -12661,7 +12661,7 @@
     },
     "methods[1]/name": {
       "en": "Bigelow Mucus Score",
-      "text": "Escore de muco Bigelow",
+      "text": "Bigelow Mucus Score",
       "status": "draft"
     },
     "methods[1]/description": {
@@ -13581,7 +13581,7 @@
     },
     "methods[11]/name": {
       "en": "STM / TCOYF",
-      "text": "Sintotérmico / TCOYF",
+      "text": "STM / TCOYF",
       "status": "draft"
     },
     "methods[11]/description": {

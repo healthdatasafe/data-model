@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { LOCALES, checkLocales, forEachText, localise, converterSidecars, checkPublished, checkConsentLabels } = require('../src/l10n');
+const { LOCALES, checkLocales, forEachText, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels } = require('../src/l10n');
 
 const entry = (en, text) => ({ en, text, reviewedBy: 'reviewer', reviewedOn: '2026-11-24' });
 const paths = (content) => { const out = []; forEachText(content, (node, at) => out.push(at)); return out; };
@@ -56,6 +56,32 @@ describe('[L10N] Translations added at build', () => {
     assert.throws(() => check({ en: 'a', text: 'x' }), /reviewedBy is missing/);
     assert.throws(() => check({ ...draft, text: '' }), /text is missing/);
     assert.throws(() => check({ ...entry('a', 'x'), note: 'n' }), /unknown key note/);
+    assert.throws(() => check(null), /l10n: it f a: an entry is an object/);
+    assert.throws(() => checkLocales({ it: { f: null } }, []), /l10n: it f is not an object/);
+  });
+
+  it('[L10N12] a held text takes a reviewed official wording only; official is a non-empty string', () => {
+    const held = [{ file: 'f', path: 'a', reason: 'licensed questionnaire' }];
+    const check = (e, h = held) => checkLocales({ it: { f: { a: e } } }, h);
+    assert.throws(() => check({ en: 'a', text: 'x', status: 'draft' }), /licensed questionnaire \(no draft/);
+    assert.throws(() => check({ en: 'a', text: 'x', status: 'draft', official: 'EuroQol' }), /no draft/);
+    assert.throws(() => check({ ...entry('a', 'x'), official: true }), /official is the source/);
+    assert.throws(() => check({ ...entry('a', 'x'), official: '' }), /official is the source/);
+    assert.throws(() => check({ ...entry('a', 'x'), official: '' }, []), /official is the source/);
+    assert.doesNotThrow(() => check({ ...entry('a', 'x'), official: 'EuroQol' }));
+  });
+
+  it('[L10N13] the pack and the converter sidecars say whether a locale holds drafts', () => {
+    const name = 'converters/x/pack-v1.json';
+    const pack = { methods: [{ id: 'm', label: { en: 'Two-day' } }] };
+    const locales = {
+      it: { [name]: { 'methods[id="m"]/label': { en: 'Two-day', text: 'Due giorni', status: 'draft' } }, f: { a: entry('a', 'x') } },
+      'pt-BR': { [name]: { 'methods[id="m"]/label': entry('Two-day', 'Dois dias') } }
+    };
+    assert.deepEqual(localeStatus(locales), { it: { status: 'draft' }, 'pt-BR': { status: 'reviewed' } });
+    const sidecars = converterSidecars([{ fileName: name, content: pack }], locales);
+    assert.equal(sidecars['converters/x/l10n-it.json'].status, 'draft');
+    assert.equal(sidecars['converters/x/l10n-pt-BR.json'].status, 'reviewed');
   });
 
   it('[L10N6] a frozen converter pack is not touched: its texts go to a sidecar', () => {
@@ -64,7 +90,7 @@ describe('[L10N] Translations added at build', () => {
     const locales = { 'pt-BR': { [name]: { 'methods[id="m"]/label': entry('Two-day', 'Dois dias') } } };
     assert.equal(localise(name, pack, locales), pack);
     assert.deepEqual(converterSidecars([{ fileName: name, content: pack }], locales), {
-      'converters/x/l10n-pt-BR.json': { locale: 'pt-BR', packs: { 'pack-v1.json': { 'methods[id="m"]/label': 'Dois dias' } } }
+      'converters/x/l10n-pt-BR.json': { locale: 'pt-BR', status: 'reviewed', packs: { 'pack-v1.json': { 'methods[id="m"]/label': 'Dois dias' } } }
     });
   });
 

@@ -3414,7 +3414,7 @@
     },
     "body-blood-serum-crp/label": {
       "en": "CRP",
-      "text": "PCR",
+      "text": "Proteína C reactiva (PCR)",
       "status": "draft"
     },
     "body-blood-serum-crp/description": {
@@ -3439,7 +3439,7 @@
     },
     "body-blood-serum-crp-hs/label": {
       "en": "hs-CRP",
-      "text": "PCR ultrasensible",
+      "text": "Proteína C reactiva ultrasensible (PCR-us)",
       "status": "draft"
     },
     "body-blood-serum-crp-hs/description": {
@@ -8323,7 +8323,7 @@
     },
     "medication-prescription-status/values/stopped/label": {
       "en": "Stopped",
-      "text": "Suspendida",
+      "text": "Interrumpida",
       "status": "draft"
     },
     "medication-prescription-status/values/completed/label": {
@@ -9207,7 +9207,7 @@
     },
     "temperatureRules/sympto-thermal/label": {
       "en": "STM / TCOYF",
-      "text": "MST / TCOYF",
+      "text": "STM / TCOYF",
       "status": "draft"
     },
     "temperatureRules/sensiplan/label": {
@@ -9262,7 +9262,7 @@
     },
     "methods[1]/name": {
       "en": "Bigelow Mucus Score",
-      "text": "Puntuación de moco Bigelow",
+      "text": "Bigelow Mucus Score",
       "status": "draft"
     },
     "methods[1]/description": {
@@ -10182,7 +10182,7 @@
     },
     "methods[11]/name": {
       "en": "STM / TCOYF",
-      "text": "MST / TCOYF",
+      "text": "STM / TCOYF",
       "status": "draft"
     },
     "methods[11]/description": {
@@ -10634,7 +10634,7 @@
     },
     "temperatureRules/sympto-thermal/label": {
       "en": "STM / TCOYF",
-      "text": "MST / TCOYF",
+      "text": "STM / TCOYF",
       "status": "draft"
     },
     "temperatureRules/sensiplan/label": {
@@ -10689,7 +10689,7 @@
     },
     "methods[1]/name": {
       "en": "Bigelow Mucus Score",
-      "text": "Puntuación de moco Bigelow",
+      "text": "Bigelow Mucus Score",
       "status": "draft"
     },
     "methods[1]/description": {
@@ -12094,7 +12094,7 @@
     },
     "methods[11]/name": {
       "en": "STM / TCOYF",
-      "text": "MST / TCOYF",
+      "text": "STM / TCOYF",
       "status": "draft"
     },
     "methods[11]/description": {
@@ -12546,7 +12546,7 @@
     },
     "temperatureRules/sympto-thermal/label": {
       "en": "STM / TCOYF",
-      "text": "MST / TCOYF",
+      "text": "STM / TCOYF",
       "status": "draft"
     },
     "temperatureRules/sensiplan/label": {
@@ -12601,7 +12601,7 @@
     },
     "methods[1]/name": {
       "en": "Bigelow Mucus Score",
-      "text": "Puntuación de moco Bigelow",
+      "text": "Bigelow Mucus Score",
       "status": "draft"
     },
     "methods[1]/description": {
@@ -13521,7 +13521,7 @@
     },
     "methods[11]/name": {
       "en": "STM / TCOYF",
-      "text": "MST / TCOYF",
+      "text": "STM / TCOYF",
       "status": "draft"
     },
     "methods[11]/description": {
