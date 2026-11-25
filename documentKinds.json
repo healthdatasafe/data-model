@@ -11,11 +11,16 @@
         "en": "Consultation report",
         "fr": "Rapport de consultation",
         "de": "Konsultationsbericht",
-        "it": "Rapporto di consultazione"
+        "it": "Rapporto di consultazione",
+        "es": "Informe de consulta",
+        "pt-BR": "Relatório de consulta"
       },
       "description": {
         "en": "A doctor's report or letter on a consultation, including a specialist's reply to the referring doctor.",
-        "fr": "Le rapport ou la lettre d'un médecin sur une consultation, y compris la réponse d'un spécialiste au médecin qui l'a adressé."
+        "fr": "Le rapport ou la lettre d'un médecin sur une consultation, y compris la réponse d'un spécialiste au médecin qui l'a adressé.",
+        "es": "Informe o carta de un médico sobre una consulta, incluida la respuesta de un especialista al médico que derivó a la persona.",
+        "it": "Il referto o la lettera di un medico su una consultazione, compresa la risposta di uno specialista al medico che ha inviato la persona.",
+        "pt-BR": "Relatório ou carta médica sobre uma consulta, incluindo a resposta de um especialista a quem fez o encaminhamento."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -35,11 +40,16 @@
         "en": "History and physical examination",
         "fr": "Anamnèse et examen clinique",
         "de": "Anamnese und Untersuchungsbefund",
-        "it": "Anamnesi ed esame obiettivo"
+        "it": "Anamnesi ed esame obiettivo",
+        "es": "Anamnesis y exploración física",
+        "pt-BR": "Anamnese e exame físico"
       },
       "description": {
         "en": "The medical history and examination findings taken at a first visit or an admission.",
-        "fr": "L'anamnèse et les constatations de l'examen, relevées lors d'une première visite ou d'une admission."
+        "fr": "L'anamnèse et les constatations de l'examen, relevées lors d'une première visite ou d'une admission.",
+        "es": "La anamnesis y los hallazgos de la exploración recogidos en una primera visita o en un ingreso.",
+        "it": "L'anamnesi e i reperti dell'esame, raccolti alla prima visita o a un ricovero.",
+        "pt-BR": "O histórico médico e os achados do exame, registrados em uma primeira consulta ou em uma internação."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -59,11 +69,16 @@
         "en": "Progress report",
         "fr": "Rapport de suivi",
         "de": "Verlaufsbericht",
-        "it": "Referto sul decorso"
+        "it": "Referto sul decorso",
+        "es": "Informe de evolución",
+        "pt-BR": "Relatório de evolução"
       },
       "description": {
         "en": "How a condition or a treatment has evolved over a period of follow-up.",
-        "fr": "L'évolution d'une affection ou d'un traitement sur une période de suivi."
+        "fr": "L'évolution d'une affection ou d'un traitement sur une période de suivi.",
+        "es": "Cómo ha evolucionado una afección o un tratamiento durante un período de seguimiento.",
+        "it": "L'evoluzione di una condizione o di un trattamento durante un periodo di controllo.",
+        "pt-BR": "Como uma condição ou um tratamento evoluiu ao longo de um período de acompanhamento."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -83,11 +98,16 @@
         "en": "Other encounter report",
         "fr": "Autre rapport de consultation",
         "de": "Anderer Konsultationsbericht",
-        "it": "Altro rapporto di visita medica"
+        "it": "Altro rapporto di visita medica",
+        "es": "Otro informe de consulta",
+        "pt-BR": "Outro relatório de atendimento"
       },
       "description": {
         "en": "A report on a visit that is neither a consultation report, a history and physical nor a progress report.",
-        "fr": "Un rapport sur une visite qui n'est ni un rapport de consultation, ni une anamnèse, ni un rapport de suivi."
+        "fr": "Un rapport sur une visite qui n'est ni un rapport de consultation, ni une anamnèse, ni un rapport de suivi.",
+        "es": "Informe sobre una visita que no es ni un informe de consulta, ni una anamnesis y exploración física, ni un informe de evolución.",
+        "it": "Un referto su una visita che non è né un referto di consultazione, né un'anamnesi con esame obiettivo, né un referto di controllo.",
+        "pt-BR": "Relatório de um atendimento que não é um relatório de consulta, uma anamnese com exame físico nem um relatório de evolução."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -107,11 +127,16 @@
         "en": "Referral letter",
         "fr": "Lettre de référence",
         "de": "Zuweisungsschreiben",
-        "it": "Lettera d'invio"
+        "it": "Lettera d'invio",
+        "es": "Carta de derivación",
+        "pt-BR": "Carta de encaminhamento"
       },
       "description": {
         "en": "A doctor's letter sending the person to another doctor or a hospital.",
-        "fr": "La lettre d'un médecin qui adresse la personne à un autre médecin ou à un hôpital."
+        "fr": "La lettre d'un médecin qui adresse la personne à un autre médecin ou à un hôpital.",
+        "es": "Carta de un médico que deriva a la persona a otro médico o a un hospital.",
+        "it": "La lettera di un medico che invia la persona a un altro medico o a un ospedale.",
+        "pt-BR": "Carta médica que encaminha a pessoa a outro profissional ou a um hospital."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -131,11 +156,16 @@
         "en": "Laboratory order",
         "fr": "Demande de laboratoire",
         "de": "Laborauftrag",
-        "it": "Richiesta di laboratorio"
+        "it": "Richiesta di laboratorio",
+        "es": "Solicitud de laboratorio",
+        "pt-BR": "Pedido de exames laboratoriais"
       },
       "description": {
         "en": "A request for laboratory tests.",
-        "fr": "Une demande d'analyses de laboratoire."
+        "fr": "Une demande d'analyses de laboratoire.",
+        "es": "Solicitud de pruebas de laboratorio.",
+        "it": "Una richiesta di esami di laboratorio.",
+        "pt-BR": "Um pedido de exames laboratoriais."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -155,11 +185,16 @@
         "en": "Pathology order",
         "fr": "Demande de pathologie",
         "de": "Pathologieauftrag",
-        "it": "Richiesta di patologia"
+        "it": "Richiesta di patologia",
+        "es": "Solicitud de anatomía patológica",
+        "pt-BR": "Pedido de anatomia patológica"
       },
       "description": {
         "en": "A request for a pathology examination of tissue or cells.",
-        "fr": "Une demande d'examen pathologique de tissus ou de cellules."
+        "fr": "Une demande d'examen pathologique de tissus ou de cellules.",
+        "es": "Solicitud de un examen de anatomía patológica de tejidos o células.",
+        "it": "Una richiesta di esame anatomopatologico di tessuti o cellule.",
+        "pt-BR": "Um pedido de exame anatomopatológico de tecidos ou células."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -179,11 +214,16 @@
         "en": "Imaging order",
         "fr": "Demande d'imagerie",
         "de": "Bildgebungsauftrag",
-        "it": "Richiesta di immaginografia"
+        "it": "Richiesta di immaginografia",
+        "es": "Solicitud de diagnóstico por imagen",
+        "pt-BR": "Pedido de exame de imagem"
       },
       "description": {
         "en": "A request for an imaging examination (X-ray, ultrasound, CT, MRI).",
-        "fr": "Une demande d'examen d'imagerie (radiographie, échographie, scanner, IRM)."
+        "fr": "Une demande d'examen d'imagerie (radiographie, échographie, scanner, IRM).",
+        "es": "Solicitud de una prueba de diagnóstico por imagen (radiografía, ecografía, TC, RM).",
+        "it": "Una richiesta di esame di diagnostica per immagini (radiografia, ecografia, TC, RM).",
+        "pt-BR": "Um pedido de exame de imagem (radiografia, ultrassonografia, tomografia, ressonância magnética)."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -204,11 +244,16 @@
         "en": "Other order",
         "fr": "Autre demande d'examen",
         "de": "Anderer Untersuchungsauftrag",
-        "it": "Altra richiesta di esami"
+        "it": "Altra richiesta di esami",
+        "es": "Otra solicitud",
+        "pt-BR": "Outro pedido de exame"
       },
       "description": {
         "en": "A request for an examination that is not a laboratory, pathology or imaging order.",
-        "fr": "Une demande d'examen qui n'est pas une demande de laboratoire, de pathologie ou d'imagerie."
+        "fr": "Une demande d'examen qui n'est pas une demande de laboratoire, de pathologie ou d'imagerie.",
+        "es": "Solicitud de una prueba que no es de laboratorio, de anatomía patológica ni de diagnóstico por imagen.",
+        "it": "Una richiesta di esame che non è una richiesta di laboratorio, di anatomia patologica o di diagnostica per immagini.",
+        "pt-BR": "Um pedido de exame que não é laboratorial, de anatomia patológica nem de imagem."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -228,11 +273,16 @@
         "en": "Discharge summary",
         "fr": "Rapport de sortie",
         "de": "Austrittsbericht",
-        "it": "Rapporto di dimissione"
+        "it": "Rapporto di dimissione",
+        "es": "Informe de alta",
+        "pt-BR": "Resumo de alta"
       },
       "description": {
         "en": "The summary of a hospital stay, written when the person leaves.",
-        "fr": "Le résumé d'un séjour hospitalier, rédigé à la sortie de la personne."
+        "fr": "Le résumé d'un séjour hospitalier, rédigé à la sortie de la personne.",
+        "es": "El resumen de una hospitalización, redactado cuando la persona sale del hospital.",
+        "it": "Il riassunto di un ricovero ospedaliero, redatto al momento delle dimissioni della persona.",
+        "pt-BR": "O resumo de uma internação hospitalar, redigido quando a pessoa sai."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -252,11 +302,16 @@
         "en": "Transfer summary",
         "fr": "Rapport de transfert",
         "de": "Verlegungsbericht",
-        "it": "Rapporto di trasferimento"
+        "it": "Rapporto di trasferimento",
+        "es": "Informe de traslado",
+        "pt-BR": "Resumo de transferência"
       },
       "description": {
         "en": "The summary sent with the person when moved from one hospital or ward to another; a letter to another doctor is a referral letter.",
-        "fr": "Le résumé qui accompagne la personne transférée d'un hôpital ou d'un service à un autre ; une lettre à un autre médecin est une lettre de référence."
+        "fr": "Le résumé qui accompagne la personne transférée d'un hôpital ou d'un service à un autre ; une lettre à un autre médecin est une lettre de référence.",
+        "es": "El resumen que acompaña a la persona cuando se la traslada de un hospital o servicio a otro; una carta a otro médico es una carta de derivación.",
+        "it": "Il riassunto che accompagna la persona trasferita da un ospedale o da un reparto a un altro; la lettera a un altro medico è una lettera di invio.",
+        "pt-BR": "O resumo enviado com a pessoa quando ela é transferida de um hospital ou setor para outro; uma carta a outro profissional é uma carta de encaminhamento."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -276,11 +331,16 @@
         "en": "Medication list",
         "fr": "Liste des médicaments",
         "de": "Medikationsliste",
-        "it": "Elenco dei medicamenti"
+        "it": "Elenco dei medicamenti",
+        "es": "Lista de medicamentos",
+        "pt-BR": "Lista de medicamentos"
       },
       "description": {
         "en": "A list of the medicines the person takes, without a schedule.",
-        "fr": "Une liste des médicaments que la personne prend, sans horaire de prise."
+        "fr": "Une liste des médicaments que la personne prend, sans horaire de prise.",
+        "es": "Lista de los medicamentos que toma la persona, sin pauta de tomas.",
+        "it": "Un elenco dei medicinali che la persona assume, senza orari di assunzione.",
+        "pt-BR": "Uma lista dos medicamentos que a pessoa toma, sem horários."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -300,11 +360,16 @@
         "en": "Medication plan",
         "fr": "Plan de médication",
         "de": "Medikationsplan",
-        "it": "Piano dei medicamenti"
+        "it": "Piano dei medicamenti",
+        "es": "Plan de medicación",
+        "pt-BR": "Plano de medicação"
       },
       "description": {
         "en": "The medicines the person takes with when and how much, as given to the person (for example the Swiss eMediplan).",
-        "fr": "Les médicaments que la personne prend, avec quand et combien, tels que remis à la personne (par exemple l'eMediplan suisse)."
+        "fr": "Les médicaments que la personne prend, avec quand et combien, tels que remis à la personne (par exemple l'eMediplan suisse).",
+        "es": "Los medicamentos que toma la persona, con cuándo y cuánto, tal como se le entregan (por ejemplo, el eMediplan suizo).",
+        "it": "I medicinali che la persona assume con quando e quanto, come consegnati alla persona (ad esempio l'eMediplan svizzero).",
+        "pt-BR": "Os medicamentos que a pessoa toma, com quando e quanto, como entregue à pessoa (por exemplo, o eMediplan suíço)."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -324,11 +389,16 @@
         "en": "Other summary",
         "fr": "Autre résumé",
         "de": "Andere Zusammenfassung",
-        "it": "Altro riepilogo"
+        "it": "Altro riepilogo",
+        "es": "Otro resumen",
+        "pt-BR": "Outro resumo"
       },
       "description": {
         "en": "A summary of the person's health or care that is not a discharge or transfer summary, a medication list or a medication plan.",
-        "fr": "Un résumé de la santé ou des soins de la personne qui n'est ni un rapport de sortie ou de transfert, ni une liste ou un plan de médication."
+        "fr": "Un résumé de la santé ou des soins de la personne qui n'est ni un rapport de sortie ou de transfert, ni une liste ou un plan de médication.",
+        "es": "Resumen de la salud o de la atención de la persona que no es un informe de alta o de traslado, ni una lista ni un plan de medicación.",
+        "it": "Un riassunto della salute o delle cure della persona che non è un riassunto di dimissione o di trasferimento, un elenco dei medicinali o un piano dei medicinali.",
+        "pt-BR": "Um resumo da saúde ou dos cuidados da pessoa que não é um resumo de alta ou de transferência, uma lista de medicamentos nem um plano de medicação."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -348,11 +418,16 @@
         "en": "Operative report",
         "fr": "Rapport d'opération",
         "de": "Operationsbericht",
-        "it": "Rapporto operatorio"
+        "it": "Rapporto operatorio",
+        "es": "Informe quirúrgico",
+        "pt-BR": "Relatório cirúrgico"
       },
       "description": {
         "en": "The surgeon's report of an operation.",
-        "fr": "Le rapport du chirurgien sur une opération."
+        "fr": "Le rapport du chirurgien sur une opération.",
+        "es": "El informe del cirujano sobre una operación.",
+        "it": "Il referto del chirurgo su un intervento.",
+        "pt-BR": "O relatório do cirurgião sobre uma operação."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -372,11 +447,16 @@
         "en": "Laboratory report",
         "fr": "Rapport de laboratoire",
         "de": "Laborbericht",
-        "it": "Referto di laboratorio"
+        "it": "Referto di laboratorio",
+        "es": "Informe de laboratorio",
+        "pt-BR": "Laudo laboratorial"
       },
       "description": {
         "en": "The results of laboratory tests (blood, urine and other samples).",
-        "fr": "Les résultats d'analyses de laboratoire (sang, urine et autres échantillons)."
+        "fr": "Les résultats d'analyses de laboratoire (sang, urine et autres échantillons).",
+        "es": "Los resultados de pruebas de laboratorio (sangre, orina y otras muestras).",
+        "it": "I risultati degli esami di laboratorio (sangue, urine e altri campioni).",
+        "pt-BR": "Os resultados de exames laboratoriais (sangue, urina e outras amostras)."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -396,11 +476,16 @@
         "en": "Pathology report",
         "fr": "Rapport de pathologie",
         "de": "Pathologiebericht",
-        "it": "Rapporto di patologia"
+        "it": "Rapporto di patologia",
+        "es": "Informe de anatomía patológica",
+        "pt-BR": "Laudo anatomopatológico"
       },
       "description": {
         "en": "The result of a pathology examination (biopsy, cytology, smear).",
-        "fr": "Le résultat d'un examen pathologique (biopsie, cytologie, frottis)."
+        "fr": "Le résultat d'un examen pathologique (biopsie, cytologie, frottis).",
+        "es": "El resultado de un examen de anatomía patológica (biopsia, citología, frotis).",
+        "it": "Il risultato di un esame anatomopatologico (biopsia, citologia, striscio).",
+        "pt-BR": "O resultado de um exame anatomopatológico (biópsia, citologia, esfregaço)."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -420,11 +505,16 @@
         "en": "Imaging report",
         "fr": "Rapport d'imagerie",
         "de": "Bericht zur Bildgebung",
-        "it": "Referto di immaginografia"
+        "it": "Referto di immaginografia",
+        "es": "Informe de diagnóstico por imagen",
+        "pt-BR": "Laudo de exame de imagem"
       },
       "description": {
         "en": "The radiologist's written report on an imaging examination.",
-        "fr": "Le compte rendu écrit du radiologue sur un examen d'imagerie."
+        "fr": "Le compte rendu écrit du radiologue sur un examen d'imagerie.",
+        "es": "El informe escrito del radiólogo sobre una prueba de diagnóstico por imagen.",
+        "it": "Il referto scritto del radiologo su un esame di diagnostica per immagini.",
+        "pt-BR": "O laudo escrito do radiologista sobre um exame de imagem."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -444,11 +534,16 @@
         "en": "Image",
         "fr": "Image",
         "de": "Bild",
-        "it": "Immagine"
+        "it": "Immagine",
+        "es": "Imagen",
+        "pt-BR": "Imagem"
       },
       "description": {
         "en": "An image filed as a document of its own, without a written report, such as an X-ray, ultrasound or MRI image (DICOM included) or a photo of a wound or of the skin (CH:EPR \"Image\"). HDS writers file every picture here, except a picture of a specimen.",
-        "fr": "Une image classée comme document à part entière, sans compte rendu écrit, comme une image de radiographie, d'échographie ou d'IRM (DICOM compris) ou la photo d'une plaie ou de la peau (DEP « Image »). Les writers HDS classent ici toute image, sauf celle d'un prélèvement."
+        "fr": "Une image classée comme document à part entière, sans compte rendu écrit, comme une image de radiographie, d'échographie ou d'IRM (DICOM compris) ou la photo d'une plaie ou de la peau (DEP « Image »). Les writers HDS classent ici toute image, sauf celle d'un prélèvement.",
+        "es": "Una imagen archivada como documento propio, sin informe escrito, como una imagen de radiografía, ecografía o resonancia magnética (incluido DICOM) o una foto de una herida o de la piel (CH:EPR «Image»). Las aplicaciones de HDS archivan aquí toda imagen, salvo la de una muestra.",
+        "it": "Un'immagine archiviata come documento a sé, senza referto scritto, come un'immagine di radiografia, ecografia o RM (DICOM compreso) o la foto di una ferita o della pelle (CH:EPR «Image»). I writer HDS archiviano qui ogni immagine, tranne quella di un campione.",
+        "pt-BR": "Uma imagem arquivada como documento próprio, sem laudo escrito, como uma imagem de radiografia, ultrassonografia ou ressonância magnética (DICOM incluído) ou a foto de uma ferida ou da pele (CH:EPR “Image”). Os aplicativos que gravam no HDS arquivam aqui toda imagem, exceto a de uma amostra."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -468,11 +563,16 @@
         "en": "Picture, video or audio",
         "fr": "Image, vidéo ou audio",
         "de": "Bild, Video oder Audio",
-        "it": "Immagine, video o audio"
+        "it": "Immagine, video o audio",
+        "es": "Imagen, vídeo o audio",
+        "pt-BR": "Foto, vídeo ou áudio"
       },
       "description": {
         "en": "A video or a sound recording, or a picture of a specimen (a biopsy slide, a smear) (CH:EPR \"Picture/Video/Audio\"; SNOMED CT digital representation of a specimen). HDS writers file any other picture as an \"Image\"; a document from another source may use this kind for a photo.",
-        "fr": "Une vidéo ou un enregistrement sonore, ou l'image d'un prélèvement (lame de biopsie, frottis) (DEP « Image/vidéo/audio » ; SNOMED CT représentation numérique d'un spécimen). Les writers HDS classent toute autre image comme « Image » ; un document d'une autre source peut utiliser ce type pour une photo."
+        "fr": "Une vidéo ou un enregistrement sonore, ou l'image d'un prélèvement (lame de biopsie, frottis) (DEP « Image/vidéo/audio » ; SNOMED CT représentation numérique d'un spécimen). Les writers HDS classent toute autre image comme « Image » ; un document d'une autre source peut utiliser ce type pour une photo.",
+        "es": "Un vídeo o una grabación de sonido, o la imagen de una muestra (una lámina de biopsia, un frotis) (CH:EPR «Picture/Video/Audio»; SNOMED CT representación digital de una muestra). Las aplicaciones de HDS archivan cualquier otra imagen como «Imagen»; un documento de otra fuente puede usar este tipo para una foto.",
+        "it": "Un video o una registrazione audio, oppure l'immagine di un campione (un vetrino di biopsia, uno striscio) (CH:EPR «Picture/Video/Audio»; SNOMED CT digital representation of a specimen). I writer HDS archiviano ogni altra immagine come «Image»; un documento di un'altra fonte può usare questo tipo per una foto.",
+        "pt-BR": "Um vídeo ou uma gravação de som, ou a imagem de uma amostra (uma lâmina de biópsia, um esfregaço) (CH:EPR “Picture/Video/Audio”; SNOMED CT digital representation of a specimen). Os aplicativos que gravam no HDS arquivam qualquer outra imagem como “Imagem”; um documento de outra origem pode usar este tipo para uma foto."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -492,11 +592,16 @@
         "en": "Other procedure report",
         "fr": "Autre rapport d'intervention",
         "de": "Anderer Interventionsbericht",
-        "it": "Altro rapporto di intervento"
+        "it": "Altro rapporto di intervento",
+        "es": "Otro informe de procedimiento",
+        "pt-BR": "Outro relatório de procedimento"
       },
       "description": {
         "en": "The report of an examination or procedure that is none of the above, such as an endoscopy, an ECG or a lung function test.",
-        "fr": "Le rapport d'un examen ou d'une intervention qui n'est aucun des précédents, comme une endoscopie, un ECG ou un test de fonction pulmonaire."
+        "fr": "Le rapport d'un examen ou d'une intervention qui n'est aucun des précédents, comme une endoscopie, un ECG ou un test de fonction pulmonaire.",
+        "es": "El informe de una exploración o un procedimiento que no es ninguno de los anteriores, como una endoscopia, un ECG o una prueba de función pulmonar.",
+        "it": "Il referto di un esame o di una procedura che non rientra in nessuno dei precedenti, come una endoscopia, un ECG o un test di funzionalità polmonare.",
+        "pt-BR": "O relatório de um exame ou procedimento que não é nenhum dos anteriores, como uma endoscopia, um ECG ou um teste de função pulmonar."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -516,11 +621,16 @@
         "en": "Medical care plan",
         "fr": "Plan de traitement médical",
         "de": "Ärztlicher Behandlungsplan",
-        "it": "Piano di cure mediche"
+        "it": "Piano di cure mediche",
+        "es": "Plan de tratamiento médico",
+        "pt-BR": "Plano de cuidados médicos"
       },
       "description": {
         "en": "A doctor's plan for the person's treatment.",
-        "fr": "Le plan d'un médecin pour le traitement de la personne."
+        "fr": "Le plan d'un médecin pour le traitement de la personne.",
+        "es": "Plan de un médico para el tratamiento de la persona.",
+        "it": "Il piano di un medico per il trattamento della persona.",
+        "pt-BR": "O plano de tratamento da pessoa elaborado por um profissional médico."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -540,11 +650,16 @@
         "en": "Nursing care plan",
         "fr": "Plan de soins infirmiers",
         "de": "Pflegeplan",
-        "it": "Piano di cure infermieristiche"
+        "it": "Piano di cure infermieristiche",
+        "es": "Plan de cuidados de enfermería",
+        "pt-BR": "Plano de cuidados de enfermagem"
       },
       "description": {
         "en": "A nursing team's plan of care.",
-        "fr": "Le plan de soins d'une équipe infirmière."
+        "fr": "Le plan de soins d'une équipe infirmière.",
+        "es": "Plan de cuidados de un equipo de enfermería.",
+        "it": "Il piano di assistenza di un'équipe infermieristica.",
+        "pt-BR": "O plano de cuidados de uma equipe de enfermagem."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -564,11 +679,16 @@
         "en": "Rehabilitation plan",
         "fr": "Plan de réhabilitation",
         "de": "Rehabilitationsplan",
-        "it": "Piano di riabilitazione"
+        "it": "Piano di riabilitazione",
+        "es": "Plan de rehabilitación",
+        "pt-BR": "Plano de reabilitação"
       },
       "description": {
         "en": "A plan of rehabilitation, such as physiotherapy after an operation.",
-        "fr": "Un plan de réhabilitation, comme la physiothérapie après une opération."
+        "fr": "Un plan de réhabilitation, comme la physiothérapie après une opération.",
+        "es": "Un plan de rehabilitación, como la fisioterapia después de una operación.",
+        "it": "Un piano di riabilitazione, come la fisioterapia dopo un intervento.",
+        "pt-BR": "Um plano de reabilitação, como a fisioterapia após uma operação."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -588,11 +708,16 @@
         "en": "Medication treatment decision",
         "fr": "Décision de traitement médicamenteux",
         "de": "Therapieentscheid Medikation",
-        "it": "Decisione di terapia medicamentosa"
+        "it": "Decisione di terapia medicamentosa",
+        "es": "Decisión de tratamiento farmacológico",
+        "pt-BR": "Decisão de tratamento medicamentoso"
       },
       "description": {
         "en": "A doctor's decision to prescribe a medicine, with its reasons.",
-        "fr": "La décision d'un médecin de prescrire un médicament, avec ses raisons."
+        "fr": "La décision d'un médecin de prescrire un médicament, avec ses raisons.",
+        "es": "La decisión de un médico de prescribir un medicamento, con sus motivos.",
+        "it": "La decisione di un medico di prescrivere un medicinale, con le sue motivazioni.",
+        "pt-BR": "A decisão de um profissional médico de prescrever um medicamento, com seus motivos."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -612,11 +737,16 @@
         "en": "Other care plan",
         "fr": "Autre plan de soins",
         "de": "Anderer Behandlungsplan",
-        "it": "Altro piano di cura"
+        "it": "Altro piano di cura",
+        "es": "Otro plan de cuidados",
+        "pt-BR": "Outro plano de cuidados"
       },
       "description": {
         "en": "A plan of care that is none of the above.",
-        "fr": "Un plan de soins qui n'est aucun des précédents."
+        "fr": "Un plan de soins qui n'est aucun des précédents.",
+        "es": "Un plan de cuidados que no es ninguno de los anteriores.",
+        "it": "Un piano di cura che non rientra in nessuno dei precedenti.",
+        "pt-BR": "Um plano de cuidados que não é nenhum dos anteriores."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -636,11 +766,16 @@
         "en": "Medication prescription",
         "fr": "Ordonnance de médicaments",
         "de": "Arzneimittelrezept",
-        "it": "Prescrizione di medicamenti"
+        "it": "Prescrizione di medicamenti",
+        "es": "Prescripción de medicamentos",
+        "pt-BR": "Prescrição de medicamentos"
       },
       "description": {
         "en": "A prescription for medicines.",
-        "fr": "Une ordonnance de médicaments."
+        "fr": "Une ordonnance de médicaments.",
+        "es": "Una prescripción de medicamentos.",
+        "it": "Una prescrizione di medicinali.",
+        "pt-BR": "Uma prescrição de medicamentos."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -660,11 +795,16 @@
         "en": "Non-drug prescription",
         "fr": "Prescription non médicamenteuse",
         "de": "Nicht-Arzneimittel-Verschreibung",
-        "it": "Prescrizione non di medicamenti"
+        "it": "Prescrizione non di medicamenti",
+        "es": "Prescripción no farmacológica",
+        "pt-BR": "Prescrição não medicamentosa"
       },
       "description": {
         "en": "A prescription for something other than a medicine, such as physiotherapy, aids or devices.",
-        "fr": "Une prescription d'autre chose qu'un médicament, comme de la physiothérapie, des moyens auxiliaires ou des appareils."
+        "fr": "Une prescription d'autre chose qu'un médicament, comme de la physiothérapie, des moyens auxiliaires ou des appareils.",
+        "es": "Una prescripción de algo distinto de un medicamento, como fisioterapia, productos de apoyo o dispositivos.",
+        "it": "Una prescrizione di qualcosa che non è un medicinale, come fisioterapia, ausili o dispositivi.",
+        "pt-BR": "Uma prescrição de algo que não é medicamento, como fisioterapia, auxílios ou dispositivos."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -684,11 +824,16 @@
         "en": "Other prescription",
         "fr": "Autre prescription",
         "de": "Andere Verschreibung",
-        "it": "Altra prescrizione medica"
+        "it": "Altra prescrizione medica",
+        "es": "Otra prescripción",
+        "pt-BR": "Outra prescrição"
       },
       "description": {
         "en": "A prescription that cannot be told to be for medicines or for something else.",
-        "fr": "Une prescription dont on ne peut pas dire si elle porte sur des médicaments ou sur autre chose."
+        "fr": "Une prescription dont on ne peut pas dire si elle porte sur des médicaments ou sur autre chose.",
+        "es": "Una prescripción de la que no se puede decir si es de medicamentos o de otra cosa.",
+        "it": "Una prescrizione di cui non si può dire se riguardi medicinali o altro.",
+        "pt-BR": "Uma prescrição da qual não se consegue dizer se é de medicamentos ou de outra coisa."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -708,11 +853,16 @@
         "en": "Allergy record",
         "fr": "Carnet des allergies",
         "de": "Allergieausweis",
-        "it": "Passaporto delle allergie"
+        "it": "Passaporto delle allergie",
+        "es": "Registro de alergias",
+        "pt-BR": "Registro de alergias"
       },
       "description": {
         "en": "An allergy pass or record listing the person's allergies.",
-        "fr": "Un passeport ou carnet des allergies de la personne."
+        "fr": "Un passeport ou carnet des allergies de la personne.",
+        "es": "Un pasaporte o registro de alergias con las alergias de la persona.",
+        "it": "Un passaporto o libretto delle allergie che elenca le allergie della persona.",
+        "pt-BR": "Um cartão ou registro de alergias com a lista das alergias da pessoa."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -732,11 +882,16 @@
         "en": "Vaccination record",
         "fr": "Document de vaccination",
         "de": "Impfdokument",
-        "it": "Documento di vaccinazione"
+        "it": "Documento di vaccinazione",
+        "es": "Documento de vacunación",
+        "pt-BR": "Registro de vacinação"
       },
       "description": {
         "en": "A vaccination booklet or certificate.",
-        "fr": "Un carnet ou un certificat de vaccination."
+        "fr": "Un carnet ou un certificat de vaccination.",
+        "es": "Una cartilla o un certificado de vacunación.",
+        "it": "Un libretto o un certificato di vaccinazione.",
+        "pt-BR": "Uma caderneta ou um certificado de vacinação."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -756,11 +911,16 @@
         "en": "Other patient record",
         "fr": "Autre documentation du patient",
         "de": "Andere Patientendokumentation",
-        "it": "Altra documentazione del paziente"
+        "it": "Altra documentazione del paziente",
+        "es": "Otro registro del paciente",
+        "pt-BR": "Outro registro do paciente"
       },
       "description": {
         "en": "A long-running record about the person, such as an extract of the medical file or a health booklet, that is not an allergy or vaccination record.",
-        "fr": "Un document tenu dans la durée sur la personne, comme un extrait du dossier médical ou un carnet de santé, qui n'est ni un carnet des allergies ni un document de vaccination."
+        "fr": "Un document tenu dans la durée sur la personne, comme un extrait du dossier médical ou un carnet de santé, qui n'est ni un carnet des allergies ni un document de vaccination.",
+        "es": "Un registro de larga duración sobre la persona, como un extracto del historial médico o una cartilla de salud, que no es un registro de alergias ni de vacunación.",
+        "it": "Un documento tenuto nel tempo sulla persona, come un estratto della cartella clinica o un libretto sanitario, che non è un libretto delle allergie né un documento di vaccinazione.",
+        "pt-BR": "Um registro mantido ao longo do tempo sobre a pessoa, como um extrato do prontuário médico ou uma caderneta de saúde, que não é um registro de alergias nem de vacinação."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -780,11 +940,16 @@
         "en": "Consent",
         "fr": "Consentement",
         "de": "Einverständniserklärung",
-        "it": "Consenso"
+        "it": "Consenso",
+        "es": "Consentimiento",
+        "pt-BR": "Consentimento"
       },
       "description": {
         "en": "A consent the person signed, for example to an operation or to a study.",
-        "fr": "Un consentement que la personne a signé, par exemple à une opération ou à une étude."
+        "fr": "Un consentement que la personne a signé, par exemple à une opération ou à une étude.",
+        "es": "Un consentimiento firmado por la persona, por ejemplo para una operación o un estudio.",
+        "it": "Un consenso firmato dalla persona, ad esempio a un intervento o a uno studio.",
+        "pt-BR": "Um consentimento assinado pela pessoa, por exemplo para uma operação ou um estudo."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -804,11 +969,16 @@
         "en": "Advance directive",
         "fr": "Directives anticipées",
         "de": "Patientenverfügung",
-        "it": "Direttive anticipate"
+        "it": "Direttive anticipate",
+        "es": "Voluntades anticipadas",
+        "pt-BR": "Diretivas antecipadas de vontade"
       },
       "description": {
         "en": "The person's instructions for care if they can no longer decide.",
-        "fr": "Les instructions de la personne pour ses soins si elle ne peut plus décider."
+        "fr": "Les instructions de la personne pour ses soins si elle ne peut plus décider.",
+        "es": "Las instrucciones de la persona sobre su atención si ya no puede decidir.",
+        "it": "Le istruzioni della persona per le cure nel caso in cui non possa più decidere.",
+        "pt-BR": "As instruções da pessoa sobre os cuidados caso ela não possa mais decidir."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -828,11 +998,16 @@
         "en": "Record access log",
         "fr": "Traçabilité des accès au DEP",
         "de": "Rückverfolgung der EPD-Zugriffe",
-        "it": "Cronologia degli accessi alla CIP"
+        "it": "Cronologia degli accessi alla CIP",
+        "es": "Registro de accesos al historial",
+        "pt-BR": "Registro de acessos ao prontuário"
       },
       "description": {
         "en": "A log of who accessed the person's health record, such as an EPR access report.",
-        "fr": "Un journal de qui a accédé au dossier de santé de la personne, comme un rapport des accès au DEP."
+        "fr": "Un journal de qui a accédé au dossier de santé de la personne, comme un rapport des accès au DEP.",
+        "es": "Un registro de quién ha accedido al historial de salud de la persona, como un informe de accesos al EPR.",
+        "it": "Un registro di chi ha avuto accesso alla cartella sanitaria della persona, come un rapporto degli accessi alla CIP.",
+        "pt-BR": "Um registro de quem acessou o prontuário de saúde da pessoa, como um relatório de acessos ao prontuário eletrônico (EPR)."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -851,11 +1026,16 @@
         "en": "Emergency card",
         "fr": "Carte d'urgence",
         "de": "Notfallkarte",
-        "it": "Tessera di emergenza"
+        "it": "Tessera di emergenza",
+        "es": "Tarjeta de emergencia",
+        "pt-BR": "Cartão de emergência"
       },
       "description": {
         "en": "A card with the information needed in an emergency.",
-        "fr": "Une carte avec les informations utiles en cas d'urgence."
+        "fr": "Une carte avec les informations utiles en cas d'urgence.",
+        "es": "Una tarjeta con la información necesaria en caso de emergencia.",
+        "it": "Una tessera con le informazioni necessarie in caso di emergenza.",
+        "pt-BR": "Um cartão com as informações necessárias em uma emergência."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -875,11 +1055,16 @@
         "en": "Organ donor card",
         "fr": "Carte de donneur d'organes",
         "de": "Organspendeausweis",
-        "it": "Tessera di donatore di organi"
+        "it": "Tessera di donatore di organi",
+        "es": "Tarjeta de donante de órganos",
+        "pt-BR": "Cartão de doador de órgãos"
       },
       "description": {
         "en": "The person's organ donation card.",
-        "fr": "La carte de don d'organes de la personne."
+        "fr": "La carte de don d'organes de la personne.",
+        "es": "La tarjeta de donación de órganos de la persona.",
+        "it": "La tessera di donatore di organi della persona.",
+        "pt-BR": "O cartão de doação de órgãos da pessoa."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -899,11 +1084,16 @@
         "en": "Pregnancy or birth report",
         "fr": "Rapport de grossesse ou de naissance",
         "de": "Schwangerschafts- oder Geburtsbericht",
-        "it": "Rapporto di gravidanza o del parto"
+        "it": "Rapporto di gravidanza o del parto",
+        "es": "Informe de embarazo o parto",
+        "pt-BR": "Relatório de gestação ou parto"
       },
       "description": {
         "en": "A report on a pregnancy or a birth.",
-        "fr": "Un rapport sur une grossesse ou une naissance."
+        "fr": "Un rapport sur une grossesse ou une naissance.",
+        "es": "Un informe sobre un embarazo o un parto.",
+        "it": "Un referto su una gravidanza o un parto.",
+        "pt-BR": "Um relatório sobre uma gestação ou um parto."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -924,11 +1114,16 @@
         "en": "Medical certificate",
         "fr": "Certificat médical",
         "de": "Ärztliches Attest",
-        "it": "Certificato medico"
+        "it": "Certificato medico",
+        "es": "Certificado médico",
+        "pt-BR": "Atestado médico"
       },
       "description": {
         "en": "A doctor's certificate, such as a sick note or a fitness certificate.",
-        "fr": "Un certificat d'un médecin, comme un arrêt de travail ou un certificat d'aptitude."
+        "fr": "Un certificat d'un médecin, comme un arrêt de travail ou un certificat d'aptitude.",
+        "es": "Un certificado de un médico, como un certificado de enfermedad o de aptitud.",
+        "it": "Un certificato di un medico, come un certificato di malattia o un certificato di idoneità.",
+        "pt-BR": "Um atestado de um profissional médico, como um atestado de afastamento ou de aptidão."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -948,11 +1143,16 @@
         "en": "Administrative document",
         "fr": "Document administratif",
         "de": "Administratives Dokument",
-        "it": "Documento amministrativo"
+        "it": "Documento amministrativo",
+        "es": "Documento administrativo",
+        "pt-BR": "Documento administrativo"
       },
       "description": {
         "en": "An administrative document about the person's care, such as an insurance letter, an invoice or an appointment.",
-        "fr": "Un document administratif sur les soins de la personne, comme une lettre d'assurance, une facture ou un rendez-vous."
+        "fr": "Un document administratif sur les soins de la personne, comme une lettre d'assurance, une facture ou un rendez-vous.",
+        "es": "Un documento administrativo sobre la atención de la persona, como una carta del seguro, una factura o una cita.",
+        "it": "Un documento amministrativo sulle cure della persona, come una lettera dell'assicurazione, una fattura o un appuntamento.",
+        "pt-BR": "Um documento administrativo sobre os cuidados da pessoa, como uma carta do convênio, uma fatura ou uma consulta marcada."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -972,11 +1172,16 @@
         "en": "Emergency report",
         "fr": "Rapport d'urgence",
         "de": "Notfallbericht",
-        "it": "Rapporto d'urgenza"
+        "it": "Rapporto d'urgenza",
+        "es": "Informe de urgencias",
+        "pt-BR": "Relatório de pronto-atendimento"
       },
       "description": {
         "en": "The report of a visit to an emergency department.",
-        "fr": "Le rapport d'un passage aux urgences."
+        "fr": "Le rapport d'un passage aux urgences.",
+        "es": "El informe de una visita a un servicio de urgencias.",
+        "it": "Il referto di una visita al pronto soccorso.",
+        "pt-BR": "O relatório de um atendimento em um pronto-socorro."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -996,11 +1201,16 @@
         "en": "Non-medical report",
         "fr": "Rapport non médical",
         "de": "Nichtmedizinischer Bericht",
-        "it": "Rapporto non medico"
+        "it": "Rapporto non medico",
+        "es": "Informe no médico",
+        "pt-BR": "Relatório não médico"
       },
       "description": {
         "en": "A report by a health professional who is not a doctor, such as a physiotherapist, a midwife or a dietitian.",
-        "fr": "Le rapport d'un professionnel de santé qui n'est pas médecin, comme un physiothérapeute, une sage-femme ou un diététicien."
+        "fr": "Le rapport d'un professionnel de santé qui n'est pas médecin, comme un physiothérapeute, une sage-femme ou un diététicien.",
+        "es": "Informe de un profesional de la salud que no es médico, como un fisioterapeuta, una matrona o un dietista.",
+        "it": "Un referto di un professionista sanitario che non è un medico, come un fisioterapista, un'ostetrica o un dietista.",
+        "pt-BR": "Um relatório de um profissional de saúde que não é da medicina, como fisioterapeuta, obstetriz ou nutricionista."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -1020,11 +1230,16 @@
         "en": "Medication dispense",
         "fr": "Dispensation de médicaments",
         "de": "Medikamentenabgabe",
-        "it": "Dispensazione di medicamenti"
+        "it": "Dispensazione di medicamenti",
+        "es": "Dispensación de medicamentos",
+        "pt-BR": "Dispensação de medicamentos"
       },
       "description": {
         "en": "A pharmacy's record of the medicines it handed out.",
-        "fr": "Le relevé d'une pharmacie des médicaments qu'elle a remis."
+        "fr": "Le relevé d'une pharmacie des médicaments qu'elle a remis.",
+        "es": "El registro de una farmacia con los medicamentos que ha entregado.",
+        "it": "Il registro di una farmacia dei medicinali che ha consegnato.",
+        "pt-BR": "O registro de uma farmácia dos medicamentos que entregou."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -1045,11 +1260,16 @@
         "en": "Other health event report",
         "fr": "Autre document sur un événement sanitaire",
         "de": "Anderes Dokument zu einem Gesundheitsereignis",
-        "it": "Altro documento su un evento sanitario"
+        "it": "Altro documento su un evento sanitario",
+        "es": "Otro informe de un evento de salud",
+        "pt-BR": "Outro relatório de evento de saúde"
       },
       "description": {
         "en": "A document about a health event that is not an emergency, a non-medical report or a medication dispense.",
-        "fr": "Un document sur un événement de santé qui n'est ni un passage aux urgences, ni un rapport non médical, ni une dispensation de médicaments."
+        "fr": "Un document sur un événement de santé qui n'est ni un passage aux urgences, ni un rapport non médical, ni une dispensation de médicaments.",
+        "es": "Un documento sobre un evento de salud que no es una urgencia, ni un informe no médico, ni una dispensación de medicamentos.",
+        "it": "Un documento su un evento sanitario che non è un'emergenza, un referto non medico o una dispensazione di medicinali.",
+        "pt-BR": "Um documento sobre um evento de saúde que não é um pronto-atendimento, um relatório não médico nem uma dispensação de medicamentos."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -1069,11 +1289,16 @@
         "en": "Other document",
         "fr": "Autre document",
         "de": "Sonstige Dokumentation",
-        "it": "Altra documentazione"
+        "it": "Altra documentazione",
+        "es": "Otro documento",
+        "pt-BR": "Outro documento"
       },
       "description": {
         "en": "A medical document of no other kind, or whose kind cannot be told.",
-        "fr": "Un document médical d'aucun autre type, ou dont le type ne peut pas être déterminé."
+        "fr": "Un document médical d'aucun autre type, ou dont le type ne peut pas être déterminé.",
+        "es": "Un documento médico de ningún otro tipo, o cuyo tipo no se puede determinar.",
+        "it": "Un documento medico di nessun altro tipo, o il cui tipo non si può determinare.",
+        "pt-BR": "Um documento médico de nenhum outro tipo, ou cujo tipo não pode ser determinado."
       },
       "class": {
         "system": "http://snomed.info/sct",
@@ -1094,11 +1319,16 @@
         "en": "Menstrual cycle chart",
         "fr": "Tableau de cycle menstruel",
         "de": "Zyklusblatt",
-        "it": "Scheda del ciclo mestruale"
+        "it": "Scheda del ciclo mestruale",
+        "es": "Gráfico del ciclo menstrual",
+        "pt-BR": "Gráfico do ciclo menstrual"
       },
       "description": {
         "en": "A day-by-day chart of menstrual cycles kept by the person, on paper or exported from an app, whatever the charting method.",
-        "fr": "Un tableau (ou cyclogramme) des cycles menstruels tenu jour par jour par la personne, sur papier ou exporté d'une application, quelle que soit la méthode."
+        "fr": "Un tableau (ou cyclogramme) des cycles menstruels tenu jour par jour par la personne, sur papier ou exporté d'une application, quelle que soit la méthode.",
+        "es": "Un gráfico de los ciclos menstruales llevado día a día por la persona, en papel o exportado de una aplicación, sea cual sea el método de registro.",
+        "it": "Un grafico dei cicli mestruali tenuto giorno per giorno dalla persona, su carta o esportato da un'app, qualunque sia il metodo di registrazione.",
+        "pt-BR": "Um gráfico dos ciclos menstruais feito dia a dia pela pessoa, em papel ou exportado de um aplicativo, qualquer que seja o método de registro."
       },
       "class": {
         "system": "http://snomed.info/sct",

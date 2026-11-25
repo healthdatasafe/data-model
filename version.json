@@ -1,9 +1,9 @@
 {
-  "commit": "c1900afdde30f3b334351f593b58cfd65c51f882",
-  "commitShort": "c1900af",
+  "commit": "92a175574283f9ba09f739b34b994cd4061cc624",
+  "commitShort": "92a1755",
   "branch": "main",
-  "buildDate": "2026-11-25T14:33:21Z",
-  "publicationDate": "2026-11-25T14:33:04.413Z",
+  "buildDate": "2026-11-25T16:26:17Z",
+  "publicationDate": "2026-11-25T16:26:07.794Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -128,9 +128,33 @@
     {
       "title": "App stream definitions",
       "file": "appStreams.json"
+    },
+    {
+      "title": "Translations: converters/cervical-fluid/l10n-es.json",
+      "file": "converters/cervical-fluid/l10n-es.json"
+    },
+    {
+      "title": "Translations: converters/cervical-fluid/l10n-it.json",
+      "file": "converters/cervical-fluid/l10n-it.json"
+    },
+    {
+      "title": "Translations: converters/cervical-fluid/l10n-pt-BR.json",
+      "file": "converters/cervical-fluid/l10n-pt-BR.json"
+    },
+    {
+      "title": "Translations: converters/mood/l10n-es.json",
+      "file": "converters/mood/l10n-es.json"
+    },
+    {
+      "title": "Translations: converters/mood/l10n-it.json",
+      "file": "converters/mood/l10n-it.json"
+    },
+    {
+      "title": "Translations: converters/mood/l10n-pt-BR.json",
+      "file": "converters/mood/l10n-pt-BR.json"
     }
   ],
-  "version": "4.36.0",
+  "version": "4.37.0",
   "license": "CC-BY-4.0",
-  "attribution": "HDS Data Model 4.36.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
+  "attribution": "HDS Data Model 4.37.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
 }

@@ -15,21 +15,30 @@
       "mild": {
         "label": {
           "en": "Mild",
-          "fr": "Légère"
+          "fr": "Légère",
+          "es": "Leve",
+          "it": "Lieve",
+          "pt-BR": "Leve"
         },
         "fhir": "mild"
       },
       "moderate": {
         "label": {
           "en": "Moderate",
-          "fr": "Modérée"
+          "fr": "Modérée",
+          "es": "Moderada",
+          "it": "Moderata",
+          "pt-BR": "Moderada"
         },
         "fhir": "moderate"
       },
       "severe": {
         "label": {
           "en": "Severe",
-          "fr": "Sévère"
+          "fr": "Sévère",
+          "es": "Grave",
+          "it": "Grave",
+          "pt-BR": "Grave"
         },
         "fhir": "severe"
       }
@@ -59,133 +68,190 @@
       "waking": {
         "label": {
           "en": "On waking",
-          "fr": "Au réveil"
+          "fr": "Au réveil",
+          "es": "Al despertar",
+          "it": "Al risveglio",
+          "pt-BR": "Ao acordar"
         },
         "fhir": "WAKE"
       },
       "morning": {
         "label": {
           "en": "In the morning",
-          "fr": "Le matin"
+          "fr": "Le matin",
+          "es": "Por la mañana",
+          "it": "La mattina",
+          "pt-BR": "De manhã"
         },
         "fhir": "MORN"
       },
       "noon": {
         "label": {
           "en": "At noon",
-          "fr": "À midi"
+          "fr": "À midi",
+          "es": "Al mediodía",
+          "it": "A mezzogiorno",
+          "pt-BR": "Ao meio-dia"
         },
         "fhir": "NOON"
       },
       "afternoon": {
         "label": {
           "en": "In the afternoon",
-          "fr": "L'après-midi"
+          "fr": "L'après-midi",
+          "es": "Por la tarde",
+          "it": "Nel pomeriggio",
+          "pt-BR": "À tarde"
         },
         "fhir": "AFT"
       },
       "evening": {
         "label": {
           "en": "In the evening",
-          "fr": "Le soir"
+          "fr": "Le soir",
+          "es": "Al anochecer",
+          "it": "La sera",
+          "pt-BR": "No início da noite"
         },
         "fhir": "EVE"
       },
       "night": {
         "label": {
           "en": "At night",
-          "fr": "La nuit"
+          "fr": "La nuit",
+          "es": "Durante la noche",
+          "it": "Di notte",
+          "pt-BR": "Durante a noite"
         },
         "fhir": "NIGHT"
       },
       "bedtime": {
         "label": {
           "en": "At bedtime",
-          "fr": "Au coucher"
+          "fr": "Au coucher",
+          "es": "Al acostarse",
+          "it": "Prima di coricarsi",
+          "pt-BR": "Ao deitar"
         },
         "fhir": "HS"
       },
       "meal": {
         "label": {
           "en": "With a meal",
-          "fr": "Pendant un repas"
+          "fr": "Pendant un repas",
+          "es": "Con una comida",
+          "it": "Durante un pasto",
+          "pt-BR": "Com uma refeição"
         },
         "fhir": "C"
       },
       "before-meal": {
         "label": {
           "en": "Before a meal",
-          "fr": "Avant un repas"
+          "fr": "Avant un repas",
+          "es": "Antes de una comida",
+          "it": "Prima di un pasto",
+          "pt-BR": "Antes de uma refeição"
         },
         "fhir": "AC"
       },
       "after-meal": {
         "label": {
           "en": "After a meal",
-          "fr": "Après un repas"
+          "fr": "Après un repas",
+          "es": "Después de una comida",
+          "it": "Dopo un pasto",
+          "pt-BR": "Depois de uma refeição"
         },
         "fhir": "PC"
       },
       "breakfast": {
         "label": {
           "en": "With breakfast",
-          "fr": "Au petit-déjeuner"
+          "fr": "Au petit-déjeuner",
+          "es": "Con el desayuno",
+          "it": "Con la colazione",
+          "pt-BR": "No café da manhã"
         },
         "fhir": "CM"
       },
       "before-breakfast": {
         "label": {
           "en": "Before breakfast",
-          "fr": "Avant le petit-déjeuner"
+          "fr": "Avant le petit-déjeuner",
+          "es": "Antes del desayuno",
+          "it": "Prima della colazione",
+          "pt-BR": "Antes do café da manhã"
         },
         "fhir": "ACM"
       },
       "after-breakfast": {
         "label": {
           "en": "After breakfast",
-          "fr": "Après le petit-déjeuner"
+          "fr": "Après le petit-déjeuner",
+          "es": "Después del desayuno",
+          "it": "Dopo la colazione",
+          "pt-BR": "Depois do café da manhã"
         },
         "fhir": "PCM"
       },
       "lunch": {
         "label": {
           "en": "With lunch",
-          "fr": "Au repas de midi"
+          "fr": "Au repas de midi",
+          "es": "Con el almuerzo",
+          "it": "Con il pranzo",
+          "pt-BR": "No almoço"
         },
         "fhir": "CD"
       },
       "before-lunch": {
         "label": {
           "en": "Before lunch",
-          "fr": "Avant le repas de midi"
+          "fr": "Avant le repas de midi",
+          "es": "Antes del almuerzo",
+          "it": "Prima del pranzo",
+          "pt-BR": "Antes do almoço"
         },
         "fhir": "ACD"
       },
       "after-lunch": {
         "label": {
           "en": "After lunch",
-          "fr": "Après le repas de midi"
+          "fr": "Après le repas de midi",
+          "es": "Después del almuerzo",
+          "it": "Dopo il pranzo",
+          "pt-BR": "Depois do almoço"
         },
         "fhir": "PCD"
       },
       "dinner": {
         "label": {
           "en": "With dinner",
-          "fr": "Au repas du soir"
+          "fr": "Au repas du soir",
+          "es": "Con la cena",
+          "it": "Con la cena",
+          "pt-BR": "No jantar"
         },
         "fhir": "CV"
       },
       "before-dinner": {
         "label": {
           "en": "Before dinner",
-          "fr": "Avant le repas du soir"
+          "fr": "Avant le repas du soir",
+          "es": "Antes de la cena",
+          "it": "Prima della cena",
+          "pt-BR": "Antes do jantar"
         },
         "fhir": "ACV"
       },
       "after-dinner": {
         "label": {
           "en": "After dinner",
-          "fr": "Après le repas du soir"
+          "fr": "Après le repas du soir",
+          "es": "Después de la cena",
+          "it": "Dopo la cena",
+          "pt-BR": "Depois do jantar"
         },
         "fhir": "PCV"
       }
@@ -207,14 +273,20 @@
       "taken": {
         "label": {
           "en": "Taken",
-          "fr": "Pris"
+          "fr": "Pris",
+          "es": "Tomado",
+          "it": "Assunto",
+          "pt-BR": "Tomado"
         },
         "fhir": "completed"
       },
       "skipped": {
         "label": {
           "en": "Skipped",
-          "fr": "Non pris"
+          "fr": "Non pris",
+          "es": "Omitido",
+          "it": "Saltato",
+          "pt-BR": "Não tomado"
         },
         "fhir": "not-taken",
         "snomed": "1269470004"
@@ -237,47 +309,68 @@
       "forgot": {
         "label": {
           "en": "Forgot",
-          "fr": "Oubli"
+          "fr": "Oubli",
+          "es": "Olvido",
+          "it": "Dimenticanza",
+          "pt-BR": "Esquecimento"
         },
         "snomed": "1303576005"
       },
       "side-effects": {
         "label": {
           "en": "Side effects",
-          "fr": "Effets indésirables"
+          "fr": "Effets indésirables",
+          "es": "Efectos secundarios",
+          "it": "Effetti collaterali",
+          "pt-BR": "Efeitos colaterais"
         },
         "snomed": "182897004"
       },
       "not-needed": {
         "label": {
           "en": "Not needed",
-          "fr": "Pas nécessaire"
+          "fr": "Pas nécessaire",
+          "es": "No era necesario",
+          "it": "Non necessario",
+          "pt-BR": "Desnecessário"
         }
       },
       "unavailable": {
         "label": {
           "en": "Ran out",
-          "fr": "Plus de médicament"
+          "fr": "Plus de médicament",
+          "es": "Se acabó el medicamento",
+          "it": "Medicinale esaurito",
+          "pt-BR": "Acabou o medicamento"
         },
         "snomed": "242990004"
       },
       "declined": {
         "label": {
           "en": "Chose not to",
-          "fr": "Choix de ne pas le prendre"
+          "fr": "Choix de ne pas le prendre",
+          "es": "Prefirió no tomarlo",
+          "it": "Scelta di non assumerlo",
+          "pt-BR": "Optou por não tomar"
         },
         "snomed": "182895007"
       },
       "advised": {
         "label": {
           "en": "Told to skip it by a carer",
-          "fr": "Sur avis d'un soignant"
+          "fr": "Sur avis d'un soignant",
+          "es": "Por indicación de un profesional de la salud",
+          "it": "Su indicazione di un operatore sanitario",
+          "pt-BR": "Por orientação de um profissional de saúde"
         }
       },
       "other": {
         "label": {
           "en": "Other",
-          "fr": "Autre"
+          "fr": "Autre",
+          "es": "Otro",
+          "it": "Altro",
+          "pt-BR": "Outro"
         }
       }
     }
@@ -306,34 +399,49 @@
       "medical-advice": {
         "label": {
           "en": "On medical advice",
-          "fr": "Sur avis médical"
+          "fr": "Sur avis médical",
+          "es": "Por consejo médico",
+          "it": "Su parere medico",
+          "pt-BR": "Por orientação médica"
         },
         "snomed": "182840001"
       },
       "side-effects": {
         "label": {
           "en": "Side effects",
-          "fr": "Effets indésirables"
+          "fr": "Effets indésirables",
+          "es": "Efectos secundarios",
+          "it": "Effetti collaterali",
+          "pt-BR": "Efeitos colaterais"
         },
         "snomed": "395009001"
       },
       "ineffective": {
         "label": {
           "en": "Not working",
-          "fr": "Inefficace"
+          "fr": "Inefficace",
+          "es": "No funciona",
+          "it": "Inefficace",
+          "pt-BR": "Sem efeito"
         },
         "snomed": "395007004"
       },
       "own-choice": {
         "label": {
           "en": "Own choice",
-          "fr": "Choix personnel"
+          "fr": "Choix personnel",
+          "es": "Decisión propia",
+          "it": "Scelta personale",
+          "pt-BR": "Escolha própria"
         }
       },
       "other": {
         "label": {
           "en": "Other",
-          "fr": "Autre"
+          "fr": "Autre",
+          "es": "Otro",
+          "it": "Altro",
+          "pt-BR": "Outro"
         }
       }
     }
@@ -354,21 +462,30 @@
       "active": {
         "label": {
           "en": "Active",
-          "fr": "En cours"
+          "fr": "En cours",
+          "es": "Activa",
+          "it": "Attiva",
+          "pt-BR": "Ativa"
         },
         "fhir": "active"
       },
       "stopped": {
         "label": {
           "en": "Stopped",
-          "fr": "Arrêtée"
+          "fr": "Arrêtée",
+          "es": "Interrumpida",
+          "it": "Interrotta",
+          "pt-BR": "Interrompida"
         },
         "fhir": "stopped"
       },
       "completed": {
         "label": {
           "en": "Completed",
-          "fr": "Terminée"
+          "fr": "Terminée",
+          "es": "Completada",
+          "it": "Completata",
+          "pt-BR": "Concluída"
         },
         "fhir": "completed"
       }

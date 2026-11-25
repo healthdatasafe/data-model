@@ -11011,251 +11011,359 @@
     "mass/mg": {
       "name": {
         "en": "Milligrams",
-        "fr": "Milligrammes"
+        "fr": "Milligrammes",
+        "es": "Miligramos",
+        "it": "Milligrammi",
+        "pt-BR": "Miligramas"
       },
       "symbol": "mg"
     },
     "mass/mcg": {
       "name": {
         "en": "Micrograms",
-        "fr": "Microgrammes"
+        "fr": "Microgrammes",
+        "es": "Microgramos",
+        "it": "Microgrammi",
+        "pt-BR": "Microgramas"
       },
       "symbol": "μg"
     },
     "dose/tablet": {
       "name": {
         "en": "Tablets",
-        "fr": "Comprimés"
+        "fr": "Comprimés",
+        "es": "Comprimidos",
+        "it": "Compresse",
+        "pt-BR": "Comprimidos"
       },
       "symbol": "tab"
     },
     "dose/drop": {
       "name": {
         "en": "Drops",
-        "fr": "Gouttes"
+        "fr": "Gouttes",
+        "es": "Gotas",
+        "it": "Gocce",
+        "pt-BR": "Gotas"
       },
       "symbol": "gtt"
     },
     "dose/puff": {
       "name": {
         "en": "Puffs",
-        "fr": "Bouffées"
+        "fr": "Bouffées",
+        "es": "Inhalaciones",
+        "it": "Spruzzi",
+        "pt-BR": "Jatos"
       },
       "symbol": "puff"
     },
     "dose/application": {
       "name": {
         "en": "Applications",
-        "fr": "Applications"
+        "fr": "Applications",
+        "es": "Aplicaciones",
+        "it": "Applicazioni",
+        "pt-BR": "Aplicações"
       },
       "symbol": "app"
     },
     "dose/suppository": {
       "name": {
         "en": "Suppositories",
-        "fr": "Suppositoires"
+        "fr": "Suppositoires",
+        "es": "Supositorios",
+        "it": "Supposte",
+        "pt-BR": "Supositórios"
       },
       "symbol": "supp"
     },
     "dose/unit": {
       "name": {
         "en": "International Units",
-        "fr": "Unités internationales"
+        "fr": "Unités internationales",
+        "es": "Unidades internacionales",
+        "it": "Unità internazionali",
+        "pt-BR": "Unidades internacionais"
       },
       "symbol": "IU"
     },
     "concentration/mg-g": {
       "name": {
         "en": "Milligrams per gram",
-        "fr": "Milligrammes par gramme"
+        "fr": "Milligrammes par gramme",
+        "es": "Miligramos por gramo",
+        "it": "Milligrammi per grammo",
+        "pt-BR": "Miligramas por grama"
       },
       "symbol": "mg/g"
     },
     "concentration/count-ml": {
       "name": {
         "en": "Counts per milliliter",
-        "fr": "Nombre par millilitre"
+        "fr": "Nombre par millilitre",
+        "es": "Recuentos por mililitro",
+        "it": "Conteggi per millilitro",
+        "pt-BR": "Contagens por mililitro"
       },
       "symbol": "#/mL"
     },
     "concentration/count-ul": {
       "name": {
         "en": "Counts per microliter",
-        "fr": "Nombre par microlitre"
+        "fr": "Nombre par microlitre",
+        "es": "Recuentos por microlitro",
+        "it": "Conteggi per microlitro",
+        "pt-BR": "Contagens por microlitro"
       },
       "symbol": "/μL"
     },
     "concentration/megacount-ml": {
       "name": {
         "en": "Megacounts per milliliter",
-        "fr": "Mégacomptes par millilitre"
+        "fr": "Mégacomptes par millilitre",
+        "es": "Megarrecuentos por mililitro",
+        "it": "Megaconteggi per millilitro",
+        "pt-BR": "Megacontagens por mililitro"
       },
       "symbol": "G/L"
     },
     "concentration/gigacount-ml": {
       "name": {
         "en": "Gigacounts per milliliter",
-        "fr": "Gigacomptes par millilitre"
+        "fr": "Gigacomptes par millilitre",
+        "es": "Gigarrecuentos por mililitro",
+        "it": "Gigaconteggi per millilitro",
+        "pt-BR": "Gigacontagens por mililitro"
       },
       "symbol": "T/L"
     },
     "concentration/mcg-dl": {
       "name": {
         "en": "Micrograms per deciliter",
-        "fr": "Microgrammes par décilitre"
+        "fr": "Microgrammes par décilitre",
+        "es": "Microgramos por decilitro",
+        "it": "Microgrammi per decilitro",
+        "pt-BR": "Microgramas por decilitro"
       },
       "symbol": "μg/dL"
     },
     "concentration/pg-ml": {
       "name": {
         "en": "Picograms per milliliter",
-        "fr": "Picogrammes par millilitre"
+        "fr": "Picogrammes par millilitre",
+        "es": "Picogramos por mililitro",
+        "it": "Picogrammi per millilitro",
+        "pt-BR": "Picogramas por mililitro"
       },
       "symbol": "pg/mL"
     },
     "concentration/uiu-ml": {
       "name": {
         "en": "Micro-international units per milliliter",
-        "fr": "Micro-unités internationales par millilitre"
+        "fr": "Micro-unités internationales par millilitre",
+        "es": "Microunidades internacionales por mililitro",
+        "it": "Micro-unità internazionali per millilitro",
+        "pt-BR": "Microunidades internacionais por mililitro"
       },
       "symbol": "μIU/mL"
     },
     "concentration/umol-l": {
       "name": {
         "en": "Micromoles per liter",
-        "fr": "Micromoles par litre"
+        "fr": "Micromoles par litre",
+        "es": "Micromoles por litro",
+        "it": "Micromoli per litro",
+        "pt-BR": "Micromols por litro"
       },
       "symbol": "μmol/L"
     },
     "concentration/nmol-l": {
       "name": {
         "en": "Nanomoles per liter",
-        "fr": "Nanomoles par litre"
+        "fr": "Nanomoles par litre",
+        "es": "Nanomoles por litro",
+        "it": "Nanomoli per litro",
+        "pt-BR": "Nanomols por litro"
       },
       "symbol": "nmol/L"
     },
     "concentration/pmol-l": {
       "name": {
         "en": "Picomoles per liter",
-        "fr": "Picomoles par litre"
+        "fr": "Picomoles par litre",
+        "es": "Picomoles por litro",
+        "it": "Picomoli per litro",
+        "pt-BR": "Picomols por litro"
       },
       "symbol": "pmol/L"
     },
     "concentration/ng-dl": {
       "name": {
         "en": "Nanograms per deciliter",
-        "fr": "Nanogrammes par décilitre"
+        "fr": "Nanogrammes par décilitre",
+        "es": "Nanogramos por decilitro",
+        "it": "Nanogrammi per decilitro",
+        "pt-BR": "Nanogramas por decilitro"
       },
       "symbol": "ng/dL"
     },
     "concentration/iu-ml": {
       "name": {
         "en": "International units per milliliter",
-        "fr": "Unités internationales par millilitre"
+        "fr": "Unités internationales par millilitre",
+        "es": "Unidades internacionales por mililitro",
+        "it": "Unità internazionali per millilitro",
+        "pt-BR": "Unidades internacionais por mililitro"
       },
       "symbol": "IU/mL"
     },
     "concentration/u-ml": {
       "name": {
         "en": "Units per milliliter",
-        "fr": "Unités par millilitre"
+        "fr": "Unités par millilitre",
+        "es": "Unidades por mililitro",
+        "it": "Unità per millilitro",
+        "pt-BR": "Unidades por mililitro"
       },
       "symbol": "U/mL"
     },
     "catalytic-activity/u-l": {
       "name": {
         "en": "Units per liter",
-        "fr": "Unités par litre"
+        "fr": "Unités par litre",
+        "es": "Unidades por litro",
+        "it": "Unità per litro",
+        "pt-BR": "Unidades por litro"
       },
       "symbol": "U/L"
     },
     "volume/fl": {
       "name": {
         "en": "Femtoliters",
-        "fr": "Femtolitres"
+        "fr": "Femtolitres",
+        "es": "Femtolitros",
+        "it": "Femtolitri",
+        "pt-BR": "Femtolitros"
       },
       "symbol": "fL"
     },
     "mass/pg": {
       "name": {
         "en": "Picograms",
-        "fr": "Picogrammes"
+        "fr": "Picogrammes",
+        "es": "Picogramos",
+        "it": "Picogrammi",
+        "pt-BR": "Picogramas"
       },
       "symbol": "pg"
     },
     "rate/ml-min-173m2": {
       "name": {
         "en": "Milliliters per minute per 1.73 m²",
-        "fr": "Millilitres par minute par 1,73 m²"
+        "fr": "Millilitres par minute par 1,73 m²",
+        "es": "Mililitros por minuto por 1,73 m²",
+        "it": "Millilitri al minuto per 1,73 m²",
+        "pt-BR": "Mililitros por minuto por 1,73 m²"
       },
       "symbol": "mL/min/1.73m²"
     },
     "count/mega": {
       "name": {
         "en": "Megacounts",
-        "fr": "Mégacomptes"
+        "fr": "Mégacomptes",
+        "es": "Megarrecuentos",
+        "it": "Megaconteggi",
+        "pt-BR": "Megacontagens"
       },
       "symbol": "M#"
     },
     "rate/mg-hr": {
       "name": {
         "en": "Milligrams per hour",
-        "fr": "Milligrammes par heure"
+        "fr": "Milligrammes par heure",
+        "es": "Miligramos por hora",
+        "it": "Milligrammi all'ora",
+        "pt-BR": "Miligramas por hora"
       },
       "symbol": "mg/h"
     },
     "rate/mcg-hr": {
       "name": {
         "en": "Micrograms per hour",
-        "fr": "Microgrammes par heure"
+        "fr": "Microgrammes par heure",
+        "es": "Microgramos por hora",
+        "it": "Microgrammi all'ora",
+        "pt-BR": "Microgramas por hora"
       },
       "symbol": "μg/h"
     },
     "rate/mm-h": {
       "name": {
         "en": "Millimeters per hour",
-        "fr": "Millimètres par heure"
+        "fr": "Millimètres par heure",
+        "es": "Milímetros por hora",
+        "it": "Millimetri all'ora",
+        "pt-BR": "Milímetros por hora"
       },
       "symbol": "mm/h"
     },
     "frequency/times-period": {
       "name": {
         "en": "Frequency",
-        "fr": "Fréquence"
+        "fr": "Fréquence",
+        "es": "Frecuencia",
+        "it": "Frequenza",
+        "pt-BR": "Frequência"
       },
       "periodUnits": {
         "h": {
           "name": {
             "en": "hour",
-            "fr": "heure"
+            "fr": "heure",
+            "es": "hora",
+            "it": "ora",
+            "pt-BR": "hora"
           },
           "symbol": "h"
         },
         "d": {
           "name": {
             "en": "day",
-            "fr": "jour"
+            "fr": "jour",
+            "es": "día",
+            "it": "giorno",
+            "pt-BR": "dia"
           },
           "symbol": "d"
         },
         "wk": {
           "name": {
             "en": "week",
-            "fr": "semaine"
+            "fr": "semaine",
+            "es": "semana",
+            "it": "settimana",
+            "pt-BR": "semana"
           },
           "symbol": "wk"
         },
         "mo": {
           "name": {
             "en": "month",
-            "fr": "mois"
+            "fr": "mois",
+            "es": "mes",
+            "it": "mese",
+            "pt-BR": "mês"
           },
           "symbol": "mo"
         },
         "y": {
           "name": {
             "en": "year",
-            "fr": "année"
+            "fr": "année",
+            "es": "año",
+            "it": "anno",
+            "pt-BR": "ano"
           },
           "symbol": "y"
         }

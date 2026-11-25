@@ -4,11 +4,17 @@
     "eventType": "note/txt",
     "label": {
       "en": "Notes",
-      "fr": "Notes"
+      "fr": "Notes",
+      "es": "Notas",
+      "it": "Note",
+      "pt-BR": "Notas"
     },
     "description": {
       "en": "Free text notes from this application",
-      "fr": "Notes libres de cette application"
+      "fr": "Notes libres de cette application",
+      "es": "Notas de texto libre de esta aplicación",
+      "it": "Note in testo libero di questa applicazione",
+      "pt-BR": "Notas em texto livre deste aplicativo"
     },
     "display": "diary"
   },
@@ -17,11 +23,17 @@
     "eventType": "message/hds-chat-v1",
     "label": {
       "en": "Chat Messages",
-      "fr": "Messages"
+      "fr": "Messages",
+      "es": "Mensajes de chat",
+      "it": "Messaggi della chat",
+      "pt-BR": "Mensagens de chat"
     },
     "description": {
       "en": "Chat messages with this connection",
-      "fr": "Messages de chat avec cette connexion"
+      "fr": "Messages de chat avec cette connexion",
+      "es": "Mensajes de chat con esta conexión",
+      "it": "Messaggi della chat con questa connessione",
+      "pt-BR": "Mensagens de chat com esta conexão"
     },
     "display": "chat"
   },
@@ -30,11 +42,17 @@
     "eventType": "message/system-alert",
     "label": {
       "en": "System Out (alerts to user)",
-      "fr": "Système sortant (alertes vers l'utilisateur)"
+      "fr": "Système sortant (alertes vers l'utilisateur)",
+      "es": "Salida del sistema (alertas al usuario)",
+      "it": "Sistema in uscita (avvisi all'utente)",
+      "pt-BR": "Saída do sistema (alertas para o usuário)"
     },
     "description": {
       "en": "Structured alerts written by requesters and read by the user. Account-level fixture (provisioned once by the user's client app).",
-      "fr": "Alertes structurées écrites par les demandeurs et lues par l'utilisateur. Élément de compte (provisionné une fois par l'application cliente de l'utilisateur)."
+      "fr": "Alertes structurées écrites par les demandeurs et lues par l'utilisateur. Élément de compte (provisionné une fois par l'application cliente de l'utilisateur).",
+      "es": "Alertas estructuradas escritas por los solicitantes y leídas por el usuario. Elemento de la cuenta (creado una sola vez por la aplicación cliente del usuario).",
+      "it": "Avvisi strutturati scritti dai richiedenti e letti dall'utente. Elemento a livello di account (predisposto una sola volta dall'app client dell'utente).",
+      "pt-BR": "Alertas estruturados escritos pelos solicitantes e lidos pelo usuário. Item fixo da conta (criado uma única vez pelo aplicativo do usuário)."
     },
     "display": "system"
   },
@@ -43,11 +61,17 @@
     "eventType": "message/system-ack",
     "label": {
       "en": "System In (acknowledgements to requester)",
-      "fr": "Système entrant (accusés de réception vers le demandeur)"
+      "fr": "Système entrant (accusés de réception vers le demandeur)",
+      "es": "Entrada del sistema (acuses de recibo al solicitante)",
+      "it": "Sistema in entrata (conferme di ricezione al richiedente)",
+      "pt-BR": "Entrada do sistema (confirmações de recebimento para o solicitante)"
     },
     "description": {
       "en": "Acknowledgements written by the user and read by requesters, paired with their alert via ackId. Account-level fixture.",
-      "fr": "Accusés de réception écrits par l'utilisateur et lus par les demandeurs, appariés à leur alerte via ackId. Élément de compte."
+      "fr": "Accusés de réception écrits par l'utilisateur et lus par les demandeurs, appariés à leur alerte via ackId. Élément de compte.",
+      "es": "Acuses de recibo escritos por el usuario y leídos por los solicitantes, emparejados con su alerta mediante ackId. Elemento de la cuenta.",
+      "it": "Conferme di ricezione scritte dall'utente e lette dai richiedenti, abbinate al loro avviso tramite ackId. Elemento a livello di account.",
+      "pt-BR": "Confirmações de recebimento escritas pelo usuário e lidas pelos solicitantes, associadas ao respectivo alerta por ackId. Item fixo da conta."
     },
     "display": "system"
   },
@@ -56,11 +80,17 @@
     "eventType": "settings/hds-react-timeline",
     "label": {
       "en": "Webapp Settings",
-      "fr": "Paramètres de l'application"
+      "fr": "Paramètres de l'application",
+      "es": "Ajustes de la aplicación web",
+      "it": "Impostazioni dell'app web",
+      "pt-BR": "Configurações do aplicativo web"
     },
     "description": {
       "en": "User-scoped settings for HDS client apps. Holds one event per feature (distinguished by eventType, e.g. settings/hds-react-timeline, settings/hds-webapp-diary, settings/hds-webapp-read). Single recurring event per type, updated in place.",
-      "fr": "Paramètres propres à l'utilisateur pour les applications client HDS. Contient un événement par fonctionnalité (distingué par eventType, ex. settings/hds-react-timeline, settings/hds-webapp-diary, settings/hds-webapp-read). Un seul événement récurrent par type, mis à jour sur place."
+      "fr": "Paramètres propres à l'utilisateur pour les applications client HDS. Contient un événement par fonctionnalité (distingué par eventType, ex. settings/hds-react-timeline, settings/hds-webapp-diary, settings/hds-webapp-read). Un seul événement récurrent par type, mis à jour sur place.",
+      "es": "Ajustes del usuario para las aplicaciones cliente de HDS. Contiene un evento por función (distinguido por eventType, p. ej. settings/hds-react-timeline, settings/hds-webapp-diary, settings/hds-webapp-read). Un único evento recurrente por tipo, actualizado en el mismo lugar.",
+      "it": "Impostazioni a livello utente per le app client HDS. Contiene un evento per funzionalità (distinto da eventType, ad es. settings/hds-react-timeline, settings/hds-webapp-diary, settings/hds-webapp-read). Un solo evento ricorrente per tipo, aggiornato sul posto.",
+      "pt-BR": "Configurações do usuário para os aplicativos HDS. Contém um evento por recurso (distinguido por eventType, por exemplo settings/hds-react-timeline, settings/hds-webapp-diary, settings/hds-webapp-read). Um único evento recorrente por tipo, atualizado no próprio lugar."
     },
     "display": "system"
   },
@@ -69,11 +99,17 @@
     "eventType": "sync-status/bridge",
     "label": {
       "en": "Sync Status",
-      "fr": "État de synchronisation"
+      "fr": "État de synchronisation",
+      "es": "Estado de sincronización",
+      "it": "Stato di sincronizzazione",
+      "pt-BR": "Status da sincronização"
     },
     "description": {
       "en": "How far this application has synced, so it can resume from there and a viewer can show when it last ran. Single recurring event, updated in place.",
-      "fr": "Jusqu'où cette application a synchronisé, afin qu'elle puisse reprendre à partir de là et qu'un visualiseur puisse indiquer sa dernière exécution. Événement unique récurrent, mis à jour sur place."
+      "fr": "Jusqu'où cette application a synchronisé, afin qu'elle puisse reprendre à partir de là et qu'un visualiseur puisse indiquer sa dernière exécution. Événement unique récurrent, mis à jour sur place.",
+      "es": "Hasta dónde ha sincronizado esta aplicación, para que pueda reanudar desde ahí y un visor pueda mostrar cuándo se ejecutó por última vez. Un único evento recurrente, actualizado en el mismo lugar.",
+      "it": "Fino a che punto questa applicazione si è sincronizzata, in modo da poter riprendere da lì e permettere a un visualizzatore di mostrare quando è stata eseguita l'ultima volta. Un solo evento ricorrente, aggiornato sul posto.",
+      "pt-BR": "Até onde este aplicativo sincronizou, para que possa continuar a partir daí e uma tela de visualização possa mostrar quando ele foi executado pela última vez. Um único evento recorrente, atualizado no próprio lugar."
     },
     "display": "system"
   }

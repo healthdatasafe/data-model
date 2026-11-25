@@ -4,7 +4,10 @@
     "name": "Physical Activity",
     "label": {
       "en": "Physical Activity",
-      "fr": "Activité physique"
+      "fr": "Activité physique",
+      "es": "Actividad física",
+      "it": "Attività fisica",
+      "pt-BR": "Atividade física"
     },
     "parentId": null,
     "children": [
@@ -75,7 +78,10 @@
     "name": "Allergies and intolerances",
     "label": {
       "en": "Allergies and intolerances",
-      "fr": "Allergies et intolérances"
+      "fr": "Allergies et intolérances",
+      "es": "Alergias e intolerancias",
+      "it": "Allergie e intolleranze",
+      "pt-BR": "Alergias e intolerâncias"
     },
     "parentId": null
   },
@@ -84,11 +90,17 @@
     "name": "Body",
     "label": {
       "en": "Body",
-      "fr": "Corps"
+      "fr": "Corps",
+      "es": "Cuerpo",
+      "it": "Corpo",
+      "pt-BR": "Corpo"
     },
     "description": {
       "en": "Your body measurements and all your laboratory results (blood, urine and other samples), including pregnancy and fertility hormones, semen analyses, and intimate observations such as vaginal bleeding and cervical mucus.",
-      "fr": "Vos mesures corporelles et tous vos résultats d'analyses (sang, urines et autres prélèvements), y compris les hormones de grossesse et de fertilité, les analyses de sperme et des observations intimes comme les saignements vaginaux et la glaire cervicale."
+      "fr": "Vos mesures corporelles et tous vos résultats d'analyses (sang, urines et autres prélèvements), y compris les hormones de grossesse et de fertilité, les analyses de sperme et des observations intimes comme les saignements vaginaux et la glaire cervicale.",
+      "es": "Sus medidas corporales y todos sus resultados de laboratorio (sangre, orina y otras muestras), incluidas las hormonas del embarazo y de la fertilidad, los análisis de semen y observaciones íntimas como el sangrado vaginal y el moco cervical.",
+      "it": "Le sue misure corporee e tutti i suoi risultati di laboratorio (sangue, urine e altri campioni), compresi gli ormoni della gravidanza e della fertilità, gli spermiogrammi e le osservazioni intime come il sanguinamento vaginale e il muco cervicale.",
+      "pt-BR": "Suas medidas corporais e todos os seus resultados de exames (sangue, urina e outras amostras), incluindo hormônios da gravidez e da fertilidade, espermogramas e observações íntimas, como sangramento vaginal e muco cervical."
     },
     "parentId": null,
     "children": [
@@ -112,7 +124,10 @@
         "name": "Blood",
         "label": {
           "en": "Blood",
-          "fr": "Sang"
+          "fr": "Sang",
+          "es": "Sangre",
+          "it": "Sangue",
+          "pt-BR": "Sangue"
         },
         "children": [
           {
@@ -120,7 +135,10 @@
             "name": "Serum or plasma",
             "label": {
               "en": "Serum or plasma",
-              "fr": "Sérum ou plasma"
+              "fr": "Sérum ou plasma",
+              "es": "Suero o plasma",
+              "it": "Siero o plasma",
+              "pt-BR": "Soro ou plasma"
             },
             "children": [
               {
@@ -541,7 +559,10 @@
             "name": "Complete blood count",
             "label": {
               "en": "Complete blood count",
-              "fr": "Formule sanguine complète"
+              "fr": "Formule sanguine complète",
+              "es": "Hemograma completo",
+              "it": "Emocromo completo",
+              "pt-BR": "Hemograma completo"
             },
             "children": [
               {
@@ -589,7 +610,10 @@
                 "name": "Neutrophils",
                 "label": {
                   "en": "Neutrophils",
-                  "fr": "Neutrophiles"
+                  "fr": "Neutrophiles",
+                  "es": "Neutrófilos",
+                  "it": "Neutrofili",
+                  "pt-BR": "Neutrófilos"
                 },
                 "parentId": "body-blood-cbc"
               },
@@ -598,7 +622,10 @@
                 "name": "Lymphocytes",
                 "label": {
                   "en": "Lymphocytes",
-                  "fr": "Lymphocytes"
+                  "fr": "Lymphocytes",
+                  "es": "Linfocitos",
+                  "it": "Linfociti",
+                  "pt-BR": "Linfócitos"
                 },
                 "parentId": "body-blood-cbc"
               },
@@ -607,7 +634,10 @@
                 "name": "Monocytes",
                 "label": {
                   "en": "Monocytes",
-                  "fr": "Monocytes"
+                  "fr": "Monocytes",
+                  "es": "Monocitos",
+                  "it": "Monociti",
+                  "pt-BR": "Monócitos"
                 },
                 "parentId": "body-blood-cbc"
               },
@@ -616,7 +646,10 @@
                 "name": "Eosinophils",
                 "label": {
                   "en": "Eosinophils",
-                  "fr": "Éosinophiles"
+                  "fr": "Éosinophiles",
+                  "es": "Eosinófilos",
+                  "it": "Eosinofili",
+                  "pt-BR": "Eosinófilos"
                 },
                 "parentId": "body-blood-cbc"
               },
@@ -625,7 +658,10 @@
                 "name": "Basophils",
                 "label": {
                   "en": "Basophils",
-                  "fr": "Basophiles"
+                  "fr": "Basophiles",
+                  "es": "Basófilos",
+                  "it": "Basofili",
+                  "pt-BR": "Basófilos"
                 },
                 "parentId": "body-blood-cbc"
               },
@@ -644,7 +680,10 @@
                 "name": "Reticulocytes",
                 "label": {
                   "en": "Reticulocytes",
-                  "fr": "Réticulocytes"
+                  "fr": "Réticulocytes",
+                  "es": "Reticulocitos",
+                  "it": "Reticolociti",
+                  "pt-BR": "Reticulócitos"
                 },
                 "parentId": "body-blood-cbc"
               },
@@ -668,7 +707,10 @@
                 "name": "Segmented neutrophils",
                 "label": {
                   "en": "Segmented neutrophils",
-                  "fr": "Neutrophiles segmentés"
+                  "fr": "Neutrophiles segmentés",
+                  "es": "Neutrófilos segmentados",
+                  "it": "Neutrofili segmentati",
+                  "pt-BR": "Neutrófilos segmentados"
                 },
                 "parentId": "body-blood-cbc"
               },
@@ -677,7 +719,10 @@
                 "name": "Band neutrophils",
                 "label": {
                   "en": "Band neutrophils",
-                  "fr": "Neutrophiles non segmentés"
+                  "fr": "Neutrophiles non segmentés",
+                  "es": "Neutrófilos en banda",
+                  "it": "Neutrofili a banda",
+                  "pt-BR": "Neutrófilos bastonetes"
                 },
                 "parentId": "body-blood-cbc"
               },
@@ -699,7 +744,10 @@
             "name": "Coagulation",
             "label": {
               "en": "Coagulation",
-              "fr": "Coagulation"
+              "fr": "Coagulation",
+              "es": "Coagulación",
+              "it": "Coagulazione",
+              "pt-BR": "Coagulação"
             },
             "children": [
               {
@@ -735,7 +783,10 @@
             "name": "Red blood cell",
             "label": {
               "en": "Red blood cell",
-              "fr": "Globules rouges"
+              "fr": "Globules rouges",
+              "es": "Glóbulos rojos",
+              "it": "Globuli rossi",
+              "pt-BR": "Hemácias"
             },
             "children": [
               {
@@ -761,11 +812,17 @@
             "name": "Other blood results",
             "label": {
               "en": "Other blood results",
-              "fr": "Autres résultats sanguins"
+              "fr": "Autres résultats sanguins",
+              "es": "Otros resultados de sangre",
+              "it": "Altri risultati del sangue",
+              "pt-BR": "Outros resultados de sangue"
             },
             "description": {
               "en": "Blood test results that have no field of their own, which can include infectious disease tests (such as HIV or hepatitis), viral loads and drug levels.",
-              "fr": "Résultats d'analyses de sang qui n'ont pas de champ dédié, pouvant inclure des analyses de maladies infectieuses (comme le VIH ou les hépatites), des charges virales et des dosages de médicaments."
+              "fr": "Résultats d'analyses de sang qui n'ont pas de champ dédié, pouvant inclure des analyses de maladies infectieuses (comme le VIH ou les hépatites), des charges virales et des dosages de médicaments.",
+              "es": "Resultados de análisis de sangre que no tienen un campo propio, entre los que pueden figurar pruebas de enfermedades infecciosas (como VIH o hepatitis), cargas virales y niveles de medicamentos.",
+              "it": "Risultati di esami del sangue che non hanno un campo proprio, tra cui possono rientrare test per malattie infettive (come HIV o epatite), cariche virali e dosaggi di farmaci.",
+              "pt-BR": "Resultados de exames de sangue que não têm campo próprio, podendo incluir testes de doenças infecciosas (como HIV ou hepatite), cargas virais e dosagens de medicamentos."
             },
             "parentId": "body-blood"
           }
@@ -777,7 +834,10 @@
         "name": "Vulva",
         "label": {
           "en": "Vulva",
-          "fr": "Vulve"
+          "fr": "Vulve",
+          "es": "Vulva",
+          "it": "Vulva",
+          "pt-BR": "Vulva"
         },
         "children": [
           {
@@ -785,7 +845,10 @@
             "name": "Vulva Wetness",
             "label": {
               "en": "Vulva Wetness",
-              "fr": "Humidité vulvaire"
+              "fr": "Humidité vulvaire",
+              "es": "Humedad vulvar",
+              "it": "Umidità vulvare",
+              "pt-BR": "Umidade vulvar"
             },
             "children": [
               {
@@ -793,7 +856,10 @@
                 "name": "Vulva Wetness when wiping",
                 "label": {
                   "en": "Vulva Wetness when wiping",
-                  "fr": "Humidité vulvaire à l'essuyage"
+                  "fr": "Humidité vulvaire à l'essuyage",
+                  "es": "Humedad vulvar al limpiarse",
+                  "it": "Umidità vulvare asciugandosi",
+                  "pt-BR": "Umidade vulvar ao se limpar"
                 },
                 "parentId": "body-vulva-wetness"
               },
@@ -802,7 +868,10 @@
                 "name": "Vulva Wetness Feeling",
                 "label": {
                   "en": "Vulva Wetness Feeling",
-                  "fr": "Sensation d'humidité vulvaire"
+                  "fr": "Sensation d'humidité vulvaire",
+                  "es": "Sensación de humedad vulvar",
+                  "it": "Sensazione di umidità vulvare",
+                  "pt-BR": "Sensação de umidade vulvar"
                 },
                 "parentId": "body-vulva-wetness"
               }
@@ -814,7 +883,10 @@
             "name": "Vulva Mucus",
             "label": {
               "en": "Vulva Mucus",
-              "fr": "Glaire cervicale"
+              "fr": "Glaire cervicale",
+              "es": "Moco cervical",
+              "it": "Muco cervicale",
+              "pt-BR": "Muco cervical"
             },
             "children": [
               {
@@ -822,7 +894,10 @@
                 "name": "Vulva Mucus Inspect",
                 "label": {
                   "en": "Vulva Mucus Inspect",
-                  "fr": "Observation de la glaire cervicale"
+                  "fr": "Observation de la glaire cervicale",
+                  "es": "Observación del moco cervical",
+                  "it": "Osservazione del muco cervicale",
+                  "pt-BR": "Inspeção do muco vulvar"
                 },
                 "parentId": "body-vulva-mucus"
               },
@@ -831,7 +906,10 @@
                 "name": "Vulva Mucus Stretch",
                 "label": {
                   "en": "Vulva Mucus Stretch",
-                  "fr": "Filance de la glaire cervicale"
+                  "fr": "Filance de la glaire cervicale",
+                  "es": "Extensibilidad del moco cervical",
+                  "it": "Elasticità del muco cervicale",
+                  "pt-BR": "Elasticidade do muco vulvar"
                 },
                 "parentId": "body-vulva-mucus"
               }
@@ -883,7 +961,10 @@
         "name": "Skin",
         "label": {
           "en": "Skin",
-          "fr": "Peau"
+          "fr": "Peau",
+          "es": "Piel",
+          "it": "Pelle",
+          "pt-BR": "Pele"
         },
         "children": [
           {
@@ -943,7 +1024,10 @@
         "name": "Urine",
         "label": {
           "en": "Urine",
-          "fr": "Urines"
+          "fr": "Urines",
+          "es": "Orina",
+          "it": "Urine",
+          "pt-BR": "Urina"
         },
         "children": [
           {
@@ -951,7 +1035,10 @@
             "name": "Urine Hormones",
             "label": {
               "en": "Urine Hormones",
-              "fr": "Hormones urinaires"
+              "fr": "Hormones urinaires",
+              "es": "Hormonas en orina",
+              "it": "Ormoni urinari",
+              "pt-BR": "Hormônios na urina"
             },
             "children": [
               {
@@ -987,7 +1074,10 @@
             "name": "Urine chemistry",
             "label": {
               "en": "Urine chemistry",
-              "fr": "Chimie urinaire"
+              "fr": "Chimie urinaire",
+              "es": "Química de la orina",
+              "it": "Chimica urinaria",
+              "pt-BR": "Química da urina"
             },
             "children": [
               {
@@ -1003,11 +1093,17 @@
             "name": "Other urine results",
             "label": {
               "en": "Other urine results",
-              "fr": "Autres résultats urinaires"
+              "fr": "Autres résultats urinaires",
+              "es": "Otros resultados de orina",
+              "it": "Altri risultati delle urine",
+              "pt-BR": "Outros resultados de urina"
             },
             "description": {
               "en": "Urine test results that have no field of their own, which can include infectious disease tests and drug screening.",
-              "fr": "Résultats d'analyses d'urine qui n'ont pas de champ dédié, pouvant inclure des analyses de maladies infectieuses et des dépistages de drogues ou de médicaments."
+              "fr": "Résultats d'analyses d'urine qui n'ont pas de champ dédié, pouvant inclure des analyses de maladies infectieuses et des dépistages de drogues ou de médicaments.",
+              "es": "Resultados de análisis de orina que no tienen un campo propio, entre los que pueden figurar pruebas de enfermedades infecciosas y detección de drogas.",
+              "it": "Risultati di esami delle urine che non hanno un campo proprio, tra cui possono rientrare test per malattie infettive e screening di droghe o farmaci.",
+              "pt-BR": "Resultados de exames de urina que não têm campo próprio, podendo incluir testes de doenças infecciosas e triagem de drogas."
             },
             "parentId": "body-urine"
           }
@@ -1019,7 +1115,10 @@
         "name": "Cerebrospinal fluid",
         "label": {
           "en": "Cerebrospinal fluid",
-          "fr": "Liquide céphalorachidien"
+          "fr": "Liquide céphalorachidien",
+          "es": "Líquido cefalorraquídeo",
+          "it": "Liquido cerebrospinale",
+          "pt-BR": "Líquido cefalorraquidiano"
         },
         "children": [
           {
@@ -1027,11 +1126,17 @@
             "name": "Cerebrospinal fluid results",
             "label": {
               "en": "Cerebrospinal fluid results",
-              "fr": "Résultats du liquide céphalorachidien"
+              "fr": "Résultats du liquide céphalorachidien",
+              "es": "Resultados del líquido cefalorraquídeo",
+              "it": "Risultati del liquido cerebrospinale",
+              "pt-BR": "Resultados do líquido cefalorraquidiano"
             },
             "description": {
               "en": "Results of a cerebrospinal fluid test, which can include tests for infections.",
-              "fr": "Résultats d'une analyse du liquide céphalorachidien, pouvant inclure la recherche d'infections."
+              "fr": "Résultats d'une analyse du liquide céphalorachidien, pouvant inclure la recherche d'infections.",
+              "es": "Resultados de un análisis del líquido cefalorraquídeo, que puede incluir pruebas de infecciones.",
+              "it": "Risultati di un esame del liquido cerebrospinale, tra cui possono rientrare test per infezioni.",
+              "pt-BR": "Resultados de um exame do líquido cefalorraquidiano, podendo incluir pesquisa de infecções."
             },
             "parentId": "body-csf"
           }
@@ -1043,7 +1148,10 @@
         "name": "Semen",
         "label": {
           "en": "Semen",
-          "fr": "Sperme"
+          "fr": "Sperme",
+          "es": "Semen",
+          "it": "Liquido seminale",
+          "pt-BR": "Sêmen"
         },
         "children": [
           {
@@ -1108,11 +1216,17 @@
     "explicitGrantOnly": true,
     "label": {
       "en": "Conversation items",
-      "fr": "Éléments de conversation"
+      "fr": "Éléments de conversation",
+      "es": "Elementos de conversación",
+      "it": "Elementi della conversazione",
+      "pt-BR": "Itens de conversa"
     },
     "description": {
       "en": "The questions and proposed values a contact sends you in a conversation, and your answers. Never included when you share all your data: each contact reads only its own conversation.",
-      "fr": "Les questions et les valeurs proposées qu'un contact vous envoie dans une conversation, et vos réponses. Jamais inclus quand vous partagez toutes vos données : chaque contact ne lit que sa propre conversation."
+      "fr": "Les questions et les valeurs proposées qu'un contact vous envoie dans une conversation, et vos réponses. Jamais inclus quand vous partagez toutes vos données : chaque contact ne lit que sa propre conversation.",
+      "es": "Las preguntas y los valores propuestos que un contacto le envía en una conversación, y sus respuestas. Nunca se incluyen cuando comparte todos sus datos: cada contacto lee solo su propia conversación.",
+      "it": "Le domande e i valori proposti che un contatto le invia in una conversazione, e le sue risposte. Mai inclusi quando condivide tutti i suoi dati: ogni contatto legge solo la propria conversazione.",
+      "pt-BR": "As perguntas e os valores propostos que um contato envia a você em uma conversa, e as suas respostas. Nunca incluídos quando você compartilha todos os seus dados: cada contato lê apenas a sua própria conversa."
     }
   },
   {
@@ -1120,7 +1234,10 @@
     "name": "Shared documents",
     "label": {
       "en": "Shared documents",
-      "fr": "Documents partagés"
+      "fr": "Documents partagés",
+      "es": "Documentos compartidos",
+      "it": "Documenti condivisi",
+      "pt-BR": "Documentos compartilhados"
     },
     "parentId": null
   },
@@ -1129,7 +1246,10 @@
     "name": "Medical documents",
     "description": {
       "en": "Every medical document you keep, filed or not: reports, letters, results, consents, advance directives, donor and emergency cards, images and administrative papers, including sensitive ones.",
-      "fr": "Tous les documents médicaux que vous conservez, classés ou non : rapports, lettres, résultats, consentements, directives anticipées, cartes de donneur et d'urgence, images et papiers administratifs, y compris les plus sensibles."
+      "fr": "Tous les documents médicaux que vous conservez, classés ou non : rapports, lettres, résultats, consentements, directives anticipées, cartes de donneur et d'urgence, images et papiers administratifs, y compris les plus sensibles.",
+      "es": "Todos los documentos médicos que conserva, archivados o no: informes, cartas, resultados, consentimientos, instrucciones previas, tarjetas de donante y de emergencia, imágenes y papeles administrativos, incluidos los sensibles.",
+      "it": "Tutti i documenti medici che conserva, archiviati o no: referti, lettere, risultati, consensi, disposizioni anticipate di trattamento, tessere di donatore e di emergenza, immagini e documenti amministrativi, compresi quelli sensibili.",
+      "pt-BR": "Todos os documentos médicos que você guarda, arquivados ou não: relatórios, cartas, resultados, consentimentos, diretivas antecipadas, cartões de doador e de emergência, imagens e papéis administrativos, inclusive os sensíveis."
     },
     "parentId": null,
     "children": [
@@ -1138,11 +1258,17 @@
         "name": "Clinical documents",
         "label": {
           "en": "Clinical documents",
-          "fr": "Documents cliniques"
+          "fr": "Documents cliniques",
+          "es": "Documentos clínicos",
+          "it": "Documenti clinici",
+          "pt-BR": "Documentos clínicos"
         },
         "description": {
           "en": "Documents about your care: reports, letters, prescriptions, results, plans, certificates, consents, advance directives, donor and emergency cards, images and recordings, including sensitive ones.",
-          "fr": "Documents sur vos soins : rapports, lettres, ordonnances, résultats, plans, certificats, consentements, directives anticipées, cartes de donneur et d'urgence, images et enregistrements, y compris les plus sensibles."
+          "fr": "Documents sur vos soins : rapports, lettres, ordonnances, résultats, plans, certificats, consentements, directives anticipées, cartes de donneur et d'urgence, images et enregistrements, y compris les plus sensibles.",
+          "es": "Documentos sobre su atención: informes, cartas, recetas, resultados, planes, certificados, consentimientos, instrucciones previas, tarjetas de donante y de emergencia, imágenes y grabaciones, incluidos los sensibles.",
+          "it": "Documenti sulle sue cure: referti, lettere, prescrizioni, risultati, piani, certificati, consensi, disposizioni anticipate di trattamento, tessere di donatore e di emergenza, immagini e registrazioni, compresi quelli sensibili.",
+          "pt-BR": "Documentos sobre os seus cuidados: relatórios, cartas, receitas, resultados, planos, atestados, consentimentos, diretivas antecipadas, cartões de doador e de emergência, imagens e gravações, inclusive os sensíveis."
         },
         "parentId": "documents"
       },
@@ -1151,11 +1277,17 @@
         "name": "Administrative documents",
         "label": {
           "en": "Administrative documents",
-          "fr": "Documents administratifs"
+          "fr": "Documents administratifs",
+          "es": "Documentos administrativos",
+          "it": "Documenti amministrativi",
+          "pt-BR": "Documentos administrativos"
         },
         "description": {
           "en": "Papers around your care, such as invoices, appointment letters and insurance documents. They can show which care you received.",
-          "fr": "Papiers autour de vos soins, comme les factures, les convocations et les documents d'assurance. Ils peuvent montrer quels soins vous avez reçus."
+          "fr": "Papiers autour de vos soins, comme les factures, les convocations et les documents d'assurance. Ils peuvent montrer quels soins vous avez reçus.",
+          "es": "Papeles relacionados con su atención, como facturas, citaciones y documentos del seguro. Pueden mostrar qué atención ha recibido.",
+          "it": "Documenti legati alle sue cure, come fatture, lettere di appuntamento e documenti assicurativi. Possono mostrare quali cure ha ricevuto.",
+          "pt-BR": "Papéis em torno dos seus cuidados, como faturas, cartas de agendamento e documentos do plano de saúde. Eles podem mostrar quais cuidados você recebeu."
         },
         "children": [
           {
@@ -1163,11 +1295,17 @@
             "name": "Insurance documents",
             "label": {
               "en": "Insurance documents",
-              "fr": "Documents d'assurance"
+              "fr": "Documents d'assurance",
+              "es": "Documentos del seguro",
+              "it": "Documenti assicurativi",
+              "pt-BR": "Documentos do plano de saúde"
             },
             "description": {
               "en": "Papers from and for insurers: policies, cards, cost approvals, reimbursement statements. They can show which care you received.",
-              "fr": "Papiers des assureurs et pour eux : polices, cartes, garanties de prise en charge, décomptes de prestations. Ils peuvent montrer quels soins vous avez reçus."
+              "fr": "Papiers des assureurs et pour eux : polices, cartes, garanties de prise en charge, décomptes de prestations. Ils peuvent montrer quels soins vous avez reçus.",
+              "es": "Papeles de las aseguradoras y para ellas: pólizas, tarjetas, autorizaciones de cobertura, liquidaciones de reembolso. Pueden mostrar qué atención ha recibido.",
+              "it": "Documenti delle assicurazioni e per le assicurazioni: polizze, tessere, autorizzazioni di spesa, rendiconti dei rimborsi. Possono mostrare quali cure ha ricevuto.",
+              "pt-BR": "Papéis das operadoras e para elas: apólices, carteirinhas, autorizações de cobertura, extratos de reembolso. Eles podem mostrar quais cuidados você recebeu."
             },
             "parentId": "documents-admin"
           }
@@ -1181,11 +1319,17 @@
     "name": "Care encounters and providers",
     "label": {
       "en": "Care encounters and providers",
-      "fr": "Soins et prestataires"
+      "fr": "Soins et prestataires",
+      "es": "Visitas de atención y profesionales",
+      "it": "Visite di cura e prestatori",
+      "pt-BR": "Atendimentos, profissionais e serviços de saúde"
     },
     "description": {
       "en": "Your consultations, hospital stays and other care visits, with the doctors and places involved and the reason given, including sensitive visits.",
-      "fr": "Vos consultations, séjours hospitaliers et autres soins, avec les médecins et les lieux concernés et le motif indiqué, y compris les visites sensibles."
+      "fr": "Vos consultations, séjours hospitaliers et autres soins, avec les médecins et les lieux concernés et le motif indiqué, y compris les visites sensibles.",
+      "es": "Sus consultas, hospitalizaciones y otras visitas de atención, con los médicos y lugares implicados y el motivo indicado, incluidas las visitas sensibles.",
+      "it": "Le sue consultazioni, i ricoveri ospedalieri e altre visite di cura, con i medici e i luoghi coinvolti e il motivo indicato, comprese le visite sensibili.",
+      "pt-BR": "Suas consultas, internações e outros atendimentos, com os médicos e locais envolvidos e o motivo informado, incluindo atendimentos sensíveis."
     },
     "parentId": null,
     "children": [
@@ -1199,7 +1343,10 @@
         "name": "Care providers",
         "label": {
           "en": "Care providers",
-          "fr": "Prestataires de soins"
+          "fr": "Prestataires de soins",
+          "es": "Profesionales y centros de atención",
+          "it": "Prestatori di cure",
+          "pt-BR": "Profissionais e serviços de saúde"
         },
         "children": [
           {
@@ -1222,11 +1369,17 @@
     "name": "Family",
     "label": {
       "en": "Family",
-      "fr": "Famille"
+      "fr": "Famille",
+      "es": "Familia",
+      "it": "Famiglia",
+      "pt-BR": "Família"
     },
     "description": {
       "en": "How many children you have.",
-      "fr": "Le nombre d'enfants que vous avez."
+      "fr": "Le nombre d'enfants que vous avez.",
+      "es": "Cuántos hijos tiene.",
+      "it": "Quanti figli ha.",
+      "pt-BR": "Quantos filhos você tem."
     },
     "parentId": null,
     "children": [
@@ -1242,11 +1395,17 @@
     "name": "Fertility",
     "label": {
       "en": "Fertility",
-      "fr": "Fertilité"
+      "fr": "Fertilité",
+      "es": "Fertilidad",
+      "it": "Fertilità",
+      "pt-BR": "Fertilidade"
     },
     "description": {
       "en": "Your menstrual cycles, fertile days and ovulation, your sexual activity and any protection used, whether you are trying to conceive or to avoid a pregnancy, ovulation and pregnancy tests, and your pregnancies and births, including miscarriages and abortions.",
-      "fr": "Vos cycles menstruels, jours fertiles et ovulation, votre activité sexuelle et la protection utilisée, votre intention de concevoir ou d'éviter une grossesse, les tests d'ovulation et de grossesse, et vos grossesses et accouchements, y compris les fausses couches et les interruptions de grossesse."
+      "fr": "Vos cycles menstruels, jours fertiles et ovulation, votre activité sexuelle et la protection utilisée, votre intention de concevoir ou d'éviter une grossesse, les tests d'ovulation et de grossesse, et vos grossesses et accouchements, y compris les fausses couches et les interruptions de grossesse.",
+      "es": "Sus ciclos menstruales, días fértiles y ovulación, su actividad sexual y la protección utilizada, si busca un embarazo o intenta evitarlo, las pruebas de ovulación y de embarazo, y sus embarazos y partos, incluidos los abortos espontáneos y las interrupciones del embarazo.",
+      "it": "I suoi cicli mestruali, i giorni fertili e l'ovulazione, la sua attività sessuale e l'eventuale protezione utilizzata, se sta cercando di concepire o di evitare una gravidanza, i test di ovulazione e di gravidanza, e le sue gravidanze e i suoi parti, compresi aborti spontanei e interruzioni di gravidanza.",
+      "pt-BR": "Seus ciclos menstruais, dias férteis e ovulação, sua atividade sexual e a proteção usada, se você está tentando engravidar ou evitando a gravidez, testes de ovulação e de gravidez, e suas gestações e partos, incluindo abortos espontâneos e abortos induzidos."
     },
     "parentId": null,
     "children": [
@@ -1255,7 +1414,10 @@
         "name": "Cycles",
         "label": {
           "en": "Cycles",
-          "fr": "Cycles"
+          "fr": "Cycles",
+          "es": "Ciclos",
+          "it": "Cicli",
+          "pt-BR": "Ciclos"
         },
         "children": [
           {
@@ -1303,7 +1465,10 @@
             "name": "Cycles charted estimation",
             "label": {
               "en": "Cycles charted estimation",
-              "fr": "Nombre estimé de cycles observés"
+              "fr": "Nombre estimé de cycles observés",
+              "es": "Número estimado de ciclos registrados",
+              "it": "Stima dei cicli registrati",
+              "pt-BR": "Número estimado de ciclos registrados"
             },
             "parentId": "fertility-cycles"
           },
@@ -1340,7 +1505,10 @@
         "name": "Trainings",
         "label": {
           "en": "Trainings",
-          "fr": "Formations"
+          "fr": "Formations",
+          "es": "Formaciones",
+          "it": "Formazioni",
+          "pt-BR": "Treinamentos"
         },
         "parentId": "fertility"
       },
@@ -1388,7 +1556,10 @@
             "name": "Miscarriages",
             "label": {
               "en": "Miscarriages",
-              "fr": "Fausses couches"
+              "fr": "Fausses couches",
+              "es": "Abortos espontáneos",
+              "it": "Aborti spontanei",
+              "pt-BR": "Abortos espontâneos"
             },
             "parentId": "fertility-pregnancies"
           },
@@ -1412,7 +1583,10 @@
     "name": "Functional status",
     "label": {
       "en": "Functional status",
-      "fr": "État fonctionnel"
+      "fr": "État fonctionnel",
+      "es": "Estado funcional",
+      "it": "Stato funzionale",
+      "pt-BR": "Estado funcional"
     },
     "parentId": null,
     "children": [
@@ -1440,11 +1614,17 @@
     "explicitGrantOnly": true,
     "label": {
       "en": "Genetic test results",
-      "fr": "Résultats de tests génétiques"
+      "fr": "Résultats de tests génétiques",
+      "es": "Resultados de pruebas genéticas",
+      "it": "Risultati dei test genetici",
+      "pt-BR": "Resultados de testes genéticos"
     },
     "description": {
       "en": "Results of genetic tests, such as the gene variants a laboratory tested. Never included when you share all your data: shared only when you name them.",
-      "fr": "Résultats de tests génétiques, comme les variants de gènes testés par un laboratoire. Jamais inclus quand vous partagez toutes vos données : partagés seulement si vous les nommez."
+      "fr": "Résultats de tests génétiques, comme les variants de gènes testés par un laboratoire. Jamais inclus quand vous partagez toutes vos données : partagés seulement si vous les nommez.",
+      "es": "Resultados de pruebas genéticas, como las variantes de genes analizadas por un laboratorio. Nunca se incluyen cuando comparte todos sus datos: solo se comparten cuando usted los nombra.",
+      "it": "Risultati di test genetici, come le varianti di geni testate da un laboratorio. Mai inclusi quando condivide tutti i suoi dati: condivisi solo quando li nomina.",
+      "pt-BR": "Resultados de testes genéticos, como as variantes de genes testadas por um laboratório. Nunca incluídos quando você compartilha todos os seus dados: compartilhados apenas quando você os indica pelo nome."
     },
     "children": [
       {
@@ -1460,11 +1640,17 @@
     "parentId": null,
     "label": {
       "en": "Health Data Safe support (holds no data)",
-      "fr": "Assistance Health Data Safe (ne contient aucune donnée)"
+      "fr": "Assistance Health Data Safe (ne contient aucune donnée)",
+      "es": "Soporte de Health Data Safe (no contiene datos)",
+      "it": "Assistenza Health Data Safe (non contiene dati)",
+      "pt-BR": "Suporte do Health Data Safe (não contém dados)"
     },
     "description": {
       "en": "Lets the Health Data Safe team exchange messages with you. It holds none of your data.",
-      "fr": "Permet à l'équipe Health Data Safe d'échanger des messages avec vous. Ne contient aucune de vos données."
+      "fr": "Permet à l'équipe Health Data Safe d'échanger des messages avec vous. Ne contient aucune de vos données.",
+      "es": "Permite que el equipo de Health Data Safe intercambie mensajes con usted. No contiene ninguno de sus datos.",
+      "it": "Permette al team di Health Data Safe di scambiare messaggi con lei. Non contiene nessuno dei suoi dati.",
+      "pt-BR": "Permite que a equipe do Health Data Safe troque mensagens com você. Não contém nenhum dado seu."
     }
   },
   {
@@ -1472,11 +1658,17 @@
     "name": "Lifestyle",
     "label": {
       "en": "Lifestyle",
-      "fr": "Mode de vie"
+      "fr": "Mode de vie",
+      "es": "Estilo de vida",
+      "it": "Stile di vita",
+      "pt-BR": "Estilo de vida"
     },
     "description": {
       "en": "Your use of tobacco and nicotine, how often and how much alcohol you drink, and your diet, including foods you avoid for reasons of belief or health.",
-      "fr": "Votre consommation de tabac, de nicotine et d'alcool, et votre alimentation, y compris les aliments que vous évitez par conviction ou pour raison de santé."
+      "fr": "Votre consommation de tabac, de nicotine et d'alcool, et votre alimentation, y compris les aliments que vous évitez par conviction ou pour raison de santé.",
+      "es": "Su consumo de tabaco y nicotina, con qué frecuencia y cuánto alcohol bebe, y su alimentación, incluidos los alimentos que evita por creencias o por motivos de salud.",
+      "it": "Il suo consumo di tabacco e nicotina, con quale frequenza e in che quantità beve alcol, e la sua alimentazione, compresi gli alimenti che evita per convinzione o per motivi di salute.",
+      "pt-BR": "Seu uso de tabaco e nicotina, com que frequência e quanto álcool você bebe, e a sua alimentação, incluindo alimentos que você evita por crença ou por saúde."
     },
     "parentId": null,
     "children": [
@@ -1485,7 +1677,10 @@
         "name": "Tobacco and nicotine",
         "label": {
           "en": "Tobacco and nicotine",
-          "fr": "Tabac et nicotine"
+          "fr": "Tabac et nicotine",
+          "es": "Tabaco y nicotina",
+          "it": "Tabacco e nicotina",
+          "pt-BR": "Tabaco e nicotina"
         },
         "children": [
           {
@@ -1511,7 +1706,10 @@
         "name": "Alcohol",
         "label": {
           "en": "Alcohol",
-          "fr": "Alcool"
+          "fr": "Alcool",
+          "es": "Alcohol",
+          "it": "Alcol",
+          "pt-BR": "Álcool"
         },
         "children": [
           {
@@ -1537,7 +1735,10 @@
         "name": "Diet",
         "label": {
           "en": "Diet",
-          "fr": "Alimentation"
+          "fr": "Alimentation",
+          "es": "Alimentación",
+          "it": "Alimentazione",
+          "pt-BR": "Alimentação"
         },
         "children": [
           {
@@ -1560,7 +1761,10 @@
     "name": "Medication",
     "label": {
       "en": "Medication",
-      "fr": "Médicaments"
+      "fr": "Médicaments",
+      "es": "Medicación",
+      "it": "Medicinali",
+      "pt-BR": "Medicamentos"
     },
     "parentId": null,
     "children": [
@@ -1569,7 +1773,10 @@
         "name": "Intake",
         "label": {
           "en": "Intake",
-          "fr": "Prises de médicaments"
+          "fr": "Prises de médicaments",
+          "es": "Tomas de medicamentos",
+          "it": "Assunzioni",
+          "pt-BR": "Tomadas"
         },
         "parentId": "medication"
       },
@@ -1578,7 +1785,10 @@
         "name": "Prescriptions",
         "label": {
           "en": "Prescriptions",
-          "fr": "Prescriptions de médicaments"
+          "fr": "Prescriptions de médicaments",
+          "es": "Prescripciones de medicamentos",
+          "it": "Prescrizioni",
+          "pt-BR": "Prescrições"
         },
         "parentId": "medication"
       }
@@ -1589,7 +1799,10 @@
     "name": "Nutrition",
     "label": {
       "en": "Nutrition",
-      "fr": "Nutrition"
+      "fr": "Nutrition",
+      "es": "Nutrición",
+      "it": "Nutrizione",
+      "pt-BR": "Nutrição"
     },
     "parentId": null,
     "children": [
@@ -1605,7 +1818,10 @@
     "name": "Procedure",
     "label": {
       "en": "Procedure",
-      "fr": "Actes médicaux"
+      "fr": "Actes médicaux",
+      "es": "Procedimientos",
+      "it": "Procedure",
+      "pt-BR": "Procedimentos"
     },
     "parentId": null,
     "children": [
@@ -1614,7 +1830,10 @@
         "name": "Fertility",
         "label": {
           "en": "Fertility",
-          "fr": "Fertilité"
+          "fr": "Fertilité",
+          "es": "Fertilidad",
+          "it": "Fertilità",
+          "pt-BR": "Fertilidade"
         },
         "role": "context",
         "parentId": "procedure"
@@ -1626,11 +1845,17 @@
     "name": "Profile",
     "label": {
       "en": "Profile",
-      "fr": "Profil"
+      "fr": "Profil",
+      "es": "Perfil",
+      "it": "Profilo",
+      "pt-BR": "Perfil"
     },
     "description": {
       "en": "Who you are: your name, display name and photo, date of birth, sex, ethnicity, country of birth and of residence, your reproductive stage, such as pregnancy or menopause, and your account preferences such as language and time zone.",
-      "fr": "Qui vous êtes : vos nom et prénom, nom d'affichage et photo, date de naissance, sexe, origine ethnique, pays de naissance et de résidence, votre stade reproductif, comme la grossesse ou la ménopause, et les préférences de votre compte comme la langue et le fuseau horaire."
+      "fr": "Qui vous êtes : vos nom et prénom, nom d'affichage et photo, date de naissance, sexe, origine ethnique, pays de naissance et de résidence, votre stade reproductif, comme la grossesse ou la ménopause, et les préférences de votre compte comme la langue et le fuseau horaire.",
+      "es": "Quién es usted: su nombre, nombre visible y foto, fecha de nacimiento, sexo, origen étnico, país de nacimiento y de residencia, su etapa reproductiva, como el embarazo o la menopausia, y las preferencias de su cuenta, como el idioma y la zona horaria.",
+      "it": "Chi è: il suo nome, il nome visualizzato e la foto, la data di nascita, il sesso, l'origine etnica, il paese di nascita e di residenza, la sua fase riproduttiva, come la gravidanza o la menopausa, e le preferenze del suo account come la lingua e il fuso orario.",
+      "pt-BR": "Quem você é: seu nome, nome de exibição e foto, data de nascimento, sexo, etnia, país de nascimento e de residência, sua fase reprodutiva, como gravidez ou menopausa, e as preferências da sua conta, como idioma e fuso horário."
     },
     "parentId": null,
     "children": [
@@ -1669,7 +1894,10 @@
         "name": "Location",
         "label": {
           "en": "Location",
-          "fr": "Localisation"
+          "fr": "Localisation",
+          "es": "Ubicación",
+          "it": "Posizione",
+          "pt-BR": "Localização"
         },
         "parentId": "profile"
       },
@@ -1678,7 +1906,10 @@
         "name": "Name",
         "label": {
           "en": "Name",
-          "fr": "Nom et prénom"
+          "fr": "Nom et prénom",
+          "es": "Nombre",
+          "it": "Nome e cognome",
+          "pt-BR": "Nome"
         },
         "parentId": "profile"
       },
@@ -1697,7 +1928,10 @@
         "name": "Account preferences",
         "label": {
           "en": "Account preferences",
-          "fr": "Préférences du compte"
+          "fr": "Préférences du compte",
+          "es": "Preferencias de la cuenta",
+          "it": "Preferenze dell'account",
+          "pt-BR": "Preferências da conta"
         },
         "parentId": "profile"
       }
@@ -1710,11 +1944,17 @@
     "explicitGrantOnly": true,
     "label": {
       "en": "Questionnaires",
-      "fr": "Questionnaires"
+      "fr": "Questionnaires",
+      "es": "Cuestionarios",
+      "it": "Questionari",
+      "pt-BR": "Questionários"
     },
     "description": {
       "en": "The questionnaires you were asked to answer and your answers: for each question, whether you answered yes or no, did not know or preferred not to say, with any detail you added and the reason you gave for not answering, on any health topic. The records your answers point to are shared separately. Never included when you share all your data: shared only when you name them.",
-      "fr": "Les questionnaires auxquels on vous a demandé de répondre et vos réponses : pour chaque question, si vous avez répondu oui ou non, si vous ne saviez pas ou si vous avez préféré ne pas répondre, avec les précisions que vous avez ajoutées et la raison que vous avez donnée pour ne pas répondre, sur tout sujet de santé. Les données auxquelles vos réponses renvoient sont partagées séparément. Jamais inclus quand vous partagez toutes vos données : partagés seulement si vous les nommez."
+      "fr": "Les questionnaires auxquels on vous a demandé de répondre et vos réponses : pour chaque question, si vous avez répondu oui ou non, si vous ne saviez pas ou si vous avez préféré ne pas répondre, avec les précisions que vous avez ajoutées et la raison que vous avez donnée pour ne pas répondre, sur tout sujet de santé. Les données auxquelles vos réponses renvoient sont partagées séparément. Jamais inclus quand vous partagez toutes vos données : partagés seulement si vous les nommez.",
+      "es": "Los cuestionarios que se le pidió responder y sus respuestas: para cada pregunta, si respondió sí o no, si no lo sabía o si prefirió no decirlo, con los detalles que añadió y el motivo que dio para no responder, sobre cualquier tema de salud. Los registros a los que remiten sus respuestas se comparten por separado. Nunca se incluyen cuando comparte todos sus datos: solo se comparten cuando usted los nombra.",
+      "it": "I questionari a cui le è stato chiesto di rispondere e le sue risposte: per ogni domanda, se ha risposto sì o no, se non sapeva o se ha preferito non rispondere, con i dettagli che ha aggiunto e il motivo che ha dato per non rispondere, su qualsiasi argomento di salute. I dati a cui rimandano le sue risposte sono condivisi separatamente. Mai inclusi quando condivide tutti i suoi dati: condivisi solo quando li nomina.",
+      "pt-BR": "Os questionários que pediram para você responder e as suas respostas: para cada pergunta, se você respondeu sim ou não, não soube ou preferiu não dizer, com os detalhes que você acrescentou e o motivo que deu para não responder, sobre qualquer assunto de saúde. Os registros para os quais as suas respostas apontam são compartilhados separadamente. Nunca incluídos quando você compartilha todos os seus dados: compartilhados apenas quando você os indica pelo nome."
     },
     "children": [
       {
@@ -1722,11 +1962,17 @@
         "name": "Questionnaires received",
         "label": {
           "en": "Questionnaires received",
-          "fr": "Questionnaires reçus"
+          "fr": "Questionnaires reçus",
+          "es": "Cuestionarios recibidos",
+          "it": "Questionari ricevuti",
+          "pt-BR": "Questionários recebidos"
         },
         "description": {
           "en": "The questionnaires you were asked to answer: their questions, on any health topic, and who asked. Never included when you share all your data: shared only when you name them.",
-          "fr": "Les questionnaires auxquels on vous a demandé de répondre : leurs questions, sur tout sujet de santé, et qui les a posées. Jamais inclus quand vous partagez toutes vos données : partagés seulement si vous les nommez."
+          "fr": "Les questionnaires auxquels on vous a demandé de répondre : leurs questions, sur tout sujet de santé, et qui les a posées. Jamais inclus quand vous partagez toutes vos données : partagés seulement si vous les nommez.",
+          "es": "Los cuestionarios que se le pidió responder: sus preguntas, sobre cualquier tema de salud, y quién las formuló. Nunca se incluyen cuando comparte todos sus datos: solo se comparten cuando usted los nombra.",
+          "it": "I questionari a cui le è stato chiesto di rispondere: le loro domande, su qualsiasi argomento di salute, e chi le ha poste. Mai inclusi quando condivide tutti i suoi dati: condivisi solo quando li nomina.",
+          "pt-BR": "Os questionários que pediram para você responder: suas perguntas, sobre qualquer assunto de saúde, e quem os enviou. Nunca incluídos quando você compartilha todos os seus dados: compartilhados apenas quando você os indica pelo nome."
         },
         "parentId": "questionnaire"
       },
@@ -1735,11 +1981,17 @@
         "name": "Questionnaire answers",
         "label": {
           "en": "Questionnaire answers",
-          "fr": "Réponses aux questionnaires"
+          "fr": "Réponses aux questionnaires",
+          "es": "Respuestas a los cuestionarios",
+          "it": "Risposte ai questionari",
+          "pt-BR": "Respostas dos questionários"
         },
         "description": {
           "en": "Your answers to questionnaires: for each question, whether you answered yes or no, did not know or preferred not to say, with any detail you added and the reason you gave for not answering, on any health topic. The records your answers point to are shared separately. Never included when you share all your data: shared only when you name them.",
-          "fr": "Vos réponses aux questionnaires : pour chaque question, si vous avez répondu oui ou non, si vous ne saviez pas ou si vous avez préféré ne pas répondre, avec les précisions que vous avez ajoutées et la raison que vous avez donnée pour ne pas répondre, sur tout sujet de santé. Les données auxquelles vos réponses renvoient sont partagées séparément. Jamais incluses quand vous partagez toutes vos données : partagées seulement si vous les nommez."
+          "fr": "Vos réponses aux questionnaires : pour chaque question, si vous avez répondu oui ou non, si vous ne saviez pas ou si vous avez préféré ne pas répondre, avec les précisions que vous avez ajoutées et la raison que vous avez donnée pour ne pas répondre, sur tout sujet de santé. Les données auxquelles vos réponses renvoient sont partagées séparément. Jamais incluses quand vous partagez toutes vos données : partagées seulement si vous les nommez.",
+          "es": "Sus respuestas a los cuestionarios: para cada pregunta, si respondió sí o no, si no lo sabía o si prefirió no decirlo, con los detalles que añadió y el motivo que dio para no responder, sobre cualquier tema de salud. Los registros a los que remiten sus respuestas se comparten por separado. Nunca se incluyen cuando comparte todos sus datos: solo se comparten cuando usted los nombra.",
+          "it": "Le sue risposte ai questionari: per ogni domanda, se ha risposto sì o no, se non sapeva o se ha preferito non rispondere, con i dettagli che ha aggiunto e il motivo che ha dato per non rispondere, su qualsiasi argomento di salute. I dati a cui rimandano le sue risposte sono condivisi separatamente. Mai incluse quando condivide tutti i suoi dati: condivise solo quando le nomina.",
+          "pt-BR": "Suas respostas aos questionários: para cada pergunta, se você respondeu sim ou não, não soube ou preferiu não dizer, com os detalhes que você acrescentou e o motivo que deu para não responder, sobre qualquer assunto de saúde. Os registros para os quais as suas respostas apontam são compartilhados separadamente. Nunca incluídas quando você compartilha todos os seus dados: compartilhadas apenas quando você as indica pelo nome."
         },
         "parentId": "questionnaire"
       }
@@ -1750,7 +2002,10 @@
     "name": "Symptoms",
     "label": {
       "en": "Symptoms",
-      "fr": "Symptômes"
+      "fr": "Symptômes",
+      "es": "Síntomas",
+      "it": "Sintomi",
+      "pt-BR": "Sintomas"
     },
     "parentId": null,
     "children": [
@@ -1759,7 +2014,10 @@
         "name": "Gastrointestinal",
         "label": {
           "en": "Gastrointestinal",
-          "fr": "Gastro-intestinaux"
+          "fr": "Gastro-intestinaux",
+          "es": "Digestivos",
+          "it": "Gastrointestinali",
+          "pt-BR": "Gastrointestinais"
         },
         "children": [
           {
@@ -1805,7 +2063,10 @@
         "name": "Pain",
         "label": {
           "en": "Pain",
-          "fr": "Douleur"
+          "fr": "Douleur",
+          "es": "Dolor",
+          "it": "Dolore",
+          "pt-BR": "Dor"
         },
         "children": [
           {
@@ -1851,7 +2112,10 @@
         "name": "Neurological",
         "label": {
           "en": "Neurological",
-          "fr": "Neurologiques"
+          "fr": "Neurologiques",
+          "es": "Neurológicos",
+          "it": "Neurologici",
+          "pt-BR": "Neurológicos"
         },
         "children": [
           {
@@ -1887,7 +2151,10 @@
         "name": "Cognitive",
         "label": {
           "en": "Cognitive",
-          "fr": "Cognitifs"
+          "fr": "Cognitifs",
+          "es": "Cognitivos",
+          "it": "Cognitivi",
+          "pt-BR": "Cognitivos"
         },
         "children": [
           {
@@ -1903,7 +2170,10 @@
         "name": "Dermatological",
         "label": {
           "en": "Dermatological",
-          "fr": "Dermatologiques"
+          "fr": "Dermatologiques",
+          "es": "Dermatológicos",
+          "it": "Dermatologici",
+          "pt-BR": "Dermatológicos"
         },
         "children": [
           {
@@ -1939,7 +2209,10 @@
         "name": "Sleep",
         "label": {
           "en": "Sleep",
-          "fr": "Sommeil"
+          "fr": "Sommeil",
+          "es": "Sueño",
+          "it": "Sonno",
+          "pt-BR": "Sono"
         },
         "children": [
           {
@@ -1955,7 +2228,10 @@
         "name": "Metabolic",
         "label": {
           "en": "Metabolic",
-          "fr": "Métaboliques"
+          "fr": "Métaboliques",
+          "es": "Metabólicos",
+          "it": "Metabolici",
+          "pt-BR": "Metabólicos"
         },
         "children": [
           {
@@ -1971,7 +2247,10 @@
         "name": "General",
         "label": {
           "en": "General",
-          "fr": "Généraux"
+          "fr": "Généraux",
+          "es": "Generales",
+          "it": "Generali",
+          "pt-BR": "Gerais"
         },
         "children": [
           {
@@ -1992,7 +2271,10 @@
         "name": "Respiratory",
         "label": {
           "en": "Respiratory",
-          "fr": "Respiratoires"
+          "fr": "Respiratoires",
+          "es": "Respiratorios",
+          "it": "Respiratori",
+          "pt-BR": "Respiratórios"
         },
         "children": [
           {
@@ -2033,7 +2315,10 @@
         "name": "Cardiac",
         "label": {
           "en": "Cardiac",
-          "fr": "Cardiaques"
+          "fr": "Cardiaques",
+          "es": "Cardíacos",
+          "it": "Cardiaci",
+          "pt-BR": "Cardíacos"
         },
         "children": [
           {
@@ -2054,7 +2339,10 @@
         "name": "Thermoregulation",
         "label": {
           "en": "Thermoregulation",
-          "fr": "Thermorégulation"
+          "fr": "Thermorégulation",
+          "es": "Termorregulación",
+          "it": "Termoregolazione",
+          "pt-BR": "Termorregulação"
         },
         "children": [
           {
@@ -2090,7 +2378,10 @@
         "name": "Vision & Sensory",
         "label": {
           "en": "Vision & Sensory",
-          "fr": "Vision et sens"
+          "fr": "Vision et sens",
+          "es": "Visión y sentidos",
+          "it": "Vista e sensi",
+          "pt-BR": "Visão e sentidos"
         },
         "children": [
           {
@@ -2116,7 +2407,10 @@
         "name": "Hydration & Urinary",
         "label": {
           "en": "Hydration & Urinary",
-          "fr": "Hydratation et voies urinaires"
+          "fr": "Hydratation et voies urinaires",
+          "es": "Hidratación y vías urinarias",
+          "it": "Idratazione e vie urinarie",
+          "pt-BR": "Hidratação e vias urinárias"
         },
         "children": [
           {
@@ -2137,7 +2431,10 @@
         "name": "Bleeding",
         "label": {
           "en": "Bleeding",
-          "fr": "Saignements"
+          "fr": "Saignements",
+          "es": "Sangrado",
+          "it": "Sanguinamenti",
+          "pt-BR": "Sangramentos"
         },
         "children": [
           {
@@ -2170,7 +2467,10 @@
         "name": "Mira connection status",
         "label": {
           "en": "Mira connection status",
-          "fr": "État de la connexion Mira"
+          "fr": "État de la connexion Mira",
+          "es": "Estado de la conexión con Mira",
+          "it": "Stato della connessione Mira",
+          "pt-BR": "Status da conexão com o Mira"
         },
         "role": "context",
         "parentId": "sync-status"
@@ -2180,7 +2480,10 @@
         "name": "Tempdrop connection status",
         "label": {
           "en": "Tempdrop connection status",
-          "fr": "État de la connexion Tempdrop"
+          "fr": "État de la connexion Tempdrop",
+          "es": "Estado de la conexión con Tempdrop",
+          "it": "Stato della connessione Tempdrop",
+          "pt-BR": "Status da conexão com o Tempdrop"
         },
         "role": "context",
         "parentId": "sync-status"
@@ -2190,7 +2493,10 @@
         "name": "FEMM connection status",
         "label": {
           "en": "FEMM connection status",
-          "fr": "État de la connexion FEMM"
+          "fr": "État de la connexion FEMM",
+          "es": "Estado de la conexión con FEMM",
+          "it": "Stato della connessione FEMM",
+          "pt-BR": "Status da conexão com o FEMM"
         },
         "role": "context",
         "parentId": "sync-status"
@@ -2200,7 +2506,10 @@
         "name": "Read Your Body connection status",
         "label": {
           "en": "Read Your Body connection status",
-          "fr": "État de la connexion Read Your Body"
+          "fr": "État de la connexion Read Your Body",
+          "es": "Estado de la conexión con Read Your Body",
+          "it": "Stato della connessione Read Your Body",
+          "pt-BR": "Status da conexão com o Read Your Body"
         },
         "role": "context",
         "parentId": "sync-status"
@@ -2210,7 +2519,10 @@
         "name": "cyclefeminin connection status",
         "label": {
           "en": "cyclefeminin connection status",
-          "fr": "État de la connexion cyclefeminin"
+          "fr": "État de la connexion cyclefeminin",
+          "es": "Estado de la conexión con cyclefeminin",
+          "it": "Stato della connessione cyclefeminin",
+          "pt-BR": "Status da conexão com o cyclefeminin"
         },
         "role": "context",
         "parentId": "sync-status"
@@ -2220,7 +2532,10 @@
         "name": "Apple Health connection status",
         "label": {
           "en": "Apple Health connection status",
-          "fr": "État de la connexion Apple Santé"
+          "fr": "État de la connexion Apple Santé",
+          "es": "Estado de la conexión con Apple Health",
+          "it": "Stato della connessione Apple Health",
+          "pt-BR": "Status da conexão com o Apple Health"
         },
         "role": "context",
         "parentId": "sync-status"
@@ -2232,7 +2547,10 @@
     "name": "Treatment",
     "label": {
       "en": "Treatment",
-      "fr": "Traitements"
+      "fr": "Traitements",
+      "es": "Tratamientos",
+      "it": "Trattamenti",
+      "pt-BR": "Tratamento"
     },
     "parentId": null,
     "children": [
@@ -2241,7 +2559,10 @@
         "name": "Fertility",
         "label": {
           "en": "Fertility",
-          "fr": "Fertilité"
+          "fr": "Fertilité",
+          "es": "Fertilidad",
+          "it": "Fertilità",
+          "pt-BR": "Fertilidade"
         },
         "role": "context",
         "parentId": "treatment"
@@ -2253,11 +2574,17 @@
     "name": "Wellbeing",
     "label": {
       "en": "Wellbeing",
-      "fr": "Bien-être"
+      "fr": "Bien-être",
+      "es": "Bienestar",
+      "it": "Benessere",
+      "pt-BR": "Bem-estar"
     },
     "description": {
       "en": "Your mood, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress.",
-      "fr": "Votre humeur, votre désir sexuel, votre santé telle que vous l'évaluez, et votre détresse mentale, y compris l'anxiété, la dépression et le stress."
+      "fr": "Votre humeur, votre désir sexuel, votre santé telle que vous l'évaluez, et votre détresse mentale, y compris l'anxiété, la dépression et le stress.",
+      "es": "Su estado de ánimo, su deseo sexual y cómo valora su salud, y su malestar psicológico, incluidos ansiedad, depresión y estrés.",
+      "it": "Il suo umore, il suo desiderio sessuale e come valuta la sua salute, e il suo disagio mentale, compresi ansia, depressione e stress.",
+      "pt-BR": "Seu humor, sua libido e como você avalia a sua saúde, e o seu sofrimento mental, incluindo ansiedade, depressão e estresse."
     },
     "parentId": null,
     "children": [
