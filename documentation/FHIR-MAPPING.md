@@ -102,10 +102,10 @@ hds-fhir-js, then the facade pin and the extension options, then hds-webapp and 
 tag** (their export indexes the live pack, [Forward compatibility](#forward-compatibility)). The `treatment`
 items joined the key later ([Treatments](#treatments-procedure-over-a-period)).
 
-**Treatments (plan 133):** the two treatment items carry a `Procedure` block too, with `status: { from: span }`, a new
+**Treatments (4.34.0, plan 133):** the two treatment items carry a `Procedure` block too, with `status: { from: span }`, a new
 block field: the status comes from the event's span, and the item has no import key
 ([Treatments](#treatments-procedure-over-a-period)). An older renderer does not know the field, skips the block and keeps
-serving the events as generic Observations.
+serving the events as generic Observations. Needs hds-fhir-js 0.14.0 to render.
 
 **Questionnaire answers (4.12.0, plan 115):** the `questionnaire-answer` item carries a `QuestionnaireResponse`
 block, a **bare scope key**, the first block with no `code` (the resource has none, and its content is read by
@@ -1003,11 +1003,11 @@ refused. Into a treatment item:
 | Source | Event |
 |---|---|
 | `in-progress`, a start (or a date) and no end | `duration: null` |
-| `in-progress` with an end, passed or not | that `duration` (a planned end read after it passed is the same event, and renders `completed` again once the end's period has begun) |
+| `in-progress` with an end, passed or not | that `duration` (a planned end read after it passed is the same event, and renders `completed` once the end's period has begun) |
 | `in-progress` with an end within the start's period | a point: the model keeps no span within one period, so `in-progress` is kept as `unknown` |
 | `completed` with a start and an end | that `duration`; an end in the future is refused |
 | `completed` or `unknown`, a date or a start only, or a span within one period | a point (a `completed` point is kept as `unknown`: less, not false) |
-| `unknown` with an end | refused: the span would render as more than the source says |
+| `unknown` with an end beyond the start's period | refused: the span would render as more than the source says |
 | `preparation`, `on-hold`, `stopped` | refused: no status is stored |
 | `entered-in-error`, `not-done`; a start in the future; an end before the start | refused |
 

@@ -13,7 +13,8 @@ Plan 133 (FHIR after plan 115, Part A): the treatment items. Additive in the pac
 - **No import key:** a Procedure is imported into a treatment item by the `meta.tag` of an HDS export or by name only.
 - Build: `status` on a Procedure only, required when the item's duration may be null and refused otherwise. Tests
   `[FHIR-ITEM-15]`, `[FHIR-MAP-28]`.
-- **Needs the renderer first** (hds-fhir-js): an older one skips the two blocks and serves the events as generic Observations.
+- **Needs hds-fhir-js 0.14.0 to render:** an older one skips the two blocks and keeps serving the events as generic
+  Observations. The facade is re-pinned only with that renderer.
 
 ## [4.33.0] - 2026-11-25
 
