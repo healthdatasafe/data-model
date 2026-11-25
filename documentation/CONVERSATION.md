@@ -244,9 +244,11 @@ set aside, may leave nothing waiting, and is deleted at `done` (R10). Her app sa
 - **On `sent` only.** It travels in no alert (R6), and the contact never echoes it, in an item, an alert or a chat
   message. A contact that does not read notes says so once per document, with the notice `note-not-read`.
 - **Removed after `done`.** Her app removes `note` from an answer (an `events.update` of the answer, writing nothing
-  else) once the contact's latest `task-status` for the document is `done` and later than the answer; when the work
-  was already `done` before the answer (a proposed document answered later), or on `not-mine` and on
-  `document-unshared`, 24 h after the answer, so the contact may read it first (R10). Answers are ordered by `created`:
+  else) once a `task-status` `done` of the contact for the document is later than the answer, whatever status follows that
+  `done` (the document shared again, then read or on hold); when the contact's latest `task-status` is `done` and not later
+  than the answer (a proposed document answered after the work), or on `not-mine` and on `document-unshared`, 24 h after
+  the answer, so the contact may read it first (R10). An answer written while the work is in progress again waits for the
+  next `done`. Answers are ordered by `created`:
   an answer's `modified` never matters (R3, R4). The removal assumes the platform keeps no event history; where it
   does, the note stays in it.
 - Her app shows that the contact reads it, as for the chat (§ Chat).
