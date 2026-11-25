@@ -7,7 +7,7 @@ implements it, and any person's app renders it, without knowing who is on the ot
 dispatches on `hds.kind` and on `content.kind`, never on the contact's app code.
 
 **Normative** (4.22.0; 4.26.0 adds a document's date and kind, her `note`, and the specimen codes; 4.27.0 the notice
-`ready`; 4.33.0 the status `on-hold`). "MUST" and "never" bind writers; readers follow § Writers validate, readers dispatch.
+`ready`; 4.33.0 the status `on-hold`; 4.36.0 a dated grid, § A dated grid). "MUST" and "never" bind writers; readers follow § Writers validate, readers dispatch.
 
 ## The principle: the conversation is standard, the content travels by reference
 
@@ -112,15 +112,15 @@ only). Every event carries `about` (the document's event id) and
 
 | `kind` | Child | Written by | Content |
 |---|---|---|---|
-| `question` | `received` | the contact | `about`, `code`, `candidateId?`, `options?` (codes), `context?` (`identity?`, `dates?`, `anchor?`) |
-| `proposed-value` | `received` | the contact | `about`, `candidateId`, `replaces?` (the candidateId it replaces), `printed` (`label`, `value`, `unit?`, `refRange?`, `flag?`, `section?`, `samplingTime?`: the line as printed; `samplingTime` is the time printed over the value's column, normalised to `HH:MM`, display only), `anchor?` (`hdsSourceAnchor`, with `eventId` = `about`), `proposal?` (`itemKey`, `type`, `content`, `time?`, `clientData?`: the event proposed), `status` (`clear`, `check`, `unmapped`, `unit-missing`, `kept-aside`), `reason?`, `requestKey?`, `askOneByOne?`, `specimenImplied?`, `extraction` (`engine`, `engineVersion`, `kbVersion`, `backend`) |
+| `question` | `received` | the contact | `about`, `code`, `candidateId?`, `options?` (codes), `context?` (`identity?`, `dates?`, `grid?`, `anchor?`) |
+| `proposed-value` | `received` | the contact | `about`, `candidateId`, `replaces?` (the candidateId it replaces), `printed` (`label`, `value` (absent only with reason `not-read`, 4.36.0), `unit?`, `refRange?`, `flag?`, `section?`, `samplingTime?`: the line as printed; `samplingTime` is the time printed over the value's column, normalised to `HH:MM`, display only), `anchor?` (`hdsSourceAnchor`, with `eventId` = `about`), `grid?` (`row`, `column`, 4.36.0: § A dated grid), `proposal?` (`itemKey`, `type`, `content`, `time?`, `clientData?`: the event proposed), `status` (`clear`, `check`, `unmapped`, `unit-missing`, `kept-aside`), `reason?`, `requestKey?`, `askOneByOne?`, `specimenImplied?`, `extraction` (`engine`, `engineVersion`, `kbVersion`, `backend`) |
 | `proposed-document` (4.26.0) | `received` | the contact | `about`, `candidateId`, `replaces?`, `proposal` (at least one of `documentKind`, a `documentKinds` key, and `time` with `timePrecision`: `day`, `month`, `year`), `anchor?` (where the date is printed), `status` (`clear`, `check`), `extraction?` (§ A document's date and kind) |
 | `answer` | `sent` | the person's app | `inReplyTo`, `about`, `action` (`confirm`, `correct`, `not-mine`, `skip`, `choose`, `request-item`, `duplicate`), `candidateIds?`, `option?`, `time?`, `timePrecision?` (`day`, `month`, `year`, `unknown`), `basis?` (`profile-match`, `existing-value`, `not-pending`), `written?` (`[{ candidateId, eventId }]`), `applied?` (`time`, `kind`: on a proposed document, 4.26.0), `note?` (plain text, at most 1000 characters, 4.26.0: § Her note) |
 
 `reason` is one of `no-item`, `unit-not-offered`, `no-coded-stream`, `timed-draw`, `implausible-value`,
-`ambiguous-label`, `qualitative-result`, `derived-index`. `requestKey` is the key of the item request for a metric no
+`ambiguous-label`, `qualitative-result`, `derived-index`, `not-read` (4.36.0, § A dated grid). `requestKey` is the key of the item request for a metric no
 item holds yet, so a kept-aside value can be offered again once its item ships. `unmapped` and `kept-aside` are set
-when the line is read, never after an answer (`unmapped`: the contact cannot say which metric it is; `kept-aside`: it
+when the line is read, never after an answer (`unmapped`: the contact cannot say which metric it is, or, with `not-read`, what is written there; `kept-aside`: it
 can, but no item holds it yet).
 
 There is no job, summary or notice kind on the person's account: the state of the work and the notices are alerts
@@ -164,6 +164,48 @@ them in the conversation; she confirms in one tap.
 - **It may arrive after `done`.** Her app lists the `received` child on every `proposed-values` alert, whatever the
   task status.
 
+### A dated grid (4.36.0)
+
+A document that bears one box per day (a paper cycle chart: one row per cycle, one column per day). The contact proposes
+what it read in a box as ordinary proposed values, and says which boxes it did not read, so that a box with writing never
+looks like an empty day.
+
+- **A box, its parts.** Every proposed value of a grid carries `grid`, its box: `row`, the grid's row on its page, from the top, from 1,
+  every row of the printed grid counted, the empty ones too (from its lines, never from the rows read), and `column`, the box's
+  printed column number (from the grid, never from a model). A contact that is not sure of a box's row and column (a grid it
+  cannot find, a page cut above its first row) writes nothing from that grid, no value, no `not-read`, no question, and sends the
+  notice `no-result-found`. A box that holds an observation, a bleeding and a mark is three candidates, one per `itemKey`, with the same `grid` and `anchor`. The record of R5 is the attachment, the page, `grid` and the
+  `itemKey`. Her app orders, groups and names boxes from `grid`, never from `bbox`. `printed.label` is the column number too, and
+  `printed.value` the part as written ("10KL x2"); a text longer than `value` allows is never cut: the part is `not-read`.
+- **`not-read`.** Status `unmapped`, reason `not-read`: the contact sees writing in this box and proposes nothing from it, or not
+  from all of it (it cannot read it, reads nothing of that kind, or cannot date the row). It carries `printed.label`, `grid` and
+  `anchor` (with `bbox`), no `printed.value`, no `proposal`, no `requestKey`. One per box at most. A box read in part has its
+  proposed values and one `not-read` with the same `grid`: her app says part of it was not read. A box with no writing, or
+  with only its date or its stamp, is none of them.
+- **What she does with it.** `skip`, once she has seen it (a `request-item` from an older app is read as a `skip`). A value she types
+  in from it is an entry of her own (no `hdsExtraction`, no engine `sourceKey`); it is not a `correct`, since nothing was proposed.
+  It does not hold up the work, and stays after `done` like a kept-aside line, until she answers it (R10).
+- **`counts.notRead`**: the proposed values with reason `not-read`, in neither `proposed` nor `keptAside`. `counts` are those of the
+  reading: `proposed` also counts the values read that are proposed once their row is dated. Her app counts the items.
+- **Nothing is proposed without its day.** The contact asks it, `which-row-date`, one question per row, with `context.grid` and
+  `context.anchor` naming one box of the row: its first box with a written date, else its first with writing; the `bbox` covers the
+  written date. She answers the day of that box, with its year, from her own document. The contact derives the other days
+  from the columns (her app never computes a day) and proposes the row's values, each with `proposal.time` (12:00 UTC) and
+  `hdsTimePrecision: day`, while the state is `awaiting-answers`, with their `proposed-values` alert and no new `task-status`. Before
+  that answer only the row's `not-read` boxes exist. A row that continues the one above is not asked: it follows it.
+- **Never a date for the whole document.** On a document with a `which-row-date`, the contact asks no `which-date`, and writes no
+  value to confirm without `proposal.time`; her app takes a value's day from `proposal.time` only (§ Writing a value). A document's
+  own date never dates a value.
+- **A row not dated** (she answered `skip`, or the written dates do not follow her answer): the contact writes its boxes as
+  `not-read` and no longer waits for that question; `done` waits for every other. While the question exists, a later `confirm` counts as a
+  first answer: the contact deletes those `not-read` she has not answered and proposes the row. At `done` the question is deleted,
+  answered or skipped (R10); after that she shares the document again.
+- **She changes the day.** Until a value of the row is in a `written`, a later `confirm` replaces the earlier: the contact
+  proposes the row again (other days, so other `candidateId`s) and deletes the row's earlier candidates that are not written. Once one is written, a later answer changes nothing; her
+  app shows each value's own day, never the question's answer.
+- **One candidate per record.** Before writing a candidate, the contact deletes the candidates of the same record under another
+  `candidateId` that are not written, answered or not, and writes none for a record that has a `written` entry.
+
 ### Question codes
 
 Bare codes are HDS's, listed here. A third party's own codes start with `x-<vendor>-`. In this version a code carries
@@ -181,10 +223,11 @@ shown, not answerable.
 | `is-this-yours` | none | none | `identity?`, `anchor?` | `confirm` (+ `basis?`), `not-mine`, `skip` |
 | `which-document-kind` (4.26.0) | MUST: a `proposed-document` | MUST: 2 to 8 `documentKinds` keys | none | `choose` (+ `option`), `skip` |
 | `which-document-date` (4.26.0) | MUST: a `proposed-document` | none | `dates?` | `confirm` (+ `timePrecision`, `time` unless `unknown`), `skip` |
+| `which-row-date` (4.36.0) | none | none | MUST: `grid` and `anchor`, only | `confirm` (+ `time`, `timePrecision: day`), `skip` |
 
-- `context.identity` and `context.anchor` appear on `is-this-yours` only, `context.dates` on `which-date` and
-  `which-document-date` only. The
-  anchor points at where the identity block is printed, for her app's anchored view of her own copy of the document;
+- `context.identity` appears on `is-this-yours` only, `context.anchor` on `is-this-yours` and `which-row-date` only, `context.grid` on
+  `which-row-date` only (4.36.0), `context.dates` on `which-date` and `which-document-date` only. The
+  anchor of `is-this-yours` points at where the identity block is printed, for her app's anchored view of her own copy of the document;
   one anchor cannot point at several dates, so an anchor per date is reserved for later.
 - `which-date` is asked only when no sampling date is certain and at least one proposed value waits for a date.
   `is-this-yours` is asked only on doubt (the printed identity does not match her profile, or none is printed).
@@ -194,7 +237,7 @@ shown, not answerable.
   `which-analyte` (and on `is-fasting` when fasting changes the item) with a new `proposed-value`, a new
   `candidateId` carrying `replaces` = the candidate the question was about, which she confirms like any other. Once a
   replacement exists, the replaced proposed value is shown as not confirmable. An answer to `which-date` or
-  `is-this-yours` settles that question only. An answer to `which-document-kind` or `which-document-date` writes
+  `is-this-yours` settles that question only. One to `which-row-date` writes nothing: the contact then proposes the row's values. An answer to `which-document-kind` or `which-document-date` writes
   nothing either: it supplies a field of its `proposed-document`, written when she confirms that one.
 
 ### Specimen codes
@@ -220,13 +263,14 @@ printed text.
 
 | The answer is to | `action` | With |
 |---|---|---|
-| a proposed value | `confirm`, `correct`, `skip`, `request-item` (a kept-aside or unmapped one), `duplicate` | `candidateIds`; `written` with `confirm` and `correct`; `basis: existing-value` only on an automatic `duplicate` (§ R3) |
+| a proposed value | `confirm`, `correct`, `skip`, `request-item` (a kept-aside or unmapped one, never `not-read`), `duplicate` | `candidateIds`; `written` with `confirm` and `correct`; `basis: existing-value` only on an automatic `duplicate` (§ R3) |
 | a `which-specimen`, `which-unit`, `which-analyte` or `is-fasting` question | `choose` | `option`, one of the question's `options`; `candidateIds` naming the question's `candidateId` |
 | a `which-date` question | `confirm` | `timePrecision`, and `time` unless `timePrecision` is `unknown`; `candidateIds` naming the question's `candidateId` when it has one |
 | an `is-this-yours` question | `confirm` or `not-mine` | `basis: profile-match` only on an automatic `confirm` (§ R3) |
 | a `proposed-document` | `confirm`, `correct`, `skip` | `candidateIds` naming it; `applied` (the fields her app wrote, `time`, `kind`) with `confirm` and `correct`, never `written`; `basis: not-pending` only on an automatic `skip`, when none of its fields is still pending on the document (§ Writing a document's date and kind) |
 | a `which-document-kind` question | `choose` | `option`, one of the question's kind keys; `candidateIds` naming its `proposed-document` |
 | a `which-document-date` question | `confirm` | as for `which-date`; `candidateIds` naming its `proposed-document` |
+| a `which-row-date` question | `confirm` | `time` (12:00 UTC of the day of the question's box) and `timePrecision: day` |
 
 Any question, proposed value or proposed document may be answered with `skip`, which settles nothing. `not-mine` is
 always about the whole document and answers `is-this-yours` only. An answer whose `action` is not in this table for
@@ -279,7 +323,12 @@ The schema cannot express conditions between fields, so writers check them befor
 | `answer` with `basis: not-pending` | be a `skip` on one proposed document none of whose proposed fields is pending on the document (4.26.0) |
 | `question` | follow its row of § Question codes (`candidateId`, `options`, `context`) |
 | `question` or `answer` with a `candidateId` | name a `proposed-value` (or, for the two document codes and an answer to a proposed document, a `proposed-document`) of the same document on the same relationship's `received` child |
-| `question` with `context.identity` or `context.anchor` | be `is-this-yours`; with `context.dates`, be `which-date` or `which-document-date` |
+| `question` with `context.identity` | be `is-this-yours`; with `context.anchor`, be `is-this-yours` or `which-row-date`; with `context.dates`, be `which-date` or `which-document-date` |
+| `question` `which-row-date` (4.36.0) | carry `context.grid`, and `context.anchor` with its `bbox`; be the only one of its document for that attachment, page and `grid.row`; be on a document with no `which-date` question |
+| `proposed-value` on a document with a `which-row-date` question, `not-read` apart | carry `grid` and `proposal.time`, at 12:00 UTC with `hdsTimePrecision: day` |
+| `answer` to a `which-row-date` question with `confirm` | carry `time` at 12:00 UTC and `timePrecision: day` |
+| `proposed-value` with reason `not-read` (4.36.0) | have `status: unmapped`, carry `grid` and `anchor` with its `bbox`, and no `printed.value`, `proposal` or `requestKey` |
+| `proposed-value` with any other reason, or none | carry `printed.value` |
 | `proposed-value` or `proposed-document` with `replaces` | name an item of the same kind and the same document on the same child, not written (no `written` entry, no answer with `applied`); for a proposed value, one the person answered a question about |
 | `proposed-value` or `proposed-document` with `anchor`, `question` with `context.anchor` (from 4.25.0) | carry `anchor.eventId` = `about` (PROVENANCE.md, a self-contained anchor) |
 | `proposed-document` | carry a `proposal.documentKind` that is a `documentKinds` key of the pack, not deprecated; `proposal.time` at 12:00 UTC at the start of its period; be the only unanswered one of its contact for the document; be written only while the document's `hdsDocumentPending` holds at least one proposed field |
@@ -298,7 +347,7 @@ cores do not validate `hds`, so every writer validates against it.
 
 | `hds.kind` | Direction | `hds` fields |
 |---|---|---|
-| `task-status` | contact → person | `about`, `status` (`received`, `reading`, `on-hold` (4.33.0), `awaiting-answers`, `done`, `error`), `attempt` (from 1, a label), `counts?` (`proposed`, `questions`, `keptAside`, `dropped`), `errorCode?` (with `error`, MUST) |
+| `task-status` | contact → person | `about`, `status` (`received`, `reading`, `on-hold` (4.33.0), `awaiting-answers`, `done`, `error`), `attempt` (from 1, a label), `counts?` (`proposed`, `questions`, `keptAside`, `dropped`, `notRead` (4.36.0)), `errorCode?` (with `error`, MUST) |
 | `notice` | contact → person | `code`, `about?` (a document event id) |
 | `question` | contact → person | `eventId` (the question event), `about` |
 | `proposed-values` | contact → person | `about`, `count` (from 1): a wake-up, her app lists the `received` child by `about` and never trusts `count`; also sent for a `proposed-document` (4.26.0), counted in `count` (the fixed words are not rendered, R12) |
@@ -394,7 +443,7 @@ record and the proposal: the same on every re-read while the proposal is the sam
 written again in place; a candidate found in an answer's `written` is never proposed again (this is why her answers
 stay on `sent`). An answer counts once per `candidateId`, until a `written` entry settles it (§ Answers). The record
 includes the column of a report printing one value column per day: two columns of one row are two candidates, even
-with equal values on one day. The contact knows a candidate is written from
+with equal values on one day. In a dated grid it is the box and the item (4.36.0). The contact knows a candidate is written from
 `answer.written`; her app knows it from the value's `sourceKey` (§ Writing a value). A `proposed-document`'s
 `candidateId` derives from the document, its attachment and the proposal, the same way.
 
@@ -422,7 +471,7 @@ additive (a minor release); a breaking change is a `-v2` type. A value a reader 
 |---|---|
 | `task-status.status` | in progress: not settled, nothing is confirmable yet (`on-hold` before 4.33.0) |
 | `proposed-value.status` | shown, not confirmable |
-| `reason` | a generic "not saved" |
+| `reason` | a generic "not saved" (`not-read` before 4.36.0) |
 | `question.code` (bare or `x-`) | shown, not answerable |
 | `answer.action` | ignored by the contact, never a confirmation |
 | `answer.basis` | never a confirmation; the answer does not count. On a `duplicate` with `existing-value`, a contact that does not know it sees the value still open and never reaches `done`, and an older app shows it open: a contact reads `existing-value` before any app sends it. `not-pending` comes only from a 4.26.0 app, on a proposed document only a 4.26.0 contact writes, and `done` never waits for it |
@@ -458,10 +507,12 @@ additive (a minor release); a breaking change is a `-v2` type. A value a reader 
 document. Deleted means deleted (twice), not only trashed.
 - **On her account, the contact deletes** (it holds `contribute` on `received`), once the work on a document is `done`:
   the proposed values whose candidate is in an answer's `written`, those answered `skip`, `duplicate` or
-  `request-item`, those replaced (`replaces`), and the questions answered. An `is-this-yours` question carrying
+  `request-item`, those replaced (`replaces`), and the questions answered (a `which-row-date` answered or skipped). An `is-this-yours` question carrying
   `identity` is deleted on `not-mine`, on `document-unshared` and when the work is `done`, whatever else stays. A
   kept-aside value stays until she dismisses it or its item ships; offering it again means reading the document again
-  (it must still be shared).
+  (it must still be shared). A `not-read` one stays until she answers it (4.36.0);
+  the contact keeps reading her answers about it until it is gone. In a dated grid, the contact also deletes at once the
+  candidates, not written, that it supersedes (§ A dated grid).
 - **A `proposed-document`** is deleted by the contact once answered (an answer whose `inReplyTo` is it) with
   `confirm`, `correct`, or `skip` with `basis: not-pending`, or once replaced, whenever that happens, and the
   `which-document-kind` and `which-document-date` questions about it with it. An unanswered one, or one she skipped
@@ -496,7 +547,8 @@ Her app writes each confirmed value as an ordinary event on its item, with her t
 - `streamIds`: the item's stream; `type` and `content`: the proposal's, or her correction; `time` and
   `clientData.hdsTimePrecision`: `proposal.time` and its `hdsTimePrecision`, or, when the proposal has no `time`, the
   `time` and `timePrecision` of her `which-date` answer about it or about the whole document (PARTIAL-DATES.md; with
-  `unknown`, no `time`: the value is written at its recording moment).
+  `unknown`, no `time`: the value is written at its recording moment). On a document with a `which-row-date` question, the day
+  comes from `proposal.time` only: a proposed value without it is not confirmable, whatever `which-date` answer exists (4.36.0).
 - `clientData.related.<document event id>: true`; `clientData.sourceKey` = `<engine>:document:<document event
   id>:<candidateId>` ([PROVENANCE.md](PROVENANCE.md#clientdatasourcekey--the-identity-of-an-imported-record)), so a
   retry finds it (`state: 'all'`; a trashed one is left trashed);
@@ -571,7 +623,10 @@ at `day`. Day D is that UTC calendar day (the proposal's time is 12:00 UTC on it
   - her event at `month`, `year`, `approx` or `unknown` precision never matches.
 - **Equal value:**
   - **Same type:** equal content, numbers compared to 12 significant digits, and the same `hdsComparator` (absent
-    equals absent).
+    equals absent). A content that is `null` equals one that is absent. A value of a convertible item (cervical fluid,
+    mood) is equal by its method (`source.key`), reading (`source.sourceData`) and `source.annotations` (absent equals empty) and any other
+    field, the `vectors`, `source.engineVersion` and `source.modelVersion` aside; with the method `_raw`, or without a method or a
+    reading, the whole content is compared (4.36.0).
   - **Another type of the same item:** her value converted with the data model's conversions into the proposal's
     unit, then equal within a tolerance, with the same comparator. The tolerance is half a unit of the last digit
     printed in `printed.value`, taken in the printed unit and scaled into the proposal's by `proposal.content` divided
@@ -582,7 +637,7 @@ at `day`. Day D is that UTC calendar day (the proposal's time is 12:00 UTC on it
 
 **One for one, per document.** Over one document, each of her events matches at most one candidate, so two equal
 values of one day, two draws, stay two. Candidates already answered `existing-value` for the document keep the event
-they matched (a later run, after a new batch or a late `which-date`, assigns only the events they leave). When an event
+they matched (a later run, after a new batch (a row's values included), an `is-this-yours` confirmed or a late `which-date`, assigns only the events they leave). When an event
 fits several candidates, it goes to the one on its own UTC day first, then the nearest in time, then the first in the
 order of the candidates. Open candidates are never compared with each other. A contact may rely on this comparison: it need not hold back a value that the
 person may already have.
@@ -737,7 +792,64 @@ Her confirmation, after her app updated the document, with a comment:
 }
 ```
 
-The alerts of that flow, one per kind (written by the sender on its collectors stream; the words are the fixed ones
+A dated grid (4.36.0): a row's question, a mark proposed once she answered, and a box not read:
+
+```json
+{
+  "streamIds": ["conv-k3x9q2m7a1b0"],
+  "type": "message/hds-conversation-v1",
+  "content": {
+    "kind": "question",
+    "about": "ckq3w8n1x0002",
+    "code": "which-row-date",
+    "context": {
+      "grid": { "row": 2, "column": 1 },
+      "anchor": { "eventId": "ckq3w8n1x0002", "attachmentId": "ckq3w8n1x0002a", "page": 1, "bbox": [7.4, 22.4, 2.5, 12.9] }
+    }
+  },
+  "clientData": { "related": { "ckq3w8n1x0002": true } }
+}
+```
+
+```json
+{
+  "streamIds": ["conv-k3x9q2m7a1b0"],
+  "type": "message/hds-conversation-v1",
+  "content": {
+    "kind": "proposed-value",
+    "about": "ckq3w8n1x0002",
+    "candidateId": "c-91be04d7",
+    "printed": { "label": "14", "value": "P" },
+    "anchor": { "eventId": "ckq3w8n1x0002", "attachmentId": "ckq3w8n1x0002a", "page": 1, "bbox": [40.6, 22.4, 2.5, 12.9] },
+    "grid": { "row": 2, "column": 14 },
+    "proposal": { "itemKey": "fertility-cycles-peak-day", "type": "activity/plain", "content": null, "time": 1773316800, "clientData": { "hdsTimePrecision": "day" } },
+    "status": "check",
+    "extraction": { "engine": "hds-reader", "engineVersion": "0.9.0", "kbVersion": "0.4.0", "backend": "bedrock:sonnet" }
+  },
+  "clientData": { "related": { "ckq3w8n1x0002": true } }
+}
+```
+
+```json
+{
+  "streamIds": ["conv-k3x9q2m7a1b0"],
+  "type": "message/hds-conversation-v1",
+  "content": {
+    "kind": "proposed-value",
+    "about": "ckq3w8n1x0002",
+    "candidateId": "c-0d55e1fa",
+    "printed": { "label": "15" },
+    "anchor": { "eventId": "ckq3w8n1x0002", "attachmentId": "ckq3w8n1x0002a", "page": 1, "bbox": [43.1, 22.4, 2.5, 12.9] },
+    "grid": { "row": 2, "column": 15 },
+    "status": "unmapped",
+    "reason": "not-read",
+    "extraction": { "engine": "hds-reader", "engineVersion": "0.9.0", "kbVersion": "0.4.0", "backend": "bedrock:sonnet" }
+  },
+  "clientData": { "related": { "ckq3w8n1x0002": true } }
+}
+```
+
+The alerts of the flow, one per kind (written by the sender on its collectors stream; the words are the fixed ones
 of [CUSTOM-FIELDS-AND-SYSTEM.md](CUSTOM-FIELDS-AND-SYSTEM.md#a-conversation-notificationalert-cmc-kinds-4220)):
 
 ```json
@@ -806,6 +918,7 @@ written before 4.22.0 still validate, and no new writer uses it. No migration: t
 
 ## Not in this version
 
+- Several pages or attachments bearing the same grid: a contact reads one.
 - `text` and `optionLabels` on a question with an `x-` code (a third party's own question), reserved: plain text,
   `en` required, an option without a label not selectable.
 - An anchor per candidate date (`context.dates[].anchor`), reserved.

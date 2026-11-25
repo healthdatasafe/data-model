@@ -360,7 +360,7 @@ Written by the sender on its own `<scope>:collectors:<peerSlug>` stream; the plu
   not validate `hds`).
 - `status` is one of `received`, `reading`, `on-hold` (4.33.0), `awaiting-answers`, `done`, `error`; the state of a document
   is its latest `task-status` by alert `time`, `attempt` (from 1) only labelling it and breaking a tie: a contact that restarts may
-  not know the last attempt. `counts` holds `proposed`, `questions`, `keptAside`, `dropped`, integers only.
+  not know the last attempt. `counts` holds `proposed`, `questions`, `keptAside`, `dropped`, `notRead` (4.36.0), integers only.
   `errorCode` is a code, MUST with `error`. `notice.code` and `errorCode` are codes, bare for HDS's and `x-<vendor>-`
   for a third party's (CONVERSATION.md § Notice and error codes).
 - `proposed-values` is a wake-up only: the person's app lists the `received` child by `about` and never trusts
