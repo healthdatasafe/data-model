@@ -35,10 +35,12 @@
           "enum": [
             "received",
             "reading",
+            "on-hold",
             "awaiting-answers",
             "done",
             "error"
-          ]
+          ],
+          "description": "on-hold (4.33.0): the contact has the document and cannot work on it now."
         },
         "attempt": {
           "description": "Attempt on this document, from 1: a label and a tie-break, never the order (a restarted contact may not know the last one).",
