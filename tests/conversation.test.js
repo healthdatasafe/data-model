@@ -110,6 +110,7 @@ const KINDS = Object.keys(VALID);
 
 const VALID_ALERTS = [
   { kind: 'task-status', about: DOC, status: 'received', attempt: 1 },
+  { kind: 'task-status', about: DOC, status: 'on-hold', attempt: 1 },
   { kind: 'task-status', about: DOC, status: 'awaiting-answers', attempt: 1, counts: { proposed: 12, questions: 1, keptAside: 2, dropped: 3 } },
   { kind: 'task-status', about: DOC, status: 'error', attempt: 2, errorCode: 'x-acme-scanner-offline' },
   { kind: 'notice', code: 'no-result-found', about: DOC },
@@ -423,11 +424,20 @@ describe('[CNV] conversation', () => {
       assert.deepStrictEqual(Object.keys(branch(ALERT, 'task-status').properties.counts.properties), ['proposed', 'questions', 'keptAside', 'dropped']);
     });
 
+    it('[CNV-DOC-STATUS] the two pages list exactly the statuses of the schema', () => {
+      const { STATUSES } = require('../src/schemas/conversationAlert');
+      for (const [file, line] of [['CONVERSATION.md', /^\| `task-status` \| contact → person \| .*$/m], ['CUSTOM-FIELDS-AND-SYSTEM.md', /^- `status` is one of [^;]*;/m]]) {
+        const text = line.exec(fs.readFileSync(path.join(__dirname, '../documentation', file), 'utf8'))[0];
+        const list = file === 'CONVERSATION.md' ? /`status` \((.*?`error`)\)/.exec(text)[1] : text;
+        assert.deepStrictEqual([...list.matchAll(/`([a-z-]+)`/g)].map((m) => m[1]).filter((c) => c !== 'status'), STATUSES, file);
+      }
+    });
+
     it('[CNV-SHAPE-3] every enum is exactly this list', () => {
       assert.deepStrictEqual(branch(schema, 'answer').properties.action.enum, ['confirm', 'correct', 'not-mine', 'skip', 'choose', 'request-item', 'duplicate']);
       assert.deepStrictEqual(branch(schema, 'answer').properties.timePrecision.enum, ['day', 'month', 'year', 'unknown']);
       assert.deepStrictEqual(branch(schema, 'answer').properties.basis.enum, ['profile-match', 'existing-value', 'not-pending']);
-      assert.deepStrictEqual(branch(ALERT, 'task-status').properties.status.enum, ['received', 'reading', 'awaiting-answers', 'done', 'error']);
+      assert.deepStrictEqual(branch(ALERT, 'task-status').properties.status.enum, ['received', 'reading', 'on-hold', 'awaiting-answers', 'done', 'error']);
       assert.strictEqual(branch(schema, 'question').properties.code.enum, undefined, 'an open code');
       const codeRe = new RegExp(branch(schema, 'question').properties.code.pattern);
       for (const c of [...HDS_CODES, 'x-acme-which-lab']) assert.ok(codeRe.test(c), c);

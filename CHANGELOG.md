@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.33.0] - 2026-11-25
+
+Plan 128. Additive.
+
+- **`task-status.status` `on-hold`.** The contact has the document and cannot work on it now; she has nothing to do; posted only
+  while none of her answers is awaited; it carries the attempt of the work it holds back, no `counts`, no `errorCode`. A later
+  `task-status` supersedes it (R4). An app that does not know it reads it as in progress, not settled (R8). Posted again at
+  least once per 24 h while it lasts, any current status at most twice per 24 h per document. CONVERSATION.md § The flow;
+  tests `[CNV-SHAPE-3]`, `[CNV-DOC-STATUS]`. hds-lib mirrors the enum (`TASK_STATUSES`) and must follow at once: its `CNV10` compares with
+  the published schema.
+
 ## [4.32.0] - 2026-11-24
 
 Plan 141 (site-agents#67). Additive.

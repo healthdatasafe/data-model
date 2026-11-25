@@ -7,7 +7,7 @@ implements it, and any person's app renders it, without knowing who is on the ot
 dispatches on `hds.kind` and on `content.kind`, never on the contact's app code.
 
 **Normative** (4.22.0; 4.26.0 adds a document's date and kind, her `note`, and the specimen codes; 4.27.0 the notice
-`ready`). "MUST" and "never" bind writers; readers follow § Writers validate, readers dispatch.
+`ready`; 4.33.0 the status `on-hold`). "MUST" and "never" bind writers; readers follow § Writers validate, readers dispatch.
 
 ## The principle: the conversation is standard, the content travels by reference
 
@@ -93,6 +93,15 @@ Before any document, once per relationship, a contact that reads documents may s
 
 A notice may come at any step; `no-result-found` and `several-sampling-dates` end the work on a document with no
 question (§ Notice and error codes).
+
+**`on-hold` (4.33.0): the contact has the document and cannot work on it now, for a reason of its own.** She has nothing
+to do. A contact that cannot start or go on posts `on-hold`, instead of `reading` (which says the work has started) or
+after it, and only while no question or proposed value of the document waits for her answer: with one open it posts no
+status, and the state stays `awaiting-answers`. Going on hold is not an attempt: `on-hold` carries the `attempt` of the
+work it holds back, and the status that follows keeps it. It carries no `counts` and no `errorCode`. A later `task-status`
+supersedes it (R4). A contact does not alternate `on-hold` and `reading` while it retries. It posts `on-hold` again at
+least once per 24 h while it lasts (its own copy is deleted within 24 h, R10), and any current status at most twice per
+24 h per document. A contact whose schema is older than 4.33.0 cannot write it and posts `received`.
 
 ## `message/hds-conversation-v1`
 
@@ -287,7 +296,7 @@ cores do not validate `hds`, so every writer validates against it.
 
 | `hds.kind` | Direction | `hds` fields |
 |---|---|---|
-| `task-status` | contact → person | `about`, `status` (`received`, `reading`, `awaiting-answers`, `done`, `error`), `attempt` (from 1, a label), `counts?` (`proposed`, `questions`, `keptAside`, `dropped`), `errorCode?` (with `error`, MUST) |
+| `task-status` | contact → person | `about`, `status` (`received`, `reading`, `on-hold` (4.33.0), `awaiting-answers`, `done`, `error`), `attempt` (from 1, a label), `counts?` (`proposed`, `questions`, `keptAside`, `dropped`), `errorCode?` (with `error`, MUST) |
 | `notice` | contact → person | `code`, `about?` (a document event id) |
 | `question` | contact → person | `eventId` (the question event), `about` |
 | `proposed-values` | contact → person | `about`, `count` (from 1): a wake-up, her app lists the `received` child by `about` and never trusts `count`; also sent for a `proposed-document` (4.26.0), counted in `count` (the fixed words are not rendered, R12) |
@@ -409,7 +418,7 @@ additive (a minor release); a breaking change is a `-v2` type. A value a reader 
 
 | Field | Unknown value is read as |
 |---|---|
-| `task-status.status` | in progress |
+| `task-status.status` | in progress: not settled, nothing is confirmable yet (`on-hold` before 4.33.0) |
 | `proposed-value.status` | shown, not confirmable |
 | `reason` | a generic "not saved" |
 | `question.code` (bare or `x-`) | shown, not answerable |
@@ -584,8 +593,8 @@ once per relationship per 24 h), and deletes what she typed within 24 h (R10).
 1. An HDS account and a CMC invite that declares the conversation (`features.chat` as wanted) and, for proposals, a
    vouched app (R9).
 2. Read a shared document by its event id on `document-shared`; stop and delete on `document-unshared` and on revoke.
-3. Post `task-status` for every document it takes (and, optionally, the notice `ready` once per relationship,
-   keeping its marker, R10).
+3. Post `task-status` for every document it takes, `on-hold` when it cannot work on one now (§ The flow) (and,
+   optionally, the notice `ready` once per relationship, keeping its marker, R10).
 4. Write `proposed-value` and `question` events (and, optionally, one `proposed-document`) on the `received` child,
    validated against this type and following § What a writer MUST include (an anchor names its document:
    `anchor.eventId` = `about`), each followed by its alert, validated against `hds-conversation-alert.json`.
