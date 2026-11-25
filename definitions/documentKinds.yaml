@@ -14,6 +14,12 @@
 #   service:  the date of the care the document reports (sample taken, examination, operation, consultation; for care
 #             over a period, such as a hospital stay, the day it ended)
 #   creation: the date the document was written or signed, the date `creation` holds
+#
+# `stream` (DOCUMENTS.md § Filing) is where a document of this kind is filed by default: a documents stream below
+# `documents`, chosen by what the document says about the person, not by its class (a medical certificate is clinical).
+# No `stream` (`other`, and `access-log`, which names everyone who opened the record): the document stays on the root, not
+# filed. It says who may read the document, so changing one is a
+# change of who reads what is filed from then on: Fable review, and stored documents are not moved.
 # Kinds sharing a class reuse one anchor, so their class Codings cannot drift. Keys are permanent: a kind CH Term
 # drops is marked `deprecated: true`, never removed or renamed.
 
@@ -33,6 +39,7 @@ kinds:
     class: &encounter { system: http://snomed.info/sct, code: '371531000', display: Encounter report }
     type: { system: http://snomed.info/sct, code: '371530004', display: Clinical consultation report }
     timeBasis: service
+    stream: documents-clinical
   history-and-physical:
     label: { en: History and physical examination, fr: Anamnèse et examen clinique, de: Anamnese und Untersuchungsbefund, it: Anamnesi ed esame obiettivo }
     description:
@@ -41,6 +48,7 @@ kinds:
     class: *encounter
     type: { system: http://snomed.info/sct, code: '371529009', display: History and physical report }
     timeBasis: service
+    stream: documents-clinical
   progress-report:
     label: { en: Progress report, fr: Rapport de suivi, de: Verlaufsbericht, it: Referto sul decorso }
     description:
@@ -49,6 +57,7 @@ kinds:
     class: *encounter
     type: { system: http://snomed.info/sct, code: '371532007', display: Progress report }
     timeBasis: service
+    stream: documents-clinical
   other-encounter-report:
     label: { en: Other encounter report, fr: Autre rapport de consultation, de: Anderer Konsultationsbericht, it: Altro rapporto di visita medica }
     description:
@@ -57,6 +66,7 @@ kinds:
     class: *encounter
     type: &other { system: http://snomed.info/sct, code: '419891008', display: Record artifact }
     timeBasis: service
+    stream: documents-clinical
 
   # Referral note
   referral-letter:
@@ -67,6 +77,7 @@ kinds:
     class: { system: http://snomed.info/sct, code: '721927009', display: Referral note }
     type: *other
     timeBasis: creation
+    stream: documents-clinical
 
   # Order
   laboratory-order:
@@ -77,6 +88,7 @@ kinds:
     class: &order { system: http://snomed.info/sct, code: '721963009', display: Order document }
     type: { system: http://snomed.info/sct, code: '721965002', display: Laboratory order }
     timeBasis: creation
+    stream: documents-clinical
   pathology-order:
     label: { en: Pathology order, fr: Demande de pathologie, de: Pathologieauftrag, it: Richiesta di patologia }
     description:
@@ -85,6 +97,7 @@ kinds:
     class: *order
     type: { system: http://snomed.info/sct, code: '721966001', display: Pathology order }
     timeBasis: creation
+    stream: documents-clinical
   imaging-order:
     label: { en: Imaging order, fr: Demande d'imagerie, de: Bildgebungsauftrag, it: Richiesta di immaginografia }
     description:
@@ -93,6 +106,7 @@ kinds:
     class: *order
     type: { system: http://snomed.info/sct, version: http://snomed.info/sct/2011000195101, code: '2161000195103', display: Imaging order }
     timeBasis: creation
+    stream: documents-clinical
   other-order:
     label: { en: Other order, fr: Autre demande d'examen, de: Anderer Untersuchungsauftrag, it: Altra richiesta di esami }
     description:
@@ -101,6 +115,7 @@ kinds:
     class: *order
     type: *other
     timeBasis: creation
+    stream: documents-clinical
 
   # Summary clinical document
   discharge-summary:
@@ -111,6 +126,7 @@ kinds:
     class: &summary { system: http://snomed.info/sct, code: '422735006', display: Summary clinical document }
     type: { system: http://snomed.info/sct, code: '373942005', display: Discharge summary }
     timeBasis: service
+    stream: documents-clinical
   transfer-summary:
     label: { en: Transfer summary, fr: Rapport de transfert, de: Verlegungsbericht, it: Rapporto di trasferimento }
     description:
@@ -119,6 +135,7 @@ kinds:
     class: *summary
     type: { system: http://snomed.info/sct, code: '371535009', display: Transfer summary report }
     timeBasis: service
+    stream: documents-clinical
   medication-list:
     label: { en: Medication list, fr: Liste des médicaments, de: Medikationsliste, it: Elenco dei medicamenti }
     description:
@@ -127,6 +144,7 @@ kinds:
     class: *summary
     type: { system: http://snomed.info/sct, code: '721912009', display: Medication summary document }
     timeBasis: creation
+    stream: documents-clinical
   medication-plan:
     label: { en: Medication plan, fr: Plan de médication, de: Medikationsplan, it: Piano dei medicamenti }
     description:
@@ -135,6 +153,7 @@ kinds:
     class: *summary
     type: { system: http://snomed.info/sct, code: '736378000', display: Medication management plan }
     timeBasis: creation
+    stream: documents-clinical
   other-summary:
     label: { en: Other summary, fr: Autre résumé, de: Andere Zusammenfassung, it: Altro riepilogo }
     description:
@@ -143,6 +162,7 @@ kinds:
     class: *summary
     type: *other
     timeBasis: creation
+    stream: documents-clinical
 
   # Clinical procedure report
   operative-report:
@@ -153,6 +173,7 @@ kinds:
     class: &procedure { system: http://snomed.info/sct, code: '371525003', display: Clinical procedure report }
     type: { system: http://snomed.info/sct, code: '371526002', display: Operative report }
     timeBasis: service
+    stream: documents-clinical
   laboratory-report:
     label: { en: Laboratory report, fr: Rapport de laboratoire, de: Laborbericht, it: Referto di laboratorio }
     description:
@@ -161,6 +182,7 @@ kinds:
     class: *procedure
     type: { system: http://snomed.info/sct, code: '4241000179101', display: Laboratory report }
     timeBasis: service
+    stream: documents-clinical
   pathology-report:
     label: { en: Pathology report, fr: Rapport de pathologie, de: Pathologiebericht, it: Rapporto di patologia }
     description:
@@ -169,6 +191,7 @@ kinds:
     class: *procedure
     type: { system: http://snomed.info/sct, code: '371528001', display: Pathology report }
     timeBasis: service
+    stream: documents-clinical
   imaging-report:
     label: { en: Imaging report, fr: Rapport d'imagerie, de: Bericht zur Bildgebung, it: Referto di immaginografia }
     description:
@@ -177,6 +200,7 @@ kinds:
     class: *procedure
     type: { system: http://snomed.info/sct, code: '4201000179104', display: Imaging report }
     timeBasis: service
+    stream: documents-clinical
   image-reference:
     label: { en: Image, fr: Image, de: Bild, it: Immagine }
     description:
@@ -185,6 +209,7 @@ kinds:
     class: *procedure
     type: { system: http://snomed.info/sct, code: '900000000000471006', display: Image reference }
     timeBasis: service
+    stream: documents-clinical
   media-recording:
     label: { en: 'Picture, video or audio', fr: 'Image, vidéo ou audio', de: 'Bild, Video oder Audio', it: 'Immagine, video o audio' }
     description:
@@ -193,6 +218,7 @@ kinds:
     class: *procedure
     type: { system: http://snomed.info/sct, code: '787148009', display: Digital representation of specimen }
     timeBasis: service
+    stream: documents-clinical
   other-procedure-report:
     label: { en: Other procedure report, fr: Autre rapport d'intervention, de: Anderer Interventionsbericht, it: Altro rapporto di intervento }
     description:
@@ -201,6 +227,7 @@ kinds:
     class: *procedure
     type: *other
     timeBasis: service
+    stream: documents-clinical
 
   # Care plan
   medical-care-plan:
@@ -211,6 +238,7 @@ kinds:
     class: &careplan { system: http://snomed.info/sct, code: '734163000', display: Care plan }
     type: { system: http://snomed.info/sct, code: '737427001', display: Clinical management plan }
     timeBasis: creation
+    stream: documents-clinical
   nursing-care-plan:
     label: { en: Nursing care plan, fr: Plan de soins infirmiers, de: Pflegeplan, it: Piano di cure infermieristiche }
     description:
@@ -219,6 +247,7 @@ kinds:
     class: *careplan
     type: { system: http://snomed.info/sct, code: '773130005', display: Nursing care plan }
     timeBasis: creation
+    stream: documents-clinical
   rehabilitation-plan:
     label: { en: Rehabilitation plan, fr: Plan de réhabilitation, de: Rehabilitationsplan, it: Piano di riabilitazione }
     description:
@@ -227,6 +256,7 @@ kinds:
     class: *careplan
     type: { system: http://snomed.info/sct, code: '736055001', display: Rehabilitation care plan }
     timeBasis: creation
+    stream: documents-clinical
   medication-treatment-plan:
     label: { en: Medication treatment decision, fr: Décision de traitement médicamenteux, de: Therapieentscheid Medikation, it: Decisione di terapia medicamentosa }
     description:
@@ -235,6 +265,7 @@ kinds:
     class: *careplan
     type: { system: http://snomed.info/sct, code: '761931002', display: Medication treatment plan report }
     timeBasis: creation
+    stream: documents-clinical
   other-care-plan:
     label: { en: Other care plan, fr: Autre plan de soins, de: Anderer Behandlungsplan, it: Altro piano di cura }
     description:
@@ -243,6 +274,7 @@ kinds:
     class: *careplan
     type: *other
     timeBasis: creation
+    stream: documents-clinical
 
   # Prescription record
   medication-prescription:
@@ -253,6 +285,7 @@ kinds:
     class: &prescription { system: http://snomed.info/sct, code: '440545006', display: Prescription record }
     type: { system: http://snomed.info/sct, code: '761938008', display: Medicinal prescription record }
     timeBasis: creation
+    stream: documents-clinical
   non-drug-prescription:
     label: { en: Non-drug prescription, fr: Prescription non médicamenteuse, de: Nicht-Arzneimittel-Verschreibung, it: Prescrizione non di medicamenti }
     description:
@@ -261,6 +294,7 @@ kinds:
     class: *prescription
     type: { system: http://snomed.info/sct, code: '765492005', display: Non-drug prescription record }
     timeBasis: creation
+    stream: documents-clinical
   other-prescription:
     label: { en: Other prescription, fr: Autre prescription, de: Andere Verschreibung, it: Altra prescrizione medica }
     description:
@@ -269,6 +303,7 @@ kinds:
     class: *prescription
     type: *other
     timeBasis: creation
+    stream: documents-clinical
 
   # Patient record type
   allergy-record:
@@ -279,6 +314,7 @@ kinds:
     class: &patientrecord { system: http://snomed.info/sct, code: '184216000', display: Patient record type }
     type: { system: http://snomed.info/sct, code: '722446000', display: Allergy record }
     timeBasis: creation
+    stream: documents-clinical
   immunization-record:
     label: { en: Vaccination record, fr: Document de vaccination, de: Impfdokument, it: Documento di vaccinazione }
     description:
@@ -287,6 +323,7 @@ kinds:
     class: *patientrecord
     type: { system: http://snomed.info/sct, code: '41000179103', display: Immunization record }
     timeBasis: creation
+    stream: documents-clinical
   other-patient-record:
     label: { en: Other patient record, fr: Autre documentation du patient, de: Andere Patientendokumentation, it: Altra documentazione del paziente }
     description:
@@ -295,6 +332,7 @@ kinds:
     class: *patientrecord
     type: *other
     timeBasis: creation
+    stream: documents-clinical
 
   # Classes whose only type is Record artifact
   consent:
@@ -305,6 +343,7 @@ kinds:
     class: { system: http://snomed.info/sct, code: '371537001', display: Consent report }
     type: *other
     timeBasis: creation
+    stream: documents-clinical
   advance-directive:
     label: { en: Advance directive, fr: Directives anticipées, de: Patientenverfügung, it: Direttive anticipate }
     description:
@@ -313,6 +352,7 @@ kinds:
     class: { system: http://snomed.info/sct, code: '371538006', display: Advance directive report }
     type: *other
     timeBasis: creation
+    stream: documents-clinical
   access-log:
     label: { en: Record access log, fr: Traçabilité des accès au DEP, de: Rückverfolgung der EPD-Zugriffe, it: Cronologia degli accessi alla CIP }
     description:
@@ -329,6 +369,7 @@ kinds:
     class: { system: http://snomed.info/sct, code: '722216001', display: Emergency medical ID record }
     type: *other
     timeBasis: creation
+    stream: documents-clinical
   organ-donor-card:
     label: { en: Organ donor card, fr: Carte de donneur d'organes, de: Organspendeausweis, it: Tessera di donatore di organi }
     description:
@@ -337,6 +378,7 @@ kinds:
     class: { system: http://snomed.info/sct, code: '772790007', display: Organ donor card }
     type: *other
     timeBasis: creation
+    stream: documents-clinical
   obstetrical-record:
     label: { en: Pregnancy or birth report, fr: Rapport de grossesse ou de naissance, de: Schwangerschafts- oder Geburtsbericht, it: Rapporto di gravidanza o del parto }
     description:
@@ -345,6 +387,7 @@ kinds:
     class: { system: http://snomed.info/sct, version: http://snomed.info/sct/2011000195101, code: '2171000195109', display: Obstetrical record }
     type: *other
     timeBasis: service
+    stream: documents-clinical
 
   # Administrative documentation
   medical-certificate:
@@ -355,6 +398,7 @@ kinds:
     class: &administrative { system: http://snomed.info/sct, code: '405624007', display: Administrative documentation }
     type: { system: http://snomed.info/sct, code: '772786005', display: Medical certificate }
     timeBasis: creation
+    stream: documents-clinical
   administrative-document:
     label: { en: Administrative document, fr: Document administratif, de: Administratives Dokument, it: Documento amministrativo }
     description:
@@ -363,6 +407,7 @@ kinds:
     class: *administrative
     type: *other
     timeBasis: creation
+    stream: documents-admin
 
   # Record of health event
   emergency-report:
@@ -373,6 +418,7 @@ kinds:
     class: &healthevent { system: http://snomed.info/sct, code: '417319006', display: Record of health event }
     type: { system: http://snomed.info/sct, code: '445300006', display: Emergency department record }
     timeBasis: service
+    stream: documents-clinical
   allied-health-report:
     label: { en: Non-medical report, fr: Rapport non médical, de: Nichtmedizinischer Bericht, it: Rapporto non medico }
     description:
@@ -381,6 +427,7 @@ kinds:
     class: *healthevent
     type: { system: http://snomed.info/sct, code: '445418005', display: Professional allied to medicine clinical report }
     timeBasis: service
+    stream: documents-clinical
   medication-dispense:
     label: { en: Medication dispense, fr: Dispensation de médicaments, de: Medikamentenabgabe, it: Dispensazione di medicamenti }
     description:
@@ -389,6 +436,7 @@ kinds:
     class: *healthevent
     type: { system: http://snomed.info/sct, version: http://snomed.info/sct/2011000195101, code: '82291000195104', display: Medication dispense document }
     timeBasis: service
+    stream: documents-clinical
   other-health-event-record:
     label: { en: Other health event report, fr: Autre document sur un événement sanitaire, de: Anderes Dokument zu einem Gesundheitsereignis, it: Altro documento su un evento sanitario }
     description:
@@ -397,6 +445,7 @@ kinds:
     class: *healthevent
     type: *other
     timeBasis: service
+    stream: documents-clinical
 
   # Record artifact: the value sets' own "other documentation"
   other:
@@ -421,3 +470,4 @@ detailKinds:
     type: *other
     detail: { system: https://hds.ngo/fhir/CodeSystem/document-kind, code: menstrual-cycle-chart, display: Menstrual cycle chart }
     timeBasis: creation
+    stream: documents-clinical

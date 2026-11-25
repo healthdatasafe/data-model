@@ -1,3 +1,35 @@
+# Children carry access, never kinds: a document's kind is its class and type codes (documentKinds.yaml). The root holds
+# the documents not filed yet. One documents stream per document, first in streamIds. No item on the children: `document`
+# resolves by walk-up. Keep the tree short: a child is a stream a person grants on its own. See documentation/DOCUMENTS.md.
 id: documents
 name: Medical documents
+description:
+  en: "Every medical document you keep, filed or not: reports, letters, results, consents, advance directives, donor and emergency cards, images and administrative papers, including sensitive ones."
+  fr: "Tous les documents médicaux que vous conservez, classés ou non : rapports, lettres, résultats, consentements, directives anticipées, cartes de donneur et d'urgence, images et papiers administratifs, y compris les plus sensibles."
 parentId: null
+children:
+  - id: documents-clinical
+    name: Clinical documents
+    label:
+      en: "Clinical documents"
+      fr: "Documents cliniques"
+    description:
+      en: "Documents about your care: reports, letters, prescriptions, results, plans, certificates, consents, advance directives, donor and emergency cards, images and recordings, including sensitive ones."
+      fr: "Documents sur vos soins : rapports, lettres, ordonnances, résultats, plans, certificats, consentements, directives anticipées, cartes de donneur et d'urgence, images et enregistrements, y compris les plus sensibles."
+  - id: documents-admin
+    name: Administrative documents
+    label:
+      en: "Administrative documents"
+      fr: "Documents administratifs"
+    description:
+      en: "Papers around your care, such as invoices, appointment letters and insurance documents. They can show which care you received."
+      fr: "Papiers autour de vos soins, comme les factures, les convocations et les documents d'assurance. Ils peuvent montrer quels soins vous avez reçus."
+    children:
+      - id: documents-admin-insurance
+        name: Insurance documents
+        label:
+          en: "Insurance documents"
+          fr: "Documents d'assurance"
+        description:
+          en: "Papers from and for insurers: policies, cards, cost approvals, reimbursement statements. They can show which care you received."
+          fr: "Papiers des assureurs et pour eux : polices, cartes, garanties de prise en charge, décomptes de prestations. Ils peuvent montrer quels soins vous avez reçus."

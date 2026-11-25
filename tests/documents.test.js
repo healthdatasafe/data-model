@@ -65,12 +65,51 @@ describe('[DOCS] Medical documents and read markers', () => {
   });
 
   describe('[DOCS-STR] stream', () => {
-    it('[DOCS-STR-1] documents is a root with no children', () => {
+    // every child is a stream a person grants on its own: a new one is a decision, not a convenience (DOCUMENTS.md § Filing)
+    const CHILDREN = { documents: ['documents-clinical', 'documents-admin'], 'documents-admin': ['documents-admin-insurance'] };
+    const below = Object.keys(streams.streamsById).filter((id) => id !== 'documents' && streams.isDescendantOf(id, 'documents'));
+
+    it('[DOCS-STR-1] documents is a root with the filing streams below it, and no other', () => {
       const root = streams.streamsById.documents;
       assert.ok(root, 'documents must exist');
       assert.strictEqual(root.parentId, null);
       assert.ok(streams.roots.find((r) => r.id === 'documents'));
-      assert.ok(!root.children || root.children.length === 0);
+      for (const id of ['documents', ...below]) {
+        assert.deepStrictEqual((streams.streamsById[id].children ?? []).map((c) => c.id), CHILDREN[id] ?? [], id);
+        assert.strictEqual(streams.streamsById[id].explicitGrantOnly, undefined, id);
+        // hds-lib reads the ancestors from the id when its pack does not know the stream
+        const { parentId } = streams.streamsById[id];
+        if (parentId != null) assert.match(id, new RegExp(`^${parentId}-[a-z0-9]+$`));
+      }
+      assert.deepStrictEqual(below.sort(), Object.values(CHILDREN).flat().sort());
+    });
+
+    it('[DOCS-STR-2] no item on a filing stream: a filed document resolves by walk-up, shared or not', () => {
+      assert.deepStrictEqual(Object.entries(itemsById).filter(([, i]) => below.includes(i.streamId)).map(([k]) => k), []);
+      for (const id of below) assert.strictEqual(findItemForEvent('file/xds-v1', id), itemsById.document, id);
+    });
+
+    it('[DOCS-STR-3] each filing stream says what a grant on it covers, en and fr; the admin ones that they can show care', () => {
+      for (const id of below) {
+        const { label, description } = streams.streamsById[id];
+        assert.ok(label?.en && label?.fr && description?.en && description?.fr, id);
+      }
+      const says = (id, en, fr) => {
+        for (const re of en) assert.match(streams.streamsById[id].description.en, re, id);
+        for (const re of fr) assert.match(streams.streamsById[id].description.fr, re, id);
+      };
+      says('documents', [/filed or not/, /advance directives/, /donor and emergency cards/, /sensitive/],
+        [/classés ou non/, /directives anticipées/, /cartes de donneur et d'urgence/, /sensibles/]);
+      // what the clinical kinds hold beside the reports
+      says('documents-clinical', [/certificates/, /consents/, /advance directives/, /donor and emergency cards/, /images and recordings/, /sensitive/],
+        [/certificats/, /consentements/, /directives anticipées/, /cartes de donneur et d'urgence/, /images et enregistrements/, /sensibles/]);
+      for (const id of ['documents-admin', 'documents-admin-insurance']) {
+        assert.match(streams.streamsById[id].description.en, /can show which care you received/);
+        assert.match(streams.streamsById[id].description.fr, /peuvent montrer quels soins/);
+      }
+      // a grant on documents-admin covers the insurance documents: its text names them
+      assert.match(streams.streamsById['documents-admin'].description.en, /insurance documents/);
+      assert.match(streams.streamsById['documents-admin'].description.fr, /documents d'assurance/);
     });
   });
 

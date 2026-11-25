@@ -9,22 +9,22 @@ document: the person keeps the file, and HDS keeps enough validated metadata to 
 
 | | |
 |---|---|
-| Stream | `documents` ("Medical documents"), a root with no children |
-| Item | `document`, `type: attachments`, `repeatable: any` (since 3.29.0) |
+| Stream | `documents` ("Medical documents"), a root: not filed yet; below it `documents-clinical`, `documents-admin` and `documents-admin-insurance` ([Filing](#filing-4350)) |
+| Item | `document`, `type: attachments`, `repeatable: any` (since 3.29.0); on the root only, a filed document resolves to it by walk-up |
 | eventType | `file/xds-v1` |
 | FHIR | `DocumentReference` + `Binary`, SMART scope key `DocumentReference\|clinical-note` (since 4.2.0, [below](#fhir-documentreference-and-binary-420)) |
 
-**One root, no per-theme children.** A document's kind (lab report, letter, …) and its clinical theme are carried by
-its `class` and `type` codes, which become FHIR `DocumentReference.category` and `.type`, never by the stream it is
-filed under. A new child under an existing root (`condition`, `treatment`, …) would be covered by every grant on that
+**One root; its children carry access, never a kind or a theme.** A document's kind (lab report, letter, …) and its
+clinical theme are carried by its `class` and `type` codes, which become FHIR `DocumentReference.category` and `.type`.
+The stream says who may read it. A document has never its own child under a clinical root: a new child under an existing root (`condition`, `treatment`, …) would be covered by every grant on that
 root, so a doctor holding `condition` today would silently gain consultation letters; and a letter that spans
 several themes would show all of them to whoever reads the stream it was filed under. A new root is covered by no
 existing grant: an app asks for `documents` explicitly, and the person sees that request. A grant on `documents`
-covers every document, the sensitive ones included: say so where the person accepts it.
+covers every document, filed or not, the sensitive ones included: say so where the person accepts it.
 
 **Create the root before the first write.** As for `consents`: a writer creates `documents` (with its model name) on
-the person's own connection before writing the first document. Until the item ships, hds-lib's stream auto-creation
-does not know the root, as it works from items.
+the person's own connection before writing the first document. A filing stream is created, parents first and with its
+model name, before the first document is filed in it: no item sits on it, so stream auto-creation does not know it.
 
 **`type: attachments`.** An item type for documents: the files are Pryv attachments, the content is metadata. The
 eventType must declare `attachmentRequired: true` (`src/items.js`). It is an item type only, like `system`, so no
@@ -97,7 +97,9 @@ The `fhir` block above (plan 115 GAP H-8, [FHIR-MAPPING.md § DocumentReference]
 makes a document readable by a SMART on FHIR app as one `DocumentReference` whose files are `Binary` resources:
 
 - **Scope key `DocumentReference|clinical-note`**, granted on `documents`: `patient/DocumentReference.rs` (with or
-  without `?category=clinical-note`) reaches every document, the sensitive ones included, as a grant on the root does.
+  without `?category=clinical-note`) reaches every document, filed or not, the sensitive ones included, as a grant on the
+  root does. The filing streams carry the same key, for good: one stream tree has one key,
+  so no resource scope will ever be narrower than the root. The native stream scope is (`hds/stream/documents-clinical.read`).
   The consent screen says so. **Every document carries `clinical-note`, administrative ones included** (an insurance
   letter, a kind "other"): it is the one code of US Core's DocumentReference category value set, the class name US
   Core gives everything a DocumentReference carries, not a claim about the document's content. The document's own
@@ -243,7 +245,8 @@ the wrong classes.
   "description": { "en": "The results of laboratory tests (blood, urine and other samples).", "fr": "…" },
   "class": { "system": "http://snomed.info/sct", "code": "371525003", "display": "Clinical procedure report" },
   "type": { "system": "http://snomed.info/sct", "code": "4241000179101", "display": "Laboratory report" },
-  "timeBasis": "service"
+  "timeBasis": "service",
+  "stream": "documents-clinical"
 }
 ```
 
@@ -290,6 +293,65 @@ the wrong classes.
   removed: a pair a release drops stays, marked `deprecated: true`, so stored documents still read back, and pickers
   leave it out. A release that puts one type under two classes is refused by the build, and the reading rule above
   would need a revision first.
+
+### Filing (4.35.0)
+
+```
+documents                        not filed yet
+├── documents-clinical           everything about care
+└── documents-admin              papers around care
+    └── documents-admin-insurance    papers from and for insurers
+document-shares                  one document shared with one contact (below)
+```
+
+| Stream | A grant on it reads | It does not read |
+|---|---|---|
+| `documents` | every document, filed or not | – |
+| `documents-clinical` | the documents filed as clinical | invoices, insurance papers, documents not filed |
+| `documents-admin` | the documents filed as administrative, insurance included | clinical documents, documents not filed |
+| `documents-admin-insurance` | the insurance documents | other administrative papers, clinical documents, documents not filed |
+
+- **Words.** A document is **received** when it is on a documents stream, the root included; **filed** when that stream is
+  below the root.
+- **One documents stream per document, first in `streamIds`,** then its share ids (below). Two would be read by the
+  readers of either.
+- **A kind's `stream`** is the default, chosen by what the document says about the person, not by its class: a medical
+  certificate is "Administrative documentation" by its codes and is filed as clinical. A kind with no `stream` stays on the
+  root: `other`, and `access-log`, which names everyone who opened the record. So does a document whose kind is pending. A
+  `stream` the reader's model does not know is as none, and an older pack has none: nothing is filed.
+- **No kind has `documents-admin-insurance` as its default:** one kind (`administrative-document`) covers invoices,
+  policies and appointment letters. The person picks it. No program files there without her.
+- **Filing is hers.** Her app files a document, with her token, when she says so: on its own, or as she confirms its kind
+  when the same screen says where it goes ([CONVERSATION.md](CONVERSATION.md#writing-a-documents-date-and-kind-4260)). She
+  may move it at any time.
+- **Every other writer writes on the root only**: a contact through its receive child, a bridge, an assistant, an importer.
+  The platform does not enforce it: an access with `contribute` on `documents` covers the streams below it. A document
+  written on a filing stream by another writer is read by that stream's readers without her having said so.
+- **Moving a document into a granted stream is a disclosure, and out of one takes it away** from its readers. Before a
+  write that changes who reads it, her app says who newly reads it and who no longer does. Adding a stream below a granted
+  one is the same decision, for the model.
+- **Without a tap** only when all hold: she allowed it for that contact, the document is on the root and its kind pending,
+  the proposal states that its kind was classified, and nobody reads the target who does not read the document now. No
+  field of a proposal states it yet (`status` covers the date and the kind together and does not say it), so in this
+  version her app always asks.
+- **A write changes one thing.** `events.update` replaces the whole list: re-read `streamIds`, replace the documents
+  stream only, keep every `share-…` id, write, re-read and check. A dropped id takes the document away from a contact,
+  which then treats it as gone.
+- **Before any writer files:** the readers on the account take this pack. A facade pinned to an older pack by its hash keeps
+  it, and does not serve a document on a stream it does not know: raise its pin first.
+- **Before a filing stream is granted or requested:** every app that accepts requests or shows who reads a document runs
+  hds-lib 2.68.0, the mobile builds in use included. An older one answers "shared" by the root and the share ids only, so
+  it can say a document is no longer shared while a filing stream still lets the contact read it.
+- **The administrative streams are not "not sensitive".** An invoice names the provider, the speciality, the dates and
+  the acts. Their consent text says so, and a narrower request says what it leaves out.
+- **No migration.** A document stored before 4.35.0 is on the root: it is not filed, so a narrower grant does not read it
+  until she files it, and nothing is shown to anyone new.
+- **Readers** list `documents` (every filed document comes with it) and never take the stream for the kind.
+
+Not modelled, each additive: a stream for advance directives, consents and emergency cards, when an emergency access needs
+one (below `documents-clinical`: beside it, the move would take them from its readers); health insurance apart from other insurers (one insurer gets its own documents through its share child, since a
+grant on the stream would read the other insurers' too); a restricted root, which cannot be a child (`explicitGrantOnly`
+is for roots). Never a stream per kind, per sender or per contact.
 
 ### Which date is a document's date
 
@@ -371,12 +433,12 @@ writes it as a placeholder, stored as one: the "held for review" state above, on
 ## Sharing one document: the `document-shares` root (3.37.0)
 
 A person shares one document with one contact, and lets a contact send documents, through a child of a separate root.
-The document stays one event in `documents`, never copied.
+The document stays one event on its documents stream, never copied.
 
 | | |
 |---|---|
 | Stream | `document-shares` ("Shared documents"), a root; its children are created by the person's app |
-| Item | none, anywhere in the subtree: `itemsDefs.forEvent` resolves a document through its `documents` stream id |
+| Item | none, anywhere in the subtree: `itemsDefs.forEvent` resolves a document through its documents stream, the first in `streamIds` |
 | Stream key | `clientData.hdsDocumentShare` on each child ([PROVENANCE.md](PROVENANCE.md)) |
 | Alerts | `document-shared`, `document-unshared`, `document-sent` ([CUSTOM-FIELDS-AND-SYSTEM.md](CUSTOM-FIELDS-AND-SYSTEM.md#documents-in-a-conversation-notificationalert-cmc-kinds-3370)) |
 
@@ -392,20 +454,51 @@ reader of a stream sees its children's names and `clientData`), and would inheri
 - `clientData.hdsDocumentShare = { relationship: <CMC relationship id>, direction: 'shared' | 'received' }`. Only the
   contact granted that child reads it, and the relationship is its own.
 - The person's app creates the root (with its model name) before the first grant, as for `documents` and `consents`.
+- **A group asks for its own two ids (4.35.0).** Its members are minted accesses bounded by its offer, by exact stream id,
+  so an offer made for a group names one new id at `read` and one at `contribute`, in that order, on a single-use invite
+  (an open link would give every person the same ids). Her app creates and marks them after the accept.
+- **An id asked for is checked before the accept, and again on the grant.** Every reader of a document sees the share ids
+  it carries, so an offer or a scope request could name another contact's. Her app refuses an id that is another
+  relationship's (marked, or named by another access), `document-shares` itself, a level a share child is never granted at,
+  a level that does not fit the child's direction (its own `shared` child at `contribute` would let the contact change what
+  she shared), and a second id for a direction (hds-lib `cmcDocuments.checkOfferedShares`, `ensureOfferedShareStreams`).
 
 **Never granted as a whole.** A child is granted to one contact, by `consent/scope-update-cmc`:
 
 - `direction: 'shared'`, level `read`: the documents the person shares with that contact.
-- `direction: 'received'`, level `create-only`: the documents that contact may send (Route B).
+- `direction: 'received'`, level `create-only`: the documents that contact may send (Route B), blind: it reads none back.
+  Or level `contribute` (4.35.0), for an **uploader**: it lists, corrects and removes what it sent, while the document is open.
 
-**A shared document** has `streamIds = ['documents', <one or more share-… ids>]`. Sharing adds a share id, taking it
-back removes it (`events.update` replaces the whole list: write, re-read, check). Readers of `documents` see those
+**An uploader's grant always holds a `shared` child, its `read` listed before the `contribute`,** for a single contact as
+for a group. An app before hds-lib 2.65.0 takes the first share id it can read as the `shared` child: with the order kept it
+shares on the right one, without it would put her own documents where the contact can change them. The order does not
+cover its revoke, which sets `streamIds = ['documents']` on everything the received child holds: filed documents go back to
+the root and lose the other contacts' share ids. So no HDS app grants `contribute` until the builds in use run 2.65.0.
+
+**A shared document** has `streamIds = [<its documents stream>, <one or more share-… ids>]`. Sharing adds a share id,
+taking it back removes it (`events.update` replaces the whole list: write, re-read, check); each touches the ids of its
+own relationship only. Taking back tells the contact nothing, and says so to her, when the contact still reads the document
+through a documents stream. Readers of the document see those
 ids; they are opaque, so they learn how many shares exist, not with whom.
 
-**A received document: replace, don't add.** The platform refuses an event to a reader when any of its streams is
-`create-only` for that reader, so a document left in the receive child could never be shared back to its sender. On
-receipt the person's app sets `streamIds = ['documents']` in one `events.update` (after checking it is a `file/xds-v1`
-event with its attachment). The receive child holds nothing processed.
+**A received document at `create-only`: replace, don't add.** The platform refuses an event to a reader when any of its
+streams is `create-only` for that reader, so a document left in the receive child could never be shared back to its
+sender. On receipt the person's app sets `streamIds = ['documents']`, or the stream it is filed in, in one `events.update`
+(after checking it is a `file/xds-v1` event with its attachment). The receive child holds nothing processed.
+
+**A received document at `contribute`: add, then freeze (4.35.0).** The received id stays on the document beside its
+documents stream, so the sender goes on correcting it: **open**. Her app **freezes** it by replacing the received id by
+the relationship's `shared` one (`read`): the sender still reads it and can no longer change or remove it, and a correction
+is then a new document listing it in `supersedes`.
+
+- Her app MUST freeze it before it shares it with someone else, and offers to at any time.
+- A single contact's document SHOULD be frozen when it is filed (below the root). A group load may stay open, when she was
+  told so at consent.
+- **Open means it can change after she read it.** The platform keeps no history unless configured to, and the sender may
+  rewrite `clientData`: "changed by the sender since" (`modified`, `modifiedBy`) is a signal, not proof. What was checked
+  on receipt (type, size) held then.
+- Going from `contribute` to `create-only` is refused while the child holds documents: freeze them first.
+- A document waiting on the received child is in no `documents` query: her app lists it as waiting (sent, not received yet).
 
 **Labels.** Readers never show a share child's name. They label it from `direction`, from the viewer's side:
 
@@ -417,25 +510,29 @@ event with its attachment). The receive child holds nothing processed.
 | `received` | the contact | Documents you send | Documents que vous envoyez | Documentos que usted envía |
 
 **When a relationship ends.** On a full revoke the person's app first processes the receive child (every event on it
-gets `streamIds = ['documents']`), then deletes both children with `mergeEventsWithParent: false`; shared documents
-keep `documents`. A restore recreates streams with their ids and `clientData` and keeps `streamIds`, but not accesses:
+that is not filed gets `streamIds = ['documents']`, and the relationship's ids come off the filed ones), then deletes both
+children with `mergeEventsWithParent: false`; documents keep their documents stream and the other contacts' ids. A restore recreates streams with their ids and `clientData` and keeps `streamIds`, but not accesses:
 the person's app deletes a share child whose relationship no longer exists.
 
 **Already sharing everything.** A contact that reads `documents`, a parent or `*` already reads every document: the
-app sends only the alert, and offers no take-back.
+app sends only the alert, and offers no take-back. A contact granted a filing stream reads the documents filed there;
+sharing one of them still adds its share id, so filing it elsewhere later does not take it away (hds-lib
+`cmcDocuments.readsDocument` says whether a grant reads one document).
 
 ## Open points
 
 - `class` is one Coding and `type` a list: `DocumentEntry.classCode` and `typeCode` are 1..1 each in XDS; the list
   carries other codings of the same type, typeCode first.
 - Writer-side enforcement of `attachmentRequired` in hds-lib is optional and not done.
-- Per-kind child streams (to share only lab reports, for example) are not modelled. They can be added later as
-  children of `documents` without breaking a grant on the root, but a grant on a child sees only the documents filed
-  under it after the split: earlier ones would need re-filing, account by account. One document is shared through
-  `document-shares` (above), not through a child of `documents`.
-- A document a contact sends is written by the contact (Route B): the contact cannot correct or retract one sent to the
-  wrong person, and the platform bounds neither its type nor its size. Delivery by the platform, attachment included,
-  is asked of Pryv; its event type will be the platform's.
+- What an administrative document is (invoice, policy, cost approval, reimbursement statement) has no code of its own: a
+  table of sub-kinds, each a second `type` coding with its own default stream, is needed before a program may propose
+  insurance.
+- **No app freezes yet** (hds-lib `freezeDocument` exists, nothing calls it), and hds-lib does not refuse to share an open
+  document. No app may grant `contribute` before both are done.
+- Who sent a filed document is not kept: the received id goes at the freeze. A `clientData` key for it is to be defined.
+- At `create-only` the contact cannot correct or retract a document sent to the wrong person, and at either level the
+  platform bounds neither its type nor its size. Delivery by the platform, attachment included, is asked of Pryv; its
+  event type will be the platform's.
 - A superseded document: a share does not follow the new version. Whether marking the old one `superseded` should
   tell the contact that a newer one exists is open.
 - Not modelled yet, minor to add: `serviceStartTime` / `serviceStopTime` (`context.period`).

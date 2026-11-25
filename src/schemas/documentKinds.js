@@ -60,6 +60,8 @@ const kindProperties = {
   type: coding,
   // the writer's default for which printed date is the event time: the care reported, or `creation`
   timeBasis: { enum: ['service', 'creation'] },
+  // the documents stream a document of this kind is filed under by default; none: it stays on the root
+  stream: { type: 'string', pattern: '^documents(-[a-z0-9]+)+$' },
   // a pair a later CH Term release dropped: kept, so a stored document still reads back, never offered
   deprecated: { const: true }
 };

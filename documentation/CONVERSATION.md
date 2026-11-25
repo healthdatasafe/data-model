@@ -535,7 +535,7 @@ When she confirms a `proposed-document`, her app updates the document event, wit
    left, write no update: answer `skip` with `basis: not-pending` instead (her app does this without a tap when it
    finds such a proposal).
 4. One `events.update` of the document: the whole `content` with `class` and `type` replaced by the kind's Codings
-   from the pack (`type` = `[kind.type]`, the other fields of `content` as they are); `time` and
+   from the pack (`type` = `[kind.type]`, then `kind.detail` when it has one; the other fields of `content` as they are); `time` and
    `clientData.hdsTimePrecision` (with `unknown`, from her `which-document-date` answer: `time` stays the moment she
    added it, DOCUMENTS.md); `hdsDocumentPending` reduced by the fields written, `null` when empty. `streamIds`,
    `title`, `language`, `creation` and the attachments are not touched, and no `hdsExtraction` is written: the date and
@@ -543,6 +543,11 @@ When she confirms a `proposed-document`, her app updates the document event, wit
 5. Write the `answer` (`confirm`, or `correct` when she changed a field) with `applied`, the fields written, and no
    `written` (a `written` entry is a value to delete on `not-mine`, never the document), then post the `answer`
    alert. The answer does not carry her correction; the document, which the contact reads, does.
+
+**Filing is a second write (4.35.0).** When the screen she confirms on says where the document goes and who newly reads it,
+her app also files it in the kind's `stream` ([DOCUMENTS.md § Filing](DOCUMENTS.md#filing-4350)), in a separate
+`events.update` after step 4 that changes `streamIds` only: the two writes never race over a share id, and `applied` does
+not list it. On any other screen, confirming a kind files nothing.
 
 A retry finds the fields no longer pending and writes no second update. When the document already holds the values
 this confirmation would write (the update went through, the answer did not), the retry writes the `confirm` (or
