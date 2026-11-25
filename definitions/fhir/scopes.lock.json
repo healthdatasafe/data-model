@@ -979,6 +979,21 @@
         "document"
       ]
     },
+    "documents-admin": {
+      "pair": "DocumentReference|clinical-note",
+      "parent": "documents",
+      "items": []
+    },
+    "documents-admin-insurance": {
+      "pair": "DocumentReference|clinical-note",
+      "parent": "documents-admin",
+      "items": []
+    },
+    "documents-clinical": {
+      "pair": "DocumentReference|clinical-note",
+      "parent": "documents",
+      "items": []
+    },
     "lifestyle-tobacco-smoking": {
       "pair": "Observation|social-history",
       "parent": "lifestyle-tobacco",
@@ -1086,6 +1101,19 @@
         "why": "2026-11-22 a no known allergy statement (plan 133); a reader of AllergyIntolerance may see it, as US Core and IPS place it under that resourceType"
       }
     },
-    "streams": {}
+    "streams": {
+      "documents-admin": {
+        "under": "documents",
+        "why": "2026-11-25 plan 140, filing (DOCUMENTS.md § Filing): same documents as before, filed below the root; a DocumentReference grant already reads administrative documents (§ FHIR)"
+      },
+      "documents-admin-insurance": {
+        "under": "documents",
+        "why": "2026-11-25 plan 140, filing (DOCUMENTS.md § Filing): same documents as before, filed below the root; a DocumentReference grant already reads administrative documents (§ FHIR)"
+      },
+      "documents-clinical": {
+        "under": "documents",
+        "why": "2026-11-25 plan 140, filing (DOCUMENTS.md § Filing): same documents as before, filed below the root; a DocumentReference grant already reads administrative documents (§ FHIR)"
+      }
+    }
   }
 }

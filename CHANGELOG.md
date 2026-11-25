@@ -1,8 +1,26 @@
 # Changelog
 
-## [Unreleased]
+## [4.35.0] - 2026-11-25
 
-Documentation; the published pack is unchanged.
+Plan 140: filing documents by who may read them. Additive; no stored event moves.
+
+- **Streams `documents-clinical`, `documents-admin` and `documents-admin-insurance`** below `documents`, with consent texts.
+  They carry access, never a kind. No item on them: a filed document resolves to `document` by walk-up. The root now means
+  not filed yet, has a consent text, and a grant on it reads everything as before. Same SMART key as the root
+  (`reviewed.streams`), for good. From now on an OAuth consent on `documents` creates the three empty streams, and a consent
+  row on one reads "Medical document › Clinical documents".
+- **`stream` on a document kind** (`documentKinds`, both sections, optional): where it is filed by default. All kinds but
+  `other` and `access-log` have one, clinical except `administrative-document`. A reader that does not know it files nothing.
+- **Documentation:** DOCUMENTS.md § Filing; a `received` share child at `contribute` (uploader), open and frozen documents,
+  group offers and the checks before an accept; CONVERSATION.md: filing is a second write; FHIR-MAPPING.md, HDS-READER.md,
+  AGENTS.md.
+- **Gates** (DOCUMENTS.md § Filing): nothing files or grants with this release. Before a writer files, a facade pinned to an
+  older pack is raised; before a filing stream is granted, every app in use runs hds-lib 2.68.0; before `contribute`, no app
+  below 2.65.0 and freezing in her app. An older app reads a filed document as before.
+- hds-lib test `[CNVD2b]` assumes a pack without `stream`: it is fixed with this release.
+- Tests `[DOCS-STR-1]` to `[DOCS-STR-3]`, `[DKND-7]`, `[DKND-10]`, `[DKND-11]`, `[STRL-3]`.
+
+Documentation only:
 
 - **CONVERSATION.md § Her note**: removed once a `done` is later than the answer, whatever status follows; it said the latest
   status is `done`, so a document shared again and on hold kept her note for days. As hds-lib `latestDoneOf` does.

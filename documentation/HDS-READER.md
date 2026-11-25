@@ -39,7 +39,7 @@ hds-reader/                 the Reader's app base
   `definitions/streams`, and `appStreams.yaml` does not describe it: an app-stream suffix goes under the app's
   `{appId}-app` stream, while `hds-reader-inbox` and `hds-reader-dialogue` sit beside it. The ids are fixed: the
   Reader's grant and its webhooks name them.
-- **A document is one event in two streams:** its `file/xds-v1` event in `documents` and in `hds-reader-inbox`
+- **A document is one event in two streams:** its `file/xds-v1` event on its documents stream and in `hds-reader-inbox`
   ([DOCUMENTS.md](DOCUMENTS.md)). Removing it from `hds-reader-inbox` withdraws it from the Reader.
 - **The Reader's grant:** `read` on `hds-reader-inbox`, `contribute` on `hds-reader-dialogue` and `hds-reader-app`,
   and nothing on the clinical tree until the person accepts a request to write a kind of data, then `create-only` on

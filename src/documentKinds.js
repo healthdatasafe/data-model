@@ -3,12 +3,14 @@ const fs = require('fs');
 const path = require('path');
 
 const { checkDocumentKinds } = require('./schemas/documentKinds');
+const { streamsById, isDescendantOf } = require('./streams');
 
 // Document kinds (4.17.0, documentation/DOCUMENTS.md § Document kinds): a `file/xds-v1` document's class and type
 // by kind, one kind per pair of the CH Term ConceptMap DocumentEntryClassCodeToDocumentEntryTypeCode, and `detailKinds`
 // (4.32.0), which share a pair and add a `detail` code.
 
 const RECORD_ARTIFACT = '419891008';
+const DOCUMENTS = 'documents';
 
 const documentKinds = loadDocumentKinds(path.join(__dirname, '../definitions/documentKinds.yaml'));
 
@@ -31,7 +33,7 @@ function loadDocumentKinds (file) {
  * is Record artifact. So a type other than Record artifact is in one kind only, a class in one Record-artifact kind
  * only, and a code has one Coding wherever it appears. A detail kind has the class and type of one of `kinds`, and its
  * detail, whose code is its key and display its English label, tells it apart. A person picks a kind by its label, so no
- * two kinds share one.
+ * two kinds share one. A kind's `stream` is a documents stream below the root.
  */
 function checkDocumentKindsTable (table) {
   checkDocumentKinds(table);
@@ -46,6 +48,7 @@ function checkDocumentKindsTable (table) {
       if (byLabel[id]) throw new Error(`Document kinds "${byLabel[id]}" and "${key}" share the ${lang} label "${text}"`);
       byLabel[id] = key;
     }
+    if (kind.stream != null && !isDocumentsChild(kind.stream)) throw new Error(`Document kind "${key}": "${kind.stream}" is no stream below "${DOCUMENTS}"`);
     for (const coding of [kind.class, kind.type]) {
       const seen = codingByCode[coding.code];
       if (seen && JSON.stringify(seen.coding) !== JSON.stringify(coding)) {
@@ -65,6 +68,10 @@ function checkDocumentKindsTable (table) {
     if (index[code]) throw new Error(`Document kinds "${index[code]}" and "${key}" cannot be told apart by their codes`);
     index[code] = key;
   }
+}
+
+function isDocumentsChild (id) {
+  return streamsById[id] != null && id !== DOCUMENTS && isDescendantOf(id, DOCUMENTS);
 }
 
 function toBePublished () {

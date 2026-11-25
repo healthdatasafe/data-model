@@ -36,6 +36,7 @@ describe('[STRL] Localised stream labels', () => {
     body: ['body-height', 'body-weight', 'body-blood-pressure', 'body-blood', 'body-vulva', 'body-skin', 'body-heart-rate', 'body-oxygen-saturation', 'body-temperature', 'body-urine', 'body-csf', 'body-semen'],
     lifestyle: ['lifestyle-tobacco', 'lifestyle-alcohol', 'lifestyle-diet'],
     family: ['family-children'],
+    documents: ['documents-clinical', 'documents-admin'], // 4.35.0
     // 4.9.0
     wellbeing: ['wellbeing-mood', 'wellbeing-sex-drive', 'wellbeing-mental-distress', 'wellbeing-mental-distress-anxiety', 'wellbeing-mental-distress-depression', 'wellbeing-mental-distress-stress', 'wellbeing-self-rated-health', 'wellbeing-general-health'],
     profile: ['profile-address', 'profile-birthcountry', 'profile-ethnicity', 'profile-date-of-birth', 'profile-avatar', 'profile-display-name', 'profile-location', 'profile-name', 'profile-sex', 'profile-reproductive-stage', 'profile-preferences']

@@ -140,9 +140,37 @@ describe('[DKND] Document kinds', () => {
     assert.deepStrictEqual(Object.values(published).filter(k => k.detail), []);
   });
 
+  // Who may read a document once filed: a change here is a change of who reads, so it is written out (4.35.0)
+  it('[DKND-10] filed as clinical, but for an administrative document (admin), `other` and an access log (not filed)', () => {
+    const all = { ...documentKinds.kinds, ...documentKinds.detailKinds };
+    const of = (stream) => Object.keys(all).filter(k => all[k].stream === stream).sort();
+    assert.deepStrictEqual(of('documents-admin'), ['administrative-document']);
+    assert.deepStrictEqual(of(undefined), ['access-log', 'other']);
+    assert.strictEqual(of('documents-clinical').length, Object.keys(all).length - 3);
+    // a medical statement in an administrative class; a detail kind where the kind it shares its codes with is
+    assert.strictEqual(all['medical-certificate'].stream, 'documents-clinical');
+    assert.strictEqual(all['menstrual-cycle-chart'].stream, all['other-patient-record'].stream);
+  });
+
+  it('[DKND-11] refuses a stream that is not below documents, in both sections', () => {
+    const refused = (stream, error) => {
+      for (const section of ['kinds', 'detailKinds']) {
+        const table = JSON.parse(JSON.stringify(documentKinds));
+        Object.values(table[section])[0].stream = stream;
+        assert.throws(() => checkDocumentKindsTable(table), error, `${section} ${stream}`);
+      }
+    };
+    refused('documents-nowhere', /"documents-nowhere" is no stream below "documents"/);
+    for (const stream of ['documents', 'document-shares', 'body', '', null]) refused(stream, /invalid/);
+    const none = JSON.parse(JSON.stringify(documentKinds));
+    delete none.kinds.consent.stream;
+    assert.doesNotThrow(() => checkDocumentKindsTable(none), 'optional: such a kind stays on the root');
+  });
+
   it('[DKND-7] is published in the pack', () => {
     const [file] = require('../src/documentKinds').toBePublished();
     assert.strictEqual(file.includeInPack, 'documentKinds');
     assert.strictEqual(file.content.source.version, '3.4.0');
+    assert.strictEqual(file.content.kinds['laboratory-report'].stream, 'documents-clinical');
   });
 });
