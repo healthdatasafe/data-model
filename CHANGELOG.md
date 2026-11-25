@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased]
+
+Plan 128 (D59), for 4.36.0. Additive in the pack.
+
+- **A dated grid (a paper cycle chart), CONVERSATION.md § A dated grid.** `grid` (`row`, `column`) on a proposed value: its box. Reason
+  `not-read` on an `unmapped` one: the contact sees writing in a box and proposes nothing from it; `printed.value` is then absent
+  (the schema asks for it with any other reason or none), `grid` and `anchor` required. `task-status.counts.notRead`. Question code
+  `which-row-date`, with `context.grid`: the day of one box of a row, with its year; the values of the row are proposed after it,
+  each with its day. On such a document no `which-date`, no value without a day, and her app takes the day from the proposal only.
+- **`proposal.content` may be `null`**: an item whose eventType has no content (`activity/plain`: `fertility-cycles-peak-day`,
+  `body-vulva-bleeding-browndark`) can be proposed. It could not: the schema asked for a number or an object.
+- **A value she already has**: the value of a convertible item (cervical fluid, mood) is compared by its method, reading and annotations, not by its
+  vectors or versions; `null` equals absent. As hds-lib-js#94.
+- An app older than 4.36.0 shows a `not-read` box as not saved and `which-row-date` as a question it cannot answer (R8): the
+  work on such a document does not reach `done` there. hds-lib mirrors the code, the count and the checks, and must follow at once (CNV10).
+
 ## [4.35.0] - 2026-11-25
 
 Plan 140: filing documents by who may read them. Additive; no stored event moves.
