@@ -3850,7 +3850,7 @@
                   ],
                   "properties": {
                     "row": {
-                      "description": "The grid's row on its page, from the top, from 1.",
+                      "description": "The grid's row on its page, from the top, from 1, every row of the printed grid counted, the empty ones too.",
                       "type": "integer",
                       "minimum": 1,
                       "maximum": 99
@@ -4094,7 +4094,7 @@
               ],
               "properties": {
                 "row": {
-                  "description": "The grid's row on its page, from the top, from 1.",
+                  "description": "The grid's row on its page, from the top, from 1, every row of the printed grid counted, the empty ones too.",
                   "type": "integer",
                   "minimum": 1,
                   "maximum": 99

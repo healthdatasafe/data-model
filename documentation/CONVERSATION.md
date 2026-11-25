@@ -170,9 +170,11 @@ A document that bears one box per day (a paper cycle chart: one row per cycle, o
 what it read in a box as ordinary proposed values, and says which boxes it did not read, so that a box with writing never
 looks like an empty day.
 
-- **A box, its parts.** Every proposed value of a grid carries `grid`, its box: `row`, the grid's row on its page, from the top, from 1, and
-  `column`, the box's printed column number (from the grid, never from a model). A box that holds an observation, a bleeding and a mark is
-  three candidates, one per `itemKey`, with the same `grid` and `anchor`. The record of R5 is the attachment, the page, `grid` and the
+- **A box, its parts.** Every proposed value of a grid carries `grid`, its box: `row`, the grid's row on its page, from the top, from 1,
+  every row of the printed grid counted, the empty ones too (from its lines, never from the rows read), and `column`, the box's
+  printed column number (from the grid, never from a model). A contact that is not sure of a box's row and column (a grid it
+  cannot find, a page cut above its first row) writes nothing from that grid, no value, no `not-read`, no question, and sends the
+  notice `no-result-found`. A box that holds an observation, a bleeding and a mark is three candidates, one per `itemKey`, with the same `grid` and `anchor`. The record of R5 is the attachment, the page, `grid` and the
   `itemKey`. Her app orders, groups and names boxes from `grid`, never from `bbox`. `printed.label` is the column number too, and
   `printed.value` the part as written ("10KL x2"); a text longer than `value` allows is never cut: the part is `not-read`.
 - **`not-read`.** Status `unmapped`, reason `not-read`: the contact sees writing in this box and proposes nothing from it, or not
