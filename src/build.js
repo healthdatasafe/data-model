@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { loadLocales, localise, converterSidecars, checkPublished, checkConsentLabels } = require('./l10n');
+const { loadLocales, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels } = require('./l10n');
 const { checkDocumentKindsTable } = require('./documentKinds');
 const { checkItem } = require('./schemas/items');
 const { checkVocabulary } = require('./schemas/vocabularies');
@@ -76,6 +76,8 @@ for (const [name, content] of Object.entries(converterSidecars(publishedFiles, l
 }
 
 checkConsentLabels(pack.streams, pack.items, locales);
+// the locales added from definitions/l10n, and whether they hold drafts (documentation/L10N.md)
+if (Object.keys(locales).length > 0) pack.l10n = localeStatus(locales);
 
 const packFilePath = path.resolve(basePath, 'pack.json');
 fs.writeFileSync(packFilePath, JSON.stringify(pack, null, 2), 'utf-8');
