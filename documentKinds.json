@@ -27,7 +27,8 @@
         "code": "371530004",
         "display": "Clinical consultation report"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "history-and-physical": {
       "label": {
@@ -50,7 +51,8 @@
         "code": "371529009",
         "display": "History and physical report"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "progress-report": {
       "label": {
@@ -73,7 +75,8 @@
         "code": "371532007",
         "display": "Progress report"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "other-encounter-report": {
       "label": {
@@ -96,7 +99,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "referral-letter": {
       "label": {
@@ -119,7 +123,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "laboratory-order": {
       "label": {
@@ -142,7 +147,8 @@
         "code": "721965002",
         "display": "Laboratory order"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "pathology-order": {
       "label": {
@@ -165,7 +171,8 @@
         "code": "721966001",
         "display": "Pathology order"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "imaging-order": {
       "label": {
@@ -189,7 +196,8 @@
         "code": "2161000195103",
         "display": "Imaging order"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "other-order": {
       "label": {
@@ -212,7 +220,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "discharge-summary": {
       "label": {
@@ -235,7 +244,8 @@
         "code": "373942005",
         "display": "Discharge summary"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "transfer-summary": {
       "label": {
@@ -258,7 +268,8 @@
         "code": "371535009",
         "display": "Transfer summary report"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "medication-list": {
       "label": {
@@ -281,7 +292,8 @@
         "code": "721912009",
         "display": "Medication summary document"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "medication-plan": {
       "label": {
@@ -304,7 +316,8 @@
         "code": "736378000",
         "display": "Medication management plan"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "other-summary": {
       "label": {
@@ -327,7 +340,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "operative-report": {
       "label": {
@@ -350,7 +364,8 @@
         "code": "371526002",
         "display": "Operative report"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "laboratory-report": {
       "label": {
@@ -373,7 +388,8 @@
         "code": "4241000179101",
         "display": "Laboratory report"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "pathology-report": {
       "label": {
@@ -396,7 +412,8 @@
         "code": "371528001",
         "display": "Pathology report"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "imaging-report": {
       "label": {
@@ -419,7 +436,8 @@
         "code": "4201000179104",
         "display": "Imaging report"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "image-reference": {
       "label": {
@@ -442,7 +460,8 @@
         "code": "900000000000471006",
         "display": "Image reference"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "media-recording": {
       "label": {
@@ -465,7 +484,8 @@
         "code": "787148009",
         "display": "Digital representation of specimen"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "other-procedure-report": {
       "label": {
@@ -488,7 +508,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "medical-care-plan": {
       "label": {
@@ -511,7 +532,8 @@
         "code": "737427001",
         "display": "Clinical management plan"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "nursing-care-plan": {
       "label": {
@@ -534,7 +556,8 @@
         "code": "773130005",
         "display": "Nursing care plan"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "rehabilitation-plan": {
       "label": {
@@ -557,7 +580,8 @@
         "code": "736055001",
         "display": "Rehabilitation care plan"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "medication-treatment-plan": {
       "label": {
@@ -580,7 +604,8 @@
         "code": "761931002",
         "display": "Medication treatment plan report"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "other-care-plan": {
       "label": {
@@ -603,7 +628,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "medication-prescription": {
       "label": {
@@ -626,7 +652,8 @@
         "code": "761938008",
         "display": "Medicinal prescription record"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "non-drug-prescription": {
       "label": {
@@ -649,7 +676,8 @@
         "code": "765492005",
         "display": "Non-drug prescription record"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "other-prescription": {
       "label": {
@@ -672,7 +700,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "allergy-record": {
       "label": {
@@ -695,7 +724,8 @@
         "code": "722446000",
         "display": "Allergy record"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "immunization-record": {
       "label": {
@@ -718,7 +748,8 @@
         "code": "41000179103",
         "display": "Immunization record"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "other-patient-record": {
       "label": {
@@ -741,7 +772,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "consent": {
       "label": {
@@ -764,7 +796,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "advance-directive": {
       "label": {
@@ -787,7 +820,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "access-log": {
       "label": {
@@ -833,7 +867,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "organ-donor-card": {
       "label": {
@@ -856,7 +891,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "obstetrical-record": {
       "label": {
@@ -880,7 +916,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "medical-certificate": {
       "label": {
@@ -903,7 +940,8 @@
         "code": "772786005",
         "display": "Medical certificate"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     },
     "administrative-document": {
       "label": {
@@ -926,7 +964,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-admin"
     },
     "emergency-report": {
       "label": {
@@ -949,7 +988,8 @@
         "code": "445300006",
         "display": "Emergency department record"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "allied-health-report": {
       "label": {
@@ -972,7 +1012,8 @@
         "code": "445418005",
         "display": "Professional allied to medicine clinical report"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "medication-dispense": {
       "label": {
@@ -996,7 +1037,8 @@
         "code": "82291000195104",
         "display": "Medication dispense document"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "other-health-event-record": {
       "label": {
@@ -1019,7 +1061,8 @@
         "code": "419891008",
         "display": "Record artifact"
       },
-      "timeBasis": "service"
+      "timeBasis": "service",
+      "stream": "documents-clinical"
     },
     "other": {
       "label": {
@@ -1072,7 +1115,8 @@
         "code": "menstrual-cycle-chart",
         "display": "Menstrual cycle chart"
       },
-      "timeBasis": "creation"
+      "timeBasis": "creation",
+      "stream": "documents-clinical"
     }
   }
 }

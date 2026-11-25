@@ -185,6 +185,10 @@
               "creation"
             ]
           },
+          "stream": {
+            "type": "string",
+            "pattern": "^documents(-[a-z0-9]+)+$"
+          },
           "deprecated": {
             "const": true
           }
@@ -339,6 +343,10 @@
               "service",
               "creation"
             ]
+          },
+          "stream": {
+            "type": "string",
+            "pattern": "^documents(-[a-z0-9]+)+$"
           },
           "deprecated": {
             "const": true
