@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+Documentation; the published pack is unchanged.
+
+- **CONVERSATION.md § Her note**: removed once a `done` is later than the answer, whatever status follows; it said the latest
+  status is `done`, so a document shared again and on hold kept her note for days. As hds-lib `latestDoneOf` does.
+
 ## [4.34.0] - 2026-11-25
 
 Plan 133 (FHIR after plan 115, Part A): the treatment items. Additive in the pack; the SMART grant table widens.
