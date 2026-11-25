@@ -509,7 +509,7 @@ document:
 | `attachments[]` (Pryv) | one `content[]` per file: `attachment.contentType`, `size`, `title` (file name), `url` = `Binary/<eventId>.<fileId>` (absolute on the facade, relative in an export file); never the Pryv `readToken`; no `hash` (FHIR's is SHA-1, Pryv's integrity is sha256) |
 
 The category key is `clinical-note` for every document: US Core's category value set has that one code, and a grant on
-`DocumentReference|clinical-note` is a grant on `documents`, the whole of it, as DOCUMENTS.md says of the root. IPS has no
+`DocumentReference|clinical-note` is a grant on `documents`, the whole of it, filing streams included, as DOCUMENTS.md says of the root. IPS has no
 DocumentReference profile, so the `ips` and `ch` flavours render the base resource. **Import is not implemented:** a
 DocumentReference matches the item by category (`matchResource`), and `fromFhir` refuses the block until a writer that
 stores the file exists; the block is permanent either way.
