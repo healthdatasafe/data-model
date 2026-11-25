@@ -4949,6 +4949,16 @@
         }
       }
     },
+    "research/eligibility-band-v1": {
+      "description": "The result a person chose to send for the eligibility test of a study: the request and the band of her score (below 50, or 50 and more), nothing else. The test runs on her device. One event per request, updated when she sends again. See documentation/ELIGIBILITY.md.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requestId", "band"],
+      "properties": {
+        "requestId": { "description": "The eligibility request answered.", "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_-]+$" },
+        "band": { "description": "Band of the unrounded score, in %.", "type": "string", "enum": ["0-49", "50-100"] }
+      }
+    },
     "support/conversation-v1": {
       "description": "State of one support conversation, kept on the support group's account: one event per conversation, updated in place by the support service and the team's members; times are Unix seconds. Holds no health data, no message text and no email address. See documentation/SUPPORT.md.",
       "type": "object",

@@ -2,8 +2,11 @@
 
 ## [Unreleased]
 
-Documentation; the published pack is unchanged.
+Additive.
 
+- **Eligibility test of a study:** eventType `research/eligibility-band-v1` (`requestId` and `band`, `0-49` or `50-100`,
+  closed) and the published schema `json-schemas/hds-eligibility-request.json` (criteria with a requester-set weight, a
+  declarative rule, an optional question). No item, no stream. documentation/ELIGIBILITY.md; tests `[ELIG-*]`.
 - **CONVERSATION.md § Her note**: removed once a `done` is later than the answer, whatever status follows; it said the latest
   status is `done`, so a document shared again and on hold kept her note for days. As hds-lib `latestDoneOf` does.
 

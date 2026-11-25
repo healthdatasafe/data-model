@@ -8,6 +8,7 @@ Always also read:
 - `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `sourceKey`, `hdsBasis`, `hdsSourceAnchor`, `hdsExtraction`, …): read it before adding one. New keys are `hds`-prefixed. A key with a closed object shape gets its JSON Schema in `src/schemas/clientDataKeys.js`, tested under both flavours and published as `json-schemas/<key>.json`.
 - `documentation/HDS-READER.md` — the HDS Reader's dialogue type `message/hds-reader-v1` (on the Reader's own app tree, not a model stream) and the provenance keys on each value it writes. It is the first eventType whose schema has a root `oneOf` (one closed branch per `content.kind`) and no root `properties`: a tool that reads `schema.properties` to list an eventType's fields finds none there and must walk the branches. Superseded (4.22.0) by `documentation/CONVERSATION.md`: `message/hds-conversation-v1` (same root `oneOf` pattern) in the `explicitGrantOnly` root `conversation-items`, and the conversation alerts, whose `hds` block is a published schema (`src/schemas/conversationAlert.js`) because the cores do not validate it.
 - `documentation/APP-DESCRIPTION.md` — how HDS apps name the app holding an access: the `hdsApp` pointer, the `hds-app-manifest` (schema `json-schemas/hds-app-manifest.json`), the catalogue's vouching and the trust rule.
+- `documentation/ELIGIBILITY.md` — the eligibility test of a study: the published request schema (`src/schemas/eligibilityRequest.js`), evaluated on the person's device by hds-lib `researchEligibility`, and `research/eligibility-band-v1`.
 - `documentation/PARTIAL-DATES.md` — partial and approximate dates (`hdsTimePrecision`): cross-domain, applies to any event whose date is known only to the month or the year.
 
 ---
@@ -361,7 +362,7 @@ data-model/
 │   ├── items/*.yaml                       # Health data point definitions (363 items, 296 active, 25 YAML files)
 │   ├── streams/*.yaml                     # Clinical-domain tree (22 top-level roots, 346 streams in all)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (92)
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (93)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)
