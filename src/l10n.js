@@ -6,8 +6,9 @@ const path = require('path');
 //
 //   { "<published file>": { "<path>": { "en": "the English it translates", "text": "...", "reviewedBy": "...", "reviewedOn": "YYYY-MM-DD" } } }
 //
-// Only reviewed texts are kept there: drafts live outside this repository. A build fails on a text whose English changed,
-// on a path that matches nothing and on an empty text, so a shipped translation never falls back to English unnoticed.
+// A text is reviewed (`reviewedBy`, `reviewedOn`) or a draft (`"status": "draft"`, no reviewer): a reviewed text replaces
+// the draft. A build fails on a text whose English changed, on a path that matches nothing and on an empty text, so a
+// shipped translation never falls back to English unnoticed.
 // Path: object keys joined with `/` (JSON Pointer escapes: `~0` for `~`, `~1` for `/`); an array entry is `[value=<JSON>]`
 // or `[id=<JSON>]` when it has one, else `[index]`: an option moved in its list keeps its translation.
 
@@ -16,6 +17,9 @@ const l10nDir = path.join(__dirname, '../definitions/l10n');
 const LOCALES = ['es', 'it', 'pt', 'pt-BR'];
 /** Published converter packs are frozen (tests/fixtures/converter-packs.sha256.json): their texts go to a sidecar. */
 const CONVERTER_PACK = /^converters\/([^/]+)\/pack-(latest|v\d+)\.json$/;
+/** The two shapes of an entry (`official` aside): a reviewed text, a draft. */
+const REVIEWED_KEYS = ['en', 'text', 'reviewedBy', 'reviewedOn'];
+const DRAFT_KEYS = ['en', 'text', 'status'];
 
 module.exports = { LOCALES, CONVERTER_PACK, checkLocales, forEachText, loadLocales, localise, converterSidecars, checkPublished, checkConsentLabels };
 
@@ -41,10 +45,16 @@ function checkLocales (locales, doNotTranslate) {
     for (const [file, texts] of Object.entries(files)) {
       for (const [at, entry] of Object.entries(texts)) {
         const where = `l10n: ${locale} ${file} ${at}`;
-        for (const key of ['en', 'text', 'reviewedBy', 'reviewedOn']) {
+        const draft = entry.status !== undefined;
+        if (draft && entry.status !== 'draft') throw new Error(`${where}: status is "draft" or absent (a reviewed text)`);
+        const shape = draft ? DRAFT_KEYS : REVIEWED_KEYS;
+        for (const key of Object.keys(entry)) {
+          if (!shape.includes(key) && key !== 'official') throw new Error(`${where}: ${draft ? 'a draft has no' : 'unknown key'} ${key}`);
+        }
+        for (const key of shape) {
           if (typeof entry[key] !== 'string' || entry[key].trim() === '') throw new Error(`${where}: ${key} is missing`);
         }
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.reviewedOn)) throw new Error(`${where}: reviewedOn must be YYYY-MM-DD`);
+        if (!draft && !/^\d{4}-\d{2}-\d{2}$/.test(entry.reviewedOn)) throw new Error(`${where}: reviewedOn must be YYYY-MM-DD`);
         if (held.has(`${file} ${at}`) && !entry.official) throw new Error(`${where}: ${held.get(`${file} ${at}`)} (give the source in "official")`);
       }
     }

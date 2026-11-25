@@ -31,7 +31,7 @@ describe('[L10N] Translations added at build', () => {
     assert.throws(() => localise('f', { a: { en: 'a', it: 'y' } }, l('a', entry('a', 'x'))), /already in the definitions/);
   });
 
-  it('[L10N5] only reviewed, non-empty texts of a known locale', () => {
+  it('[L10N5] reviewed, non-empty texts of a known locale', () => {
     const ok = entry('a', 'x');
     const check = (e, locale = 'it', held = []) => checkLocales({ [locale]: { f: { a: e } } }, held);
     assert.doesNotThrow(() => check(ok));
@@ -42,6 +42,20 @@ describe('[L10N] Translations added at build', () => {
     const held = [{ file: 'f', path: 'a', reason: 'licensed questionnaire' }];
     assert.throws(() => check(ok, 'it', held), /licensed questionnaire/);
     assert.doesNotThrow(() => check({ ...ok, official: 'EuroQol, Italian EQ-5D-5L' }, 'it', held));
+  });
+
+  it('[L10N11] a draft is marked and has no reviewer; nothing else is accepted', () => {
+    const draft = { en: 'a', text: 'x', status: 'draft' };
+    const check = (e) => checkLocales({ it: { f: { a: e } } }, []);
+    assert.doesNotThrow(() => check(draft));
+    assert.equal(localise('f', { a: { en: 'a' } }, { it: { f: { a: draft } } }).a.it, 'x');
+    assert.throws(() => check({ ...draft, reviewedBy: 'reviewer' }), /a draft has no reviewedBy/);
+    assert.throws(() => check({ ...draft, reviewedOn: '2026-11-25' }), /a draft has no reviewedOn/);
+    assert.throws(() => check({ ...draft, status: 'machine' }), /status is "draft" or absent/);
+    assert.throws(() => check({ ...entry('a', 'x'), status: 'reviewed' }), /status is "draft" or absent/);
+    assert.throws(() => check({ en: 'a', text: 'x' }), /reviewedBy is missing/);
+    assert.throws(() => check({ ...draft, text: '' }), /text is missing/);
+    assert.throws(() => check({ ...entry('a', 'x'), note: 'n' }), /unknown key note/);
   });
 
   it('[L10N6] a frozen converter pack is not touched: its texts go to a sidecar', () => {
