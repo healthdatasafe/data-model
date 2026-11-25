@@ -36,30 +36,58 @@ Closed object (`additionalProperties: false`). One event per act.
 | field | required | meaning |
 |---|---|---|
 | `documentId` | yes | Which document: `terms`, `privacy`, `health-processing`, `us-chd-privacy`, `us-chd-consent` today. Pattern `^[a-z0-9][a-z0-9-]{0,63}$`, so a new document needs no model release. |
-| `version` | yes | The version of that document the act refers to, as published in the website's legal manifest (`1.0`, `1.2`, `2.0.1`; the manifest's versions must match the pattern `^[0-9]{1,4}(\.[0-9]{1,4}){0,2}$`). A `lapsed` (or `withdrawn`) act carries the version of the `given` it ends. |
-| `action` | yes | `given`, `withdrawn`, `acknowledged`, `lapsed`: see below. |
+| `version` | yes | The version of that document the act refers to, as published in the website's legal manifest (`1.0`, `1.2`, `2.0.1`; the manifest's versions must match the pattern `^[0-9]{1,4}(\.[0-9]{1,4}){0,2}$`). A `lapsed` (or `withdrawn`) act carries the version of the `given` it ends; a `declined` act carries the version that was shown. |
+| `action` | yes | `given`, `withdrawn`, `acknowledged`, `lapsed`, `declined`: see below. |
 | `locale` | | The language the text was shown in (`en`, `fr`, `es`, `en-US`). |
 | `url` | | The URL the document was published at when the act happened. Informational: the website's URLs are not versioned, so what version N said is evidenced by the version and the published-documents register, not by this URL. |
 | `residence` | | The residence the user declared at that moment: `{ country, state? }`. `country` is the closed set of jurisdictions the signup distinguishes, not an ISO list: today `US` or `other` ("none of those offered at the time"). The set grows by adding codes (`CH`, `EU`, ...), never by re-reading `other`. `state` is a two-letter US state code, given with `US` (a writer convention; the schema stays shape-only). Nothing more is collected than the US layer needs. |
 | `surface` | | Where the act happened: `signup`, `sign-in` (the prompt shown at sign-in: a first consent for an older account, or a new version after a material change), `center` (the Privacy & Consents area of the account). |
-| `method` | | `checkbox` (a box ticked) or `button` (an explicit button, as in the Privacy & Consents center). Omitted on `lapsed`, which the app derives from a residence change. |
+| `method` | | `checkbox` (a box ticked) or `button` (an explicit button, as in the Privacy & Consents center). Omitted on `lapsed`, which the app derives from a residence change. An optional choice always records `button`, never `checkbox`: a `declined` with `checkbox` would read as a box left unticked. |
 
 ### Actions
 
 | action | used for | meaning |
 |---|---|---|
-| `given` | `terms`, `health-processing`, `us-chd-consent` | The user accepted or consented to this version. |
+| `given` | `terms`, `health-processing`, `us-chd-consent`, an optional choice | The user accepted or consented to this version. For an optional choice: the user said yes. |
 | `acknowledged` | `privacy`, `us-chd-privacy` | The user was shown this version of a notice and confirmed having read it. A notice is not consented to. |
-| `withdrawn` | (reserved) | The user withdrew a consent and the account stays. Not written for `health-processing` or `us-chd-consent`: withdrawing those **is** deleting the account (below). |
+| `withdrawn` | an optional choice | The user withdrew a consent and the account stays: an optional choice that was `given` is now no. Not written for `health-processing` or `us-chd-consent`: withdrawing those **is** deleting the account (below). |
 | `lapsed` | `us-chd-consent` | The user declared a residence outside the United States; the US layer stops applying. Declaring US residence again requires a new `given`. |
+| `declined` | an optional choice | The user was asked and said no, with no `given` in force for that document. The account is the same either way. |
+
+### Optional choices
+
+Some documents are a choice the user makes, not a condition of the account: the account exists whatever the answer,
+and nothing but what the document describes depends on it (the first one is the research opt-in). Both answers are
+recorded, so "said no" and "was never asked" stay distinct:
+
+- **Yes** is `given`, on the version shown. **No** is `withdrawn` when the document's latest event is `given` (whatever
+  its version), and carries that version; otherwise it is `declined`, carrying the version shown. Readers treat both
+  the same.
+- **Only a latest `given` on a version at or above the manifest's `materialSince` means yes.** A `given` below it is
+  not yes, and is asked again. A latest `declined` or `withdrawn` is an answer: it means no and is never asked again,
+  whatever the version. An unknown action is not yes, and is asked again (rule 5).
+- **No event means not asked yet.** The account app asks at sign-in until an answer is recorded (a user who deletes
+  the events is asked again, rule 2). It never blocks the account: either answer lets the user go on.
+- **Changing the answer** is a new event, in either direction, from the Privacy & Consents center.
+- **Surface** is `signup` at registration, `sign-in` on the prompt shown at sign-in, `center` from Privacy & Consents.
+  **Method** is always `button`.
+
+Withdrawing an optional choice never touches the account: the export-then-delete rule below is for
+`health-processing` and `us-chd-consent` only. Which documents are optional choices is said by the website's legal
+manifest, not by this record. **An optional choice is never published under a kind an older account app knows**
+(`contract`, `consent`, `notice`): that app drops a document of a kind it does not know, so it never sees these events,
+whereas under `consent` it would hold a user who said no at the sign-in gate, and offer deletion for a `withdrawn`.
+
+`declined` here is an act on a legal document. It is unrelated to the "declined to answer" of
+`questionnaire/answer-v1` (AGENTS.md §4), a different enum on a different event type.
 
 **Withdrawing the health-data consent is deleting the account** (decision, plan 91, 2026-10-08): no one can withdraw
 `health-processing` and keep their data, so there is no "withdrawn but still holding data" state to record. The
 account app's withdraw action leads to export, then account deletion, and writes nothing; the deletion removes the
 record with everything else. The same holds for `us-chd-consent` while the user declares US residence (a user who
 moves away declares the new residence, which records `lapsed`). A refused material change likewise records nothing
-and leads to export, then deletion. `withdrawn` stays in the enum for a future consent whose withdrawal leaves the
-account in place. "Superseded" is a state derived from the manifest, not an act.
+and leads to export, then deletion (not for an optional choice: a no there is `withdrawn`, and the account stays). `withdrawn` is for a consent whose withdrawal leaves the account in place: an
+optional choice (above). "Superseded" is a state derived from the manifest, not an act.
 
 No free text anywhere: the record carries identifiers, versions and enumerations only.
 
@@ -92,7 +120,8 @@ cheap to add.
    trashed events by default, so a trashed or deleted record is **absent**, and the next sign-in asks again. The HDS
    cores keep no event history, so a deletion is final.
 3. **Latest wins, per document.** The current state of a document for a user is its most recent event by `time`.
-   A document with no event has never been accepted: the account app treats it as "consent required".
+   A document with no event has never been accepted: the account app treats it as "consent required" (for an
+   optional choice: not asked yet, never blocking).
 4. **The version is the published one.** `version` is copied from the legal manifest the account app reads, never
    typed by hand; a re-consent compares it with the manifest.
 5. **The schema is advisory; readers tolerate the unknown.** The cores accept any content for `consent/record-v1`

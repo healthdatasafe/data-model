@@ -61,7 +61,7 @@ describe('[CONS] Consent record — consents (plan 91)', () => {
         surface: 'sign-in',
         method: 'checkbox'
       }), JSON.stringify(validate.errors));
-      for (const action of ['given', 'withdrawn', 'acknowledged', 'lapsed']) {
+      for (const action of ['given', 'withdrawn', 'acknowledged', 'lapsed', 'declined']) {
         assert.ok(validate({ documentId: 'privacy', version: '2.0.1', action }), action);
       }
       assert.ok(validate({ documentId: 'terms', version: '3', action: 'given', residence: { country: 'other' } }));
@@ -71,7 +71,8 @@ describe('[CONS] Consent record — consents (plan 91)', () => {
       assert.ok(!validate({ version: '1.0', action: 'given' }));
       assert.ok(!validate({ documentId: 'terms', action: 'given' }));
       assert.ok(!validate({ documentId: 'terms', version: '1.0' }));
-      assert.ok(!validate({ documentId: 'terms', version: '1.0', action: 'declined' }));
+      assert.ok(!validate({ documentId: 'terms', version: '1.0', action: 'refused' }));
+      assert.ok(!validate({ documentId: 'terms', version: '1.0', action: 'Declined' }));
       assert.ok(!validate({ documentId: 'terms', version: '1.0', action: 'given', note: 'free text' }));
       assert.ok(!validate({ documentId: 'terms', version: '1.0', action: 'given', surface: 'support' }));
       assert.ok(!validate({ documentId: 'terms', version: '1.0', action: 'given', surface: 're-consent' }));
