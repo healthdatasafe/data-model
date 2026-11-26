@@ -4,6 +4,10 @@
 
 Additive in the pack.
 
+- **Eligibility test of a study:** eventType `research/eligibility-band-v1` (`requestId` and `band`, `0-49` or `50-100`,
+  closed) and the published schema `json-schemas/hds-eligibility-request.json` (criteria with a requester-set weight, a
+  declarative rule, an optional question). No item, no stream. documentation/ELIGIBILITY.md; tests `[ELIG-*]`.
+
 - **`consent/record-v1` action `declined`**: the user was asked an optional choice and said no. CONSENTS.md § Optional
   choices: a document the account does not depend on (the research opt-in first). Yes is `given`; no is `withdrawn`
   when the latest event is `given`, else `declined`; only a latest `given` at or above `materialSince` means yes, a no is
