@@ -1635,6 +1635,48 @@
     ]
   },
   {
+    "id": "hds-research",
+    "name": "Health Data Safe research",
+    "parentId": null,
+    "explicitGrantOnly": true,
+    "label": {
+      "en": "Health Data Safe research",
+      "fr": "Recherche Health Data Safe"
+    },
+    "description": {
+      "en": "Lets Health Data Safe send you research invitations and eligibility tests. Holds none of your health records: only the score ranges you choose to send and the topics you choose. Never included when you share all your data: shared only when you name it.",
+      "fr": "Permet à Health Data Safe de vous envoyer des invitations à la recherche et des tests d'éligibilité. Ne contient aucun de vos dossiers de santé : seulement les fourchettes de score que vous choisissez d'envoyer et les sujets que vous choisissez. Jamais inclus quand vous partagez toutes vos données : partagé seulement si vous le nommez."
+    },
+    "children": [
+      {
+        "id": "hds-research-eligibility",
+        "name": "Eligibility test results sent",
+        "label": {
+          "en": "Eligibility test results sent",
+          "fr": "Résultats de tests d'éligibilité envoyés"
+        },
+        "description": {
+          "en": "The score range of each eligibility test you chose to send (below 50%, or 50% and more). Never the exact result or your answers.",
+          "fr": "La fourchette de score de chaque test d'éligibilité que vous avez choisi d'envoyer (moins de 50 %, ou 50 % et plus). Jamais le résultat exact ni vos réponses."
+        },
+        "parentId": "hds-research"
+      },
+      {
+        "id": "hds-research-topics",
+        "name": "Research topics",
+        "label": {
+          "en": "Research topics",
+          "fr": "Sujets de recherche"
+        },
+        "description": {
+          "en": "The research topics you chose, to receive the invitations that concern you.",
+          "fr": "Les sujets de recherche que vous avez choisis, pour recevoir les invitations qui vous concernent."
+        },
+        "parentId": "hds-research"
+      }
+    ]
+  },
+  {
     "id": "hds-support",
     "name": "Health Data Safe support (holds no data)",
     "parentId": null,

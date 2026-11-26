@@ -1,6 +1,6 @@
 {
-  "version": "4.37.0",
-  "publicationDate": "2026-11-25T16:26:07.794Z",
+  "version": "4.38.0",
+  "publicationDate": "2026-11-26T08:13:49.429Z",
   "streams": [
     {
       "id": "activity",
@@ -1634,6 +1634,48 @@
           "id": "genetics-variant",
           "name": "Tested gene variants",
           "parentId": "genetics"
+        }
+      ]
+    },
+    {
+      "id": "hds-research",
+      "name": "Health Data Safe research",
+      "parentId": null,
+      "explicitGrantOnly": true,
+      "label": {
+        "en": "Health Data Safe research",
+        "fr": "Recherche Health Data Safe"
+      },
+      "description": {
+        "en": "Lets Health Data Safe send you research invitations and eligibility tests. Holds none of your health records: only the score ranges you choose to send and the topics you choose. Never included when you share all your data: shared only when you name it.",
+        "fr": "Permet à Health Data Safe de vous envoyer des invitations à la recherche et des tests d'éligibilité. Ne contient aucun de vos dossiers de santé : seulement les fourchettes de score que vous choisissez d'envoyer et les sujets que vous choisissez. Jamais inclus quand vous partagez toutes vos données : partagé seulement si vous le nommez."
+      },
+      "children": [
+        {
+          "id": "hds-research-eligibility",
+          "name": "Eligibility test results sent",
+          "label": {
+            "en": "Eligibility test results sent",
+            "fr": "Résultats de tests d'éligibilité envoyés"
+          },
+          "description": {
+            "en": "The score range of each eligibility test you chose to send (below 50%, or 50% and more). Never the exact result or your answers.",
+            "fr": "La fourchette de score de chaque test d'éligibilité que vous avez choisi d'envoyer (moins de 50 %, ou 50 % et plus). Jamais le résultat exact ni vos réponses."
+          },
+          "parentId": "hds-research"
+        },
+        {
+          "id": "hds-research-topics",
+          "name": "Research topics",
+          "label": {
+            "en": "Research topics",
+            "fr": "Sujets de recherche"
+          },
+          "description": {
+            "en": "The research topics you chose, to receive the invitations that concern you.",
+            "fr": "Les sujets de recherche que vous avez choisis, pour recevoir les invitations qui vous concernent."
+          },
+          "parentId": "hds-research"
         }
       ]
     },
@@ -16074,16 +16116,16 @@
         "pt-BR": "Histórico de consentimentos"
       },
       "description": {
-        "en": "The consents you gave and the notices you acknowledged, and when.",
-        "fr": "Les consentements donnés et les notices prises en compte, et quand.",
-        "es": "Los consentimientos dados y los avisos reconocidos, y cuándo.",
-        "it": "I consensi che ha dato e le informative di cui ha preso atto, e quando.",
-        "pt-BR": "Os consentimentos que você deu e os avisos de que tomou ciência, e quando."
+        "en": "Your consents, your choices and the notices you acknowledged, and when.",
+        "fr": "Vos consentements, vos choix et les notices prises en compte, et quand.",
+        "es": "Sus consentimientos, sus elecciones y los avisos reconocidos, y cuándo.",
+        "it": "I suoi consensi, le sue scelte e le informative di cui ha preso atto, e quando.",
+        "pt-BR": "Seus consentimentos, suas escolhas e os avisos de que você tomou ciência, e quando."
       },
       "streamId": "consents",
       "eventType": "consent/record-v1",
       "repeatable": "unlimited",
-      "devNotes": "Append-only history of the account-level consents (plan 91): one event per act, never updated in place; the current state of a document is its latest event. Written by the account app with the personal token at signup, at re-consent and from the Privacy & Consents center. Withdrawing `health-processing` (or `us-chd-consent` under US residence) is account deletion: export, then delete, no event written; `withdrawn` is reserved. No app requests access to this stream. See documentation/CONSENTS.md."
+      "devNotes": "Append-only history of the account-level consents (plan 91): one event per act, never updated in place; the current state of a document is its latest event. Written by the account app with the personal token at signup, at re-consent and from the Privacy & Consents center. Withdrawing `health-processing` (or `us-chd-consent` under US residence) is account deletion: export, then delete, no event written. An optional choice (the research opt-in) records yes as `given` and no as `declined`, or `withdrawn` after a yes; the account stays. No app requests access to this stream. See documentation/CONSENTS.md."
     },
     "document": {
       "version": "v1",
@@ -34972,7 +35014,8 @@
               "given",
               "withdrawn",
               "acknowledged",
-              "lapsed"
+              "lapsed",
+              "declined"
             ]
           },
           "locale": {
@@ -35018,6 +35061,67 @@
               "checkbox",
               "button"
             ]
+          }
+        }
+      },
+      "research/eligibility-band-v1": {
+        "description": "The result a person chose to send for the eligibility test of a study: the request and the band of her score (below 50, or 50 and more), nothing else. The test runs on her device. One event per request, updated when she sends again. See documentation/ELIGIBILITY.md.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "band"
+        ],
+        "properties": {
+          "requestId": {
+            "description": "The eligibility request answered.",
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "band": {
+            "description": "Band of the unrounded score, in %.",
+            "type": "string",
+            "enum": [
+              "0-49",
+              "50-100"
+            ]
+          }
+        }
+      },
+      "research/topics-v1": {
+        "description": "The research topics a person chose, to receive the research invitations that concern them: one event, updated in place. An empty list means none chosen. Keys of the research-topic vocabulary only, no free text. See documentation/RESEARCH.md.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "topics"
+        ],
+        "properties": {
+          "topics": {
+            "description": "Chosen topics, each once.",
+            "type": "array",
+            "uniqueItems": true,
+            "maxItems": 32,
+            "items": {
+              "type": "string",
+              "enum": [
+                "cardiovascular",
+                "metabolic",
+                "mental-health",
+                "neurology",
+                "cancer",
+                "respiratory",
+                "reproductive-health",
+                "womens-health",
+                "pregnancy",
+                "sleep",
+                "nutrition",
+                "physical-activity",
+                "musculoskeletal",
+                "infectious-diseases",
+                "rare-diseases"
+              ]
+            }
           }
         }
       },
@@ -38743,6 +38847,106 @@
             "pt-BR": "Concluída"
           },
           "fhir": "completed"
+        }
+      }
+    },
+    "research-topic": {
+      "binds": [
+        {
+          "eventType": "research/topics-v1",
+          "path": "topics"
+        }
+      ],
+      "values": {
+        "cardiovascular": {
+          "label": {
+            "en": "Heart and blood vessels",
+            "fr": "Cœur et vaisseaux"
+          }
+        },
+        "metabolic": {
+          "label": {
+            "en": "Diabetes and metabolism",
+            "fr": "Diabète et métabolisme"
+          }
+        },
+        "mental-health": {
+          "label": {
+            "en": "Mental health",
+            "fr": "Santé mentale"
+          }
+        },
+        "neurology": {
+          "label": {
+            "en": "Brain and nervous system",
+            "fr": "Cerveau et système nerveux"
+          }
+        },
+        "cancer": {
+          "label": {
+            "en": "Cancer",
+            "fr": "Cancer"
+          }
+        },
+        "respiratory": {
+          "label": {
+            "en": "Lungs and breathing",
+            "fr": "Poumons et respiration"
+          }
+        },
+        "reproductive-health": {
+          "label": {
+            "en": "Fertility and reproductive health",
+            "fr": "Fertilité et santé reproductive"
+          }
+        },
+        "womens-health": {
+          "label": {
+            "en": "Women's health",
+            "fr": "Santé des femmes"
+          }
+        },
+        "pregnancy": {
+          "label": {
+            "en": "Pregnancy",
+            "fr": "Grossesse"
+          }
+        },
+        "sleep": {
+          "label": {
+            "en": "Sleep",
+            "fr": "Sommeil"
+          }
+        },
+        "nutrition": {
+          "label": {
+            "en": "Nutrition",
+            "fr": "Nutrition"
+          }
+        },
+        "physical-activity": {
+          "label": {
+            "en": "Physical activity",
+            "fr": "Activité physique"
+          }
+        },
+        "musculoskeletal": {
+          "label": {
+            "en": "Bones, joints and muscles",
+            "fr": "Os, articulations et muscles"
+          }
+        },
+        "infectious-diseases": {
+          "label": {
+            "en": "Infections and vaccines",
+            "fr": "Infections et vaccins"
+          }
+        },
+        "rare-diseases": {
+          "label": {
+            "en": "Rare diseases",
+            "fr": "Maladies rares"
+          }
         }
       }
     }

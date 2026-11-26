@@ -1,0 +1,57 @@
+{
+  "$id": "https://model.datasafe.dev/json-schemas/hds-research-alert.json",
+  "title": "HDS notification/alert-cmc content.hds, research kinds",
+  "description": "The hds block of a research alert: a kind and one id, per study or per request, never per person; never a name, a date, a criterion or free text. See documentation/RESEARCH.md.",
+  "type": "object",
+  "required": [
+    "kind"
+  ],
+  "oneOf": [
+    {
+      "description": "research-invitation (HDS to person: an invitation to a study.)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "studyId"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "research-invitation"
+          ]
+        },
+        "studyId": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "The study, as published by the research service."
+        }
+      }
+    },
+    {
+      "description": "research-eligibility-request (HDS to person: the eligibility test of a study.)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "requestId"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "research-eligibility-request"
+          ]
+        },
+        "requestId": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "The published eligibility request (json-schemas/hds-eligibility-request.json)."
+        }
+      }
+    }
+  ]
+}

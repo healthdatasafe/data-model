@@ -1,9 +1,9 @@
 {
-  "commit": "92a175574283f9ba09f739b34b994cd4061cc624",
-  "commitShort": "92a1755",
+  "commit": "4dca86be72a9303ed2829ec416a4bb929709e6f2",
+  "commitShort": "4dca86b",
   "branch": "main",
-  "buildDate": "2026-11-25T16:26:17Z",
-  "publicationDate": "2026-11-25T16:26:07.794Z",
+  "buildDate": "2026-11-26T08:14:00Z",
+  "publicationDate": "2026-11-26T08:13:49.429Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -52,6 +52,14 @@
     {
       "title": "Json Schema notification/alert-cmc content.hds, conversation kinds",
       "file": "json-schemas/hds-conversation-alert.json"
+    },
+    {
+      "title": "Json Schema HDS eligibility request",
+      "file": "json-schemas/hds-eligibility-request.json"
+    },
+    {
+      "title": "Json Schema notification/alert-cmc content.hds, research kinds",
+      "file": "json-schemas/hds-research-alert.json"
     },
     {
       "title": "Streams Tree",
@@ -154,7 +162,7 @@
       "file": "converters/mood/l10n-pt-BR.json"
     }
   ],
-  "version": "4.37.0",
+  "version": "4.38.0",
   "license": "CC-BY-4.0",
-  "attribution": "HDS Data Model 4.37.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
+  "attribution": "HDS Data Model 4.38.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
 }

@@ -1,0 +1,591 @@
+{
+  "$id": "https://model.datasafe.dev/json-schemas/hds-eligibility-request.json",
+  "title": "HDS eligibility request",
+  "description": "The eligibility test of a study, run on the person's device. See documentation/ELIGIBILITY.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "requestId",
+    "studyId",
+    "studyName",
+    "title",
+    "description",
+    "ethicsRef",
+    "expiresAt",
+    "criteria"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "enum": [
+        1
+      ],
+      "description": "Version of this schema."
+    },
+    "requestId": {
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "studyId": {
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "studyName": {
+      "type": "object",
+      "required": [
+        "en",
+        "fr"
+      ],
+      "additionalProperties": {
+        "type": "string"
+      },
+      "properties": {
+        "en": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "fr": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "title": {
+      "type": "object",
+      "required": [
+        "en",
+        "fr"
+      ],
+      "additionalProperties": {
+        "type": "string"
+      },
+      "properties": {
+        "en": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "fr": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "description": {
+      "type": "object",
+      "required": [
+        "en",
+        "fr"
+      ],
+      "additionalProperties": {
+        "type": "string"
+      },
+      "properties": {
+        "en": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "fr": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "ethicsRef": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Reference of the ethics approval."
+    },
+    "expiresAt": {
+      "type": "number",
+      "description": "Unix seconds."
+    },
+    "criteria": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "label",
+          "weight"
+        ],
+        "anyOf": [
+          {
+            "required": [
+              "rule"
+            ]
+          },
+          {
+            "required": [
+              "question"
+            ]
+          }
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "label": {
+            "type": "object",
+            "required": [
+              "en",
+              "fr"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            },
+            "properties": {
+              "en": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "fr": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            }
+          },
+          "weight": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Set by the requester. Score = weights of the criteria met / all weights."
+          },
+          "rule": {
+            "description": "What must hold in the account. Data, never code.",
+            "oneOf": [
+              {
+                "description": "exists (recorded, within the last N days when withinDays is set)",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "op",
+                  "itemKey"
+                ],
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "enum": [
+                      "exists"
+                    ]
+                  },
+                  "itemKey": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                    "description": "Key of an HDS item."
+                  },
+                  "withinDays": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              },
+              {
+                "description": "range (the latest number, read in eventType, is in the range)",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "op",
+                  "itemKey",
+                  "eventType"
+                ],
+                "anyOf": [
+                  {
+                    "required": [
+                      "min"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "max"
+                    ]
+                  }
+                ],
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "enum": [
+                      "range"
+                    ]
+                  },
+                  "itemKey": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                    "description": "Key of an HDS item."
+                  },
+                  "eventType": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"
+                  },
+                  "min": {
+                    "type": "number"
+                  },
+                  "max": {
+                    "type": "number"
+                  },
+                  "withinDays": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              },
+              {
+                "description": "count (at least min events, within the last N days when withinDays is set)",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "op",
+                  "itemKey",
+                  "min"
+                ],
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "enum": [
+                      "count"
+                    ]
+                  },
+                  "itemKey": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                    "description": "Key of an HDS item."
+                  },
+                  "min": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "withinDays": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              },
+              {
+                "description": "in (the latest value of a select item is one of these options)",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "op",
+                  "itemKey",
+                  "values"
+                ],
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "enum": [
+                      "in"
+                    ]
+                  },
+                  "itemKey": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                    "description": "Key of an HDS item."
+                  },
+                  "values": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                      "type": [
+                        "string",
+                        "number"
+                      ]
+                    }
+                  },
+                  "withinDays": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              },
+              {
+                "description": "age (whole years since a declared date, from the date of birth)",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "op",
+                  "itemKey"
+                ],
+                "anyOf": [
+                  {
+                    "required": [
+                      "min"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "max"
+                    ]
+                  }
+                ],
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "enum": [
+                      "age"
+                    ]
+                  },
+                  "itemKey": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                    "description": "Key of an HDS item."
+                  },
+                  "min": {
+                    "type": "number"
+                  },
+                  "max": {
+                    "type": "number"
+                  }
+                }
+              }
+            ]
+          },
+          "question": {
+            "description": "Asked only when the account has no data for the rule (or there is no rule). The answer stays on the device.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "text",
+              "answer"
+            ],
+            "properties": {
+              "text": {
+                "type": "object",
+                "required": [
+                  "en",
+                  "fr"
+                ],
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "properties": {
+                  "en": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "fr": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  }
+                }
+              },
+              "answer": {
+                "description": "How the question is answered, and the answers that meet the criterion. No free text.",
+                "oneOf": [
+                  {
+                    "description": "boolean (yes or no)",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "type",
+                      "met"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "boolean"
+                        ]
+                      },
+                      "met": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  {
+                    "description": "number (a number)",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "type"
+                    ],
+                    "anyOf": [
+                      {
+                        "required": [
+                          "min"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "max"
+                        ]
+                      }
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "number"
+                        ]
+                      },
+                      "unit": {
+                        "type": "object",
+                        "required": [
+                          "en",
+                          "fr"
+                        ],
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "properties": {
+                          "en": {
+                            "type": "string",
+                            "minLength": 1,
+                            "pattern": "\\S"
+                          },
+                          "fr": {
+                            "type": "string",
+                            "minLength": 1,
+                            "pattern": "\\S"
+                          }
+                        }
+                      },
+                      "min": {
+                        "type": "number"
+                      },
+                      "max": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  {
+                    "description": "choice (one option of a list)",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "type",
+                      "options",
+                      "met"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "choice"
+                        ]
+                      },
+                      "options": {
+                        "type": "array",
+                        "minItems": 2,
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "value",
+                            "label"
+                          ],
+                          "properties": {
+                            "value": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "label": {
+                              "type": "object",
+                              "required": [
+                                "en",
+                                "fr"
+                              ],
+                              "additionalProperties": {
+                                "type": "string"
+                              },
+                              "properties": {
+                                "en": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "pattern": "\\S"
+                                },
+                                "fr": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "pattern": "\\S"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "met": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "description": "date (a date: within the last N days, or a number of whole years ago)",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "type"
+                    ],
+                    "anyOf": [
+                      {
+                        "required": [
+                          "withinDays"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "minYears"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "maxYears"
+                        ]
+                      }
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "date"
+                        ]
+                      },
+                      "withinDays": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "minYears": {
+                        "type": "number"
+                      },
+                      "maxYears": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
