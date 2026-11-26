@@ -18,6 +18,7 @@ const sources = [
   require('./schemas/clientDataKeys').toBePublished,
   require('./schemas/conversationAlert').toBePublished,
   require('./schemas/eligibilityRequest').toBePublished,
+  require('./schemas/researchAlert').toBePublished,
   require('./streams').toBePublished,
   require('./items').toBePublished,
   require('./eventTypes').toBePublished,

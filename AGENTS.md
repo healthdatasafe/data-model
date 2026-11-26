@@ -4,7 +4,7 @@ This file orients future agents (Claude or others) working on the `data-model` r
 
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
-- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `ALLERGY.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md`, `DOCUMENTS.md`, `ENCOUNTER.md`, `MEDICATION.md`, `SUPPORT.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
+- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `ALLERGY.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md`, `DOCUMENTS.md`, `ENCOUNTER.md`, `MEDICATION.md`, `SUPPORT.md`, `RESEARCH.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
 - `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `sourceKey`, `hdsBasis`, `hdsSourceAnchor`, `hdsExtraction`, …): read it before adding one. New keys are `hds`-prefixed. A key with a closed object shape gets its JSON Schema in `src/schemas/clientDataKeys.js`, tested under both flavours and published as `json-schemas/<key>.json`.
 - `documentation/HDS-READER.md` — the HDS Reader's dialogue type `message/hds-reader-v1` (on the Reader's own app tree, not a model stream) and the provenance keys on each value it writes. It is the first eventType whose schema has a root `oneOf` (one closed branch per `content.kind`) and no root `properties`: a tool that reads `schema.properties` to list an eventType's fields finds none there and must walk the branches. Superseded (4.22.0) by `documentation/CONVERSATION.md`: `message/hds-conversation-v1` (same root `oneOf` pattern) in the `explicitGrantOnly` root `conversation-items`, and the conversation alerts, whose `hds` block is a published schema (`src/schemas/conversationAlert.js`) because the cores do not validate it.
 - `documentation/APP-DESCRIPTION.md` — how HDS apps name the app holding an access: the `hdsApp` pointer, the `hds-app-manifest` (schema `json-schemas/hds-app-manifest.json`), the catalogue's vouching and the trust rule.
@@ -40,7 +40,7 @@ The same eventType is reused by many items. Adding a new eventType is rare and n
 
 `body-*`, `symptom-*`, `wellbeing-*`, `activity-*`, `fertility-*`, `nutrition-*`, `lifestyle-*`, `medication-*`, `profile-*`, `family-*`, `genetics-*`. Mirrors body systems / function domains, close to SNOMED CT and ICF categorisations.
 
-**Six non-clinical roots besides `profile`: `sync-status` (3.13.0), `consents` (plan 91), `documents` (3.25.0), `encounter` (3.34.0), `document-shares` (3.37.0) and `hds-support` (3.38.0).** `sync-status` holds a connector's user-visible status — one `type: system` item, `sync-status`, and one `role: context` leaf per connector (`sync-status-mira`, …). Partner-named *streams* are accepted there because the leaves are D3 context markers, not vocabulary; partner-named *item keys* stay forbidden (§1). See [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
+**Seven non-clinical roots besides `profile`: `sync-status` (3.13.0), `consents` (plan 91), `documents` (3.25.0), `encounter` (3.34.0), `document-shares` (3.37.0), `hds-support` (3.38.0) and `hds-research` (research invitations and eligibility tests, [`documentation/RESEARCH.md`](documentation/RESEARCH.md)).** `sync-status` holds a connector's user-visible status — one `type: system` item, `sync-status`, and one `role: context` leaf per connector (`sync-status-mira`, …). Partner-named *streams* are accepted there because the leaves are D3 context markers, not vocabulary; partner-named *item keys* stay forbidden (§1). See [`documentation/SYNC-STATUS.md`](documentation/SYNC-STATUS.md).
 
 `consents` holds the account-level consent record: one `type: system` item, `consent-record`, append-only, written by the account app with the personal token and requested by no app. See [`documentation/CONSENTS.md`](documentation/CONSENTS.md).
 
@@ -360,7 +360,7 @@ data-model/
 │
 ├── definitions/                           # THE SOURCE OF TRUTH
 │   ├── items/*.yaml                       # Health data point definitions (363 items, 296 active, 25 YAML files)
-│   ├── streams/*.yaml                     # Clinical-domain tree (22 top-level roots, 346 streams in all)
+│   ├── streams/*.yaml                     # Clinical-domain tree (26 top-level roots, 352 streams in all)
 │   ├── eventTypes/
 │   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (93)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
@@ -419,7 +419,8 @@ data-model/
 │   ├── ENCOUNTER.md                       # Care visits and providers: encounter root, encounter/visit-v1, provider/*-v1, identifiers
 │   ├── MEDICATION.md                      # Intake vs period, regimen timing, skipped / stopped, typed prescription, vocabularies, coding (Swiss brand label, ATC hdsId)
 │   ├── GENETICS.md                        # Genetic test results: genetics root, explicitGrantOnly, genetic-variant/coded-v1
-│   └── SUPPORT.md                         # HDS support channel: hds-support anchor root, support/conversation-v1, retention
+│   ├── SUPPORT.md                         # HDS support channel: hds-support anchor root, support/conversation-v1, retention
+│   └── RESEARCH.md                        # HDS research relationship: hds-research tree, research/topics-v1, research alert kinds
 │
 ├── scripts/                               # setup / deploy shell scripts
 ├── tests/                                 # Mocha test suite

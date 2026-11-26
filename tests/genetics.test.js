@@ -60,13 +60,13 @@ describe('[GEN] genetic test results', () => {
       assert.deepStrictEqual(inside, [KEY]);
     });
 
-    it('[GEN-STR-2] the root carries explicitGrantOnly and consent-screen names; the other marked roots are questionnaire (plan 115) and conversation-items (plan 128)', () => {
+    it('[GEN-STR-2] the root carries explicitGrantOnly and consent-screen names; the other marked roots are questionnaire (plan 115), conversation-items (plan 128) and hds-research', () => {
       const root = streams.streamsById.genetics;
       assert.strictEqual(root.explicitGrantOnly, true);
       assert.strictEqual(root.label.en, root.name);
       assert.ok(root.label.fr && root.description.en && root.description.fr, 'localised for consent screens');
       const marked = Object.values(streams.streamsById).filter((s) => s.explicitGrantOnly !== undefined).map((s) => s.id).sort();
-      assert.deepStrictEqual(marked, ['conversation-items', 'genetics', 'questionnaire'], 'the marker is on the conversation-items, genetics and questionnaire roots only');
+      assert.deepStrictEqual(marked, ['conversation-items', 'genetics', 'hds-research', 'questionnaire'], 'the marker is on the conversation-items, genetics, hds-research and questionnaire roots only');
     });
 
     it('[GEN-STR-3] explicitGrantOnly is a boolean, on a root only', () => {

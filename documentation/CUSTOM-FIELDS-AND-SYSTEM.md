@@ -327,6 +327,12 @@ The person's app never writes this kind. A reader keeps only alerts carrying `co
 (stamped by the plugin on delivery); an alert without `from` on a stream is the writer's own copy,
 which only the contact's app reads back (to show when it last reminded the person of an item).
 
+### Research: `notification/alert-cmc` kinds `research-invitation` and `research-eligibility-request`
+
+Sent by HDS (`hds-research`) to a person who opted in to research, ids only (`studyId`, `requestId`); the person's app
+fetches the study or request by id. Same envelope rules as above; schema `json-schemas/hds-research-alert.json`. See
+[RESEARCH.md](RESEARCH.md#alert-kinds).
+
 ### A conversation: `notification/alert-cmc` kinds *(4.22.0)*
 
 A contact asks the person questions and proposes values read from a document she shared; she answers. The questions,
