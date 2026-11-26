@@ -1003,6 +1003,14 @@
       {
         "id": "body-temperature",
         "name": "Body Temperature",
+        "description": {
+          "en": "Includes basal (waking) temperatures recorded for fertility charting, and whether a reading was disturbed.",
+          "fr": "Comprend les températures basales (au réveil) relevées pour le suivi de la fertilité, et si une mesure a été perturbée.",
+          "es": "Incluye las temperaturas basales (al despertar) registradas para el seguimiento de la fertilidad, y si una medición se vio alterada.",
+          "it": "Comprende le temperature basali (al risveglio) registrate per il monitoraggio della fertilità, e se una misurazione è stata alterata.",
+          "pt-BR": "Inclui as temperaturas basais (ao acordar) registradas para o acompanhamento da fertilidade, e se uma medição foi alterada."
+        },
+        "consentOptIn": true,
         "children": [
           {
             "id": "body-temperature-basal",

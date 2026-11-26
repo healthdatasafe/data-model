@@ -157,6 +157,7 @@
     "body-heart-rate",
     "body-height",
     "body-oxygen-saturation",
+    "body-temperature",
     "body-weight"
   ],
   "Patient": [

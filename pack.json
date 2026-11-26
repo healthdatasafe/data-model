@@ -1,6 +1,6 @@
 {
-  "version": "4.40.0",
-  "publicationDate": "2026-11-26T16:59:40.769Z",
+  "version": "4.41.0",
+  "publicationDate": "2026-11-26T21:04:29.814Z",
   "streams": [
     {
       "id": "activity",
@@ -1006,6 +1006,14 @@
         {
           "id": "body-temperature",
           "name": "Body Temperature",
+          "description": {
+            "en": "Includes basal (waking) temperatures recorded for fertility charting, and whether a reading was disturbed.",
+            "fr": "Comprend les températures basales (au réveil) relevées pour le suivi de la fertilité, et si une mesure a été perturbée.",
+            "es": "Incluye las temperaturas basales (al despertar) registradas para el seguimiento de la fertilidad, y si una medición se vio alterada.",
+            "it": "Comprende le temperature basali (al risveglio) registrate per il monitoraggio della fertilità, e se una misurazione è stata alterata.",
+            "pt-BR": "Inclui as temperaturas basais (ao acordar) registradas para o acompanhamento da fertilidade, e se uma medição foi alterada."
+          },
+          "consentOptIn": true,
           "children": [
             {
               "id": "body-temperature-basal",
@@ -5010,7 +5018,33 @@
           "300076005"
         ]
       },
-      "devNotes": "Used for fertility charting (coverline and thermal shift). See `body-temperature-basal-disturbance` for flagging a reading as unreliable."
+      "devNotes": "Used for fertility charting (coverline and thermal shift). See `body-temperature-basal-disturbance` for flagging a reading as unreliable.",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "vital-signs",
+        "code": {
+          "system": "http://snomed.info/sct",
+          "code": "300076005",
+          "display": "Basal body temperature"
+        },
+        "alsoEmit": [
+          {
+            "system": "http://loinc.org",
+            "code": "8310-5",
+            "display": "Body temperature"
+          }
+        ],
+        "value": {
+          "kind": "quantity",
+          "units": {
+            "temperature/c": "Cel"
+          }
+        },
+        "profiles": {
+          "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-temperature",
+          "ips": "http://hl7.org/fhir/StructureDefinition/bodytemp"
+        }
+      }
     },
     "body-temperature-basal-disturbance": {
       "version": "v1",
@@ -5104,7 +5138,10 @@
         }
       ],
       "repeatable": "unlimited",
-      "devNotes": "A \"parasitic temperature\" qualifier for a co-occurring `body-temperature-basal` event: a reader should exclude the flagged reading from coverline and thermal-shift computation. Absence means the reading was not flagged, NOT that it was confirmed reliable."
+      "devNotes": "A \"parasitic temperature\" qualifier for a co-occurring `body-temperature-basal` event: a reader should exclude the flagged reading from coverline and thermal-shift computation. Absence means the reading was not flagged, NOT that it was confirmed reliable.",
+      "fhir": {
+        "companionOf": "body-temperature-basal"
+      }
     },
     "body-heart-rate": {
       "version": "v1",
@@ -5254,7 +5291,26 @@
           "8310-5"
         ]
       },
-      "devNotes": "Any measured body temperature except the basal fertility reading, which stays `body-temperature-basal`. A grant on `body-temperature` also covers the basal child."
+      "devNotes": "Any measured body temperature except the basal fertility reading, which stays `body-temperature-basal`. A grant on `body-temperature` also covers the basal child.",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "vital-signs",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "8310-5",
+          "display": "Body temperature"
+        },
+        "value": {
+          "kind": "quantity",
+          "units": {
+            "temperature/c": "Cel"
+          }
+        },
+        "profiles": {
+          "us": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-temperature",
+          "ips": "http://hl7.org/fhir/StructureDefinition/bodytemp"
+        }
+      }
     },
     "body-height": {
       "version": "v1",
@@ -26824,6 +26880,7 @@
       "body-heart-rate",
       "body-height",
       "body-oxygen-saturation",
+      "body-temperature",
       "body-weight"
     ],
     "Patient": [
