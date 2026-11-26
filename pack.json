@@ -1,6 +1,6 @@
 {
-  "version": "4.39.0",
-  "publicationDate": "2026-11-26T16:56:59.454Z",
+  "version": "4.40.0",
+  "publicationDate": "2026-11-26T16:59:40.769Z",
   "streams": [
     {
       "id": "activity",
@@ -1205,6 +1205,13 @@
     {
       "id": "condition",
       "name": "Condition",
+      "label": {
+        "en": "Condition",
+        "fr": "Affections",
+        "es": "Afecciones",
+        "it": "Condizioni",
+        "pt-BR": "Condições"
+      },
       "parentId": null
     },
     {
@@ -1579,6 +1586,13 @@
     {
       "id": "finding",
       "name": "Finding",
+      "label": {
+        "en": "Finding",
+        "fr": "Constatations cliniques",
+        "es": "Hallazgos",
+        "it": "Reperti",
+        "pt-BR": "Achados"
+      },
       "parentId": null
     },
     {
@@ -27466,6 +27480,10 @@
               "allowUserChoice": {
                 "type": "boolean",
                 "description": "Default false: the consent is ALL OR NOTHING (the user may only accept the whole permission set or deny). Set true to let the user cherry-pick entries on the consent screen (entries flagged `mandatory` stay locked)."
+              },
+              "requireVerifiedEmail": {
+                "type": "boolean",
+                "description": "Default false. Set true when accepting must take a proved email address: the accept is refused (`cmc-verified-email-required`) while the accepting account's primary address is not proved. The permissions must ask `:system:email` at `read`, flagged `mandatory` with `allowUserChoice`; not available to a membership request. Enforced by the accepting platform when its service info has `features.cmcRequireVerifiedEmail`; not a guarantee to the requester, which reads `verification/email` through the grant when it uses the address."
               },
               "accessType": {
                 "type": "string",

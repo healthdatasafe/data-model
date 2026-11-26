@@ -1202,6 +1202,13 @@
   {
     "id": "condition",
     "name": "Condition",
+    "label": {
+      "en": "Condition",
+      "fr": "Affections",
+      "es": "Afecciones",
+      "it": "Condizioni",
+      "pt-BR": "Condições"
+    },
     "parentId": null
   },
   {
@@ -1576,6 +1583,13 @@
   {
     "id": "finding",
     "name": "Finding",
+    "label": {
+      "en": "Finding",
+      "fr": "Constatations cliniques",
+      "es": "Hallazgos",
+      "it": "Reperti",
+      "pt-BR": "Achados"
+    },
     "parentId": null
   },
   {
