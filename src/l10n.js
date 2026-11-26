@@ -6,8 +6,9 @@ const path = require('path');
 //
 //   { "<published file>": { "<path>": { "en": "the English it translates", "text": "...", "reviewedBy": "...", "reviewedOn": "YYYY-MM-DD" } } }
 //
-// Only reviewed texts are kept there: drafts live outside this repository. A build fails on a text whose English changed,
-// on a path that matches nothing and on an empty text, so a shipped translation never falls back to English unnoticed.
+// A text is reviewed (`reviewedBy`, `reviewedOn`) or a draft (`"status": "draft"`, no reviewer): a reviewed text replaces
+// the draft. A build fails on a text whose English changed, on a path that matches nothing and on an empty text, so a
+// shipped translation never falls back to English unnoticed.
 // Path: object keys joined with `/` (JSON Pointer escapes: `~0` for `~`, `~1` for `/`); an array entry is `[value=<JSON>]`
 // or `[id=<JSON>]` when it has one, else `[index]`: an option moved in its list keeps its translation.
 
@@ -16,8 +17,13 @@ const l10nDir = path.join(__dirname, '../definitions/l10n');
 const LOCALES = ['es', 'it', 'pt', 'pt-BR'];
 /** Published converter packs are frozen (tests/fixtures/converter-packs.sha256.json): their texts go to a sidecar. */
 const CONVERTER_PACK = /^converters\/([^/]+)\/pack-(latest|v\d+)\.json$/;
+/** The two shapes of an entry (`official` aside): a reviewed text, a draft. */
+const REVIEWED_KEYS = ['en', 'text', 'reviewedBy', 'reviewedOn'];
+const DRAFT_KEYS = ['en', 'text', 'status'];
 
-module.exports = { LOCALES, CONVERTER_PACK, checkLocales, forEachText, loadLocales, localise, converterSidecars, checkPublished, checkConsentLabels };
+const isObject = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
+
+module.exports = { LOCALES, CONVERTER_PACK, checkLocales, forEachText, loadLocales, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels };
 
 function loadLocales (dir = l10nDir) {
   const locales = {};
@@ -38,14 +44,30 @@ function checkLocales (locales, doNotTranslate) {
   const held = new Map(doNotTranslate.map(({ file, path: at, reason }) => [`${file} ${at}`, reason]));
   for (const [locale, files] of Object.entries(locales)) {
     if (!LOCALES.includes(locale)) throw new Error(`l10n: ${locale} is not one of ${LOCALES.join(', ')}`);
+    if (!isObject(files)) throw new Error(`l10n: ${locale} is not an object of published files`);
     for (const [file, texts] of Object.entries(files)) {
+      if (!isObject(texts)) throw new Error(`l10n: ${locale} ${file} is not an object of texts`);
       for (const [at, entry] of Object.entries(texts)) {
         const where = `l10n: ${locale} ${file} ${at}`;
-        for (const key of ['en', 'text', 'reviewedBy', 'reviewedOn']) {
+        if (!isObject(entry)) throw new Error(`${where}: an entry is an object`);
+        const draft = entry.status !== undefined;
+        if (draft && entry.status !== 'draft') throw new Error(`${where}: status is "draft" or absent (a reviewed text)`);
+        const shape = draft ? DRAFT_KEYS : REVIEWED_KEYS;
+        for (const key of Object.keys(entry)) {
+          if (!shape.includes(key) && key !== 'official') throw new Error(`${where}: ${draft ? 'a draft has no' : 'unknown key'} ${key}`);
+        }
+        for (const key of shape) {
           if (typeof entry[key] !== 'string' || entry[key].trim() === '') throw new Error(`${where}: ${key} is missing`);
         }
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.reviewedOn)) throw new Error(`${where}: reviewedOn must be YYYY-MM-DD`);
-        if (held.has(`${file} ${at}`) && !entry.official) throw new Error(`${where}: ${held.get(`${file} ${at}`)} (give the source in "official")`);
+        if (!draft && !/^\d{4}-\d{2}-\d{2}$/.test(entry.reviewedOn)) throw new Error(`${where}: reviewedOn must be YYYY-MM-DD`);
+        if (entry.official !== undefined && (typeof entry.official !== 'string' || entry.official.trim() === '')) {
+          throw new Error(`${where}: official is the source of the wording, a non-empty string`);
+        }
+        if (held.has(`${file} ${at}`)) {
+          const reason = held.get(`${file} ${at}`);
+          if (draft) throw new Error(`${where}: ${reason} (no draft: a reviewed official wording only)`);
+          if (entry.official === undefined) throw new Error(`${where}: ${reason} (give the source in "official")`);
+        }
       }
     }
   }
@@ -110,17 +132,32 @@ function localise (fileName, content, locales) {
 }
 
 /**
+ * `pack.json` `l10n`: `{ "<locale>": { "status": "draft" | "reviewed" } }` for each locale of `definitions/l10n`, `draft`
+ * when one of its texts is. A text map does not tell a draft from a reviewed text: this is the only mark a reader gets.
+ */
+function localeStatus (locales) {
+  const out = {};
+  for (const [locale, files] of Object.entries(locales)) {
+    const draft = Object.values(files).some((texts) => Object.values(texts).some((entry) => entry.status === 'draft'));
+    out[locale] = { status: draft ? 'draft' : 'reviewed' };
+  }
+  return out;
+}
+
+/**
  * The texts of a frozen converter pack, one published file per item key and locale: `converters/{key}/l10n-{locale}.json`,
- * `{ locale, packs: { "pack-v1.json": { "<path>": "text" } } }`. A reader that knows it merges it after the pack.
+ * `{ locale, status, packs: { "pack-v1.json": { "<path>": "text" } } }`, `status` as in `localeStatus`. A reader that knows
+ * it merges it after the pack.
  */
 function converterSidecars (published, locales) {
   const files = {};
+  const status = localeStatus(locales);
   for (const { fileName, content } of published) {
     const m = fileName.match(CONVERTER_PACK);
     if (!m) continue;
     walk(fileName, content, locales, (node, locale, entry, at) => {
       const name = `converters/${m[1]}/l10n-${locale}.json`;
-      files[name] ??= { locale, packs: {} };
+      files[name] ??= { locale, status: status[locale].status, packs: {} };
       (files[name].packs[`pack-${m[2]}.json`] ??= {})[at] = entry.text;
     });
   }

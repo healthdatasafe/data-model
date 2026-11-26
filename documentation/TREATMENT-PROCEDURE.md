@@ -292,13 +292,14 @@ grant on the `procedure` and `treatment` roots, `procedure-fertility` and `treat
 | `event.time` + a positive `event.duration` | `performedPeriod` (an imported operation with a start and an end) |
 | (none) | `status: completed`: a procedure event is a procedure that took place |
 | `notes` | `note` |
-| `count` (Flavour A) | **no Procedure**: the event is a lifetime tally, served as a generic Observation |
+| `count` (Flavour A) | **no Procedure**: the event is a lifetime tally, an Observation of the count |
 | `robotAssisted`, `findings` | not rendered |
 
 - **Flavour A never becomes a Procedure.** "Had it 2 times" (or `0`: never) states no date of any procedure, its
   `event.time` is when the question was answered, and one resource would state several procedures, or one that never
-  happened, as one that was performed. A reader of the grant still sees the event, as the generic Observation of its
-  item. A writer that knows the dates writes Flavour B, one event per occurrence, and those are Procedures.
+  happened, as one that was performed. A reader of the grant sees the event as an Observation of the count, with what was
+  counted and the notes ([FHIR-MAPPING.md § A lifetime tally](FHIR-MAPPING.md#a-lifetime-tally-an-observation)). A writer that
+  knows the dates writes Flavour B, one event per occurrence, and those are Procedures.
 - **A Flavour A event MUST carry `count`** (`0` included): the split is `count != null` and nothing else. An intake
   answer written without it is read as one dated procedure performed at `event.time` and served as a completed
   Procedure. The apps show `×N` only above 1, so `count: 1` looks like a single procedure there and is a tally in

@@ -14,6 +14,31 @@ Additive in the pack.
   `consent` or `notice`, so an account app older than this release drops the document and never reads its events.
   Published as `consent`, that app would hold a user who said no at the sign-in gate and offer deletion for a `withdrawn`.
 
+## [4.37.0] - 2026-11-25
+
+Plan 138. Additive in the pack: more languages in the text maps and one new top-level key, `l10n`; no key, path or English
+changed.
+
+- **Brazilian Portuguese (`pt-BR`), Italian (`it`) and Spanish (`es`)**, machine drafts not reviewed yet, in
+  `definitions/l10n/{locale}.json`: 3,123 `pt-BR`, 3,077 `it`, 3,111 `es` texts (streams, items, eventTypes, vocabularies,
+  document kinds, app streams). The texts of the frozen converter packs (cervical fluid, mood) are in the new
+  `converters/{key}/l10n-{locale}.json`, which hds-lib 2.70.0 and later read. `pack.json` grows from 1.13 MB to 1.39 MB (151 KB
+  to 199 KB gzip).
+- **A draft may be published when marked** (L10N.md): an entry is reviewed (`reviewedBy`, `reviewedOn`) or `"status": "draft"`
+  with no reviewer; the build refuses any other shape. A reviewed text replaces the draft.
+- **`pack.json` `l10n`**: `{ "<locale>": { "status": "draft" | "reviewed" } }` for the locales of `definitions/l10n`, `draft`
+  when one of its texts is; here `pt-BR`, `it` and `es` are `draft`. The converter sidecars carry the same `status`. A text map
+  itself does not mark drafts: `{ "en", "it" }` reads the same either way, so a reader that must know looks at `l10n`.
+- **`definitions/l10n/do-not-translate.json`**: the 58 texts of licensed or validated questionnaires on nine items (the
+  EQ-5D-5L dimensions, alcohol frequency, pain severity, mental distress, self-rated and general health), left in English in
+  these languages until an official wording is given. A translation of one is reviewed and names its `official` source:
+  the build refuses a draft there, and an `official` that is not a non-empty string.
+- **To review first**, with an instructor of each method: the standardised charting vocabularies (Creighton, Billings,
+  Sensiplan, Marquette, Justisse) and the vendor mood labels are machine drafts like the rest, and their wording is the
+  method's own. Method names stay in English (STM / TCOYF, Bigelow Mucus Score), as the other method names.
+- **Documentation: a lifetime tally in FHIR** (plan 133, no pack change): FHIR-MAPPING.md § A lifetime tally, TREATMENT-PROCEDURE.md
+  § FHIR. An event carrying `count` is an Observation of the count (hds-fhir-js after 0.14.0); as before, never a Procedure.
+
 ## [4.36.0] - 2026-11-25
 
 Plan 128 (D59). Additive in the pack.

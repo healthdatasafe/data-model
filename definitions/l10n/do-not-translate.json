@@ -1,0 +1,292 @@
+[
+  {
+    "file": "items.json",
+    "path": "function-mobility/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-mobility/description",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-mobility/options[value=0]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-mobility/options[value=0.25]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-mobility/options[value=0.5]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-mobility/options[value=0.75]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-mobility/options[value=1]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-self-care/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-self-care/description",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-self-care/options[value=0]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-self-care/options[value=0.25]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-self-care/options[value=0.5]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-self-care/options[value=0.75]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-self-care/options[value=1]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-usual-activities/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-usual-activities/description",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-usual-activities/options[value=0]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-usual-activities/options[value=0.25]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-usual-activities/options[value=0.5]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-usual-activities/options[value=0.75]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "function-usual-activities/options[value=1]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "lifestyle-alcohol-frequency/description",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "lifestyle-alcohol-frequency/options[value=\"never\"]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "lifestyle-alcohol-frequency/options[value=\"monthly-or-less\"]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "lifestyle-alcohol-frequency/options[value=\"2-4-per-month\"]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "lifestyle-alcohol-frequency/options[value=\"2-3-per-week\"]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "lifestyle-alcohol-frequency/options[value=\"4-plus-per-week\"]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "lifestyle-alcohol-binge-frequency/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "lifestyle-alcohol-binge-frequency/description",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "lifestyle-alcohol-binge-frequency/options[value=\"never\"]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "lifestyle-alcohol-binge-frequency/options[value=\"less-than-monthly\"]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "lifestyle-alcohol-binge-frequency/options[value=\"monthly\"]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "lifestyle-alcohol-binge-frequency/options[value=\"weekly\"]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "lifestyle-alcohol-binge-frequency/options[value=\"daily-or-almost-daily\"]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "symptom-pain-severity/options[value=0]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "symptom-pain-severity/options[value=0.25]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "symptom-pain-severity/options[value=0.5]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "symptom-pain-severity/options[value=0.75]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "symptom-pain-severity/options[value=1]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-mental-distress/options[value=0]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-mental-distress/options[value=0.25]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-mental-distress/options[value=0.5]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-mental-distress/options[value=0.75]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-mental-distress/options[value=1]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-self-rated-health/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-self-rated-health/description",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-self-rated-health/slider/display/suffix",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-self-rated-health/slider/labels/0/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-self-rated-health/slider/labels/0/description",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-self-rated-health/slider/labels/1/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-self-rated-health/slider/labels/1/description",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-general-health/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-general-health/description",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-general-health/options[value=1]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-general-health/options[value=0.75]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-general-health/options[value=0.5]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-general-health/options[value=0.25]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  },
+  {
+    "file": "items.json",
+    "path": "wellbeing-general-health/options[value=0]/label",
+    "reason": "licensed or validated questionnaire: official wording needed"
+  }
+]
