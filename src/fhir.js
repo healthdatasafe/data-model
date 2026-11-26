@@ -462,8 +462,10 @@ function checkFhirMapping (key, item, itemEventTypes) {
     mappedFields.add(k);
   }
   unique('code, components and split codes', [...ownCodings, ...Object.values(f.split || {}).map((s) => s.code)]);
-  // A renderer that predates alsoEmit leaves it out and claims a profile the resource misses; only a kind it skips is safe.
-  if (f.alsoEmit != null && v?.kind !== 'scaled-quantity') fail('"alsoEmit" needs a value kind the deployed renderers skip (scaled-quantity) until every deployed hds-fhir-js knows alsoEmit; see FHIR-MAPPING.md § Forward compatibility');
+  // A renderer that predates alsoEmit would leave it out and claim a profile the resource misses. Every deployed
+  // hds-fhir-js knows alsoEmit (0.1.0, with scaled-quantity), so `quantity` is allowed too (plan 133, the basal body
+  // temperature); any other kind stays refused until a block needs it and its renderer is checked.
+  if (f.alsoEmit != null && v?.kind !== 'scaled-quantity' && v?.kind !== 'quantity') fail('"alsoEmit" applies to value kind "quantity" or "scaled-quantity" only; see FHIR-MAPPING.md § Forward compatibility');
 
   for (const k of f.ignore || []) {
     if (composite?.[k] == null) fail(`ignore "${k}" is not a composite field`);
@@ -1001,7 +1003,7 @@ function checkFhirScopes (items, { roots = streams.roots, lock = readLock() } = 
   if (violations.length > 0) throw new Error(`fhir scope invariant:\n  ${violations.join('\n  ')}`);
   checkConsentOptInPlacement(grants, roots);
   checkLock(items, checkedLock(lock), subtree, parentOf);
-  checkFhirImportKeys(items);
+  checkFhirImportKeys(items, roots);
   return grants;
 }
 
@@ -1091,7 +1093,7 @@ function ancestorsIn (parentOf, id) {
  * no category can still fit two datasource-coded items of different categories; the importer reports that as
  * ambiguous rather than guess.
  */
-function checkFhirImportKeys (items) {
+function checkFhirImportKeys (items, roots = streams.roots) {
   const seen = new Map();
   const claim = (k, key) => {
     const other = seen.get(k);
@@ -1143,15 +1145,33 @@ function checkFhirImportKeys (items) {
     }
   }
   // An emitted-only coding (`alsoEmit`) is never an import key, and never a code that would make the rendered resource
-  // match another item on its way back: no item's import key, no LOINC code another item owns.
+  // match another item on its way back: no item's import key, no LOINC code another item owns. One exception (plan
+  // 133): the code of a **more general item**, one whose stream is a strict ancestor of the emitter's, in the same scope
+  // pair (the basal body temperature emits body-temperature's 8310-5). The rendered resource then matches both, and the
+  // importer gives it to the item that also emits the other's code, the more specific one (FHIR-MAPPING.md § Import).
+  const { parentOf } = streamIndex(roots);
+  const isMoreGeneral = (other, key) => {
+    const o = items[other];
+    const e = items[key];
+    if (o?.streamId == null || e?.streamId == null || o.deprecated) return false;
+    if (!ancestorsIn(parentOf, e.streamId).includes(o.streamId)) return false;
+    return scopePairOf(other, items) === scopePairOf(key, items);
+  };
+  const refuse = (k, key, other, what) => {
+    const why = items[other]?.streamId != null && items[key]?.streamId != null && ancestorsIn(parentOf, items[key].streamId).includes(items[other].streamId)
+      ? `"${other}" is another scope pair`
+      : `it is allowed only from an item whose stream is under "${other}"'s stream, in the same scope pair`;
+    throw new Error(`fhir alsoEmit ${k} of "${key}" is ${what}; ${why}`);
+  };
   for (const [key, item] of Object.entries(items)) {
     const f = item.fhir;
     if (item.deprecated || f?.alsoEmit == null) continue;
     for (const c of f.alsoEmit) {
       const k = `${f.resourceType} ${c.system}|${c.code}`;
-      if (seen.has(k)) throw new Error(`fhir alsoEmit ${k} of "${key}" is an import key of "${seen.get(k)}"; the rendered resource would import back into it`);
+      const s = seen.get(k);
+      if (s != null && !isMoreGeneral(s, key)) refuse(k, key, s, `an import key of "${s}" (the rendered resource would import back into it)`);
       const o = c.system === LOINC_SYSTEM ? owner.get(c.code) : undefined;
-      if (o != null && o !== key) throw new Error(`fhir alsoEmit ${k} of "${key}" is a LOINC code item "${o}" owns`);
+      if (o != null && o !== key && !isMoreGeneral(o, key)) refuse(k, key, o, `a LOINC code item "${o}" owns`);
     }
   }
 }

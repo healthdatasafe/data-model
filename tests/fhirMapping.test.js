@@ -187,17 +187,19 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.deepStrictEqual(h.profiles, { us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-height', ips: 'http://hl7.org/fhir/StructureDefinition/bodyheight' });
     });
 
-    it('[FHIR-ITEM-16] body temperature (plan 133): 8310-5 in Cel with the body temperature profiles; basal is SNOMED 300076005 alone, no profile; the disturbance flag is its companion; the stream is consentOptIn', () => {
+    it('[FHIR-ITEM-16] body temperature (plan 133): 8310-5 in Cel with the body temperature profiles; basal is SNOMED 300076005 emitting 8310-5, same profiles (B2); the disturbance flag is its companion; the stream is consentOptIn', () => {
       const t = itemsById['body-temperature'].fhir;
+      const profiles = { us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-temperature', ips: 'http://hl7.org/fhir/StructureDefinition/bodytemp' };
       assert.deepStrictEqual([t.resourceType, t.category], ['Observation', 'vital-signs']);
       assert.deepStrictEqual(t.code, { system: 'http://loinc.org', code: '8310-5', display: 'Body temperature' });
       assert.deepStrictEqual(t.value, { kind: 'quantity', units: { 'temperature/c': 'Cel' } });
-      assert.deepStrictEqual(t.profiles, { us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-temperature', ips: 'http://hl7.org/fhir/StructureDefinition/bodytemp' });
+      assert.deepStrictEqual(t.profiles, profiles);
       const b = itemsById['body-temperature-basal'].fhir;
       assert.deepStrictEqual([b.resourceType, b.category], ['Observation', 'vital-signs']);
       assert.deepStrictEqual(b.code, { system: 'http://snomed.info/sct', code: '300076005', display: 'Basal body temperature' });
+      assert.deepStrictEqual(b.alsoEmit, [t.code], 'bodytemp requires 8310-5 on every vital-signs Observation in Cel');
       assert.deepStrictEqual(b.value, { kind: 'quantity', units: { 'temperature/c': 'Cel' } });
-      assert.deepStrictEqual(b.profiles, {}, 'the vital-signs profiles bind by LOINC code: none claimed');
+      assert.deepStrictEqual(b.profiles, profiles);
       assert.deepStrictEqual(itemsById['body-temperature-basal-disturbance'].fhir, { companionOf: 'body-temperature-basal' });
       const { streamsById } = require('../src/streams');
       assert.strictEqual(streamsById['body-temperature'].consentOptIn, true);
@@ -817,10 +819,13 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const d = item('body-blood-pressure');
       d.fhir.alsoEmit = [d.fhir.split.rate.code];
       assert.throws(() => check(d), /code, components and split codes: the coding http:\/\/loinc.org\|8867-4 appears more than once/);
-      // A plain quantity block would be half-rendered by a renderer that predates alsoEmit.
+      // Every deployed renderer knows alsoEmit (hds-fhir-js 0.1.0): a plain quantity takes it (plan 133), other kinds not.
       const e = item('body-heart-rate');
       e.fhir.alsoEmit = [coding('9')];
-      assert.throws(() => check(e), /"alsoEmit" needs a value kind the deployed renderers skip \(scaled-quantity\)/);
+      check(e);
+      const g = item('wellbeing-general-health');
+      g.fhir.alsoEmit = [coding('9')];
+      assert.throws(() => check(g), /"alsoEmit" applies to value kind "quantity" or "scaled-quantity" only/);
     });
 
     it('[FHIR-MAP-18] a static LOINC code must be the code every unit option stores', () => {
@@ -1596,6 +1601,25 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       checkFhirImportKeys({ a: { fhir: emits('1', '9') }, b: { fhir: obs('vital-signs', '9'), deprecated: true } });
       // The model: 2708-6 (a blood-gas SaO2) is emitted by SpO2 and claimed by no item.
       assert.ok(Object.values(itemsById).every((i) => !(i.references?.loinc || []).includes('2708-6')));
+    });
+
+    it('[FHIR-SCOPE-25] an alsoEmit coding may be the code of a more general item: its stream a strict ancestor, the same pair (plan 133)', () => {
+      const { checkFhirImportKeys } = require('../src/fhir');
+      const general = it_('body-a', obs('vital-signs', 'a'), { references: { loinc: ['a'] } });
+      const emits = (streamId, category = 'vital-signs') => it_(streamId, { ...obs(category, 's'), alsoEmit: [coding('a')] });
+      // allowed: under the owner, in its pair; the build passes and grants the owner's stream alone
+      assert.deepStrictEqual(run({ a: general, s: emits('body-a-flag') }), { 'Observation|vital-signs': ['body-a'] });
+      // refused: a sibling of the owner's stream
+      assert.throws(() => run({ a: general, s: emits('body-b') }), /fhir alsoEmit Observation http:\/\/loinc.org\|a of "s" is an import key of "a" .*; it is allowed only from an item whose stream is under "a"'s stream, in the same scope pair/);
+      // refused: the owner on the emitter's own stream is not more general
+      assert.throws(() => run({ a: general, s: emits('body-a') }), /fhir alsoEmit Observation http:\/\/loinc.org\|a of "s" is an import key of "a"/);
+      // refused: under the owner, in another pair (the scope invariant refuses it first in a build, so checked here alone)
+      assert.throws(() => checkFhirImportKeys({ a: general, s: emits('body-a-flag', 'survey') }, tree), /of "s" is an import key of "a" .*; "a" is another scope pair/);
+      // refused: the owner above, but the emitted code owned by an unrelated item
+      assert.throws(() => checkFhirImportKeys({ a: general, s: emits('body-a-flag'), o: { references: { loinc: ['a2'] } }, s2: it_('body-a-flag', { ...obs('vital-signs', 's2'), alsoEmit: [coding('a2')] }) }, tree), /of "s2" is a LOINC code item "o" owns/);
+      // the model: the basal body temperature emits body-temperature's 8310-5
+      assert.deepStrictEqual(itemsById['body-temperature-basal'].fhir.alsoEmit, [{ system: 'http://loinc.org', code: '8310-5', display: 'Body temperature' }]);
+      checkFhirImportKeys(itemsById);
     });
 
     it('[FHIR-SCOPE-11] the model\'s table; the committed lock is up to date (run npm run fhir:lock)', () => {

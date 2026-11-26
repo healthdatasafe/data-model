@@ -79,17 +79,20 @@ shared by two eventTypes (below); production sees neither until the facade is re
 and that reading's disturbance flag, so the three items are mapped together and the stream holds one pair:
 - `body-temperature` is LOINC `8310-5` "Body temperature", a `quantity` in `Cel` (`temperature/c` only, so a `[degF]`
   import is refused; a Fahrenheit eventType later is additive), with the US Core and IPS body temperature profiles.
-- `body-temperature-basal` is SNOMED CT `300076005` "Basal body temperature", a `quantity` in `Cel`, with **no
-  profile claimed** (`profiles: {}`). LOINC has no basal body temperature term, and `8310-5` is owned by
-  `body-temperature`, so it can be neither the block's code nor an import key of it. **This is a deliberate exception**
-  to the rule that an item with no LOINC code takes the HDS item coding
-  ([code](#code-static-from-a-datasource-from-the-eventtype-or-from-the-content)): a SNOMED CT concept states exactly
-  what the item stores, and a reader asking for `code=http://snomed.info/sct|300076005` finds it. R4 applies its
-  vital-signs profiles by LOINC code, and a validator checks only the profiles a resource claims, so the reading is
-  expected to be valid R4 and acceptable under US Core (to confirm on hds-fhir-js `validate:fhir` once it renders the
-  block). It is under-coded in spirit, since R4 says a body temperature carries `8310-5`. **The cost:** an
-  app asking for body temperatures (`code=8310-5`) does not see the basal readings. Adding `8310-5` later as an
-  emitted coding is additive for every reader; removing it once shipped would not be, which is why it is left out.
+- `body-temperature-basal` is SNOMED CT `300076005` "Basal body temperature", a `quantity` in `Cel`, which **also
+  emits `8310-5`** (`alsoEmit`) and claims the same US Core and IPS body temperature profiles (option B2). A basal
+  reading is a body temperature: an app asking for `code=8310-5` sees it, and `300076005` tells it apart from any
+  other body temperature. The two codings are required: base R4 holds every vital-signs Observation in `Cel` to the
+  `bodytemp` profile, whose `code` must carry `8310-5` ("magic LOINC code", HL7 validator), whether a profile is
+  claimed or not. With both codings the resource is valid R4, US Core 6.1.0 and IPS, as verified with the HL7
+  validator (hds-fhir-js `validate:fhir`). LOINC has no basal body temperature term, so the static code is the SNOMED
+  CT concept, which states exactly what the item stores. **This is a deliberate exception** to the rule that an item
+  with no LOINC code takes the HDS item coding ([code](#code-static-from-a-datasource-from-the-eventtype-or-from-the-content)).
+  `300076005` is the item's import key. `8310-5` stays `body-temperature`'s code and import key: emitting it is the
+  one exemption of the build ([alsoEmit](#the-block-field-by-field), [Import](#import)), allowed because
+  `body-temperature`'s stream is an ancestor of the basal stream, in the same pair. A resource coded with both goes
+  to the basal item. **Older importers** (hds-fhir-js before the release that adds that rule) find two matches and
+  refuse such a resource as ambiguous, never placing it wrong.
 - `body-temperature-basal-disturbance` is a companion of the basal reading (`companionOf`), the first one, and is never
   rendered: a FHIR reader loses the disturbance flag ([Qualifiers](#qualifiers-companionof)).
 - The basal stream sits inside `body-temperature`, so it is not a grant root of its own: the scope table lists
@@ -256,7 +259,7 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 | `alsoMatchCategories` | no | Further category keys of the same table that a resource may carry and still import into this item, **on import only**, never emitted (smoking status filed under `survey` by older sources). Never the block's own category. |
 | `code` | yes; none on a `QuestionnaireResponse` or a `Questionnaire` | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }`, `{ from: eventType, codings }`, `{ from: content, field, translate, unknown }`, `{ from: text, field }`, `{ from: enum, field, codings }` or `{ from: concept, field }` (below). |
 | `alsoMatch` | no | Extra codings accepted **on import only**, never emitted. With a static code, a list; with an eventType code, keyed by the eventType each names (`{ concentration/mg-dl: [codings] }`). Never with a datasource code. |
-| `alsoEmit` | no | Extra codings **emitted only**, after the static code in `code.coding`, never an import key: the second code a profile requires (US Core pulse oximetry wants 2708-6 beside 59408-5). A list, with a static code only. A resource that carries an `alsoEmit` coding without the code does not match the item. |
+| `alsoEmit` | no | Extra codings **emitted only**, after the static code in `code.coding`, never an import key: the second code a profile requires (US Core pulse oximetry wants 2708-6 beside 59408-5). A list, with a static code only, on value kind `quantity` or `scaled-quantity`. A resource that carries an `alsoEmit` coding without the code does not match the item. An `alsoEmit` coding is never another item's import key or owned LOINC code, **except the code of a more general item**: one whose stream is a strict ancestor of this item's stream, in the same scope pair (`body-temperature-basal` emits `body-temperature`'s `8310-5`). A resource carrying both items' codes matches both, and the importer gives it to the item that also emits the other's code, the more specific one ([Import](#import)). |
 | `value` | no | FHIR `value[x]`, by `kind` (below). Absent on a Condition, a DocumentReference, a medication, a Procedure and an AllergyIntolerance, which have no `value[x]`. |
 | `split` | no | Extra resources, one per numeric composite field (below). |
 | `ignore` | no | Composite fields deliberately left out of the FHIR rendering. |
@@ -1632,11 +1635,13 @@ block's `dosage` and needs no renderer change.
 
 **A new field is not skipped:** a consumer that does not know a field ignores it. That is harmless for an import-only
 field (`alsoMatch`, `alsoMatchCategories`: an older importer accepts less), and it is why a change of what a block
-emits is a new kind rather than a field (`scaled-quantity`). `alsoEmit` is the exception, and holds only as long as the
-blocks that use it also use a kind an older renderer skips: today one block (`body-oxygen-saturation`, a
-`scaled-quantity`). An older renderer that rendered a block with `alsoEmit` would leave the coding out and claim a
-profile the resource does not meet, so **the build refuses `alsoEmit` on any other value kind**. The rule lifts once
-every deployed hds-fhir-js knows `alsoEmit` (the release that adds `scaled-quantity`).
+emits is a new kind rather than a field (`scaled-quantity`). `alsoEmit` was the exception, safe only while the
+blocks that used it also used a kind an older renderer skips (`body-oxygen-saturation`, a `scaled-quantity`): an older
+renderer that rendered a block with `alsoEmit` would leave the coding out and claim a profile the resource does not
+meet. That condition has lifted for `quantity`: `alsoEmit` came with `scaled-quantity` in hds-fhir-js 0.1.0, and every
+consumer pins a later release (plan 133, 2026-11-26: the facade 0.15.0, hds-webapp and doctor-dashboard 0.10.2), so
+`body-temperature-basal`, a `quantity`, carries it. **The build still refuses `alsoEmit` on any other value kind**,
+until a block needs one and its renderer is checked.
 
 **A coding shared by two eventTypes** of an eventType source (labs slice) changes nothing an older renderer emits: it
 renders each eventType's coding as before. Its importer, though, takes a code that names two eventTypes for a
@@ -1665,7 +1670,12 @@ its code from a datasource). A static code match wins over a datasource match. A
 code imports as a fragment of that item (below) and only when no item matches it directly: a standalone heart-rate
 Observation goes to `body-heart-rate`, not to the blood-pressure pulse. The build guarantees that a static code or an
 `alsoMatch` coding is claimed by one active item only, and a datasource source by one active item per category it
-accepts (`hds-fhir-js`: `matchResource`, which also says why nothing matched). A medication is matched on its
+accepts (`hds-fhir-js`: `matchResource`, which also says why nothing matched). **The more specific item wins** (plan
+133): a resource whose codings match two items, where one of them also emits the other's code (`alsoEmit`), goes to
+that one. The build allows such an `alsoEmit` only from an item whose stream is under the other's, in the same scope
+pair ([alsoEmit](#the-block-field-by-field)), so the winner is always the narrower item of one grant: `8310-5` +
+`300076005` is a basal reading, `8310-5` alone a body temperature. Any other resource matching two items is refused as
+ambiguous. A medication is matched on its
 `medicationCodeableConcept`: a coding with a datasource label goes to the datasource-coded item, a name alone to the
 text-coded one ([medications](#medications-medicationstatement-and-medicationrequest)); a Procedure the same way on
 its `code` ([procedures](#procedures-procedure)), never to a treatment item unless a tag names it (below). **Deprecated items are not import
@@ -1930,7 +1940,10 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   eventType coding or `alsoMatch` coding; a datasource or content source per category it accepts; a Patient element). A split
   code is not an import key: it may be another item's code, which then wins (`body-heart-rate` and the blood-pressure
   pulse). An `alsoEmit` coding is not an import key either, and is never another active item's import key or a LOINC
-  code another item owns: the rendered resource would import back into that item.
+  code another item owns: the rendered resource would import back into that item. The exception is the code of a more
+  general item, whose stream is a strict ancestor of the emitter's, in the same scope pair; the importer then gives a
+  resource carrying both codes to the emitter (`[FHIR-SCOPE-25]`). `alsoEmit` applies to value kind `quantity` or
+  `scaled-quantity` only.
 - **Units:** two eventTypes of one `quantity`, `scaled-quantity` or `ratio-quantity` block never share a UCUM unit,
   annotations aside (`{beats}/min` is `/min`) and powers of ten alike (`ug/L` is `ng/mL`): the unit picks the eventType
   on import.

@@ -115,18 +115,23 @@ body-temperature-basal:
     Used for fertility charting (coverline and thermal shift). See
     `body-temperature-basal-disturbance` for flagging a reading as unreliable.
   # SNOMED CT 300076005 verified active (snomed-db), 2026-11-26; LOINC has no basal body temperature term (loinc-db 2.83).
-  # A deliberate exception to the HDS item coding of a LOINC-less item (FHIR-MAPPING.md § Vital signs): 8310-5 is owned
-  # by body-temperature, so it cannot be this block's code; adding it later as an emitted coding is additive. No profile
-  # claimed: the vital-signs profiles bind by LOINC code.
+  # Option B2 (perki, 2026-11-26): R4 holds a vital-signs Observation in Cel to the bodytemp profile, which requires
+  # LOINC 8310-5 (HL7 validator). So the block emits 8310-5, which body-temperature owns: allowed because that item's
+  # stream is an ancestor of this one, in the same pair. 300076005 stays the import key, and on import the item that
+  # also emits the other's code wins (FHIR-MAPPING.md § Import).
   fhir:
     resourceType: Observation
     category: vital-signs
     code: { system: http://snomed.info/sct, code: "300076005", display: Basal body temperature }
+    alsoEmit:
+      - { system: http://loinc.org, code: 8310-5, display: Body temperature }
     value:
       kind: quantity
       units:
         temperature/c: Cel
-    profiles: {}
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-temperature
+      ips: http://hl7.org/fhir/StructureDefinition/bodytemp
 # Sympto-thermal rules EXCLUDE a disturbed reading from the coverline and the
 # temperature-shift computation, so a consumer charting BBT cannot read the curve
 # correctly without the flag. Cycle Féminin exports it

@@ -9,10 +9,19 @@ Additive in the pack. **Release order: hds-fhir-js first** (the release whose `e
 
 - **Three FHIR blocks** (`definitions/items/body.yaml`), all `Observation|vital-signs`: `body-temperature` is LOINC
   `8310-5` "Body temperature" in `Cel`, profiles `us-core-body-temperature` (us) and `bodytemp` (ips);
-  `body-temperature-basal` is SNOMED CT `300076005` "Basal body temperature" in `Cel`, no profile claimed (option B1,
-  perki 2026-11-26: LOINC has no basal term and `8310-5` is owned by `body-temperature`; a deliberate exception to the
-  HDS item coding of a LOINC-less item); `body-temperature-basal-disturbance` is `{ companionOf: body-temperature-basal }`,
-  the first companion, never rendered, so a FHIR reader of the basal readings loses the disturbance flag.
+  `body-temperature-basal` is SNOMED CT `300076005` "Basal body temperature" in `Cel`, emitting `8310-5` (`alsoEmit`)
+  with the same two profiles (option B2, perki 2026-11-26, after the HL7 validator refuted B1: base R4 holds every
+  vital-signs Observation in `Cel` to `bodytemp`, which requires `8310-5`). An app asking for `code=8310-5` sees the
+  basal readings, and `300076005` tells them apart; the SNOMED code, the item's import key, is a deliberate exception
+  to the HDS item coding of a LOINC-less item. `body-temperature-basal-disturbance` is
+  `{ companionOf: body-temperature-basal }`, the first companion, never rendered, so a FHIR reader of the basal
+  readings loses the disturbance flag.
+- **Build checks relaxed, narrowly** (`src/fhir.js`): `alsoEmit` is allowed on value kind `quantity` as well as
+  `scaled-quantity` (the guard kept older renderers, which predate `alsoEmit`, from dropping the coding while claiming
+  the profile; every consumer pins hds-fhir-js 0.10.2 or later, and `alsoEmit` came in 0.1.0); other kinds stay
+  refused. An `alsoEmit` coding may be another item's import key or owned LOINC code **only** when that item's stream
+  is a strict ancestor of the emitter's, in the same scope pair. Import rule, implemented in hds-fhir-js: a resource
+  matching both goes to the item that also emits the other's code. Older importers refuse it as ambiguous.
 - **`pack.fhirScopes['Observation|vital-signs']`** gains `body-temperature`; the basal stream sits inside it and is no
   grant root of its own. `definitions/fhir/scopes.lock.json` locks the three streams under the pair.
 - **New stream property `consentOptIn: true`**, on `body-temperature`, published in `pack.streams`: a SMART consent
