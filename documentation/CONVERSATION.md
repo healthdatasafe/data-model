@@ -206,6 +206,35 @@ looks like an empty day.
 - **One candidate per record.** Before writing a candidate, the contact deletes the candidates of the same record under another
   `candidateId` that are not written, answered or not, and writes none for a record that has a `written` entry.
 
+### A table read per column (4.39.0)
+
+A picture of a cumulative report (one result column per sampling day) that the contact reads column by column. A model can
+misread a column's date the same way twice, and nothing on the page tells it; so on a picture the person dates each column.
+
+- **One question per column, `which-column-date`,** with `context.column` (`index`: the result column, from the left, from 1, the
+  empty ones counted) and `context.anchor` with its `bbox`: the box of everything printed above that column, its heading. A
+  column the contact has no heading box for is not asked, and not proposed. The question carries no date: a date a model read is
+  never offered (`context.dates` is copied from a text layer only), she reads the day from the heading. She answers the day, with
+  its year: `confirm` (+ `time` at 12:00 UTC, `timePrecision: day`), or `skip`. Two columns may have the same day.
+- **Nothing of the column is proposed before her answer, and her day must be the day read.** Her answer and the model's reading
+  are two readings of one heading. When her day is the day the contact read, it proposes the column's values, each with
+  `column`, `proposal.time` = that day and `hdsTimePrecision: day`, each with its own status (`clear` allowed), while the state
+  is `awaiting-answers`, with their `proposed-values` alert and no new `task-status`. When it is not, the column is not dated.
+  `counts.proposed` counts the values read that are proposed once their column is dated.
+- **Never a date for the whole document.** On a document with a `which-column-date`, the contact asks no `which-date`, and writes
+  no value to confirm without `proposal.time`; her app takes a value's day from `proposal.time` only (§ Writing a value).
+- **A column not dated** (she answered `skip`, or her day is not the day read): the contact proposes none of its values, sends
+  the notice `columns-not-read` once for the document, and no longer waits for that question; `done` waits for every other.
+  While the question exists, a later `confirm` counts as a first answer. At `done` the question is deleted, answered or skipped
+  (R10).
+- **She changes the day.** Until a value of the column is in a `written`, a later `confirm` replaces the earlier: the contact
+  deletes the column's earlier candidates that are not written and proposes it again if the new day is the day read. Once one is
+  written, a later answer changes nothing.
+- **One candidate per record.** The record of R5 is the attachment, the page, `column.index`, the printed line (`section` and
+  `label`) and the `itemKey`; before writing a candidate, the contact deletes the candidates of the same record under another
+  `candidateId` that are not written, and writes none for a record that has a `written` entry.
+- A report with a text layer is read per column from its text, with each column's printed day, and is never asked this.
+
 ### Question codes
 
 Bare codes are HDS's, listed here. A third party's own codes start with `x-<vendor>-`. In this version a code carries
@@ -224,9 +253,11 @@ shown, not answerable.
 | `which-document-kind` (4.26.0) | MUST: a `proposed-document` | MUST: 2 to 8 `documentKinds` keys | none | `choose` (+ `option`), `skip` |
 | `which-document-date` (4.26.0) | MUST: a `proposed-document` | none | `dates?` | `confirm` (+ `timePrecision`, `time` unless `unknown`), `skip` |
 | `which-row-date` (4.36.0) | none | none | MUST: `grid` and `anchor`, only | `confirm` (+ `time`, `timePrecision: day`), `skip` |
+| `which-column-date` (4.39.0) | none | none | MUST: `column` and `anchor`, only | `confirm` (+ `time`, `timePrecision: day`), `skip` |
 
-- `context.identity` appears on `is-this-yours` only, `context.anchor` on `is-this-yours` and `which-row-date` only, `context.grid` on
-  `which-row-date` only (4.36.0), `context.dates` on `which-date` and `which-document-date` only. The
+- `context.identity` appears on `is-this-yours` only, `context.anchor` on `is-this-yours`, `which-row-date` and `which-column-date`
+  only, `context.grid` on `which-row-date` only (4.36.0), `context.column` on `which-column-date` only (4.39.0), `context.dates` on
+  `which-date` and `which-document-date` only. The
   anchor of `is-this-yours` points at where the identity block is printed, for her app's anchored view of her own copy of the document;
   one anchor cannot point at several dates, so an anchor per date is reserved for later.
 - `which-date` is asked only when no sampling date is certain and at least one proposed value waits for a date.
@@ -237,7 +268,7 @@ shown, not answerable.
   `which-analyte` (and on `is-fasting` when fasting changes the item) with a new `proposed-value`, a new
   `candidateId` carrying `replaces` = the candidate the question was about, which she confirms like any other. Once a
   replacement exists, the replaced proposed value is shown as not confirmable. An answer to `which-date` or
-  `is-this-yours` settles that question only. One to `which-row-date` writes nothing: the contact then proposes the row's values. An answer to `which-document-kind` or `which-document-date` writes
+  `is-this-yours` settles that question only. One to `which-row-date` writes nothing: the contact then proposes the row's values; one to `which-column-date`, the column's. An answer to `which-document-kind` or `which-document-date` writes
   nothing either: it supplies a field of its `proposed-document`, written when she confirms that one.
 
 ### Specimen codes
@@ -362,6 +393,7 @@ unknown code is shown with a generic text.
 |---|---|---|
 | `no-result-found` | the document | The contact read the document and recognised no result line: nothing is proposed, no question is asked, the work ends `done` with zero counts. Not "not a lab report": a scan in which no line was recognised has none either. A read that failed is the error `reading-failed`, not this notice. |
 | `several-sampling-dates` | the document | The document prints its results for several sampling days, one value column per day (a cumulative report), and the contact proposes no value from it: it does not tell which value was taken which day. Nothing is proposed, no question is asked, the work ends `done` with zero counts. Sent instead of `no-result-found`, never both for one read. A contact that reads each column under its own day sends neither. Not `which-date`, which asks for the one day all the waiting values share. The notice names no date (R6). |
+| `columns-not-read` | the document | A table read column by column on a picture (4.39.0): at least one result column is not proposed (she skipped its `which-column-date`, her day is not the day read, or the contact could not read that column on its own). The other columns' values stand. Once per document. The notice names no date and no column (R6). |
 | `typed-text-not-read` | none | The contact does not read typed text (§ Chat). At most one per relationship per 24 h. |
 | `note-not-read` | the document | The contact does not read her notes (§ Her note, 4.26.0). At most one per document. The notice names no text of the note (R6). |
 | `ready` | none | The contact is ready to read the documents she shares in this conversation (4.27.0). Sent once per relationship, right after the contact receives her accept (a contact that starts sending it later sends it once to each relationship it already has). Optional: a contact that does not read documents does not send it. To know it sent one, the contact keeps a marker per relationship: the relationship id and the fact, nothing else, deleted when the relationship ends (R10). |
