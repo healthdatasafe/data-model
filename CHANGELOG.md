@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.41.0] - 2026-11-26
 
 ### Added: body temperature as an opt-in vital sign (plan 133, DESIGN-BODY-TEMP.md v2)
 
