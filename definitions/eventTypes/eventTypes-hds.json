@@ -4971,7 +4971,8 @@
             "given",
             "withdrawn",
             "acknowledged",
-            "lapsed"
+            "lapsed",
+            "declined"
           ]
         },
         "locale": {

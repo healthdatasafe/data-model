@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+Additive in the pack.
+
+- **`consent/record-v1` action `declined`**: the user was asked an optional choice and said no. CONSENTS.md § Optional
+  choices: a document the account does not depend on (the research opt-in first). Yes is `given`; no is `withdrawn`
+  when the latest event is `given`, else `declined`; only a latest `given` at or above `materialSince` means yes, a no is
+  never asked again, and no event means not asked yet. Method is always `button`. `withdrawn` is no longer reserved: it
+  is written for an optional choice, never for `health-processing` or `us-chd-consent`.
+- `consent-record` description names the choices (en, fr, es).
+- **Older readers stay safe only through the manifest kind**: an optional choice is never published under `contract`,
+  `consent` or `notice`, so an account app older than this release drops the document and never reads its events.
+  Published as `consent`, that app would hold a user who said no at the sign-in gate and offer deletion for a `withdrawn`.
+
 ## [4.37.0] - 2026-11-25
 
 Plan 138. Additive in the pack: more languages in the text maps and one new top-level key, `l10n`; no key, path or English

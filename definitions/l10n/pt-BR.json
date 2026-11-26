@@ -3978,8 +3978,8 @@
       "status": "draft"
     },
     "consent-record/description": {
-      "en": "The consents you gave and the notices you acknowledged, and when.",
-      "text": "Os consentimentos que você deu e os avisos de que tomou ciência, e quando.",
+      "en": "Your consents, your choices and the notices you acknowledged, and when.",
+      "text": "Seus consentimentos, suas escolhas e os avisos de que você tomou ciência, e quando.",
       "status": "draft"
     },
     "document/label": {
