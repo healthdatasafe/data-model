@@ -2,6 +2,23 @@
 
 ## [Unreleased]
 
+## [4.39.0] - 2026-11-26
+
+Plan 128, PER-COLUMN-READING.md § 9 (Fable review: ship with edits, applied; perki: her day must be the day read). Additive.
+
+- **Question code `which-column-date`:** a picture of a cumulative report read column by column asks the person the day of each
+  column, which a model can misread the same way twice. `context.column` (`index`, the result column from the left) and
+  `context.anchor` with the heading's `bbox`, only; no date a model read. Answers `confirm` (+ `time` at 12:00 UTC,
+  `timePrecision: day`) or `skip`. The contact proposes the column's values, each with its own status, only when her day is the
+  day it read; otherwise the column is not dated. CONVERSATION.md § A table read per column.
+- **`proposed-value.column`** (`index`, the same shape as `context.column`): the value's result column; part of the R5 record
+  (attachment, page, `column.index`, printed line, `itemKey`).
+- **Notice `columns-not-read`:** a column of such a table is not proposed (skipped, her day not the day read, or not read on its own).
+- **R8:** hds-lib mirrors the code and its checks, and must follow at once: `QUESTION_CODES`, `questionActions`,
+  `checkConversationItem` (`column` and `anchor.bbox` required), `checkAnswerFor` (noon, `day`), and `isDatedGrid` /
+  `answeredDateOf` (a value of such a document takes its day from `proposal.time` only). The engine keys an asked question by
+  attachment, page and `column.index`.
+
 ## [4.38.0] - 2026-11-26
 
 Plan 142: the research opt-in and the eligibility test of a study. Additive in the pack.

@@ -27,10 +27,11 @@ const ID_RE = '^[a-zA-Z0-9_-]+$';
 
 const DOC = 'ckq3w8n1x0001';
 const GRID = 'ckq3w8n1x0002';
+const TABLE = 'ckq3w8n1x0003';
 const BOX = { eventId: GRID, attachmentId: 'ckq3w8n1x0002a', page: 1, bbox: [40.6, 22.4, 2.5, 12.9] };
 const ANCHOR = { eventId: 'ckq3w8n1x0001', attachmentId: 'ckq3w8n1x0001a', page: 1, bbox: [8.5, 41.2, 83, 2.1] };
 const EXTRACTION = { engine: 'hds-reader', engineVersion: '0.3.0', kbVersion: '0.4.0', backend: 'text-layer' };
-const HDS_CODES = ['which-specimen', 'which-unit', 'which-analyte', 'which-date', 'is-fasting', 'is-this-yours', 'which-document-kind', 'which-document-date', 'which-row-date'];
+const HDS_CODES = ['which-specimen', 'which-unit', 'which-analyte', 'which-date', 'is-fasting', 'is-this-yours', 'which-document-kind', 'which-document-date', 'which-row-date', 'which-column-date'];
 const SPECIMENS = ['serum-plasma', 'whole-blood', 'citrated-plasma', 'rbc', 'urine', 'urine-24h', 'semen', 'csf', 'stool', 'saliva'];
 const KIND = require('../src/documentKinds').documentKinds.kinds;
 
@@ -76,6 +77,7 @@ const VALID = {
     { kind: 'question', about: DOC, code: 'which-specimen', candidateId: 'c-77', options: ['serum-plasma', 'whole-blood'] },
     { kind: 'question', about: DOC, code: 'which-document-kind', candidateId: 'd-1', options: ['laboratory-report', 'other'] },
     { kind: 'question', about: DOC, code: 'which-document-date', candidateId: 'd-1', context: { dates: [{ day: '2026-03-13', text: '13/03/26', label: 'Édité le', role: 'report' }] } },
+    { kind: 'question', about: TABLE, code: 'which-column-date', context: { column: { index: 2 }, anchor: { eventId: TABLE, attachmentId: 'ckq3w8n1x0003a', page: 1, bbox: [52.1, 18.3, 11.4, 4.2] } } },
     { kind: 'question', about: GRID, code: 'which-row-date', context: { grid: { row: 2, column: 1 }, anchor: { ...BOX, bbox: [7.4, 22.4, 2.5, 12.9] } } }
   ],
   'proposed-value': [
@@ -85,6 +87,8 @@ const VALID = {
     { ...proposed, proposal: { itemKey: 'body-blood-coded', type: 'lab-result/coded-v1', content: { analyte: { label: { en: 'X' }, codes: [{ system: 'http://loinc.org', code: '2947-0' }] }, value: 140, unit: 'mmol/L' } } },
     { ...proposed, candidateId: 'c-78b', replaces: 'c-78', printed: { label: 'Hémoglobine', value: '13.5' }, proposal: { itemKey: 'body-blood-serum-ferritin', type: 'concentration/ug-l', content: 13.5 }, status: 'check' },
     { ...proposed, candidateId: 'c-79', printed: { ...proposed.printed, samplingTime: '08:30' }, anchor: { ...proposed.anchor, eventId: DOC } },
+    // a table read per column on a picture (4.39.0): a value of column 2, once its day is hers and the one read
+    { ...proposed, about: TABLE, candidateId: 'c-t2-1', column: { index: 2 }, anchor: { eventId: TABLE, attachmentId: 'ckq3w8n1x0003a', page: 1, bbox: [8.5, 30.1, 83, 2.1] } },
     // a dated grid (4.36.0): the parts of one box, a null content, a box not read
     { kind: 'proposed-value', about: GRID, candidateId: 'c-r1c14-a', printed: { label: '14', value: '10KL x2' }, anchor: BOX, grid: { row: 2, column: 14 }, proposal: { itemKey: 'body-vulva-mucus-inspect', type: 'vulva-mucus-inspect/9d-vector', content: { vectors: { stretchability: 1 }, source: { key: 'creighton', sourceData: '10KL', annotations: { frequency: 'X2' } } }, time: 1773316800, clientData: { hdsTimePrecision: 'day' } }, status: 'check', extraction: EXTRACTION },
     { kind: 'proposed-value', about: GRID, candidateId: 'c-r1c14-b', printed: { label: '14', value: 'P' }, anchor: BOX, grid: { row: 2, column: 14 }, proposal: { itemKey: 'fertility-cycles-peak-day', type: 'activity/plain', content: null, time: 1773316800, clientData: { hdsTimePrecision: 'day' } }, status: 'check', extraction: EXTRACTION },
@@ -111,7 +115,8 @@ const VALID = {
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0025', about: DOC, action: 'choose', option: 'laboratory-report', candidateIds: ['d-1'] },
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0026', about: DOC, action: 'confirm', candidateIds: ['d-1'], time: 1773316800, timePrecision: 'day' },
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0027', about: DOC, action: 'skip', candidateIds: ['d-2'], basis: 'not-pending' },
-    { kind: 'answer', inReplyTo: 'ckq3w8n1x0028', about: GRID, action: 'confirm', time: 1773316800, timePrecision: 'day' }
+    { kind: 'answer', inReplyTo: 'ckq3w8n1x0028', about: GRID, action: 'confirm', time: 1773316800, timePrecision: 'day' },
+    { kind: 'answer', inReplyTo: 'ckq3w8n1x0040', about: TABLE, action: 'confirm', time: 1773316800, timePrecision: 'day' }
   ]
 };
 const KINDS = Object.keys(VALID);
@@ -125,6 +130,7 @@ const VALID_ALERTS = [
   { kind: 'notice', code: 'no-result-found', about: DOC },
   { kind: 'notice', code: 'typed-text-not-read' },
   { kind: 'notice', code: 'several-sampling-dates', about: DOC },
+  { kind: 'notice', code: 'columns-not-read', about: TABLE },
   { kind: 'notice', code: 'note-not-read', about: DOC },
   { kind: 'notice', code: 'ready' },
   { kind: 'task-status', about: DOC, status: 'error', attempt: 1, errorCode: 'reading-failed' },
@@ -242,6 +248,12 @@ describe('[CNV] conversation', () => {
         for (const grid of [{}, { row: 2 }, { column: 14 }, { row: 0, column: 1 }, { row: 1, column: 100 }, { row: 1.5, column: 1 }, { row: 2, column: 14, part: 'mucus' }]) {
           assert.ok(!validate({ ...notRead, grid }), 'grid ' + JSON.stringify(grid));
           assert.ok(!validate({ ...VALID.question.at(-1), context: { ...VALID.question.at(-1).context, grid } }), 'context.grid ' + JSON.stringify(grid));
+        }
+        const colQ = VALID.question.find((q) => q.code === 'which-column-date');
+        const colV = VALID['proposed-value'].find((v) => v.column);
+        for (const column of [{}, { index: 0 }, { index: 100 }, { index: 1.5 }, { index: 2, page: 1 }]) {
+          assert.ok(!validate({ ...colV, column }), 'column ' + JSON.stringify(column));
+          assert.ok(!validate({ ...colQ, context: { ...colQ.context, column } }), 'context.column ' + JSON.stringify(column));
         }
         for (const content of [null, 48, {}]) assert.ok(validate({ ...proposed, proposal: { ...proposed.proposal, content } }), 'proposal.content ' + JSON.stringify(content));
         const { content: _c, ...noContent } = proposed.proposal;
@@ -404,7 +416,7 @@ describe('[CNV] conversation', () => {
     it('[CNV-SHAPE-2] every kind has exactly these fields, and these required', () => {
       const SHAPES = {
         question: [['kind', 'about', 'code'], ['kind', 'about', 'code', 'candidateId', 'options', 'context']],
-        'proposed-value': [['kind', 'about', 'candidateId', 'printed', 'status', 'extraction'], ['kind', 'about', 'candidateId', 'replaces', 'printed', 'anchor', 'grid', 'proposal', 'status', 'reason', 'requestKey', 'askOneByOne', 'specimenImplied', 'extraction']],
+        'proposed-value': [['kind', 'about', 'candidateId', 'printed', 'status', 'extraction'], ['kind', 'about', 'candidateId', 'replaces', 'printed', 'anchor', 'grid', 'column', 'proposal', 'status', 'reason', 'requestKey', 'askOneByOne', 'specimenImplied', 'extraction']],
         'proposed-document': [['kind', 'about', 'candidateId', 'proposal', 'status'], ['kind', 'about', 'candidateId', 'replaces', 'proposal', 'anchor', 'status', 'extraction']],
         answer: [['kind', 'inReplyTo', 'about', 'action'], ['kind', 'inReplyTo', 'about', 'action', 'candidateIds', 'option', 'time', 'timePrecision', 'basis', 'written', 'applied', 'note']]
       };
@@ -422,7 +434,9 @@ describe('[CNV] conversation', () => {
         assert.deepStrictEqual(Object.keys(branch(schema, k).properties), props, k + ' properties');
       }
       const ctx = branch(schema, 'question').properties.context;
-      assert.deepStrictEqual(Object.keys(ctx.properties), ['identity', 'dates', 'grid', 'anchor']);
+      assert.deepStrictEqual(Object.keys(ctx.properties), ['identity', 'dates', 'grid', 'column', 'anchor']);
+      assert.deepStrictEqual([ctx.properties.column.required, Object.keys(ctx.properties.column.properties)], [['index'], ['index']]);
+      assert.deepStrictEqual(strip(ctx.properties.column), strip(branch(schema, 'proposed-value').properties.column), 'a value\'s column is its question\'s');
       assert.deepStrictEqual(strip(ctx.properties.grid), strip(branch(schema, 'proposed-value').properties.grid));
       assert.deepStrictEqual(ctx.properties.grid.required, ['row', 'column']);
       assert.deepStrictEqual(Object.keys(ctx.properties.identity.properties), ['name', 'birthDate', 'birthDay']);
@@ -595,7 +609,8 @@ describe('[CNV] conversation', () => {
         'is-this-yours': ['confirm', 'not-mine', 'skip'],
         'which-document-kind': ['choose', 'skip'],
         'which-document-date': ['confirm', 'skip'],
-        'which-row-date': ['confirm', 'skip']
+        'which-row-date': ['confirm', 'skip'],
+        'which-column-date': ['confirm', 'skip']
       };
       assert.deepStrictEqual(Object.keys(ALLOWED).sort(), [...HDS_CODES].sort());
       const messages = [...docs.map((e) => e.content), ...Object.values(VALID).flat()];
@@ -618,7 +633,21 @@ describe('[CNV] conversation', () => {
         if (m.code === 'is-this-yours') assert.strictEqual(m.candidateId, undefined);
         if (m.context?.identity) assert.strictEqual(m.code, 'is-this-yours', 'identity on is-this-yours only');
         if (m.context?.dates) assert.ok(['which-date', 'which-document-date'].includes(m.code), 'dates on the two date codes only');
-        if (m.context?.anchor) assert.ok(['is-this-yours', 'which-row-date'].includes(m.code), 'a context anchor on these two only');
+        if (m.context?.anchor) assert.ok(['is-this-yours', 'which-row-date', 'which-column-date'].includes(m.code), 'a context anchor on these three only');
+        if (m.context?.grid) assert.strictEqual(m.code, 'which-row-date', 'grid on which-row-date only');
+        if (m.context?.column) assert.strictEqual(m.code, 'which-column-date', 'column on which-column-date only');
+        if (m.code === 'which-column-date') {
+          assert.deepStrictEqual(Object.keys(m.context).sort(), ['anchor', 'column'], 'its context is the column and its heading, only: no date a model read');
+          assert.ok(m.context.anchor.bbox, 'with the heading\'s box');
+          assert.strictEqual(m.candidateId ?? m.options, undefined, 'no candidate, no options');
+          const about = messages.filter((x) => x.about === m.about);
+          assert.ok(!about.some((x) => x.kind === 'question' && x.code === 'which-date'), 'no which-date on a table read per column');
+          const values = about.filter((x) => x.kind === 'proposed-value');
+          const answers = messages.filter((x) => x.kind === 'answer' && x.about === m.about && x.action === 'confirm' && !x.candidateIds);
+          assert.ok(values.length > 0 && answers.length > 0, 'the fixtures hold a value and an answer of the table');
+          for (const p of values) assert.ok(p.column && p.proposal?.time !== undefined, 'every value names its column and has its day');
+          for (const a of answers) assert.deepStrictEqual([a.time % 86400, a.timePrecision], [43200, 'day'], 'a day at 12:00 UTC');
+        }
         if (m.code === 'which-row-date') {
           assert.deepStrictEqual(Object.keys(m.context).sort(), ['anchor', 'grid'], 'its context is the box and its anchor, only');
           assert.ok(m.context.anchor.bbox, 'with its box');
@@ -712,7 +741,7 @@ describe('[CNV] conversation', () => {
       // every code row is parsed: the rows starting with a code, less the two header rows
       const rows = section.split('\n').filter((l) => l.startsWith('| `')).length - 2;
       assert.strictEqual(notices.length + errors.length, rows, 'a table row matched neither pattern');
-      assert.deepStrictEqual(notices, [['no-result-found', 'the document'], ['several-sampling-dates', 'the document'], ['typed-text-not-read', 'none'], ['note-not-read', 'the document'], ['ready', 'none']]);
+      assert.deepStrictEqual(notices, [['no-result-found', 'the document'], ['several-sampling-dates', 'the document'], ['columns-not-read', 'the document'], ['typed-text-not-read', 'none'], ['note-not-read', 'the document'], ['ready', 'none']]);
       assert.deepStrictEqual(errors, ['no-attachment', 'write-failed', 'reading-failed']);
       const validate = new AjvDraft04({ strict: false, logger: false }).compile(ALERT);
       for (const [code, about] of notices) {
