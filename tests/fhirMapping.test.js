@@ -209,6 +209,27 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.match(streamsById['body-temperature'].description.fr, /basales.*fertilité.*perturbée/);
     });
 
+    it('[FHIR-ITEM-17] the built pack: body-temperature carries consentOptIn and its description in every locale of the pack', function () {
+      const packPath = path.join(__dirname, '../dist/pack.json');
+      if (!fs.existsSync(packPath)) return this.skip(); // npm run build has not run yet
+      const pack = JSON.parse(fs.readFileSync(packPath, 'utf-8'));
+      const find = (list, id) => {
+        for (const s of list) {
+          if (s.id === id) return s;
+          const r = find(s.children ?? [], id);
+          if (r) return r;
+        }
+      };
+      const t = find(pack.streams, 'body-temperature');
+      assert.strictEqual(t.consentOptIn, true);
+      assert.deepStrictEqual(Object.keys(t.description).sort(), ['en', 'es', 'fr', 'it', 'pt-BR']);
+      for (const [lang, text] of Object.entries(t.description)) assert.ok(text.length > 0, lang);
+      assert.match(t.description.es, /basales/);
+      assert.match(t.description.it, /basali/);
+      assert.match(t.description['pt-BR'], /basais/);
+      assert.strictEqual(find(pack.streams, 'body-temperature-basal').consentOptIn, undefined);
+    });
+
     it('[FHIR-ITEM-2] wellbeing-general-health: 5 levels, higher is better, LOINC answers on every option', () => {
       const gh = itemsById['wellbeing-general-health'];
       assert.strictEqual(gh.eventType, 'ratio/proportion');
@@ -1609,6 +1630,9 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const emits = (streamId, category = 'vital-signs') => it_(streamId, { ...obs(category, 's'), alsoEmit: [coding('a')] });
       // allowed: under the owner, in its pair; the build passes and grants the owner's stream alone
       assert.deepStrictEqual(run({ a: general, s: emits('body-a-flag') }), { 'Observation|vital-signs': ['body-a'] });
+      // allowed: the owner is the emitter's grandparent
+      const grand = it_('body', obs('vital-signs', 'a'), { references: { loinc: ['a'] } });
+      assert.deepStrictEqual(run({ a: grand, s: emits('body-a-flag') }), { 'Observation|vital-signs': ['body'] });
       // refused: a sibling of the owner's stream
       assert.throws(() => run({ a: general, s: emits('body-b') }), /fhir alsoEmit Observation http:\/\/loinc.org\|a of "s" is an import key of "a" .*; it is allowed only from an item whose stream is under "a"'s stream, in the same scope pair/);
       // refused: the owner on the emitter's own stream is not more general

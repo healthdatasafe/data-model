@@ -462,8 +462,9 @@ function checkFhirMapping (key, item, itemEventTypes) {
     mappedFields.add(k);
   }
   unique('code, components and split codes', [...ownCodings, ...Object.values(f.split || {}).map((s) => s.code)]);
-  // A renderer that predates alsoEmit would leave it out and claim a profile the resource misses. Every deployed
-  // hds-fhir-js knows alsoEmit (0.1.0, with scaled-quantity), so `quantity` is allowed too (plan 133, the basal body
+  // A renderer that predates alsoEmit would leave it out and claim a profile the resource misses. alsoEmit came with
+  // scaled-quantity in hds-fhir-js 0.1.0, and the three consumers (facade v0.15.0, hds-webapp and doctor-dashboard
+  // v0.10.2, by their package.json pins, 2026-11-26) are past it, so `quantity` is allowed too (plan 133, the basal body
   // temperature); any other kind stays refused until a block needs it and its renderer is checked.
   if (f.alsoEmit != null && v?.kind !== 'scaled-quantity' && v?.kind !== 'quantity') fail('"alsoEmit" applies to value kind "quantity" or "scaled-quantity" only; see FHIR-MAPPING.md § Forward compatibility');
 
@@ -1147,13 +1148,15 @@ function checkFhirImportKeys (items, roots = streams.roots) {
   // An emitted-only coding (`alsoEmit`) is never an import key, and never a code that would make the rendered resource
   // match another item on its way back: no item's import key, no LOINC code another item owns. One exception (plan
   // 133): the code of a **more general item**, one whose stream is a strict ancestor of the emitter's, in the same scope
-  // pair (the basal body temperature emits body-temperature's 8310-5). The rendered resource then matches both, and the
-  // importer gives it to the item that also emits the other's code, the more specific one (FHIR-MAPPING.md § Import).
+  // pair (the basal body temperature emits body-temperature's 8310-5). The rendered resource then matches both; of
+  // several items a resource matches by code, the importer picks the one that also emits every code of the others that
+  // the resource carries, the more specific one (FHIR-MAPPING.md § Import). Deprecated items are never in `seen` or
+  // `owner`, so `other` is active.
   const { parentOf } = streamIndex(roots);
   const isMoreGeneral = (other, key) => {
     const o = items[other];
     const e = items[key];
-    if (o?.streamId == null || e?.streamId == null || o.deprecated) return false;
+    if (o?.streamId == null || e?.streamId == null) return false;
     if (!ancestorsIn(parentOf, e.streamId).includes(o.streamId)) return false;
     return scopePairOf(other, items) === scopePairOf(key, items);
   };

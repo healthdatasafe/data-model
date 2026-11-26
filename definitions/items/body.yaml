@@ -117,8 +117,9 @@ body-temperature-basal:
   # SNOMED CT 300076005 verified active (snomed-db), 2026-11-26; LOINC has no basal body temperature term (loinc-db 2.83).
   # Option B2 (perki, 2026-11-26): R4 holds a vital-signs Observation in Cel to the bodytemp profile, which requires
   # LOINC 8310-5 (HL7 validator). So the block emits 8310-5, which body-temperature owns: allowed because that item's
-  # stream is an ancestor of this one, in the same pair. 300076005 stays the import key, and on import the item that
-  # also emits the other's code wins (FHIR-MAPPING.md § Import).
+  # stream is an ancestor of this one, in the same pair. 300076005 stays the import key; of several items a resource
+  # matches by code, the one that also emits every code of the others that the resource carries wins (FHIR-MAPPING.md
+  # § Import).
   fhir:
     resourceType: Observation
     category: vital-signs
