@@ -180,6 +180,11 @@
       "text": "Sêmen",
       "status": "draft"
     },
+    "[id=\"condition\"]/label": {
+      "en": "Condition",
+      "text": "Condições",
+      "status": "draft"
+    },
     "[id=\"conversation-items\"]/label": {
       "en": "Conversation items",
       "text": "Itens de conversa",
@@ -283,6 +288,11 @@
     "[id=\"fertility\"]/children[id=\"fertility-pregnancies\"]/children[id=\"fertility-miscarriages\"]/label": {
       "en": "Miscarriages",
       "text": "Abortos espontâneos",
+      "status": "draft"
+    },
+    "[id=\"finding\"]/label": {
+      "en": "Finding",
+      "text": "Achados",
       "status": "draft"
     },
     "[id=\"function\"]/label": {

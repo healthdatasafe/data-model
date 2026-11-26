@@ -1,3 +1,6 @@
 id: condition
 name: Condition
+label:
+  en: "Condition"
+  fr: "Affections"
 parentId: null

@@ -45,6 +45,9 @@ or `body-*`. Several concepts sit uncomfortably:
   a `finding` is undecided.
 - **A physical-examination finding.** Not surgery, not imaging.
 
+The root's label (4.40.0: "Finding", "Constatations cliniques", "Hallazgos", "Reperti", "Achados") follows the
+`finding-coded` item's label and decides nothing about this scope.
+
 Widening the scope is cheap in code and expensive in meaning: the `finding` root is published, so
 anything written under it is permanent, and a root that means "any clinical observation" stops
 partitioning against `condition`, `symptom` and `body` at all.

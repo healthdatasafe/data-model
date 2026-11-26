@@ -2,6 +2,30 @@
 
 ## [Unreleased]
 
+## [4.40.0] - 2026-11-26
+
+Additive in the pack.
+
+### Added: labels of the root streams `condition` and `finding`
+
+Both had a `name` only, so they showed in English whatever the language (the item groups of the French form builder,
+hds-forms-js#77; B-2026-11-25-15). `label` en / fr in `definitions/streams/`, drafts in `definitions/l10n/{es,it,pt-BR}`:
+`condition` "Condition" / "Affections" / "Afecciones" / "Condizioni" / "Condições", `finding` "Finding" /
+"Constatations cliniques" / "Hallazgos" / "Reperti" / "Achados". Plural outside English like the sibling roots
+(`procedure`, `treatment`, `medication`); `label.en` equals `name`. They follow the coded items' wording and decide
+nothing about `finding`'s open scope (`documentation/FINDING.md`). A consent screen still names each root by its only
+item ("Condition (coded)"). Fable-reviewed (ship with edits, applied).
+
+### Changed: `eventTypes-legacy.json` mirror refreshed to pryv/data-types 1.3.4
+
+Upstream commit `798bac0d71` (2026-11-25, "consent/request-cmc: request.requireVerifiedEmail … version 1.3.4"), fetched
+2026-11-26 and byte-verified against `https://pryv.github.io/event-types/flat.json` and `api.pryv.com/event-types/flat.json`
+(after its redirect); upstream `master` is already past it (unpublished 1.4.0). Byte-faithful copy. 358 → 358 types.
+**Changed**, one optional property only: `consent/request-cmc` gains `request.requireVerifiedEmail` (boolean: accepting
+takes a proved primary email address, pryv/open-pryv.io#173). It is enforced only by a platform whose service info has
+`features.cmcRequireVerifiedEmail`; hds-lib 2.73.0 passes it through `createInviteWithFormSpec`. No `required` changed;
+no `$ref`, no key shared with `eventTypes-hds.json`; `KNOWN_DRAFT07_INCOMPATIBLE` unchanged. Fable-reviewed.
+
 ## [4.39.0] - 2026-11-26
 
 Plan 128, PER-COLUMN-READING.md § 9 (Fable review: ship with edits, applied; perki: her day must be the day read). Additive.
