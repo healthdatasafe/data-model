@@ -401,8 +401,14 @@ children:
     name: Heart Rate
   - id: body-oxygen-saturation
     name: Oxygen Saturation
+  # `consentOptIn` (FHIR-MAPPING.md § SMART scopes): a SMART consent offers the stream unticked, since a grant on it
+  # also reads the basal fertility readings and their disturbance flags. The description says so under the row.
   - id: body-temperature
     name: Body Temperature
+    description:
+      en: "Includes basal (waking) temperatures recorded for fertility charting, and whether a reading was disturbed."
+      fr: "Comprend les températures basales (au réveil) relevées pour le suivi de la fertilité, et si une mesure a été perturbée."
+    consentOptIn: true
     children:
       - id: body-temperature-basal
         name: Basal Body Temperature

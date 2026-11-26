@@ -55,6 +55,9 @@ What a consumer must do, by how the access is made:
   (`optIn`), whatever brought it into the request: `patient/*.rs`, a scope that names the type
   (`patient/QuestionnaireResponse.rs`) or a native token that names the stream. The person ticks it on purpose; it
   is never ticked by default. The FHIR facade gives a `*` stream permission the model roots minus the marked ones.
+  The unticked offer alone, with no Pryv `*` exclusion and on a non-root stream, is the `consentOptIn` marker
+  (plan 133, `body-temperature`; FHIR-MAPPING.md § SMART scopes): a stream that carries it is not covered by this
+  section.
 - **Readers** that list what an access shares must not show a `level: 'none'` entry as shared.
 
 ### Before the first write

@@ -999,9 +999,31 @@ function checkFhirScopes (items, { roots = streams.roots, lock = readLock() } = 
 
   const { grants, subtree, violations } = computeFhirScopes(items, roots);
   if (violations.length > 0) throw new Error(`fhir scope invariant:\n  ${violations.join('\n  ')}`);
+  checkConsentOptInPlacement(grants, roots);
   checkLock(items, checkedLock(lock), subtree, parentOf);
   checkFhirImportKeys(items);
   return grants;
+}
+
+/**
+ * A `consentOptIn` stream is offered unticked by a SMART consent, so it must be a row of one: a grant root of a scope
+ * key. It is refused under an `explicitGrantOnly` root (already offered unticked, and also kept out of `*`) and under
+ * another `consentOptIn` stream (the outer one already holds it). See FHIR-MAPPING.md § SMART scopes.
+ */
+function checkConsentOptInPlacement (grants, roots) {
+  const granted = new Set(Object.values(grants).flat());
+  const visit = (node, ancestors) => {
+    if (node.consentOptIn === true) {
+      const at = `stream "${node.id}" is consentOptIn`;
+      const explicit = [node, ...ancestors].find((s) => s.explicitGrantOnly === true);
+      if (explicit != null) throw new Error(`${at} but sits under the explicitGrantOnly root "${explicit.id}", which a consent already offers unticked`);
+      const outer = ancestors.find((s) => s.consentOptIn === true);
+      if (outer != null) throw new Error(`${at} but sits under the consentOptIn stream "${outer.id}", which already holds it`);
+      if (!granted.has(node.id)) throw new Error(`${at} but is not a grant root of any fhirScopes key: no SMART consent offers it as a row`);
+    }
+    for (const c of node.children ?? []) visit(c, [node, ...ancestors]);
+  };
+  for (const r of roots) visit(r, []);
 }
 
 /**

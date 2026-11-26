@@ -907,6 +907,27 @@
         "body-semen-volume"
       ]
     },
+    "body-temperature": {
+      "pair": "Observation|vital-signs",
+      "parent": "body",
+      "items": [
+        "body-temperature"
+      ]
+    },
+    "body-temperature-basal": {
+      "pair": "Observation|vital-signs",
+      "parent": "body-temperature",
+      "items": [
+        "body-temperature-basal"
+      ]
+    },
+    "body-temperature-basal-disturbance": {
+      "pair": "Observation|vital-signs",
+      "parent": "body-temperature-basal",
+      "items": [
+        "body-temperature-basal-disturbance"
+      ]
+    },
     "body-urine-chemistry-creatinine": {
       "pair": "Observation|laboratory",
       "parent": "body-urine-chemistry",
