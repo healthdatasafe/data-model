@@ -180,6 +180,11 @@
       "text": "Liquido seminale",
       "status": "draft"
     },
+    "[id=\"condition\"]/label": {
+      "en": "Condition",
+      "text": "Condizioni",
+      "status": "draft"
+    },
     "[id=\"conversation-items\"]/label": {
       "en": "Conversation items",
       "text": "Elementi della conversazione",
@@ -283,6 +288,11 @@
     "[id=\"fertility\"]/children[id=\"fertility-pregnancies\"]/children[id=\"fertility-miscarriages\"]/label": {
       "en": "Miscarriages",
       "text": "Aborti spontanei",
+      "status": "draft"
+    },
+    "[id=\"finding\"]/label": {
+      "en": "Finding",
+      "text": "Reperti",
       "status": "draft"
     },
     "[id=\"function\"]/label": {

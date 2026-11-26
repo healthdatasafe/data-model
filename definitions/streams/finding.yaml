@@ -1,3 +1,6 @@
 id: finding
 name: Finding
+label:
+  en: "Finding"
+  fr: "Constatations cliniques"
 parentId: null
