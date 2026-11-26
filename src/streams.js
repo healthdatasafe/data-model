@@ -14,6 +14,7 @@ module.exports = {
   isDescendantOf,
   checkLocalisedNames,
   checkExplicitGrantOnly,
+  checkConsentOptIn,
   toBePublished
 };
 
@@ -79,6 +80,7 @@ function indexStreams (stream, parentId) {
   }
   checkLocalisedNames(stream);
   checkExplicitGrantOnly(stream, parentId);
+  checkConsentOptIn(stream);
   stream.parentId = parentId;
   streamsById[stream.id] = stream;
   if (stream.children) {
@@ -121,6 +123,18 @@ function checkExplicitGrantOnly (stream, parentId) {
   }
   if (parentId !== null) {
     throw new Error(`stream ${stream.id}: explicitGrantOnly is allowed on a root only`);
+  }
+}
+
+/**
+ * Optional `consentOptIn`: a SMART consent offers the stream unticked. Boolean. It binds the SMART consent offer only
+ * (no Pryv `*` exclusion, unlike `explicitGrantOnly`); where it may sit is checked against the grant table, in
+ * `checkFhirScopes` (src/fhir.js). See documentation/FHIR-MAPPING.md § SMART scopes.
+ */
+function checkConsentOptIn (stream) {
+  if (stream.consentOptIn === undefined) return;
+  if (typeof stream.consentOptIn !== 'boolean') {
+    throw new Error(`stream ${stream.id}: consentOptIn must be a boolean`);
   }
 }
 

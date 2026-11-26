@@ -114,6 +114,25 @@ body-temperature-basal:
   devNotes: >-
     Used for fertility charting (coverline and thermal shift). See
     `body-temperature-basal-disturbance` for flagging a reading as unreliable.
+  # SNOMED CT 300076005 verified active (snomed-db), 2026-11-26; LOINC has no basal body temperature term (loinc-db 2.83).
+  # Option B2 (perki, 2026-11-26): R4 holds a vital-signs Observation in Cel to the bodytemp profile, which requires
+  # LOINC 8310-5 (HL7 validator). So the block emits 8310-5, which body-temperature owns: allowed because that item's
+  # stream is an ancestor of this one, in the same pair. 300076005 stays the import key; of several items a resource
+  # matches by code, the one that also emits every code of the others that the resource carries wins (FHIR-MAPPING.md
+  # § Import).
+  fhir:
+    resourceType: Observation
+    category: vital-signs
+    code: { system: http://snomed.info/sct, code: "300076005", display: Basal body temperature }
+    alsoEmit:
+      - { system: http://loinc.org, code: 8310-5, display: Body temperature }
+    value:
+      kind: quantity
+      units:
+        temperature/c: Cel
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-temperature
+      ips: http://hl7.org/fhir/StructureDefinition/bodytemp
 # Sympto-thermal rules EXCLUDE a disturbed reading from the coverline and the
 # temperature-shift computation, so a consumer charting BBT cannot read the curve
 # correctly without the flag. Cycle Féminin exports it
@@ -161,6 +180,9 @@ body-temperature-basal-disturbance:
     A "parasitic temperature" qualifier for a co-occurring `body-temperature-basal` event: a
     reader should exclude the flagged reading from coverline and thermal-shift computation.
     Absence means the reading was not flagged, NOT that it was confirmed reliable.
+  # Never rendered nor imported: a FHIR reader of the basal readings gets them without the flag (FHIR-MAPPING.md
+  # § Qualifiers). Its raw events stay readable through Pryv under the same grant.
+  fhir: { companionOf: body-temperature-basal }
 # Vital signs printed on letters and reports, or measured by a device (site-agents#30). The basal
 # fertility reading stays `body-temperature-basal`; this is any other measured body temperature, on
 # the parent stream, so the pair (body-temperature, temperature/c) differs from the basal one.
@@ -250,6 +272,19 @@ body-temperature:
   devNotes: >-
     Any measured body temperature except the basal fertility reading, which stays
     `body-temperature-basal`. A grant on `body-temperature` also covers the basal child.
+  # LOINC 8310-5 verified ACTIVE in loinc-db (LOINC 2.83), 2026-11-26. The stream is `consentOptIn`: a SMART consent
+  # offers it unticked, since a grant on it also reads the basal fertility readings (plan 133, DESIGN-BODY-TEMP.md).
+  fhir:
+    resourceType: Observation
+    category: vital-signs
+    code: { system: http://loinc.org, code: 8310-5, display: Body temperature }
+    value:
+      kind: quantity
+      units:
+        temperature/c: Cel
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-temperature
+      ips: http://hl7.org/fhir/StructureDefinition/bodytemp
 body-height:
   version: v1
   label:

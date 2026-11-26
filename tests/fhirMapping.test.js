@@ -179,14 +179,55 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       }
     });
 
-    it('[FHIR-ITEM-9] body height: 8302-2, metres in cm and feet in inches (the profiles take cm or [in_i] only); body temperature stays unmapped', () => {
+    it('[FHIR-ITEM-9] body height: 8302-2, metres in cm and feet in inches (the profiles take cm or [in_i] only)', () => {
       const h = itemsById['body-height'].fhir;
       assert.deepStrictEqual(h.code, { system: 'http://loinc.org', code: '8302-2', display: 'Body height' });
       assert.deepStrictEqual(h.alsoMatch, [{ system: 'http://loinc.org', code: '3137-7', display: 'Body height Measured' }]);
       assert.deepStrictEqual(h.value, { kind: 'scaled-quantity', units: { 'length/m': { unit: 'cm', factor: 100 }, 'length/ft': { unit: '[in_i]', factor: 12 } } });
       assert.deepStrictEqual(h.profiles, { us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-height', ips: 'http://hl7.org/fhir/StructureDefinition/bodyheight' });
-      // Its stream holds the basal temperature (fertility charting) and its disturbance flag, both unmapped.
-      assert.strictEqual(itemsById['body-temperature'].fhir, undefined);
+    });
+
+    it('[FHIR-ITEM-16] body temperature (plan 133): 8310-5 in Cel with the body temperature profiles; basal is SNOMED 300076005 emitting 8310-5, same profiles (B2); the disturbance flag is its companion; the stream is consentOptIn', () => {
+      const t = itemsById['body-temperature'].fhir;
+      const profiles = { us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-temperature', ips: 'http://hl7.org/fhir/StructureDefinition/bodytemp' };
+      assert.deepStrictEqual([t.resourceType, t.category], ['Observation', 'vital-signs']);
+      assert.deepStrictEqual(t.code, { system: 'http://loinc.org', code: '8310-5', display: 'Body temperature' });
+      assert.deepStrictEqual(t.value, { kind: 'quantity', units: { 'temperature/c': 'Cel' } });
+      assert.deepStrictEqual(t.profiles, profiles);
+      const b = itemsById['body-temperature-basal'].fhir;
+      assert.deepStrictEqual([b.resourceType, b.category], ['Observation', 'vital-signs']);
+      assert.deepStrictEqual(b.code, { system: 'http://snomed.info/sct', code: '300076005', display: 'Basal body temperature' });
+      assert.deepStrictEqual(b.alsoEmit, [t.code], 'bodytemp requires 8310-5 on every vital-signs Observation in Cel');
+      assert.deepStrictEqual(b.value, { kind: 'quantity', units: { 'temperature/c': 'Cel' } });
+      assert.deepStrictEqual(b.profiles, profiles);
+      assert.deepStrictEqual(itemsById['body-temperature-basal-disturbance'].fhir, { companionOf: 'body-temperature-basal' });
+      const { streamsById } = require('../src/streams');
+      assert.strictEqual(streamsById['body-temperature'].consentOptIn, true);
+      assert.deepStrictEqual(Object.values(streamsById).filter((s) => s.consentOptIn !== undefined).map((s) => s.id), ['body-temperature']);
+      // the consent row is "Body temperature"; its description says what else ticking it discloses
+      assert.match(streamsById['body-temperature'].description.en, /basal.*fertility.*disturbed/);
+      assert.match(streamsById['body-temperature'].description.fr, /basales.*fertilité.*perturbée/);
+    });
+
+    it('[FHIR-ITEM-17] the built pack: body-temperature carries consentOptIn and its description in every locale of the pack', function () {
+      const packPath = path.join(__dirname, '../dist/pack.json');
+      if (!fs.existsSync(packPath)) return this.skip(); // npm run build has not run yet
+      const pack = JSON.parse(fs.readFileSync(packPath, 'utf-8'));
+      const find = (list, id) => {
+        for (const s of list) {
+          if (s.id === id) return s;
+          const r = find(s.children ?? [], id);
+          if (r) return r;
+        }
+      };
+      const t = find(pack.streams, 'body-temperature');
+      assert.strictEqual(t.consentOptIn, true);
+      assert.deepStrictEqual(Object.keys(t.description).sort(), ['en', 'es', 'fr', 'it', 'pt-BR']);
+      for (const [lang, text] of Object.entries(t.description)) assert.ok(text.length > 0, lang);
+      assert.match(t.description.es, /basales/);
+      assert.match(t.description.it, /basali/);
+      assert.match(t.description['pt-BR'], /basais/);
+      assert.strictEqual(find(pack.streams, 'body-temperature-basal').consentOptIn, undefined);
     });
 
     it('[FHIR-ITEM-2] wellbeing-general-health: 5 levels, higher is better, LOINC answers on every option', () => {
@@ -799,10 +840,13 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const d = item('body-blood-pressure');
       d.fhir.alsoEmit = [d.fhir.split.rate.code];
       assert.throws(() => check(d), /code, components and split codes: the coding http:\/\/loinc.org\|8867-4 appears more than once/);
-      // A plain quantity block would be half-rendered by a renderer that predates alsoEmit.
+      // Every deployed renderer knows alsoEmit (hds-fhir-js 0.1.0): a plain quantity takes it (plan 133), other kinds not.
       const e = item('body-heart-rate');
       e.fhir.alsoEmit = [coding('9')];
-      assert.throws(() => check(e), /"alsoEmit" needs a value kind the deployed renderers skip \(scaled-quantity\)/);
+      check(e);
+      const g = item('wellbeing-general-health');
+      g.fhir.alsoEmit = [coding('9')];
+      assert.throws(() => check(g), /"alsoEmit" applies to value kind "quantity" or "scaled-quantity" only/);
     });
 
     it('[FHIR-MAP-18] a static LOINC code must be the code every unit option stores', () => {
@@ -1356,6 +1400,45 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => run({ a: it_('body-a', obs('vital-signs')), c: it_('body-a-flag', { companionOf: 'a' }), d: it_('body-a-flag', { companionOf: 'c' }) }), /the parent must carry a mapping/);
     });
 
+    describe('[FHIR-SCOPE-24] consentOptIn (plan 133): offered unticked by a SMART consent, so it must be a row of one', () => {
+      const items = { a: it_('body-a', obs('vital-signs', 'a')), f: it_('body-a-flag', { companionOf: 'a' }), b: it_('body-b', obs('vital-signs', 'b')) };
+      /** The test tree with `marks` ({ streamId: { consentOptIn, explicitGrantOnly } }) set on its streams. */
+      const marked = (marks) => {
+        const t = structuredClone(tree);
+        const visit = (n) => { Object.assign(n, marks[n.id] ?? {}); for (const c of n.children ?? []) visit(c); };
+        for (const r of t) visit(r);
+        return t;
+      };
+
+      it('[FHIR-SCOPE-24a] a boolean, checked when the stream tree loads', () => {
+        const { checkConsentOptIn } = require('../src/streams');
+        assert.doesNotThrow(() => checkConsentOptIn({ id: 's', consentOptIn: true }));
+        assert.doesNotThrow(() => checkConsentOptIn({ id: 's', consentOptIn: false }));
+        assert.throws(() => checkConsentOptIn({ id: 's', consentOptIn: 'yes' }), /stream s: consentOptIn must be a boolean/);
+      });
+
+      it('[FHIR-SCOPE-24b] it must be a grant root of a scope key', () => {
+        assert.deepStrictEqual(run(items, emptyLock(), marked({ 'body-a': { consentOptIn: true } })), { 'Observation|vital-signs': ['body-a', 'body-b'] });
+        // an ancestor that merely holds grant roots is no row
+        assert.throws(() => run(items, emptyLock(), marked({ body: { consentOptIn: true } })), /stream "body" is consentOptIn but is not a grant root of any fhirScopes key/);
+        // nor is a stream inside a grant root (it rides under the root's row)
+        assert.throws(() => run(items, emptyLock(), marked({ 'body-a-flag': { consentOptIn: true } })), /stream "body-a-flag" is consentOptIn but is not a grant root/);
+        // false marks nothing
+        run(items, emptyLock(), marked({ body: { consentOptIn: false } }));
+      });
+
+      it('[FHIR-SCOPE-24c] it is refused under an explicitGrantOnly root', () => {
+        run(items, emptyLock(), marked({ 'body-a': { consentOptIn: true }, mood: { explicitGrantOnly: true } }));
+        assert.throws(() => run(items, emptyLock(), marked({ 'body-a': { consentOptIn: true }, body: { explicitGrantOnly: true } })), /stream "body-a" is consentOptIn but sits under the explicitGrantOnly root "body"/);
+      });
+
+      it('[FHIR-SCOPE-24d] it is refused under another consentOptIn stream', () => {
+        // two sibling rows, each its own opt-in
+        run(items, emptyLock(), marked({ 'body-a': { consentOptIn: true }, 'body-b': { consentOptIn: true } }));
+        assert.throws(() => run(items, emptyLock(), marked({ 'body-a': { consentOptIn: true }, 'body-a-flag': { consentOptIn: true } })), /stream "body-a-flag" is consentOptIn but sits under the consentOptIn stream "body-a"/);
+      });
+    });
+
     it('[FHIR-SCOPE-8] the lock records every stream a grant reaches: pair, parent, items', () => {
       const items = { a: it_('body-a', obs('vital-signs', 'a')), f: it_('body-a-flag', { companionOf: 'a' }), b: it_('body-b', obs('survey', 'b')) };
       assert.deepStrictEqual(lockOf(items), {
@@ -1541,6 +1624,28 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.ok(Object.values(itemsById).every((i) => !(i.references?.loinc || []).includes('2708-6')));
     });
 
+    it('[FHIR-SCOPE-25] an alsoEmit coding may be the code of a more general item: its stream a strict ancestor, the same pair (plan 133)', () => {
+      const { checkFhirImportKeys } = require('../src/fhir');
+      const general = it_('body-a', obs('vital-signs', 'a'), { references: { loinc: ['a'] } });
+      const emits = (streamId, category = 'vital-signs') => it_(streamId, { ...obs(category, 's'), alsoEmit: [coding('a')] });
+      // allowed: under the owner, in its pair; the build passes and grants the owner's stream alone
+      assert.deepStrictEqual(run({ a: general, s: emits('body-a-flag') }), { 'Observation|vital-signs': ['body-a'] });
+      // allowed: the owner is the emitter's grandparent
+      const grand = it_('body', obs('vital-signs', 'a'), { references: { loinc: ['a'] } });
+      assert.deepStrictEqual(run({ a: grand, s: emits('body-a-flag') }), { 'Observation|vital-signs': ['body'] });
+      // refused: a sibling of the owner's stream
+      assert.throws(() => run({ a: general, s: emits('body-b') }), /fhir alsoEmit Observation http:\/\/loinc.org\|a of "s" is an import key of "a" .*; it is allowed only from an item whose stream is under "a"'s stream, in the same scope pair/);
+      // refused: the owner on the emitter's own stream is not more general
+      assert.throws(() => run({ a: general, s: emits('body-a') }), /fhir alsoEmit Observation http:\/\/loinc.org\|a of "s" is an import key of "a"/);
+      // refused: under the owner, in another pair (the scope invariant refuses it first in a build, so checked here alone)
+      assert.throws(() => checkFhirImportKeys({ a: general, s: emits('body-a-flag', 'survey') }, tree), /of "s" is an import key of "a" .*; "a" is another scope pair/);
+      // refused: the owner above, but the emitted code owned by an unrelated item
+      assert.throws(() => checkFhirImportKeys({ a: general, s: emits('body-a-flag'), o: { references: { loinc: ['a2'] } }, s2: it_('body-a-flag', { ...obs('vital-signs', 's2'), alsoEmit: [coding('a2')] }) }, tree), /of "s2" is a LOINC code item "o" owns/);
+      // the model: the basal body temperature emits body-temperature's 8310-5
+      assert.deepStrictEqual(itemsById['body-temperature-basal'].fhir.alsoEmit, [{ system: 'http://loinc.org', code: '8310-5', display: 'Body temperature' }]);
+      checkFhirImportKeys(itemsById);
+    });
+
     it('[FHIR-SCOPE-11] the model\'s table; the committed lock is up to date (run npm run fhir:lock)', () => {
       const labBlocks = Object.entries(itemsById).filter(([, i]) => i.fhir?.category === 'laboratory');
       // 135 active items, plus the two legacy urine-hormone items (LH, PdG) whose stream is their replacement's. The
@@ -1558,7 +1663,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         'Observation|laboratory': lab,
         'Observation|social-history': ['lifestyle-tobacco-smoking'],
         'Observation|survey': ['wellbeing-general-health'],
-        'Observation|vital-signs': ['body-blood-pressure', 'body-heart-rate', 'body-height', 'body-oxygen-saturation', 'body-weight'],
+        'Observation|vital-signs': ['body-blood-pressure', 'body-heart-rate', 'body-height', 'body-oxygen-saturation', 'body-temperature', 'body-weight'],
         Patient: ['profile-address', 'profile-date-of-birth', 'profile-name', 'profile-sex'],
         Procedure: ['procedure', 'treatment'],
         Questionnaire: ['questionnaire-request'],
@@ -1573,6 +1678,10 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       // the treatment root is its second grant root, context stream included
       assert.deepStrictEqual(readLock().streams.treatment, { pair: 'Procedure', parent: null, items: ['treatment-basic', 'treatment-coded'] });
       assert.deepStrictEqual(readLock().streams['treatment-fertility'], { pair: 'Procedure', parent: 'treatment', items: [] });
+      // body temperature (plan 133): one grant root, the basal stream and its flag locked under it
+      assert.deepStrictEqual(readLock().streams['body-temperature'], { pair: 'Observation|vital-signs', parent: 'body', items: ['body-temperature'] });
+      assert.deepStrictEqual(readLock().streams['body-temperature-basal'], { pair: 'Observation|vital-signs', parent: 'body-temperature', items: ['body-temperature-basal'] });
+      assert.deepStrictEqual(readLock().streams['body-temperature-basal-disturbance'], { pair: 'Observation|vital-signs', parent: 'body-temperature-basal', items: ['body-temperature-basal-disturbance'] });
       assert.deepStrictEqual(mergeLock(readLock(), lockEntries(itemsById, fhirScopes)), readLock(), 'definitions/fhir/scopes.lock.json is not up to date');
       assert.ok(!JSON.stringify(fhirScopes).includes(UNMAPPED));
     });

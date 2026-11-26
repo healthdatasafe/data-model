@@ -135,6 +135,11 @@
       "text": "Pele",
       "status": "draft"
     },
+    "[id=\"body\"]/children[id=\"body-temperature\"]/description": {
+      "en": "Includes basal (waking) temperatures recorded for fertility charting, and whether a reading was disturbed.",
+      "text": "Inclui as temperaturas basais (ao acordar) registradas para o acompanhamento da fertilidade, e se uma medição foi alterada.",
+      "status": "draft"
+    },
     "[id=\"body\"]/children[id=\"body-urine\"]/label": {
       "en": "Urine",
       "text": "Urina",
