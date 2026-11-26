@@ -2,8 +2,19 @@
 
 ## [Unreleased]
 
-Additive in the pack.
+## [4.38.0] - 2026-11-26
 
+Plan 142: the research opt-in and the eligibility test of a study. Additive in the pack.
+
+- **`consent/record-v1` action `declined`**: the user was asked an optional choice and said no. CONSENTS.md § Optional
+  choices: a document the account does not depend on (the research opt-in first). Yes is `given`; no is `withdrawn`
+  when the latest event is `given`, else `declined`; only a latest `given` at or above `materialSince` means yes, a no is
+  never asked again, and no event means not asked yet. Method is always `button`. `withdrawn` is no longer reserved: it
+  is written for an optional choice, never for `health-processing` or `us-chd-consent`.
+- `consent-record` description names the choices (en, fr, es; the it and pt-BR drafts follow the new English).
+- **Older readers stay safe only through the manifest kind**: an optional choice is never published under `contract`,
+  `consent` or `notice`, so an account app older than this release drops the document and never reads its events.
+  Published as `consent`, that app would hold a user who said no at the sign-in gate and offer deletion for a `withdrawn`.
 - **Eligibility test of a study:** eventType `research/eligibility-band-v1` (`requestId` and `band`, `0-49` or `50-100`,
   closed) and the published schema `json-schemas/hds-eligibility-request.json` (criteria with a requester-set weight, a
   declarative rule, an optional question). No item. documentation/ELIGIBILITY.md; tests `[ELIG-*]`.
@@ -13,17 +24,7 @@ Additive in the pack.
   `research-topic` vocabulary, uncoded, closed). `notification/alert-cmc` kinds `research-invitation` (`studyId`) and
   `research-eligibility-request` (`requestId`), ids only, schema `json-schemas/hds-research-alert.json`. Tests `[RES-*]`.
 - **Before the first write** to `hds-research`, consumers honour its marker as for `genetics`, and existing `*` accesses
-  on each core get the `level: none` mask. Needs CONSENTS.md § Optional choices (`declined`) released first.
-
-- **`consent/record-v1` action `declined`**: the user was asked an optional choice and said no. CONSENTS.md § Optional
-  choices: a document the account does not depend on (the research opt-in first). Yes is `given`; no is `withdrawn`
-  when the latest event is `given`, else `declined`; only a latest `given` at or above `materialSince` means yes, a no is
-  never asked again, and no event means not asked yet. Method is always `button`. `withdrawn` is no longer reserved: it
-  is written for an optional choice, never for `health-processing` or `us-chd-consent`.
-- `consent-record` description names the choices (en, fr, es).
-- **Older readers stay safe only through the manifest kind**: an optional choice is never published under `contract`,
-  `consent` or `notice`, so an account app older than this release drops the document and never reads its events.
-  Published as `consent`, that app would hold a user who said no at the sign-in gate and offer deletion for a `withdrawn`.
+  on each core get the `level: none` mask.
 
 ## [4.37.0] - 2026-11-25
 
