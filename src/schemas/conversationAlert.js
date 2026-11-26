@@ -26,7 +26,7 @@ const hdsConversationAlert = {
         description: 'Counts only, never what was counted.',
         type: 'object',
         additionalProperties: false,
-        properties: { proposed: COUNT, questions: COUNT, keptAside: COUNT, dropped: COUNT }
+        properties: { proposed: COUNT, questions: COUNT, keptAside: COUNT, dropped: COUNT, notRead: COUNT }
       },
       errorCode: { ...CODE, description: 'With status error: a code, never a message.' }
     }),

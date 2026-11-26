@@ -2,11 +2,62 @@
 
 ## [Unreleased]
 
-Additive.
+Additive in the pack.
 
 - **Eligibility test of a study:** eventType `research/eligibility-band-v1` (`requestId` and `band`, `0-49` or `50-100`,
   closed) and the published schema `json-schemas/hds-eligibility-request.json` (criteria with a requester-set weight, a
   declarative rule, an optional question). No item, no stream. documentation/ELIGIBILITY.md; tests `[ELIG-*]`.
+
+- **`consent/record-v1` action `declined`**: the user was asked an optional choice and said no. CONSENTS.md § Optional
+  choices: a document the account does not depend on (the research opt-in first). Yes is `given`; no is `withdrawn`
+  when the latest event is `given`, else `declined`; only a latest `given` at or above `materialSince` means yes, a no is
+  never asked again, and no event means not asked yet. Method is always `button`. `withdrawn` is no longer reserved: it
+  is written for an optional choice, never for `health-processing` or `us-chd-consent`.
+- `consent-record` description names the choices (en, fr, es).
+- **Older readers stay safe only through the manifest kind**: an optional choice is never published under `contract`,
+  `consent` or `notice`, so an account app older than this release drops the document and never reads its events.
+  Published as `consent`, that app would hold a user who said no at the sign-in gate and offer deletion for a `withdrawn`.
+
+## [4.37.0] - 2026-11-25
+
+Plan 138. Additive in the pack: more languages in the text maps and one new top-level key, `l10n`; no key, path or English
+changed.
+
+- **Brazilian Portuguese (`pt-BR`), Italian (`it`) and Spanish (`es`)**, machine drafts not reviewed yet, in
+  `definitions/l10n/{locale}.json`: 3,123 `pt-BR`, 3,077 `it`, 3,111 `es` texts (streams, items, eventTypes, vocabularies,
+  document kinds, app streams). The texts of the frozen converter packs (cervical fluid, mood) are in the new
+  `converters/{key}/l10n-{locale}.json`, which hds-lib 2.70.0 and later read. `pack.json` grows from 1.13 MB to 1.39 MB (151 KB
+  to 199 KB gzip).
+- **A draft may be published when marked** (L10N.md): an entry is reviewed (`reviewedBy`, `reviewedOn`) or `"status": "draft"`
+  with no reviewer; the build refuses any other shape. A reviewed text replaces the draft.
+- **`pack.json` `l10n`**: `{ "<locale>": { "status": "draft" | "reviewed" } }` for the locales of `definitions/l10n`, `draft`
+  when one of its texts is; here `pt-BR`, `it` and `es` are `draft`. The converter sidecars carry the same `status`. A text map
+  itself does not mark drafts: `{ "en", "it" }` reads the same either way, so a reader that must know looks at `l10n`.
+- **`definitions/l10n/do-not-translate.json`**: the 58 texts of licensed or validated questionnaires on nine items (the
+  EQ-5D-5L dimensions, alcohol frequency, pain severity, mental distress, self-rated and general health), left in English in
+  these languages until an official wording is given. A translation of one is reviewed and names its `official` source:
+  the build refuses a draft there, and an `official` that is not a non-empty string.
+- **To review first**, with an instructor of each method: the standardised charting vocabularies (Creighton, Billings,
+  Sensiplan, Marquette, Justisse) and the vendor mood labels are machine drafts like the rest, and their wording is the
+  method's own. Method names stay in English (STM / TCOYF, Bigelow Mucus Score), as the other method names.
+- **Documentation: a lifetime tally in FHIR** (plan 133, no pack change): FHIR-MAPPING.md § A lifetime tally, TREATMENT-PROCEDURE.md
+  § FHIR. An event carrying `count` is an Observation of the count (hds-fhir-js after 0.14.0); as before, never a Procedure.
+
+## [4.36.0] - 2026-11-25
+
+Plan 128 (D59). Additive in the pack.
+
+- **A dated grid (a paper cycle chart), CONVERSATION.md § A dated grid.** `grid` (`row`, `column`) on a proposed value: its box. Reason
+  `not-read` on an `unmapped` one: the contact sees writing in a box and proposes nothing from it; `printed.value` is then absent
+  (the schema asks for it with any other reason or none), `grid` and `anchor` required. `task-status.counts.notRead`. Question code
+  `which-row-date`, with `context.grid`: the day of one box of a row, with its year; the values of the row are proposed after it,
+  each with its day. On such a document no `which-date`, no value without a day, and her app takes the day from the proposal only.
+- **`proposal.content` may be `null`**: an item whose eventType has no content (`activity/plain`: `fertility-cycles-peak-day`,
+  `body-vulva-bleeding-browndark`) can be proposed. It could not: the schema asked for a number or an object.
+- **A value she already has**: the value of a convertible item (cervical fluid, mood) is compared by its method, reading and annotations, not by its
+  vectors or versions; `null` equals absent. As hds-lib-js#94.
+- An app older than 4.36.0 shows a `not-read` box as not saved and `which-row-date` as a question it cannot answer (R8): the
+  work on such a document does not reach `done` there. hds-lib mirrors the code, the count and the checks, and must follow at once (CNV10).
 
 ## [4.35.0] - 2026-11-25
 
