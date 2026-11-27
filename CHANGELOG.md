@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.48.0] - 2026-11-27
 
 ### Added: SMART scope classes for filed documents, `pack.fhirScopeClasses` (plan 133)
 
