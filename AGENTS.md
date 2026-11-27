@@ -85,11 +85,15 @@ newest `models/<method>/vM.json` with M ≤ N, each tagged `modelVersion`. The i
   refuses a build that changes a deployed pack. So any method change (a label, a new option, a vector, a new method) is
   a new model version **and** a new converter version of the same name, never an edit of a published file; the build
   refuses a model version with no converter version. Model versions are sparse: a method's next version may be v3.
+- **A new pack starts with no translations**: they are keyed by the published file name, and the build skips a pack
+  without a block silently. Copy the previous pack's block in `definitions/l10n/{locale}.json` to
+  `converters/<key>/pack-vN.json` (then translate what the new version adds), or es / it / pt-BR readers get English.
 - A new converter version keeps the dimensions and weights of the previous ones unless it says otherwise, so vectors
   stored under `engineVersion` v0 and v1 are comparable. `source.modelVersion` names the method file that produced the
   code (`models/<source.key>/<modelVersion>.json`).
 - An item's `converter-engine.version` is the engine's initial version, not the pack selector.
-- Creighton v1 / converter v1 (plan 131) is the first case; hds-lib supports it from 2.60.0.
+- Creighton v1 / converter v1 (plan 131) is the first case; hds-lib supports it from 2.60.0. Creighton v2 / converter
+  v2 (plan 136) adds only `notFor: ['0']` on the frequency annotation; hds-lib supports it from 2.77.0.
 
 ### 6b. ⚑ `description` is short, and written for the end user
 
