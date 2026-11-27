@@ -1,6 +1,6 @@
 {
-  "version": "4.42.0",
-  "publicationDate": "2026-11-27T11:27:21.398Z",
+  "version": "4.43.0",
+  "publicationDate": "2026-11-27T12:34:25.021Z",
   "streams": [
     {
       "id": "activity",
@@ -1381,6 +1381,21 @@
           "parentId": "encounter"
         }
       ]
+    },
+    {
+      "id": "entry-corrections",
+      "name": "Corrections from your contacts",
+      "parentId": null,
+      "label": {
+        "en": "Corrections from your contacts",
+        "fr": "Corrections de vos contacts",
+        "es": "Correcciones de sus contactos"
+      },
+      "description": {
+        "en": "What a professional you share data with says one of your entries should have been, and why. Your entries are never changed: you decide whether to apply a correction.",
+        "fr": "Ce qu'un professionnel avec qui vous partagez des données dit qu'une de vos saisies aurait dû être, et pourquoi. Vos saisies ne sont jamais modifiées : vous décidez d'appliquer ou non une correction.",
+        "es": "Lo que un profesional con quien comparte datos dice que uno de sus registros debería haber sido, y por qué. Sus registros nunca se modifican: usted decide si aplica una corrección."
+      }
     },
     {
       "id": "family",
@@ -17245,6 +17260,24 @@
       },
       "repeatable": "unlimited",
       "devNotes": "One event per organization (a department is its own organization), reused by visits (serviceProvider), practitioners (organizations) and documents (authors). Forms enter the name as printed; importers also write the identifiers. Look an organization up by clientData.hdsGln, then hdsZsr, then the writer's own sourceKey before creating one. No specialty field: Organization has none. No fhir block yet (Organization needs a renderer first). See documentation/ENCOUNTER.md."
+    },
+    "entry-correction": {
+      "version": "v1",
+      "type": "system",
+      "label": {
+        "en": "Correction of an entry",
+        "fr": "Correction d'une saisie",
+        "es": "Corrección de un registro"
+      },
+      "description": {
+        "en": "A professional says one of your entries should have been different, should exist or should not exist, and why.",
+        "fr": "Un professionnel indique qu'une de vos saisies aurait dû être différente, devrait exister ou ne devrait pas exister, et pourquoi.",
+        "es": "Un profesional indica que uno de sus registros debería haber sido diferente, debería existir o no debería existir, y por qué."
+      },
+      "streamId": "entry-corrections",
+      "eventType": "correction/entry-v1",
+      "repeatable": "unlimited",
+      "devNotes": "Written by a contact on its own corr- child of entry-corrections (one per relationship, not in the model), never on the root and never on the corrected entry's stream. Never updated: superseded by a new correction naming it in replaces, withdrawn by trashing it. A grant on this item is a grant on the root and reads every contact's corrections. The entry itself is never changed by the contact; she applies a correction with her own app. Readers resolve a corr- child to this item. See documentation/CORRECTIONS.md."
     },
     "family-children-count": {
       "version": "temporary",
@@ -37157,6 +37190,159 @@
             }
           }
         }
+      },
+      "correction/entry-v1": {
+        "description": "A professional's correction of one entry of the person's record: a contact holding a CMC relationship (an instructor, a clinician) says that an entry should have been different (change), should exist (add) or should not exist (remove), with an optional comment. The entry itself is never changed by the contact: she applies a correction with her own app if she wants. Written by the contact on its own corr- child of entry-corrections, never updated (superseded by a new one naming it in replaces, withdrawn by trashing it). event.time is the corrected entry's time (for add, the moment the missing entry is about), so a timeline places it next to the entry; readers join it to the entry by entryId, never by time. Every event id in content is mirrored in clientData.related.<eventId> (documentation/PROVENANCE.md). Conditions the schema cannot express (which fields go with which kind, the item checks) are in documentation/CORRECTIONS.md.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "authorRole",
+          "itemKey"
+        ],
+        "properties": {
+          "kind": {
+            "description": "change: the entry entryId should have been corrected. add: there is no entry, one should exist (corrected). remove: the entry entryId should not exist.",
+            "type": "string",
+            "enum": [
+              "change",
+              "add",
+              "remove"
+            ]
+          },
+          "authorRole": {
+            "description": "The author's role, declared by the writer: a role, never an identity. Labels and SNOMED CT occupations in the vocabulary professional-role (definitions/vocabularies/professional.yaml). A reader reads a role it does not know as other.",
+            "type": "string",
+            "enum": [
+              "physician",
+              "midwife",
+              "nurse",
+              "pharmacist",
+              "psychologist",
+              "dietitian",
+              "physiotherapist",
+              "health-educator",
+              "other"
+            ]
+          },
+          "itemKey": {
+            "description": "The item of the published pack the entry is, or should be, on (not an app's overload item): not a system or attachments item, not under an explicitGrantOnly root.",
+            "type": "string",
+            "maxLength": 128,
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "entryId": {
+            "description": "With change and remove: the id of the corrected event. Mirrored in clientData.related.<entryId>.",
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "entryModified": {
+            "description": "With change and remove: the entry's modified (Unix seconds) as the writer saw it, so a reader tells that the entry changed since.",
+            "type": "number"
+          },
+          "corrected": {
+            "description": "What the entry should have been, the shape of a conversation proposal (documentation/CONVERSATION.md): type and content together (content valid against type, type an eventType of itemKey), time when the entry belongs on another moment (change only). At least one of type and time; with add, type and content.",
+            "type": "object",
+            "additionalProperties": false,
+            "anyOf": [
+              {
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "required": [
+                  "time"
+                ]
+              }
+            ],
+            "dependencies": {
+              "type": [
+                "content"
+              ],
+              "content": [
+                "type"
+              ]
+            },
+            "properties": {
+              "type": {
+                "description": "The eventType id.",
+                "type": "string",
+                "maxLength": 128,
+                "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"
+              },
+              "content": {
+                "description": "The content as it would be stored, valid against type.",
+                "type": [
+                  "number",
+                  "string",
+                  "boolean",
+                  "object",
+                  "array",
+                  "null"
+                ]
+              },
+              "time": {
+                "description": "The time the entry should have, Unix seconds (a day: 12:00 UTC with clientData.hdsTimePrecision day, PARTIAL-DATES.md).",
+                "type": "number"
+              },
+              "clientData": {
+                "description": "The clientData keys of the corrected entry that the model defines and a correction may set (PARTIAL-DATES.md, MENSTRUAL-CYCLE.md, BLOOD-CHEMISTRY.md).",
+                "type": "object",
+                "additionalProperties": false,
+                "minProperties": 1,
+                "properties": {
+                  "hdsTimePrecision": {
+                    "type": "string",
+                    "enum": [
+                      "minute",
+                      "day",
+                      "month",
+                      "year"
+                    ]
+                  },
+                  "hdsBasis": {
+                    "type": "string",
+                    "enum": [
+                      "predicted",
+                      "confirmed",
+                      "auto",
+                      "manual"
+                    ]
+                  },
+                  "hdsComparator": {
+                    "type": "string",
+                    "enum": [
+                      "<",
+                      "<=",
+                      ">",
+                      ">="
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "comment": {
+            "description": "The author's explanation, shown to every reader of the correction. Markdown when the event's clientData.hdsTextFormat is text/markdown (PROVENANCE.md), else plain text.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "about": {
+            "description": "The file/xds-v1 document the correction was read from (a chart photo). Mirrored in clientData.related.<about>; with it, clientData.hdsSourceAnchor may point at the box, its eventId = about.",
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "replaces": {
+            "description": "The id of an earlier correction that this one replaces: on the same corr- child, with the same entryId (for add, the same itemKey). Mirrored in clientData.related.<replaces>.",
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          }
+        }
       }
     },
     "extras": {
@@ -39756,6 +39942,87 @@
             "pt-BR": "Concluída"
           },
           "fhir": "completed"
+        }
+      }
+    },
+    "professional-role": {
+      "binds": [
+        {
+          "eventType": "correction/entry-v1",
+          "path": "authorRole"
+        }
+      ],
+      "values": {
+        "physician": {
+          "label": {
+            "en": "Physician",
+            "fr": "Médecin",
+            "es": "Médico"
+          },
+          "snomed": "309343006"
+        },
+        "midwife": {
+          "label": {
+            "en": "Midwife",
+            "fr": "Sage-femme",
+            "es": "Matrona"
+          },
+          "snomed": "309453006"
+        },
+        "nurse": {
+          "label": {
+            "en": "Nurse",
+            "fr": "Infirmier ou infirmière",
+            "es": "Enfermero o enfermera"
+          },
+          "snomed": "106292003"
+        },
+        "pharmacist": {
+          "label": {
+            "en": "Pharmacist",
+            "fr": "Pharmacien ou pharmacienne",
+            "es": "Farmacéutico o farmacéutica"
+          },
+          "snomed": "46255001"
+        },
+        "psychologist": {
+          "label": {
+            "en": "Psychologist",
+            "fr": "Psychologue",
+            "es": "Psicólogo o psicóloga"
+          },
+          "snomed": "59944000"
+        },
+        "dietitian": {
+          "label": {
+            "en": "Dietitian",
+            "fr": "Diététicien ou diététicienne",
+            "es": "Dietista"
+          },
+          "snomed": "159033005"
+        },
+        "physiotherapist": {
+          "label": {
+            "en": "Physiotherapist",
+            "fr": "Physiothérapeute",
+            "es": "Fisioterapeuta"
+          },
+          "snomed": "36682004"
+        },
+        "health-educator": {
+          "label": {
+            "en": "Health educator",
+            "fr": "Éducateur ou éducatrice en santé",
+            "es": "Educador o educadora en salud"
+          },
+          "snomed": "409974004"
+        },
+        "other": {
+          "label": {
+            "en": "Other",
+            "fr": "Autre",
+            "es": "Otro"
+          }
         }
       }
     },

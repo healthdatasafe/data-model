@@ -1380,6 +1380,21 @@
     ]
   },
   {
+    "id": "entry-corrections",
+    "name": "Corrections from your contacts",
+    "parentId": null,
+    "label": {
+      "en": "Corrections from your contacts",
+      "fr": "Corrections de vos contacts",
+      "es": "Correcciones de sus contactos"
+    },
+    "description": {
+      "en": "What a professional you share data with says one of your entries should have been, and why. Your entries are never changed: you decide whether to apply a correction.",
+      "fr": "Ce qu'un professionnel avec qui vous partagez des données dit qu'une de vos saisies aurait dû être, et pourquoi. Vos saisies ne sont jamais modifiées : vous décidez d'appliquer ou non une correction.",
+      "es": "Lo que un profesional con quien comparte datos dice que uno de sus registros debería haber sido, y por qué. Sus registros nunca se modifican: usted decide si aplica una corrección."
+    }
+  },
+  {
     "id": "family",
     "name": "Family",
     "label": {
