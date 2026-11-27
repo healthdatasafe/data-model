@@ -27,7 +27,8 @@ module.exports = {
   checkUnitConversions,
   checkLoincRefs,
   checkFhirMapping: fhir.checkFhirMapping,
-  fhirScopes: null
+  fhirScopes: null,
+  fhirScopeClasses: fhir.fhirScopeClasses
 };
 
 /**
@@ -69,8 +70,9 @@ for (const file of fs.readdirSync(streamsFilePath)) {
     }
   }
 }
-// FHIR checks that need every item: companions, the one-pair-per-granted-subtree invariant, the scope lock and the
-// import match keys. The result is the published SMART scope grant table (pack.fhirScopes).
+// FHIR checks that need every item: companions, the one-pair-per-granted-subtree invariant, the scope lock, the scope
+// classes and the import match keys. The result is the published SMART scope grant table (pack.fhirScopes); the
+// classes (pack.fhirScopeClasses) are published beside it.
 module.exports.fhirScopes = fhir.checkFhirScopes(itemsById);
 
 /**
@@ -277,7 +279,7 @@ function toBePublished () {
     type: 'json',
     content: itemsById,
     includeInPack: 'items'
-  }, ...fhir.toBePublished(module.exports.fhirScopes)];
+  }, ...fhir.toBePublished(module.exports.fhirScopes, module.exports.fhirScopeClasses)];
 }
 
 function checkItemVsEvenType (key, item, eventType) {

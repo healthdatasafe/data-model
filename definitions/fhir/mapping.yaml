@@ -38,11 +38,20 @@ categories:
     problem-list-item: { system: http://terminology.hl7.org/CodeSystem/condition-category, code: problem-list-item, display: Problem List Item }
     encounter-diagnosis: { system: http://terminology.hl7.org/CodeSystem/condition-category, code: encounter-diagnosis, display: Encounter Diagnosis }
     health-concern: { system: http://hl7.org/fhir/us/core/CodeSystem/condition-category, code: health-concern, display: Health Concern }
-  # The one key of the US Core DocumentReference category value set (4.2.0, plan 115 GAP H-8): every HDS document is
-  # a clinical note in this sense, whatever its XDS class (which rides as a second `category` coding). A grant on
-  # `DocumentReference|clinical-note` covers every document, as a grant on `documents` does.
+  # `clinical-note` is the one key of the US Core DocumentReference category value set (4.2.0, plan 115 GAP H-8): the
+  # category of the `document` item, so every HDS document carries it, whatever its XDS class (which rides as another
+  # `category` coding). Its scope key `DocumentReference|clinical-note` is granted on the `documents` root and reads
+  # every document, filed or not (perki, 2026-11-27).
+  # The three `filed-*` keys (HDS code system document-filing, plan 133) are scope classes, never an item block's
+  # category: each names one filing stream (definitions/fhir/scope-classes.yaml, published as pack.fhirScopeClasses), so
+  # `patient/DocumentReference.rs?category=filed-clinical` reads the documents filed in `documents-clinical` and
+  # nothing else. A filed document carries the coding of its filing stream beside `clinical-note` (an insurance paper
+  # `filed-administrative` too, as a grant on `documents-admin` reads it). See documentation/FHIR-MAPPING.md § Scope classes.
   DocumentReference:
     clinical-note: { system: http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category, code: clinical-note, display: Clinical Note }
+    filed-clinical: { system: https://hds.ngo/fhir/CodeSystem/document-filing, code: filed-clinical, display: Filed as clinical }
+    filed-administrative: { system: https://hds.ngo/fhir/CodeSystem/document-filing, code: filed-administrative, display: Filed as administrative }
+    filed-insurance: { system: https://hds.ngo/fhir/CodeSystem/document-filing, code: filed-insurance, display: Filed as insurance }
 
 # Code-system label used in datasets-service content (`codes[].system`) → canonical URI.
 # One label per URI, so an imported coding maps back to exactly one label.

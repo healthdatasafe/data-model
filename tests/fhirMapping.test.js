@@ -6,7 +6,7 @@ const Ajv = require('ajv');
 describe('[FHIR] item fhir blocks (plan 115)', () => {
   const { itemsById, fhirScopes, toBePublished } = require('../src/items');
   const { checkItem, toBePublished: schemasToBePublished } = require('../src/schemas/items');
-  const { checkMappingTable, checkFhirMapping, checkFhirScopes, computeFhirScopes, readLock, emptyLock, lockEntries, mergeLock, ucumKey, ucumUnitKey, fhirMapping, UNMAPPED, PATIENT_ELEMENTS } = require('../src/fhir');
+  const { checkMappingTable, checkScopeClassTable, checkFhirMapping, checkFhirScopes, checkScopeClasses, computeFhirScopes, readLock, emptyLock, lockEntries, lockClassEntries, mergeLock, ucumKey, ucumUnitKey, fhirMapping, fhirScopeClasses, UNMAPPED, PATIENT_ELEMENTS, LOCK_FORMAT, LOCK_FILE_PATH } = require('../src/fhir');
 
   const MAPPED = ['body-weight', 'body-blood-pressure', 'body-heart-rate', 'lifestyle-tobacco-smoking', 'condition-coded', 'wellbeing-general-health'];
   const item = (k) => structuredClone(itemsById[k]);
@@ -1424,7 +1424,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         t.categories.Observation[key] = c;
         return t;
       };
-      const fresh = { system: 'http://example.org/cat', code: 'x', display: 'X' };
+      const fresh = { system: 'http://example.org/cat', code: 'new-cat', display: 'X' };
       checkMappingTable(withCategory('new-cat', fresh));
       for (const bad of ['a|b', 'a b', 'Vital', '-a', '']) {
         assert.throws(() => checkMappingTable(withCategory(bad, fresh)), /a category key is lowercase letters, digits and dashes/, bad);
@@ -1434,6 +1434,21 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => checkMappingTable(badType), /"observation\|x" is not a FHIR resourceType name/);
       const dup = structuredClone(fhirMapping.categories.Observation['vital-signs']);
       assert.throws(() => checkMappingTable(withCategory('vitals', dup)), /categories Observation\/vital-signs and Observation\/vitals share the coding/);
+    });
+
+    it('[FHIR-MAP-16b] the key is the code, and one code has one system per resourceType (plan 133, F11, H4)', () => {
+      const withCategory = (key, c) => {
+        const t = structuredClone(fhirMapping);
+        t.categories.DocumentReference[key] = c;
+        return t;
+      };
+      // every key of the model's table is its code
+      for (const [type, table] of Object.entries(fhirMapping.categories)) {
+        for (const [key, c] of Object.entries(table)) assert.strictEqual(c.code, key, `${type}/${key}`);
+      }
+      assert.throws(() => checkMappingTable(withCategory('filed-other', { system: 'https://hds.ngo/fhir/CodeSystem/document-filing', code: 'other', display: 'X' })), /category DocumentReference\/filed-other: the key must be the code \("other"\)/);
+      // `filed-clinical` again, under another system: a scope `?category=filed-clinical` could not tell them apart
+      assert.throws(() => checkMappingTable(withCategory('other-key', { system: 'http://example.org/other', code: 'filed-clinical', display: 'X' })), /categories DocumentReference\/filed-clinical and DocumentReference\/other-key share the code "filed-clinical" under two systems/);
     });
   });
 
@@ -1629,12 +1644,13 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
     it('[FHIR-SCOPE-8] the lock records every stream a grant reaches: pair, parent, items', () => {
       const items = { a: it_('body-a', obs('vital-signs', 'a')), f: it_('body-a-flag', { companionOf: 'a' }), b: it_('body-b', obs('survey', 'b')) };
       assert.deepStrictEqual(lockOf(items), {
-        formatVersion: 2,
+        formatVersion: 3,
         streams: {
           'body-a': { pair: 'Observation|vital-signs', parent: 'body', items: ['a'] },
           'body-a-flag': { pair: 'Observation|vital-signs', parent: 'body-a', items: ['f'] },
           'body-b': { pair: 'Observation|survey', parent: 'body', items: ['b'] }
         },
+        classes: {},
         reviewed: { items: {}, streams: {} }
       });
       run(items, lockOf(items));
@@ -1734,8 +1750,12 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => run({ a: it_('body-a', obs('vital-signs', 'a'), { deprecated: true }), a2: it_('body-a', obs('vital-signs', 'a')) }, lock), /item "a2" is new under the published stream "body-a"/);
     });
 
-    it('[FHIR-SCOPE-17] an old-format lock is refused', () => {
-      assert.throws(() => checkFhirScopes({}, { roots: tree, lock: { 'Observation|survey': ['x'] } }), /formatVersion undefined, this build reads 2/);
+    it('[FHIR-SCOPE-17] an old-format lock is refused, format 2 (before the classes) included; an older build refuses format 3', () => {
+      assert.throws(() => checkFhirScopes({}, { roots: tree, lock: { 'Observation|survey': ['x'] } }), /formatVersion undefined, this build reads 3/);
+      assert.throws(() => checkFhirScopes({}, { roots: tree, lock: { formatVersion: 2, streams: {}, reviewed: { items: {}, streams: {} } } }), /formatVersion 2, this build reads 3/);
+      // a build reading format 2 compares the version exactly (`checkedLock`), so it refuses the committed lock
+      assert.strictEqual(LOCK_FORMAT, 3);
+      assert.strictEqual(JSON.parse(fs.readFileSync(LOCK_FILE_PATH, 'utf-8')).formatVersion, 3);
     });
 
     it('[FHIR-SCOPE-12] Patient elements: a bare scope key, one active item per element, never a companion parent', () => {
@@ -1756,14 +1776,21 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         c: { pair: 'Condition|problem-list-item', parent: null, items: ['c'] }
       });
       assert.deepStrictEqual(merged, {
-        formatVersion: 2,
+        formatVersion: 3,
         streams: {
           c: { pair: 'Condition|problem-list-item', parent: null, items: ['c'] },
           x: { pair: 'Observation|survey', parent: null, items: ['i', 'j'] }
         },
+        classes: {},
         reviewed
       });
       assert.deepStrictEqual(mergeLock(merged, {}), merged);
+      // classes: added, never removed, never rewritten (stream and since stay as first locked)
+      const withClass = mergeLock(merged, {}, lockClassEntries({ 'A|b': 'x' }, '2026-11-27'));
+      assert.deepStrictEqual(withClass.classes, { 'A|b': { stream: 'x', since: '2026-11-27' } });
+      const later = mergeLock(withClass, {}, lockClassEntries({ 'A|a': 'c', 'A|b': 'y' }, '2027-01-01'));
+      assert.deepStrictEqual(later.classes, { 'A|a': { stream: 'c', since: '2027-01-01' }, 'A|b': { stream: 'x', since: '2026-11-27' } });
+      assert.deepStrictEqual(mergeLock(later, {}).classes, later.classes);
     });
 
     it('[FHIR-SCOPE-10] import keys are unique across active items', () => {
@@ -1922,16 +1949,189 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.ok(!JSON.stringify(fhirScopes).includes(UNMAPPED));
     });
 
-    it('[FHIR-SCOPE-18] CI: the published fhirScopes is contained in the lock, each root under its pair', () => {
+    it('[FHIR-SCOPE-18] CI: the published fhirScopes and fhirScopeClasses are contained in the lock, each root under its pair, each class with its stream', () => {
       const lock = readLock();
-      const contained = (table) => {
+      const contained = (l, table, classes) => {
         for (const [pair, roots] of Object.entries(table)) {
-          for (const root of roots) assert.strictEqual(lock.streams[root]?.pair, pair, `grant root "${root}" of ${pair} is not in the lock under that pair`);
+          for (const root of roots) assert.strictEqual(l.streams[root]?.pair, pair, `grant root "${root}" of ${pair} is not in the lock under that pair`);
         }
+        for (const [key, stream] of Object.entries(classes)) assert.strictEqual(l.classes[key]?.stream, stream, `class "${key}" on stream "${stream}" is not in the lock with that stream`);
       };
-      contained(fhirScopes);
+      contained(lock, fhirScopes, fhirScopeClasses);
       const p = path.join(__dirname, '../dist/pack.json');
-      if (fs.existsSync(p)) contained(JSON.parse(fs.readFileSync(p, 'utf-8')).fhirScopes ?? {});
+      if (fs.existsSync(p)) {
+        const pack = JSON.parse(fs.readFileSync(p, 'utf-8'));
+        contained(lock, pack.fhirScopes ?? {}, pack.fhirScopeClasses ?? {});
+      }
+      // a class entry deleted from the lock by hand fails
+      const cut = structuredClone(lock);
+      delete cut.classes['DocumentReference|filed-clinical'];
+      assert.throws(() => contained(cut, fhirScopes, fhirScopeClasses), /class "DocumentReference\|filed-clinical" on stream "documents-clinical" is not in the lock with that stream/);
+    });
+  });
+
+  describe('[FHIR-CLASS] SMART scope classes: pack.fhirScopeClasses (plan 133, documents)', () => {
+    const CLASSES = {
+      'DocumentReference|filed-administrative': 'documents-admin',
+      'DocumentReference|filed-clinical': 'documents-clinical',
+      'DocumentReference|filed-insurance': 'documents-admin-insurance'
+    };
+    const obs = (category, code = '1') => ({ resourceType: 'Observation', category, code: coding(code), value: { kind: 'quantity', units: { 'mass/kg': 'kg' } }, profiles: {} });
+    const doc = (category = 'clinical-note') => ({ resourceType: 'DocumentReference', category, code: { from: 'content', field: 'type' }, profiles: {} });
+    const it_ = (streamId, fhir, extra = {}) => ({ streamId, ...(fhir ? { fhir } : {}), ...extra });
+    const tree = [
+      { id: 'docs', children: [{ id: 'docs-c' }, { id: 'docs-a', children: [{ id: 'docs-a-i' }] }] },
+      { id: 'body', children: [{ id: 'body-a', children: [{ id: 'body-a-flag' }] }] },
+      { id: 'other' }
+    ];
+    const classes = {
+      'DocumentReference|filed-administrative': 'docs-a',
+      'DocumentReference|filed-clinical': 'docs-c',
+      'DocumentReference|filed-insurance': 'docs-a-i'
+    };
+    const items = { d: it_('docs', doc()), a: it_('body-a', obs('vital-signs', 'a')) };
+    const grants = { 'DocumentReference|clinical-note': ['docs'], 'Observation|vital-signs': ['body-a'] };
+    const lockOf = (its = items, cls = classes, roots = tree) => mergeLock(emptyLock(), lockEntries(its, computeFhirScopes(its, roots).grants, roots), lockClassEntries(cls, '2026-11-27'));
+    const run = (its = items, lock = lockOf(), cls = classes, roots = tree) => checkFhirScopes(its, { roots, lock, classes: cls });
+
+    it('[FHIR-CLASS-1] the model: three filing classes, published apart; fhirScopes is unchanged and holds no class key', () => {
+      assert.deepStrictEqual(fhirScopeClasses, CLASSES);
+      assert.deepStrictEqual(Object.keys(fhirScopeClasses), Object.keys(CLASSES), 'sorted keys');
+      assert.deepStrictEqual(require('../src/items').fhirScopeClasses, CLASSES);
+      // fhirScopes as before plan 133's classes: the one documents key on the root, nothing else touched ([FHIR-SCOPE-11])
+      assert.deepStrictEqual(fhirScopes['DocumentReference|clinical-note'], ['documents']);
+      for (const key of Object.keys(CLASSES)) assert.strictEqual(fhirScopes[key], undefined, key);
+      assert.deepStrictEqual(Object.keys(fhirScopes).filter((k) => k.startsWith('DocumentReference')), ['DocumentReference|clinical-note']);
+      // the codes, in the category table, under the HDS filing system
+      const system = 'https://hds.ngo/fhir/CodeSystem/document-filing';
+      assert.deepStrictEqual(fhirMapping.categories.DocumentReference, {
+        'clinical-note': { system: 'http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category', code: 'clinical-note', display: 'Clinical Note' },
+        'filed-clinical': { system, code: 'filed-clinical', display: 'Filed as clinical' },
+        'filed-administrative': { system, code: 'filed-administrative', display: 'Filed as administrative' },
+        'filed-insurance': { system, code: 'filed-insurance', display: 'Filed as insurance' }
+      });
+      // the `document` block is untouched: an older renderer keeps rendering documents (F3)
+      assert.deepStrictEqual(Object.keys(itemsById.document.fhir), ['resourceType', 'category', 'code', 'profiles']);
+      assert.strictEqual(itemsById.document.fhir.category, 'clinical-note');
+      // published beside fhirScopes
+      const byPack = Object.fromEntries(toBePublished().filter((f) => f.includeInPack).map((f) => [f.includeInPack, f]));
+      assert.deepStrictEqual(byPack.fhirScopeClasses.content, CLASSES);
+      assert.strictEqual(byPack.fhirScopeClasses.path + byPack.fhirScopeClasses.filename, './fhir/scope-classes.json');
+      assert.deepStrictEqual(byPack.fhirScopes.content, fhirScopes);
+    });
+
+    it('[FHIR-CLASS-2] the model\'s lock holds each class with its stream, each stream locked under DocumentReference|clinical-note', () => {
+      const lock = readLock();
+      assert.deepStrictEqual(Object.fromEntries(Object.entries(lock.classes).map(([k, e]) => [k, e.stream])), CLASSES, 'run npm run fhir:lock');
+      for (const [key, e] of Object.entries(lock.classes)) assert.match(e.since, /^\d{4}-\d{2}-\d{2}$/, key);
+      for (const stream of Object.values(CLASSES)) assert.strictEqual(lock.streams[stream].pair, 'DocumentReference|clinical-note', stream);
+      assert.deepStrictEqual(mergeLock(lock, lockEntries(itemsById, fhirScopes), lockClassEntries(fhirScopeClasses, '2099-01-01')), lock, 'definitions/fhir/scopes.lock.json is not up to date');
+    });
+
+    it('[FHIR-CLASS-3] the table: a key is ResourceType|code of the category table, its value one stream id', () => {
+      checkScopeClassTable(classes);
+      checkScopeClassTable({});
+      // a digit in the code too: hds-fhir-js's SCOPE_KEY_RE refuses it, so such a class could never be asked for
+      for (const bad of ['DocumentReference', 'documentReference|filed-clinical', 'DocumentReference|Filed', 'DocumentReference|filed|x', 'DocumentReference|filed-2', 'DocumentReference|filed2']) {
+        assert.throws(() => checkScopeClassTable({ [bad]: 'docs-c' }), /is not a class key "ResourceType\|category"/, bad);
+      }
+      assert.throws(() => checkScopeClassTable({ 'Patient|x': 'docs-c' }), /Patient has no category table/);
+      assert.throws(() => checkScopeClassTable({ 'DocumentReference|filed-other': 'docs-c' }), /"filed-other" is not a DocumentReference category/);
+      assert.throws(() => checkScopeClassTable({ 'DocumentReference|filed-clinical': '' }), /must name one stream id/);
+      assert.throws(() => checkScopeClassTable({ 'DocumentReference|filed-clinical': ['docs-c'] }), /must name one stream id/);
+      assert.throws(() => checkScopeClassTable([]), /the table is class key → stream id/);
+      // one class key per stream: a class reads exactly one stream, and one stream is read by one class
+      assert.throws(() => checkScopeClassTable({ 'DocumentReference|filed-clinical': 'docs-c', 'DocumentReference|filed-insurance': 'docs-c' }), /"DocumentReference\|filed-insurance" reads stream "docs-c", already read by "DocumentReference\|filed-clinical": one class key per stream/);
+      // a key whose code is not the table's code (the table check refuses such a table first: belt and braces)
+      const t = structuredClone(fhirMapping);
+      t.categories.DocumentReference['filed-clinical'].code = 'clinical';
+      assert.throws(() => checkScopeClassTable({ 'DocumentReference|filed-clinical': 'docs-c' }, t), /the category's code is "clinical", not "filed-clinical"/);
+    });
+
+    it('[FHIR-CLASS-4] each class stream is a stream strictly below a grant root of the same resourceType', () => {
+      assert.deepStrictEqual(run(), grants, 'the classes change no grant');
+      const with1 = (stream) => ({ ...classes, 'DocumentReference|filed-clinical': stream });
+      assert.throws(() => run(items, lockOf(items, {}), with1('nope')), /fhir scope class "DocumentReference\|filed-clinical" \(stream "nope"\): no such stream/);
+      assert.throws(() => run(items, lockOf(items, {}), with1('docs')), /the stream is a grant root of DocumentReference\|clinical-note; a class reads a stream strictly below a grant root/);
+      assert.throws(() => run(items, lockOf(items, {}), with1('other')), /\(stream "other"\): the stream is not below a grant root of a DocumentReference key of fhirScopes$/);
+      assert.throws(() => run(items, lockOf(items, {}), with1('body-a-flag')), /the stream is not below a grant root of a DocumentReference key of fhirScopes \(it is below "body-a", granted for Observation\|vital-signs\)/);
+    });
+
+    it('[FHIR-CLASS-5] each class stream is locked under its grant root\'s pair; a class not published yet may wait for fhir:lock', () => {
+      const lock = lockOf();
+      const repaired = structuredClone(lock);
+      repaired.streams['docs-a'].pair = 'Observation|survey';
+      assert.throws(() => run(items, repaired), /class "DocumentReference\|filed-administrative" \(stream "docs-a"\): the stream is locked under Observation\|survey, not under DocumentReference\|clinical-note, the pair of its grant root "docs"/);
+      // a new grant root with its class, nothing locked yet: passes, and fhir:lock locks both
+      run(items, emptyLock());
+      assert.deepStrictEqual(lockOf().streams['docs-c'], { pair: 'DocumentReference|clinical-note', parent: 'docs', items: [] });
+      assert.deepStrictEqual(lockOf().classes['DocumentReference|filed-clinical'], { stream: 'docs-c', since: '2026-11-27' });
+    });
+
+    it('[FHIR-CLASS-6] no item on or under a class stream holds another pair; no item block carries a class category', () => {
+      // in a build the one-pair invariant refuses it first; checked here alone
+      const foreign = { ...items, x: it_('docs-a-i', obs('survey', 'x')) };
+      assert.throws(() => run(foreign, emptyLock()), /fhir scope invariant/);
+      assert.throws(() => checkScopeClasses(classes, foreign, grants, emptyLock(), tree), /class "DocumentReference\|filed-administrative" \(stream "docs-a"\): item "x" on stream "docs-a-i" is Observation\|survey, not DocumentReference\|clinical-note/);
+      assert.throws(() => checkScopeClasses(classes, { ...items, u: it_('docs-c') }, grants, emptyLock(), tree), /item "u" on stream "docs-c" is \(unmapped\)/);
+      // an item of the root's pair under the class stream is read by the root's grants too: fine
+      checkScopeClasses(classes, { ...items, y: it_('docs-c', doc(), { deprecated: true }) }, grants, emptyLock(), tree);
+      // a class category on an item block, anywhere
+      assert.throws(() => checkScopeClasses(classes, { ...items, e: it_('other', doc('filed-clinical')) }, grants, emptyLock(), tree), /class "DocumentReference\|filed-clinical" \(stream "docs-c"\): item "e" carries the category "filed-clinical"; a class category is never an item block's/);
+      assert.throws(() => checkScopeClasses(classes, { ...items, e: it_('other', { ...doc(), alsoMatchCategories: ['filed-insurance'] }) }, grants, emptyLock(), tree), /item "e" carries the category "filed-insurance"/);
+      // and the per-item check refuses it on the model's `document`
+      const d = item('document');
+      d.fhir.category = 'filed-clinical';
+      assert.throws(() => check(d, 'document'), /"filed-clinical" is a scope class category \(definitions\/fhir\/scope-classes.yaml\), never an item block's category/);
+      const d2 = item('document');
+      d2.fhir.alsoMatchCategories = ['filed-administrative'];
+      assert.throws(() => check(d2, 'document'), /"filed-administrative" is a scope class category/);
+    });
+
+    it('[FHIR-CLASS-7] the lock: a published class key never disappears nor changes stream; a new one is added', () => {
+      const lock = lockOf();
+      run(items, lock);
+      const { 'DocumentReference|filed-insurance': gone, ...fewer } = classes;
+      assert.ok(gone);
+      assert.throws(() => run(items, lock, fewer), /fhir scope lock: class "DocumentReference\|filed-insurance", published on stream "docs-a-i", is gone from definitions\/fhir\/scope-classes.yaml: a published class key is never removed/);
+      assert.throws(() => run(items, lock, { ...classes, 'DocumentReference|filed-insurance': 'docs-a' }), /class "DocumentReference\|filed-insurance", published on stream "docs-a-i", now reads stream "docs-a": a published class key never changes stream/);
+      // a class added later passes against the older lock
+      run(items, lockOf(items, fewer));
+      // the lock's class entries are checked for shape
+      assert.throws(() => run(items, { ...lock, classes: { 'DocumentReference|filed-clinical': { stream: 'docs-c' } } }), /class "DocumentReference\|filed-clinical" must read \{ "stream": "<stream id>", "since": "YYYY-MM-DD" \}/);
+    });
+
+    it('[FHIR-CLASS-8] a new stream or item under a class stream names the class keys that would read it', () => {
+      const lock = lockOf();
+      const added = [{ id: 'docs', children: [{ id: 'docs-c' }, { id: 'docs-a', children: [{ id: 'docs-a-i', children: [{ id: 'docs-a-i-new' }] }] }] }, tree[1], tree[2]];
+      assert.throws(() => run(items, lock, classes, added), /stream "docs-a-i-new" is new under the published stream "docs-a-i": every grant already issued for DocumentReference\|clinical-note and for the classes DocumentReference\|filed-administrative, DocumentReference\|filed-insurance would read it\. If a reader of DocumentReference\|clinical-note or of the classes DocumentReference\|filed-administrative, DocumentReference\|filed-insurance may see it, acknowledge/);
+      const beside = [{ id: 'docs', children: [{ id: 'docs-c' }, { id: 'docs-new' }, { id: 'docs-a', children: [{ id: 'docs-a-i' }] }] }, tree[1], tree[2]];
+      assert.throws(() => run(items, lock, classes, beside), /stream "docs-new" is new under the published stream "docs": every grant already issued for DocumentReference\|clinical-note would read it\. If a reader of DocumentReference\|clinical-note may see it/);
+      assert.throws(() => run({ ...items, n: it_('docs-c', doc(), { deprecated: true }) }, lock), /item "n" is new under the published stream "docs-c": every grant already issued for DocumentReference\|clinical-note and for the class DocumentReference\|filed-clinical would read it/);
+    });
+
+    it('[FHIR-CLASS-9] a class stream is not, holds no and sits under no explicitGrantOnly or consentOptIn stream', () => {
+      /** The test tree with `marks` ({ streamId: { consentOptIn, explicitGrantOnly } }) set on its streams. */
+      const marked = (marks) => {
+        const t = structuredClone(tree);
+        const visit = (n) => { Object.assign(n, marks[n.id] ?? {}); for (const c of n.children ?? []) visit(c); };
+        for (const r of t) visit(r);
+        return t;
+      };
+      const checkMarked = (marks, cls = classes) => checkScopeClasses(cls, items, grants, emptyLock(), marked(marks));
+      checkMarked({});
+      checkMarked({ 'body-a': { consentOptIn: true }, other: { explicitGrantOnly: true } });
+      checkMarked({ 'docs-c': { consentOptIn: false, explicitGrantOnly: false } });
+      // is
+      assert.throws(() => checkMarked({ 'docs-c': { explicitGrantOnly: true } }), /class "DocumentReference\|filed-clinical" \(stream "docs-c"\): the stream is explicitGrantOnly; a published class is never taken back/);
+      assert.throws(() => checkMarked({ 'docs-c': { consentOptIn: true } }), /\(stream "docs-c"\): the stream is consentOptIn/);
+      // sits under
+      assert.throws(() => checkMarked({ docs: { explicitGrantOnly: true } }), /class "DocumentReference\|filed-administrative" \(stream "docs-a"\): the stream sits under "docs", which is explicitGrantOnly/);
+      assert.throws(() => checkMarked({ 'docs-a': { consentOptIn: true } }, { 'DocumentReference|filed-insurance': 'docs-a-i' }), /\(stream "docs-a-i"\): the stream sits under "docs-a", which is consentOptIn/);
+      // holds
+      assert.throws(() => checkMarked({ 'docs-a-i': { consentOptIn: true } }), /class "DocumentReference\|filed-administrative" \(stream "docs-a"\): the stream holds "docs-a-i", which is consentOptIn/);
+      // and in a build
+      assert.throws(() => run(items, lockOf(), classes, marked({ docs: { explicitGrantOnly: true } })), /the stream sits under "docs", which is explicitGrantOnly/);
     });
   });
 
@@ -1956,6 +2156,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       if (!fs.existsSync(p)) return; // npm run build has not run yet
       const pack = JSON.parse(fs.readFileSync(p, 'utf-8'));
       assert.deepStrictEqual(pack.fhirScopes, fhirScopes);
+      assert.deepStrictEqual(pack.fhirScopeClasses, fhirScopeClasses);
       assert.strictEqual(pack.fhirMapping.formatVersion, 1);
     });
   });

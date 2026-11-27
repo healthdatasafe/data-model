@@ -13,6 +13,7 @@ const { eventTypesById } = require('./eventTypes');
 
 const MAPPING_FILE_PATH = path.join(__dirname, '../definitions/fhir/mapping.yaml');
 const LOCK_FILE_PATH = path.join(__dirname, '../definitions/fhir/scopes.lock.json');
+const SCOPE_CLASSES_FILE_PATH = path.join(__dirname, '../definitions/fhir/scope-classes.yaml');
 
 /** Scope pair of an item that has no mapping: its events would be readable through a grant but never rendered. */
 const UNMAPPED = '(unmapped)';
@@ -123,11 +124,23 @@ const PATIENT_ELEMENTS = {
 const fhirMapping = YAML.parse(fs.readFileSync(MAPPING_FILE_PATH, 'utf8'));
 checkMappingTable(fhirMapping);
 
-/** Format of definitions/fhir/scopes.lock.json this build reads and writes. */
-const LOCK_FORMAT = 2;
+/**
+ * The SMART scope classes (plan 133, FHIR-MAPPING.md § Scope classes): class key `ResourceType|category` → the one
+ * stream it reads, with its subtree. Published as `pack.fhirScopeClasses`, apart from `pack.fhirScopes`, which a class
+ * never changes.
+ */
+const fhirScopeClasses = sortedObject(YAML.parse(fs.readFileSync(SCOPE_CLASSES_FILE_PATH, 'utf8')) ?? {});
+checkScopeClassTable(fhirScopeClasses);
+
+/**
+ * Format of definitions/fhir/scopes.lock.json this build reads and writes. 3 (plan 133) adds `classes`: a build that
+ * reads 2 would drop it on its next `npm run fhir:lock`, so it refuses the file instead.
+ */
+const LOCK_FORMAT = 3;
 
 module.exports = {
   fhirMapping,
+  fhirScopeClasses,
   UNMAPPED,
   MEDICATION_TYPES,
   ALLERGY_FIELDS,
@@ -140,19 +153,26 @@ module.exports = {
   LOCK_FILE_PATH,
   LOCK_FORMAT,
   checkMappingTable,
+  checkScopeClassTable,
   checkFhirMapping,
   scopePairOf,
   ucumKey,
   ucumUnitKey,
   computeFhirScopes,
   checkFhirScopes,
+  checkScopeClasses,
   checkFhirImportKeys,
   readLock,
   emptyLock,
   lockEntries,
+  lockClassEntries,
   mergeLock,
   toBePublished
 };
+
+function sortedObject (o) {
+  return Object.fromEntries(Object.keys(o).sort().map((k) => [k, o[k]]));
+}
 
 /**
  * A UCUM unit as compared for equality: annotations (`{beats}`) carry no meaning in UCUM, so `{beats}/min` is `/min`
@@ -199,6 +219,7 @@ function checkMappingTable (t) {
   for (const [resourceType, table] of Object.entries(t.categories || {})) {
     if (!/^[A-Z][A-Za-z]*$/.test(resourceType)) fail(`categories: "${resourceType}" is not a FHIR resourceType name`);
     const codings = new Map();
+    const codes = new Map();
     for (const [key, c] of Object.entries(table)) {
       // The key is the second half of a `ResourceType|category` scope key: no `|`, no space, no capital.
       if (!/^[a-z][a-z0-9-]*$/.test(key)) fail(`category ${resourceType}/${key}: a category key is lowercase letters, digits and dashes, starting with a letter`);
@@ -206,6 +227,12 @@ function checkMappingTable (t) {
       const other = codings.get(c.system + '|' + c.code);
       if (other != null) fail(`categories ${resourceType}/${other} and ${resourceType}/${key} share the coding ${c.system}|${c.code}; an imported category would map back to two keys`);
       codings.set(c.system + '|' + c.code, key);
+      // A SMART scope and a facade search name a category by its code, without its system (plan 133, H4).
+      const sameCode = codes.get(c.code);
+      if (sameCode != null) fail(`categories ${resourceType}/${sameCode} and ${resourceType}/${key} share the code "${c.code}" under two systems; a scope names a category by its code alone`);
+      codes.set(c.code, key);
+      // The key is the code: a scope's `?category=<code>` is compared to the key (plan 133, F11).
+      if (c.code !== key) fail(`category ${resourceType}/${key}: the key must be the code ("${c.code}"), as a scope names the category by its code`);
     }
   }
   const uris = Object.values(t.systems || {});
@@ -216,6 +243,35 @@ function checkMappingTable (t) {
   const productUris = Object.values(t.productSystems || {});
   for (const uri of productUris) if (!/^(https?:|urn:)/.test(uri)) fail(`productSystem "${uri}" is not a canonical URI`);
   if (new Set([...uris, ...productUris]).size !== uris.length + productUris.length) fail('productSystems: one label per URI, distinct from systems');
+}
+
+/**
+ * The scope class table (definitions/fhir/scope-classes.yaml) on its own: each key is `ResourceType|code` where the
+ * resourceType has a category table and the code is a key of it (so the key's code is the table's code), and each
+ * value is one stream id, read by that key alone. A class code is lowercase letters and dashes (hds-fhir-js refuses a
+ * digit in a scope key's category). Where each stream sits is checked with the items loaded (checkScopeClasses).
+ */
+function checkScopeClassTable (classes, t = fhirMapping) {
+  const fail = (msg) => { throw new Error(`definitions/fhir/scope-classes.yaml: ${msg}`); };
+  if (classes == null || typeof classes !== 'object' || Array.isArray(classes)) fail('the table is class key → stream id');
+  const keyOf = new Map();
+  for (const [key, stream] of Object.entries(classes)) {
+    const m = /^([A-Z][A-Za-z]*)\|([a-z][a-z-]*)$/.exec(key);
+    if (m == null) fail(`"${key}" is not a class key "ResourceType|category" (a category of lowercase letters and dashes)`);
+    if (typeof stream !== 'string' || stream === '') fail(`"${key}" must name one stream id`);
+    if (keyOf.has(stream)) fail(`"${key}" reads stream "${stream}", already read by "${keyOf.get(stream)}": one class key per stream`);
+    keyOf.set(stream, key);
+    const [, resourceType, code] = m;
+    const table = t.categories?.[resourceType];
+    if (table == null) fail(`"${key}": ${resourceType} has no category table in definitions/fhir/mapping.yaml`);
+    if (table[code] == null) fail(`"${key}": "${code}" is not a ${resourceType} category in definitions/fhir/mapping.yaml (known: ${Object.keys(table).join(', ')})`);
+    if (table[code].code !== code) fail(`"${key}": the category's code is "${table[code].code}", not "${code}"`);
+  }
+}
+
+/** Whether `category` of `resourceType` is a scope class category: never an item block's. */
+function isClassCategory (resourceType, category, classes = fhirScopeClasses) {
+  return category != null && classes[`${resourceType}|${category}`] != null;
 }
 
 /**
@@ -260,6 +316,10 @@ function checkFhirMapping (key, item, itemEventTypes) {
     if (table == null) fail(`resourceType "${f.resourceType}" takes no category, so no "alsoMatchCategories"`);
     if (table[c] == null) fail(`alsoMatchCategories: unknown ${f.resourceType} category "${c}" (known: ${Object.keys(table).join(', ')})`);
     if (c === f.category) fail(`alsoMatchCategories: "${c}" is the block's own category`);
+  }
+  // A scope class category names a stream, never an item's own pair (plan 133): pack.fhirScopes stays disjoint.
+  for (const c of [f.category, ...(f.alsoMatchCategories || [])]) {
+    if (isClassCategory(f.resourceType, c)) fail(`"${c}" is a scope class category (definitions/fhir/scope-classes.yaml), never an item block's category`);
   }
 
   // A QuestionnaireResponse has no code: nothing below applies to it.
@@ -1039,13 +1099,14 @@ function computeFhirScopes (items, roots = streams.roots) {
 
 /**
  * Every check that needs all items loaded: companion blocks, the one-pair invariant, the scope lock (a published
- * stream is never removed, re-parented, given another pair or a new item unacknowledged) and the import match keys.
- * Returns the grant table.
+ * stream is never removed, re-parented, given another pair or a new item unacknowledged; a published class key never
+ * removed or moved), the scope classes and the import match keys. Returns the grant table.
  *
  * @param {object} items item key → item
- * @param {object} [opts] `{ roots, lock }` for tests; default the model's stream tree and the committed lock
+ * @param {object} [opts] `{ roots, lock, classes }` for tests; default the model's stream tree, the committed lock and
+ *   the model's scope classes (none on another stream tree)
  */
-function checkFhirScopes (items, { roots = streams.roots, lock = readLock() } = {}) {
+function checkFhirScopes (items, { roots = streams.roots, lock = readLock(), classes = roots === streams.roots ? fhirScopeClasses : {} } = {}) {
   const { parentOf } = streamIndex(roots);
   const inSubtree = (id, rootId) => {
     for (let s = id; s != null; s = parentOf.get(s)) if (s === rootId) return true;
@@ -1066,7 +1127,9 @@ function checkFhirScopes (items, { roots = streams.roots, lock = readLock() } = 
   const { grants, subtree, violations } = computeFhirScopes(items, roots);
   if (violations.length > 0) throw new Error(`fhir scope invariant:\n  ${violations.join('\n  ')}`);
   checkConsentOptInPlacement(grants, roots);
-  checkLock(items, checkedLock(lock), subtree, parentOf);
+  const checked = checkedLock(lock);
+  checkLock(items, checked, subtree, parentOf, classes);
+  checkScopeClasses(classes, items, grants, checked, roots);
   checkFixedCodedFamilies(items);
   checkFhirImportKeys(items, roots);
   return grants;
@@ -1133,13 +1196,93 @@ function checkConsentOptInPlacement (grants, roots) {
 }
 
 /**
+ * The scope classes against the grant table (plan 133, FHIR-MAPPING.md § Scope classes). A class key reads one stream
+ * and its subtree, so each class stream
+ * - is a stream, strictly below a grant root of a `fhirScopes` key of the same resourceType (never a grant root: a
+ *   class is narrower than a key, never beside it);
+ * - is locked under that root's pair: a class reads documents a grant on the root already reads, and the lock keeps
+ *   them so. A class not published yet may sit on a stream not locked yet (a new grant root, or a new stream
+ *   acknowledged in `reviewed`): `npm run fhir:lock` locks the stream under the root's pair and the class with it, and
+ *   the test suite fails until it has run;
+ * - holds, on itself and under it, no item of another pair;
+ * - is not, holds no and sits under no `explicitGrantOnly` or `consentOptIn` stream: those are offered apart, and a
+ *   published class can never be taken back from them;
+ * and the class category is never an item block's category (so `fhirScopes` never holds a class key).
+ *
+ * @param {object} classes class key → stream id
+ * @param {object} items item key → item
+ * @param {object} grants the grant table
+ * @param {object} lock the checked lock
+ * @param {Array} roots the stream tree
+ */
+function checkScopeClasses (classes, items, grants, lock, roots = streams.roots) {
+  checkScopeClassTable(classes);
+  const { parentOf, descendantsOf } = streamIndex(roots);
+  const nodeOf = new Map();
+  const index = (node) => { nodeOf.set(node.id, node); for (const c of node.children ?? []) index(c); };
+  for (const r of roots) index(r);
+  const rootPair = new Map();
+  for (const [pair, grantRoots] of Object.entries(grants)) for (const r of grantRoots) rootPair.set(r, pair);
+  for (const [key, stream] of Object.entries(classes)) {
+    const at = `fhir scope class "${key}" (stream "${stream}")`;
+    const [resourceType, category] = key.split('|');
+    if (!parentOf.has(stream)) throw new Error(`${at}: no such stream`);
+    if (rootPair.has(stream)) throw new Error(`${at}: the stream is a grant root of ${rootPair.get(stream)}; a class reads a stream strictly below a grant root`);
+    const root = ancestorsIn(parentOf, stream).find((s) => rootPair.has(s));
+    const pair = rootPair.get(root);
+    if (root == null || pair.split('|')[0] !== resourceType) {
+      throw new Error(`${at}: the stream is not below a grant root of a ${resourceType} key of fhirScopes${root != null ? ` (it is below "${root}", granted for ${pair})` : ''}`);
+    }
+    const above = ancestorsIn(parentOf, stream);
+    for (const id of [...above, ...descendantsOf(stream)]) {
+      const s = nodeOf.get(id);
+      const mark = ['explicitGrantOnly', 'consentOptIn'].find((m) => s[m] === true);
+      if (mark == null) continue;
+      const where = id === stream ? 'the stream is' : `the stream ${above.includes(id) ? 'sits under' : 'holds'} "${id}", which is`;
+      throw new Error(`${at}: ${where} ${mark}; a published class is never taken back, so it never reads a stream offered apart`);
+    }
+    const locked = lock.streams[stream];
+    if (locked != null && locked.pair !== pair) throw new Error(`${at}: the stream is locked under ${locked.pair}, not under ${pair}, the pair of its grant root "${root}"`);
+    if (locked == null && lock.classes[key] != null) throw new Error(`${at}: the class is locked but its stream is not; the lock was edited by hand`);
+    for (const [k, item] of Object.entries(items)) {
+      if (item.streamId !== stream && !ancestorsIn(parentOf, item.streamId).includes(stream)) continue;
+      const p = scopePairOf(k, items);
+      if (p !== pair) throw new Error(`${at}: item "${k}" on stream "${item.streamId}" is ${p}, not ${pair}; a class reads only what its grant root's pair reads`);
+    }
+    for (const [k, item] of Object.entries(items)) {
+      const f = item.fhir;
+      if (f?.resourceType !== resourceType) continue;
+      if (f.category === category || (f.alsoMatchCategories || []).includes(category)) throw new Error(`${at}: item "${k}" carries the category "${category}"; a class category is never an item block's`);
+    }
+  }
+}
+
+/** The class keys that read stream `id`: those whose stream is `id` or above it. */
+function classesReaching (classes, parentOf, id) {
+  const above = [id, ...ancestorsIn(parentOf, id)];
+  return Object.entries(classes).filter(([, s]) => above.includes(s)).map(([k]) => k).sort();
+}
+
+/**
  * The lock records every stream a published grant reaches (each grant root and its whole subtree) with its pair, its
  * parent and the items on it. A grant already issued must never reach more than it did, nor silently less. So the
  * build fails when a locked stream is removed, is re-parented, holds another pair in its subtree, or loses an item
  * (removed, or moved to another stream: deprecate instead), and when a stream or an item that is not in the lock
  * appears on a locked stream or under one, unless the lock's `reviewed` list acknowledges it under that locked stream.
+ * A class key in the lock (`classes`) is published too: the build fails when it disappears or reads another stream.
  */
-function checkLock (items, lock, subtree, parentOf) {
+function checkLock (items, lock, subtree, parentOf, classes = {}) {
+  for (const [key, e] of Object.entries(lock.classes)) {
+    const at = `fhir scope lock: class "${key}", published on stream "${e.stream}",`;
+    if (classes[key] == null) throw new Error(`${at} is gone from definitions/fhir/scope-classes.yaml: a published class key is never removed`);
+    if (classes[key] !== e.stream) throw new Error(`${at} now reads stream "${classes[key]}": a published class key never changes stream`);
+  }
+  // Who reads a new stream or item under a locked stream: the grants of its pair, and the classes above it.
+  const readers = (pair, id) => {
+    const reach = classesReaching(classes, parentOf, id);
+    const classList = `class${reach.length > 1 ? 'es' : ''} ${reach.join(', ')}`;
+    return reach.length === 0 ? { issued: pair, reader: pair } : { issued: `${pair} and for the ${classList}`, reader: `${pair} or of the ${classList}` };
+  };
   for (const kind of ['items', 'streams']) {
     for (const [id, r] of Object.entries(lock.reviewed[kind])) {
       const at = `fhir scope lock: reviewed ${kind} "${id}"`;
@@ -1171,14 +1314,16 @@ function checkLock (items, lock, subtree, parentOf) {
     const locked = ancestorsIn(parentOf, id).find((s) => lock.streams[s] != null);
     if (locked == null || reviewedUnder('streams', id, locked)) continue;
     const pair = lock.streams[locked].pair;
-    throw new Error(`fhir scope lock: stream "${id}" is new under the published stream "${locked}": every grant already issued for ${pair} would read it. If a reader of ${pair} may see it, acknowledge it in definitions/fhir/scopes.lock.json, "reviewed": { "streams": { "${id}": { "under": "${locked}", "why": "YYYY-MM-DD <why>" } } }, then run npm run fhir:lock`);
+    const who = readers(pair, id);
+    throw new Error(`fhir scope lock: stream "${id}" is new under the published stream "${locked}": every grant already issued for ${who.issued} would read it. If a reader of ${who.reader} may see it, acknowledge it in definitions/fhir/scopes.lock.json, "reviewed": { "streams": { "${id}": { "under": "${locked}", "why": "YYYY-MM-DD <why>" } } }, then run npm run fhir:lock`);
   }
   for (const [key, item] of Object.entries(items)) {
     if (lock.streams[item.streamId]?.items.includes(key)) continue;
     const locked = [item.streamId, ...ancestorsIn(parentOf, item.streamId)].find((s) => lock.streams[s] != null);
     if (locked == null || reviewedUnder('items', key, locked)) continue;
     const pair = lock.streams[locked].pair;
-    throw new Error(`fhir scope lock: item "${key}" is new under the published stream "${locked}": every grant already issued for ${pair} would read it. If a reader of ${pair} may see it, acknowledge it in definitions/fhir/scopes.lock.json, "reviewed": { "items": { "${key}": { "under": "${locked}", "why": "YYYY-MM-DD <why>" } } }, then run npm run fhir:lock`);
+    const who = readers(pair, item.streamId);
+    throw new Error(`fhir scope lock: item "${key}" is new under the published stream "${locked}": every grant already issued for ${who.issued} would read it. If a reader of ${who.reader} may see it, acknowledge it in definitions/fhir/scopes.lock.json, "reviewed": { "items": { "${key}": { "under": "${locked}", "why": "YYYY-MM-DD <why>" } } }, then run npm run fhir:lock`);
   }
 }
 
@@ -1303,14 +1448,15 @@ function checkFhirImportKeys (items, roots = streams.roots) {
 }
 
 function emptyLock () {
-  return { formatVersion: LOCK_FORMAT, streams: {}, reviewed: { items: {}, streams: {} } };
+  return { formatVersion: LOCK_FORMAT, streams: {}, classes: {}, reviewed: { items: {}, streams: {} } };
 }
 
 /**
- * The committed lock, `{ formatVersion, streams: { <streamId>: { pair, parent, items } }, reviewed: { items:
- * { <item key>: { under, why } }, streams: { <streamId>: { under, why } } } }`: every stream a published grant
- * reaches, ever, and each acknowledgement of a new item or stream under the locked stream `under`, with
- * `why` = "YYYY-MM-DD <why>". An absent file is an empty lock.
+ * The committed lock, `{ formatVersion, streams: { <streamId>: { pair, parent, items } }, classes: { <class key>:
+ * { stream, since } }, reviewed: { items: { <item key>: { under, why } }, streams: { <streamId>: { under, why } } } }`:
+ * every stream a published grant reaches, ever, every class key published with the stream it reads and the date
+ * `fhir:lock` first recorded it (`since`, "YYYY-MM-DD"), and each acknowledgement of a new item or stream under the
+ * locked stream `under`, with `why` = "YYYY-MM-DD <why>". An absent file is an empty lock.
  */
 function readLock () {
   if (!fs.existsSync(LOCK_FILE_PATH)) return emptyLock();
@@ -1322,7 +1468,13 @@ function checkedLock (lock) {
   const reviewed = lock.reviewed ?? {};
   const unknown = Object.keys(reviewed).filter((k) => k !== 'items' && k !== 'streams');
   if (unknown.length > 0) throw new Error(`definitions/fhir/scopes.lock.json: "reviewed" holds "items" and "streams" only, not ${unknown.map((k) => `"${k}"`).join(', ')}`);
-  return { ...emptyLock(), ...lock, reviewed: { items: reviewed.items ?? {}, streams: reviewed.streams ?? {} } };
+  const classes = lock.classes ?? {};
+  for (const [key, e] of Object.entries(classes)) {
+    if (typeof e?.stream !== 'string' || typeof e.since !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(e.since)) {
+      throw new Error(`definitions/fhir/scopes.lock.json: class "${key}" must read { "stream": "<stream id>", "since": "YYYY-MM-DD" }`);
+    }
+  }
+  return { ...emptyLock(), ...lock, classes, reviewed: { items: reviewed.items ?? {}, streams: reviewed.streams ?? {} } };
 }
 
 /**
@@ -1348,20 +1500,36 @@ function lockEntries (items, grants, roots = streams.roots) {
 }
 
 /**
- * Add lock entries to a lock. Never removes a stream or an item, never rewrites a pair or a parent (the build has
- * already refused a change), and keeps the hand-written `reviewed` list.
+ * What the lock records for the scope classes: each class key with its stream, first recorded on `since`.
+ *
+ * @param {object} classes class key → stream id
+ * @param {string} since "YYYY-MM-DD"
  */
-function mergeLock (lock, entries) {
+function lockClassEntries (classes, since) {
+  return Object.fromEntries(Object.entries(classes).map(([key, stream]) => [key, { stream, since }]));
+}
+
+/**
+ * Add lock entries to a lock. Never removes a stream, an item or a class, never rewrites a pair, a parent or a class
+ * entry (the build has already refused a change), and keeps the hand-written `reviewed` list.
+ *
+ * @param {object} lock the lock
+ * @param {object} entries stream entries (`lockEntries`)
+ * @param {object} [classEntries] class entries (`lockClassEntries`)
+ */
+function mergeLock (lock, entries, classEntries = {}) {
   const out = {};
   for (const id of [...new Set([...Object.keys(lock.streams), ...Object.keys(entries)])].sort()) {
     const was = lock.streams[id];
     const now = entries[id];
     out[id] = was == null ? now : { ...was, items: [...new Set([...was.items, ...(now?.items ?? [])])].sort() };
   }
-  return { formatVersion: LOCK_FORMAT, streams: out, reviewed: lock.reviewed ?? emptyLock().reviewed };
+  const was = lock.classes ?? {};
+  const classes = sortedObject({ ...classEntries, ...was });
+  return { formatVersion: LOCK_FORMAT, streams: out, classes, reviewed: lock.reviewed ?? emptyLock().reviewed };
 }
 
-function toBePublished (grants) {
+function toBePublished (grants, classes = fhirScopeClasses) {
   return [{
     title: 'FHIR SMART scope grants',
     path: './fhir/',
@@ -1369,6 +1537,13 @@ function toBePublished (grants) {
     type: 'json',
     content: grants,
     includeInPack: 'fhirScopes'
+  }, {
+    title: 'FHIR SMART scope classes',
+    path: './fhir/',
+    filename: 'scope-classes.json',
+    type: 'json',
+    content: classes,
+    includeInPack: 'fhirScopeClasses'
   }, {
     title: 'FHIR mapping tables',
     path: './fhir/',

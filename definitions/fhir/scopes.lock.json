@@ -1,5 +1,5 @@
 {
-  "formatVersion": 2,
+  "formatVersion": 3,
   "streams": {
     "activity-cycling": {
       "pair": "Observation|activity",
@@ -1206,6 +1206,20 @@
       "items": [
         "wellbeing-general-health"
       ]
+    }
+  },
+  "classes": {
+    "DocumentReference|filed-administrative": {
+      "stream": "documents-admin",
+      "since": "2026-11-27"
+    },
+    "DocumentReference|filed-clinical": {
+      "stream": "documents-clinical",
+      "since": "2026-11-27"
+    },
+    "DocumentReference|filed-insurance": {
+      "stream": "documents-admin-insurance",
+      "since": "2026-11-27"
     }
   },
   "reviewed": {
