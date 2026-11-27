@@ -1,0 +1,17 @@
+# SMART scope classes (plan 133), published as `pack.fhirScopeClasses`. See documentation/FHIR-MAPPING.md
+# § Scope classes.
+#
+# A class key `ResourceType|category` reads exactly one stream and its subtree: a stream strictly below a grant root
+# of pack.fhirScopes of the same resourceType, holding no item of another scope pair. Its category is a key of the
+# resourceType's table in mapping.yaml, never an item block's category, so pack.fhirScopes is unchanged by a class
+# and stays disjoint. A reader matches a class key only for a scope with `?category=`; a type scope, `patient/*.rs`
+# and the block's own category never reach it.
+#
+# Permanent: definitions/fhir/scopes.lock.json records each class key with its stream (`classes`), and the build
+# fails when a published key disappears or reads another stream. Add a key, then run npm run fhir:lock.
+
+# The filing streams of DOCUMENTS.md § Filing. A class reads what she filed there, never a document on the root
+# (not filed yet): `filed-administrative` reads `documents-admin`, insurance papers included.
+DocumentReference|filed-clinical: documents-clinical
+DocumentReference|filed-administrative: documents-admin
+DocumentReference|filed-insurance: documents-admin-insurance
