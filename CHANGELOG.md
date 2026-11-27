@@ -1,5 +1,37 @@
 # Changelog
 
+## [Unreleased]
+
+### Added: SMART scope classes for filed documents, `pack.fhirScopeClasses` (plan 133)
+
+Minor, additive in the pack. A SMART app can ask for one class of documents with a standard scope:
+`patient/DocumentReference.rs?category=filed-clinical` reads `documents-clinical`, `filed-administrative` reads
+`documents-admin` (insurance papers included), `filed-insurance` reads `documents-admin-insurance`. A class reads
+filed documents only, never one on the root (not filed yet). The US Core `clinical-note` scope keeps reading every
+document (perki, 2026-11-27). Design: B′ of plan 133 DESIGN-DOC-CLASSES (Fable review "go with changes").
+
+- **Categories** (`definitions/fhir/mapping.yaml`): `DocumentReference` gains `filed-clinical`, `filed-administrative`,
+  `filed-insurance`, system `https://hds.ngo/fhir/CodeSystem/document-filing` ("Filed as clinical", ...). They are
+  scope classes only: the build refuses them as an item block's `category` or `alsoMatchCategories`. The `document`
+  block is unchanged.
+- **`pack.fhirScopeClasses`** (and `fhir/scope-classes.json`): class key → the one stream it reads, from the new
+  `definitions/fhir/scope-classes.yaml`. **`pack.fhirScopes` is unchanged**, byte for byte: still one key per stream
+  tree, disjoint.
+- **Build checks:** a category key is its code, and one code has one system per resourceType (both hold for every
+  existing category); a class key is `ResourceType|code` of the table; each class stream exists, is strictly below a
+  grant root of the same resourceType, is locked under that root's pair, and holds no item of another pair.
+- **Lock** (`definitions/fhir/scopes.lock.json`, `formatVersion` 3): a new append-only `classes` section,
+  `{ "<key>": { "stream", "since" } }`. The build fails when a locked class key disappears or reads another stream. A
+  new stream or item under a class stream names the class keys that would read it. A build that reads format 2
+  refuses the new lock.
+- **Readers:** hds-fhir-js consults `fhirScopeClasses` for a scope with `?category=` only, and renders one filing
+  coding per class whose stream holds the document; the facade unions the classes for a category search. Until they
+  re-pin, no reader uses the new member. hds-fhir-js `check:pack` holds its category copy equal to the pack, so it
+  takes the three codes in the same release that reads the classes.
+- Docs: DOCUMENTS.md § FHIR (the passage saying no resource scope would ever be narrower than the root is rewritten)
+  and § Filing; FHIR-MAPPING.md § Categories, § DocumentReference, § SMART scopes (new § Scope classes), § Permanence,
+  § Build checks.
+
 ## [4.47.0] - 2026-11-27
 
 ### Added: her other names, and the match against them (PROFILE.md, CONVERSATION.md R3, plan 128 SUB-F L6)

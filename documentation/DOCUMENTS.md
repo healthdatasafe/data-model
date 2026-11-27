@@ -12,7 +12,7 @@ document: the person keeps the file, and HDS keeps enough validated metadata to 
 | Stream | `documents` ("Medical documents"), a root: not filed yet; below it `documents-clinical`, `documents-admin` and `documents-admin-insurance` ([Filing](#filing-4350)) |
 | Item | `document`, `type: attachments`, `repeatable: any` (since 3.29.0); on the root only, a filed document resolves to it by walk-up |
 | eventType | `file/xds-v1` |
-| FHIR | `DocumentReference` + `Binary`, SMART scope key `DocumentReference\|clinical-note` (since 4.2.0, [below](#fhir-documentreference-and-binary-420)) |
+| FHIR | `DocumentReference` + `Binary`, SMART scope key `DocumentReference\|clinical-note` on the root (since 4.2.0, [below](#fhir-documentreference-and-binary-420)); one scope class per filing stream, `filed-clinical`, `filed-administrative`, `filed-insurance` (plan 133) |
 
 **One root; its children carry access, never a kind or a theme.** A document's kind (lab report, letter, …) and its
 clinical theme are carried by its `class` and `type` codes, which become FHIR `DocumentReference.category` and `.type`.
@@ -98,12 +98,27 @@ makes a document readable by a SMART on FHIR app as one `DocumentReference` whos
 
 - **Scope key `DocumentReference|clinical-note`**, granted on `documents`: `patient/DocumentReference.rs` (with or
   without `?category=clinical-note`) reaches every document, filed or not, the sensitive ones included, as a grant on the
-  root does. The filing streams carry the same key, for good: one stream tree has one key,
-  so no resource scope will ever be narrower than the root. The native stream scope is (`hds/stream/documents-clinical.read`).
-  The consent screen says so. **Every document carries `clinical-note`, administrative ones included** (an insurance
-  letter, a kind "other"): it is the one code of US Core's DocumentReference category value set, the class name US
-  Core gives everything a DocumentReference carries, not a claim about the document's content. The document's own
-  `class` rides as a second `category` coding, so what it is stays stated.
+  root does. That holds for good, and also for a stock US Core app: the standard `clinical-note` scope reads every class
+  (perki, 2026-11-27). The consent screen says so. **Every document carries `clinical-note`, administrative ones
+  included** (an insurance letter, a kind "other"): it is the one code of US Core's DocumentReference category value set,
+  the class name US Core gives everything a DocumentReference carries, not a claim about the document's content. The
+  document's own `class` rides as another `category` coding, so what it is stays stated.
+- **Scope classes, one per filing stream (plan 133).** An app that wants one class asks for it by an HDS category code
+  (system `https://hds.ngo/fhir/CodeSystem/document-filing`, published as `pack.fhirScopeClasses`):
+
+  | Scope | Reads | Does not read |
+  |---|---|---|
+  | `patient/DocumentReference.rs?category=filed-clinical` | `documents-clinical` | every other document, documents not filed included |
+  | `patient/DocumentReference.rs?category=filed-administrative` | `documents-admin`, insurance papers included | clinical documents, documents not filed |
+  | `patient/DocumentReference.rs?category=filed-insurance` | `documents-admin-insurance` | every other document, documents not filed included |
+
+  **A class scope reads filed documents only:** a document on the root (not filed yet, nearly all of them before she
+  files) is read by `clinical-note` and the type scope, never by a class. An app asking for `filed-clinical` sees only
+  what she filed there; its consent text says so. A class is not a key of `pack.fhirScopes`: that table keeps one key
+  for the whole tree, and the classes are published beside it ([FHIR-MAPPING.md § Scope classes](FHIR-MAPPING.md#scope-classes-packfhirscopeclasses)).
+  A filed document carries the coding of its filing stream beside `clinical-note`, an insurance paper
+  `filed-administrative` as well, so a category search agrees with the streams a grant reads. The native stream scope
+  reads one class too (`hds/stream/documents-clinical.read`), for an app that knows the HDS streams.
 - **`date`** is the event time (the document's date on the person's timeline), as an instant: it is what a `date`
   search filters, so a client that re-searches with a returned date finds the document again. The document's own
   authoring date and its precision are `content[].attachment.creation`; when the event was written is
@@ -310,6 +325,10 @@ document-shares                  one document shared with one contact (below)
 | `documents-clinical` | the documents filed as clinical | invoices, insurance papers, documents not filed |
 | `documents-admin` | the documents filed as administrative, insurance included | clinical documents, documents not filed |
 | `documents-admin-insurance` | the insurance documents | other administrative papers, clinical documents, documents not filed |
+
+A SMART app reads the same subtrees through the scope classes (`filed-clinical`, `filed-administrative`,
+`filed-insurance`, [§ FHIR](#fhir-documentreference-and-binary-420)). So filing a document is also a disclosure to the
+SMART apps granted a class, and her app counts their grants among who newly reads it.
 
 - **Words.** A document is **received** when it is on a documents stream, the root included; **filed** when that stream is
   below the root.

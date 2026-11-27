@@ -249,15 +249,22 @@ One file holds the tables every block refers to. The build reads it to validate 
 
 Entries are additive: a published category key or system label is never renamed or removed.
 
+The scope classes live beside this file, in `definitions/fhir/scope-classes.yaml`, published as
+`pack.fhirScopeClasses` ([Scope classes](#scope-classes-packfhirscopeclasses)), not inside `pack.fhirMapping`.
+
 ### Categories per resourceType
 
 | resourceType | Category keys | Required |
 |---|---|---|
 | Observation | `vital-signs`, `social-history`, `survey`, `laboratory`, `exam`, `imaging`, `procedure`, `therapy`, `activity` (system `http://terminology.hl7.org/CodeSystem/observation-category`) | yes |
 | Condition | `problem-list-item`, `encounter-diagnosis` (system `http://terminology.hl7.org/CodeSystem/condition-category`), `health-concern` (system `http://hl7.org/fhir/us/core/CodeSystem/condition-category`) | yes |
-| DocumentReference | `clinical-note` (system `http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category`), the one key of the US Core category value set: every HDS document, whatever its XDS class (4.2.0) | yes |
+| DocumentReference | `clinical-note` (system `http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category`), the one key of the US Core category value set: every HDS document, whatever its XDS class (4.2.0). `filed-clinical`, `filed-administrative`, `filed-insurance` (system `https://hds.ngo/fhir/CodeSystem/document-filing`, displays "Filed as clinical", "Filed as administrative", "Filed as insurance"): scope classes only, never a block's category ([Scope classes](#scope-classes-packfhirscopeclasses), plan 133) | yes |
 
-A resourceType that has a table must carry a `category` from it; a resourceType without a table takes none (Patient,
+The key is the code, and one code has one system per resourceType: a SMART scope (`?category=<code>`) and a facade
+search name a category by its code, so two systems sharing a code could not be told apart (plan 133).
+
+A resourceType that has a table must carry a `category` from it, never a scope class category (one listed in
+`definitions/fhir/scope-classes.yaml`); a resourceType without a table takes none (Patient,
 MedicationStatement, MedicationRequest, Procedure, QuestionnaireResponse, Questionnaire, AllergyIntolerance). The SMART scope key is `ResourceType|category` for a resourceType with a
 table, and the bare resourceType otherwise (see [SMART scopes](#smart-scopes-packfhirscopes)). **A bare key is a
 one-way door: once it is published, no category table can ever be added for that resourceType.** A block with a
@@ -607,6 +614,7 @@ document:
 |---|---|
 | `type[]` | `type.coding`: the translated LOINC document type (else `UNK`) first, then the content codings as written |
 | `class` | `category[1]`; `category[0]` is the block's `clinical-note` |
+| the event's filing streams (`streamIds`) | one more `category` coding per scope class whose stream holds the event or is above it (plan 133, [Scope classes](#scope-classes-packfhirscopeclasses)): `filed-insurance` with `filed-administrative`. Read from `pack.fhirScopeClasses`, not from the block |
 | `status` | `status`: `superseded` as stored, else `current`. Whether another document supersedes this one is not looked up |
 | `supersedes[]` | `relatesTo[]` `{ code: replaces, target: DocumentReference/<id> }` |
 | `title` | `description`, and each attachment's `title` when the file has no name |
@@ -621,7 +629,9 @@ document:
 | `attachments[]` (Pryv) | one `content[]` per file: `attachment.contentType`, `size`, `title` (file name), `url` = `Binary/<eventId>.<fileId>` (absolute on the facade, relative in an export file); never the Pryv `readToken`; no `hash` (FHIR's is SHA-1, Pryv's integrity is sha256) |
 
 The category key is `clinical-note` for every document: US Core's category value set has that one code, and a grant on
-`DocumentReference|clinical-note` is a grant on `documents`, the whole of it, filing streams included, as DOCUMENTS.md says of the root. IPS has no
+`DocumentReference|clinical-note` is a grant on `documents`, the whole of it, filing streams included, as DOCUMENTS.md says of the root.
+A class of documents is asked by its scope class (`?category=filed-clinical`, `filed-administrative`, `filed-insurance`),
+which reads its filing stream only, never a document not filed yet. IPS has no
 DocumentReference profile, so the `ips` and `ch` flavours render the base resource. **Import is not implemented:** a
 DocumentReference matches the item by category (`matchResource`), and `fromFhir` refuses the block until a writer that
 stores the file exists; the block is permanent either way.
@@ -800,9 +810,12 @@ grant reaches**: each grant root and every stream in its subtree, with its pair,
 
 ```json
 {
-  "formatVersion": 2,
+  "formatVersion": 3,
   "streams": {
     "profile-name": { "pair": "Patient", "parent": "profile", "items": ["profile-name", "profile-surname"] }
+  },
+  "classes": {
+    "DocumentReference|filed-clinical": { "stream": "documents-clinical", "since": "2026-11-27" }
   },
   "reviewed": {
     "items": {
@@ -825,15 +838,56 @@ The build fails when a locked stream
   of that scope may see it. `under` is the nearest locked stream above (or, for an item, the locked stream it sits
   on): an acknowledgement given for one pair never covers a placement under another, and one whose `under` is not on
   or above where the item or stream sits now fails the build (it never pre-approves a later move). Acknowledging a
-  stream does not acknowledge its children: each new stream and item needs its own entry.
+  stream does not acknowledge its children: each new stream and item needs its own entry. When the new stream or
+  item is on or under a class stream, the message also names the class keys that would read it.
 
-Each would widen, or silently break, every grant already issued for that scope. New grant roots are allowed. The
-test suite also fails when the lock is not up to date with the current table, and when a published grant root
-(`fhirScopes`, and `dist/pack.json` when built) is not in the lock under its pair.
+The build also fails when a locked class key (`classes`) is no longer in `definitions/fhir/scope-classes.yaml`, or
+reads another stream than its locked one.
 
-- `npm run fhir:lock` adds the current table and its items to the lock. It never removes or rewrites anything. Run it
-  when you add or change a mapping, and commit the lock with the change. `streams` is never edited by hand;
-  `reviewed` is, and only that.
+Each would widen, or silently break, every grant already issued for that scope. New grant roots and new class keys
+are allowed. The test suite also fails when the lock is not up to date with the current table and classes, and when a
+published grant root (`fhirScopes`, and `dist/pack.json` when built) is not in the lock under its pair.
+
+- `npm run fhir:lock` adds the current table, its items and the class keys (with today's date as `since`) to the lock.
+  It never removes or rewrites anything. Run it when you add or change a mapping or a class, and commit the lock with
+  the change. `streams` and `classes` are never edited by hand; `reviewed` is, and only that.
+- `formatVersion` 3 (plan 133) added `classes`. A build reads its own format only, so a build that reads 2 refuses this
+  lock rather than drop `classes` on its next `npm run fhir:lock`.
+
+### Scope classes: `pack.fhirScopeClasses`
+
+`pack.fhirScopes` keeps one key per stream tree: its keys are disjoint, and a reader derives a scope's streams as the
+plain union of its keys' roots. A **scope class** is a narrower key published apart, in `pack.fhirScopeClasses`
+(plan 133), so that no reader of `fhirScopes` changes:
+
+```json
+"fhirScopeClasses": {
+  "DocumentReference|filed-administrative": "documents-admin",
+  "DocumentReference|filed-clinical": "documents-clinical",
+  "DocumentReference|filed-insurance": "documents-admin-insurance"
+}
+```
+
+- **Key → one stream.** The key is `ResourceType|code`, its code a category of that resourceType's table (the three
+  `filed-*` codes, system `https://hds.ngo/fhir/CodeSystem/document-filing`). The value is one stream id: a grant of the
+  class reads that stream and its subtree, so `filed-administrative` reads the insurance papers too.
+- **Source:** `definitions/fhir/scope-classes.yaml`, at pack level. No item block names a class, and the build refuses
+  a class category as a block's `category` or `alsoMatchCategories`: the `document` block is untouched, so every
+  renderer that predates the classes keeps rendering documents.
+- **Where a reader uses it:** only for a scope with `?category=`. `patient/DocumentReference.rs`, `patient/*.rs` and
+  `?category=clinical-note` never see a class key, so they read what they read before, and their stored echoes stay as
+  they were. A scope `patient/DocumentReference.rs?category=filed-clinical` (or with the system,
+  `?category=https://hds.ngo/fhir/CodeSystem/document-filing|filed-clinical`) derives `documents-clinical`.
+- **What a class reads:** its stream's documents, filed there by her (DOCUMENTS.md § Filing). Never a document on the
+  root, not filed yet. The US Core `clinical-note` scope keeps reading every document, every class included (perki,
+  2026-11-27): the classes narrow nothing that exists.
+- **Rendering:** a document carries one filing coding per class whose stream holds it or is above it, beside
+  `clinical-note` and its XDS class, so a category search finds what the class grant reads.
+- **Build checks** (`checkScopeClasses`): each class stream exists, sits strictly below a grant root of a `fhirScopes`
+  key of the same resourceType (never on a grant root), is locked under that root's pair, and holds no item of another
+  pair on itself or under it. A class not published yet may sit on a stream not locked yet (a new grant root, or a new
+  stream acknowledged in `reviewed`): `npm run fhir:lock` locks both.
+- **Lock:** `classes` in `scopes.lock.json`, append-only (above).
 
 ### Permanence
 
@@ -841,6 +895,10 @@ A shipped block's **(resourceType, category) is permanent**, like an item key. C
 from one grant table entry to another: apps already granted the old scope would lose data they were promised, and
 the lock refuses it anyway (the stream is locked under the old pair). The same holds for a locked stream: whatever is
 added on it or under it must belong to its pair, and is acknowledged in `reviewed`.
+
+**A published scope class is permanent too**, like a pair: its key is never removed and never reads another stream
+(the lock's `classes`). Moving a class to another stream would hand its grants other documents, or take theirs away.
+Its category code and display in `mapping.yaml` are never renamed, as for every category. A new class is additive.
 
 **Renaming a mapped item's key.** The usual pattern (the old key stays as a deprecated alias on the same `streamId`
 and eventType) needs one more thing here: the alias must still count as the stream's pair, or the stream's subtree
@@ -2075,9 +2133,15 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   on import.
 - **Scopes:** companions valid (never of a Patient element); the one-pair invariant; the lock (no locked stream
   removed, re-parented or re-paired, no locked item removed or moved, no new item or stream under a locked stream
-  without a `reviewed` entry naming that locked stream).
+  without a `reviewed` entry naming that locked stream, no locked class key removed or moved to another stream).
+- **Scope classes** (`[FHIR-CLASS]`, [§ Scope classes](#scope-classes-packfhirscopeclasses)): a key is
+  `ResourceType|code`, its code a key of that type's category table; each class stream exists, sits strictly below a
+  grant root of a `fhirScopes` key of the same resourceType, is locked under that root's pair (or, for a class not
+  published yet, waits for `npm run fhir:lock`) and holds, on itself and under it, no item of another pair; no item block
+  carries a class category, as `category` or in `alsoMatchCategories`.
 - **Category table:** category keys are lowercase letters, digits and dashes (a scope key is split on `|`); one
-  `{system, code}` names one category per resourceType.
+  `{system, code}` names one category per resourceType; the key is the code, and one code has one system per
+  resourceType (a scope names a category by its code alone).
 
 ---
 
