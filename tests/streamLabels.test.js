@@ -32,7 +32,7 @@ describe('[STRL] Localised stream labels', () => {
   // A consent description must not understate the grant. The texts name each root's content exactly, so a root that
   // gains or loses a direct child fails here until its description is re-read (grandchildren are not caught).
   const DESCRIBED_CHILDREN = {
-    fertility: ['fertility-cycles', 'fertility-trainings', 'fertility-ttc-tta', 'fertility-ttc-duration', 'fertility-sexual-activity', 'fertility-genital-contact', 'fertility-tracking-method', 'fertility-test-opk', 'fertility-test-pregnancy', 'fertility-pregnancies'],
+    fertility: ['fertility-cycles', 'fertility-trainings', 'fertility-ttc-tta', 'fertility-ttc-duration', 'fertility-sexual-activity', 'fertility-genital-contact', 'fertility-tracking-method', 'fertility-monitor', 'fertility-test-opk', 'fertility-test-pregnancy', 'fertility-pregnancies'],
     body: ['body-height', 'body-weight', 'body-blood-pressure', 'body-blood', 'body-vulva', 'body-skin', 'body-heart-rate', 'body-oxygen-saturation', 'body-temperature', 'body-urine', 'body-csf', 'body-semen'],
     lifestyle: ['lifestyle-tobacco', 'lifestyle-alcohol', 'lifestyle-diet'],
     family: ['family-children'],

@@ -22,9 +22,9 @@ it.
 
 | Category | Count | Description |
 |----------|-------|-------------|
-| Items | **369** (300 active, 69 deprecated) | Health data point definitions (body, fertility, lifestyle, treatment, procedure, …) |
-| Streams | **28** top-level, **356** at all levels | Hierarchical data categories |
-| Event types (HDS) | **98** | Custom Pryv event type schemas |
+| Items | **370** (301 active, 69 deprecated) | Health data point definitions (body, fertility, lifestyle, treatment, procedure, …) |
+| Streams | **28** top-level, **358** at all levels | Hierarchical data categories |
+| Event types (HDS) | **99** | Custom Pryv event type schemas |
 | Event types (legacy) | **365** | Standard Pryv measurement types (mirror of pryv/data-types) |
 | Converters | 2 | Cross-method conversion engines (cervical-fluid, mood) |
 
@@ -49,7 +49,7 @@ definitions/
     encounter.yaml         3 / 3    care visits, practitioners, organizations
     entry-corrections.yaml 1 / 1    a professional's correction of one entry (`type: system`)
     family.yaml            1 / 1    children count
-    fertility.yaml        27 / 31   cycles, hormones, tests, sexual activity
+    fertility.yaml        28 / 32   cycles, hormones, tests, sexual activity
     finding.yaml           1 / 1    coded clinical finding
     function.yaml          3 / 3    mobility, self-care, usual activities (ICF/EQ-5D)
     genetics.yaml          1 / 1    genetic test results (`type: imported`)

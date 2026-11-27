@@ -4,8 +4,8 @@ label:
   en: "Fertility"
   fr: "Fertilité"
 description:
-  en: "Your menstrual cycles, fertile days and ovulation, your sexual activity and any protection used, whether you are trying to conceive or to avoid a pregnancy, ovulation and pregnancy tests, and your pregnancies and births, including miscarriages and abortions."
-  fr: "Vos cycles menstruels, jours fertiles et ovulation, votre activité sexuelle et la protection utilisée, votre intention de concevoir ou d'éviter une grossesse, les tests d'ovulation et de grossesse, et vos grossesses et accouchements, y compris les fausses couches et les interruptions de grossesse."
+  en: "Your menstrual cycles, fertile days and ovulation, your sexual activity and any protection used, whether you are trying to conceive or to avoid a pregnancy, fertility monitor readings, ovulation and pregnancy tests, and your pregnancies and births, including miscarriages and abortions."
+  fr: "Vos cycles menstruels, jours fertiles et ovulation, votre activité sexuelle et la protection utilisée, votre intention de concevoir ou d'éviter une grossesse, les lectures d'un moniteur de fertilité, les tests d'ovulation et de grossesse, et vos grossesses et accouchements, y compris les fausses couches et les interruptions de grossesse."
 parentId: null
 children:
   - id: fertility-cycles
@@ -60,6 +60,14 @@ children:
     name: Non-intercourse genital contact
   - id: fertility-tracking-method
     name: Fertility-tracking method
+  - id: fertility-monitor
+    name: Fertility monitor
+    label:
+      en: "Fertility monitor"
+      fr: "Moniteur de fertilité"
+    children:
+      - id: fertility-monitor-reading
+        name: Fertility monitor reading
   - id: fertility-test-opk
     name: Ovulation Test (OPK)
   - id: fertility-test-pregnancy

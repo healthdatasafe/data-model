@@ -225,7 +225,8 @@ fertility-cycles-lh-peak-day:
     `fertility-cycles-peak-day`, so a permission on one never grants the other. No LOINC or SNOMED
     CT concept found for it (2026-10-28). HealthKit has no peak-day sample:
     `HKCategoryValueOvulationTestResult.luteinizingHormoneSurge` is a per-test result and maps to
-    `fertility-test-opk`. FHIR: a locally coded Observation, or omitted.
+    `fertility-test-opk`. FHIR: a locally coded Observation, or omitted. A monitor's daily Peak
+    reading is `fertility-monitor-reading`, never this mark.
 fertility-cycles-coverline:
   version: v1
   label:
@@ -858,6 +859,49 @@ fertility-hormone-pdg:
     profiles:
       us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
       ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
+fertility-monitor-reading:
+  version: v1
+  label:
+    en: Fertility monitor reading
+    fr: Lecture du moniteur de fertilité
+  description:
+    en: Low, High or Peak, as your fertility monitor shows it.
+    fr: Bas, Haut ou Pic, tel que l'affiche votre moniteur de fertilité.
+  streamId: fertility-monitor-reading
+  eventType: fertility/monitor-reading-v1
+  type: select
+  options:
+    - value: low
+      label: { en: Low, fr: Bas }
+    - value: high
+      label: { en: High, fr: Haut }
+    - value: peak
+      label: { en: Peak, fr: Pic }
+  repeatable: P1D
+  devNotes: |-
+    The daily reading of a home fertility monitor that tests urine for estrogen (E3G) and LH and shows
+    Low, High or Peak (the Clearblue Fertility Monitor; any monitor or app showing the same three levels
+    writes it). `high` follows the estrogen rise, `peak` the LH surge. One event per tested day, `time`
+    anywhere on that calendar day, no duration. The device's display, kept as shown: a writer never
+    derives it from hormone values, and a reader derives no fertile or infertile day from it.
+    Not the same thing as: a hormone quantity (`body-urine-hormones-lh`, `-e3g`), an LH strip result
+    (`fertility-test-opk`), the LH peak day (`fertility-cycles-lh-peak-day`: one mark per cycle; a
+    monitor shows Peak on several days, so a `peak` reading never writes that mark by itself), the
+    mucus Peak Day (`fertility-cycles-peak-day`) or a mucus level (the `marquette` method's L / H / P
+    options of `body-vulva-mucus-inspect`).
+    A day the monitor asked for a test and none was done ("missed") is not a reading: no event is
+    written (FHIR would carry it as `dataAbsentReason`, not as a value); an import keeps it in its raw
+    record. The device is not in the value: `clientData.hdsInstrument` (brand, model) names it, and
+    `fertility-tracking-method` says which monitor the person uses.
+    HealthKit `HKCategoryValueOvulationTestResult`: `negative` = low, `estrogenSurge` = high,
+    `luteinizingHormoneSurge` = peak on export; on import `estrogenSurge` lands here (a test strip's
+    negative / positive stays `fertility-test-opk`), `indeterminate` has no value here. FHIR: an
+    Observation with a locally coded value and the device as `Observation.device`; no LOINC or SNOMED
+    CT concept for the reading (searched 2026-10-28, not asserted), so no fhir block.
+    A string enum, not `ratio/generic` 0 / 1 / 2: the levels are categories of two hormones, not a
+    proportion. Cycle Intelligence's overlay item `fertility-monitor-lh-marquette` (`ratio/generic`,
+    its own stream under `fertility-monitor`, demo accounts) is another key and stream, so its model
+    still loads; see documentation/MENSTRUAL-CYCLE.md "Fertility monitor reading".
 fertility-test-opk:
   version: v1
   label:

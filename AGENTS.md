@@ -95,7 +95,10 @@ newest `models/<method>/vM.json` with M ≤ N, each tagged `modelVersion`. The i
 - Creighton v1 / converter v1 (plan 131) is the first case; hds-lib supports it from 2.60.0. Creighton v2 / converter
   v2 (plan 136) adds only `notFor: ['0']` on the frequency annotation; hds-lib supports it from 2.77.0. Creighton v3 /
   converter v3 (plan 136) changes only `produce`: the 11 incomplete codes off, `6CL`, `8KL`, `8CKL`, `6PY` on; hds-lib
-  supports it from 2.82.0.
+  supports it from 2.82.0. Marquette model v4 / converter v4 adds the options `L`, `H`, `P` (Low / High / Peak), each
+  the centroid of the 1 to 8 values it stands for, `produce: false` and `offer: false`; it needs an hds-lib whose
+  `SUPPORTED_CONVERTER_VERSIONS` reads v4. A model version takes the name of its converter version (Marquette goes
+  v0 → v4): named v1, it would enter the frozen packs v1 to v3.
 
 ### 6b. ⚑ `description` is short, and written for the end user
 
@@ -365,8 +368,8 @@ data-model/
 ├── package.json, eslint.config.mjs, etc.
 │
 ├── definitions/                           # THE SOURCE OF TRUTH
-│   ├── items/*.yaml                       # Health data point definitions (369 items, 300 active, 27 YAML files)
-│   ├── streams/*.yaml                     # Clinical-domain tree (28 top-level roots, 356 streams in all)
+│   ├── items/*.yaml                       # Health data point definitions (370 items, 301 active, 27 YAML files)
+│   ├── streams/*.yaml                     # Clinical-domain tree (28 top-level roots, 358 streams in all)
 │   ├── eventTypes/
 │   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (98)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (365) — see below

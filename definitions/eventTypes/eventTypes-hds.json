@@ -157,6 +157,15 @@
         "on-break"
       ]
     },
+    "fertility/monitor-reading-v1": {
+      "description": "The daily reading a home fertility monitor shows from a urine test of estrogen (E3G) and LH: low, high (estrogen rise) or peak (LH surge). The device's own display, as shown; not a hormone quantity and not a statement of fertility.",
+      "type": "string",
+      "enum": [
+        "low",
+        "high",
+        "peak"
+      ]
+    },
     "fertility/chart-stamp-v1": {
       "description": "The stamp (sticker) put on one day of a stamp-based fertility-awareness chart, as charted by the person or her instructor. Chart notation: HDS reads no fertility statement from it, and an HDS app never stores a stamp it computed.",
       "type": "object",

@@ -183,7 +183,7 @@ other).
 | `fertility-cycles-lh-peak-day` | The **LH peak**: the day the LH surge peaked, as marked from urine LH tests or a fertility monitor | the person, an LH or monitor app (Cycle Intelligence) |
 
 Neither is ovulation (`fertility-cycles-ovulation`), and neither is a fertility monitor's daily Low / High / Peak
-reading (no item yet: see the 3.24.0 CHANGELOG). The two peaks usually fall a day or two apart and either can be
+reading (`fertility-monitor-reading`, below). The two peaks usually fall a day or two apart and either can be
 recorded without the other.
 
 HealthKit has no peak-day sample: `HKCategoryValueOvulationTestResult.luteinizingHormoneSurge` is a per-test result
@@ -205,6 +205,69 @@ peak. There is no recalled average for the LH peak; it would be a new item, neve
 
 **Not a fertility statement.** Both are chart notation the person or her method records. HDS apps show them as
 recorded; they do not derive fertile or infertile days from them.
+
+## Fertility monitor reading
+
+`fertility-monitor-reading` is the daily reading of a home fertility monitor that tests urine for estrogen (E3G) and LH
+and shows **Low, High or Peak** (the Clearblue Fertility Monitor, the device the Marquette Method is taught with; any
+monitor or app that shows the same three levels writes it). `select` on `fertility/monitor-reading-v1`, a string
+`low` | `high` | `peak`, one event per tested day, `time` anywhere on the calendar day, no duration, on
+`fertility-monitor` → `fertility-monitor-reading`. `high` follows the estrogen rise, `peak` the LH surge.
+
+- **The device's display, kept as shown.** A writer never derives it from hormone values, and a reader derives no
+  fertile or infertile day from it.
+- **Not the LH peak day.** A monitor shows Peak on several days of a cycle; `fertility-cycles-lh-peak-day` is one mark
+  per cycle, placed by the person or her app. A `peak` reading never writes that mark by itself. It is not the mucus
+  Peak Day either, nor a mucus level (the `marquette` mucus options `L` / `H` / `P`, below).
+- **Not a test strip, not a quantity.** An LH strip is `fertility-test-opk`; a hormone value is
+  `body-urine-hormones-lh` / `-e3g`. A device that gives both the value and a level writes both.
+- **A missed test is not a reading.** When the monitor asked for a test and none was done, no event is written; an
+  import keeps the mark in its raw record. A value `missed` would count as a reading in every reader that lists or
+  counts them; FHIR carries it as `dataAbsentReason`, not as a value.
+- **The device is not in the value.** `clientData.hdsInstrument` (`brand`, `model`; [PROVENANCE.md](PROVENANCE.md))
+  names the monitor, and `fertility-tracking-method` (`clearblue`, `mira`, `inito`) says which one the person uses.
+
+| HDS | HL7 FHIR | Apple HealthKit `HKCategoryValueOvulationTestResult` |
+|---|---|---|
+| `low` | `Observation`, `valueCodeableConcept` (a local code) | `negative` (export) |
+| `high` | same | `estrogenSurge` (export and import) |
+| `peak` | same | `luteinizingHormoneSurge` (export; on import a positive LH test is `fertility-test-opk`) |
+| the monitor | `Observation.device` (from `clientData.hdsInstrument`) | `HKDevice` |
+
+HealthKit `indeterminate` has no value here. No LOINC or SNOMED CT concept was found for the reading (LOINC on
+tx.fhir.org, SNOMED CT in snomed-db, 2026-10-28), so the item asserts none and has no `fhir` block (a coded block must
+map every option).
+
+**Why a string, and why not Cycle Intelligence's key.** Cycle Intelligence carries its own overlay item
+`fertility-monitor-lh-marquette` (`ratio/generic` 0 / 1 / 2 on `fertility-monitor` → `fertility-monitor-lh-marquette`,
+demo accounts), which a 3.24.0 branch proposed to adopt as it is and which stayed blocked on the overlay
+(B-2026-10-28-5: hds-lib refuses an overlay that restates a canonical item differently). The canonical item is another
+key on another stream, so that model still loads and nothing waits on it. The key names neither LH (the reading is
+estrogen and LH) nor a method; the three levels are categories of two hormones, not a proportion, so `value / relativeTo`
+would mean nothing. Cycle Intelligence's events stay readable through its overlay; it is asked to write the canonical
+item (`0` → `low`, `1` → `high`, `2` → `peak`).
+
+## Marquette mucus as Low / High / Peak (cervical-fluid converter v4)
+
+The Marquette Method rates the mucus on the 1 to 8 scale or on three levels, Low, High, Peak; its own app offers both
+and groups 1–2 as Low, 3–6 as High, 7–8 as Peak. From converter v4 the `marquette` method (model v4) has three more
+options, `L`, `H`, `P`, so a chart kept on the levels is stored as charted (`source.key: marquette`,
+`source.sourceData: 'H'`, `source.modelVersion: 'v4'`) instead of an invented number.
+
+- **Vectors: the centroid of the scale values the level stands for** (the mean, dimension by dimension, of 1–2, of 3–6,
+  of 7–8), pinned by test `[CNVV9]`. A level converted to the 1 to 8 scale therefore lands inside its own group.
+- **`produce: false`**: a conversion *to* `marquette` keeps answering 1 to 8. The centroids are not a partition of the
+  space (the 3 of the scale is nearer the Low centroid than the High one), so producing levels by distance would
+  disagree with the app's grouping. A reader that shows 1 to 8 data as levels uses the grouping, not the engine.
+- **`offer: false`**: pickers keep proposing 1 to 8 only; the levels are read from imports. Offering them is a new
+  converter version.
+- Not a separate method: the levels and the scale are one method's two notations (one `fertility-tracking-method`
+  value, one charting-method setting), and a method of three centroids could not be produced correctly (above).
+- The 1 to 8 options are unchanged, so vectors stored under earlier versions stay comparable. The method file is to be
+  copied to model-cervical-fluid (`src/definitions/v0/marquette.json`), which owns the method definitions.
+
+A mucus level is not a monitor reading: the first is `body-vulva-mucus-inspect`, the second
+`fertility-monitor-reading`, and both can be charted on one day.
 
 ## Charted stamp (4.32.0, site-agents#67)
 

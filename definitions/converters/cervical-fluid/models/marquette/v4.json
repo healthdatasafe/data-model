@@ -1,0 +1,206 @@
+{
+  "methodId": "marquette",
+  "order": 40,
+  "name": {
+    "en": "Marquette",
+    "fr": "Marquette"
+  },
+  "description": {
+    "en": "Mucus rating used alongside a fertility monitor: an eight-point scale (1–8), or its three levels Low, High, Peak.",
+    "fr": "Notation de la glaire utilisée avec un moniteur de fertilité : une échelle à huit niveaux (1–8), ou ses trois niveaux Bas, Haut, Pic."
+  },
+  "referenceUrl": "https://nfp.marquette.edu/",
+  "components": [
+    {
+      "field": "observation",
+      "label": {
+        "en": "Rating",
+        "fr": "Évaluation"
+      },
+      "options": [
+        {
+          "value": "1",
+          "label": {
+            "en": "1 — Dry sensation, no mucus present",
+            "fr": "1 — Sensation sèche, pas de glaire"
+          },
+          "vector": {}
+        },
+        {
+          "value": "2",
+          "label": {
+            "en": "2 — Not dry, not slippery, no mucus seen",
+            "fr": "2 — Ni sec ni glissant, pas de glaire visible"
+          },
+          "vector": {
+            "sensation": 0.25,
+            "wetness": 0.15,
+            "lubricative": 0.05
+          }
+        },
+        {
+          "value": "3",
+          "label": {
+            "en": "3 — Moist, yellow or white, minimal",
+            "fr": "3 — Humide, jaune ou blanc, minimal"
+          },
+          "vector": {
+            "sensation": 0.35,
+            "wetness": 0.30,
+            "lubricative": 0.10,
+            "transparency": 0.05,
+            "densityFluidity": 0.10,
+            "threadiness": 0.10,
+            "stretchability": 0.05,
+            "color": 0.20,
+            "mucusVolume": 0.15
+          }
+        },
+        {
+          "value": "4",
+          "label": {
+            "en": "4 — Moist, yellow or white, moderate, sticky",
+            "fr": "4 — Humide, jaune ou blanc, modéré, collant"
+          },
+          "vector": {
+            "sensation": 0.40,
+            "wetness": 0.35,
+            "lubricative": 0.15,
+            "transparency": 0.10,
+            "densityFluidity": 0.15,
+            "threadiness": 0.30,
+            "stretchability": 0.15,
+            "color": 0.20,
+            "mucusVolume": 0.35
+          }
+        },
+        {
+          "value": "5",
+          "label": {
+            "en": "5 — Moist, cloudy, becoming clearer",
+            "fr": "5 — Humide, trouble, devenant plus clair"
+          },
+          "vector": {
+            "sensation": 0.50,
+            "wetness": 0.50,
+            "lubricative": 0.30,
+            "transparency": 0.35,
+            "densityFluidity": 0.40,
+            "threadiness": 0.35,
+            "stretchability": 0.30,
+            "color": 0.30,
+            "mucusVolume": 0.50
+          }
+        },
+        {
+          "value": "6",
+          "label": {
+            "en": "6 — Wet, clearer, less cloudy, more stretch",
+            "fr": "6 — Mouillé, plus clair, moins trouble, plus étirable"
+          },
+          "vector": {
+            "sensation": 0.65,
+            "wetness": 0.70,
+            "lubricative": 0.55,
+            "transparency": 0.60,
+            "densityFluidity": 0.60,
+            "threadiness": 0.55,
+            "stretchability": 0.55,
+            "color": 0.40,
+            "mucusVolume": 0.65
+          }
+        },
+        {
+          "value": "7",
+          "label": {
+            "en": "7 — Slippery, clear and stretchy",
+            "fr": "7 — Glissant, clair et étirable"
+          },
+          "vector": {
+            "sensation": 0.90,
+            "wetness": 0.85,
+            "lubricative": 0.90,
+            "transparency": 0.90,
+            "densityFluidity": 0.80,
+            "threadiness": 0.90,
+            "stretchability": 0.90,
+            "color": 0.50,
+            "mucusVolume": 0.75
+          }
+        },
+        {
+          "value": "8",
+          "label": {
+            "en": "8 — Wet, slippery, variable amount",
+            "fr": "8 — Mouillé, glissant, quantité variable"
+          },
+          "vector": {
+            "sensation": 1.00,
+            "wetness": 1.00,
+            "lubricative": 1.00,
+            "transparency": 0.85,
+            "densityFluidity": 0.85,
+            "threadiness": 0.80,
+            "stretchability": 0.75,
+            "color": 0.50,
+            "mucusVolume": 0.70
+          }
+        },
+        {
+          "value": "L",
+          "label": {
+            "en": "L — Low: dry or damp, no mucus seen (1–2)",
+            "fr": "L — Bas : sec ou humide, pas de glaire visible (1–2)"
+          },
+          "vector": {
+            "sensation": 0.125,
+            "wetness": 0.075,
+            "lubricative": 0.025
+          },
+          "offer": false,
+          "produce": false
+        },
+        {
+          "value": "H",
+          "label": {
+            "en": "H — High: moist or wet, mucus not yet clear and slippery (3–6)",
+            "fr": "H — Haut : humide ou mouillé, glaire pas encore claire et glissante (3–6)"
+          },
+          "vector": {
+            "sensation": 0.475,
+            "wetness": 0.4625,
+            "lubricative": 0.275,
+            "transparency": 0.275,
+            "densityFluidity": 0.3125,
+            "threadiness": 0.325,
+            "stretchability": 0.2625,
+            "color": 0.275,
+            "mucusVolume": 0.4125
+          },
+          "offer": false,
+          "produce": false
+        },
+        {
+          "value": "P",
+          "label": {
+            "en": "P — Peak: slippery, clear, stretchy (7–8)",
+            "fr": "P — Pic : glissant, clair, étirable (7–8)"
+          },
+          "vector": {
+            "sensation": 0.95,
+            "wetness": 0.925,
+            "lubricative": 0.95,
+            "transparency": 0.875,
+            "densityFluidity": 0.825,
+            "threadiness": 0.85,
+            "stretchability": 0.825,
+            "color": 0.5,
+            "mucusVolume": 0.725
+          },
+          "offer": false,
+          "produce": false
+        }
+      ]
+    }
+  ]
+}

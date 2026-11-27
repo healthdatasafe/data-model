@@ -13,9 +13,9 @@ describe('[CNVX] Converters build output', () => {
       const pack = JSON.parse(fs.readFileSync(path.join(distConverters, 'pack.json'), 'utf-8'));
       assert.ok(pack['cervical-fluid'], 'cervical-fluid should be in pack');
       assert.ok(pack.mood, 'mood should be in pack');
-      assert.strictEqual(pack['cervical-fluid'].latestVersion, 'v3');
+      assert.strictEqual(pack['cervical-fluid'].latestVersion, 'v4');
       assert.strictEqual(pack.mood.latestVersion, 'v0');
-      assert.deepStrictEqual(pack['cervical-fluid'].versions, ['v0', 'v1', 'v2', 'v3']);
+      assert.deepStrictEqual(pack['cervical-fluid'].versions, ['v0', 'v1', 'v2', 'v3', 'v4']);
       assert.deepStrictEqual(pack.mood.versions, ['v0']);
     });
   });
@@ -63,7 +63,59 @@ describe('[CNVX] Converters build output', () => {
         const versions = Object.keys(read(`${itemKey}/index.json`).versions);
         for (const v of versions) assert.strictEqual(read(`${itemKey}/pack-${v}.json`).converterVersion, v);
       }
-      assert.deepStrictEqual(Object.keys(read('cervical-fluid/index.json').versions).sort(), ['v0', 'v1', 'v2', 'v3']);
+      assert.deepStrictEqual(Object.keys(read('cervical-fluid/index.json').versions).sort(), ['v0', 'v1', 'v2', 'v3', 'v4']);
+    });
+
+    it('[CNVV9] cervical-fluid v4 differs from v3 only by its version and Marquette model v4: Low / High / Peak, read, never produced or offered', () => {
+      const v3 = read('cervical-fluid/pack-v3.json');
+      const v4 = read('cervical-fluid/pack-v4.json');
+      assert.deepStrictEqual({ ...v4, converterVersion: 'v3', methods: [] }, { ...v3, methods: [] });
+      assert.deepStrictEqual(v4.methods.map(m => m.methodId), v3.methods.map(m => m.methodId));
+      for (const m of v4.methods) {
+        if (m.methodId !== 'marquette') assert.deepStrictEqual(m, v3.methods.find(o => o.methodId === m.methodId), m.methodId);
+      }
+      const old = v3.methods.find(m => m.methodId === 'marquette');
+      const now = v4.methods.find(m => m.methodId === 'marquette');
+      assert.strictEqual(old.modelVersion, 'v0');
+      assert.strictEqual(now.modelVersion, 'v4');
+      assert.deepStrictEqual({ ...now, modelVersion: 'v0', description: old.description, components: [] }, { ...old, components: [] });
+      assert.match(now.description.en, /Low, High, Peak/);
+      assert.match(now.description.fr, /Bas, Haut, Pic/);
+      const options = now.components[0].options;
+      const scale = options.slice(0, 8);
+      assert.deepStrictEqual(scale, old.components[0].options, 'the 1 to 8 options are untouched: same order, labels, vectors, no flag');
+      assert.deepStrictEqual(options.slice(8).map(o => o.value), ['L', 'H', 'P']);
+      // Each level is the centroid of the scale values it stands for (1–2, 3–6, 7–8): never hand-tuned.
+      const LEVELS = { L: ['1', '2'], H: ['3', '4', '5', '6'], P: ['7', '8'] };
+      const vectorOf = (value) => scale.find(o => o.value === value).vector;
+      for (const o of options.slice(8)) {
+        assert.strictEqual(o.produce, false, `${o.value}: a conversion to marquette keeps answering 1 to 8`);
+        assert.strictEqual(o.offer, false, `${o.value}: read from imports, not proposed by pickers`);
+        assert.ok(o.label.en && o.label.fr, o.value);
+        for (const dim of v4.dimensionNames) {
+          const mean = LEVELS[o.value].reduce((sum, v) => sum + (vectorOf(v)[dim] ?? 0), 0) / LEVELS[o.value].length;
+          assert.ok(Math.abs((o.vector[dim] ?? 0) - mean) < 1e-9, `${o.value}.${dim}: ${o.vector[dim]} is not the mean ${mean}`);
+        }
+        assert.ok(Object.keys(o.vector).every(dim => v4.dimensionNames.includes(dim)), o.value);
+      }
+      // A level converted to the 1 to 8 scale lands inside its own bucket (weighted distance of the pack).
+      const distance = (a, b) => Math.sqrt(v4.dimensionNames.reduce((sum, d) => sum + v4.dimensions[d].weight * ((a[d] ?? 0) - (b[d] ?? 0)) ** 2, 0));
+      for (const o of options.slice(8)) {
+        const nearest = scale.slice().sort((a, b) => distance(o.vector, a.vector) - distance(o.vector, b.vector))[0].value;
+        assert.ok(LEVELS[o.value].includes(nearest), `${o.value} converts to ${nearest}`);
+      }
+      // Its translations are those of v3, plus the Marquette description and the three levels.
+      for (const locale of ['es', 'it', 'pt-BR']) {
+        const { packs } = read(`cervical-fluid/l10n-${locale}.json`);
+        const index = v4.methods.indexOf(now);
+        const added = ['L', 'H', 'P'].map(v => `methods[${index}]/components[0]/options[value="${v}"]/label`);
+        const changed = `methods[${index}]/description`;
+        const rest = Object.fromEntries(Object.entries(packs['pack-v4.json']).filter(([k]) => !added.includes(k) && k !== changed));
+        const before = Object.fromEntries(Object.entries(packs['pack-v3.json']).filter(([k]) => k !== changed));
+        assert.deepStrictEqual(rest, before, locale);
+        for (const key of [...added, changed]) assert.ok(packs['pack-v4.json'][key], `${locale}: ${key}`);
+        assert.notStrictEqual(packs['pack-v4.json'][changed], packs['pack-v3.json'][changed], locale);
+      }
     });
 
     it('[CNVV8] cervical-fluid v3 differs from v2 only by its version and which Creighton codes are produced (plan 136)', () => {

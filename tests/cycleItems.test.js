@@ -30,14 +30,56 @@ describe('[CYC] Cycle items (3.24.0)', () => {
     }
   });
 
-  it('[CYC-2] the fertility monitor item is deferred while Cycle Intelligence carries it in its overlay', () => {
-    // Before hds-lib 2.24.0, validateOverload refuses an overload restating an existing item's type,
-    // streamId, eventType or options, so making it canonical would break Cycle Intelligence's model
-    // load. It ships once CI runs hds-lib >= 2.24.0 with an overlay matching the canonical item exactly
-    // (its option labels differ today, B-2026-10-28-5) or lists the key in UPSTREAM_ITEM_KEYS. Kept on
-    // branch feature/marquette-monitor-item; see CHANGELOG 3.24.0.
+  it('[CYC-2] Cycle Intelligence\'s overlay item stays out of the model: its key and its stream are not canonical', () => {
+    // hds-lib validateOverload refuses an overload restating an existing item's type, streamId, eventType or
+    // options unless identical (2.24.0), and CI's overlay differs (B-2026-10-28-5). The canonical reading is
+    // another key on another stream (fertility-monitor-reading), so CI's model still loads. An overlay may
+    // restate the parent stream `fertility-monitor` (same parent: only parentId, role, clientData are checked).
     assert.strictEqual(itemsById['fertility-monitor-lh-marquette'], undefined);
-    assert.strictEqual(streams.streamsById['fertility-monitor'], undefined);
+    assert.strictEqual(streams.streamsById['fertility-monitor-lh-marquette'], undefined);
+    assert.strictEqual(streams.streamsById['fertility-monitor'].parentId, 'fertility');
+    assert.strictEqual(streams.streamsById['fertility-monitor'].role, undefined);
+    assert.strictEqual(streams.streamsById['fertility-monitor'].clientData, undefined);
+  });
+
+  describe('[CYC-MON] fertility-monitor-reading: a monitor\'s daily Low / High / Peak', () => {
+    const item = () => itemsById['fertility-monitor-reading'];
+
+    it('[CYC-MON-1] a select of three string values on its own eventType, one per day', () => {
+      assert.strictEqual(item().type, 'select');
+      assert.strictEqual(item().eventType, 'fertility/monitor-reading-v1');
+      assert.strictEqual(item().repeatable, 'P1D');
+      assert.deepStrictEqual(item().options.map(o => o.value), ['low', 'high', 'peak']);
+      assert.deepStrictEqual(eventTypesById('fertility/monitor-reading-v1').enum, ['low', 'high', 'peak']);
+      for (const o of item().options) assert.ok(o.label.en && o.label.fr, o.value);
+      assert.ok(item().label.fr && item().description.fr);
+      assert.strictEqual(findItemForEvent('fertility/monitor-reading-v1', 'fertility-monitor-reading'), item());
+    });
+
+    it('[CYC-MON-2] its stream sits under fertility-monitor, apart from the tests and the peak days', () => {
+      assert.deepStrictEqual(streams.getAncestorsById('fertility-monitor-reading'),
+        ['fertility-monitor-reading', 'fertility-monitor', 'fertility']);
+      for (const other of ['fertility-test-opk', 'fertility-cycles-lh-peak-day', 'fertility-cycles-peak-day']) {
+        assert.ok(!streams.isDescendantOf('fertility-monitor-reading', other), other);
+        assert.ok(!streams.isDescendantOf(other, 'fertility-monitor'), other);
+      }
+    });
+
+    it('[CYC-MON-3] no source or device in the key or the values, no code asserted, no fhir block', () => {
+      assert.doesNotMatch(JSON.stringify([item().streamId, item().options.map(o => o.value)]), /clearblue|marquette|mira|inito/i);
+      assert.strictEqual(item().references, undefined);
+      assert.strictEqual(item().fhir, undefined);
+    });
+
+    it('[CYC-MON-4] the reading rules are on the item: not the LH peak day, a missed test is no reading, the device', () => {
+      const notes = item().devNotes;
+      assert.match(notes, /fertility-cycles-lh-peak-day/);
+      assert.match(notes, /never writes that mark by itself/);
+      assert.match(notes, /"missed"\) is not a reading: no event is\s+written/);
+      assert.match(notes, /clientData\.hdsInstrument/);
+      assert.match(notes, /estrogenSurge/);
+      assert.match(itemsById['fertility-cycles-lh-peak-day'].devNotes, /fertility-monitor-reading/);
+    });
   });
 
   describe('[CYC-COV] fertility-cycles-coverline', () => {
@@ -130,6 +172,7 @@ describe('[CYC] Cycle items (3.24.0)', () => {
         invalid: ['yellow', null, { stamp: 'yellow' }, { method: 'creighton' }, { method: '', stamp: 'red' }, { method: 'creighton', stamp: 'red-baby' }]
       },
       'fertility-cycles-lh-peak-day': { valid: [null], invalid: [true, 1] },
+      'fertility-monitor-reading': { valid: ['low', 'high', 'peak'], invalid: ['missed', 'Low', 'L', 0, 2, null, { value: 2, relativeTo: 2 }] },
       'fertility-cycles-peak-day': { valid: [null], invalid: [true, 1] }
     };
 

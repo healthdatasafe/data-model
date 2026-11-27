@@ -1,5 +1,47 @@
 # Changelog
 
+## [Unreleased]
+
+Additive (minor): one item, two streams, one eventType, one converter version. No existing key, stream, option or
+eventType changes; the published converter packs v0 to v3 and `pack-latest.json` are byte-identical.
+
+### Added: the fertility monitor reading, `fertility-monitor-reading`
+
+The daily Low / High / Peak a home fertility monitor shows (the Clearblue Fertility Monitor; any monitor or app with
+the same three levels), the gap left open in 3.24.0. `select` on the new **`fertility/monitor-reading-v1`** (string
+`low` | `high` | `peak`), `repeatable: P1D`, on the new streams **`fertility-monitor`** → **`fertility-monitor-reading`**
+under `fertility`; the `fertility` consent description now names "fertility monitor readings" (en, fr, es, it, pt-BR).
+See MENSTRUAL-CYCLE.md § Fertility monitor reading.
+
+- Not the LH peak day (`fertility-cycles-lh-peak-day`, one mark per cycle: a `peak` reading never writes it by itself),
+  not an LH strip (`fertility-test-opk`), not a hormone value, not a mucus level.
+- **A missed test is no reading**: no event is written, an import keeps it in its raw record.
+- The device is `clientData.hdsInstrument` and `fertility-tracking-method`, never a value or a key.
+- HealthKit `HKCategoryValueOvulationTestResult`: `negative` / `estrogenSurge` / `luteinizingHormoneSurge` map to
+  `low` / `high` / `peak` (`estrogenSurge` had no home). No LOINC or SNOMED CT concept, no `fhir` block.
+- **Not Cycle Intelligence's overlay key** `fertility-monitor-lh-marquette` (`ratio/generic` 0 / 1 / 2), deferred in
+  3.24.0 and blocked since on that overlay (B-2026-10-28-5). A different key and stream, so that overlay still loads;
+  `[CYC-2]` now pins that its key and stream stay out of the model. **For consumers** that point at the overlay key
+  (hds-feminine-cycle-ui `monitorItem`, model-cervical-fluid `method-rules.json`, hds-webapp's monitor row): read
+  `fertility-monitor-reading`, string values, `low` < `high` < `peak` in option order. Cycle Intelligence: write the
+  canonical item (`0` → `low`, `1` → `high`, `2` → `peak`).
+
+### Added: cervical-fluid converter v4, Marquette mucus as Low / High / Peak
+
+`converter/v4.yaml` (v3 with `version: v4`) and `models/marquette/v4.json`: the 1 to 8 options unchanged, plus `L`, `H`,
+`P`, the levels the method's own app offers beside the scale (1–2 Low, 3–6 High, 7–8 Peak). Each level's vector is the
+centroid of the scale values it stands for; `produce: false` (a conversion to `marquette` keeps answering 1 to 8) and
+`offer: false` (read from imports, not proposed by pickers). The method description names both notations. Every other
+method is unchanged. Test `[CNVV9]`; `pack-v4.json` pinned. es / it / pt-BR: the pack-v3 block copied to pack-v4, with
+the new description and the three levels (drafts). See MENSTRUAL-CYCLE.md § Marquette mucus as Low / High / Peak.
+
+- **hds-lib** reads it once `SUPPORTED_CONVERTER_VERSIONS['cervical-fluid']` is `v4` (no other change: it already reads
+  `produce` and `offer`). An older hds-lib keeps reading pack-v3, where `L` / `H` / `P` are unknown source codes: the
+  stored vector still converts.
+- **model-cervical-fluid** owns the method files: `models/marquette/v4.json` is to be copied there
+  (`src/definitions/v0/marquette.json`), and its `method-rules.json` needs the category of `L` / `H` / `P` (dry,
+  non-peak, peak-type).
+
 ## [4.54.0] - 2026-11-27
 
 Fable review: go with changes, applied (canonical-case language keys, the notes below, the closed settings envelopes
