@@ -131,6 +131,10 @@ const VALID_ALERTS = [
   { kind: 'notice', code: 'typed-text-not-read' },
   { kind: 'notice', code: 'several-sampling-dates', about: DOC },
   { kind: 'notice', code: 'columns-not-read', about: TABLE },
+  { kind: 'notice', code: 'several-result-columns', about: DOC },
+  { kind: 'notice', code: 'lines-may-be-missing', about: TABLE },
+  { kind: 'notice', code: 'grid-not-located', about: GRID },
+  { kind: 'notice', code: 'kind-not-read', about: GRID },
   { kind: 'notice', code: 'note-not-read', about: DOC },
   { kind: 'notice', code: 'ready' },
   { kind: 'task-status', about: DOC, status: 'error', attempt: 1, errorCode: 'reading-failed' },
@@ -741,7 +745,18 @@ describe('[CNV] conversation', () => {
       // every code row is parsed: the rows starting with a code, less the two header rows
       const rows = section.split('\n').filter((l) => l.startsWith('| `')).length - 2;
       assert.strictEqual(notices.length + errors.length, rows, 'a table row matched neither pattern');
-      assert.deepStrictEqual(notices, [['no-result-found', 'the document'], ['several-sampling-dates', 'the document'], ['columns-not-read', 'the document'], ['typed-text-not-read', 'none'], ['note-not-read', 'the document'], ['ready', 'none']]);
+      assert.deepStrictEqual(notices, [['no-result-found', 'the document'], ['several-sampling-dates', 'the document'], ['several-result-columns', 'the document'], ['columns-not-read', 'the document'], ['lines-may-be-missing', 'the document'], ['grid-not-located', 'the document'], ['kind-not-read', 'the document'], ['typed-text-not-read', 'none'], ['note-not-read', 'the document'], ['ready', 'none']]);
+      // the notices that end the work are the ones § The flow names, and each says so in its row (4.45.0). An ending
+      // notice row MUST say "the work ends `done` with zero counts": a row that proposes and asks nothing and omits it fails here.
+      const codeRows = section.split('\n').filter((l) => /^\| `[a-z0-9-]+` \| (the document|none) \|/.test(l));
+      const ending = codeRows.filter((l) => l.includes('the work ends `done` with zero counts')).map((l) => l.match(/^\| `([a-z0-9-]+)`/)[1]);
+      for (const l of codeRows) {
+        if (/nothing is proposed, no question is asked/i.test(l)) assert.ok(l.includes('the work ends `done` with zero counts'), 'an ending row says so: ' + l.slice(0, 40));
+      }
+      const flowAt = text.indexOf('A notice may come at any step;');
+      const flow = text.slice(flowAt, text.indexOf('(§ Notice and error codes)', flowAt));
+      assert.deepStrictEqual(ending, ['no-result-found', 'several-sampling-dates', 'several-result-columns', 'grid-not-located', 'kind-not-read']);
+      assert.deepStrictEqual([...flow.matchAll(/`([a-z0-9-]+)`/g)].map((m) => m[1]), ending, '§ The flow lists every ending notice');
       assert.deepStrictEqual(errors, ['no-attachment', 'write-failed', 'reading-failed']);
       const validate = new AjvDraft04({ strict: false, logger: false }).compile(ALERT);
       for (const [code, about] of notices) {

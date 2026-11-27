@@ -7,7 +7,8 @@ implements it, and any person's app renders it, without knowing who is on the ot
 dispatches on `hds.kind` and on `content.kind`, never on the contact's app code.
 
 **Normative** (4.22.0; 4.26.0 adds a document's date and kind, her `note`, and the specimen codes; 4.27.0 the notice
-`ready`; 4.33.0 the status `on-hold`; 4.36.0 a dated grid, § A dated grid). "MUST" and "never" bind writers; readers follow § Writers validate, readers dispatch.
+`ready`; 4.33.0 the status `on-hold`; 4.36.0 a dated grid, § A dated grid; 4.39.0 a table read per column; 4.45.0 four
+notice codes, § Notice and error codes). "MUST" and "never" bind writers; readers follow § Writers validate, readers dispatch.
 
 ## The principle: the conversation is standard, the content travels by reference
 
@@ -91,8 +92,8 @@ Before any document, once per relationship, a contact that reads documents may s
 5. The contact reads the answer, and posts `task-status` `done` once nothing waits.
 6. Retention (§ R10) removes what is no longer needed, on both accounts.
 
-A notice may come at any step; `no-result-found` and `several-sampling-dates` end the work on a document with no
-question (§ Notice and error codes).
+A notice may come at any step; `no-result-found`, `several-sampling-dates`, `several-result-columns`,
+`grid-not-located` and `kind-not-read` end the work on a document with no question (§ Notice and error codes).
 
 **`on-hold` (4.33.0): the contact has the document and cannot work on it now, for a reason of its own.** She has nothing
 to do. A contact that cannot start or go on posts `on-hold`, instead of `reading` (which says the work has started) or
@@ -112,8 +113,8 @@ only). Every event carries `about` (the document's event id) and
 
 | `kind` | Child | Written by | Content |
 |---|---|---|---|
-| `question` | `received` | the contact | `about`, `code`, `candidateId?`, `options?` (codes), `context?` (`identity?`, `dates?`, `grid?`, `anchor?`) |
-| `proposed-value` | `received` | the contact | `about`, `candidateId`, `replaces?` (the candidateId it replaces), `printed` (`label`, `value` (absent only with reason `not-read`, 4.36.0), `unit?`, `refRange?`, `flag?`, `section?`, `samplingTime?`: the line as printed; `samplingTime` is the time printed over the value's column, normalised to `HH:MM`, display only), `anchor?` (`hdsSourceAnchor`, with `eventId` = `about`), `grid?` (`row`, `column`, 4.36.0: § A dated grid), `proposal?` (`itemKey`, `type`, `content`, `time?`, `clientData?`: the event proposed), `status` (`clear`, `check`, `unmapped`, `unit-missing`, `kept-aside`), `reason?`, `requestKey?`, `askOneByOne?`, `specimenImplied?`, `extraction` (`engine`, `engineVersion`, `kbVersion`, `backend`) |
+| `question` | `received` | the contact | `about`, `code`, `candidateId?`, `options?` (codes), `context?` (`identity?`, `dates?`, `grid?`, `column?`, `anchor?`) |
+| `proposed-value` | `received` | the contact | `about`, `candidateId`, `replaces?` (the candidateId it replaces), `printed` (`label`, `value` (absent only with reason `not-read`, 4.36.0), `unit?`, `refRange?`, `flag?`, `section?`, `samplingTime?`: the line as printed; `samplingTime` is the time printed over the value's column, normalised to `HH:MM`, display only), `anchor?` (`hdsSourceAnchor`, with `eventId` = `about`), `grid?` (`row`, `column`, 4.36.0: § A dated grid), `column?` (`index`, 4.39.0: § A table read per column), `proposal?` (`itemKey`, `type`, `content`, `time?`, `clientData?`: the event proposed), `status` (`clear`, `check`, `unmapped`, `unit-missing`, `kept-aside`), `reason?`, `requestKey?`, `askOneByOne?`, `specimenImplied?`, `extraction` (`engine`, `engineVersion`, `kbVersion`, `backend`) |
 | `proposed-document` (4.26.0) | `received` | the contact | `about`, `candidateId`, `replaces?`, `proposal` (at least one of `documentKind`, a `documentKinds` key, and `time` with `timePrecision`: `day`, `month`, `year`), `anchor?` (where the date is printed), `status` (`clear`, `check`), `extraction?` (§ A document's date and kind) |
 | `answer` | `sent` | the person's app | `inReplyTo`, `about`, `action` (`confirm`, `correct`, `not-mine`, `skip`, `choose`, `request-item`, `duplicate`), `candidateIds?`, `option?`, `time?`, `timePrecision?` (`day`, `month`, `year`, `unknown`), `basis?` (`profile-match`, `existing-value`, `not-pending`), `written?` (`[{ candidateId, eventId }]`), `applied?` (`time`, `kind`: on a proposed document, 4.26.0), `note?` (plain text, at most 1000 characters, 4.26.0: § Her note) |
 
@@ -173,8 +174,8 @@ looks like an empty day.
 - **A box, its parts.** Every proposed value of a grid carries `grid`, its box: `row`, the grid's row on its page, from the top, from 1,
   every row of the printed grid counted, the empty ones too (from its lines, never from the rows read), and `column`, the box's
   printed column number (from the grid, never from a model). A contact that is not sure of a box's row and column (a grid it
-  cannot find, a page cut above its first row) writes nothing from that grid, no value, no `not-read`, no question, and sends the
-  notice `no-result-found`. A box that holds an observation, a bleeding and a mark is three candidates, one per `itemKey`, with the same `grid` and `anchor`. The record of R5 is the attachment, the page, `grid` and the
+  cannot find, a page cut above its first row) writes nothing from the document, no value, no `not-read`, no question, and sends
+  the notice `grid-not-located` (4.45.0: a contact reads a dated-grid document whole or not at all; `no-result-found` before). A box that holds an observation, a bleeding and a mark is three candidates, one per `itemKey`, with the same `grid` and `anchor`. The record of R5 is the attachment, the page, `grid` and the
   `itemKey`. Her app orders, groups and names boxes from `grid`, never from `bbox`. `printed.label` is the column number too, and
   `printed.value` the part as written ("10KL x2"); a text longer than `value` allows is never cut: the part is `not-read`.
 - **`not-read`.** Status `unmapped`, reason `not-read`: the contact sees writing in this box and proposes nothing from it, or not
@@ -302,6 +303,7 @@ printed text.
 | a `which-document-kind` question | `choose` | `option`, one of the question's kind keys; `candidateIds` naming its `proposed-document` |
 | a `which-document-date` question | `confirm` | as for `which-date`; `candidateIds` naming its `proposed-document` |
 | a `which-row-date` question | `confirm` | `time` (12:00 UTC of the day of the question's box) and `timePrecision: day` |
+| a `which-column-date` question (4.39.0) | `confirm` | `time` (12:00 UTC of the day printed above the question's column) and `timePrecision: day` |
 
 Any question, proposed value or proposed document may be answered with `skip`, which settles nothing. `not-mine` is
 always about the whole document and answers `is-this-yours` only. An answer whose `action` is not in this table for
@@ -354,10 +356,12 @@ The schema cannot express conditions between fields, so writers check them befor
 | `answer` with `basis: not-pending` | be a `skip` on one proposed document none of whose proposed fields is pending on the document (4.26.0) |
 | `question` | follow its row of § Question codes (`candidateId`, `options`, `context`) |
 | `question` or `answer` with a `candidateId` | name a `proposed-value` (or, for the two document codes and an answer to a proposed document, a `proposed-document`) of the same document on the same relationship's `received` child |
-| `question` with `context.identity` | be `is-this-yours`; with `context.anchor`, be `is-this-yours` or `which-row-date`; with `context.dates`, be `which-date` or `which-document-date` |
+| `question` with `context.identity` | be `is-this-yours`; with `context.anchor`, be `is-this-yours`, `which-row-date` or `which-column-date`; with `context.dates`, be `which-date` or `which-document-date` |
 | `question` `which-row-date` (4.36.0) | carry `context.grid`, and `context.anchor` with its `bbox`; be the only one of its document for that attachment, page and `grid.row`; be on a document with no `which-date` question |
+| `question` `which-column-date` (4.39.0) | carry `context.column`, and `context.anchor` with its `bbox`; be the only one of its document for that attachment, page and `column.index`; be on a document with no `which-date` question |
 | `proposed-value` on a document with a `which-row-date` question, `not-read` apart | carry `grid` and `proposal.time`, at 12:00 UTC with `hdsTimePrecision: day` |
-| `answer` to a `which-row-date` question with `confirm` | carry `time` at 12:00 UTC and `timePrecision: day` |
+| `proposed-value` on a document with a `which-column-date` question | carry `column`, never `grid`; when it has a `proposal`, `proposal.time` at 12:00 UTC with `hdsTimePrecision: day` |
+| `answer` to a `which-row-date` or `which-column-date` question with `confirm` | carry `time` at 12:00 UTC and `timePrecision: day` |
 | `proposed-value` with reason `not-read` (4.36.0) | have `status: unmapped`, carry `grid` and `anchor` with its `bbox`, and no `printed.value`, `proposal` or `requestKey` |
 | `proposed-value` with any other reason, or none | carry `printed.value` |
 | `proposed-value` or `proposed-document` with `replaces` | name an item of the same kind and the same document on the same child, not written (no `written` entry, no answer with `applied`); for a proposed value, one the person answered a question about |
@@ -392,11 +396,19 @@ unknown code is shown with a generic text.
 | `notice.code` | `about` | Meaning |
 |---|---|---|
 | `no-result-found` | the document | The contact read the document and recognised no result line: nothing is proposed, no question is asked, the work ends `done` with zero counts. Not "not a lab report": a scan in which no line was recognised has none either. A read that failed is the error `reading-failed`, not this notice. |
-| `several-sampling-dates` | the document | The document prints its results for several sampling days, one value column per day (a cumulative report), and the contact proposes no value from it: it does not tell which value was taken which day. Nothing is proposed, no question is asked, the work ends `done` with zero counts. Sent instead of `no-result-found`, never both for one read. A contact that reads each column under its own day sends neither. Not `which-date`, which asks for the one day all the waiting values share. The notice names no date (R6). |
+| `several-sampling-dates` | the document | The document prints its results for several sampling days, one value column per day (a cumulative report), and the contact proposes no value from it: it does not tell which value was taken which day. Nothing is proposed, no question is asked, the work ends `done` with zero counts. Sent instead of `no-result-found`, never both for one read. A contact that reads each column under its own day sends neither. Not `which-date`, which asks for the one day all the waiting values share. The notice names no date (R6). Before 4.45.0 also sent for `several-result-columns`. |
+| `several-result-columns` | the document | The document prints its results in several value columns, and the contact tells fewer than two sampling days apart (two samples of one day with no time or sample number that differs, or columns with no heading), so it proposes no value from them (4.45.0). Nothing is proposed, no question is asked, the work ends `done` with zero counts. Sent instead of `no-result-found` and `several-sampling-dates`: one of the three per read, `several-sampling-dates` when two days or more are told apart. On a document with a `which-column-date` question, or read per column, `columns-not-read` is sent instead, also when no column is proposed. The notice names no date and no time (R6). |
 | `columns-not-read` | the document | A table read column by column on a picture (4.39.0): at least one result column is not proposed (she skipped its `which-column-date`, her day is not the day read, or the contact could not read that column on its own). The other columns' values stand. Once per document. The notice names no date and no column (R6). |
+| `lines-may-be-missing` | the document | Values read from a picture (4.45.0), a dated grid apart: the contact has evidence that the page prints more result lines than it read (proposed, kept aside and dropped lines alike), so a line may be missing from what is proposed. The proposed values stand, each with its own status; she compares them with her document. Sent once per document, with or after its first `proposed-values` alert; never on a read that writes no proposed value. A dated grid says this box by box with `not-read`, never with this notice. The notice names no line and no count (R6). |
+| `grid-not-located` | the document | The document is, or may be, a dated grid (a paper cycle chart), and the contact cannot locate its grid with certainty (cut above its first row or beside a column, folded, partly hidden, or its kind in doubt), so it reads nothing of the document (4.45.0; `no-result-found` before). Nothing is proposed, no question is asked, the work ends `done` with zero counts. Sent instead of `no-result-found`. Her app's text never says the document is a chart; when it is one, a clearer picture of the whole grid, shared again, may be read. |
+| `kind-not-read` | the document | The contact recognises the kind of the document and does not read that kind (4.45.0): nothing is proposed, no question is asked, the work ends `done` with zero counts. The kind is what the document is, not its file type (`no-attachment`). It may still propose the document's kind (§ A document's date and kind). It promises nothing about when or whether it will. Not `on-hold` (the contact reads that kind and cannot work now), not `no-result-found` (it read the document and found no result line). A contact that does not read dated grids sends this or `no-result-found`, never `grid-not-located`. The notice names no kind (R6). |
 | `typed-text-not-read` | none | The contact does not read typed text (§ Chat). At most one per relationship per 24 h. |
 | `note-not-read` | the document | The contact does not read her notes (§ Her note, 4.26.0). At most one per document. The notice names no text of the note (R6). |
 | `ready` | none | The contact is ready to read the documents she shares in this conversation (4.27.0). Sent once per relationship, right after the contact receives her accept (a contact that starts sending it later sends it once to each relationship it already has). Optional: a contact that does not read documents does not send it. To know it sent one, the contact keeps a marker per relationship: the relationship id and the fact, nothing else, deleted when the relationship ends (R10). |
+
+**A notice speaks of one read.** A notice about a document is about the read it was sent in: her app shows it only when
+it is not earlier than the contact's latest `task-status` `received` about that document (4.45.0). A document shared again
+and read again keeps none of the earlier read's notices.
 
 **Rendering `ready`.** Her app shows it at its place in time (the first message of a new relationship), as a fixed
 text with the contact's name ([APP-DESCRIPTION.md](APP-DESCRIPTION.md) § The rule), for example en "{name} can read
@@ -539,7 +551,7 @@ additive (a minor release); a breaking change is a `-v2` type. A value a reader 
 document. Deleted means deleted (twice), not only trashed.
 - **On her account, the contact deletes** (it holds `contribute` on `received`), once the work on a document is `done`:
   the proposed values whose candidate is in an answer's `written`, those answered `skip`, `duplicate` or
-  `request-item`, those replaced (`replaces`), and the questions answered (a `which-row-date` answered or skipped). An `is-this-yours` question carrying
+  `request-item`, those replaced (`replaces`), and the questions answered (a `which-row-date` or `which-column-date` answered or skipped). An `is-this-yours` question carrying
   `identity` is deleted on `not-mine`, on `document-unshared` and when the work is `done`, whatever else stays. A
   kept-aside value stays until she dismisses it or its item ships; offering it again means reading the document again
   (it must still be shared). A `not-read` one stays until she answers it (4.36.0);
@@ -579,8 +591,9 @@ Her app writes each confirmed value as an ordinary event on its item, with her t
 - `streamIds`: the item's stream; `type` and `content`: the proposal's, or her correction; `time` and
   `clientData.hdsTimePrecision`: `proposal.time` and its `hdsTimePrecision`, or, when the proposal has no `time`, the
   `time` and `timePrecision` of her `which-date` answer about it or about the whole document (PARTIAL-DATES.md; with
-  `unknown`, no `time`: the value is written at its recording moment). On a document with a `which-row-date` question, the day
-  comes from `proposal.time` only: a proposed value without it is not confirmable, whatever `which-date` answer exists (4.36.0).
+  `unknown`, no `time`: the value is written at its recording moment). On a document with a `which-row-date` (4.36.0) or `which-column-date`
+  (4.39.0) question, the day comes from `proposal.time` only: a proposed value without it is not confirmable, whatever
+  `which-date` answer exists.
 - `clientData.related.<document event id>: true`; `clientData.sourceKey` = `<engine>:document:<document event
   id>:<candidateId>` ([PROVENANCE.md](PROVENANCE.md#clientdatasourcekey--the-identity-of-an-imported-record)), so a
   retry finds it (`state: 'all'`; a trashed one is left trashed);
