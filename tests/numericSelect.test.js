@@ -64,13 +64,14 @@ describe('[NSEL] select on a numeric eventType', () => {
   });
 
   describe('[NSEL-PUB] the two published items', () => {
-    for (const key of ['fertility-test-opk', 'fertility-test-pregnancy']) {
-      it(`[NSEL-PUB] ${key} offers the three named results`, () => {
+    // The OPK also offers 0.5 "High (approaching peak)" since plan 133 (fertility F2: HealthKit estrogenSurge).
+    for (const [key, values] of [['fertility-test-opk', [-1, 0, 0.5, 1]], ['fertility-test-pregnancy', [-1, 0, 1]]]) {
+      it(`[NSEL-PUB] ${key} offers the ${values.length === 3 ? 'three' : 'four'} named results`, () => {
         const data = itemsById[key];
         assert.ok(data, `${key} must exist`);
         assert.strictEqual(data.type, 'select', `${key} must be a select, not a bare number input`);
         assert.strictEqual(data.eventType, 'test-result/scale');
-        assert.deepStrictEqual(data.options.map((o) => o.value), [-1, 0, 1]);
+        assert.deepStrictEqual(data.options.map((o) => o.value), values);
         for (const option of data.options) {
           assert.ok(option.label.en, 'every option needs an English label');
           assert.ok(option.label.fr, 'every option needs a French label');

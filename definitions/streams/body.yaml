@@ -370,8 +370,15 @@ children:
               fr: "Filance de la glaire cervicale"
       - id: body-vulva-cervix-position
         name: Cervical Position
+      # `consentOptIn` (plan 133, FHIR-MAPPING.md § SMART scopes): the grant root of Observation|fertility for the
+      # bleeding and its four qualifiers, offered unticked. Its row is labelled "Vaginal bleeding intensity"; the
+      # description, shown under the row in every language of the pack, says what else ticking it discloses.
       - id: body-vulva-bleeding
         name: Vulva Bleeding
+        description:
+          en: "Includes brown or dark bleeding, blood clots, bleeding after childbirth and bleeding from a pregnancy loss."
+          fr: "Comprend les saignements bruns ou foncés, les caillots, les saignements après un accouchement et ceux d'une perte de grossesse."
+        consentOptIn: true
         children:
           - id: body-vulva-bleeding-browndark
             name: Presence of brown/dark coloration
@@ -383,6 +390,7 @@ children:
             name: Miscarriage Bleeding
       - id: body-vulva-menstrual-cup
         name: Menstrual Cup
+        consentOptIn: true
   - id: body-skin
     name: Skin
     label:
@@ -435,8 +443,11 @@ children:
             name: PdG
           - id: body-urine-hormones-fsh
             name: FSH
+          # `consentOptIn` (plan 133): a quantitative urine hCG says what a pregnancy test says, so it is offered
+          # unticked like fertility-test-pregnancy (else that opt-in would be defeated).
           - id: body-urine-hormones-hcg
             name: hCG
+            consentOptIn: true
       - id: body-urine-chemistry
         name: Urine chemistry
         label:

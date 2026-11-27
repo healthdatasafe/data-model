@@ -29,6 +29,16 @@ symptom-gastrointestinal-nausea:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "422587007", display: Nausea }
+    effective: { from: span }
+    profiles: {}
 
 symptom-gastrointestinal-nausea-severity:
   version: v1
@@ -65,6 +75,44 @@ symptom-gastrointestinal-nausea-severity:
   repeatable: unlimited
   references:
     snomed: ["422587007"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "422587007", display: Nausea }
+      component:
+        absent: symptom-gastrointestinal-nausea
+        code: &symptomSeverityCode { system: http://loinc.org, code: 64750-3, display: Severity of symptoms }
+        options: &symptomSeverityOptions
+          "0": { system: http://loinc.org, code: LA137-2, display: None }
+          "0.25": { system: http://loinc.org, code: LA6752-5, display: Mild }
+          "0.5": { system: http://loinc.org, code: LA6751-7, display: Moderate }
+          "0.75": { system: http://loinc.org, code: LA6750-9, display: Severe }
+          "1": { system: http://loinc.org, code: LA11912-5, display: Extreme }
+        alsoMatch: &symptomSeverityAlsoMatch
+          "0":
+            - { system: http://snomed.info/sct, code: "260413007", display: None }
+          "0.25":
+            - { system: http://loinc.org, code: LA11910-9, display: Slight }
+            - { system: http://snomed.info/sct, code: "255604002", display: Mild }
+            - { system: http://snomed.info/sct, code: "255510006", display: Slight }
+            - { system: http://snomed.info/sct, code: "162468002", display: Symptom mild }
+          "0.5":
+            - { system: http://snomed.info/sct, code: "6736007", display: Moderate severity }
+            - { system: http://snomed.info/sct, code: "162469005", display: Symptom moderate }
+          "0.75":
+            - { system: http://snomed.info/sct, code: "24484000", display: Severe }
+            - { system: http://snomed.info/sct, code: "162470006", display: Symptom severe }
+          "1":
+            - { system: http://loinc.org, code: LA13958-6, display: Very severe }
+            - { system: http://snomed.info/sct, code: "12565001", display: Extreme }
+            - { system: http://snomed.info/sct, code: "162471005", display: Symptom very severe }
+        negation: &symptomSeverityNegation { option: "0", code: { system: http://loinc.org, code: 111551-8, display: Symptom absent } }
+    effective: { from: span }
+    profiles: {}
 
 symptom-gastrointestinal-cramps:
   version: v1
@@ -75,6 +123,19 @@ symptom-gastrointestinal-cramps:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "55300003", display: Cramp }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "51197009", display: Stomach cramps }
+        - { system: http://snomed.info/sct, code: "431416001", display: Menstrual cramp }
+    effective: { from: span }
+    profiles: {}
 
 symptom-gastrointestinal-cramps-severity:
   version: v1
@@ -90,7 +151,26 @@ symptom-gastrointestinal-cramps-severity:
   options: *severity5
   repeatable: unlimited
   references:
-    snomed: ["21522001"]
+    snomed: ["55300003"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "55300003", display: Cramp }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "51197009", display: Stomach cramps }
+        - { system: http://snomed.info/sct, code: "431416001", display: Menstrual cramp }
+      component:
+        absent: symptom-gastrointestinal-cramps
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-gastrointestinal-gas:
   version: v1
@@ -101,6 +181,19 @@ symptom-gastrointestinal-gas:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "308698004", display: Flatulence symptom }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "249504006", display: Passing flatus }
+        - { system: http://snomed.info/sct, code: "80301007", display: Excessive flatus }
+    effective: { from: span }
+    profiles: {}
 
 symptom-gastrointestinal-gas-severity:
   version: v1
@@ -116,7 +209,26 @@ symptom-gastrointestinal-gas-severity:
   options: *severity5
   repeatable: unlimited
   references:
-    snomed: ["271835004"]
+    snomed: ["308698004"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "308698004", display: Flatulence symptom }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "249504006", display: Passing flatus }
+        - { system: http://snomed.info/sct, code: "80301007", display: Excessive flatus }
+      component:
+        absent: symptom-gastrointestinal-gas
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-gastrointestinal-cravings:
   version: v1
@@ -127,6 +239,18 @@ symptom-gastrointestinal-cravings:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "192019001", display: Craving for particular food }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "248132003", display: Craving for food or drink }
+    effective: { from: span }
+    profiles: {}
 
 symptom-gastrointestinal-cravings-severity:
   version: v1
@@ -141,6 +265,26 @@ symptom-gastrointestinal-cravings-severity:
   type: select
   options: *severity5
   repeatable: unlimited
+  references:
+    snomed: ["192019001"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "192019001", display: Craving for particular food }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "248132003", display: Craving for food or drink }
+      component:
+        absent: symptom-gastrointestinal-cravings
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-gastrointestinal-bloating:
   version: v1
@@ -151,6 +295,18 @@ symptom-gastrointestinal-bloating:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "116289008", display: Abdominal bloating }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "271835004", display: Distension of abdomen caused by intestinal gas }
+    effective: { from: span }
+    profiles: {}
 
 symptom-gastrointestinal-bloating-severity:
   version: v1
@@ -167,6 +323,24 @@ symptom-gastrointestinal-bloating-severity:
   repeatable: unlimited
   references:
     snomed: ["116289008"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "116289008", display: Abdominal bloating }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "271835004", display: Distension of abdomen caused by intestinal gas }
+      component:
+        absent: symptom-gastrointestinal-bloating
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-gastrointestinal-diarrhea:
   version: v1
@@ -177,6 +351,16 @@ symptom-gastrointestinal-diarrhea:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "62315008", display: Diarrhea }
+    effective: { from: span }
+    profiles: {}
 
 symptom-gastrointestinal-diarrhea-severity:
   version: v1
@@ -193,6 +377,22 @@ symptom-gastrointestinal-diarrhea-severity:
   repeatable: unlimited
   references:
     snomed: ["62315008"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "62315008", display: Diarrhea }
+      component:
+        absent: symptom-gastrointestinal-diarrhea
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-gastrointestinal-constipation:
   version: v1
@@ -203,6 +403,16 @@ symptom-gastrointestinal-constipation:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "14760008", display: Constipation }
+    effective: { from: span }
+    profiles: {}
 
 symptom-gastrointestinal-constipation-severity:
   version: v1
@@ -219,6 +429,22 @@ symptom-gastrointestinal-constipation-severity:
   repeatable: unlimited
   references:
     snomed: ["14760008"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "14760008", display: Constipation }
+      component:
+        absent: symptom-gastrointestinal-constipation
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 ## Pain / Musculoskeletal
 symptom-pain-severity:
@@ -264,6 +490,16 @@ symptom-pain-severity:
     snomed: ["22253000", "225908003"]
     loinc: ["38208-5"]
     icd10: ["R52"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 38208-5, display: "Pain severity - Reported" }
+    value:
+      kind: coded
+      options: *symptomSeverityOptions
+      alsoMatch: *symptomSeverityAlsoMatch
+    effective: { from: span }
+    profiles: {}
 
 symptom-pain-headache:
   version: v1
@@ -274,6 +510,16 @@ symptom-pain-headache:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "25064002", display: Headache }
+    effective: { from: span }
+    profiles: {}
 
 symptom-pain-headache-severity:
   version: v1
@@ -290,6 +536,22 @@ symptom-pain-headache-severity:
   repeatable: unlimited
   references:
     snomed: ["25064002"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "25064002", display: Headache }
+      component:
+        absent: symptom-pain-headache
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-pain-migraine:
   version: v1
@@ -300,6 +562,16 @@ symptom-pain-migraine:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "37796009", display: Migraine }
+    effective: { from: span }
+    profiles: {}
 
 symptom-pain-migraine-severity:
   version: v1
@@ -316,6 +588,22 @@ symptom-pain-migraine-severity:
   repeatable: unlimited
   references:
     snomed: ["37796009"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "37796009", display: Migraine }
+      component:
+        absent: symptom-pain-migraine
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-pain-sore-breasts:
   version: v1
@@ -326,6 +614,19 @@ symptom-pain-sore-breasts:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "53430007", display: Pain of breast }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "55222007", display: Tenderness of breast }
+        - { system: http://snomed.info/sct, code: "302003005", display: Premenstrual breast tenderness }
+    effective: { from: span }
+    profiles: {}
 
 symptom-pain-sore-breasts-severity:
   version: v1
@@ -341,7 +642,26 @@ symptom-pain-sore-breasts-severity:
   options: *severity5
   repeatable: unlimited
   references:
-    snomed: ["53430007", "55222007"]
+    snomed: ["53430007"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "53430007", display: Pain of breast }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "55222007", display: Tenderness of breast }
+        - { system: http://snomed.info/sct, code: "302003005", display: Premenstrual breast tenderness }
+      component:
+        absent: symptom-pain-sore-breasts
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-pain-backache:
   version: v1
@@ -352,6 +672,16 @@ symptom-pain-backache:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "161891005", display: Backache }
+    effective: { from: span }
+    profiles: {}
 
 symptom-pain-backache-severity:
   version: v1
@@ -368,6 +698,22 @@ symptom-pain-backache-severity:
   repeatable: unlimited
   references:
     snomed: ["161891005"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "161891005", display: Backache }
+      component:
+        absent: symptom-pain-backache
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-pain-pelvic:
   version: v1
@@ -383,7 +729,19 @@ symptom-pain-pelvic:
   type: checkbox
   repeatable: unlimited
   references:
-    snomed: ["274671002"]
+    snomed: ["30473006"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "30473006", display: Pain in pelvis }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "274671002", display: Pelvic and perineal pain }
+    effective: { from: span }
+    profiles: {}
 
 symptom-pain-pelvic-severity:
   version: v1
@@ -399,7 +757,25 @@ symptom-pain-pelvic-severity:
   options: *severity5
   repeatable: unlimited
   references:
-    snomed: ["274671002"]
+    snomed: ["30473006"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "30473006", display: Pain in pelvis }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "274671002", display: Pelvic and perineal pain }
+      component:
+        absent: symptom-pain-pelvic
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-pain-muscle:
   version: v1
@@ -410,6 +786,19 @@ symptom-pain-muscle:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "279069000", display: Musculoskeletal pain }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "68962001", display: Muscle pain }
+        - { system: http://snomed.info/sct, code: "57676002", display: Pain of joint }
+    effective: { from: span }
+    profiles: {}
 
 symptom-pain-muscle-severity:
   version: v1
@@ -425,7 +814,26 @@ symptom-pain-muscle-severity:
   options: *severity5
   repeatable: unlimited
   references:
-    snomed: ["68962001", "57676002"]
+    snomed: ["279069000"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "279069000", display: Musculoskeletal pain }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "68962001", display: Muscle pain }
+        - { system: http://snomed.info/sct, code: "57676002", display: Pain of joint }
+      component:
+        absent: symptom-pain-muscle
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 ## Neurological
 symptom-neurological-dizziness:
@@ -437,6 +845,16 @@ symptom-neurological-dizziness:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "404640003", display: Dizziness }
+    effective: { from: span }
+    profiles: {}
 
 symptom-neurological-dizziness-severity:
   version: v1
@@ -453,6 +871,22 @@ symptom-neurological-dizziness-severity:
   repeatable: unlimited
   references:
     snomed: ["404640003"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "404640003", display: Dizziness }
+      component:
+        absent: symptom-neurological-dizziness
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 ## Dermatological
 symptom-dermatological-hair-loss:
@@ -464,6 +898,16 @@ symptom-dermatological-hair-loss:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "278040002", display: Loss of hair }
+    effective: { from: span }
+    profiles: {}
 
 symptom-dermatological-hair-loss-severity:
   version: v1
@@ -480,6 +924,22 @@ symptom-dermatological-hair-loss-severity:
   repeatable: unlimited
   references:
     snomed: ["278040002"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "278040002", display: Loss of hair }
+      component:
+        absent: symptom-dermatological-hair-loss
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-dermatological-hair-growth:
   version: v1
@@ -490,6 +950,19 @@ symptom-dermatological-hair-growth:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "271607001", display: Excessive hair growth }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "399939002", display: Hirsutism }
+        - { system: http://snomed.info/sct, code: "66520009", display: Female hirsutism }
+    effective: { from: span }
+    profiles: {}
 
 symptom-dermatological-hair-growth-severity:
   version: v1
@@ -505,7 +978,26 @@ symptom-dermatological-hair-growth-severity:
   options: *severity5
   repeatable: unlimited
   references:
-    snomed: ["66520009"]
+    snomed: ["271607001"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "271607001", display: Excessive hair growth }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "399939002", display: Hirsutism }
+        - { system: http://snomed.info/sct, code: "66520009", display: Female hirsutism }
+      component:
+        absent: symptom-dermatological-hair-growth
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 # Oily hair or scalp (site-agents#69). Not body-skin-oily (skin). SNOMED 67295004 "Greasy hair (finding)", synonym
 # "Oily hair"; no concept names the scalp. Not PMS-specific; no key carries the premenstrual context yet.
@@ -524,6 +1016,16 @@ symptom-dermatological-hair-oily:
   repeatable: unlimited
   references:
     snomed: ["67295004"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "67295004", display: Greasy hair }
+    effective: { from: span }
+    profiles: {}
 
 symptom-dermatological-hair-oily-severity:
   version: v1
@@ -540,6 +1042,22 @@ symptom-dermatological-hair-oily-severity:
   repeatable: unlimited
   references:
     snomed: ["67295004"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "67295004", display: Greasy hair }
+      component:
+        absent: symptom-dermatological-hair-oily
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 ## Cognitive
 symptom-cognitive-focus-difficulty:
@@ -551,6 +1069,16 @@ symptom-cognitive-focus-difficulty:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "26329005", display: Poor concentration }
+    effective: { from: span }
+    profiles: {}
 
 symptom-cognitive-focus-difficulty-severity:
   version: v1
@@ -567,6 +1095,22 @@ symptom-cognitive-focus-difficulty-severity:
   repeatable: unlimited
   references:
     snomed: ["26329005"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "26329005", display: Poor concentration }
+      component:
+        absent: symptom-cognitive-focus-difficulty
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 ## Sleep
 symptom-sleep-insomnia:
@@ -578,6 +1122,18 @@ symptom-sleep-insomnia:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "301345002", display: Difficulty sleeping }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "193462001", display: Insomnia }
+    effective: { from: span }
+    profiles: {}
 
 symptom-sleep-insomnia-severity:
   version: v1
@@ -593,7 +1149,25 @@ symptom-sleep-insomnia-severity:
   options: *severity5
   repeatable: unlimited
   references:
-    snomed: ["193462001"]
+    snomed: ["301345002"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "301345002", display: Difficulty sleeping }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "193462001", display: Insomnia }
+      component:
+        absent: symptom-sleep-insomnia
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 ## Metabolic
 symptom-metabolic-water-retention:
@@ -605,6 +1179,16 @@ symptom-metabolic-water-retention:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "43498006", display: Body fluid retention }
+    effective: { from: span }
+    profiles: {}
 
 symptom-metabolic-water-retention-severity:
   version: v1
@@ -621,6 +1205,22 @@ symptom-metabolic-water-retention-severity:
   repeatable: unlimited
   references:
     snomed: ["43498006"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "43498006", display: Body fluid retention }
+      component:
+        absent: symptom-metabolic-water-retention
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 ## General / Constitutional
 symptom-general-fatigue:
@@ -632,6 +1232,16 @@ symptom-general-fatigue:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "84229001", display: Fatigue }
+    effective: { from: span }
+    profiles: {}
 
 symptom-general-fatigue-severity:
   version: v1
@@ -648,6 +1258,22 @@ symptom-general-fatigue-severity:
   repeatable: unlimited
   references:
     snomed: ["84229001"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "84229001", display: Fatigue }
+      component:
+        absent: symptom-general-fatigue
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 # Malaise: the general feeling of being ill. Not a global health rating (wellbeing-self-rated-health,
 # wellbeing-general-health) and not tiredness (fatigue). No HealthKit category type exists for it.
@@ -664,6 +1290,16 @@ symptom-general-malaise:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "367391008", display: Malaise }
+    effective: { from: span }
+    profiles: {}
 
 symptom-general-malaise-severity:
   version: v1
@@ -680,3 +1316,19 @@ symptom-general-malaise-severity:
   repeatable: unlimited
   references:
     snomed: ["367391008"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "367391008", display: Malaise }
+      component:
+        absent: symptom-general-malaise
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}

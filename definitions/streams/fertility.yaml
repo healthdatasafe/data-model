@@ -13,19 +13,27 @@ children:
     label:
       en: "Cycles"
       fr: "Cycles"
+    # `consentOptIn` on every stream mapped under Observation|fertility and on the two home tests (plan 133,
+    # FHIR-MAPPING.md § SMART scopes): fertility charting is offered unticked in a SMART consent.
     children:
       - id: fertility-cycles-start
         name: New Cycle
+        consentOptIn: true
       - id: fertility-cycles-period
         name: Period
+        consentOptIn: true
       - id: fertility-cycles-fertile-window
         name: Fertile Window
+        consentOptIn: true
       - id: fertility-cycles-ovulation
         name: Ovulation Day
+        consentOptIn: true
       - id: fertility-cycles-peak-day
         name: Peak Day
+        consentOptIn: true
       - id: fertility-cycles-lh-peak-day
         name: LH Peak Day
+        consentOptIn: true
       - id: fertility-cycles-coverline
         name: Coverline
       - id: fertility-cycles-chart-stamp
@@ -56,14 +64,18 @@ children:
     name: Time trying to conceive
   - id: fertility-sexual-activity
     name: Sexual Activity
+    consentOptIn: true
   - id: fertility-genital-contact
     name: Non-intercourse genital contact
+    consentOptIn: true
   - id: fertility-tracking-method
     name: Fertility-tracking method
   - id: fertility-test-opk
     name: Ovulation Test (OPK)
+    consentOptIn: true
   - id: fertility-test-pregnancy
     name: Pregnancy Test
+    consentOptIn: true
   - id: fertility-pregnancies
     name: Pregnancies
     children:
