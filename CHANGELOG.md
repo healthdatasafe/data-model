@@ -22,11 +22,15 @@ before this pack; then the facade pin, then each core's extension options (FHIR-
 - **`fixed-coded` component fields:** `component.alsoMatch` (option → answer codings accepted on import only: the SNOMED
   CT severities by label, so an incoming "Severe" is 0.75, and LA11910-9 Slight, LA13958-6 Very severe) and
   `component.negation` (`{ option: "0", code: 111551-8 "Symptom absent" }`: the zero grade renders as that code with
-  the finding as value and no component; the rendered zero shape is not locked, both zero shapes import). Build checks:
-  alsoMatch keyed by options, its codings unique in the item; the negation option an option, its code not the block's,
-  reserved like the shared code (never an import key, one category, value keys under it too).
+  the finding as value and no component; the HL7 validator accepts it, hds-fhir-js `validate:fhir` on tx.fhir.org, US
+  Core and IPS, 2026-11-27; both zero shapes import). Build checks: alsoMatch keyed by options, its codings unique in
+  the item; the negation option an option, its code not the block's, reserved like the shared code (never an import
+  key, one category, value keys under it too); every block with a component sharing a code carries the same negation,
+  or all none.
 - **Corrected `references.snomed`** of the symptom items to the rendered concept (cramps was 21522001 Abdominal pain,
-  gas 271835004 a distension, hair growth 66520009 Female hirsutism, and the pairs that asserted two concepts).
+  gas 271835004 a distension, hair growth 66520009 Female hirsutism, and the pairs that asserted two concepts), and
+  **added** on the 47 presence twins that had none, the same concept as their `-severity` item (hot flashes render an
+  HDS code: neither item carries one).
 - Not opt-in: the 51 rows are offered ticked.
 
 ### Added: fertility charting as FHIR Observations (`Observation|fertility`, phase 1)
@@ -38,7 +42,8 @@ before this pack; then the facade pin, then each core's extension options (FHIR-
   no-content item, no `alsoEmit`, `split` or `effective`.
 - **Value-less markers** on the HDS item coding: period end, fertile window (`effective: { from: span }`), mucus peak
   day, LH peak day, genital contact, brown or dark bleeding (289537009 import only), miscarriage bleeding; clots
-  `289532003` and postpartum bleeding `289576005`. Frozen once shipped.
+  `289532003` and postpartum bleeding `289576005`. Frozen once shipped. The HL7 validator accepts them, and the
+  `valueDateTime` under `8665-2` and `11976-8` (US Core and IPS; no Swiss flavour in the script).
 - **`body-vulva-bleeding`** (seven grades), **`body-vulva-menstrual-cup`** and **`fertility-sexual-activity`**
   (`364316005`) as `coded`, with a new HDS answer system `https://hds.ngo/fhir/CodeSystem/fertility` (bleeding,
   cup fill, intercourse variants, `ovulation-test-high`); 9126005 spotting and 289539007 moderate bleeding import only.
@@ -47,15 +52,18 @@ before this pack; then the facade pin, then each core's extension options (FHIR-
   Positive (Not detected, Equivocal, Detected import only); lab profiles.
 - **`fertility-test-opk` option 0.5 "High (approaching peak)"** (fr "Élevé (approche du pic)"; es, it, pt-BR drafts),
   the value HealthKit's `estrogenSurge` already writes. Additive.
-- **Opt-in:** `consentOptIn` on the 10 fertility grant roots, the two home tests and `body-urine-hormones-hcg` (13 rows
-  offered unticked). `body-vulva-bleeding` gets a stream description in every pack language (en, fr; es, it, pt-BR
-  drafts): its row also grants clots, brown, postpartum and miscarriage bleeding.
+- **Opt-in:** `consentOptIn` on the 10 fertility grant roots, the two home tests and the five quantitative urine
+  hormones `body-urine-hormones-lh`, `-e3g`, `-pdg`, `-fsh`, `-hcg` (17 rows offered unticked; LH, E3G, PdG and FSH were
+  offered ticked before, a grant already given keeps reading them). `body-vulva-bleeding` gets a stream description in
+  every pack language (en, fr; es, it, pt-BR drafts, AI-written and unreviewed): its row also grants clots, brown,
+  postpartum and miscarriage bleeding. No German: `de` covers document kinds only (L10N.md, B-2026-11-27-46).
 
 ### Added: build checks
 
 - An Observation block without `value` only on an item whose eventTypes hold no content (the renderer would drop it).
 - A `consentOptIn` grant root whose subtree holds other mapped streams carries a description in every language of the
   pack (`npm run build`).
+- `fixed-coded` blocks with a component sharing a code carry the same `component.negation`, or all none.
 
 ### Lock
 

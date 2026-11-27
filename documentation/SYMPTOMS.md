@@ -328,6 +328,7 @@ in this family, even when Mira sends them in its `symptoms` array.
   | 1 | Extreme | LA11912-5 Extreme | LA13958-6 Very severe; SNOMED 12565001 Extreme, 162471005 Symptom very severe |
 
   Refused on import: Trivial (162466003), "mild to moderate", "moderate to severe" (no HDS level means them). The zero
-  shape (`111551-8`) is not locked: if the validator refutes it, the None component under `75325-1` renders instead.
+  shape (`111551-8` with the finding as value) passed the HL7 validator (hds-fhir-js `validate:fhir`, US Core and IPS,
+  2026-11-27) and renders; the None component under `75325-1` still imports.
 - **Pain severity** (`symptom-pain-severity`, no presence twin): `code` LOINC `38208-5` "Pain severity - Reported",
   the same five answers as its value; a 0 to 10 score is refused.

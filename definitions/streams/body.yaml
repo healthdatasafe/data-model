@@ -434,17 +434,22 @@ children:
         label:
           en: "Urine Hormones"
           fr: "Hormones urinaires"
+        # `consentOptIn` (plan 133): the quantitative urine hormones are fertility tracking readings (LH, E3G, PdG and
+        # FSH chart the cycle, hCG says what a pregnancy test says), so each is offered unticked like the two home tests
+        # (else those opt-ins would be defeated). Each is a grant root of Observation|laboratory.
         children:
           - id: body-urine-hormones-lh
             name: LH
+            consentOptIn: true
           - id: body-urine-hormones-e3g
             name: E3G
+            consentOptIn: true
           - id: body-urine-hormones-pdg
             name: PdG
+            consentOptIn: true
           - id: body-urine-hormones-fsh
             name: FSH
-          # `consentOptIn` (plan 133): a quantitative urine hCG says what a pregnancy test says, so it is offered
-          # unticked like fertility-test-pregnancy (else that opt-in would be defeated).
+            consentOptIn: true
           - id: body-urine-hormones-hcg
             name: hCG
             consentOptIn: true

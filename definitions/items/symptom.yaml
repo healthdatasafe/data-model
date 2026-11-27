@@ -35,6 +35,8 @@ symptom-gastrointestinal-nausea:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["422587007"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -131,6 +133,8 @@ symptom-gastrointestinal-cramps:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["55300003"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -191,6 +195,8 @@ symptom-gastrointestinal-gas:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["308698004"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -251,6 +257,8 @@ symptom-gastrointestinal-cravings:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["192019001"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -309,6 +317,8 @@ symptom-gastrointestinal-bloating:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["116289008"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -367,6 +377,8 @@ symptom-gastrointestinal-diarrhea:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["62315008"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -421,6 +433,8 @@ symptom-gastrointestinal-constipation:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["14760008"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -531,6 +545,8 @@ symptom-pain-headache:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["25064002"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -585,6 +601,8 @@ symptom-pain-migraine:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["37796009"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -639,6 +657,8 @@ symptom-pain-sore-breasts:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["53430007"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -699,6 +719,8 @@ symptom-pain-backache:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["161891005"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -817,6 +839,8 @@ symptom-pain-muscle:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["279069000"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -878,6 +902,8 @@ symptom-neurological-dizziness:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["404640003"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -933,6 +959,8 @@ symptom-dermatological-hair-loss:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["278040002"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -987,6 +1015,8 @@ symptom-dermatological-hair-growth:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["271607001"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1110,6 +1140,8 @@ symptom-cognitive-focus-difficulty:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["26329005"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1165,6 +1197,8 @@ symptom-sleep-insomnia:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["301345002"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1224,6 +1258,8 @@ symptom-metabolic-water-retention:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["43498006"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1279,6 +1315,8 @@ symptom-general-fatigue:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["84229001"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1339,6 +1377,8 @@ symptom-general-malaise:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["367391008"]
   fhir:
     resourceType: Observation
     category: symptom

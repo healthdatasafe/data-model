@@ -28,6 +28,8 @@ symptom-respiratory-cough:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["49727002"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -128,6 +130,8 @@ symptom-respiratory-dyspnea:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["267036007"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -186,6 +190,8 @@ symptom-respiratory-wheezing:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["56018004"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -244,6 +250,8 @@ symptom-respiratory-nasal-congestion:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["68235000"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -302,6 +310,8 @@ symptom-respiratory-sore-throat:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["267102003"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -364,6 +374,8 @@ symptom-respiratory-rhinorrhea:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["64531003"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -424,6 +436,8 @@ symptom-cardiac-palpitations:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["80313002"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -482,6 +496,8 @@ symptom-cardiac-skipped-beat:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["248629002"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -542,6 +558,8 @@ symptom-thermoregulation-chills:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["43724002"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -664,6 +682,8 @@ symptom-thermoregulation-night-sweats:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["42984000"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -722,6 +742,8 @@ symptom-thermoregulation-excessive-sweating:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["52613005"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -780,6 +802,8 @@ symptom-thermoregulation-cold-extremities:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["771542000"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -846,6 +870,8 @@ symptom-vision-blurred-vision:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["111516008"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -908,6 +934,8 @@ symptom-vision-visual-disturbance:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["63102001"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -966,6 +994,8 @@ symptom-vision-hearing-difficulty:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["162340000"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1026,6 +1056,8 @@ symptom-hydration-excessive-thirst:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["17173007"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1084,6 +1116,8 @@ symptom-hydration-frequent-urination:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["162116003"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1144,6 +1178,8 @@ symptom-bleeding-nosebleed:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["249366005"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1202,6 +1238,8 @@ symptom-bleeding-bleeding-gums:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["86276007"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1260,6 +1298,8 @@ symptom-bleeding-easy-bruising:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["424131007"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1320,6 +1360,8 @@ symptom-neurological-paresthesia:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["62507009"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1382,6 +1424,8 @@ symptom-neurological-tremor:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["26079004"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1440,6 +1484,8 @@ symptom-neurological-restless-legs:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["32914008"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1498,6 +1544,8 @@ symptom-neurological-twitching:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["82470000"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1558,6 +1606,8 @@ symptom-dermatological-rash:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["271807003"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1616,6 +1666,8 @@ symptom-dermatological-hives:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["126485001"]
   fhir:
     resourceType: Observation
     category: symptom
@@ -1674,6 +1726,8 @@ symptom-dermatological-itching:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["418290006"]
   fhir:
     resourceType: Observation
     category: symptom

@@ -14,9 +14,10 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
   const check = (it, key = 'x') => checkFhirMapping(key, it, eventTypesOf(it));
   const coding = (code, system = 'http://loinc.org') => ({ system, code, display: `display ${code}` });
   // plan 133 fertility: the 10 grant roots of Observation|fertility, all offered unticked, with the two home tests and the
-  // urine hCG of Observation|laboratory
+  // five quantitative urine hormones of Observation|laboratory (hCG; LH, E3G, PdG, FSH: perki 2026-11-27, F5)
   const FERTILITY_ROOTS = ['body-vulva-bleeding', 'body-vulva-menstrual-cup', 'fertility-cycles-fertile-window', 'fertility-cycles-lh-peak-day', 'fertility-cycles-ovulation', 'fertility-cycles-peak-day', 'fertility-cycles-period', 'fertility-cycles-start', 'fertility-genital-contact', 'fertility-sexual-activity'];
-  const FERTILITY_OPT_IN = [...FERTILITY_ROOTS, 'fertility-test-opk', 'fertility-test-pregnancy', 'body-urine-hormones-hcg'];
+  const URINE_HORMONES = ['body-urine-hormones-lh', 'body-urine-hormones-e3g', 'body-urine-hormones-pdg', 'body-urine-hormones-fsh', 'body-urine-hormones-hcg'];
+  const FERTILITY_OPT_IN = [...FERTILITY_ROOTS, 'fertility-test-opk', 'fertility-test-pregnancy', ...URINE_HORMONES];
 
   describe('[FHIR-ITEM] the shipped blocks', () => {
     it('[FHIR-ITEM-1] the mapped items load and keep their blocks; the VAS slider is unmapped', () => {
@@ -341,9 +342,14 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
           alsoMatch: severe.alsoMatch,
           negation: { option: '0', code: { system: LOINC, code: '111551-8', display: 'Symptom absent' } }
         }, presenceKey);
-        // references.snomed states the rendered concept
+        // references.snomed states the rendered concept, on the severity item and on its presence twin alike (F11)
         const rendered = severity.fhir.value.codings[0];
-        if (rendered.system === SCT) assert.deepStrictEqual(severity.references.snomed, [rendered.code], presenceKey);
+        if (rendered.system === SCT) {
+          assert.deepStrictEqual(severity.references.snomed, [rendered.code], presenceKey);
+          assert.deepStrictEqual(presence.references, severity.references, presenceKey);
+        } else {
+          assert.strictEqual(presence.references, undefined, presenceKey);
+        }
       }
       const value = (k) => [answers(itemsById[k].fhir.value.codings), answers(itemsById[k].fhir.value.alsoMatch ?? [])];
       // perki 2026-11-27: cramps renders the common parent 55300003; Fable F9: sore throat renders 267102003
@@ -403,6 +409,9 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       // every new row is offered unticked; the bleeding row says what else it grants
       const { streamsById } = require('../src/streams');
       for (const s of FERTILITY_OPT_IN) assert.strictEqual(streamsById[s].consentOptIn, true, s);
+      // the five quantitative urine hormones (F5): each its own laboratory row, unticked; their group is no row
+      for (const s of URINE_HORMONES) assert.ok(fhirScopes['Observation|laboratory'].includes(s), s);
+      assert.strictEqual(streamsById['body-urine-hormones'].consentOptIn, undefined);
       assert.match(streamsById['body-vulva-bleeding'].description.en, /brown or dark.*clots.*childbirth.*pregnancy loss/);
       assert.match(streamsById['body-vulva-bleeding'].description.fr, /bruns ou foncés.*caillots.*accouchement.*perte de grossesse/);
     });
@@ -2172,6 +2181,18 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => run({ ...family, m: severity('mood', [coding('M')], 'mp', {}, { category: 'exam', code: coding('Q2') }), mp: presence('mood', [coding('M')], { category: 'exam', code: coding('Q2') }) }), /item "m" fhir: the fixed-coded code http:\/\/loinc.org\|N is "sa"'s under category "survey"/);
       // ... and a shared code of one family is never another family's negation code under another category
       assert.throws(() => run({ ...family, m: severity('mood', [coding('M')], 'mp', { negation: { option: '0', code: coding('Q') } }, { category: 'exam', code: coding('Q2') }), mp: presence('mood', [coding('M')], { category: 'exam', code: coding('Q2') }) }), /item "m" fhir: the fixed-coded code http:\/\/loinc.org\|Q is "sa"'s under category "survey"/);
+      // every block with a component sharing a code carries the same negation, or all none (F10): one zero shape per
+      // shared code; the presence twins carry no component and are not compared
+      assert.throws(() => run({ ...family, sb: severity('body-b', [coding('B')], 'pb', { negation: undefined }) }), /item "sb" fhir: value.component.negation is absent but "sa", sharing the code http:\/\/loinc.org\|Q, has \{"option":"0","code":\{"system":"http:\/\/loinc.org","code":"N","display":"display N"\}\}: every block with a component sharing a code carries the same negation, or all none/);
+      assert.throws(() => run({ ...family, sb: severity('body-b', [coding('B')], 'pb', { negation: { option: '0', code: coding('N2') } }) }), /item "sb" fhir: value.component.negation \{"option":"0","code":\{"system":"http:\/\/loinc.org","code":"N2","display":"display N2"\}\} but "sa", sharing the code http:\/\/loinc.org\|Q, has/);
+      assert.throws(() => run({ ...family, sb: severity('body-b', [coding('B')], 'pb', { negation: { option: '1', code: coding('N') } }) }), /item "sb" fhir: value.component.negation .* but "sa", sharing the code http:\/\/loinc.org\|Q/);
+      // all none under one shared code passes; another shared code may hold its own (or none)
+      run({ ...family, sa: severity('body-a', [coding('A')], 'pa', { negation: undefined }), sb: severity('body-b', [coding('B')], 'pb', { negation: undefined }) });
+      run({ ...family, m: severity('mood', [coding('M')], 'mp', { negation: undefined }, { code: coding('Q2') }), mp: presence('mood', [coding('M')], { code: coding('Q2') }) });
+      // the model: every 75325-1 block with a component carries the 111551-8 negation
+      const withComponent = Object.values(itemsById).filter((i) => i.fhir?.value?.kind === 'fixed-coded' && i.fhir.code.code === '75325-1' && i.fhir.value.component != null);
+      assert.strictEqual(withComponent.length, 50);
+      for (const i of withComponent) assert.strictEqual(i.fhir.value.component.negation?.code.code, '111551-8');
       // never an import key: a static code or an alsoMatch of any active item
       assert.throws(() => checkFhirImportKeys({ ...family, o: { fhir: obs('survey', 'N') } }, tree), /fhir import key Observation http:\/\/loinc.org\|N of "o" is the fixed-coded code of "(sa|sb)" \(its shared code or its negation code\)/);
       assert.throws(() => checkFhirImportKeys({ ...family, o: { fhir: { ...obs('survey', 'O'), alsoMatch: [coding('N')] } } }, tree), /fhir import key Observation http:\/\/loinc.org\|N of "o" is the fixed-coded code/);

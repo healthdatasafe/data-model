@@ -132,7 +132,7 @@
     },
     "[id=\"body\"]/children[id=\"body-vulva\"]/children[id=\"body-vulva-bleeding\"]/description": {
       "en": "Includes brown or dark bleeding, blood clots, bleeding after childbirth and bleeding from a pregnancy loss.",
-      "text": "Comprende il sanguinamento marrone o scuro, i coaguli, il sanguinamento dopo il parto e quello dovuto a una perdita della gravidanza.",
+      "text": "Comprende il sanguinamento marrone o scuro, i coaguli, il sanguinamento dopo il parto e quello legato a una perdita di gravidanza.",
       "status": "draft"
     },
     "[id=\"body\"]/children[id=\"body-skin\"]/label": {

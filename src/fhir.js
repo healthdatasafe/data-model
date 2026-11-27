@@ -1203,6 +1203,8 @@ function checkFhirScopes (items, { roots = streams.roots, lock = readLock(), cla
  * The `fixed-coded` blocks, with every item loaded (FHIR-MAPPING.md § Value kinds, § Import; plan 133 activity):
  * - every block sharing a code has one category: the code is the family's question, never an import key
  *   (checkFhirImportKeys), and the value names the item; a `component.negation` code is held the same way;
+ * - every block with a component sharing a code carries the same `component.negation`, or all none: a reader of the
+ *   shared code reads one zero shape for the whole family (the presence twins carry no component, so no negation);
  * - per stream, at most one item carries a component;
  * - the component's `absent` names the presence twin: another item on the same stream, eventType `activity/plain`,
  *   whose block is `fixed-coded` without a component, with the same code, category, codings, alsoMatch and effective. A resource
@@ -1210,6 +1212,7 @@ function checkFhirScopes (items, { roots = streams.roots, lock = readLock(), cla
  */
 function checkFixedCodedFamilies (items) {
   const categoryOf = new Map();
+  const negationOf = new Map();
   const withComponent = new Map();
   for (const [key, item] of Object.entries(items)) {
     const f = item.fhir;
@@ -1224,6 +1227,10 @@ function checkFixedCodedFamilies (items) {
     }
     const c = f.value.component;
     if (c == null) continue;
+    const shared = `${f.code.system}|${f.code.code}`;
+    const zero = negationOf.get(shared);
+    if (zero != null && !isDeepStrictEqual(zero.negation, c.negation)) fail(`value.component.negation ${c.negation == null ? 'is absent' : JSON.stringify(c.negation)} but "${zero.key}", sharing the code ${shared}, has ${zero.negation == null ? 'none' : JSON.stringify(zero.negation)}: every block with a component sharing a code carries the same negation, or all none`);
+    if (zero == null) negationOf.set(shared, { negation: c.negation, key });
     const sibling = withComponent.get(item.streamId);
     if (sibling != null) fail(`stream "${item.streamId}" already holds "${sibling}", a fixed-coded block with a component: one per stream`);
     withComponent.set(item.streamId, key);

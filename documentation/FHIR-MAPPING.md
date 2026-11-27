@@ -146,9 +146,11 @@ and that reading's disturbance flag, so the three items are mapped together and 
   import only.
 - **The zero grade** renders as `111551-8` "Symptom absent" with the finding as value and no component (the new
   `component.negation`, [Value kinds](#value-kinds)), so a reader that reads only `code` and `value` never sees
-  "Symptom: Nausea" for a "none" answer. **The rendered zero shape is not locked:** if the HL7 validator refutes
-  `111551-8` with a finding value, the fallback is the None component under `75325-1`, and both shapes import from
-  day one.
+  "Symptom: Nausea" for a "none" answer. **The HL7 validator accepts this shape:** `111551-8` with a finding value
+  passed hds-fhir-js `validate:fhir` on tx.fhir.org under the US Core and IPS flavours (2026-11-27). The None
+  component under `75325-1` is still accepted on import (both zero shapes import), so a source that writes it is not
+  refused. The build holds the family to one zero shape: every block with a component sharing a code carries the same
+  `component.negation`, or all none.
 - **Severity answers on import** (the new `component.alsoMatch`): SNOMED CT None, Mild, Slight, Moderate, Severe,
   Extreme and the "Symptom mild / moderate / severe / very severe" findings, LA11910-9 Slight and LA13958-6 Very severe,
   **mapped by label**: an incoming "Severe" is 0.75 (perki 2026-11-27). Trivial, "mild to moderate" and "moderate to
@@ -161,8 +163,10 @@ and that reading's disturbance flag, so the three items are mapped together and 
 - **Scope:** the 51 leaf streams are the grant roots of `Observation|symptom`; the `symptom` root and the 14
   body-system groups hold no item and are never granted. Not opt-in. The symptom family owns every cycle-related
   symptom stream (cramps, sore breasts, pelvic pain); the fertility family claims none of their codes.
-- `references.snomed` of each item states the rendered concept (corrected in the same release: cramps, gas, hair
-  growth, sore breasts, muscle and joint pain, pelvic pain, insomnia, cold extremities, blurred vision, sore throat).
+- `references.snomed` of each `-severity` item and of its presence twin states the rendered concept, the same on both
+  (corrected in the same release: cramps, gas, hair growth, sore breasts, muscle and joint pain, pelvic pain, insomnia,
+  cold extremities, blurred vision, sore throat; added on the 47 twins that had none). Hot flashes render an HDS code,
+  so neither of its items carries `references.snomed`.
 - **Release order: renderer first**, as activity: the hds-fhir-js release that knows the `symptom` category and the
   two component fields, then this pack, then the facade pin and the cores' extension options.
 
@@ -177,8 +181,10 @@ and that reading's disturbance flag, so the three items are mapped together and 
   bleeding qualifiers (brown or dark, miscarriage) are **value-less Observations** coded with the HDS item coding (no
   LOINC or SNOMED CT concept states them); clots and postpartum bleeding are SNOMED CT `289532003` and `289576005`,
   value-less too. The fertile window renders an `effectivePeriod` (`effective: { from: span }`). **A value-less marker
-  is frozen once shipped**: valid base R4 (value 0..1), confirmed by the validator run before the pack is published;
-  a later `valueBoolean` would be a new kind and a new shape for readers.
+  is frozen once shipped**: valid base R4 (value 0..1); a later `valueBoolean` would be a new kind and a new shape for
+  readers. The HL7 validator confirmed both the value-less markers and the `valueDateTime` under `8665-2` and
+  `11976-8` (hds-fhir-js `validate:fhir` on tx.fhir.org, US Core and IPS flavours, 2026-11-27; the script has no
+  Swiss flavour, so CH Core was not checked).
 - **Vaginal bleeding** is the HDS item coding with seven answers of the HDS fertility system (`bleeding-none` to
   `bleeding-very-heavy`; SNOMED CT `9126005` spotting and `289539007` moderate vaginal bleeding import only); brown or
   dark bleeding imports `289537009`. The **menstrual cup** fill is three `cup-fill-*` codes, apart from the flow
@@ -188,8 +194,10 @@ and that reading's disturbance flag, so the three items are mapped together and 
   detected / Equivocal / Detected import only). The OPK gains option 0.5 "High (approaching peak)", an HDS code
   (`ovulation-test-high`): HealthKit's `estrogenSurge` writes it. Any other intermediate value is refused on render.
 - **Scope:** the 10 grant roots of `Observation|fertility` (the six cycle streams, bleeding, cup, sexual activity,
-  genital contact), each **`consentOptIn`**, with the two tests and `body-urine-hormones-hcg` (a quantitative hCG says
-  what a pregnancy test says): 13 rows offered unticked. The bleeding row also grants clots, brown, postpartum and
+  genital contact), each **`consentOptIn`**, with the two tests and the five quantitative urine hormones of
+  `Observation|laboratory` (`body-urine-hormones-lh`, `-e3g`, `-pdg`, `-fsh` chart the cycle; `-hcg` says what a
+  pregnancy test says): 17 rows offered unticked. The four cycle hormones were offered ticked before this release; the
+  marker changes only the consent offer, so a grant already given keeps reading them. The bleeding row also grants clots, brown, postpartum and
   miscarriage bleeding, so its stream description says so in every language of the pack, a build check
   ([SMART scopes](#smart-scopes-packfhirscopes)). A predicted ovulation or fertile window (`hdsBasis: 'predicted'`) is
   never rendered.
@@ -911,8 +919,8 @@ in production.
 **A grant root marked `consentOptIn: true` is offered unticked too (plan 133), and that is all the marker does.** It is
 a stream property, published in `pack.streams` like `explicitGrantOnly`. `body-temperature` carries it (a grant on it
 also reads the basal fertility readings and their disturbance flags; see "Body temperature" at the top of this
-document), and since plan 133 the 10 grant roots of `Observation|fertility`, the two home tests and
-`body-urine-hormones-hcg` (see "Fertility charting"). hds-fhir-js adds the marked stream's subtree to the same option list as the `explicitGrantOnly` streams, so its
+document), and since plan 133 the 10 grant roots of `Observation|fertility`, the two home tests and the five
+quantitative urine hormones, `body-urine-hormones-lh`, `-e3g`, `-pdg`, `-fsh` and `-hcg` (see "Fertility charting"). hds-fhir-js adds the marked stream's subtree to the same option list as the `explicitGrantOnly` streams, so its
 consent row is unticked under a scope that names its key (`patient/Observation.rs?category=vital-signs`), under
 `patient/*.rs`, and under a native token on the stream itself or below it (`hds/stream/body-temperature.read`). Unlike
 `explicitGrantOnly`:
@@ -1973,9 +1981,12 @@ throws on a category table that differs from its own, so an older extension gene
 it does not know, so the block is skipped, never half-rendered) and the `event-date` kind. The blocks add 51 streams to
 `Observation|symptom`, 10 to `Observation|fertility` and 2 to `Observation|laboratory`, so the order is the activity
 one: (1) the hds-fhir-js release that knows all of them; (2) this pack; (3) the facade re-pin; (4) each core's
-extension options regenerated, when the scopes widen and the 13 opt-in rows appear unticked. The two home tests join a
-key an older library already serves: under an older library their blocks render as before the release (generic), and
-the laboratory scan drops them until step 3.
+extension options regenerated, when the scopes widen and the 17 opt-in rows appear unticked. The two home tests join a
+key an older library already serves, with a block an older library already reads (category `laboratory`, kind
+`coded`, a static code, the HDS item coding for the OPK): hds-fhir-js 0.21.0 and earlier render them as mapped lab
+Observations as soon as they read this pack, without waiting for step 1. The
+one change for such a consumer: a test event whose value is not one of the item's options was a generic Observation
+before the release and is refused on render after it.
 
 ---
 
@@ -2023,8 +2034,8 @@ bridge assembles them.
   no `64750-3` component, or one stated absent, into the presence twin, content `null`.
 - **N2:** `111551-8` "Symptom absent" (the `component.negation` code) with a value naming one symptom and no component
   imports into the `-severity` item at `0`; with a `64750-3` component whose answer is None it imports at `0` too, with
-  any other answer it is refused. **N1:** `75325-1` with the None answer imports at `0` as well. Both zero shapes import
-  from day one; which one renders is not locked (see "Symptoms").
+  any other answer it is refused. **N1:** `75325-1` with the None answer imports at `0` as well, an accepted import
+  shape. Both zero shapes import; `111551-8` is the one that renders, accepted by the HL7 validator (see "Symptoms").
 - Answers map **by label**: an incoming SNOMED CT "Severe" or "Symptom severe" is 0.75, "Very severe" 1. Refused:
   Trivial, "mild to moderate", "moderate to severe", a value naming two symptoms or none, any other component (a body
   site, `64748-7` duration), an unmapped answer, a category other than `symptom`, `survey`, `exam` (none is accepted).
@@ -2294,7 +2305,9 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   item. `component.alsoMatch` (`[FHIR-MAP-31]`): keys are component options, its codings join the item's codings
   (once in the item, across options too; never the HDS item coding). `component.negation` (`[FHIR-MAP-31]`,
   `[FHIR-SCOPE-27]`): its option a component option, its code not the block's; reserved like the shared code (never an
-  import key, one category across every block using it), the value codings keys under it too.
+  import key, one category across every block using it), the value codings keys under it too; every block with a
+  component sharing a code carries the same `negation`, or all none (one zero shape per family; the presence twins carry
+  no component and are not compared).
 - **effective (`[FHIR-MAP-30]`):** on an Observation only, never beside a `split` or a `concept` code; `day: true`
   exactly on an Observation item whose duration is one day (`mandatory`, `canBeNull: false`, `maxSeconds` at most
   90000).
