@@ -1,0 +1,18 @@
+# The person's other names (4.47.0): a usage name, a birth name, a former name, her full official name, a nickname.
+# A root of its own, not a child of `profile`: `explicitGrantOnly` is allowed on a root only, and a former or birth name
+# can say a marriage, a divorce or a change of gender, so no grant on `profile` or on `*` may read it. Not named
+# `profile-…`: in a list of grants, a `profile-` id reads as a child of `profile`. Her app matches a printed identity
+# against it, and nothing else reads it. The description makes no consent-screen promise until the production `*`
+# accesses are masked for it (documentation/PROFILE.md § Other names, Before the first write), as for genetics.
+id: other-names
+name: Other names
+parentId: null
+explicitGrantOnly: true
+label:
+  en: Other names
+  fr: Autres noms
+  es: Otros nombres
+description:
+  en: "Your other names, such as a usage name, your name at birth or a former name, so that your app recognises your documents."
+  fr: "Vos autres noms, comme un nom d'usage, votre nom de naissance ou un ancien nom, pour que votre app reconnaisse vos documents."
+  es: "Sus otros nombres, como un nombre de uso, su nombre de nacimiento o un nombre anterior, para que su app reconozca sus documentos."

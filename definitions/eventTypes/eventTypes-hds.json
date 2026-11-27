@@ -215,6 +215,50 @@
       "description": "Surname",
       "type": "string"
     },
+    "contact/other-name-v1": {
+      "description": "Another name of the person, beside the given and family names of her profile: a usage name, a birth name, a former name, her full official name, a nickname. FHIR HumanName (given, family, use). At least one of given and family. On the other-names root (explicitGrantOnly): no grant on profile reads it, nor one on * once the production * accesses are masked for it (documentation/PROFILE.md). Her app matches a printed identity against it (documentation/CONVERSATION.md R3); a nickname never matches. See documentation/PROFILE.md.",
+      "type": "object",
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "given"
+          ]
+        },
+        {
+          "required": [
+            "family"
+          ]
+        }
+      ],
+      "properties": {
+        "given": {
+          "description": "Given name(s), one string ('Marie Anne'). FHIR HumanName.given. Absent: her profile's given name goes with this family name.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "family": {
+          "description": "Family name. FHIR HumanName.family. Absent: her profile's family name goes with this given name.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "use": {
+          "description": "What the name is, FHIR HumanName.use: official (the full name of an identity document), usual (the name she uses, a usage name), maiden (her name at birth, before a marriage), old (a name she no longer uses), nickname (never matched against a document).",
+          "type": "string",
+          "enum": [
+            "official",
+            "usual",
+            "maiden",
+            "old",
+            "nickname"
+          ]
+        }
+      }
+    },
     "reproductive-sexuality/detailed": {
       "description": "Potentially reproductive sexual activity",
       "type": "string",
@@ -3769,7 +3813,7 @@
               }
             },
             "context": {
-              "description": "What the document prints that the person needs to answer: identity (is-this-yours only), dates (which-date and which-document-date only), anchor (is-this-yours: where the identity is printed; which-row-date: the box asked about; which-column-date: the column's heading), grid (which-row-date only: that box), column (which-column-date only: that column). Identity and dates are copied verbatim from the document's text layer, never produced or completed by a model.",
+              "description": "What the document prints that the person needs to answer: identity (is-this-yours only), dates (which-date and which-document-date only), anchor (is-this-yours: where the identity is printed; which-row-date: the box asked about; which-column-date: the column's heading), grid (which-row-date only: that box), column (which-column-date only: that column). Identity is copied verbatim from the document's text layer, never produced or completed by a model; a date is copied from a text layer, or carries its anchor (4.47.0).",
               "type": "object",
               "additionalProperties": false,
               "minProperties": 1,
@@ -3800,7 +3844,7 @@
                   }
                 },
                 "dates": {
-                  "description": "which-date and which-document-date only: the dates the document prints (never the birth date), so the person can pick one without the document. Partial dates are not listed.",
+                  "description": "which-date and which-document-date only: the dates the document prints (never the birth date), so the person can pick one without the document. Partial dates are not listed. A date not copied from a text layer carries its anchor (4.47.0), and her app shows it with the crop of its box; such a date carries no label (its role says what it is, the crop shows the printed label) and a text holding only the date as read.",
                   "type": "array",
                   "minItems": 1,
                   "maxItems": 6,
@@ -3836,6 +3880,63 @@
                           "received",
                           "other"
                         ]
+                      },
+                      "anchor": {
+                        "description": "Where the date is printed in the source document (4.47.0), for her app's crop of her own copy: the document, an attachment, a page and a box, nothing of what is printed there. A date not copied from a text layer MUST carry it, with its bbox; a date without one is not offered. See documentation/CONVERSATION.md and PROVENANCE.md.",
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "attachmentId",
+                          "page"
+                        ],
+                        "properties": {
+                          "eventId": {
+                            "description": "The id of the file/xds-v1 document event, the one clientData.related names (it stays there for queries). Absent on anchors written before 4.25.0: the document is then the one related names.",
+                            "type": "string",
+                            "maxLength": 64,
+                            "pattern": "^[a-zA-Z0-9_-]+$"
+                          },
+                          "attachmentId": {
+                            "description": "The id of the document event's attachment (Pryv attachments[].id) the value was read from.",
+                            "type": "string",
+                            "maxLength": 64,
+                            "pattern": "^[a-zA-Z0-9_-]+$"
+                          },
+                          "page": {
+                            "description": "Page number within that attachment, from 1 (an image is page 1).",
+                            "type": "integer",
+                            "minimum": 1
+                          },
+                          "bbox": {
+                            "description": "[x, y, width, height] of the printed line the value was read from, in percent of the page as displayed (x and width of its width, y and height of its height), origin at the top left. Absent when the reader has no box it trusts.",
+                            "type": "array",
+                            "items": [
+                              {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 100
+                              },
+                              {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 100
+                              },
+                              {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 100
+                              },
+                              {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 100
+                              }
+                            ],
+                            "additionalItems": false,
+                            "minItems": 4,
+                            "maxItems": 4
+                          }
+                        }
                       }
                     }
                   }
