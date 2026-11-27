@@ -924,6 +924,14 @@
           {
             "id": "body-vulva-bleeding",
             "name": "Vulva Bleeding",
+            "description": {
+              "en": "Includes brown or dark bleeding, blood clots, bleeding after childbirth and bleeding from a pregnancy loss.",
+              "fr": "Comprend les saignements bruns ou foncés, les caillots, les saignements après un accouchement et ceux d'une perte de grossesse.",
+              "es": "Incluye el sangrado marrón u oscuro, los coágulos, el sangrado después del parto y el sangrado asociado a una pérdida de embarazo.",
+              "it": "Comprende il sanguinamento marrone o scuro, i coaguli, il sanguinamento dopo il parto e quello legato a una perdita di gravidanza.",
+              "pt-BR": "Inclui sangramento marrom ou escuro, coágulos, sangramento após o parto e sangramento associado a uma perda gestacional."
+            },
+            "consentOptIn": true,
             "children": [
               {
                 "id": "body-vulva-bleeding-browndark",
@@ -951,6 +959,7 @@
           {
             "id": "body-vulva-menstrual-cup",
             "name": "Menstrual Cup",
+            "consentOptIn": true,
             "parentId": "body-vulva"
           }
         ],
@@ -1052,26 +1061,31 @@
               {
                 "id": "body-urine-hormones-lh",
                 "name": "LH",
+                "consentOptIn": true,
                 "parentId": "body-urine-hormones"
               },
               {
                 "id": "body-urine-hormones-e3g",
                 "name": "E3G",
+                "consentOptIn": true,
                 "parentId": "body-urine-hormones"
               },
               {
                 "id": "body-urine-hormones-pdg",
                 "name": "PdG",
+                "consentOptIn": true,
                 "parentId": "body-urine-hormones"
               },
               {
                 "id": "body-urine-hormones-fsh",
                 "name": "FSH",
+                "consentOptIn": true,
                 "parentId": "body-urine-hormones"
               },
               {
                 "id": "body-urine-hormones-hcg",
                 "name": "hCG",
+                "consentOptIn": true,
                 "parentId": "body-urine-hormones"
               }
             ],
@@ -1453,31 +1467,37 @@
           {
             "id": "fertility-cycles-start",
             "name": "New Cycle",
+            "consentOptIn": true,
             "parentId": "fertility-cycles"
           },
           {
             "id": "fertility-cycles-period",
             "name": "Period",
+            "consentOptIn": true,
             "parentId": "fertility-cycles"
           },
           {
             "id": "fertility-cycles-fertile-window",
             "name": "Fertile Window",
+            "consentOptIn": true,
             "parentId": "fertility-cycles"
           },
           {
             "id": "fertility-cycles-ovulation",
             "name": "Ovulation Day",
+            "consentOptIn": true,
             "parentId": "fertility-cycles"
           },
           {
             "id": "fertility-cycles-peak-day",
             "name": "Peak Day",
+            "consentOptIn": true,
             "parentId": "fertility-cycles"
           },
           {
             "id": "fertility-cycles-lh-peak-day",
             "name": "LH Peak Day",
+            "consentOptIn": true,
             "parentId": "fertility-cycles"
           },
           {
@@ -1555,11 +1575,13 @@
       {
         "id": "fertility-sexual-activity",
         "name": "Sexual Activity",
+        "consentOptIn": true,
         "parentId": "fertility"
       },
       {
         "id": "fertility-genital-contact",
         "name": "Non-intercourse genital contact",
+        "consentOptIn": true,
         "parentId": "fertility"
       },
       {
@@ -1570,11 +1592,13 @@
       {
         "id": "fertility-test-opk",
         "name": "Ovulation Test (OPK)",
+        "consentOptIn": true,
         "parentId": "fertility"
       },
       {
         "id": "fertility-test-pregnancy",
         "name": "Pregnancy Test",
+        "consentOptIn": true,
         "parentId": "fertility"
       },
       {

@@ -52,6 +52,16 @@
         "system": "http://terminology.hl7.org/CodeSystem/observation-category",
         "code": "activity",
         "display": "Activity"
+      },
+      "symptom": {
+        "system": "https://hds.ngo/fhir/CodeSystem/observation-category",
+        "code": "symptom",
+        "display": "Symptom"
+      },
+      "fertility": {
+        "system": "https://hds.ngo/fhir/CodeSystem/observation-category",
+        "code": "fertility",
+        "display": "Fertility"
       }
     },
     "Condition": {
