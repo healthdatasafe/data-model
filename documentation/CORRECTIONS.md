@@ -87,7 +87,9 @@ A closed object (`additionalProperties: false`). One event per entry.
 entry belongs on another moment, a day misplaced on a chart; it goes with `change` only. `clientData` holds only
 `hdsTimePrecision`, `hdsBasis` ([MENSTRUAL-CYCLE.md](MENSTRUAL-CYCLE.md)) and `hdsComparator`
 ([BLOOD-CHEMISTRY.md](BLOOD-CHEMISTRY.md#a-censored-value-hdscomparator)). With `change`, at least one of `type` and
-`content` or `time`; with `add`, `type` and `content`.
+`content` or `time`; with `add`, `type` and `content`. Applying a `change` keeps the entry's `hdsSourceGrid` (4.51.0,
+[PROVENANCE.md](PROVENANCE.md#clientdatahdssourcegrid--the-box-of-a-dated-grid-4510)): it is never in `corrected`. A
+`change` of `time` leaves the box where it was read; readers show the new day and never derive a row's days from it.
 
 **Event `time`.** The corrected entry's `time`, copied, for `change` and `remove`; for `add`, the moment the missing
 entry is about (a day: 12:00 UTC with `clientData.hdsTimePrecision: day`). Not the moment it was written (`created`

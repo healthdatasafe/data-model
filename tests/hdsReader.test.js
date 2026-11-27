@@ -21,7 +21,7 @@ const FLAVOURS = [
 ];
 const PORTABLE = /"(if|then|else|const|not|\$ref)"/;
 const strip = (schema) => { const s = structuredClone(schema); delete s.description; delete s.$id; delete s.title; return s; };
-const KEY_SCHEMAS = { hdsSourceAnchor: keys.hdsSourceAnchor, hdsExtraction: keys.hdsExtraction };
+const KEY_SCHEMAS = { hdsSourceAnchor: keys.hdsSourceAnchor, hdsExtraction: keys.hdsExtraction, hdsSourceGrid: keys.hdsSourceGrid };
 
 const EXTRACTION = { engine: 'hds-reader', engineVersion: '0.2.0', kbVersion: '0.4.0', backend: 'text-layer', confirmedBy: 'person' };
 const ANCHOR = { attachmentId: 'ckq3w8n1x0001a', page: 1, bbox: [8.5, 41.2, 83, 2.1] };
@@ -98,6 +98,71 @@ describe('[RDR] HDS Reader', () => {
     });
   }
 
+  for (const [flavour, make] of FLAVOURS) {
+    describe(`[RDR-GRID] clientData.hdsSourceGrid (4.51.0), ${flavour}`, () => {
+      let grid;
+      before(() => { grid = make().compile(keys.hdsSourceGrid); });
+
+      it('[RDR-GRID-1] a box is a row and a column, each 1 to 99', () => {
+        for (const g of [{ row: 1, column: 1 }, { row: 2, column: 14 }, { row: 99, column: 99 }]) assert.ok(grid(g), JSON.stringify(g) + ' ' + JSON.stringify(grid.errors));
+      });
+
+      it('[RDR-GRID-2] refuses a missing field, 0, a fraction, a string, above 99, and anything that could carry text or a date', () => {
+        for (const bad of [
+          {}, { row: 2 }, { column: 14 }, { row: 0, column: 1 }, { row: 1, column: 0 }, { row: 1.5, column: 1 }, { row: '2', column: 14 },
+          { row: 100, column: 1 }, { row: 1, column: 100 }, { row: 2, column: 14, text: '10KL x2' }, { row: 2, column: 14, day: '2026-03-12' },
+          { row: 2, column: 14, page: 1 }, [2, 14], null
+        ]) {
+          assert.ok(!grid(bad), JSON.stringify(bad));
+        }
+      });
+    });
+  }
+
+  describe('[RDR-GRID-SHAPE] hdsSourceGrid, pinned', () => {
+    it('[RDR-GRID-3] closed, portable, both required, the bounds of the proposed value\'s grid', () => {
+      const s = keys.hdsSourceGrid;
+      assert.strictEqual(s.additionalProperties, false);
+      assert.ok(!PORTABLE.test(JSON.stringify(s)));
+      assert.deepStrictEqual(Object.keys(s.properties), ['row', 'column']);
+      assert.deepStrictEqual(s.required, ['row', 'column']);
+      const pv = eventTypesById('message/hds-conversation-v1').oneOf.find((b) => b.properties.kind.enum[0] === 'proposed-value');
+      // strip() removes the top-level description only: the nested row and column descriptions are compared too
+      assert.deepStrictEqual(strip(s), strip(pv.properties.grid), 'the proposed value\'s grid, copied as it is');
+      assert.deepStrictEqual(s.properties.row, pv.properties.grid.properties.row);
+      assert.deepStrictEqual(s.properties.column, pv.properties.grid.properties.column);
+      // only from grid: never the column of a table read per column (an object with an index, another shape)
+      assert.deepStrictEqual(Object.keys(pv.properties.column.properties), ['index']);
+      assert.ok(!keys.hdsSourceGrid.properties.index, 'column.index is never copied here');
+    });
+
+    it('[RDR-GRID-4] PROVENANCE.md indexes it and documents it; CONVERSATION.md § Writing a value writes it', () => {
+      const prov = fs.readFileSync(path.join(__dirname, '../documentation/PROVENANCE.md'), 'utf-8');
+      assert.ok(prov.includes('| `clientData.hdsSourceGrid` (4.51.0) | The box of a dated grid a value was read from: its row and column, nothing of what is written there | this page'));
+      assert.ok(prov.includes('### `clientData.hdsSourceGrid` — the box of a dated grid (4.51.0)'));
+      assert.ok(prov.indexOf('### `clientData.hdsSourceGrid`') > prov.indexOf('### `clientData.hdsSourceAnchor`'), 'after the anchor');
+      const flat = prov.replace(/\s+/g, ' ');
+      for (const s of [
+        'With `hdsSourceAnchor`, never without it',
+        'Removed with the anchor, and whenever the anchor is rewritten.',
+        'A value from a table read per column (`column`, an index from the left) or dated per page carries none; `column` is never copied here.',
+        'by the anchor\'s `eventId`, `attachmentId` and `page`, and `row`; a reader uses these ids even when it cannot read the document.',
+        'A reader places a value by `row` and `column`, and shows its day from the event\'s `time`. The two may disagree after a correction of its `time`: the box stays, and a reader never derives a row\'s days from one value alone.',
+        'A reader draws the values that carry it and lists the others without a box; it never infers a box from `time`.',
+        'A reader reads `row` and `column` and ignores a field it does not know',
+        'her `correct` answer before the value is written (the grid is still copied, with `hdsExtraction.corrected`), and applying a `correction/entry-v1` `change`'
+      ]) assert.ok(flat.includes(s), s);
+      assert.doesNotMatch(flat, /takes each day from the event's `time`/);
+      const conv = fs.readFileSync(path.join(__dirname, '../documentation/CONVERSATION.md'), 'utf-8').replace(/\s+/g, ' ');
+      assert.ok(conv.includes('`hdsSourceGrid` = the proposed value\'s `grid` when it has one and the anchor is written (4.51.0'));
+      assert.ok(conv.includes('only from `grid`: a value from a table read per column (`column`, an index from the left) or dated per page carries none, and `column` is never copied there'));
+      assert.ok(conv.includes('a contact writes `anchor` on every grid value'));
+      const corr = fs.readFileSync(path.join(__dirname, '../documentation/CORRECTIONS.md'), 'utf-8').replace(/\s+/g, ' ');
+      assert.ok(corr.includes('Applying a `change` keeps the entry\'s `hdsSourceGrid` (4.51.0,'));
+      assert.ok(corr.includes('never derive a row\'s days from it'));
+    });
+  });
+
   describe('[RDR-KEY-SHAPE] the key schemas', () => {
     it('[RDR-KEY-5] are closed, in the portable subset, with exactly these fields', () => {
       for (const [k, s] of Object.entries(KEY_SCHEMAS)) {
@@ -115,14 +180,22 @@ describe('[RDR] HDS Reader', () => {
     it('[RDR-KEY-6] the PROVENANCE.md example carries valid keys', () => {
       const ajv = new Ajv({ strict: false });
       const examples = jsonBlocks('PROVENANCE.md').filter((e) => e.clientData?.hdsExtraction);
-      assert.strictEqual(examples.length, 1);
-      assert.ok(ajv.validate(keys.hdsSourceAnchor, examples[0].clientData.hdsSourceAnchor), JSON.stringify(ajv.errors));
-      assert.ok(ajv.validate(keys.hdsExtraction, examples[0].clientData.hdsExtraction), JSON.stringify(ajv.errors));
+      assert.strictEqual(examples.length, 2, 'a value read from a text layer, and one read from a dated grid (4.51.0)');
+      for (const e of examples) {
+        assert.ok(ajv.validate(keys.hdsSourceAnchor, e.clientData.hdsSourceAnchor), JSON.stringify(ajv.errors));
+        assert.ok(ajv.validate(keys.hdsExtraction, e.clientData.hdsExtraction), JSON.stringify(ajv.errors));
+        assert.strictEqual(e.clientData.hdsSourceAnchor.eventId, Object.keys(e.clientData.related)[0], 'the anchor names the related document');
+      }
+      const gridded = examples.filter((e) => e.clientData.hdsSourceGrid);
+      assert.strictEqual(gridded.length, 1);
+      assert.ok(ajv.validate(keys.hdsSourceGrid, gridded[0].clientData.hdsSourceGrid), JSON.stringify(ajv.errors));
+      assert.ok(gridded[0].clientData.hdsSourceAnchor, 'never without the anchor');
     });
 
     it('[RDR-KEY-7] the key schemas are published with the pack, under json-schemas/', () => {
       const files = keys.toBePublished();
-      assert.deepStrictEqual(files.map((f) => f.path + f.filename), ['./json-schemas/hds-source-anchor.json', './json-schemas/hds-extraction.json', './json-schemas/hds-document-pending.json', './json-schemas/hds-document-values.json', './json-schemas/hds-printed-in.json']);
+      assert.deepStrictEqual(files.map((f) => f.path + f.filename), ['./json-schemas/hds-source-anchor.json', './json-schemas/hds-extraction.json', './json-schemas/hds-document-pending.json', './json-schemas/hds-document-values.json', './json-schemas/hds-printed-in.json', './json-schemas/hds-source-grid.json']);
+      assert.strictEqual(files[5].content, keys.hdsSourceGrid);
       assert.strictEqual(files[0].content, keys.hdsSourceAnchor);
       assert.strictEqual(files[1].content, keys.hdsExtraction);
       assert.strictEqual(files[2].content, keys.hdsDocumentPending);
