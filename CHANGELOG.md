@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.52.0] - 2026-11-27
 
 ### Added: mood swings and oily hair or scalp as symptoms (site-agents#68, #69)
 
