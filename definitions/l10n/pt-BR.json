@@ -210,6 +210,11 @@
       "text": "Documentos compartilhados",
       "status": "draft"
     },
+    "[id=\"documents\"]/label": {
+      "en": "Medical documents",
+      "text": "Documentos médicos",
+      "status": "draft"
+    },
     "[id=\"documents\"]/description": {
       "en": "Every medical document you keep, filed or not: reports, letters, results, consents, advance directives, donor and emergency cards, images and administrative papers, including sensitive ones.",
       "text": "Todos os documentos médicos que você guarda, arquivados ou não: relatórios, cartas, resultados, consentimentos, diretivas antecipadas, cartões de doador e de emergência, imagens e papéis administrativos, inclusive os sensíveis.",

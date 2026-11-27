@@ -111,6 +111,11 @@ describe('[DOCS] Medical documents and read markers', () => {
       assert.match(streams.streamsById['documents-admin'].description.en, /insurance documents/);
       assert.match(streams.streamsById['documents-admin'].description.fr, /documents d'assurance/);
     });
+
+    it('[DOCS-STR-4] the root has its own plural label, the parent name of a filing stream on a consent (4.55.1)', () => {
+      assert.deepStrictEqual(streams.streamsById.documents.label, { en: 'Medical documents', fr: 'Documents médicaux' });
+      assert.strictEqual(itemsById.document.label.en, 'Medical document', 'the item still names the root alone');
+    });
   });
 
   // One document shared with one contact (3.37.0): share children are created by the person's app, so the model

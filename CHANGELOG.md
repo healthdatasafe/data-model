@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.55.1] - 2026-11-27
+
+Patch. A label only (plan 144, Bug C).
+
+### Added
+
+- **`documents` root `label`** { en "Medical documents", fr "Documents médicaux"; es, it, pt-BR drafts }. The item
+  `document` still names the root alone ("Medical document"); a consent naming a filing stream prefixes the parent's
+  own label, which the root lacked, so it read "Medical document › Clinical documents". hds-lib `dataName` (qualified)
+  and the account app read the parent's stream label first.
+
 ## [4.55.0] - 2026-11-27
 
 Minor. Plan 133 (DESIGN-SYMPTOMS.md v2, DESIGN-FERTILITY.md v2 phase 1, perki's decisions of 2026-11-27). **Renderer
