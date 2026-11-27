@@ -48,8 +48,8 @@ body-blood-pressure:
     en: Blood pressure
     fr: Tension artérielle
   description:
-    en: Blood pressure measurement — systolic / diastolic in mmHg, optional pulse in bpm.
-    fr: Mesure de la tension artérielle — systolique / diastolique en mmHg, pouls optionnel en bpm.
+    en: Blood pressure measurement — systolic and diastolic, with an optional pulse.
+    fr: Mesure de la tension artérielle — systolique et diastolique, avec le pouls en option.
   streamId: body-blood-pressure
   eventType: blood-pressure/mmhg-bpm
   type: composite
@@ -192,8 +192,8 @@ body-heart-rate:
     en: Heart rate
     fr: Fréquence cardiaque
   description:
-    en: Your measured heart rate, in beats per minute.
-    fr: Votre fréquence cardiaque mesurée, en battements par minute.
+    en: Your measured heart rate.
+    fr: Votre fréquence cardiaque mesurée.
   streamId: body-heart-rate
   eventType: frequency/bpm
   type: number
@@ -223,8 +223,8 @@ body-oxygen-saturation:
     en: Oxygen saturation (SpO2)
     fr: Saturation en oxygène (SpO2)
   description:
-    en: How much oxygen your blood carries, as a percentage.
-    fr: La quantité d'oxygène transportée par votre sang, en pourcentage.
+    en: How much oxygen your blood carries.
+    fr: La quantité d'oxygène transportée par votre sang.
   streamId: body-oxygen-saturation
   eventType: ratio/proportion
   type: number
@@ -486,8 +486,8 @@ body-semen-volume:
     en: Semen volume
     fr: Volume de sperme
   description:
-    en: Volume of semen in a single ejaculate, in millilitres.
-    fr: Volume de sperme dans un éjaculat unique, en millilitres.
+    en: Volume of semen in a single ejaculate.
+    fr: Volume de sperme dans un éjaculat unique.
   streamId: body-semen-volume
   eventType: volume/ml
   type: number
@@ -657,7 +657,7 @@ body-blood-serum-glucose-fasting:
   type: number
   repeatable: any
   # Fasting is its own item rather than a variation: SNOMED codes fasting (167087006) and
-  # random (167086002) serum glucose as different procedures, and the schema's `variations`
+  # untimed (167086002, SNOMED 'random') serum glucose as different procedures, and the schema's `variations`
   # block only supports eventType. Precedent: body-temperature-basal vs body-temperature.
   variations:
     eventType:
@@ -704,10 +704,10 @@ body-blood-serum-glucose-fasting:
 
 body-blood-serum-glucose-random:
   version: v1
-  label: { en: Glucose (random), fr: Glycémie (non à jeun) }
+  label: { en: Glucose (untimed), fr: Glycémie (jeûne non précisé) }
   description:
-    en: Blood sugar, measured at any time of day.
-    fr: Taux de sucre dans le sang, mesuré à n'importe quel moment.
+    en: Blood sugar, when the report does not say whether you were fasting.
+    fr: Taux de sucre dans le sang, lorsque le compte rendu ne précise pas si vous étiez à jeun.
   streamId: body-blood-serum-glucose-random
   type: number
   repeatable: any
@@ -797,8 +797,8 @@ body-blood-serum-insulin:
   version: v1
   label: { en: Insulin (untimed), fr: Insuline (jeûne non précisé) }
   description:
-    en: The hormone that moves sugar into your cells, measured at any time of day.
-    fr: L'hormone qui fait entrer le sucre dans vos cellules, mesurée à n'importe quel moment.
+    en: The hormone that moves sugar into your cells, when the report does not say whether you were fasting.
+    fr: L'hormone qui fait entrer le sucre dans vos cellules, lorsque le compte rendu ne précise pas si vous étiez à jeun.
   streamId: body-blood-serum-insulin
   type: number
   repeatable: any
