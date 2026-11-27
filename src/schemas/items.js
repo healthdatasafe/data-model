@@ -194,7 +194,7 @@ const defsSchema = {
     fhirValue: {
       type: 'object',
       properties: {
-        kind: { enum: ['quantity', 'scaled-quantity', 'ratio-quantity', 'coded', 'components', 'lab-result'] }
+        kind: { enum: ['quantity', 'scaled-quantity', 'ratio-quantity', 'coded', 'components', 'lab-result', 'fixed-coded'] }
       },
       required: ['kind'],
       allOf: [
@@ -266,6 +266,32 @@ const defsSchema = {
               }
             },
             required: ['options'],
+            additionalProperties: false
+          }
+        },
+        { // fixed-coded: one concept, fixed per item, rendered as valueCodeableConcept (the sport of a session, every
+          // coding a translation of it); `alsoMatch`: value codings accepted on import only, never emitted; `component`:
+          // the item's select options as one component (`code`, option value → coding), `absent` naming the item an
+          // import without that component goes to (the presence twin). Its own kind, not a field of `coded`: a renderer
+          // that does not know it skips the block instead of emitting a resource without its value.
+          if: { properties: { kind: { const: 'fixed-coded' } } },
+          then: {
+            properties: {
+              kind: {},
+              codings: { type: 'array', minItems: 1, items: { $ref: 'defs.json#/definitions/fhirCoding' } },
+              alsoMatch: { type: 'array', minItems: 1, items: { $ref: 'defs.json#/definitions/fhirCoding' } },
+              component: {
+                type: 'object',
+                properties: {
+                  absent: { type: 'string', minLength: 1 },
+                  code: { $ref: 'defs.json#/definitions/fhirCoding' },
+                  options: { type: 'object', minProperties: 1, additionalProperties: { $ref: 'defs.json#/definitions/fhirCoding' } }
+                },
+                required: ['absent', 'code', 'options'],
+                additionalProperties: false
+              }
+            },
+            required: ['codings'],
             additionalProperties: false
           }
         },
@@ -365,6 +391,19 @@ const defsSchema = {
         status: {
           type: 'object',
           properties: { from: { type: 'string', enum: ['span'] } },
+          required: ['from'],
+          additionalProperties: false
+        },
+        // Where an Observation's date comes from: the event's span, `effectivePeriod` when it has a positive duration,
+        // else `effectiveDateTime`. `day: true`: the event is one local day (a daily total), so a period of 23 to 25 h
+        // with exact start and end, and nothing else. Required with `day` exactly on an item whose duration is
+        // mandatory. FHIR-MAPPING.md § The block, field by field.
+        effective: {
+          type: 'object',
+          properties: {
+            from: { type: 'string', enum: ['span'] },
+            day: { const: true }
+          },
           required: ['from'],
           additionalProperties: false
         },
