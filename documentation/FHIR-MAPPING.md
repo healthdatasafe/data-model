@@ -432,8 +432,11 @@ code once shipped is a wire value, never renamed; codes are added when a sport n
 **`lab-result`** reads an object eventType, not a composite, so the composite accounting of the next section does not
 see it: the build holds instead that the keys of `lab-result/coded-v1` are exactly the ones the kind reads, at every
 level (the content: `analyte`, `value`, `comparator`, `unit`, `unitText`, `valueText`, `valueCodes`, `notes`;
-`analyte`: `label`, `codes`; `label`: `en`, then any key matching the language pattern
-`^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$` (the one hds-fhir-js `localized` keeps), no other key; a Coding: `system`, `version`, `code`, `display`, and `hdsId`
+`analyte`: `label`, `codes`; `label`: `en`, then any key matching
+`^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$` (a language tag in canonical case, language[-Script][-REGION]:
+`pt-BR`, `zh-Hant`, `es-419`), each `{ type: string, minLength: 1 }`, no other key. That set is a subset of the keys
+hds-fhir-js `localized` keeps as `translation` extensions (`LANGUAGE` in `render.ts`, `^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$`,
+any case after the first subtag), so every stored language is exported; a Coding: `system`, `version`, `code`, `display`, and `hdsId`
 in `analyte.codes`), and that `comparator` allows `<`, `<=`, `>`, `>=` only (it renders as `Quantity.comparator`), so
 a key or a value added to the eventType fails the build until the renderers place it.
 

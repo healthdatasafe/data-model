@@ -348,7 +348,7 @@ per specimen: `body-blood-coded`, `body-urine-coded`, `body-csf-coded`.
 
 | Field | Meaning |
 |---|---|
-| `analyte.label` | The test name, by language: any BCP 47 language tag (`en` required, `fr`, `es`, `it`, `pt-BR`, `de`, …); `en`, `fr`, `es` only in packs before this change. |
+| `analyte.label` | The test name, by language: a BCP 47 language tag in canonical case, language[-Script][-REGION] (`en` required, `fr`, `es`, `it`, `pt-BR`, `de`, `zh-Hant`, `es-419`, …); `en`, `fr`, `es` only in packs before this change. |
 | `analyte.codes[]` | FHIR Codings `{ system, code, display?, version?, hdsId? }`; `system` is a canonical URI. A LOINC code (`http://loinc.org`) whenever one fits, verified as in § Codes; otherwise the lab's or the writer's own code system: a URL it controls, else a fixed `urn:uuid:` (or the lab's `urn:oid:…`), the same value on every event. `hdsId` only when a datasource provides the test (none does yet; a datasource that does emits URI systems). |
 | `value` | The figure as printed. Requires `unit`. |
 | `unit` | The **UCUM code** of the printed unit: case-sensitive, printable ASCII (`umol/L`, not `µmol/L`; `10*9/L`; `{copies}/mL`; `1` when unitless). |

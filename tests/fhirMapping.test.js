@@ -1527,6 +1527,8 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       tamper((t) => { t.properties.analyte.properties.label.patternProperties = { '^[a-z]+$': { type: 'string' } }; }, /places analyte.label languages matching .* declares \^\[a-z\]\+\$/);
       tamper((t) => { delete t.properties.analyte.properties.label.patternProperties; }, /declares no patternProperties/);
       tamper((t) => { delete t.properties.analyte.properties.label.additionalProperties; }, /leaves other keys open/);
+      tamper((t) => { Object.values(t.properties.analyte.properties.label.patternProperties)[0].minLength = 0; }, /with another text schema/);
+      tamper((t) => { Object.values(t.properties.analyte.properties.label.patternProperties)[0].type = 'object'; }, /with another text schema/);
       tamper((t) => { t.properties.analyte.properties.codes.items.properties.userSelected = { type: 'boolean' }; }, /reads analyte.codes\[\] .* adds userSelected/);
       tamper((t) => { t.properties.valueCodes.items.properties.hdsId = { type: 'string' }; }, /reads valueCodes\[\] .* adds hdsId/);
       tamper((t) => { t.properties.comparator.enum.push('~'); }, /renders comparator as Quantity.comparator \(< <= > >=\); .* allows < <= > >= ~/);

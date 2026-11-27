@@ -368,7 +368,7 @@ data-model/
 │   ├── items/*.yaml                       # Health data point definitions (369 items, 300 active, 27 YAML files)
 │   ├── streams/*.yaml                     # Clinical-domain tree (28 top-level roots, 356 streams in all)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (96)
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (98)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (365) — see below
 │   ├── converters/
 │   │   ├── cervical-fluid/                # 9D vector converter (12 charting methods)

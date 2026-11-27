@@ -7,6 +7,11 @@
 #   default    — default value when no server value exists
 #   type       — value type hint (string, string[], enum, etc.)
 #   options    — allowed values for enum types
+#
+# Not listed here: hds-lib's dynamic settings, one event per key with no default, on two
+# more event types of the same baseStream: settings/preferred-display ('preferred-display-<itemKey>')
+# and settings/preferred-input ('preferred-input-<itemKey>'), content { itemKey, value }
+# (definitions/eventTypes/eventTypes-hds.json).
 
 preferredLocales:
   eventType: settings/preferred-locales

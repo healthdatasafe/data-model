@@ -2663,7 +2663,7 @@
       ]
     },
     "settings/preferred-display": {
-      "description": "One display preference of the user, written by hds-lib HDSSettings for the dynamic setting key 'preferred-display-<itemKey>': one event per itemKey on the application's baseStream, updated in place and deleted when the preference is cleared. The value's shape is owned by the app that sets it (a converter method id, a flag, an object of view preferences), so it is not enforced here.",
+      "description": "One display preference of the user, written by hds-lib HDSSettings for the dynamic setting key 'preferred-display-<itemKey>': one event per itemKey on the application's baseStream, updated in place and deleted when the preference is cleared. The value's shape is owned by the app that sets it (a converter method id, a flag, an object of view preferences), so it is not enforced here. The envelope is closed on purpose, since it is hds-lib's own and hds-lib writes exactly these two keys, unlike the app-owned settings types (settings/hds-react-timeline, settings/hds-webapp-diary) kept open.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -2689,7 +2689,7 @@
       }
     },
     "settings/preferred-input": {
-      "description": "One input preference of the user, written by hds-lib HDSSettings for the dynamic setting key 'preferred-input-<itemKey>': one event per itemKey on the application's baseStream, updated in place and deleted when the preference is cleared. The value's shape is owned by the app that sets it (an input method, a unit, an object of input choices), so it is not enforced here.",
+      "description": "One input preference of the user, written by hds-lib HDSSettings for the dynamic setting key 'preferred-input-<itemKey>': one event per itemKey on the application's baseStream, updated in place and deleted when the preference is cleared. The value's shape is owned by the app that sets it (an input method, a unit, an object of input choices), so it is not enforced here. The envelope is closed on purpose, since it is hds-lib's own and hds-lib writes exactly these two keys, unlike the app-owned settings types (settings/hds-react-timeline, settings/hds-webapp-diary) kept open.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -5771,7 +5771,7 @@
           ],
           "properties": {
             "label": {
-              "description": "The test name, by language: keys are BCP 47 language tags (en, fr, es, it, pt-BR, de, …); 'en' is required. Packs before this one accept en, fr and es only.",
+              "description": "The test name, by language: keys are BCP 47 language tags in canonical case, language[-Script][-REGION] (en, fr, es, it, pt-BR, de, zh-Hant, es-419); 'en' is required. Packs before this one accept en, fr and es only.",
               "type": "object",
               "additionalProperties": false,
               "required": [
@@ -5784,7 +5784,7 @@
                 }
               },
               "patternProperties": {
-                "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$": {
+                "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$": {
                   "type": "string",
                   "minLength": 1
                 }
