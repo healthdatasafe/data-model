@@ -79,6 +79,8 @@ children:
         name: Hair Loss
       - id: symptom-dermatological-hair-growth
         name: Excess Hair Growth
+      - id: symptom-dermatological-hair-oily
+        name: Oily Hair
       - id: symptom-dermatological-rash
         name: Rash
       - id: symptom-dermatological-hives

@@ -7452,6 +7452,51 @@
       "text": "Extrema",
       "status": "draft"
     },
+    "symptom-dermatological-hair-oily/label": {
+      "en": "Oily Hair",
+      "text": "Cabello graso",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily/description": {
+      "en": "Oily hair or scalp. Presence marker for sources that record occurrence only (no grade); use symptom-dermatological-hair-oily-severity when a severity is known.",
+      "text": "Cabello o cuero cabelludo graso. Marcador de presencia para las fuentes que registran solo la aparición (sin grado); use symptom-dermatological-hair-oily-severity cuando se conozca la gravedad.",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/label": {
+      "en": "Oily Hair",
+      "text": "Cabello graso",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/description": {
+      "en": "Oily hair or scalp.",
+      "text": "Cabello o cuero cabelludo graso.",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/options[value=0]/label": {
+      "en": "None",
+      "text": "Ninguna",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/options[value=0.25]/label": {
+      "en": "Slight",
+      "text": "Leve",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/options[value=0.5]/label": {
+      "en": "Moderate",
+      "text": "Moderado",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/options[value=0.75]/label": {
+      "en": "Severe",
+      "text": "Grave",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/options[value=1]/label": {
+      "en": "Extreme",
+      "text": "Extrema",
+      "status": "draft"
+    },
     "symptom-cognitive-focus-difficulty-severity/label": {
       "en": "Difficulty Concentrating",
       "text": "Dificultad para concentrarse",
@@ -7965,6 +8010,51 @@
     "wellbeing-mental-distress-stress-presence/description": {
       "en": "Stress symptoms. Presence marker for sources that record occurrence only (no grade); use wellbeing-mental-distress-stress when a severity is known.",
       "text": "Síntomas de estrés. Marcador de presencia para las fuentes que registran solo la aparición (sin grado); use wellbeing-mental-distress-stress cuando se conozca la gravedad.",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings/label": {
+      "en": "Mood swings",
+      "text": "Cambios de humor",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings/description": {
+      "en": "Mood that changes a lot over a short time. Presence marker for sources that record occurrence only (no grade); use wellbeing-mood-swings-severity when a severity is known.",
+      "text": "Estado de ánimo que cambia mucho en poco tiempo. Marcador de presencia para las fuentes que registran solo la aparición (sin grado); use wellbeing-mood-swings-severity cuando se conozca la gravedad.",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/label": {
+      "en": "Mood swings",
+      "text": "Cambios de humor",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/description": {
+      "en": "Mood that changes a lot over a short time.",
+      "text": "Estado de ánimo que cambia mucho en poco tiempo.",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/options[value=0]/label": {
+      "en": "None",
+      "text": "Ninguna",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/options[value=0.25]/label": {
+      "en": "Slight",
+      "text": "Leve",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/options[value=0.5]/label": {
+      "en": "Moderate",
+      "text": "Moderado",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/options[value=0.75]/label": {
+      "en": "Severe",
+      "text": "Grave",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/options[value=1]/label": {
+      "en": "Extreme",
+      "text": "Extrema",
       "status": "draft"
     }
   },

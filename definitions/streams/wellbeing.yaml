@@ -20,6 +20,8 @@ children:
     name: Depression severity
   - id: wellbeing-mental-distress-stress
     name: Stress severity
+  - id: wellbeing-mood-swings
+    name: Mood swings
   - id: wellbeing-self-rated-health
     name: Self-rated health
   - id: wellbeing-general-health

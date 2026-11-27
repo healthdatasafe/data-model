@@ -173,7 +173,7 @@ All Mira values confirmed from real prod API (2026-03-17). "Normal" = no event.
 
 ### Items not included (and why)
 
-- **Hair** (hairLoss, hair quality): Separate domain, separate stream (`body-hair/` if needed later)
+- **Hair** (hairLoss, hair quality): Separate domain, separate stream (`body-hair/` if needed later). Since then, hair symptoms are under `symptom-dermatological`: hair loss, hair growth, and oily hair or scalp (`symptom-dermatological-hair-oily`, SYMPTOMS.md decision 7), never `body-skin-oily`.
 - **Itchy/Pruritus**: Could be added as `body-skin-itchy` if a source provides it
 - **Rash**: Clinical finding, could be added later
 - **Severity**: Not needed now — can upgrade event type later
