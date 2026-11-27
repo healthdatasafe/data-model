@@ -93,7 +93,9 @@ newest `models/<method>/vM.json` with M ≤ N, each tagged `modelVersion`. The i
   code (`models/<source.key>/<modelVersion>.json`).
 - An item's `converter-engine.version` is the engine's initial version, not the pack selector.
 - Creighton v1 / converter v1 (plan 131) is the first case; hds-lib supports it from 2.60.0. Creighton v2 / converter
-  v2 (plan 136) adds only `notFor: ['0']` on the frequency annotation; hds-lib supports it from 2.77.0.
+  v2 (plan 136) adds only `notFor: ['0']` on the frequency annotation; hds-lib supports it from 2.77.0. Creighton v3 /
+  converter v3 (plan 136) changes only `produce`: the 11 incomplete codes off, `6CL`, `8KL`, `8CKL`, `6PY` on; hds-lib
+  supports it from 2.82.0.
 
 ### 6b. ⚑ `description` is short, and written for the end user
 

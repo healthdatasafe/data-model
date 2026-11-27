@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.46.0] - 2026-11-27
+
+### Added: cervical-fluid converter v3, Creighton model v3 (plan 136)
+
+- `converter/v3.yaml` (v2 with `version: v3`) and `models/creighton/v3.json` (model-cervical-fluid 1.5.0): only
+  `produce` changes. The 11 incomplete codes (6, 8, 10, 6G, 6GL, 6L, 6P, 8L, 8P, 10L, 10P) are no longer produced by a
+  conversion from another method, and `6CL`, `8KL`, `8CKL`, `6PY` become producible, so no conversion that was
+  peak-type with v2 becomes non-peak or dry (ChartNeo lubricative without stretch → `6CL`, not `2W`; watery → `8KL`;
+  colourless lubricative → `8CKL`, not `8YL`; Mira Gray → `6PY`, not `4`). Decided by perki on 2026-11-27 from the
+  conversion tables (no practitioner answer), after a Fable review. Vectors, labels, the option list and every other
+  method unchanged ([CNVV8]); `pack-v3.json` pinned; es / it / pt-BR blocks copied from pack-v2.
+- Readers: hds-lib 2.82.0 fetches `pack-v3.json`; earlier ones keep their pack. Stored events do not change; a
+  conversion made from now on may land on another code than before.
+
 ## [4.45.0] - 2026-11-27
 
 ### Added: four notice codes of the HDS Reader (CONVERSATION.md, plan 128 SUB-F)
