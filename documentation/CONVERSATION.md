@@ -369,7 +369,9 @@ set aside, may leave nothing waiting, and is deleted at `done` (R10). Her app sa
   `done` (the document shared again, then read or on hold); when the contact's latest `task-status` is `done` and not later
   than the answer (a proposed document answered after the work), or on `not-mine` and on `document-unshared`, 24 h after
   the answer, so the contact may read it first (R10). An answer written while the work is in progress again waits for the
-  next `done`. Answers are ordered by `created`:
+  next `done`. A `task-status` `error` still the contact's latest status 24 h after it was sent ends the work for her
+  notes, as a `done` does: each answer's own 24 h then applies, and a later status supersedes the error (R4). Answers are
+  ordered by `created`:
   an answer's `modified` never matters (R3, R4). The removal assumes the platform keeps no event history; where it
   does, the note stays in it.
 - Her app shows that the contact reads it, as for the chat (§ Chat).
