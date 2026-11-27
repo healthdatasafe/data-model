@@ -14120,6 +14120,1918 @@
       "status": "draft"
     }
   },
+  "converters/cervical-fluid/pack-v3.json": {
+    "dimensions/threadiness/label": {
+      "en": "Threadiness",
+      "text": "Formação de fios",
+      "status": "draft"
+    },
+    "dimensions/threadiness/shortLabel": {
+      "en": "Thread",
+      "text": "Fios",
+      "status": "draft"
+    },
+    "dimensions/threadiness/description": {
+      "en": "The tendency of the fluid to form thin filaments or strings when gently separated.",
+      "text": "A tendência do fluido de formar filamentos ou fios finos quando é separado com delicadeza.",
+      "status": "draft"
+    },
+    "dimensions/threadiness/stops[value=0]/label": {
+      "en": "None",
+      "text": "Nenhuma",
+      "status": "draft"
+    },
+    "dimensions/threadiness/stops[value=0.15]/label": {
+      "en": "Minimal",
+      "text": "Mínima",
+      "status": "draft"
+    },
+    "dimensions/threadiness/stops[value=0.3]/label": {
+      "en": "Slight",
+      "text": "Leve",
+      "status": "draft"
+    },
+    "dimensions/threadiness/stops[value=0.5]/label": {
+      "en": "Moderate",
+      "text": "Moderada",
+      "status": "draft"
+    },
+    "dimensions/threadiness/stops[value=0.7]/label": {
+      "en": "Stringy",
+      "text": "Filamentosa",
+      "status": "draft"
+    },
+    "dimensions/threadiness/stops[value=0.85]/label": {
+      "en": "Very stringy",
+      "text": "Muito filamentosa",
+      "status": "draft"
+    },
+    "dimensions/threadiness/stops[value=1]/label": {
+      "en": "Maximum",
+      "text": "Máxima",
+      "status": "draft"
+    },
+    "dimensions/stretchability/label": {
+      "en": "Stretchability",
+      "text": "Elasticidade",
+      "status": "draft"
+    },
+    "dimensions/stretchability/shortLabel": {
+      "en": "Stretch",
+      "text": "Elast.",
+      "status": "draft"
+    },
+    "dimensions/stretchability/description": {
+      "en": "The maximum distance the fluid can be stretched between fingers before breaking.",
+      "text": "A distância máxima a que o fluido pode ser esticado entre os dedos antes de se romper.",
+      "status": "draft"
+    },
+    "dimensions/stretchability/stops[value=0]/label": {
+      "en": "None",
+      "text": "Nenhuma",
+      "status": "draft"
+    },
+    "dimensions/stretchability/stops[value=0.15]/label": {
+      "en": "Minimal",
+      "text": "Mínima",
+      "status": "draft"
+    },
+    "dimensions/stretchability/stops[value=0.3]/label": {
+      "en": "Short",
+      "text": "Curta",
+      "status": "draft"
+    },
+    "dimensions/stretchability/stops[value=0.5]/label": {
+      "en": "Medium",
+      "text": "Média",
+      "status": "draft"
+    },
+    "dimensions/stretchability/stops[value=0.7]/label": {
+      "en": "Long",
+      "text": "Longa",
+      "status": "draft"
+    },
+    "dimensions/stretchability/stops[value=0.85]/label": {
+      "en": "Very long",
+      "text": "Muito longa",
+      "status": "draft"
+    },
+    "dimensions/stretchability/stops[value=1]/label": {
+      "en": "Maximum (>3 cm)",
+      "text": "Máxima (>3 cm)",
+      "status": "draft"
+    },
+    "dimensions/lubricative/label": {
+      "en": "Lubricative",
+      "text": "Lubrificação",
+      "status": "draft"
+    },
+    "dimensions/lubricative/shortLabel": {
+      "en": "Lubric",
+      "text": "Lubrif.",
+      "status": "draft"
+    },
+    "dimensions/lubricative/description": {
+      "en": "The degree to which the fluid creates a slippery, gliding sensation that reduces friction.",
+      "text": "O grau em que o fluido cria uma sensação escorregadia, de deslizamento, que reduz o atrito.",
+      "status": "draft"
+    },
+    "dimensions/lubricative/stops[value=0]/label": {
+      "en": "None",
+      "text": "Nenhuma",
+      "status": "draft"
+    },
+    "dimensions/lubricative/stops[value=0.2]/label": {
+      "en": "Slightly",
+      "text": "Levemente",
+      "status": "draft"
+    },
+    "dimensions/lubricative/stops[value=0.4]/label": {
+      "en": "Moderate",
+      "text": "Moderada",
+      "status": "draft"
+    },
+    "dimensions/lubricative/stops[value=0.6]/label": {
+      "en": "Slippery",
+      "text": "Escorregadia",
+      "status": "draft"
+    },
+    "dimensions/lubricative/stops[value=0.8]/label": {
+      "en": "Very slippery",
+      "text": "Muito escorregadia",
+      "status": "draft"
+    },
+    "dimensions/lubricative/stops[value=1]/label": {
+      "en": "Extremely slippery",
+      "text": "Extremamente escorregadia",
+      "status": "draft"
+    },
+    "dimensions/transparency/label": {
+      "en": "Transparency",
+      "text": "Transparência",
+      "status": "draft"
+    },
+    "dimensions/transparency/shortLabel": {
+      "en": "Transp",
+      "text": "Transp.",
+      "status": "draft"
+    },
+    "dimensions/transparency/description": {
+      "en": "How much light passes through the fluid, from fully opaque to fully transparent.",
+      "text": "A quantidade de luz que atravessa o fluido, de totalmente opaco a totalmente transparente.",
+      "status": "draft"
+    },
+    "dimensions/transparency/stops[value=0]/label": {
+      "en": "Opaque",
+      "text": "Opaco",
+      "status": "draft"
+    },
+    "dimensions/transparency/stops[value=0.25]/label": {
+      "en": "Cloudy",
+      "text": "Turvo",
+      "status": "draft"
+    },
+    "dimensions/transparency/stops[value=0.5]/label": {
+      "en": "Translucent",
+      "text": "Translúcido",
+      "status": "draft"
+    },
+    "dimensions/transparency/stops[value=0.75]/label": {
+      "en": "Nearly clear",
+      "text": "Quase transparente",
+      "status": "draft"
+    },
+    "dimensions/transparency/stops[value=1]/label": {
+      "en": "Transparent",
+      "text": "Transparente",
+      "status": "draft"
+    },
+    "dimensions/wetness/label": {
+      "en": "Wetness",
+      "text": "Umidade",
+      "status": "draft"
+    },
+    "dimensions/wetness/shortLabel": {
+      "en": "Wet",
+      "text": "Umidade",
+      "status": "draft"
+    },
+    "dimensions/wetness/description": {
+      "en": "The overall moisture content and water-like quality at the vulva.",
+      "text": "O teor geral de umidade e a qualidade aquosa na vulva.",
+      "status": "draft"
+    },
+    "dimensions/wetness/stops[value=0]/label": {
+      "en": "Dry",
+      "text": "Seco",
+      "status": "draft"
+    },
+    "dimensions/wetness/stops[value=0.2]/label": {
+      "en": "Barely moist",
+      "text": "Pouca umidade",
+      "status": "draft"
+    },
+    "dimensions/wetness/stops[value=0.4]/label": {
+      "en": "Moist",
+      "text": "Umedecido",
+      "status": "draft"
+    },
+    "dimensions/wetness/stops[value=0.6]/label": {
+      "en": "Wet",
+      "text": "Molhado",
+      "status": "draft"
+    },
+    "dimensions/wetness/stops[value=0.8]/label": {
+      "en": "Very wet",
+      "text": "Muito molhado",
+      "status": "draft"
+    },
+    "dimensions/wetness/stops[value=1]/label": {
+      "en": "Dripping",
+      "text": "Pingando",
+      "status": "draft"
+    },
+    "dimensions/densityFluidity/label": {
+      "en": "Density / Fluidity",
+      "text": "Densidade / Fluidez",
+      "status": "draft"
+    },
+    "dimensions/densityFluidity/shortLabel": {
+      "en": "Fluid",
+      "text": "Fluidez",
+      "status": "draft"
+    },
+    "dimensions/densityFluidity/description": {
+      "en": "The viscosity spectrum from thick and dense to thin and fluid.",
+      "text": "O espectro de viscosidade, de espesso e denso a fino e fluido.",
+      "status": "draft"
+    },
+    "dimensions/densityFluidity/stops[value=0]/label": {
+      "en": "Thick / Pasty",
+      "text": "Espesso / Pastoso",
+      "status": "draft"
+    },
+    "dimensions/densityFluidity/stops[value=0.2]/label": {
+      "en": "Dense",
+      "text": "Denso",
+      "status": "draft"
+    },
+    "dimensions/densityFluidity/stops[value=0.4]/label": {
+      "en": "Creamy",
+      "text": "Cremoso",
+      "status": "draft"
+    },
+    "dimensions/densityFluidity/stops[value=0.6]/label": {
+      "en": "Fluid",
+      "text": "Fluido",
+      "status": "draft"
+    },
+    "dimensions/densityFluidity/stops[value=0.8]/label": {
+      "en": "Thin",
+      "text": "Fino",
+      "status": "draft"
+    },
+    "dimensions/densityFluidity/stops[value=1]/label": {
+      "en": "Watery",
+      "text": "Aquoso",
+      "status": "draft"
+    },
+    "dimensions/sensation/label": {
+      "en": "Sensation",
+      "text": "Sensação",
+      "status": "draft"
+    },
+    "dimensions/sensation/shortLabel": {
+      "en": "Sense",
+      "text": "Sens.",
+      "status": "draft"
+    },
+    "dimensions/sensation/description": {
+      "en": "The subjective vulvar perception felt during walking or daily movement.",
+      "text": "A percepção vulvar subjetiva sentida ao caminhar ou nos movimentos do dia a dia.",
+      "status": "draft"
+    },
+    "dimensions/sensation/stops[value=0]/label": {
+      "en": "Dry",
+      "text": "Seco",
+      "status": "draft"
+    },
+    "dimensions/sensation/stops[value=0.25]/label": {
+      "en": "Nothing felt",
+      "text": "Nenhuma sensação",
+      "status": "draft"
+    },
+    "dimensions/sensation/stops[value=0.5]/label": {
+      "en": "Damp",
+      "text": "Úmido",
+      "status": "draft"
+    },
+    "dimensions/sensation/stops[value=0.75]/label": {
+      "en": "Wet",
+      "text": "Molhado",
+      "status": "draft"
+    },
+    "dimensions/sensation/stops[value=1]/label": {
+      "en": "Slippery",
+      "text": "Escorregadio",
+      "status": "draft"
+    },
+    "dimensions/mucusVolume/label": {
+      "en": "Mucus Volume",
+      "text": "Volume de muco",
+      "status": "draft"
+    },
+    "dimensions/mucusVolume/shortLabel": {
+      "en": "M.Vol",
+      "text": "Vol. muco",
+      "status": "draft"
+    },
+    "dimensions/mucusVolume/description": {
+      "en": "The quantity of cervical mucus observed, from none to profuse.",
+      "text": "A quantidade de muco cervical observada, de nenhuma a muito abundante.",
+      "status": "draft"
+    },
+    "dimensions/mucusVolume/stops[value=0]/label": {
+      "en": "None",
+      "text": "Nenhum",
+      "status": "draft"
+    },
+    "dimensions/mucusVolume/stops[value=0.1]/label": {
+      "en": "Scanty",
+      "text": "Mínimo",
+      "status": "draft"
+    },
+    "dimensions/mucusVolume/stops[value=0.25]/label": {
+      "en": "Light",
+      "text": "Leve",
+      "status": "draft"
+    },
+    "dimensions/mucusVolume/stops[value=0.5]/label": {
+      "en": "Medium",
+      "text": "Médio",
+      "status": "draft"
+    },
+    "dimensions/mucusVolume/stops[value=0.75]/label": {
+      "en": "Heavy",
+      "text": "Abundante",
+      "status": "draft"
+    },
+    "dimensions/mucusVolume/stops[value=1]/label": {
+      "en": "Profuse",
+      "text": "Muito abundante",
+      "status": "draft"
+    },
+    "dimensions/color/label": {
+      "en": "Color",
+      "text": "Cor",
+      "status": "draft"
+    },
+    "dimensions/color/shortLabel": {
+      "en": "Color",
+      "text": "Cor",
+      "status": "draft"
+    },
+    "dimensions/color/description": {
+      "en": "The color of the fluid on a non-linear spectrum. Not a fertility gradient.",
+      "text": "A cor do fluido em um espectro não linear. Não é um gradiente de fertilidade.",
+      "status": "draft"
+    },
+    "dimensions/color/stops[value=0]/label": {
+      "en": "White",
+      "text": "Branco",
+      "status": "draft"
+    },
+    "dimensions/color/stops[value=0.2]/label": {
+      "en": "Off-white",
+      "text": "Branco-gelo",
+      "status": "draft"
+    },
+    "dimensions/color/stops[value=0.4]/label": {
+      "en": "Yellow",
+      "text": "Amarelo",
+      "status": "draft"
+    },
+    "dimensions/color/stops[value=0.5]/label": {
+      "en": "Clear",
+      "text": "Claro",
+      "status": "draft"
+    },
+    "dimensions/color/stops[value=0.6]/label": {
+      "en": "Pink",
+      "text": "Rosa",
+      "status": "draft"
+    },
+    "dimensions/color/stops[value=0.8]/label": {
+      "en": "Red",
+      "text": "Vermelho",
+      "status": "draft"
+    },
+    "dimensions/color/stops[value=1]/label": {
+      "en": "Brown",
+      "text": "Marrom",
+      "status": "draft"
+    },
+    "temperatureRules/sympto-thermal/label": {
+      "en": "STM / TCOYF",
+      "text": "STM / TCOYF",
+      "status": "draft"
+    },
+    "temperatureRules/sensiplan/label": {
+      "en": "Sensiplan (3 over 6)",
+      "text": "Sensiplan (3 sobre 6)",
+      "status": "draft"
+    },
+    "temperatureRules/manual/label": {
+      "en": "Drawn by the person",
+      "text": "Traçada pela própria pessoa",
+      "status": "draft"
+    },
+    "methods[0]/name": {
+      "en": "Apple Health",
+      "text": "Apple Health",
+      "status": "draft"
+    },
+    "methods[0]/description": {
+      "en": "Five-level cervical mucus quality scale used by Apple HealthKit.",
+      "text": "Escala de qualidade do muco cervical em cinco níveis usada pelo Apple HealthKit.",
+      "status": "draft"
+    },
+    "methods[0]/components[0]/label": {
+      "en": "Observation",
+      "text": "Observação",
+      "status": "draft"
+    },
+    "methods[0]/components[0]/options[value=\"dry\"]/label": {
+      "en": "Dry",
+      "text": "Seco",
+      "status": "draft"
+    },
+    "methods[0]/components[0]/options[value=\"sticky\"]/label": {
+      "en": "Sticky",
+      "text": "Pegajoso",
+      "status": "draft"
+    },
+    "methods[0]/components[0]/options[value=\"creamy\"]/label": {
+      "en": "Creamy",
+      "text": "Cremoso",
+      "status": "draft"
+    },
+    "methods[0]/components[0]/options[value=\"watery\"]/label": {
+      "en": "Watery",
+      "text": "Aquoso",
+      "status": "draft"
+    },
+    "methods[0]/components[0]/options[value=\"eggWhite\"]/label": {
+      "en": "Egg White",
+      "text": "Clara de ovo",
+      "status": "draft"
+    },
+    "methods[1]/name": {
+      "en": "Bigelow Mucus Score",
+      "text": "Bigelow Mucus Score",
+      "status": "draft"
+    },
+    "methods[1]/description": {
+      "en": "Bigelow mucus score (1–4): standardized mucus quality assessment.",
+      "text": "Escore de muco Bigelow (1–4): avaliação padronizada da qualidade do muco.",
+      "status": "draft"
+    },
+    "methods[1]/components[0]/label": {
+      "en": "Mucus (Bigelow 1–4)",
+      "text": "Muco (Bigelow 1–4)",
+      "status": "draft"
+    },
+    "methods[1]/components[0]/options[value=1]/label": {
+      "en": "1 — Dry / nothing",
+      "text": "1 — Seco / nada",
+      "status": "draft"
+    },
+    "methods[1]/components[0]/options[value=2]/label": {
+      "en": "2 — Damp / nothing seen",
+      "text": "2 — Úmido / nada visto",
+      "status": "draft"
+    },
+    "methods[1]/components[0]/options[value=3]/label": {
+      "en": "3 — Damp / thick-creamy",
+      "text": "3 — Úmido / espesso-cremoso",
+      "status": "draft"
+    },
+    "methods[1]/components[0]/options[value=4]/label": {
+      "en": "4 — Wet-slippery / eggwhite",
+      "text": "4 — Molhado-escorregadio / clara de ovo",
+      "status": "draft"
+    },
+    "methods[2]/name": {
+      "en": "Billings",
+      "text": "Billings",
+      "status": "draft"
+    },
+    "methods[2]/description": {
+      "en": "Tracks mucus sensation and appearance from dry through peak, with bleeding recorded per BillingsMentor structured vocabulary.",
+      "text": "Registra a sensação e o aspecto do muco, do seco até o ápice, com o sangramento anotado segundo o vocabulário estruturado do BillingsMentor.",
+      "status": "draft"
+    },
+    "methods[2]/components[0]/label": {
+      "en": "Mucus observation",
+      "text": "Observação do muco",
+      "status": "draft"
+    },
+    "methods[2]/components[0]/options[value=\"dry\"]/label": {
+      "en": "Dry",
+      "text": "Seco",
+      "status": "draft"
+    },
+    "methods[2]/components[0]/options[value=\"unchanged\"]/label": {
+      "en": "Unchanging sticky/thick",
+      "text": "Pegajoso/espesso, sem mudança",
+      "status": "draft"
+    },
+    "methods[2]/components[0]/options[value=\"sticky\"]/label": {
+      "en": "Sticky",
+      "text": "Pegajoso",
+      "status": "draft"
+    },
+    "methods[2]/components[0]/options[value=\"cloudyWhite\"]/label": {
+      "en": "Cloudy/White",
+      "text": "Turvo/Branco",
+      "status": "draft"
+    },
+    "methods[2]/components[0]/options[value=\"wetSlippery\"]/label": {
+      "en": "Wet/Slippery",
+      "text": "Molhado/Escorregadio",
+      "status": "draft"
+    },
+    "methods[2]/components[0]/options[value=\"peak\"]/label": {
+      "en": "Peak",
+      "text": "Ápice",
+      "status": "draft"
+    },
+    "methods[3]/name": {
+      "en": "ChartNeo",
+      "text": "ChartNeo",
+      "status": "draft"
+    },
+    "methods[3]/description": {
+      "en": "Multi-axis digital charting with separate walking, wiping, inspect, and finger-test scales.",
+      "text": "Registro digital em vários eixos, com escalas separadas para caminhada, limpeza, inspeção e teste do dedo.",
+      "status": "draft"
+    },
+    "methods[3]/components[0]/label": {
+      "en": "Walking",
+      "text": "Ao caminhar",
+      "status": "draft"
+    },
+    "methods[3]/components[0]/options[value=null]/label": {
+      "en": "Not observed",
+      "text": "Não observado",
+      "status": "draft"
+    },
+    "methods[3]/components[0]/options[value=1]/label": {
+      "en": "1 — Nothing",
+      "text": "1 — Nada",
+      "status": "draft"
+    },
+    "methods[3]/components[0]/options[value=2]/label": {
+      "en": "2 — Damp",
+      "text": "2 — Úmido",
+      "status": "draft"
+    },
+    "methods[3]/components[0]/options[value=3]/label": {
+      "en": "3 — Wet/Slippery",
+      "text": "3 — Molhado/Escorregadio",
+      "status": "draft"
+    },
+    "methods[3]/components[1]/label": {
+      "en": "Wiping",
+      "text": "Ao se limpar",
+      "status": "draft"
+    },
+    "methods[3]/components[1]/options[value=null]/label": {
+      "en": "Not observed",
+      "text": "Não observado",
+      "status": "draft"
+    },
+    "methods[3]/components[1]/options[value=1]/label": {
+      "en": "1 — Nothing",
+      "text": "1 — Nada",
+      "status": "draft"
+    },
+    "methods[3]/components[1]/options[value=2]/label": {
+      "en": "2 — Damp",
+      "text": "2 — Úmido",
+      "status": "draft"
+    },
+    "methods[3]/components[1]/options[value=3]/label": {
+      "en": "3 — Wet/Slippery",
+      "text": "3 — Molhado/Escorregadio",
+      "status": "draft"
+    },
+    "methods[3]/components[2]/label": {
+      "en": "Inspect",
+      "text": "Inspeção",
+      "status": "draft"
+    },
+    "methods[3]/components[2]/options[value=null]/label": {
+      "en": "Not observed",
+      "text": "Não observado",
+      "status": "draft"
+    },
+    "methods[3]/components[2]/options[value=1]/label": {
+      "en": "1 — Nothing",
+      "text": "1 — Nada",
+      "status": "draft"
+    },
+    "methods[3]/components[2]/options[value=2]/label": {
+      "en": "2 — Small amount",
+      "text": "2 — Pequena quantidade",
+      "status": "draft"
+    },
+    "methods[3]/components[2]/options[value=3]/label": {
+      "en": "3 — Moderate",
+      "text": "3 — Moderada",
+      "status": "draft"
+    },
+    "methods[3]/components[2]/options[value=4]/label": {
+      "en": "4 — Abundant",
+      "text": "4 — Abundante",
+      "status": "draft"
+    },
+    "methods[3]/components[3]/label": {
+      "en": "Finger Test",
+      "text": "Teste do dedo",
+      "status": "draft"
+    },
+    "methods[3]/components[3]/options[value=null]/label": {
+      "en": "Not observed",
+      "text": "Não observado",
+      "status": "draft"
+    },
+    "methods[3]/components[3]/options[value=1]/label": {
+      "en": "1 — Pasty",
+      "text": "1 — Pastoso",
+      "status": "draft"
+    },
+    "methods[3]/components[3]/options[value=2]/label": {
+      "en": "2 — Some stretch",
+      "text": "2 — Um pouco esticável",
+      "status": "draft"
+    },
+    "methods[3]/components[3]/options[value=3]/label": {
+      "en": "3 — Very stretchy",
+      "text": "3 — Muito esticável",
+      "status": "draft"
+    },
+    "methods[3]/components[3]/options[value=4]/label": {
+      "en": "4 — Peak",
+      "text": "4 — Ápice",
+      "status": "draft"
+    },
+    "methods[3]/components[4]/label": {
+      "en": "Clear / Transparent",
+      "text": "Claro / Transparente",
+      "status": "draft"
+    },
+    "methods[3]/components[4]/options[value=0]/label": {
+      "en": "No",
+      "text": "Não",
+      "status": "draft"
+    },
+    "methods[3]/components[4]/options[value=1]/label": {
+      "en": "Yes",
+      "text": "Sim",
+      "status": "draft"
+    },
+    "methods[4]/name": {
+      "en": "Creighton",
+      "text": "Creighton",
+      "status": "draft"
+    },
+    "methods[4]/description": {
+      "en": "Creighton notation (book ch. 6): a stretch number (6, 8, 10) with a colour (C, C/K, K, KY, Y, B brown, R red), a consistency if any (G, P) and lubrication (L); PC, PY for a pasty discharge without stretch; 0, 2, 2W, 4 for dry days; 10DL, 10SL, 10WL for lubrication without stretch.",
+      "text": "Notação Creighton (livro, cap. 6): um número de elasticidade (6, 8, 10) com uma cor (C, C/K, K, KY, Y, B marrom, R vermelho), uma consistência, se houver (G, P), e a lubrificação (L); PC, PY para uma secreção pastosa sem elasticidade; 0, 2, 2W, 4 para dias secos; 10DL, 10SL, 10WL para lubrificação sem elasticidade.",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/label": {
+      "en": "Mucus code",
+      "text": "Código do muco",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"0\"]/label": {
+      "en": "0 — Dry",
+      "text": "0 — Seco",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"2\"]/label": {
+      "en": "2 — Damp without lubrication",
+      "text": "2 — Úmido sem lubrificação",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"4\"]/label": {
+      "en": "4 — Shiny without lubrication",
+      "text": "4 — Brilhante sem lubrificação",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"2W\"]/label": {
+      "en": "2W — Wet without lubrication",
+      "text": "2W — Molhado sem lubrificação",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"PC\"]/label": {
+      "en": "PC — Pasty, cloudy",
+      "text": "PC — Pastoso, turvo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"PY\"]/label": {
+      "en": "PY — Pasty, yellow",
+      "text": "PY — Pastoso, amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6\"]/label": {
+      "en": "6 — Sticky",
+      "text": "6 — Pegajoso",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6B\"]/label": {
+      "en": "6B — Sticky, brown",
+      "text": "6B — Pegajoso, marrom",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6BL\"]/label": {
+      "en": "6BL — Sticky, brown, lubricative",
+      "text": "6BL — Pegajoso, marrom, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6C\"]/label": {
+      "en": "6C — Sticky, cloudy",
+      "text": "6C — Pegajoso, turvo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6CK\"]/label": {
+      "en": "6CK — Sticky, cloudy/clear",
+      "text": "6CK — Pegajoso, turvo/transparente",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6CKL\"]/label": {
+      "en": "6CKL — Sticky, cloudy/clear, lubricative",
+      "text": "6CKL — Pegajoso, turvo/transparente, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6CL\"]/label": {
+      "en": "6CL — Sticky, cloudy, lubricative",
+      "text": "6CL — Pegajoso, turvo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6G\"]/label": {
+      "en": "6G — Gummy",
+      "text": "6G — Gomoso",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GB\"]/label": {
+      "en": "6GB — Sticky, gummy, brown",
+      "text": "6GB — Pegajoso, gomoso, marrom",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GBL\"]/label": {
+      "en": "6GBL — Sticky, gummy, brown, lubricative",
+      "text": "6GBL — Pegajoso, gomoso, marrom, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GC\"]/label": {
+      "en": "6GC — Sticky, gummy, cloudy",
+      "text": "6GC — Pegajoso, gomoso, turvo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GCK\"]/label": {
+      "en": "6GCK — Sticky, gummy, cloudy/clear",
+      "text": "6GCK — Pegajoso, gomoso, turvo/transparente",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GCKL\"]/label": {
+      "en": "6GCKL — Sticky, gummy, cloudy/clear, lubricative",
+      "text": "6GCKL — Pegajoso, gomoso, turvo/transparente, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GCL\"]/label": {
+      "en": "6GCL — Sticky, gummy, cloudy, lubricative",
+      "text": "6GCL — Pegajoso, gomoso, turvo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GK\"]/label": {
+      "en": "6GK — Sticky, gummy, clear",
+      "text": "6GK — Pegajoso, gomoso, transparente",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GKL\"]/label": {
+      "en": "6GKL — Sticky, gummy, clear, lubricative",
+      "text": "6GKL — Pegajoso, gomoso, transparente, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GKY\"]/label": {
+      "en": "6GKY — Sticky, gummy, clear and yellow",
+      "text": "6GKY — Pegajoso, gomoso, transparente e amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GKYL\"]/label": {
+      "en": "6GKYL — Sticky, gummy, clear and yellow, lubricative",
+      "text": "6GKYL — Pegajoso, gomoso, transparente e amarelo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GL\"]/label": {
+      "en": "6GL — Gummy, lubricative",
+      "text": "6GL — Gomoso, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GR\"]/label": {
+      "en": "6GR — Sticky, gummy, red",
+      "text": "6GR — Pegajoso, gomoso, vermelho",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GRL\"]/label": {
+      "en": "6GRL — Sticky, gummy, red, lubricative",
+      "text": "6GRL — Pegajoso, gomoso, vermelho, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GY\"]/label": {
+      "en": "6GY — Sticky, gummy, yellow",
+      "text": "6GY — Pegajoso, gomoso, amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6GYL\"]/label": {
+      "en": "6GYL — Sticky, gummy, yellow, lubricative",
+      "text": "6GYL — Pegajoso, gomoso, amarelo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6K\"]/label": {
+      "en": "6K — Sticky, clear",
+      "text": "6K — Pegajoso, transparente",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6KL\"]/label": {
+      "en": "6KL — Sticky, clear, lubricative",
+      "text": "6KL — Pegajoso, transparente, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6KY\"]/label": {
+      "en": "6KY — Sticky, clear and yellow",
+      "text": "6KY — Pegajoso, transparente e amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6KYL\"]/label": {
+      "en": "6KYL — Sticky, clear and yellow, lubricative",
+      "text": "6KYL — Pegajoso, transparente e amarelo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6L\"]/label": {
+      "en": "6L — Sticky, lubricative",
+      "text": "6L — Pegajoso, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6P\"]/label": {
+      "en": "6P — Sticky, pasty",
+      "text": "6P — Pegajoso, pastoso",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6PC\"]/label": {
+      "en": "6PC — Sticky, pasty, cloudy",
+      "text": "6PC — Pegajoso, pastoso, turvo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6PY\"]/label": {
+      "en": "6PY — Sticky, pasty, yellow",
+      "text": "6PY — Pegajoso, pastoso, amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6R\"]/label": {
+      "en": "6R — Sticky, red",
+      "text": "6R — Pegajoso, vermelho",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6RL\"]/label": {
+      "en": "6RL — Sticky, red, lubricative",
+      "text": "6RL — Pegajoso, vermelho, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6Y\"]/label": {
+      "en": "6Y — Sticky, yellow",
+      "text": "6Y — Pegajoso, amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"6YL\"]/label": {
+      "en": "6YL — Sticky, yellow, lubricative",
+      "text": "6YL — Pegajoso, amarelo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8\"]/label": {
+      "en": "8 — Tacky",
+      "text": "8 — Grudento",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8B\"]/label": {
+      "en": "8B — Tacky, brown",
+      "text": "8B — Grudento, marrom",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8BL\"]/label": {
+      "en": "8BL — Tacky, brown, lubricative",
+      "text": "8BL — Grudento, marrom, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8C\"]/label": {
+      "en": "8C — Tacky, cloudy",
+      "text": "8C — Grudento, turvo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8CK\"]/label": {
+      "en": "8CK — Tacky, cloudy/clear",
+      "text": "8CK — Grudento, turvo/transparente",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8CKL\"]/label": {
+      "en": "8CKL — Tacky, cloudy/clear, lubricative",
+      "text": "8CKL — Grudento, turvo/transparente, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8CL\"]/label": {
+      "en": "8CL — Tacky, cloudy, lubricative",
+      "text": "8CL — Grudento, turvo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GB\"]/label": {
+      "en": "8GB — Tacky, gummy, brown",
+      "text": "8GB — Grudento, gomoso, marrom",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GBL\"]/label": {
+      "en": "8GBL — Tacky, gummy, brown, lubricative",
+      "text": "8GBL — Grudento, gomoso, marrom, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GC\"]/label": {
+      "en": "8GC — Tacky, gummy, cloudy",
+      "text": "8GC — Grudento, gomoso, turvo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GCK\"]/label": {
+      "en": "8GCK — Tacky, gummy, cloudy/clear",
+      "text": "8GCK — Grudento, gomoso, turvo/transparente",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GCKL\"]/label": {
+      "en": "8GCKL — Tacky, gummy, cloudy/clear, lubricative",
+      "text": "8GCKL — Grudento, gomoso, turvo/transparente, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GCL\"]/label": {
+      "en": "8GCL — Tacky, gummy, cloudy, lubricative",
+      "text": "8GCL — Grudento, gomoso, turvo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GK\"]/label": {
+      "en": "8GK — Tacky, gummy, clear",
+      "text": "8GK — Grudento, gomoso, transparente",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GKL\"]/label": {
+      "en": "8GKL — Tacky, gummy, clear, lubricative",
+      "text": "8GKL — Grudento, gomoso, transparente, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GKY\"]/label": {
+      "en": "8GKY — Tacky, gummy, clear and yellow",
+      "text": "8GKY — Grudento, gomoso, transparente e amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GKYL\"]/label": {
+      "en": "8GKYL — Tacky, gummy, clear and yellow, lubricative",
+      "text": "8GKYL — Grudento, gomoso, transparente e amarelo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GR\"]/label": {
+      "en": "8GR — Tacky, gummy, red",
+      "text": "8GR — Grudento, gomoso, vermelho",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GRL\"]/label": {
+      "en": "8GRL — Tacky, gummy, red, lubricative",
+      "text": "8GRL — Grudento, gomoso, vermelho, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GY\"]/label": {
+      "en": "8GY — Tacky, gummy, yellow",
+      "text": "8GY — Grudento, gomoso, amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8GYL\"]/label": {
+      "en": "8GYL — Tacky, gummy, yellow, lubricative",
+      "text": "8GYL — Grudento, gomoso, amarelo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8K\"]/label": {
+      "en": "8K — Tacky, clear",
+      "text": "8K — Grudento, transparente",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8KL\"]/label": {
+      "en": "8KL — Tacky, clear, lubricative",
+      "text": "8KL — Grudento, transparente, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8KY\"]/label": {
+      "en": "8KY — Tacky, clear and yellow",
+      "text": "8KY — Grudento, transparente e amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8KYL\"]/label": {
+      "en": "8KYL — Tacky, clear and yellow, lubricative",
+      "text": "8KYL — Grudento, transparente e amarelo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8L\"]/label": {
+      "en": "8L — Tacky, lubricative",
+      "text": "8L — Grudento, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8P\"]/label": {
+      "en": "8P — Tacky, pasty",
+      "text": "8P — Grudento, pastoso",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8R\"]/label": {
+      "en": "8R — Tacky, red",
+      "text": "8R — Grudento, vermelho",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8RL\"]/label": {
+      "en": "8RL — Tacky, red, lubricative",
+      "text": "8RL — Grudento, vermelho, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8Y\"]/label": {
+      "en": "8Y — Tacky, yellow",
+      "text": "8Y — Grudento, amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"8YL\"]/label": {
+      "en": "8YL — Tacky, yellow, lubricative",
+      "text": "8YL — Grudento, amarelo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10\"]/label": {
+      "en": "10 — Stretchy",
+      "text": "10 — Esticável",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10B\"]/label": {
+      "en": "10B — Stretchy, brown",
+      "text": "10B — Esticável, marrom",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10BL\"]/label": {
+      "en": "10BL — Stretchy, brown, lubricative",
+      "text": "10BL — Esticável, marrom, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10C\"]/label": {
+      "en": "10C — Stretchy, cloudy",
+      "text": "10C — Esticável, turvo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10CK\"]/label": {
+      "en": "10CK — Stretchy, cloudy/clear",
+      "text": "10CK — Esticável, turvo/transparente",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10CKL\"]/label": {
+      "en": "10CKL — Stretchy, cloudy/clear, lubricative",
+      "text": "10CKL — Esticável, turvo/transparente, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10CL\"]/label": {
+      "en": "10CL — Stretchy, cloudy, lubricative",
+      "text": "10CL — Esticável, turvo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GB\"]/label": {
+      "en": "10GB — Stretchy, gummy, brown",
+      "text": "10GB — Esticável, gomoso, marrom",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GBL\"]/label": {
+      "en": "10GBL — Stretchy, gummy, brown, lubricative",
+      "text": "10GBL — Esticável, gomoso, marrom, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GC\"]/label": {
+      "en": "10GC — Stretchy, gummy, cloudy",
+      "text": "10GC — Esticável, gomoso, turvo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GCK\"]/label": {
+      "en": "10GCK — Stretchy, gummy, cloudy/clear",
+      "text": "10GCK — Esticável, gomoso, turvo/transparente",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GCKL\"]/label": {
+      "en": "10GCKL — Stretchy, gummy, cloudy/clear, lubricative",
+      "text": "10GCKL — Esticável, gomoso, turvo/transparente, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GCL\"]/label": {
+      "en": "10GCL — Stretchy, gummy, cloudy, lubricative",
+      "text": "10GCL — Esticável, gomoso, turvo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GK\"]/label": {
+      "en": "10GK — Stretchy, gummy, clear",
+      "text": "10GK — Esticável, gomoso, transparente",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GKL\"]/label": {
+      "en": "10GKL — Stretchy, gummy, clear, lubricative",
+      "text": "10GKL — Esticável, gomoso, transparente, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GKY\"]/label": {
+      "en": "10GKY — Stretchy, gummy, clear and yellow",
+      "text": "10GKY — Esticável, gomoso, transparente e amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GKYL\"]/label": {
+      "en": "10GKYL — Stretchy, gummy, clear and yellow, lubricative",
+      "text": "10GKYL — Esticável, gomoso, transparente e amarelo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GR\"]/label": {
+      "en": "10GR — Stretchy, gummy, red",
+      "text": "10GR — Esticável, gomoso, vermelho",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GRL\"]/label": {
+      "en": "10GRL — Stretchy, gummy, red, lubricative",
+      "text": "10GRL — Esticável, gomoso, vermelho, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GY\"]/label": {
+      "en": "10GY — Stretchy, gummy, yellow",
+      "text": "10GY — Esticável, gomoso, amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10GYL\"]/label": {
+      "en": "10GYL — Stretchy, gummy, yellow, lubricative",
+      "text": "10GYL — Esticável, gomoso, amarelo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10K\"]/label": {
+      "en": "10K — Stretchy, clear",
+      "text": "10K — Esticável, transparente",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10KL\"]/label": {
+      "en": "10KL — Stretchy, clear, lubricative",
+      "text": "10KL — Esticável, transparente, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10KY\"]/label": {
+      "en": "10KY — Stretchy, clear and yellow",
+      "text": "10KY — Esticável, transparente e amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10KYL\"]/label": {
+      "en": "10KYL — Stretchy, clear and yellow, lubricative",
+      "text": "10KYL — Esticável, transparente e amarelo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10L\"]/label": {
+      "en": "10L — Stretchy, lubricative",
+      "text": "10L — Esticável, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10P\"]/label": {
+      "en": "10P — Stretchy, pasty",
+      "text": "10P — Esticável, pastoso",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10R\"]/label": {
+      "en": "10R — Stretchy, red",
+      "text": "10R — Esticável, vermelho",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10RL\"]/label": {
+      "en": "10RL — Stretchy, red, lubricative",
+      "text": "10RL — Esticável, vermelho, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10Y\"]/label": {
+      "en": "10Y — Stretchy, yellow",
+      "text": "10Y — Esticável, amarelo",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10YL\"]/label": {
+      "en": "10YL — Stretchy, yellow, lubricative",
+      "text": "10YL — Esticável, amarelo, lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10DL\"]/label": {
+      "en": "10DL — Damp with lubrication",
+      "text": "10DL — Úmido com lubrificação",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10SL\"]/label": {
+      "en": "10SL — Shiny with lubrication",
+      "text": "10SL — Brilhante com lubrificação",
+      "status": "draft"
+    },
+    "methods[4]/components[0]/options[value=\"10WL\"]/label": {
+      "en": "10WL — Wet with lubrication",
+      "text": "10WL — Molhado com lubrificação",
+      "status": "draft"
+    },
+    "methods[4]/notation/rows[id=\"number\"]/label": {
+      "en": "Number",
+      "text": "Número",
+      "status": "draft"
+    },
+    "methods[4]/notation/rows[id=\"letters\"]/label": {
+      "en": "Letters",
+      "text": "Letras",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/base[value=\"0\"]/label": {
+      "en": "dry",
+      "text": "seco",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/base[value=\"2\"]/label": {
+      "en": "damp",
+      "text": "úmido",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/base[value=\"2W\"]/label": {
+      "en": "wet",
+      "text": "molhado",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/base[value=\"4\"]/label": {
+      "en": "shiny",
+      "text": "brilhante",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/base[value=\"6\"]/label": {
+      "en": "sticky",
+      "text": "pegajoso",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/base[value=\"8\"]/label": {
+      "en": "tacky",
+      "text": "grudento",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/base[value=\"10\"]/label": {
+      "en": "stretchy",
+      "text": "esticável",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/consistency[value=\"G\"]/label": {
+      "en": "gummy",
+      "text": "gomoso",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/consistency[value=\"P\"]/label": {
+      "en": "pasty",
+      "text": "pastoso",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/colour[value=\"C\"]/label": {
+      "en": "cloudy",
+      "text": "turvo",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/colour[value=\"CK\"]/label": {
+      "en": "cloudy/clear",
+      "text": "turvo/transparente",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/colour[value=\"K\"]/label": {
+      "en": "clear",
+      "text": "transparente",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/colour[value=\"KY\"]/label": {
+      "en": "clear and yellow",
+      "text": "transparente e amarelo",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/colour[value=\"Y\"]/label": {
+      "en": "yellow",
+      "text": "amarelo",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/colour[value=\"B\"]/label": {
+      "en": "brown",
+      "text": "marrom",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/colour[value=\"R\"]/label": {
+      "en": "red",
+      "text": "vermelho",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/sensation[value=\"D\"]/label": {
+      "en": "damp",
+      "text": "úmido",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/sensation[value=\"S\"]/label": {
+      "en": "shiny",
+      "text": "brilhante",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/sensation[value=\"W\"]/label": {
+      "en": "wet",
+      "text": "molhado",
+      "status": "draft"
+    },
+    "methods[4]/notation/values/lubricative[value=true]/label": {
+      "en": "lubricative",
+      "text": "lubrificante",
+      "status": "draft"
+    },
+    "methods[4]/notation/annotations[id=\"frequency\"]/label": {
+      "en": "Frequency",
+      "text": "Frequência",
+      "status": "draft"
+    },
+    "methods[4]/notation/annotations[id=\"frequency\"]/values[value=\"X1\"]/label": {
+      "en": "seen once",
+      "text": "visto uma vez",
+      "status": "draft"
+    },
+    "methods[4]/notation/annotations[id=\"frequency\"]/values[value=\"X2\"]/label": {
+      "en": "seen twice",
+      "text": "visto duas vezes",
+      "status": "draft"
+    },
+    "methods[4]/notation/annotations[id=\"frequency\"]/values[value=\"X3\"]/label": {
+      "en": "seen three times",
+      "text": "visto três vezes",
+      "status": "draft"
+    },
+    "methods[4]/notation/annotations[id=\"frequency\"]/values[value=\"AD\"]/label": {
+      "en": "all day (4 times or more)",
+      "text": "o dia todo (4 vezes ou mais)",
+      "status": "draft"
+    },
+    "methods[5]/name": {
+      "en": "Descriptive (English)",
+      "text": "Descritivo (inglês)",
+      "status": "draft"
+    },
+    "methods[5]/description": {
+      "en": "Free-form vocabulary across 5 descriptors: consistency, stretch, sensation, appearance, and color.",
+      "text": "Vocabulário livre em 5 descritores: consistência, elasticidade, sensação, aparência e cor.",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/label": {
+      "en": "Consistency",
+      "text": "Consistência",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/options[value=\"dry\"]/label": {
+      "en": "Dry",
+      "text": "Seco",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/options[value=\"flaky\"]/label": {
+      "en": "Flaky",
+      "text": "Em flocos",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/options[value=\"crumbly\"]/label": {
+      "en": "Crumbly",
+      "text": "Esfarelado",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/options[value=\"pasty\"]/label": {
+      "en": "Pasty",
+      "text": "Pastoso",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/options[value=\"sticky\"]/label": {
+      "en": "Sticky",
+      "text": "Pegajoso",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/options[value=\"rubbery\"]/label": {
+      "en": "Rubbery",
+      "text": "Borrachoso",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/options[value=\"gluey\"]/label": {
+      "en": "Gluey",
+      "text": "Tipo cola",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/options[value=\"lotiony\"]/label": {
+      "en": "Lotiony",
+      "text": "Tipo loção",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/options[value=\"smooth\"]/label": {
+      "en": "Smooth",
+      "text": "Liso",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/options[value=\"creamy\"]/label": {
+      "en": "Creamy",
+      "text": "Cremoso",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/options[value=\"gummy\"]/label": {
+      "en": "Gummy",
+      "text": "Gomoso",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/options[value=\"slimy\"]/label": {
+      "en": "Slimy",
+      "text": "Gosmento",
+      "status": "draft"
+    },
+    "methods[5]/components[0]/options[value=\"watery\"]/label": {
+      "en": "Watery",
+      "text": "Aquoso",
+      "status": "draft"
+    },
+    "methods[5]/components[1]/label": {
+      "en": "Stretch",
+      "text": "Elasticidade",
+      "status": "draft"
+    },
+    "methods[5]/components[1]/options[value=\"none\"]/label": {
+      "en": "None",
+      "text": "Nenhuma",
+      "status": "draft"
+    },
+    "methods[5]/components[1]/options[value=\"brittle\"]/label": {
+      "en": "Brittle",
+      "text": "Quebradiça",
+      "status": "draft"
+    },
+    "methods[5]/components[1]/options[value=\"short\"]/label": {
+      "en": "Short",
+      "text": "Curta",
+      "status": "draft"
+    },
+    "methods[5]/components[1]/options[value=\"stringy\"]/label": {
+      "en": "Stringy",
+      "text": "Filamentosa",
+      "status": "draft"
+    },
+    "methods[5]/components[1]/options[value=\"ropy\"]/label": {
+      "en": "Ropy",
+      "text": "Em corda",
+      "status": "draft"
+    },
+    "methods[5]/components[1]/options[value=\"long\"]/label": {
+      "en": "Long",
+      "text": "Longa",
+      "status": "draft"
+    },
+    "methods[5]/components[1]/options[value=\"elastic\"]/label": {
+      "en": "Elastic",
+      "text": "Elástica",
+      "status": "draft"
+    },
+    "methods[5]/components[1]/options[value=\"stretchy\"]/label": {
+      "en": "Stretchy",
+      "text": "Esticável",
+      "status": "draft"
+    },
+    "methods[5]/components[1]/options[value=\"spinnbar\"]/label": {
+      "en": "Spinnbar",
+      "text": "Spinnbar",
+      "status": "draft"
+    },
+    "methods[5]/components[2]/label": {
+      "en": "Sensation",
+      "text": "Sensação",
+      "status": "draft"
+    },
+    "methods[5]/components[2]/options[value=\"dry\"]/label": {
+      "en": "Dry",
+      "text": "Seco",
+      "status": "draft"
+    },
+    "methods[5]/components[2]/options[value=\"damp\"]/label": {
+      "en": "Damp",
+      "text": "Úmido",
+      "status": "draft"
+    },
+    "methods[5]/components[2]/options[value=\"moist\"]/label": {
+      "en": "Moist",
+      "text": "Umedecido",
+      "status": "draft"
+    },
+    "methods[5]/components[2]/options[value=\"wet\"]/label": {
+      "en": "Wet",
+      "text": "Molhado",
+      "status": "draft"
+    },
+    "methods[5]/components[2]/options[value=\"slippery\"]/label": {
+      "en": "Slippery",
+      "text": "Escorregadio",
+      "status": "draft"
+    },
+    "methods[5]/components[2]/options[value=\"lubricative\"]/label": {
+      "en": "Lubricative",
+      "text": "Lubrificante",
+      "status": "draft"
+    },
+    "methods[5]/components[3]/label": {
+      "en": "Appearance",
+      "text": "Aparência",
+      "status": "draft"
+    },
+    "methods[5]/components[3]/options[value=\"opaque\"]/label": {
+      "en": "Opaque",
+      "text": "Opaco",
+      "status": "draft"
+    },
+    "methods[5]/components[3]/options[value=\"milky\"]/label": {
+      "en": "Milky",
+      "text": "Leitoso",
+      "status": "draft"
+    },
+    "methods[5]/components[3]/options[value=\"cloudy\"]/label": {
+      "en": "Cloudy",
+      "text": "Turvo",
+      "status": "draft"
+    },
+    "methods[5]/components[3]/options[value=\"hazy\"]/label": {
+      "en": "Hazy",
+      "text": "Nebuloso",
+      "status": "draft"
+    },
+    "methods[5]/components[3]/options[value=\"translucent\"]/label": {
+      "en": "Translucent",
+      "text": "Translúcido",
+      "status": "draft"
+    },
+    "methods[5]/components[3]/options[value=\"clear\"]/label": {
+      "en": "Clear",
+      "text": "Claro",
+      "status": "draft"
+    },
+    "methods[5]/components[3]/options[value=\"transparent\"]/label": {
+      "en": "Transparent",
+      "text": "Transparente",
+      "status": "draft"
+    },
+    "methods[5]/components[4]/label": {
+      "en": "Color",
+      "text": "Cor",
+      "status": "draft"
+    },
+    "methods[5]/components[4]/options[value=\"white\"]/label": {
+      "en": "White",
+      "text": "Branco",
+      "status": "draft"
+    },
+    "methods[5]/components[4]/options[value=\"off-white\"]/label": {
+      "en": "Off-white",
+      "text": "Branco-gelo",
+      "status": "draft"
+    },
+    "methods[5]/components[4]/options[value=\"cream\"]/label": {
+      "en": "Cream",
+      "text": "Creme",
+      "status": "draft"
+    },
+    "methods[5]/components[4]/options[value=\"yellow\"]/label": {
+      "en": "Yellow",
+      "text": "Amarelo",
+      "status": "draft"
+    },
+    "methods[5]/components[4]/options[value=\"colorless\"]/label": {
+      "en": "Colorless",
+      "text": "Incolor",
+      "status": "draft"
+    },
+    "methods[5]/components[4]/options[value=\"pink\"]/label": {
+      "en": "Pink",
+      "text": "Rosa",
+      "status": "draft"
+    },
+    "methods[5]/components[4]/options[value=\"red\"]/label": {
+      "en": "Red",
+      "text": "Vermelho",
+      "status": "draft"
+    },
+    "methods[5]/components[4]/options[value=\"brown\"]/label": {
+      "en": "Brown",
+      "text": "Marrom",
+      "status": "draft"
+    },
+    "methods[5]/components[5]/label": {
+      "en": "Volume",
+      "text": "Volume",
+      "status": "draft"
+    },
+    "methods[5]/components[5]/options[value=\"none\"]/label": {
+      "en": "None",
+      "text": "Nenhum",
+      "status": "draft"
+    },
+    "methods[5]/components[5]/options[value=\"scanty\"]/label": {
+      "en": "Scanty",
+      "text": "Mínimo",
+      "status": "draft"
+    },
+    "methods[5]/components[5]/options[value=\"light\"]/label": {
+      "en": "Light",
+      "text": "Leve",
+      "status": "draft"
+    },
+    "methods[5]/components[5]/options[value=\"medium\"]/label": {
+      "en": "Medium",
+      "text": "Médio",
+      "status": "draft"
+    },
+    "methods[5]/components[5]/options[value=\"heavy\"]/label": {
+      "en": "Heavy",
+      "text": "Abundante",
+      "status": "draft"
+    },
+    "methods[5]/components[5]/options[value=\"profuse\"]/label": {
+      "en": "Profuse",
+      "text": "Muito abundante",
+      "status": "draft"
+    },
+    "methods[6]/name": {
+      "en": "FEMM",
+      "text": "FEMM",
+      "status": "draft"
+    },
+    "methods[6]/description": {
+      "en": "Two-axis composite: bleeding intensity and cervical mucus quality from the FEMM app.",
+      "text": "Composto de dois eixos: intensidade do sangramento e qualidade do muco cervical, do aplicativo FEMM.",
+      "status": "draft"
+    },
+    "methods[6]/components[0]/label": {
+      "en": "Cervical Mucus",
+      "text": "Muco cervical",
+      "status": "draft"
+    },
+    "methods[6]/components[0]/options[value=1]/label": {
+      "en": "Dry",
+      "text": "Seco",
+      "status": "draft"
+    },
+    "methods[6]/components[0]/options[value=2]/label": {
+      "en": "Pasty",
+      "text": "Pastoso",
+      "status": "draft"
+    },
+    "methods[6]/components[0]/options[value=3]/label": {
+      "en": "Moist",
+      "text": "Umedecido",
+      "status": "draft"
+    },
+    "methods[6]/components[0]/options[value=4]/label": {
+      "en": "Slippery",
+      "text": "Escorregadio",
+      "status": "draft"
+    },
+    "methods[7]/name": {
+      "en": "Justisse",
+      "text": "Justisse",
+      "status": "draft"
+    },
+    "methods[7]/description": {
+      "en": "Six categories from dry to eggwhite and watery, emphasizing tactile quality.",
+      "text": "Seis categorias, de seco a clara de ovo e aquoso, com ênfase na qualidade tátil.",
+      "status": "draft"
+    },
+    "methods[7]/components[0]/label": {
+      "en": "Observation",
+      "text": "Observação",
+      "status": "draft"
+    },
+    "methods[7]/components[0]/options[value=\"dry\"]/label": {
+      "en": "Dry",
+      "text": "Seco",
+      "status": "draft"
+    },
+    "methods[7]/components[0]/options[value=\"sticky\"]/label": {
+      "en": "Sticky",
+      "text": "Pegajoso",
+      "status": "draft"
+    },
+    "methods[7]/components[0]/options[value=\"tacky\"]/label": {
+      "en": "Tacky",
+      "text": "Grudento",
+      "status": "draft"
+    },
+    "methods[7]/components[0]/options[value=\"creamy\"]/label": {
+      "en": "Creamy",
+      "text": "Cremoso",
+      "status": "draft"
+    },
+    "methods[7]/components[0]/options[value=\"eggWhite\"]/label": {
+      "en": "Egg White",
+      "text": "Clara de ovo",
+      "status": "draft"
+    },
+    "methods[7]/components[0]/options[value=\"watery\"]/label": {
+      "en": "Watery",
+      "text": "Aquoso",
+      "status": "draft"
+    },
+    "methods[8]/name": {
+      "en": "Marquette",
+      "text": "Marquette",
+      "status": "draft"
+    },
+    "methods[8]/description": {
+      "en": "Eight-point mucus rating scale (1–8) used alongside a fertility monitor.",
+      "text": "Escala de classificação do muco em oito níveis (1–8), usada junto com um monitor de fertilidade.",
+      "status": "draft"
+    },
+    "methods[8]/components[0]/label": {
+      "en": "Rating",
+      "text": "Classificação",
+      "status": "draft"
+    },
+    "methods[8]/components[0]/options[value=\"1\"]/label": {
+      "en": "1 — Dry sensation, no mucus present",
+      "text": "1 — Sensação de secura, sem muco",
+      "status": "draft"
+    },
+    "methods[8]/components[0]/options[value=\"2\"]/label": {
+      "en": "2 — Not dry, not slippery, no mucus seen",
+      "text": "2 — Nem seco, nem escorregadio, nenhum muco visto",
+      "status": "draft"
+    },
+    "methods[8]/components[0]/options[value=\"3\"]/label": {
+      "en": "3 — Moist, yellow or white, minimal",
+      "text": "3 — Úmido, amarelo ou branco, mínimo",
+      "status": "draft"
+    },
+    "methods[8]/components[0]/options[value=\"4\"]/label": {
+      "en": "4 — Moist, yellow or white, moderate, sticky",
+      "text": "4 — Úmido, amarelo ou branco, moderado, pegajoso",
+      "status": "draft"
+    },
+    "methods[8]/components[0]/options[value=\"5\"]/label": {
+      "en": "5 — Moist, cloudy, becoming clearer",
+      "text": "5 — Úmido, turvo, ficando mais transparente",
+      "status": "draft"
+    },
+    "methods[8]/components[0]/options[value=\"6\"]/label": {
+      "en": "6 — Wet, clearer, less cloudy, more stretch",
+      "text": "6 — Molhado, mais transparente, menos turvo, mais esticável",
+      "status": "draft"
+    },
+    "methods[8]/components[0]/options[value=\"7\"]/label": {
+      "en": "7 — Slippery, clear and stretchy",
+      "text": "7 — Escorregadio, transparente e esticável",
+      "status": "draft"
+    },
+    "methods[8]/components[0]/options[value=\"8\"]/label": {
+      "en": "8 — Wet, slippery, variable amount",
+      "text": "8 — Molhado, escorregadio, quantidade variável",
+      "status": "draft"
+    },
+    "methods[9]/name": {
+      "en": "Mira",
+      "text": "Mira",
+      "status": "draft"
+    },
+    "methods[9]/description": {
+      "en": "Eight-level cervical mucus scale from the Mira fertility tracker, including two pathological indicators (clumpy white, gray).",
+      "text": "Escala de muco cervical em oito níveis do monitor de fertilidade Mira, incluindo dois indicadores patológicos (branco grumoso, cinza).",
+      "status": "draft"
+    },
+    "methods[9]/components[0]/label": {
+      "en": "Observation",
+      "text": "Observação",
+      "status": "draft"
+    },
+    "methods[9]/components[0]/options[value=\"No discharge\"]/label": {
+      "en": "No discharge",
+      "text": "Sem secreção",
+      "status": "draft"
+    },
+    "methods[9]/components[0]/options[value=\"Dry\"]/label": {
+      "en": "Dry",
+      "text": "Seco",
+      "status": "draft"
+    },
+    "methods[9]/components[0]/options[value=\"Sticky\"]/label": {
+      "en": "Sticky",
+      "text": "Pegajoso",
+      "status": "draft"
+    },
+    "methods[9]/components[0]/options[value=\"Creamy\"]/label": {
+      "en": "Creamy",
+      "text": "Cremoso",
+      "status": "draft"
+    },
+    "methods[9]/components[0]/options[value=\"Watery\"]/label": {
+      "en": "Watery",
+      "text": "Aquoso",
+      "status": "draft"
+    },
+    "methods[9]/components[0]/options[value=\"Raw Egg White\"]/label": {
+      "en": "Raw Egg White",
+      "text": "Clara de ovo crua",
+      "status": "draft"
+    },
+    "methods[9]/components[0]/options[value=\"Clumpy white\"]/label": {
+      "en": "Clumpy white",
+      "text": "Branco grumoso",
+      "status": "draft"
+    },
+    "methods[9]/components[0]/options[value=\"Gray\"]/label": {
+      "en": "Gray",
+      "text": "Cinza",
+      "status": "draft"
+    },
+    "methods[10]/name": {
+      "en": "Sensiplan",
+      "text": "Sensiplan",
+      "status": "draft"
+    },
+    "methods[10]/description": {
+      "en": "German-developed method using letter codes (t, ø, f, S, S+) from dry to peak quality.",
+      "text": "Método de origem alemã que usa códigos de letras (t, ø, f, S, S+), do seco à qualidade de ápice.",
+      "status": "draft"
+    },
+    "methods[10]/components[0]/label": {
+      "en": "Observation",
+      "text": "Observação",
+      "status": "draft"
+    },
+    "methods[10]/components[0]/options[value=\"t\"]/label": {
+      "en": "t — Dry",
+      "text": "t — Seco",
+      "status": "draft"
+    },
+    "methods[10]/components[0]/options[value=\"ø\"]/label": {
+      "en": "ø — Nothing seen",
+      "text": "ø — Nada visto",
+      "status": "draft"
+    },
+    "methods[10]/components[0]/options[value=\"S\"]/label": {
+      "en": "S — Stretchy",
+      "text": "S — Esticável",
+      "status": "draft"
+    },
+    "methods[10]/components[0]/options[value=\"S+\"]/label": {
+      "en": "S+ — Peak",
+      "text": "S+ — Ápice",
+      "status": "draft"
+    },
+    "methods[11]/name": {
+      "en": "STM / TCOYF",
+      "text": "STM / TCOYF",
+      "status": "draft"
+    },
+    "methods[11]/description": {
+      "en": "Sympto-Thermal Method mucus categories as described in Taking Charge of Your Fertility.",
+      "text": "Categorias de muco do método sintotérmico, conforme descritas em Taking Charge of Your Fertility.",
+      "status": "draft"
+    },
+    "methods[11]/components[0]/label": {
+      "en": "Observation",
+      "text": "Observação",
+      "status": "draft"
+    },
+    "methods[11]/components[0]/options[value=\"dry\"]/label": {
+      "en": "Dry",
+      "text": "Seco",
+      "status": "draft"
+    },
+    "methods[11]/components[0]/options[value=\"sticky\"]/label": {
+      "en": "Sticky",
+      "text": "Pegajoso",
+      "status": "draft"
+    },
+    "methods[11]/components[0]/options[value=\"creamy\"]/label": {
+      "en": "Creamy",
+      "text": "Cremoso",
+      "status": "draft"
+    },
+    "methods[11]/components[0]/options[value=\"eggWhite\"]/label": {
+      "en": "Egg White",
+      "text": "Clara de ovo",
+      "status": "draft"
+    },
+    "methods[11]/components[0]/options[value=\"watery\"]/label": {
+      "en": "Watery",
+      "text": "Aquoso",
+      "status": "draft"
+    }
+  },
   "converters/cervical-fluid/pack-latest.json": {
     "dimensions/threadiness/label": {
       "en": "Threadiness",

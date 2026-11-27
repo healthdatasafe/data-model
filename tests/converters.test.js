@@ -13,9 +13,9 @@ describe('[CNVX] Converters build output', () => {
       const pack = JSON.parse(fs.readFileSync(path.join(distConverters, 'pack.json'), 'utf-8'));
       assert.ok(pack['cervical-fluid'], 'cervical-fluid should be in pack');
       assert.ok(pack.mood, 'mood should be in pack');
-      assert.strictEqual(pack['cervical-fluid'].latestVersion, 'v2');
+      assert.strictEqual(pack['cervical-fluid'].latestVersion, 'v3');
       assert.strictEqual(pack.mood.latestVersion, 'v0');
-      assert.deepStrictEqual(pack['cervical-fluid'].versions, ['v0', 'v1', 'v2']);
+      assert.deepStrictEqual(pack['cervical-fluid'].versions, ['v0', 'v1', 'v2', 'v3']);
       assert.deepStrictEqual(pack.mood.versions, ['v0']);
     });
   });
@@ -63,7 +63,42 @@ describe('[CNVX] Converters build output', () => {
         const versions = Object.keys(read(`${itemKey}/index.json`).versions);
         for (const v of versions) assert.strictEqual(read(`${itemKey}/pack-${v}.json`).converterVersion, v);
       }
-      assert.deepStrictEqual(Object.keys(read('cervical-fluid/index.json').versions).sort(), ['v0', 'v1', 'v2']);
+      assert.deepStrictEqual(Object.keys(read('cervical-fluid/index.json').versions).sort(), ['v0', 'v1', 'v2', 'v3']);
+    });
+
+    it('[CNVV8] cervical-fluid v3 differs from v2 only by its version and which Creighton codes are produced (plan 136)', () => {
+      const v2 = read('cervical-fluid/pack-v2.json');
+      const v3 = read('cervical-fluid/pack-v3.json');
+      assert.deepStrictEqual({ ...v3, converterVersion: 'v2', methods: [] }, { ...v2, methods: [] });
+      assert.deepStrictEqual(v3.methods.map(m => m.methodId), v2.methods.map(m => m.methodId));
+      const INCOMPLETE = ['6', '6G', '6GL', '6L', '6P', '8', '8L', '8P', '10', '10L', '10P'];
+      const NOW_PRODUCED = ['6CL', '8KL', '8CKL', '6PY'];
+      for (const m of v3.methods) {
+        const old = v2.methods.find(o => o.methodId === m.methodId);
+        if (m.methodId !== 'creighton') {
+          assert.deepStrictEqual(m, old, m.methodId);
+          continue;
+        }
+        assert.strictEqual(m.modelVersion, 'v3');
+        assert.strictEqual(m.components.length, 1);
+        assert.deepStrictEqual(m.components[0].options.map(o => o.value), old.components[0].options.map(o => o.value), 'same options, same order');
+        const produceOf = (o) => o.produce !== false;
+        const was = new Map(old.components[0].options.map(o => [String(o.value), o]));
+        for (const o of m.components[0].options) {
+          const v = String(o.value);
+          const before = was.get(v);
+          assert.strictEqual(produceOf(o), INCOMPLETE.includes(v) ? false : NOW_PRODUCED.includes(v) ? true : produceOf(before), v);
+          const strip = ({ produce, ...rest }) => rest;
+          assert.deepStrictEqual(strip(o), strip(before), `${v}: only produce changes`);
+        }
+        assert.deepStrictEqual({ ...m, modelVersion: 'v2', components: [] }, { ...old, components: [] });
+      }
+      // Its translations are those of v2 (copied: a new pack has none)
+      for (const locale of ['es', 'it', 'pt-BR']) {
+        const { packs } = read(`cervical-fluid/l10n-${locale}.json`);
+        assert.ok(Object.keys(packs['pack-v3.json'] ?? {}).length > 0, `${locale}: pack-v3 has translations`);
+        assert.deepStrictEqual(packs['pack-v3.json'], packs['pack-v2.json'], locale);
+      }
     });
 
     it('[CNVV7] cervical-fluid v2 differs from v1 only by its version and Creighton frequency notFor 0 (plan 136)', () => {
