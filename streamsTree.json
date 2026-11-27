@@ -148,7 +148,7 @@
               },
               {
                 "id": "body-blood-serum-glucose-random",
-                "name": "Glucose (random)",
+                "name": "Glucose (untimed)",
                 "parentId": "body-blood-serum"
               },
               {

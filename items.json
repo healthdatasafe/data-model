@@ -2970,11 +2970,11 @@
       "pt-BR": "Pressão arterial"
     },
     "description": {
-      "en": "Blood pressure measurement — systolic / diastolic in mmHg, optional pulse in bpm.",
-      "fr": "Mesure de la tension artérielle — systolique / diastolique en mmHg, pouls optionnel en bpm.",
-      "es": "Medición de la presión arterial: sistólica / diastólica en mmHg, pulso opcional en bpm.",
-      "it": "Misurazione della pressione arteriosa — sistolica / diastolica in mmHg, polso facoltativo in bpm.",
-      "pt-BR": "Medida da pressão arterial — sistólica / diastólica em mmHg, pulsação opcional em bpm."
+      "en": "Blood pressure measurement — systolic and diastolic, with an optional pulse.",
+      "fr": "Mesure de la tension artérielle — systolique et diastolique, avec le pouls en option.",
+      "es": "Medición de la presión arterial: sistólica y diastólica, con el pulso opcional.",
+      "it": "Misurazione della pressione arteriosa — sistolica e diastolica, con il polso facoltativo.",
+      "pt-BR": "Medida da pressão arterial — sistólica e diastólica, com a pulsação opcional."
     },
     "streamId": "body-blood-pressure",
     "eventType": "blood-pressure/mmhg-bpm",
@@ -3241,11 +3241,11 @@
       "pt-BR": "Frequência cardíaca"
     },
     "description": {
-      "en": "Your measured heart rate, in beats per minute.",
-      "fr": "Votre fréquence cardiaque mesurée, en battements par minute.",
-      "es": "Su frecuencia cardíaca medida, en latidos por minuto.",
-      "it": "La sua frequenza cardiaca misurata, in battiti al minuto.",
-      "pt-BR": "Sua frequência cardíaca medida, em batimentos por minuto."
+      "en": "Your measured heart rate.",
+      "fr": "Votre fréquence cardiaque mesurée.",
+      "es": "Su frecuencia cardíaca medida.",
+      "it": "La sua frequenza cardiaca misurata.",
+      "pt-BR": "Sua frequência cardíaca medida."
     },
     "streamId": "body-heart-rate",
     "eventType": "frequency/bpm",
@@ -3290,11 +3290,11 @@
       "pt-BR": "Saturação de oxigênio (SpO2)"
     },
     "description": {
-      "en": "How much oxygen your blood carries, as a percentage.",
-      "fr": "La quantité d'oxygène transportée par votre sang, en pourcentage.",
-      "es": "Cuánto oxígeno transporta su sangre, en porcentaje.",
-      "it": "Quanto ossigeno trasporta il suo sangue, in percentuale.",
-      "pt-BR": "A quantidade de oxigênio que seu sangue transporta, em porcentagem."
+      "en": "How much oxygen your blood carries.",
+      "fr": "La quantité d'oxygène transportée par votre sang.",
+      "es": "Cuánto oxígeno transporta su sangre.",
+      "it": "Quanto ossigeno trasporta il suo sangue.",
+      "pt-BR": "A quantidade de oxigênio que seu sangue transporta."
     },
     "streamId": "body-oxygen-saturation",
     "eventType": "ratio/proportion",
@@ -3733,11 +3733,11 @@
       "pt-BR": "Volume de sêmen"
     },
     "description": {
-      "en": "Volume of semen in a single ejaculate, in millilitres.",
-      "fr": "Volume de sperme dans un éjaculat unique, en millilitres.",
-      "es": "Volumen de semen en un solo eyaculado, en mililitros.",
-      "it": "Volume del liquido seminale in una singola eiaculazione, in millilitri.",
-      "pt-BR": "Volume de sêmen em um único ejaculado, em mililitros."
+      "en": "Volume of semen in a single ejaculate.",
+      "fr": "Volume de sperme dans un éjaculat unique.",
+      "es": "Volumen de semen en un solo eyaculado.",
+      "it": "Volume del liquido seminale in una singola eiaculazione.",
+      "pt-BR": "Volume de sêmen em um único ejaculado."
     },
     "streamId": "body-semen-volume",
     "eventType": "volume/ml",
@@ -4058,18 +4058,18 @@
   "body-blood-serum-glucose-random": {
     "version": "v1",
     "label": {
-      "en": "Glucose (random)",
-      "fr": "Glycémie (non à jeun)",
-      "es": "Glucosa (al azar)",
-      "it": "Glicemia (casuale)",
-      "pt-BR": "Glicemia ao acaso"
+      "en": "Glucose (untimed)",
+      "fr": "Glycémie (jeûne non précisé)",
+      "es": "Glucosa (ayuno no especificado)",
+      "it": "Glicemia (digiuno non precisato)",
+      "pt-BR": "Glicemia (jejum não especificado)"
     },
     "description": {
-      "en": "Blood sugar, measured at any time of day.",
-      "fr": "Taux de sucre dans le sang, mesuré à n'importe quel moment.",
-      "es": "Azúcar en la sangre, medido a cualquier hora del día.",
-      "it": "Zucchero nel sangue, misurato in qualsiasi momento della giornata.",
-      "pt-BR": "Açúcar no sangue, medido a qualquer hora do dia."
+      "en": "Blood sugar, when the report does not say whether you were fasting.",
+      "fr": "Taux de sucre dans le sang, lorsque le compte rendu ne précise pas si vous étiez à jeun.",
+      "es": "Azúcar en la sangre, cuando el informe no indica si estaba en ayunas.",
+      "it": "Zucchero nel sangue, quando il referto non indica se era a digiuno.",
+      "pt-BR": "Açúcar no sangue, quando o laudo não informa se você estava em jejum."
     },
     "streamId": "body-blood-serum-glucose-random",
     "type": "number",
@@ -4270,16 +4270,16 @@
     "label": {
       "en": "Insulin (untimed)",
       "fr": "Insuline (jeûne non précisé)",
-      "es": "Insulina (momento no especificado)",
-      "it": "Insulina (momento non precisato)",
+      "es": "Insulina (ayuno no especificado)",
+      "it": "Insulina (digiuno non precisato)",
       "pt-BR": "Insulina (jejum não especificado)"
     },
     "description": {
-      "en": "The hormone that moves sugar into your cells, measured at any time of day.",
-      "fr": "L'hormone qui fait entrer le sucre dans vos cellules, mesurée à n'importe quel moment.",
-      "es": "La hormona que hace entrar el azúcar en sus células, medida a cualquier hora del día.",
-      "it": "L'ormone che fa entrare lo zucchero nelle sue cellule, misurato in qualsiasi momento della giornata.",
-      "pt-BR": "O hormônio que leva o açúcar para dentro das suas células, medido a qualquer hora do dia."
+      "en": "The hormone that moves sugar into your cells, when the report does not say whether you were fasting.",
+      "fr": "L'hormone qui fait entrer le sucre dans vos cellules, lorsque le compte rendu ne précise pas si vous étiez à jeun.",
+      "es": "La hormona que hace entrar el azúcar en sus células, cuando el informe no indica si estaba en ayunas.",
+      "it": "L'ormone che fa entrare lo zucchero nelle sue cellule, quando il referto non indica se era a digiuno.",
+      "pt-BR": "O hormônio que leva o açúcar para dentro das suas células, quando o laudo não informa se você estava em jejum."
     },
     "streamId": "body-blood-serum-insulin",
     "type": "number",
