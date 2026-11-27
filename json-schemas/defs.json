@@ -337,7 +337,8 @@
             "ratio-quantity",
             "coded",
             "components",
-            "lab-result"
+            "lab-result",
+            "fixed-coded"
           ]
         }
       },
@@ -486,6 +487,63 @@
             },
             "required": [
               "options"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "fixed-coded"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "kind": {},
+              "codings": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "defs.json#/definitions/fhirCoding"
+                }
+              },
+              "alsoMatch": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "defs.json#/definitions/fhirCoding"
+                }
+              },
+              "component": {
+                "type": "object",
+                "properties": {
+                  "absent": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "code": {
+                    "$ref": "defs.json#/definitions/fhirCoding"
+                  },
+                  "options": {
+                    "type": "object",
+                    "minProperties": 1,
+                    "additionalProperties": {
+                      "$ref": "defs.json#/definitions/fhirCoding"
+                    }
+                  }
+                },
+                "required": [
+                  "absent",
+                  "code",
+                  "options"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "codings"
             ],
             "additionalProperties": false
           }
@@ -689,6 +747,24 @@
               "enum": [
                 "span"
               ]
+            }
+          },
+          "required": [
+            "from"
+          ],
+          "additionalProperties": false
+        },
+        "effective": {
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "string",
+              "enum": [
+                "span"
+              ]
+            },
+            "day": {
+              "const": true
             }
           },
           "required": [

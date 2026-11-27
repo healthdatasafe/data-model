@@ -1,6 +1,6 @@
 {
-  "version": "4.41.0",
-  "publicationDate": "2026-11-26T21:04:29.814Z",
+  "version": "4.42.0",
+  "publicationDate": "2026-11-27T11:27:21.398Z",
   "streams": [
     {
       "id": "activity",
@@ -2711,7 +2711,30 @@
       "streamId": "activity-yoga",
       "eventType": "activity/plain",
       "type": "checkbox",
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "229224000",
+              "display": "Participation in yoga"
+            }
+          ]
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-yoga-intensity": {
       "version": "v1",
@@ -2764,7 +2787,55 @@
           }
         }
       ],
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "229224000",
+              "display": "Participation in yoga"
+            }
+          ],
+          "component": {
+            "absent": "activity-yoga",
+            "code": {
+              "system": "http://loinc.org",
+              "code": "74008-4",
+              "display": "Exercise intensity"
+            },
+            "options": {
+              "1": {
+                "system": "http://loinc.org",
+                "code": "LA20166-7",
+                "display": "Vigorous exercise intensity"
+              },
+              "0.25": {
+                "system": "http://loinc.org",
+                "code": "LA20164-2",
+                "display": "Light exercise intensity"
+              },
+              "0.5": {
+                "system": "http://loinc.org",
+                "code": "LA20165-9",
+                "display": "Moderate exercise intensity"
+              }
+            }
+          }
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-stretching": {
       "version": "v1",
@@ -2778,7 +2849,37 @@
       "streamId": "activity-stretching",
       "eventType": "activity/plain",
       "type": "checkbox",
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "53061000087100",
+              "display": "Stretching exercises"
+            }
+          ],
+          "alsoMatch": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "229070002",
+              "display": "Stretching exercises"
+            }
+          ]
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-stretching-intensity": {
       "version": "v1",
@@ -2831,7 +2932,62 @@
           }
         }
       ],
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "53061000087100",
+              "display": "Stretching exercises"
+            }
+          ],
+          "alsoMatch": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "229070002",
+              "display": "Stretching exercises"
+            }
+          ],
+          "component": {
+            "absent": "activity-stretching",
+            "code": {
+              "system": "http://loinc.org",
+              "code": "74008-4",
+              "display": "Exercise intensity"
+            },
+            "options": {
+              "1": {
+                "system": "http://loinc.org",
+                "code": "LA20166-7",
+                "display": "Vigorous exercise intensity"
+              },
+              "0.25": {
+                "system": "http://loinc.org",
+                "code": "LA20164-2",
+                "display": "Light exercise intensity"
+              },
+              "0.5": {
+                "system": "http://loinc.org",
+                "code": "LA20165-9",
+                "display": "Moderate exercise intensity"
+              }
+            }
+          }
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-pilates": {
       "version": "v1",
@@ -2845,7 +3001,30 @@
       "streamId": "activity-pilates",
       "eventType": "activity/plain",
       "type": "checkbox",
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "404928000",
+              "display": "Pilates exercise"
+            }
+          ]
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-pilates-intensity": {
       "version": "v1",
@@ -2898,7 +3077,55 @@
           }
         }
       ],
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "404928000",
+              "display": "Pilates exercise"
+            }
+          ],
+          "component": {
+            "absent": "activity-pilates",
+            "code": {
+              "system": "http://loinc.org",
+              "code": "74008-4",
+              "display": "Exercise intensity"
+            },
+            "options": {
+              "1": {
+                "system": "http://loinc.org",
+                "code": "LA20166-7",
+                "display": "Vigorous exercise intensity"
+              },
+              "0.25": {
+                "system": "http://loinc.org",
+                "code": "LA20164-2",
+                "display": "Light exercise intensity"
+              },
+              "0.5": {
+                "system": "http://loinc.org",
+                "code": "LA20165-9",
+                "display": "Moderate exercise intensity"
+              }
+            }
+          }
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-hiit": {
       "version": "v1",
@@ -2912,7 +3139,30 @@
       "streamId": "activity-hiit",
       "eventType": "activity/plain",
       "type": "checkbox",
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "https://hds.ngo/fhir/CodeSystem/activity",
+              "code": "hiit",
+              "display": "High-intensity interval training"
+            }
+          ]
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-hiit-intensity": {
       "version": "v1",
@@ -2965,7 +3215,55 @@
           }
         }
       ],
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "https://hds.ngo/fhir/CodeSystem/activity",
+              "code": "hiit",
+              "display": "High-intensity interval training"
+            }
+          ],
+          "component": {
+            "absent": "activity-hiit",
+            "code": {
+              "system": "http://loinc.org",
+              "code": "74008-4",
+              "display": "Exercise intensity"
+            },
+            "options": {
+              "1": {
+                "system": "http://loinc.org",
+                "code": "LA20166-7",
+                "display": "Vigorous exercise intensity"
+              },
+              "0.25": {
+                "system": "http://loinc.org",
+                "code": "LA20164-2",
+                "display": "Light exercise intensity"
+              },
+              "0.5": {
+                "system": "http://loinc.org",
+                "code": "LA20165-9",
+                "display": "Moderate exercise intensity"
+              }
+            }
+          }
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-weights": {
       "version": "v1",
@@ -2979,7 +3277,42 @@
       "streamId": "activity-weights",
       "eventType": "activity/plain",
       "type": "checkbox",
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA11839-0",
+              "display": "Weights"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "6397004",
+              "display": "Muscular strength development exercise"
+            }
+          ],
+          "alsoMatch": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "1386230000",
+              "display": "Weightlifting"
+            }
+          ]
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-weights-intensity": {
       "version": "v1",
@@ -3032,7 +3365,67 @@
           }
         }
       ],
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA11839-0",
+              "display": "Weights"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "6397004",
+              "display": "Muscular strength development exercise"
+            }
+          ],
+          "alsoMatch": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "1386230000",
+              "display": "Weightlifting"
+            }
+          ],
+          "component": {
+            "absent": "activity-weights",
+            "code": {
+              "system": "http://loinc.org",
+              "code": "74008-4",
+              "display": "Exercise intensity"
+            },
+            "options": {
+              "1": {
+                "system": "http://loinc.org",
+                "code": "LA20166-7",
+                "display": "Vigorous exercise intensity"
+              },
+              "0.25": {
+                "system": "http://loinc.org",
+                "code": "LA20164-2",
+                "display": "Light exercise intensity"
+              },
+              "0.5": {
+                "system": "http://loinc.org",
+                "code": "LA20165-9",
+                "display": "Moderate exercise intensity"
+              }
+            }
+          }
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-swimming": {
       "version": "v1",
@@ -3046,7 +3439,35 @@
       "streamId": "activity-swimming",
       "eventType": "activity/plain",
       "type": "checkbox",
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA11838-2",
+              "display": "Swimming"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "20461001",
+              "display": "Swimming"
+            }
+          ]
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-swimming-intensity": {
       "version": "v1",
@@ -3099,7 +3520,60 @@
           }
         }
       ],
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA11838-2",
+              "display": "Swimming"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "20461001",
+              "display": "Swimming"
+            }
+          ],
+          "component": {
+            "absent": "activity-swimming",
+            "code": {
+              "system": "http://loinc.org",
+              "code": "74008-4",
+              "display": "Exercise intensity"
+            },
+            "options": {
+              "1": {
+                "system": "http://loinc.org",
+                "code": "LA20166-7",
+                "display": "Vigorous exercise intensity"
+              },
+              "0.25": {
+                "system": "http://loinc.org",
+                "code": "LA20164-2",
+                "display": "Light exercise intensity"
+              },
+              "0.5": {
+                "system": "http://loinc.org",
+                "code": "LA20165-9",
+                "display": "Moderate exercise intensity"
+              }
+            }
+          }
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-cycling": {
       "version": "v1",
@@ -3113,7 +3587,35 @@
       "streamId": "activity-cycling",
       "eventType": "activity/plain",
       "type": "checkbox",
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA11837-4",
+              "display": "Bicycling"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "54391000087108",
+              "display": "Cycling"
+            }
+          ]
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-cycling-intensity": {
       "version": "v1",
@@ -3166,7 +3668,60 @@
           }
         }
       ],
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA11837-4",
+              "display": "Bicycling"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "54391000087108",
+              "display": "Cycling"
+            }
+          ],
+          "component": {
+            "absent": "activity-cycling",
+            "code": {
+              "system": "http://loinc.org",
+              "code": "74008-4",
+              "display": "Exercise intensity"
+            },
+            "options": {
+              "1": {
+                "system": "http://loinc.org",
+                "code": "LA20166-7",
+                "display": "Vigorous exercise intensity"
+              },
+              "0.25": {
+                "system": "http://loinc.org",
+                "code": "LA20164-2",
+                "display": "Light exercise intensity"
+              },
+              "0.5": {
+                "system": "http://loinc.org",
+                "code": "LA20165-9",
+                "display": "Moderate exercise intensity"
+              }
+            }
+          }
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-jogging": {
       "version": "v1",
@@ -3180,7 +3735,42 @@
       "streamId": "activity-jogging",
       "eventType": "activity/plain",
       "type": "checkbox",
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA11835-8",
+              "display": "Jogging"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "1968006",
+              "display": "Jogging"
+            }
+          ],
+          "alsoMatch": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA11836-6",
+              "display": "Running"
+            }
+          ]
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-jogging-intensity": {
       "version": "v1",
@@ -3233,7 +3823,67 @@
           }
         }
       ],
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA11835-8",
+              "display": "Jogging"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "1968006",
+              "display": "Jogging"
+            }
+          ],
+          "alsoMatch": [
+            {
+              "system": "http://loinc.org",
+              "code": "LA11836-6",
+              "display": "Running"
+            }
+          ],
+          "component": {
+            "absent": "activity-jogging",
+            "code": {
+              "system": "http://loinc.org",
+              "code": "74008-4",
+              "display": "Exercise intensity"
+            },
+            "options": {
+              "1": {
+                "system": "http://loinc.org",
+                "code": "LA20166-7",
+                "display": "Vigorous exercise intensity"
+              },
+              "0.25": {
+                "system": "http://loinc.org",
+                "code": "LA20164-2",
+                "display": "Light exercise intensity"
+              },
+              "0.5": {
+                "system": "http://loinc.org",
+                "code": "LA20165-9",
+                "display": "Moderate exercise intensity"
+              }
+            }
+          }
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-hiking": {
       "version": "v1",
@@ -3247,7 +3897,30 @@
       "streamId": "activity-hiking",
       "eventType": "activity/plain",
       "type": "checkbox",
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "https://hds.ngo/fhir/CodeSystem/activity",
+              "code": "hiking",
+              "display": "Hiking"
+            }
+          ]
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-hiking-intensity": {
       "version": "v1",
@@ -3300,7 +3973,55 @@
           }
         }
       ],
-      "repeatable": "unlimited"
+      "repeatable": "unlimited",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "73985-4",
+          "display": "Exercise activity"
+        },
+        "value": {
+          "kind": "fixed-coded",
+          "codings": [
+            {
+              "system": "https://hds.ngo/fhir/CodeSystem/activity",
+              "code": "hiking",
+              "display": "Hiking"
+            }
+          ],
+          "component": {
+            "absent": "activity-hiking",
+            "code": {
+              "system": "http://loinc.org",
+              "code": "74008-4",
+              "display": "Exercise intensity"
+            },
+            "options": {
+              "1": {
+                "system": "http://loinc.org",
+                "code": "LA20166-7",
+                "display": "Vigorous exercise intensity"
+              },
+              "0.25": {
+                "system": "http://loinc.org",
+                "code": "LA20164-2",
+                "display": "Light exercise intensity"
+              },
+              "0.5": {
+                "system": "http://loinc.org",
+                "code": "LA20165-9",
+                "display": "Moderate exercise intensity"
+              }
+            }
+          }
+        },
+        "effective": {
+          "from": "span"
+        },
+        "profiles": {}
+      }
     },
     "activity-steps": {
       "version": "v1",
@@ -3332,7 +4053,27 @@
           "41950-7"
         ]
       },
-      "devNotes": "HealthKit stepCount, Google Fit step_count.delta, summed over the day."
+      "devNotes": "HealthKit stepCount, Google Fit step_count.delta, summed over the day.",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "41950-7",
+          "display": "Number of steps in 24 hour Measured"
+        },
+        "value": {
+          "kind": "quantity",
+          "units": {
+            "count/steps": "/d"
+          }
+        },
+        "effective": {
+          "from": "span",
+          "day": true
+        },
+        "profiles": {}
+      }
     },
     "activity-distance-walking-running": {
       "version": "v1",
@@ -3364,7 +4105,34 @@
           "41953-1"
         ]
       },
-      "devNotes": "HealthKit distanceWalkingRunning, summed over the day. Walking and running together because that is what phones and watches export; a source that counts walking only writes it here too. LOINC 41953-1 is \"Walking distance 24 hour\"; there is no walking+running code."
+      "devNotes": "HealthKit distanceWalkingRunning, summed over the day. Walking and running together because that is what phones and watches export; a source that counts walking only writes it here too. LOINC 41953-1 is \"Walking distance 24 hour Calculated\", walking only. Two other codes exist (LOINC 2.83): 112427-0 \"Distance walking or running\" is a point in time (Pt), not a day; 93849-8 \"Exercise distance in 24 hour\" is a day of exercise distance, accepted on import only (alsoMatch). 41953-1 stays the exported code.",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "http://loinc.org",
+          "code": "41953-1",
+          "display": "Walking distance 24 hour Calculated"
+        },
+        "alsoMatch": [
+          {
+            "system": "http://loinc.org",
+            "code": "93849-8",
+            "display": "Exercise distance in 24 hour"
+          }
+        ],
+        "value": {
+          "kind": "quantity",
+          "units": {
+            "length/m": "m"
+          }
+        },
+        "effective": {
+          "from": "span",
+          "day": true
+        },
+        "profiles": {}
+      }
     },
     "activity-duration-active": {
       "version": "v1",
@@ -3391,7 +4159,27 @@
         "maxSeconds": 90000
       },
       "repeatable": "P1D",
-      "devNotes": "The source's own \"active\" or \"exercise\" minutes (HealthKit appleExerciseTime, Google Fit active_minutes), in seconds; each source defines active differently, so compare a person with themself, not across devices. No LOINC asserted: 55411-3 \"Exercise duration\" is one session, not a daily total."
+      "devNotes": "The source's own \"active\" or \"exercise\" minutes (HealthKit appleExerciseTime, Google Fit active_minutes), in seconds; each source defines active differently, so compare a person with themself, not across devices. No LOINC asserted: 55411-3 \"Exercise duration\" is one session, not a daily total.",
+      "fhir": {
+        "resourceType": "Observation",
+        "category": "activity",
+        "code": {
+          "system": "https://hds.ngo/fhir/CodeSystem/item",
+          "code": "activity-duration-active",
+          "display": "Daily active time"
+        },
+        "value": {
+          "kind": "quantity",
+          "units": {
+            "time/s": "s"
+          }
+        },
+        "effective": {
+          "from": "span",
+          "day": true
+        },
+        "profiles": {}
+      }
     },
     "allergy-coded": {
       "version": "v1",
@@ -26736,6 +27524,20 @@
     ],
     "MedicationStatement": [
       "medication-intake"
+    ],
+    "Observation|activity": [
+      "activity-cycling",
+      "activity-distance-walking-running",
+      "activity-duration-active",
+      "activity-hiit",
+      "activity-hiking",
+      "activity-jogging",
+      "activity-pilates",
+      "activity-steps",
+      "activity-stretching",
+      "activity-swimming",
+      "activity-weights",
+      "activity-yoga"
     ],
     "Observation|laboratory": [
       "body-blood-cbc-basophils",

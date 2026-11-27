@@ -14,6 +14,20 @@
   "MedicationStatement": [
     "medication-intake"
   ],
+  "Observation|activity": [
+    "activity-cycling",
+    "activity-distance-walking-running",
+    "activity-duration-active",
+    "activity-hiit",
+    "activity-hiking",
+    "activity-jogging",
+    "activity-pilates",
+    "activity-steps",
+    "activity-stretching",
+    "activity-swimming",
+    "activity-weights",
+    "activity-yoga"
+  ],
   "Observation|laboratory": [
     "body-blood-cbc-basophils",
     "body-blood-cbc-eosinophils",
