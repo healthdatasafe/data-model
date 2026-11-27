@@ -8,6 +8,10 @@
     "v1": {
       "status": "active",
       "updatedAt": "2026-11-21T10:50:10.000Z"
+    },
+    "v2": {
+      "status": "active",
+      "updatedAt": "2026-11-27T12:47:20.000Z"
     }
   }
 }

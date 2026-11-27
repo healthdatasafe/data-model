@@ -3210,7 +3210,7 @@
             },
             "annotations": {
               "type": "object",
-              "description": "Values that qualify the source observation without being part of it, keyed by the id of an annotation of the method's notation (converter pack `notation.annotations`), e.g. Creighton { \"frequency\": \"X2\" }. Scoped to the method named by `key`: a writer that changes `key` drops them. Not in the vector, never used by a conversion. Optional for validity: `requiredAtEntry` on the annotation is an entry-form rule only, so events stored before it, imported or converted from another method have none and stay valid. An editor that does not know annotations may drop them when it rewrites `source`.",
+              "description": "Values that qualify the source observation without being part of it, keyed by the id of an annotation of the method's notation (converter pack `notation.annotations`), e.g. Creighton { \"frequency\": \"X2\" }. Scoped to the method named by `key`: a writer that changes `key` drops them. Not in the vector, never used by a conversion. Optional for validity: `requiredAtEntry` and `notFor` on the annotation are entry-form rules only, so events stored before it, imported or converted from another method have none and stay valid. An editor that does not know annotations may drop them when it rewrites `source`.",
               "additionalProperties": {
                 "type": "string"
               }

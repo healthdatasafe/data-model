@@ -1,9 +1,9 @@
 {
-  "commit": "40d073548eb953da5aa8903b1ebe24df1fac0eba",
-  "commitShort": "40d0735",
+  "commit": "00eebd7f44dfa349fa4edc77fa63d4f54eaa1062",
+  "commitShort": "00eebd7",
   "branch": "main",
-  "buildDate": "2026-11-27T12:34:51Z",
-  "publicationDate": "2026-11-27T12:34:25.021Z",
+  "buildDate": "2026-11-27T12:48:00Z",
+  "publicationDate": "2026-11-27T12:47:46.387Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -110,6 +110,10 @@
       "file": "converters/cervical-fluid/pack-v1.json"
     },
     {
+      "title": "Converter: cervical-fluid — pack v2",
+      "file": "converters/cervical-fluid/pack-v2.json"
+    },
+    {
       "title": "Converter: cervical-fluid — pack v0 (legacy URL)",
       "file": "converters/cervical-fluid/pack-latest.json"
     },
@@ -162,7 +166,7 @@
       "file": "converters/mood/l10n-pt-BR.json"
     }
   ],
-  "version": "4.43.0",
+  "version": "4.44.0",
   "license": "CC-BY-4.0",
-  "attribution": "HDS Data Model 4.43.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
+  "attribution": "HDS Data Model 4.44.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
 }
