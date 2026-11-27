@@ -330,8 +330,8 @@ document-shares                  one document shared with one contact (below)
 A SMART app reads the same subtrees through the scope classes (`filed-clinical`, `filed-administrative`,
 `filed-insurance`, [§ FHIR](#fhir-documentreference-and-binary-420)). So filing a document is also a disclosure to the
 SMART apps granted a class. Her app must count their grants among who newly reads it. hds-webapp does: its
-`readersChange` counts every account access but personal and expired ones, and a SMART grant is an account access (read
-in code 2026-11-27; a test with an OAuth access on a filing stream is planned in plan 144).
+`readersChange` counts every account access but personal and expired ones, and a SMART grant is an account access (a
+test with an OAuth-style access on a filing stream covers it, plan 144).
 
 - **Words.** A document is **received** when it is on a documents stream, the root included; **filed** when that stream is
   below the root.
@@ -366,6 +366,16 @@ in code 2026-11-27; a test with an OAuth access on a filing stream is planned in
   it can say a document is no longer shared while a filing stream still lets the contact read it.
 - **The administrative streams are not "not sensitive".** An invoice names the provider, the speciality, the dates and
   the acts. Their consent text says so, and a narrower request says what it leaves out.
+- **A contact may ask for a filing stream** (a data set asks for a class of documents): a plain stream permission at
+  `read`, never an item. Her consent shows the stream's description and what the grant leaves out (hds-lib
+  `cmcDocuments.documentsGrantNote`: the documents not filed yet, the other classes, and what is filed on a stream above
+  the granted one, such as the other administrative documents for `documents-admin-insurance`; none on `documents`, whose
+  description already says it reads every document, filed or not).
+- **A grant is not checked against open documents when she accepts it.** A class grant accepted later on a place where a
+  group's open document was filed ([§ Sharing one document](#sharing-one-document-the-document-shares-root-3370), "A
+  received document at `contribute`"), and any later grant on `documents` or of the SMART `clinical-note` scope, reads it.
+  So does a grant on `documents` for a single contact's open document still on the root. The new reader reads a document
+  its sender can still change or remove. Open means it can change, or be removed, after she read it.
 - **No migration.** A document stored before 4.35.0 is on the root: it is not filed, so a narrower grant does not read it
   until she files it, and nothing is shown to anyone new.
 - **Readers** list `documents` (every filed document comes with it) and never take the stream for the kind.
@@ -508,15 +518,31 @@ streams is `create-only` for that reader, so a document left in the receive chil
 sender. On receipt the person's app sets `streamIds = ['documents']`, or the stream it is filed in, in one `events.update`
 (after checking it is a `file/xds-v1` event with its attachment). The receive child holds nothing processed.
 
+**One document weighs at most 50 MB,** all its files together (hds-lib `cmcDocuments.MAX_DOCUMENT_BYTES`). Apps apply
+it: they check it before an import and before a send (`sendDocument` does not), and pass
+`maxBytes: MAX_DOCUMENT_BYTES` to `receiveDocument`, which then refuses a larger one (`too-large`) and leaves it as it
+is. The platform does not check it (open points).
+
 **A received document at `contribute`: add, then freeze (4.35.0).** The received id stays on the document beside its
 documents stream, so the sender goes on correcting it: **open**. Her app **freezes** it by replacing the received id by
 the relationship's `shared` one (`read`): the sender still reads it and can no longer change or remove it, and a correction
-is then a new document listing it in `supersedes`.
+is then a new document listing it in `supersedes`. An app that grants `contribute` applies both rules below.
 
-- Her app MUST freeze it before it shares it with someone else, and offers to at any time.
-- A single contact's document SHOULD be frozen when it is filed (below the root). A group load may stay open, when she was
-  told so at consent.
-- **Open means it can change after she read it.** The platform keeps no history unless configured to, and the sender may
+- **Frozen before it is shared with someone else.** When a share adds a share id, hds-lib `shareDocument` refuses a
+  document another contact can still change (`open-document`, naming those relationships) and writes nothing; it refuses
+  a document not received yet too (`not-received`). Her app asks her once to lock it, freezes it for each of them, then
+  shares. A contact that reads `documents`, a parent or `*` already reads every document, an open one included: sharing
+  with it posts only the alert, with no refusal (below, "Already sharing everything"). Her app offers to freeze at any
+  time.
+- **Frozen first, then filed.** Her app enforces it: hds-lib `fileDocument` neither freezes nor refuses an open document.
+  Filed below the root, an open document is frozen before the move, so it never becomes open on a filing stream someone
+  else reads at the time of filing. A single contact's document is always frozen. A group's (its access has
+  `type: 'app'`) stays open only when, at filing, nobody else reads the target place: no contact, no other access of the
+  account (a SMART grant included), and every access known. This is checked once, at filing. Otherwise it is frozen
+  first. A sender her app cannot tell is a single contact. She is told at consent that a group may correct its documents
+  until she locks them. On the root, nothing is frozen: there an open document is read by whoever reads `documents` (a
+  contact, a SMART app granted `clinical-note`) while its sender can still change it.
+- **Open means it can change, or be removed, after she read it.** The platform keeps no history unless configured to, and the sender may
   rewrite `clientData`: "changed by the sender since" (`modified`, `modifiedBy`) is a signal, not proof. What was checked
   on receipt (type, size) held then.
 - Going from `contribute` to `create-only` is refused while the child holds documents: freeze them first.
@@ -549,11 +575,9 @@ sharing one of them still adds its share id, so filing it elsewhere later does n
 - What an administrative document is (invoice, policy, cost approval, reimbursement statement) has no code of its own: a
   table of sub-kinds, each a second `type` coding with its own default stream, is needed before a program may propose
   insurance.
-- **No app freezes yet** (hds-lib `freezeDocument` exists, nothing calls it), and hds-lib does not refuse to share an open
-  document. No app may grant `contribute` before both are done.
 - Who sent a filed document is not kept: the received id goes at the freeze. A `clientData` key for it is to be defined.
 - At `create-only` the contact cannot correct or retract a document sent to the wrong person, and at either level the
-  platform bounds neither its type nor its size. Delivery by the platform, attachment included, is asked of Pryv; its
+  platform bounds neither its type nor its size: the 50 MB limit is applied by the apps (above). Delivery by the platform, attachment included, is asked of Pryv; its
   event type will be the platform's.
 - A superseded document: a share does not follow the new version. Whether marking the old one `superseded` should
   tell the contact that a newer one exists is open.

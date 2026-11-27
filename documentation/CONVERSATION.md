@@ -370,7 +370,10 @@ set aside, may leave nothing waiting, and is deleted at `done` (R10). Her app sa
   `done` (the document shared again, then read or on hold); when the contact's latest `task-status` is `done` and not later
   than the answer (a proposed document answered after the work), or on `not-mine` and on `document-unshared`, 24 h after
   the answer, so the contact may read it first (R10). An answer written while the work is in progress again waits for the
-  next `done`. Answers are ordered by `created`:
+  next `done`. A `task-status` `error` still the contact's latest status 24 h after it was sent (the alert's `time`) ends
+  the work for her notes, as a `done` does: each answer's own 24 h then applies, and a later status supersedes the error
+  (R4). So a contact still retrying posts a status within 24 h of its error, or her notes are removed for good. Answers
+  are ordered by `created`:
   an answer's `modified` never matters (R3, R4). The removal assumes the platform keeps no event history; where it
   does, the note stays in it.
 - Her app shows that the contact reads it, as for the chat (§ Chat).
@@ -472,7 +475,7 @@ the first `ready` of a relationship. An app that does not know the code shows th
 |---|---|
 | `no-attachment` | The shared document has no attachment, or none of a type the contact reads. Not retried. |
 | `write-failed` | The contact could not write its items on the person's account. |
-| `reading-failed` | The document has an attachment of a type the contact reads, but fetching or reading it failed. The contact retries on its own: a later `task-status` (another `attempt`) supersedes the error (R4), and the person has nothing to do. The error stands once the contact stops retrying. |
+| `reading-failed` | The document has an attachment of a type the contact reads, but fetching or reading it failed. The contact retries on its own: a later `task-status` (another `attempt`) supersedes the error (R4), and the person has nothing to do. The error stands once the contact stops retrying. A contact still retrying posts a status within 24 h of the error: past that, the error is final for her notes (§ Her note). |
 
 ## Rules
 
@@ -630,7 +633,7 @@ document. Deleted means deleted (twice), not only trashed.
 - **`not-mine`, `document-unshared` and a document gone win over everything above:** every item of that document is
   deleted, kept-aside values included.
 - **Her answers** stay on `sent` until the relationship ends: they carry ids, codes and her date only, once her app
-  has removed her `note` (after `done`, or 24 h after the answer, § Her note).
+  has removed her `note` (after `done` or a final `error`, or 24 h after the answer, § Her note).
 - **On the contact's account**, the delivered copies of the conversation alerts and of her chat messages, and its own
   copies of what it sent, are deleted once the work they are about is `done`, at the latest 24 h after they arrived.
   The `ready` marker of a relationship (its id and the fact, § Notice and error codes) is kept until the relationship
