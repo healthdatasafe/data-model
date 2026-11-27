@@ -329,8 +329,9 @@ document-shares                  one document shared with one contact (below)
 
 A SMART app reads the same subtrees through the scope classes (`filed-clinical`, `filed-administrative`,
 `filed-insurance`, [§ FHIR](#fhir-documentreference-and-binary-420)). So filing a document is also a disclosure to the
-SMART apps granted a class. Her app must count their grants among who newly reads it (a requirement on the app;
-hds-webapp has not been checked to do so).
+SMART apps granted a class. Her app must count their grants among who newly reads it. hds-webapp does: its
+`readersChange` counts every account access but personal and expired ones, and a SMART grant is an account access (read
+in code 2026-11-27; a test with an OAuth access on a filing stream is planned in plan 144).
 
 - **Words.** A document is **received** when it is on a documents stream, the root included; **filed** when that stream is
   below the root.
