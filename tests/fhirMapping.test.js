@@ -304,7 +304,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const items = Object.entries(itemsById).filter(([, i]) => i.streamId?.startsWith('symptom-'));
       assert.strictEqual(items.length, 101);
       for (const [k, i] of items) {
-        assert.deepStrictEqual([i.fhir?.resourceType, i.fhir?.category, i.fhir?.effective, i.fhir?.profiles], ['Observation', 'symptom', { from: 'span' }, {}], k);
+        assert.deepStrictEqual([i.fhir?.resourceType, i.fhir?.category, i.fhir?.alsoMatchCategories, i.fhir?.effective, i.fhir?.profiles], ['Observation', 'symptom', ['survey', 'exam'], { from: 'span' }, {}], k);
       }
       const symptom = { system: LOINC, code: '75325-1', display: 'Symptom' };
       const options = {

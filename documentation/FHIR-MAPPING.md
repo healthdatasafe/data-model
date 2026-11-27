@@ -135,6 +135,69 @@ and that reading's disturbance flag, so the three items are mapped together and 
   blocks add 12 streams to a category key, so an older library would scan and drop them in a facade `category=`
   search.
 
+**Symptoms (plan 133):** the 101 items of the 51 `symptom-*` leaf streams carry an `Observation|symptom` block
+(SYMPTOMS.md § FHIR):
+- **The shape** is the C-CDA question: LOINC `75325-1` "Symptom", the finding as a `fixed-coded` value (one SNOMED CT
+  concept per symptom, a finding where one exists; other concepts the item covers, or older ones, as value
+  `alsoMatch`), the grade of the `-severity` item as a `64750-3` "Severity of symptoms" component whose answers are
+  LL4051-0 (None, Mild, Moderate, Severe, Extreme; HDS "Slight" renders as Mild). The deprecated presence twin renders
+  the same resource without the component. Hot flashes have no active SNOMED CT concept: the value is
+  `https://hds.ngo/fhir/CodeSystem/symptom` `hot-flashes`, the qualified disorders (menopausal, non-menopausal, male)
+  import only.
+- **The zero grade** renders as `111551-8` "Symptom absent" with the finding as value and no component (the new
+  `component.negation`, [Value kinds](#value-kinds)), so a reader that reads only `code` and `value` never sees
+  "Symptom: Nausea" for a "none" answer. **The rendered zero shape is not locked:** if the HL7 validator refutes
+  `111551-8` with a finding value, the fallback is the None component under `75325-1`, and both shapes import from
+  day one.
+- **Severity answers on import** (the new `component.alsoMatch`): SNOMED CT None, Mild, Slight, Moderate, Severe,
+  Extreme and the "Symptom mild / moderate / severe / very severe" findings, LA11910-9 Slight and LA13958-6 Very severe,
+  **mapped by label**: an incoming "Severe" is 0.75 (perki 2026-11-27). Trivial, "mild to moderate" and "moderate to
+  severe" are refused: no HDS level means them.
+- `symptom-pain-severity` has no presence twin, so it is a `coded` block under its own LOINC `38208-5` ("Pain
+  severity - Reported"), with the same five answers and the same import-only answers; the question names the pain, so
+  no negation. A 0 to 10 score is refused (no binning rule).
+- **The date** comes from the span (`effective: { from: span }`): a HealthKit-style interval renders an
+  `effectivePeriod`, a Mira or form event a point.
+- **Scope:** the 51 leaf streams are the grant roots of `Observation|symptom`; the `symptom` root and the 14
+  body-system groups hold no item and are never granted. Not opt-in. The symptom family owns every cycle-related
+  symptom stream (cramps, sore breasts, pelvic pain); the fertility family claims none of their codes.
+- `references.snomed` of each item states the rendered concept (corrected in the same release: cramps, gas, hair
+  growth, sore breasts, muscle and joint pain, pelvic pain, insomnia, cold extremities, blurred vision, sore throat).
+- **Release order: renderer first**, as activity: the hds-fhir-js release that knows the `symptom` category and the
+  two component fields, then this pack, then the facade pin and the cores' extension options.
+
+**Fertility charting (plan 133, phase 1):** 16 items of the fertility and vulva streams carry a block (MENSTRUAL-CYCLE.md
+§ FHIR / HL7):
+- **Cycle start and ovulation** are LOINC date Observations, `8665-2` "Last menstrual period start date" and `11976-8`
+  "Ovulation date", with the new value kind `event-date`: `valueDateTime` is the event's own date (`YYYY-MM-DD`), the
+  same day as `effectiveDateTime`. Both accept `social-history` and `exam` on import (an EHR files a last menstrual
+  period there), and an imported date below day precision is refused. The cycle length (the start's `duration`, a
+  prediction on the open cycle) is not exported: a stated loss.
+- **The other cycle markers** (end of period, fertile window, mucus peak day, LH peak day, genital contact) and the
+  bleeding qualifiers (brown or dark, miscarriage) are **value-less Observations** coded with the HDS item coding (no
+  LOINC or SNOMED CT concept states them); clots and postpartum bleeding are SNOMED CT `289532003` and `289576005`,
+  value-less too. The fertile window renders an `effectivePeriod` (`effective: { from: span }`). **A value-less marker
+  is frozen once shipped**: valid base R4 (value 0..1), confirmed by the validator run before the pack is published;
+  a later `valueBoolean` would be a new kind and a new shape for readers.
+- **Vaginal bleeding** is the HDS item coding with seven answers of the HDS fertility system (`bleeding-none` to
+  `bleeding-very-heavy`; SNOMED CT `9126005` spotting and `289539007` moderate vaginal bleeding import only); brown or
+  dark bleeding imports `289537009`. The **menstrual cup** fill is three `cup-fill-*` codes, apart from the flow
+  grades. **Sexual activity** is SNOMED CT `364316005` with Unprotected / Protected intercourse and four HDS codes.
+- **The home tests** join `Observation|laboratory`: the pregnancy test is `2106-3` (`80384-1` import only), the OPK the
+  HDS item coding (no LOINC for a qualitative urine LH), both with SNOMED CT Negative / Indeterminate / Positive (Not
+  detected / Equivocal / Detected import only). The OPK gains option 0.5 "High (approaching peak)", an HDS code
+  (`ovulation-test-high`): HealthKit's `estrogenSurge` writes it. Any other intermediate value is refused on render.
+- **Scope:** the 10 grant roots of `Observation|fertility` (the six cycle streams, bleeding, cup, sexual activity,
+  genital contact), each **`consentOptIn`**, with the two tests and `body-urine-hormones-hcg` (a quantitative hCG says
+  what a pregnancy test says): 13 rows offered unticked. The bleeding row also grants clots, brown, postpartum and
+  miscarriage bleeding, so its stream description says so in every language of the pack, a build check
+  ([SMART scopes](#smart-scopes-packfhirscopes)). A predicted ovulation or fertile window (`hdsBasis: 'predicted'`) is
+  never rendered.
+- **Phase 2** (not built; decided now because an export is permanent): the cervical fluid observation is exported as
+  charted (the stored vector and the method's own reading), never a converted code, so a converter release never
+  changes an exported resource; cervix position and the recalled summaries get their own designs.
+- **Release order: renderer first**, in one train with symptoms.
+
 **Documents (4.2.0):** the `document` item carries a `DocumentReference|clinical-note` block, the first block on a
 resourceType other than Observation and Condition, and the first whose code comes from the content
 ([DocumentReference: documents](#documentreference-documents)). Needs hds-fhir-js 0.5.0 to render; an older renderer
@@ -256,12 +319,20 @@ The scope classes live beside this file, in `definitions/fhir/scope-classes.yaml
 
 | resourceType | Category keys | Required |
 |---|---|---|
-| Observation | `vital-signs`, `social-history`, `survey`, `laboratory`, `exam`, `imaging`, `procedure`, `therapy`, `activity` (system `http://terminology.hl7.org/CodeSystem/observation-category`) | yes |
+| Observation | `vital-signs`, `social-history`, `survey`, `laboratory`, `exam`, `imaging`, `procedure`, `therapy`, `activity` (system `http://terminology.hl7.org/CodeSystem/observation-category`); `symptom` "Symptom", `fertility` "Fertility" (system `https://hds.ngo/fhir/CodeSystem/observation-category`, plan 133: HL7 has no code for either) | yes |
 | Condition | `problem-list-item`, `encounter-diagnosis` (system `http://terminology.hl7.org/CodeSystem/condition-category`), `health-concern` (system `http://hl7.org/fhir/us/core/CodeSystem/condition-category`) | yes |
 | DocumentReference | `clinical-note` (system `http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category`), the one key of the US Core category value set: every HDS document, whatever its XDS class (4.2.0). `filed-clinical`, `filed-administrative`, `filed-insurance` (system `https://hds.ngo/fhir/CodeSystem/document-filing`, displays "Filed as clinical", "Filed as administrative", "Filed as insurance"): scope classes only, never a block's category ([Scope classes](#scope-classes-packfhirscopeclasses), plan 133) | yes |
 
 The key is the code, and one code has one system per resourceType: a SMART scope (`?category=<code>`) and a facade
 search name a category by its code, so two systems sharing a code could not be told apart (plan 133).
+
+**The HDS Observation category system** `https://hds.ngo/fhir/CodeSystem/observation-category` (plan 133) holds three
+codes: `symptom` and `fertility`, the two keys above, and `hds-item`, the category hds-fhir-js gives the generic
+rendering of an item with no block. `hds-item` is never a key (the build refuses it), so a generic resource matches no
+block on import. A block on an HDS category lists the HL7 categories an outside source may use in
+`alsoMatchCategories` (symptoms: `survey`, `exam`; cycle start and ovulation: `social-history`, `exam`). An app that
+asks by HL7 category does not see these resources; `patient/Observation.rs` and `patient/*.rs` do. *Permanent:* the
+codes are wire values and scope keys.
 
 A resourceType that has a table must carry a `category` from it, never a scope class category (one listed in
 `definitions/fhir/scope-classes.yaml`); a resourceType without a table takes none (Patient,
@@ -297,12 +368,12 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 | `code` | yes; none on a `QuestionnaireResponse` or a `Questionnaire` | The resource code: a **static coding** `{ system, code, display }`, or a **source**: `{ from: datasource, field: <dotted path> }`, `{ from: eventType, codings }`, `{ from: content, field, translate, unknown }`, `{ from: text, field }`, `{ from: enum, field, codings }` or `{ from: concept, field }` (below). |
 | `alsoMatch` | no | Extra codings accepted **on import only**, never emitted. With a static code, a list; with an eventType code, keyed by the eventType each names (`{ concentration/mg-dl: [codings] }`). Never with a datasource code. |
 | `alsoEmit` | no | Extra codings **emitted only**, after the static code in `code.coding`, never an import key: the second code a profile requires (US Core pulse oximetry wants 2708-6 beside 59408-5). A list, with a static code only, on value kind `quantity` or `scaled-quantity`. A resource that carries an `alsoEmit` coding without the code does not match the item. An `alsoEmit` coding is never another item's import key or owned LOINC code, **except the code of a more general item**: one whose stream is a strict ancestor of this item's stream, in the same scope pair (`body-temperature-basal` emits `body-temperature`'s `8310-5`). A resource carrying both items' codes matches both, and the importer gives it to the item that also emits every code of the others that the resource carries, the more specific one ([Import](#import)). |
-| `value` | no | FHIR `value[x]`, by `kind` (below). Absent on a Condition, a DocumentReference, a medication, a Procedure and an AllergyIntolerance, which have no `value[x]`. |
+| `value` | no | FHIR `value[x]`, by `kind` (below). Absent on a Condition, a DocumentReference, a medication, a Procedure and an AllergyIntolerance, which have no `value[x]`. An Observation without `value` states a finding by its code alone (a cycle marker, plan 133): only on an item whose eventTypes hold no content (`activity/plain`), since the renderer would drop any content; the build refuses it elsewhere. |
 | `split` | no | Extra resources, one per numeric composite field (below). |
 | `ignore` | no | Composite fields deliberately left out of the FHIR rendering. |
 | `dosage` | on a medication | `{ field, doseUnits, routes }`: the regimen as a FHIR `Dosage` ([medications](#medications-medicationstatement-and-medicationrequest)). Required on a `MedicationStatement` or `MedicationRequest`, refused elsewhere. |
 | `status` | on a treatment | `{ from: span }`: a Procedure's status from the event's span ([treatments](#treatments-procedure-over-a-period)). Required on a Procedure item whose `duration` may be null, refused elsewhere. |
-| `effective` | no; on an Observation (the 18 session blocks), `day: true` on a daily total | `{ from: span }`, optional `day: true` (plan 133, physical activity): an Observation's date from the event's span. A positive `duration` renders `effectivePeriod` (`start` at `time`, `end` at `time + duration`, each in the event's zone and precision), no duration or 0 `effectiveDateTime` as without the field; a `duration: null` (still running) is refused, and so is an `unknown` date with a duration. `day: true`: the event is one local day, so a period of 82800 to 90000 s (23 to 25 h, the DST days) with an exact start and end, and nothing else, on render and on import. On an Observation only, never beside a `split` or a `concept` code; `day: true` is required exactly on an item whose duration is one day (`mandatory`, `canBeNull: false`, `maxSeconds` at most 90000), and refused elsewhere (a fertile window of up to 6 days, a pregnancy still running). On import, `effectivePeriod.end` becomes the `duration`, on such a block only. A renderer that knows the field refuses an `effective` shape it does not know. |
+| `effective` | no; on an Observation (the 18 session blocks, the 101 symptom blocks, the fertile window), `day: true` on a daily total; never with value kind `event-date` | `{ from: span }`, optional `day: true` (plan 133, physical activity): an Observation's date from the event's span. A positive `duration` renders `effectivePeriod` (`start` at `time`, `end` at `time + duration`, each in the event's zone and precision), no duration or 0 `effectiveDateTime` as without the field; a `duration: null` (still running) is refused, and so is an `unknown` date with a duration. `day: true`: the event is one local day, so a period of 82800 to 90000 s (23 to 25 h, the DST days) with an exact start and end, and nothing else, on render and on import. On an Observation only, never beside a `split` or a `concept` code; `day: true` is required exactly on an item whose duration is one day (`mandatory`, `canBeNull: false`, `maxSeconds` at most 90000), and refused elsewhere (a fertile window of up to 6 days, a pregnancy still running). On import, `effectivePeriod.end` becomes the `duration`, on such a block only. A renderer that knows the field refuses an `effective` shape it does not know. |
 | `profiles` | yes | Profile per flavour; `{}` claims none (below). |
 
 **Codings** always have a canonical system URI (`http://loinc.org`, `http://snomed.info/sct`), never a label, a
@@ -417,6 +488,20 @@ answer and no SNOMED CT concept, as a `fixed-coded` value ([Value kinds](#value-
 `meta.tag` the importer routes by), and a sport is shared by a presence item and its intensity item. *Permanent:* a
 code once shipped is a wire value, never renamed; codes are added when a sport needs one.
 
+**The HDS symptom code system** (plan 133): `https://hds.ngo/fhir/CodeSystem/symptom`, for a symptom with no active
+SNOMED CT concept, as a `fixed-coded` value: `hot-flashes` "Hot flashes" (67443009 Hot flash and the "Hot flushes"
+concepts are inactive; only qualified disorders remain, imported as value `alsoMatch`). Same rules as the activity
+system. *Permanent.*
+
+**The HDS fertility code system** (plan 133): `https://hds.ngo/fhir/CodeSystem/fertility`, answer codes only, never an
+item (the item system stays the item's own code). Phase 1: `bleeding-none`, `bleeding-spotting`, `bleeding-very-light`,
+`bleeding-light`, `bleeding-moderate`, `bleeding-heavy`, `bleeding-very-heavy` (the vaginal bleeding grades: no
+terminology has the graded scale), `cup-fill-light`, `cup-fill-moderate`, `cup-fill-heavy` (the menstrual cup),
+`intercourse-without-ejaculation`, `intercourse-withdrawal`, `intercourse-condom`, `intercourse-cervical-barrier` (the
+SNOMED CT concepts that once named them are inactive), `ovulation-test-high` "High (approaching peak)" (the OPK's 0.5).
+Phase 2 will add the cervical fluid dimensions, the cervix components and `no-current-periods`. *Permanent:* a code
+once shipped is a wire value.
+
 ### Value kinds
 
 | `kind` | Item | Block fields | Renders |
@@ -426,7 +511,8 @@ code once shipped is a wire value, never renamed; codes are added when a sport n
 | `ratio-quantity` | `number`, every eventType an object `{ value, relativeTo }` (`ratio/generic`) | `units`: every eventType of the item → UCUM code, distinct as for `quantity`; `relativeTo`: the item's fixed denominator (`ratioRelativeTo`) | `valueQuantity` of `content.value` in the unit, with the lab extras as for `quantity`; an event whose `relativeTo` is not the block's is refused. On import the content is `{ value, relativeTo }` with the block's denominator |
 | `coded` | `select` | `options`: every option value → coding, each coding once; optional `alsoMatch`: option value → extra codings accepted for that option on import only | `valueCodeableConcept` (the option coding, never an `alsoMatch` one) |
 | `components` | `composite` | `components`: numeric composite field → `{ code, unit }` | `component[]`, one per field present |
-| `fixed-coded` | `select` with a component; an item whose one eventType holds no content (`activity/plain`) without one | `codings`: the one concept the item stands for, every coding a translation of it; optional `alsoMatch`: value codings accepted on import only; optional `component`: `{ absent, code, options }`, every option value → coding, and `absent` the item a resource without the component imports into | `valueCodeableConcept` (the `codings`, never an `alsoMatch` one); with a component, `component[0]` = `code` with the option's coding |
+| `fixed-coded` | `select` with a component; an item whose one eventType holds no content (`activity/plain`) without one | `codings`: the one concept the item stands for, every coding a translation of it; optional `alsoMatch`: value codings accepted on import only; optional `component`: `{ absent, code, options, alsoMatch?, negation? }`, every option value → coding, `absent` the item a resource without the component imports into, `alsoMatch` option value → extra answer codings accepted on import only, `negation` `{ option, code }` | `valueCodeableConcept` (the `codings`, never an `alsoMatch` one); with a component, `component[0]` = `code` with the option's coding; for the `negation.option`, `code` = `negation.code` and no component |
+| `event-date` | an item whose one eventType holds no content (`activity/plain`), with a static code | none | `valueDateTime`: the event's own date at day precision (`YYYY-MM-DD` of the offset-local rendering), the same day as `effectiveDateTime`; an `unknown` date is refused. On import, `valueDateTime` gives `time` (day precision; a month or a year is refused), and the resource's `effective[x]` (when the source recorded it) is not kept |
 | `lab-result` | `imported`, eventType `lab-result/coded-v1`, with a `concept` code | none | from the content (BLOOD-CHEMISTRY.md § The three items, Cross-system): `valueQuantity` (`value`, `comparator`, `unit` as the UCUM `code`, `unitText` else the code itself as `unit`), else `valueCodeableConcept` (`valueCodes`, `valueText` as text), else `valueString` (`valueText`); the printed text of a semi-quantitative result in the `https://hds.ngo/fhir/StructureDefinition/printed-result` extension, with a readable copy in `note`; `notes` as a `note`; the range and interpretation from `clientData` (the range text only when there is no `value`; `clientData.hdsComparator` is not read); the item's key as `meta.tag` in `https://hds.ngo/fhir/CodeSystem/item`; the lab profiles only when the analyte has a LOINC coding |
 
 **`lab-result`** reads an object eventType, not a composite, so the composite accounting of the next section does not
@@ -566,6 +652,55 @@ The rules (`src/fhir.js`, `checkFixedCoded`, `checkFixedCodedFamilies`, `checkFh
 
 It is a kind of its own, not a field of `coded`, for [forward compatibility](#forward-compatibility): a renderer that
 does not know it skips the block and serves the generic Observation, rather than emit a resource without its sport.
+
+**Two component fields** (plan 133, symptoms):
+- **`component.alsoMatch`**: option value → answer codings accepted for that option **on import only**, as a `coded`
+  value's per-option `alsoMatch` (the SNOMED CT severities and the "Symptom mild" findings beside the LL4051-0 answers).
+  Keys are component options; its codings join the item's other codings, so each appears once in the item (across
+  options too) and none is the HDS item coding.
+- **`component.negation`**: `{ option, code }`. An event whose content is `option` renders `code` (`111551-8` "Symptom
+  absent") as the resource code, the value codings as value and **no component**; on import, a resource coded
+  `negation.code` with a matching value goes to the item with the component, at `option`. The option is a key of
+  `component.options`; the code is not the block's own code (the two would read alike). Like the shared code, it is
+  **reserved**: never an import key of any item, one category across every block using it, and the value codings are
+  keys under it as they are under the shared code (`<resourceType> <negation code> value <coding>`).
+
+```yaml
+symptom-gastrointestinal-nausea-severity:
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "422587007", display: Nausea }
+      component:
+        absent: symptom-gastrointestinal-nausea
+        code: { system: http://loinc.org, code: 64750-3, display: Severity of symptoms }
+        options:
+          "0": { system: http://loinc.org, code: LA137-2, display: None }
+          # "0.25" Mild, "0.5" Moderate, "0.75" Severe, "1" Extreme (LL4051-0)
+        alsoMatch:
+          "0.75": [{ system: http://snomed.info/sct, code: "24484000", display: Severe }, …]
+        negation: { option: "0", code: { system: http://loinc.org, code: 111551-8, display: Symptom absent } }
+    effective: { from: span }
+    profiles: {}
+```
+
+Both are new fields of `component`: a renderer that predates them refuses the block (hds-fhir-js `isFixedCodedValue`)
+and serves the generic Observation, the forward-compatible failure. The symptom YAML writes the shared component parts
+once per file as YAML anchors (`*symptomSeverityOptions`); the published pack holds them expanded.
+
+**`event-date`** (plan 133, fertility) is for an item whose event *is* a date that a code asks for: a cycle start is
+"the last menstrual period started on this day", `8665-2` with `valueDateTime`. On an Observation, with a static code,
+on an item whose one eventType holds no content; no `alsoEmit`, no `split`, no `effective` (the value and the date are
+one day, and a span is not a date). The rendered `valueDateTime` repeats `effectiveDateTime` at day precision, so the
+two can never disagree. On import the value is what counts: an EHR's last menstrual period (effective: the visit;
+value: the date) becomes the cycle start it states, a recalled date, at the value's day; a `valueDateTime` below day
+precision (`2026-03`) is refused rather than create a month-precision cycle start. It is a kind of its own: a
+renderer that does not know it skips the block rather than emit a resource without its value.
 
 ### Composite items: `components`, `split`, `ignore`
 
@@ -774,9 +909,10 @@ by version and hash (`hds-fhir-js`: `node scripts/extension-options.ts <pack>`);
 in production.
 
 **A grant root marked `consentOptIn: true` is offered unticked too (plan 133), and that is all the marker does.** It is
-a stream property, published in `pack.streams` like `explicitGrantOnly`, and today `body-temperature` alone carries it
-(a grant on it also reads the basal fertility readings and their disturbance flags; see "Body temperature" at the top
-of this document). hds-fhir-js adds the marked stream's subtree to the same option list as the `explicitGrantOnly` streams, so its
+a stream property, published in `pack.streams` like `explicitGrantOnly`. `body-temperature` carries it (a grant on it
+also reads the basal fertility readings and their disturbance flags; see "Body temperature" at the top of this
+document), and since plan 133 the 10 grant roots of `Observation|fertility`, the two home tests and
+`body-urine-hormones-hcg` (see "Fertility charting"). hds-fhir-js adds the marked stream's subtree to the same option list as the `explicitGrantOnly` streams, so its
 consent row is unticked under a scope that names its key (`patient/Observation.rs?category=vital-signs`), under
 `patient/*.rs`, and under a native token on the stream itself or below it (`hds/stream/body-temperature.read`). Unlike
 `explicitGrantOnly`:
@@ -793,6 +929,12 @@ leave out a child.
 offers it as a row: an ancestor that merely holds grant roots, or a stream inside one), one under an
 `explicitGrantOnly` root (already offered unticked, and kept out of `*` besides), and one under another `consentOptIn`
 stream (the outer row already holds it). The value is a boolean (`src/streams.js`).
+
+**A row that grants more than its label says it** (plan 133, fertility F8): a `consentOptIn` grant root whose subtree
+holds other streams carrying mapped items (`body-temperature`: the basal readings; `body-vulva-bleeding`: clots,
+brown, postpartum and miscarriage bleeding) needs a stream `description` in **every language of the pack** (`en`,
+`fr` and each `definitions/l10n` locale), shown under the row. `npm run build` refuses the pack otherwise
+(`checkConsentOptInDescriptions`, on the localised streams).
 
 **How it is computed.**
 - Every item counts for the invariant, at its `streamId`: a mapped item as its pair, a companion as its parent's
@@ -1824,6 +1966,17 @@ these events until their own re-pin. **A sub-field of `effective` is a one-way d
 so hds-fhir-js `isSupported` refuses a block whose `effective` shape it does not know (the block is skipped), and a new
 sub-field needs the renderer first, like a new kind.
 
+**Symptoms and fertility charting (plan 133) are renderer first too**, in one train: the `symptom` and `fertility`
+categories (an older library skips a block whose category it does not know, and an older `extensionOptionsFromPack`
+throws on a category table that differs from its own, so an older extension generator fails closed), the
+`component.alsoMatch` and `component.negation` fields (hds-fhir-js 0.20.0 `isFixedCodedValue` refuses a component field
+it does not know, so the block is skipped, never half-rendered) and the `event-date` kind. The blocks add 51 streams to
+`Observation|symptom`, 10 to `Observation|fertility` and 2 to `Observation|laboratory`, so the order is the activity
+one: (1) the hds-fhir-js release that knows all of them; (2) this pack; (3) the facade re-pin; (4) each core's
+extension options regenerated, when the scopes widen and the 13 opt-in rows appear unticked. The two home tests join a
+key an older library already serves: under an older library their blocks render as before the release (generic), and
+the laboratory scan drops them until step 3.
+
 ---
 
 ## Import
@@ -1863,6 +2016,29 @@ item, with the same code and value codings. Refused: a 74008-4 coding that is no
 sports or none (Walking, Mixed), any other component (55411-3, calories), a category other than `activity`. The PA IG's
 split shape (a separate 55411-3, a `PAPanel` group) is not matched: 55411-3 and `PAPanel` are no item's key, and a
 bridge assembles them.
+
+**Symptoms (plan 133) follow the same rule (P1)**, with the zero grade:
+- `75325-1` with a value naming one symptom (rendered or value `alsoMatch`) and a `64750-3` component holding a mapped
+  answer (an option coding or a `component.alsoMatch` coding) imports into the `-severity` item at that option; with
+  no `64750-3` component, or one stated absent, into the presence twin, content `null`.
+- **N2:** `111551-8` "Symptom absent" (the `component.negation` code) with a value naming one symptom and no component
+  imports into the `-severity` item at `0`; with a `64750-3` component whose answer is None it imports at `0` too, with
+  any other answer it is refused. **N1:** `75325-1` with the None answer imports at `0` as well. Both zero shapes import
+  from day one; which one renders is not locked (see "Symptoms").
+- Answers map **by label**: an incoming SNOMED CT "Severe" or "Symptom severe" is 0.75, "Very severe" 1. Refused:
+  Trivial, "mild to moderate", "moderate to severe", a value naming two symptoms or none, any other component (a body
+  site, `64748-7` duration), an unmapped answer, a category other than `symptom`, `survey`, `exam` (none is accepted).
+  The assertion style (`code` = a SNOMED CT finding, no value) matches no key: a bridge normalises it, and adding it
+  later is an additive import rule.
+- `38208-5` with an LL4051-0 answer (or its import-only answers) imports into `symptom-pain-severity`; a 0 to 10 score
+  is refused.
+
+**Fertility charting (plan 133):** `8665-2` and `11976-8` import by `valueDateTime` (an `event-date` block): the value's
+day is the event's `time`, at day precision; no `valueDateTime`, or one below day precision, is refused, and the
+resource's `effective[x]` is not kept. A value-less marker imports from its code with no value, content `null`; a
+resource with a value where the block has none, or the reverse, is refused. A last menstrual period stated at several
+visits gives several events on one day: the importing bridge keeps one per (item, day). The bleeding qualifiers import
+alone (the link to the bleeding event is by day, as in HDS).
 
 **Concept-coded lab items are never matched** (`body-blood-coded`, `body-urine-coded`, `body-csf-coded`; plan 133).
 They claim no import key. A laboratory Observation whose codes match no item is reported with the three as
@@ -2115,10 +2291,21 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   names the presence twin (same stream, `activity/plain`, a component-less `fixed-coded` block, same code, category,
   `codings`, `alsoMatch` and `effective`). Import keys: each value and value `alsoMatch` coding, under the code, claimed by the item
   with the component for itself and its twin (the twin claims nothing); the shared code is never an import key of any
-  item.
+  item. `component.alsoMatch` (`[FHIR-MAP-31]`): keys are component options, its codings join the item's codings
+  (once in the item, across options too; never the HDS item coding). `component.negation` (`[FHIR-MAP-31]`,
+  `[FHIR-SCOPE-27]`): its option a component option, its code not the block's; reserved like the shared code (never an
+  import key, one category across every block using it), the value codings keys under it too.
 - **effective (`[FHIR-MAP-30]`):** on an Observation only, never beside a `split` or a `concept` code; `day: true`
   exactly on an Observation item whose duration is one day (`mandatory`, `canBeNull: false`, `maxSeconds` at most
   90000).
+- **event-date (`[FHIR-MAP-32]`):** on an Observation with a static code, an item whose one eventType holds no content;
+  no `alsoEmit`, `split` or `effective`.
+- **An Observation without a value (`[FHIR-MAP-33]`):** only on an item whose eventTypes hold no content (the renderer
+  would drop it).
+- **Categories (`[FHIR-PACK-1]`):** `https://hds.ngo/fhir/CodeSystem/observation-category|hds-item`, the generic
+  rendering's category, is never a key of the table.
+- **An opt-in row that grants more (`[FHIR-SCOPE-28]`, `npm run build`):** a `consentOptIn` grant root whose subtree
+  holds other mapped streams carries a `description` in every language of the pack.
 - **eventType codings (`[FHIR-MAP-23]`):** at least two distinct codings; two eventTypes may share one, with one
   display, on an item that asserts `references.loinc` only; a shared coding is still never an `alsoMatch` of the
   block. **An HDS item coding** (static or per eventType) is the item's own key, a deprecated alias aside.

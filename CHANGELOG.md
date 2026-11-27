@@ -1,5 +1,75 @@
 # Changelog
 
+## [Unreleased]
+
+Minor. Plan 133 (DESIGN-SYMPTOMS.md v2, DESIGN-FERTILITY.md v2 phase 1, perki's decisions of 2026-11-27). **Renderer
+first:** the hds-fhir-js release that knows the two categories, the two component fields and `event-date` is released
+before this pack; then the facade pin, then each core's extension options (FHIR-MAPPING.md § Forward compatibility).
+
+### Added: symptoms as FHIR Observations (`Observation|symptom`)
+
+- **Category `symptom`** in a new HDS system, `https://hds.ngo/fhir/CodeSystem/observation-category` (HL7 has no
+  symptom category; the system also names `hds-item`, the generic rendering's category, which the build now refuses as
+  a key). Import also accepts `survey`, `exam` or none (`alsoMatchCategories`).
+- **101 blocks** on the 51 `symptom-*` leaf streams: the 50 pairs are LOINC `75325-1` "Symptom" with the finding as a
+  `fixed-coded` value and, on the `-severity` item, a `64750-3` "Severity of symptoms" component answered from
+  LL4051-0 (None, Mild, Moderate, Severe, Extreme; "Slight" renders as Mild), naming its presence twin;
+  `symptom-pain-severity` is `coded` under `38208-5`. `effective: { from: span }`, `profiles: {}`. Cramps renders
+  `55300003` Cramp (Stomach cramps, Menstrual cramp import only), sore throat `267102003` (Pain in throat import only),
+  hot flashes `https://hds.ngo/fhir/CodeSystem/symptom|hot-flashes` (a new HDS code system; the menopausal,
+  non-menopausal and male hot flash disorders import only). Oily hair (4.52.0, after the design) is mapped with the
+  family (`67295004` Greasy hair).
+- **`fixed-coded` component fields:** `component.alsoMatch` (option → answer codings accepted on import only: the SNOMED
+  CT severities by label, so an incoming "Severe" is 0.75, and LA11910-9 Slight, LA13958-6 Very severe) and
+  `component.negation` (`{ option: "0", code: 111551-8 "Symptom absent" }`: the zero grade renders as that code with
+  the finding as value and no component; the rendered zero shape is not locked, both zero shapes import). Build checks:
+  alsoMatch keyed by options, its codings unique in the item; the negation option an option, its code not the block's,
+  reserved like the shared code (never an import key, one category, value keys under it too).
+- **Corrected `references.snomed`** of the symptom items to the rendered concept (cramps was 21522001 Abdominal pain,
+  gas 271835004 a distension, hair growth 66520009 Female hirsutism, and the pairs that asserted two concepts).
+- Not opt-in: the 51 rows are offered ticked.
+
+### Added: fertility charting as FHIR Observations (`Observation|fertility`, phase 1)
+
+- **Category `fertility`** in the same HDS system.
+- **New value kind `event-date`**: `valueDateTime` is the event's own date. `fertility-cycles-start` is LOINC `8665-2`
+  "Last menstrual period start date", `fertility-cycles-ovulation` `11976-8` "Ovulation date" (`references.loinc`
+  added); both accept `social-history` and `exam` on import. Build check: an Observation with a static code, a
+  no-content item, no `alsoEmit`, `split` or `effective`.
+- **Value-less markers** on the HDS item coding: period end, fertile window (`effective: { from: span }`), mucus peak
+  day, LH peak day, genital contact, brown or dark bleeding (289537009 import only), miscarriage bleeding; clots
+  `289532003` and postpartum bleeding `289576005`. Frozen once shipped.
+- **`body-vulva-bleeding`** (seven grades), **`body-vulva-menstrual-cup`** and **`fertility-sexual-activity`**
+  (`364316005`) as `coded`, with a new HDS answer system `https://hds.ngo/fhir/CodeSystem/fertility` (bleeding,
+  cup fill, intercourse variants, `ovulation-test-high`); 9126005 spotting and 289539007 moderate bleeding import only.
+- **The home tests under `Observation|laboratory`:** `fertility-test-pregnancy` `2106-3` (`80384-1` import only,
+  `references.loinc`/`loincMethod` added), `fertility-test-opk` the HDS item coding; SNOMED CT Negative, Indeterminate,
+  Positive (Not detected, Equivocal, Detected import only); lab profiles.
+- **`fertility-test-opk` option 0.5 "High (approaching peak)"** (fr "Élevé (approche du pic)"; es, it, pt-BR drafts),
+  the value HealthKit's `estrogenSurge` already writes. Additive.
+- **Opt-in:** `consentOptIn` on the 10 fertility grant roots, the two home tests and `body-urine-hormones-hcg` (13 rows
+  offered unticked). `body-vulva-bleeding` gets a stream description in every pack language (en, fr; es, it, pt-BR
+  drafts): its row also grants clots, brown, postpartum and miscarriage bleeding.
+
+### Added: build checks
+
+- An Observation block without `value` only on an item whose eventTypes hold no content (the renderer would drop it).
+- A `consentOptIn` grant root whose subtree holds other mapped streams carries a description in every language of the
+  pack (`npm run build`).
+
+### Lock
+
+`scopes.lock.json`: 51 streams under `Observation|symptom`, 14 under `Observation|fertility` (10 roots and the 4
+bleeding qualifiers), 2 more under `Observation|laboratory`. Permanent.
+
+### Docs
+
+FHIR-MAPPING.md (Symptoms and Fertility charting paragraphs, the HDS category, symptom and fertility code systems,
+`event-date`, the component fields, Import, Forward compatibility, Build checks); SYMPTOMS.md (HDS rendering in FHIR;
+the stale bloating codes and the nonexistent HL7 `symptom` category removed; Apple "Severe" now maps by label to 0.75,
+closing the doc side of B-2026-11-27-47); MENSTRUAL-CYCLE.md (§ FHIR / HL7: the rendering, imported starts are recalled
+dates, `11976-8` is an OB dating term).
+
 ## [4.54.0] - 2026-11-27
 
 Fable review: go with changes, applied (canonical-case language keys, the notes below, the closed settings envelopes

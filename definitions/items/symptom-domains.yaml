@@ -11,6 +11,8 @@
 # NOT "do not write": presence-only sources keep writing them. Nothing referenced
 # these keys when the flag was added, so no writer or reader was affected.
 # 5-level hooks 0.0/0.25/0.5/0.75/1.0 (semantic anchors; see DESIGN-NOTES.md).
+# FHIR (plan 133): the blocks of symptom.yaml's header; YAML anchors are per file, so the shared component parts
+# (&symptomSeverity*) are defined again in the first -severity block here.
 
 ## Respiratory
 symptom-respiratory-cough:
@@ -29,6 +31,7 @@ symptom-respiratory-cough:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -75,6 +78,7 @@ symptom-respiratory-cough-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -127,6 +131,7 @@ symptom-respiratory-dyspnea:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -153,6 +158,7 @@ symptom-respiratory-dyspnea-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -183,6 +189,7 @@ symptom-respiratory-wheezing:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -209,6 +216,7 @@ symptom-respiratory-wheezing-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -239,6 +247,7 @@ symptom-respiratory-nasal-congestion:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -265,6 +274,7 @@ symptom-respiratory-nasal-congestion-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -295,6 +305,7 @@ symptom-respiratory-sore-throat:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -323,6 +334,7 @@ symptom-respiratory-sore-throat-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -355,6 +367,7 @@ symptom-respiratory-rhinorrhea:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -381,6 +394,7 @@ symptom-respiratory-rhinorrhea-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -413,6 +427,7 @@ symptom-cardiac-palpitations:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -439,6 +454,7 @@ symptom-cardiac-palpitations-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -469,6 +485,7 @@ symptom-cardiac-skipped-beat:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -495,6 +512,7 @@ symptom-cardiac-skipped-beat-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -527,6 +545,7 @@ symptom-thermoregulation-chills:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -553,6 +572,7 @@ symptom-thermoregulation-chills-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -583,6 +603,7 @@ symptom-thermoregulation-hot-flashes:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -611,6 +632,7 @@ symptom-thermoregulation-hot-flashes-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -645,6 +667,7 @@ symptom-thermoregulation-night-sweats:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -671,6 +694,7 @@ symptom-thermoregulation-night-sweats-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -701,6 +725,7 @@ symptom-thermoregulation-excessive-sweating:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -727,6 +752,7 @@ symptom-thermoregulation-excessive-sweating-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -757,6 +783,7 @@ symptom-thermoregulation-cold-extremities:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -786,6 +813,7 @@ symptom-thermoregulation-cold-extremities-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -821,6 +849,7 @@ symptom-vision-blurred-vision:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -849,6 +878,7 @@ symptom-vision-blurred-vision-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -881,6 +911,7 @@ symptom-vision-visual-disturbance:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -907,6 +938,7 @@ symptom-vision-visual-disturbance-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -937,6 +969,7 @@ symptom-vision-hearing-difficulty:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -963,6 +996,7 @@ symptom-vision-hearing-difficulty-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -995,6 +1029,7 @@ symptom-hydration-excessive-thirst:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1021,6 +1056,7 @@ symptom-hydration-excessive-thirst-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1051,6 +1087,7 @@ symptom-hydration-frequent-urination:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1077,6 +1114,7 @@ symptom-hydration-frequent-urination-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1109,6 +1147,7 @@ symptom-bleeding-nosebleed:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1135,6 +1174,7 @@ symptom-bleeding-nosebleed-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1165,6 +1205,7 @@ symptom-bleeding-bleeding-gums:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1191,6 +1232,7 @@ symptom-bleeding-bleeding-gums-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1221,6 +1263,7 @@ symptom-bleeding-easy-bruising:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1247,6 +1290,7 @@ symptom-bleeding-easy-bruising-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1279,6 +1323,7 @@ symptom-neurological-paresthesia:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1307,6 +1352,7 @@ symptom-neurological-paresthesia-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1339,6 +1385,7 @@ symptom-neurological-tremor:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1365,6 +1412,7 @@ symptom-neurological-tremor-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1395,6 +1443,7 @@ symptom-neurological-restless-legs:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1421,6 +1470,7 @@ symptom-neurological-restless-legs-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1451,6 +1501,7 @@ symptom-neurological-twitching:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1477,6 +1528,7 @@ symptom-neurological-twitching-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1509,6 +1561,7 @@ symptom-dermatological-rash:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1535,6 +1588,7 @@ symptom-dermatological-rash-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1565,6 +1619,7 @@ symptom-dermatological-hives:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1591,6 +1646,7 @@ symptom-dermatological-hives-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1621,6 +1677,7 @@ symptom-dermatological-itching:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1647,6 +1704,7 @@ symptom-dermatological-itching-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded

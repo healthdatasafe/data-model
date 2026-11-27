@@ -110,14 +110,15 @@ Apple uses a **flat list** of symptom identifiers under `HKCategoryTypeIdentifie
 
 | Body System | SNOMED Concept ID | Example symptoms |
 |-------------|-------------------|------------------|
-| Digestive system | 53619000 | nausea (422587007), bloating (236653009) |
+| Digestive system | 53619000 | nausea (422587007), bloating (116289008) |
 | Nervous system | 118940003 | headache (25064002), dizziness (404640003) |
 | Respiratory system | 50043002 | cough, dyspnea, wheezing |
 | Musculoskeletal system | 928000 | joint pain, back pain |
 | General/constitutional | 162408000 | fatigue (84229001), malaise (367391008), fever |
 
 **FHIR modeling:**
-- **Observation** (category: `survey` or `symptom`) — for point-in-time patient-reported symptoms
+- **Observation**: for point-in-time patient-reported symptoms. HL7's observation-category system has no symptom code
+  (its nine codes, and US Core 6.1.0's four, name none), so HDS renders its own category (§ HDS rendering in FHIR, below)
 - **Condition** — for persistent/recurring symptoms on a problem list
 - **Questionnaire / QuestionnaireResponse** (SDC profile) — for structured symptom diary entries
 - Rule of thumb: episodic self-reports → Observation; persistent patterns → Condition
@@ -169,20 +170,20 @@ Source: PMC8631160 — "The real-world applications of the symptom tracking func
 | Headache | `headache` (Severity) | 25064002 |
 | Migraine | `headache` (Severity) | 37796009 |
 | Nausea | `nausea` (Severity) | 422587007 |
-| Cramps | `abdominalCramps` (Severity) | 21522001 |
-| Gas | — | 271835004 |
-| Cravings | — | — |
-| Sore breasts | `breastPain` (Severity) | 53430007, 55222007 |
-| Bloating | `bloating` (Severity) | 248490000 |
+| Cramps | `abdominalCramps` (Severity) | 55300003 (Cramp: the item is abdominal or pelvic cramps) |
+| Gas | — | 308698004 |
+| Cravings | — | 192019001 |
+| Sore breasts | `breastPain` (Severity) | 53430007 (55222007 tenderness, import only) |
+| Bloating | `bloating` (Severity) | 116289008 |
 | Backache | `lowerBackPain` (Severity) | 161891005 |
 | Dizziness | `dizziness` (Severity) | 404640003 |
 | Acne | `acne` (Severity) | 11381005 |
 | Diarrhea | `diarrhea` (Severity) | 62315008 |
 | Constipation | `constipation` (Severity) | 14760008 |
 | Water retention | — | 43498006 |
-| Body/Facial hair growth | — | 66520009 (hirsutism) |
+| Body/Facial hair growth | — | 271607001 (excessive hair growth; the hirsutism disorders import only) |
 | Hair loss | `hairLoss` (Severity) | 278040002 |
-| Insomnia | `sleepChanges` (Presence) | 193462001 |
+| Insomnia | `sleepChanges` (Presence) | 301345002 (difficulty sleeping; 193462001 the disorder, import only) |
 | Low energy | `fatigue` (Severity) | 84229001 |
 | Sickness | — (no HealthKit type) | 367391008 (malaise: Mira does not document the value; it also sends Nausea, so read as feeling unwell) |
 | Anxiety | — (`moodChanges` is mood swings, decision 6) | 48694002 |
@@ -233,7 +234,7 @@ Some concepts tracked as "symptoms" in consumer apps are clinically classified d
 | Anxiety | **finding** (48694002) | — (`moodChanges` is mood swings) | Transient = symptom; persistent = condition (anxiety disorder 197480006) |
 | Weight fluctuations | — (derived measurement) | quantity (`bodyMass`) | Not a symptom — computed from weight tracking |
 
-**HDS approach:** Model these as self-reported symptom observations (FHIR `Observation` category `symptom`), not conditions. The same concept can exist as both a symptom item (self-reported presence) and a condition in a clinical context — the FHIR resource type determines the interpretation.
+**HDS approach:** Model these as self-reported symptom observations (FHIR `Observation` in the HDS category `symptom`, § HDS rendering in FHIR), not conditions. The same concept can exist as both a symptom item (self-reported presence) and a condition in a clinical context: the FHIR resource type determines the interpretation.
 
 ---
 
@@ -256,14 +257,16 @@ HDS uses a canonical **5-level** severity scale on `ratio/proportion`. See `DESI
 | None | 0.0 | NotPresent |
 | Slight (or Mild) | 0.25 | Mild |
 | Moderate | 0.5 | Moderate |
-| Severe | 0.75 | *(no Apple equivalent)* |
-| Very severe (or Extreme) | 1.0 | Severe (Apple ceiling) |
+| Severe | 0.75 | Severe |
+| Extreme (or Very severe) | 1.0 | *(no Apple equivalent)* |
 
-Apple HealthKit's 4-level `HKCategoryValueSeverity` is a **subset** of the HDS 5-level scale — sharing hooks at 0.0, 0.25, 0.5, and 1.0, with no Apple equivalent at the 0.75 position.
+Apple HealthKit's 4-level `HKCategoryValueSeverity` is a **subset** of the HDS 5-level scale, **mapped by label**: it shares the hooks 0.0, 0.25, 0.5 and 0.75, and has no equivalent at 1.0 (Extreme).
 
-- **Bridge conversion** (Apple → HDS): map by label, not by numeric proximity — `NotPresent → None (0.0)`, `Mild → Slight (0.25)`, `Moderate → Moderate (0.5)`, `Severe → Very severe (1.0)` (Apple's ceiling maps to the HDS ceiling).
-- **Bridge conversion** (HDS → Apple): `None → NotPresent`, `Slight → Mild`, `Moderate → Moderate`, `Severe → ` tie-break to Apple `Severe` (upward, conservative), `Very severe → Severe`.
-- **Closest-value** matching works correctly for all 4 Apple values and 4 of 5 HDS values under this placement; only the HDS `0.75` hook has no Apple equivalent and must tie-break by label rather than by distance.
+- **Bridge conversion** (Apple → HDS): map by label, not by numeric proximity or by ceiling: `NotPresent → None (0.0)`, `Mild → Slight (0.25)`, `Moderate → Moderate (0.5)`, `Severe → Severe (0.75)`.
+- **Bridge conversion** (HDS → Apple): `None → NotPresent`, `Slight → Mild`, `Moderate → Moderate`, `Severe → Severe`, `Extreme → Severe` (Apple's ceiling).
+- One rule for every source: Mira's `level` (Mild 0.25, Moderate 0.5, Severe 0.75), a FHIR answer (SNOMED CT or LOINC Severe is 0.75, § HDS rendering in FHIR) and Apple land on the hook their label names. A 3-level source's top label is "Severe", never stretched to the HDS ceiling.
+
+> **Correction (plan 133, 2026-11-27, B-2026-11-27-47).** Until then this section mapped Apple's `Severe` to 1.0 ("Apple's ceiling maps to the HDS ceiling"), while Mira's bridge and every FHIR answer map "Severe" by label to 0.75. perki decided for the label rule: an incoming "Severe" is 0.75 whatever its source.
 
 Sources that use a 3-level or 4-level subset (Mira's `level` field, etc.) land on the same hooks as Apple's equivalent labels above — by label lookup, not by numeric distribution.
 
@@ -294,3 +297,37 @@ Some Mira concepts appear in multiple fields:
 5. **Stream hierarchy**: Full clinical sub-categories under `symptom/` (gastrointestinal, pain, neurological, dermatological, sleep, metabolic, general) — ready for future items from HealthKit and other integrations.
 6. **Mood swings** *(site-agents#68)*: a report that the mood changes a lot over a short time is a symptom, not a mood state. `wellbeing-mood` (5D vectors) holds a state at a point in time, and none of its dimensions says the mood varies, so a ticked "Mood swings" box written there would claim a state the person never reported. Recorded on `wellbeing-mood-swings` (stream beside the mental-distress items, not under them: it is not a validated distress rating): the presence marker at the base key (`activity/plain`, hidden from pickers, written by presence-only sources such as a checklist) and `wellbeing-mood-swings-severity` (`ratio/proportion`, the 5-level symptom scale). SNOMED `18963009` "Mood swings (finding)", synonyms "Labile mood", "Emotional lability". The item is not PMS-specific; no key carries the premenstrual context yet. A "Mood swings" tag from any source writes `wellbeing-mood-swings`, and no mood converter method carries that label. Apple HealthKit `moodChanges` (Presence) writes `wellbeing-mood-swings`, not anxiety. To be migrated: the femm adapter of bridge-cycles-files (`src/adapters/femm/mapping.ts:105`) still maps femm's `mood_swings` to a mood vector.
 7. **Oily hair or scalp** *(site-agents#69)*: `body-skin-oily` is skin. Recorded on `symptom-dermatological-hair-oily`, beside hair loss and hair growth, with the same twin shape (presence `activity/plain`, `-severity` `ratio/proportion`). SNOMED `67295004` "Greasy hair (finding)", synonym "Oily hair"; no concept names the scalp, so the label says hair and the description says hair or scalp. Cross-system match: Clue's Hair category (Good, Bad, Oily, Dry; SKIN.md), its "Oily" value. The item is not PMS-specific; no key carries the premenstrual context yet.
+
+---
+
+## HDS rendering in FHIR
+
+Plan 133 (FHIR-MAPPING.md, "Symptoms"). Every item of the 51 `symptom-*` leaf streams carries a block; the
+`wellbeing-mental-distress-*` and `wellbeing-mood-swings` items, `body-skin-acne` and `nutrition-appetite` are not
+in this family, even when Mira sends them in its `symptoms` array.
+
+- **Category:** `symptom` in the HDS system `https://hds.ngo/fhir/CodeSystem/observation-category` (HL7 has none, see
+  "SNOMED CT / HL7 FHIR" above). Import also accepts `survey`, `exam` or no category. Scope
+  `patient/Observation.rs?category=symptom`; the 51 leaf streams are its grant roots, never `symptom` or a body-system
+  group. Offered ticked (not opt-in).
+- **Shape (the C-CDA question):** `code` LOINC `75325-1` "Symptom", `valueCodeableConcept` the finding (the one SNOMED
+  CT concept of the stream; hot flashes, with no active concept, `https://hds.ngo/fhir/CodeSystem/symptom|hot-flashes`),
+  and for a `-severity` event a `64750-3` "Severity of symptoms" component. The presence twin renders the same resource
+  without the component; on import a resource without the component goes back to it (P1). Other concepts a symptom
+  covers are import only (cramps: 51197009 Stomach cramps, 431416001 Menstrual cramp; sore breasts: 55222007,
+  302003005; gas: 249504006, 80301007; and so on, in the items' blocks).
+- **The date** is the event's span: a point for a daily log, an `effectivePeriod` for an interval (HealthKit).
+- **Severity:**
+
+  | HDS value | HDS label | Rendered answer (LL4051-0) | Also imported (by label) |
+  |---|---|---|---|
+  | 0 | None | **code `111551-8` "Symptom absent"**, the finding as value, no component (LA137-2 None under `75325-1` also imports) | SNOMED 260413007 None |
+  | 0.25 | Slight | LA6752-5 Mild | LA11910-9 Slight; SNOMED 255604002 Mild, 255510006 Slight, 162468002 Symptom mild |
+  | 0.5 | Moderate | LA6751-7 Moderate | SNOMED 6736007 Moderate severity, 162469005 Symptom moderate |
+  | 0.75 | Severe | LA6750-9 Severe | SNOMED 24484000 Severe, 162470006 Symptom severe |
+  | 1 | Extreme | LA11912-5 Extreme | LA13958-6 Very severe; SNOMED 12565001 Extreme, 162471005 Symptom very severe |
+
+  Refused on import: Trivial (162466003), "mild to moderate", "moderate to severe" (no HDS level means them). The zero
+  shape (`111551-8`) is not locked: if the validator refutes it, the None component under `75325-1` renders instead.
+- **Pain severity** (`symptom-pain-severity`, no presence twin): `code` LOINC `38208-5` "Pain severity - Reported",
+  the same five answers as its value; a 0 to 10 score is refused.

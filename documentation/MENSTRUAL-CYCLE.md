@@ -123,10 +123,41 @@ Notes:
 No standard FHIR observation profile exists for menstrual flow intensity as of 2026.
 
 - **LOINC** codes cover cycle timing (last period date, duration, frequency) but not flow intensity.
-- **SNOMED CT** has diagnostic concepts (menorrhagia, hypomenorrhea) but not a graduated observation scale.
+- **SNOMED CT** has diagnostic concepts (menorrhagia, hypomenorrhea) and three vaginal bleeding grades (289538004
+  Scanty, 289539007 Moderate, 289540009 Profuse), but not a graduated observation scale of seven levels.
 - **PBAC** (Pictorial Blood Loss Assessment Chart) is a clinical research tool using continuous numeric scores based on pad saturation and clot counts. Not a patient self-tracking scale.
 
 The HDS model fills a gap — it can serve as a bridge format until a FHIR IG emerges.
+
+**HDS rendering (plan 133, phase 1; FHIR-MAPPING.md "Fertility charting").** The cycle items are Observations of the
+HDS category `fertility` (`https://hds.ngo/fhir/CodeSystem/observation-category`), scope
+`patient/Observation.rs?category=fertility`, every row offered unticked (`consentOptIn`):
+
+| Item | `code` | Value |
+|---|---|---|
+| `fertility-cycles-start` | LOINC `8665-2` Last menstrual period start date | `valueDateTime`, the start day (`event-date`) |
+| `fertility-cycles-ovulation` | LOINC `11976-8` Ovulation date | `valueDateTime`, the ovulation day |
+| `fertility-cycles-period-end`, `-peak-day`, `-lh-peak-day` | the HDS item coding | none |
+| `fertility-cycles-fertile-window` | the HDS item coding | none; `effectivePeriod` first to last fertile day |
+| `body-vulva-bleeding` | the HDS item coding (the item includes mid-cycle spotting, while SNOMED CT 364308001 names menstrual blood loss only) | the seven grades as HDS fertility codes (`bleeding-none` … `bleeding-very-heavy`); 9126005 spotting and 289539007 moderate import only |
+| `body-vulva-bleeding-browndark`, `-miscarriage` | the HDS item coding (289537009 Passing altered blood imports as brown or dark) | none |
+| `body-vulva-bleeding-clots`, `-postpartum` | SNOMED CT 289532003 Passing clots vaginally, 289576005 Lochia present | none |
+| `body-vulva-menstrual-cup` | the HDS item coding | `cup-fill-light`, `-moderate`, `-heavy` |
+
+- **Imported cycle starts are recalled dates.** An EHR's last menstrual period (`8665-2`, filed under `social-history`,
+  `exam` or no category) imports as the cycle start it states, at the `valueDateTime` day; the visit date
+  (`effective[x]`) is not kept, a date below day precision is refused, and a last menstrual period stated at several
+  visits gives several events on one day (the importing bridge keeps one per day). A last menstrual period of a
+  pregnancy imports as a cycle start: it was one.
+- **`11976-8` is an OB dating term** (LOINC class OB.US, "Ovulation date", Reported): fine for import, read as the
+  ovulation it states; it carries no basis, so an imported ovulation has no `hdsBasis`.
+- **Not exported:** the cycle length (the start's `duration`, a prediction on the open cycle; derivable from the next
+  start), `clientData.hdsBasis: 'confirmed'` (not stated in the resource), and every predicted boundary
+  (`hdsBasis: 'predicted'` is never rendered).
+- The bleeding row also grants clots, brown, postpartum and miscarriage bleeding: its stream description says so in
+  every language of the pack.
+- A value-less marker is frozen once shipped (valid base R4); a future cervical fluid export (phase 2) carries the
+  observation as charted, never a converted code.
 
 ## Design Rationale
 
@@ -187,7 +218,8 @@ reading (no item yet: see the 3.24.0 CHANGELOG). The two peaks usually fall a da
 recorded without the other.
 
 HealthKit has no peak-day sample: `HKCategoryValueOvulationTestResult.luteinizingHormoneSurge` is a per-test result
-and maps to `fertility-test-opk`. A FHIR export carries either peak as a locally coded Observation, or leaves it out.
+and maps to `fertility-test-opk`. A FHIR export carries either peak as a locally coded Observation (plan 133: the HDS
+item coding, no value, category `fertility`; § FHIR / HL7).
 
 **Why the existing item is the mucus peak.** Until 3.24.0 the item said only "peak day of fertility", and two writers
 read it differently: the Cyclefeminin import (`bridge-cycles-files`, and the earlier `bridge-cyclefeminin-net`) writes

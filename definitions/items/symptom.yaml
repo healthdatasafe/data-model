@@ -18,6 +18,12 @@
 # sources (Apple HKCategoryValueSeverity, Mira level, MSQ 0–3) map as a subset by label.
 #
 # Categories follow clinical body-system groupings.
+#
+# FHIR (plan 133): every item is an Observation|symptom (HDS category). A pair is LOINC 75325-1 "Symptom" with the
+# finding as a fixed-coded value; the -severity item adds a 64750-3 component (LL4051-0 answers, by-label import-only
+# answers, "0" rendered as 111551-8 "Symptom absent") and names its presence twin. symptom-pain-severity is coded under
+# 38208-5. The shared component parts are YAML anchors (&symptomSeverity*), defined in the first -severity block of
+# this file. See documentation/FHIR-MAPPING.md, "Symptoms", and documentation/SYMPTOMS.md.
 
 ## Gastrointestinal
 symptom-gastrointestinal-nausea:
@@ -32,6 +38,7 @@ symptom-gastrointestinal-nausea:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -78,6 +85,7 @@ symptom-gastrointestinal-nausea-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -126,6 +134,7 @@ symptom-gastrointestinal-cramps:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -155,6 +164,7 @@ symptom-gastrointestinal-cramps-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -184,6 +194,7 @@ symptom-gastrointestinal-gas:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -213,6 +224,7 @@ symptom-gastrointestinal-gas-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -242,6 +254,7 @@ symptom-gastrointestinal-cravings:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -270,6 +283,7 @@ symptom-gastrointestinal-cravings-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -298,6 +312,7 @@ symptom-gastrointestinal-bloating:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -326,6 +341,7 @@ symptom-gastrointestinal-bloating-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -354,6 +370,7 @@ symptom-gastrointestinal-diarrhea:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -380,6 +397,7 @@ symptom-gastrointestinal-diarrhea-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -406,6 +424,7 @@ symptom-gastrointestinal-constipation:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -432,6 +451,7 @@ symptom-gastrointestinal-constipation-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -493,6 +513,7 @@ symptom-pain-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 38208-5, display: "Pain severity - Reported" }
     value:
       kind: coded
@@ -513,6 +534,7 @@ symptom-pain-headache:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -539,6 +561,7 @@ symptom-pain-headache-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -565,6 +588,7 @@ symptom-pain-migraine:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -591,6 +615,7 @@ symptom-pain-migraine-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -617,6 +642,7 @@ symptom-pain-sore-breasts:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -646,6 +672,7 @@ symptom-pain-sore-breasts-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -675,6 +702,7 @@ symptom-pain-backache:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -701,6 +729,7 @@ symptom-pain-backache-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -733,6 +762,7 @@ symptom-pain-pelvic:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -761,6 +791,7 @@ symptom-pain-pelvic-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -789,6 +820,7 @@ symptom-pain-muscle:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -818,6 +850,7 @@ symptom-pain-muscle-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -848,6 +881,7 @@ symptom-neurological-dizziness:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -874,6 +908,7 @@ symptom-neurological-dizziness-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -901,6 +936,7 @@ symptom-dermatological-hair-loss:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -927,6 +963,7 @@ symptom-dermatological-hair-loss-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -953,6 +990,7 @@ symptom-dermatological-hair-growth:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -982,6 +1020,7 @@ symptom-dermatological-hair-growth-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1019,6 +1058,7 @@ symptom-dermatological-hair-oily:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1045,6 +1085,7 @@ symptom-dermatological-hair-oily-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1072,6 +1113,7 @@ symptom-cognitive-focus-difficulty:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1098,6 +1140,7 @@ symptom-cognitive-focus-difficulty-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1125,6 +1168,7 @@ symptom-sleep-insomnia:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1153,6 +1197,7 @@ symptom-sleep-insomnia-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1182,6 +1227,7 @@ symptom-metabolic-water-retention:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1208,6 +1254,7 @@ symptom-metabolic-water-retention-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1235,6 +1282,7 @@ symptom-general-fatigue:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1261,6 +1309,7 @@ symptom-general-fatigue-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1293,6 +1342,7 @@ symptom-general-malaise:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
@@ -1319,6 +1369,7 @@ symptom-general-malaise-severity:
   fhir:
     resourceType: Observation
     category: symptom
+    alsoMatchCategories: [survey, exam]
     code: { system: http://loinc.org, code: 75325-1, display: Symptom }
     value:
       kind: fixed-coded
