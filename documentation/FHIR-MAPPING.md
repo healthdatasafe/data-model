@@ -399,9 +399,9 @@ content (`from: concept`, a lab result with no item of its own).
   never block entries. Any other resourceType refuses it.
 - **From a labelled concept of the content** (an `Observation` only, the `lab-result/coded-v1` items of plan 133):
   `code: { from: concept, field: analyte }`, always with `value: { kind: lab-result }`. The content at `field` is
-  `{ label: { en, fr?, es? }, codes: [Coding] }`: every entry of `codes` is a coding as stored (the systems are
+  `{ label: { en, <language>? }, codes: [Coding] }`: every entry of `codes` is a coding as stored (the systems are
   already canonical URIs, no `fhirMapping.systems` translation), `version` and `display` kept, `hdsId` dropped, a
-  LOINC coding first; `code.text` is `label.en`, with `fr` and `es` as the `translation` extension. Named by its
+  LOINC coding first; `code.text` is `label.en`, every other language a `translation` extension. Named by its
   shape, not by the domain: unlike a datasource selection, also `{ label, codes[] }`, its label is localised, its
   systems are canonical URIs as stored and no datasource stands behind it; `from: content` stays the
   DocumentReference source (a Coding list, not a labelled concept). The item's one eventType is `lab-result/coded-v1`
@@ -432,7 +432,8 @@ code once shipped is a wire value, never renamed; codes are added when a sport n
 **`lab-result`** reads an object eventType, not a composite, so the composite accounting of the next section does not
 see it: the build holds instead that the keys of `lab-result/coded-v1` are exactly the ones the kind reads, at every
 level (the content: `analyte`, `value`, `comparator`, `unit`, `unitText`, `valueText`, `valueCodes`, `notes`;
-`analyte`: `label`, `codes`; `label`: `en`, `fr`, `es`; a Coding: `system`, `version`, `code`, `display`, and `hdsId`
+`analyte`: `label`, `codes`; `label`: `en`, then any key matching the language pattern
+`^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$` (the one hds-fhir-js `localized` keeps), no other key; a Coding: `system`, `version`, `code`, `display`, and `hdsId`
 in `analyte.codes`), and that `comparator` allows `<`, `<=`, `>`, `>=` only (it renders as `Quantity.comparator`), so
 a key or a value added to the eventType fails the build until the renderers place it.
 

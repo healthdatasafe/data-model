@@ -1,5 +1,6 @@
 # Changelog
 
+<<<<<<< HEAD
 ## [4.53.0] - 2026-11-27
 
 ### Changed: legacy mirror refreshed to pryv/data-types 1.4.0; untimed glucose label; docs (B-2026-11-19-4 DM-1, B-2026-11-19-6)
@@ -38,6 +39,40 @@ eventType changes.
   published document matches no upstream commit.
 - Fable review: go with changes, all applied (test fixed to call `eventTypesById()`, null check added, stale counts in
   `eventTypesLegacyMirror.test.js`, "random" leftovers, descriptions and es/it parity).
+=======
+## [Unreleased]
+
+### Added: the settings types hds-lib writes, `settings/preferred-display` and `settings/preferred-input` (B-2026-11-25-17)
+
+hds-lib `HDSSettings.setDynamic` stores the dynamic settings `preferred-display-<itemKey>` and `preferred-input-<itemKey>`
+(the charting method, the stamp input, a remembered unit or input method, the practitioner's view preferences) as events
+of these two types, which the pack did not declare. Both are now declared with the content hds-lib writes, exactly:
+`{ itemKey, value }`, both required, nothing else. `itemKey` is the key after the prefix (an item key, a converter model
+key or an app-defined view key such as `cervical-cycle`), a non-empty string. `value` is any JSON value but `null`: its
+shape belongs to the app that sets it, and a null clears the setting, which deletes the event. Additive (minor). Not in
+`definitions/settings/settings.yaml`, which lists the typed settings with their default: a dynamic setting has neither a
+fixed key nor a default.
+
+### Changed: a coded lab result's analyte name takes any language (B-2026-11-26-3)
+
+`lab-result/coded-v1` → `analyte.label` accepted `en` (required), `fr` and `es` only, so a test name could not be stored
+in Italian, Brazilian Portuguese or German. Its keys are now any BCP 47 language tag
+(`patternProperties` `^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$`, still closed to any other key), each a non-empty string, `en`
+still required. **Writers:** the validators of earlier packs refuse a label with a key other than `en`, `fr`, `es`. A
+writer that validates its content against the pack it has must be on this pack (or later) before it writes `it`,
+`pt-BR`, `de` or another language; until then, keep to `en`, `fr`, `es`. Readers need nothing (hds-lib
+`localizeText(analyte.label)` already picks the language). The pattern is the one hds-fhir-js `localized` keeps on
+export (every language a `translation` extension), and the build check of the `lab-result` kind (`src/fhir.js`,
+`[FHIR-LABC-4]`) now holds the label to `en` plus exactly that pattern, closed. hds-fhir-js import still keeps only `fr`
+and `es` from a FHIR `translation` extension (`src/import.ts`), to open in its own release.
+
+### Fixed: pt-BR, one name for the cervical-fluid observation (B-2026-11-27-33)
+
+The pt-BR stream `body-vulva-mucus-inspect` read "Inspeção do muco vulvar" while its item reads "Observação do muco
+cervical" and its parent "Muco cervical", so the consent screen and the app named one thing twice. The stream label is
+now "Observação do muco cervical"; its sibling `body-vulva-mucus-stretch` goes from "Elasticidade do muco vulvar" to
+"Elasticidade do muco cervical", as in es and it. Both stay drafts. es and it had no such split.
+>>>>>>> 91608e3 (Settings types preferred-display / preferred-input, analyte label in any language, pt-BR cervical-fluid stream label (B-2026-11-25-17, B-2026-11-26-3, B-2026-11-27-33))
 
 ## [4.52.0] - 2026-11-27
 

@@ -33,7 +33,10 @@ const PROCEDURE_TYPE = 'Procedure';
 const LAB_RESULT_CODED = 'lab-result/coded-v1';
 const LAB_RESULT_FIELDS = ['analyte', 'value', 'comparator', 'unit', 'unitText', 'valueText', 'valueCodes', 'notes'];
 const LAB_RESULT_ANALYTE_FIELDS = ['label', 'codes'];
-const LAB_RESULT_LABEL_LANGS = ['en', 'fr', 'es'];
+// `analyte.label`: `en` by name, then any language tag; the renderer (hds-fhir-js `localized`) keeps a key matching
+// this same pattern as a `translation` extension.
+const LAB_RESULT_LABEL_LANGS = ['en'];
+const LAB_RESULT_LABEL_LANGUAGE = '^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$';
 const LAB_RESULT_ANALYTE_CODING_FIELDS = ['system', 'version', 'code', 'display', 'hdsId'];
 const LAB_RESULT_VALUE_CODING_FIELDS = ['system', 'version', 'code', 'display'];
 // FHIR Quantity.comparator, which `comparator` renders as is.
@@ -755,6 +758,10 @@ function checkLabResultContent (item, f, itemEventTypes, fail) {
   const analyte = et.properties.analyte;
   keysOf('analyte', analyte, LAB_RESULT_ANALYTE_FIELDS);
   keysOf('analyte.label', analyte.properties.label, LAB_RESULT_LABEL_LANGS);
+  const languages = Object.keys(analyte.properties.label.patternProperties || {});
+  if (languages.length !== 1 || languages[0] !== LAB_RESULT_LABEL_LANGUAGE || analyte.properties.label.additionalProperties !== false) {
+    fail(`value.kind "lab-result" places analyte.label languages matching ${LAB_RESULT_LABEL_LANGUAGE} only; eventType "${itemEventTypes[0]}" declares ${languages.join(', ') || 'no patternProperties'}${analyte.properties.label.additionalProperties !== false ? ' and leaves other keys open' : ''}`);
+  }
   keysOf('analyte.codes[]', analyte.properties.codes?.items, LAB_RESULT_ANALYTE_CODING_FIELDS);
   keysOf('valueCodes[]', et.properties.valueCodes?.items, LAB_RESULT_VALUE_CODING_FIELDS);
   const comparators = et.properties.comparator?.enum || [];

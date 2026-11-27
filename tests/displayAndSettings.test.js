@@ -78,6 +78,61 @@ describe('[DSET] Display symbols and app settings types', () => {
     });
   });
 
+  describe('[DSET-DYN] hds-lib dynamic settings types (B-2026-11-25-17)', () => {
+    // hds-lib HDSSettings.setDynamic writes `{ itemKey, value }` (ts/settings/HDSSettings.ts, DYNAMIC_PREFIXES): itemKey is
+    // the key after the prefix, value whatever the app sets. A null value deletes the event, so none is stored.
+    const DYNAMIC = { 'settings/preferred-display': 'preferred-display-', 'settings/preferred-input': 'preferred-input-' };
+    const validatorsFor = (schema) => {
+      const draft04 = new AjvDraft04({ strict: false, allErrors: true, logger: false });
+      addFormats(draft04);
+      return [new Ajv({ strict: false, allErrors: true, logger: false }).compile(schema), draft04.compile(schema)];
+    };
+    // What hds-lib writes for a key and a value, as setDynamic builds it
+    const contentOf = (prefix, key, value) => ({ itemKey: key.slice(prefix.length), value });
+
+    it('[DSET-DYN-1] both are declared', () => {
+      for (const type of Object.keys(DYNAMIC)) assert.ok(hds.types[type], type + ' must be declared');
+    });
+
+    it('[DSET-DYN-2] they accept the content hds-lib writes, for the values the apps set', () => {
+      const writes = {
+        'settings/preferred-display': [
+          ['preferred-display-body-vulva-mucus-inspect', 'billings'],
+          ['preferred-display-cervical-cycle', 'creighton'],
+          ['preferred-display-cervical-cycle-force-convert', false],
+          ['preferred-display-timeline', { scale: 'month', items: {} }],
+          ['preferred-display-cycles-view', { mode: 'grid' }]
+        ],
+        'settings/preferred-input': [
+          ['preferred-input-wellbeing-mood', 'daylio'],
+          ['preferred-input-body-weight', 'mass/lb'],
+          ['preferred-input-mood', 'apple-healthkit'],
+          ['preferred-input-fertility-cycles-chart-stamp', { peak: true }],
+          ['preferred-input-some-item', 3],
+          ['preferred-input-some-item', ['a', 'b']]
+        ]
+      };
+      for (const [type, cases] of Object.entries(writes)) {
+        for (const validate of validatorsFor(hds.types[type])) {
+          for (const [key, value] of cases) {
+            const content = contentOf(DYNAMIC[type], key, value);
+            assert.ok(validate(content), type + ' ' + JSON.stringify(content) + ': ' + JSON.stringify(validate.errors));
+          }
+        }
+      }
+    });
+
+    it('[DSET-DYN-3] they refuse a content hds-lib never writes', () => {
+      for (const type of Object.keys(DYNAMIC)) {
+        for (const validate of validatorsFor(hds.types[type])) {
+          for (const content of [{}, { itemKey: 'x' }, { value: 'x' }, { itemKey: '', value: 'x' }, { itemKey: 'x', value: null }, { itemKey: 1, value: 'x' }, { itemKey: 'x', value: 'y', extra: 1 }, 'x']) {
+            assert.ok(!validate(content), type + ' must refuse ' + JSON.stringify(content));
+          }
+        }
+      }
+    });
+  });
+
   describe('[DSET-SYM] unit symbols', () => {
     it('[DSET-SYM-1] cell counts show the notation lab reports print', () => {
       // 10⁶/mL = 10⁹/L (G/L, WBC and platelets); 10⁹/mL = 10¹²/L (T/L, RBC). Same stored number.

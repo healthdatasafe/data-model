@@ -43,6 +43,12 @@ describe('[LABC] Coded lab results', () => {
         ok({ analyte: { label: { en: 'X', fr: 'X', es: 'X' }, codes: [{ system: 'urn:oid:1.2.3', code: 'X1', version: '2', display: 'x', hdsId: 'x' }] }, valueText: 'x' }, 'non-LOINC system, full coding');
       });
 
+      it('[LABC-ET-1b] the analyte name takes any language tag: the HDS languages it, pt-BR, de and others (B-2026-11-26-3)', () => {
+        const label = { en: 'HIV-1 RNA', fr: 'ARN VIH-1', es: 'ARN VIH-1', it: 'RNA HIV-1', 'pt-BR': 'RNA do HIV-1', de: 'HIV-1-RNA', pt: 'ARN do VIH-1', 'zh-Hant': 'HIV-1 RNA' };
+        ok({ ...numeric(), analyte: { ...hiv(), label } }, 'it, pt-BR, de, pt, zh-Hant');
+        for (const lang of ['it', 'pt-BR', 'de']) ok({ ...numeric(), analyte: { ...hiv(), label: { en: 'x', [lang]: 'y' } } }, lang);
+      });
+
       it('[LABC-ET-2] rejects malformed results', () => {
         const without = (k) => { const c = numeric(); delete c[k]; return c; };
         ko(without('analyte'), 'no analyte');
@@ -51,7 +57,9 @@ describe('[LABC] Coded lab results', () => {
         ko({ ...numeric(), analyte: { ...hiv(), codes: [{ system: 'LOINC', code: '20447-9' }] } }, 'system not a URI');
         ko({ ...numeric(), analyte: { ...hiv(), codes: [{ ...loinc('20447-9'), source: { key: 'x' } }] } }, 'no source on a coding');
         ko({ ...numeric(), analyte: { label: { fr: 'ARN VIH-1' }, codes: [loinc('20447-9')] } }, 'label without en');
-        ko({ ...numeric(), analyte: { ...hiv(), label: { en: 'x', de: 'x' } } }, 'label: unknown language');
+        for (const key of ['EN', 'pt_BR', 'label', 'x', '']) ko({ ...numeric(), analyte: { ...hiv(), label: { en: 'x', [key]: 'x' } } }, `label: ${key} is not a language tag`);
+        ko({ ...numeric(), analyte: { ...hiv(), label: { en: 'x', it: '' } } }, 'label: empty text in another language');
+        ko({ ...numeric(), analyte: { ...hiv(), label: { en: 'x', de: 1 } } }, 'label: a text is a string');
         ko({ ...numeric(), analyte: { ...hiv(), specimen: 'serum' } }, 'analyte is closed');
         ko(without('unit'), 'value without unit');
         ko({ analyte: hiv(), unit: 'mg/L', valueText: 'x' }, 'unit without value');

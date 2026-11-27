@@ -122,12 +122,12 @@
     },
     "[id=\"body\"]/children[id=\"body-vulva\"]/children[id=\"body-vulva-mucus\"]/children[id=\"body-vulva-mucus-inspect\"]/label": {
       "en": "Vulva Mucus Inspect",
-      "text": "Inspeção do muco vulvar",
+      "text": "Observação do muco cervical",
       "status": "draft"
     },
     "[id=\"body\"]/children[id=\"body-vulva\"]/children[id=\"body-vulva-mucus\"]/children[id=\"body-vulva-mucus-stretch\"]/label": {
       "en": "Vulva Mucus Stretch",
-      "text": "Elasticidade do muco vulvar",
+      "text": "Elasticidade do muco cervical",
       "status": "draft"
     },
     "[id=\"body\"]/children[id=\"body-skin\"]/label": {
