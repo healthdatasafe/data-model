@@ -1,0 +1,25 @@
+{
+  "$id": "https://model.datasafe.dev/json-schemas/hds-source-grid.json",
+  "title": "HDS clientData.hdsSourceGrid",
+  "description": "The box of a dated grid a value was read from: its row and column, nothing of what is written there. Written with hdsSourceAnchor, whose page it is on, never without it; no date is stored here (the day is the event time). See documentation/PROVENANCE.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "row",
+    "column"
+  ],
+  "properties": {
+    "row": {
+      "description": "The grid's row on its page, from the top, from 1, every row of the printed grid counted, the empty ones too.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 99
+    },
+    "column": {
+      "description": "The box's printed column number.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 99
+    }
+  }
+}
