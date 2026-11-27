@@ -13,9 +13,9 @@ describe('[CNVX] Converters build output', () => {
       const pack = JSON.parse(fs.readFileSync(path.join(distConverters, 'pack.json'), 'utf-8'));
       assert.ok(pack['cervical-fluid'], 'cervical-fluid should be in pack');
       assert.ok(pack.mood, 'mood should be in pack');
-      assert.strictEqual(pack['cervical-fluid'].latestVersion, 'v1');
+      assert.strictEqual(pack['cervical-fluid'].latestVersion, 'v2');
       assert.strictEqual(pack.mood.latestVersion, 'v0');
-      assert.deepStrictEqual(pack['cervical-fluid'].versions, ['v0', 'v1']);
+      assert.deepStrictEqual(pack['cervical-fluid'].versions, ['v0', 'v1', 'v2']);
       assert.deepStrictEqual(pack.mood.versions, ['v0']);
     });
   });
@@ -63,7 +63,34 @@ describe('[CNVX] Converters build output', () => {
         const versions = Object.keys(read(`${itemKey}/index.json`).versions);
         for (const v of versions) assert.strictEqual(read(`${itemKey}/pack-${v}.json`).converterVersion, v);
       }
-      assert.deepStrictEqual(Object.keys(read('cervical-fluid/index.json').versions).sort(), ['v0', 'v1']);
+      assert.deepStrictEqual(Object.keys(read('cervical-fluid/index.json').versions).sort(), ['v0', 'v1', 'v2']);
+    });
+
+    it('[CNVV7] cervical-fluid v2 differs from v1 only by its version and Creighton frequency notFor 0 (plan 136)', () => {
+      const v1 = read('cervical-fluid/pack-v1.json');
+      const v2 = read('cervical-fluid/pack-v2.json');
+      assert.deepStrictEqual({ ...v2, converterVersion: 'v1', methods: [] }, { ...v1, methods: [] });
+      assert.deepStrictEqual(v2.methods.map(m => m.methodId), v1.methods.map(m => m.methodId));
+      for (const m of v2.methods) {
+        const old = v1.methods.find(o => o.methodId === m.methodId);
+        if (m.methodId !== 'creighton') {
+          assert.deepStrictEqual(m, old, m.methodId);
+          continue;
+        }
+        assert.strictEqual(m.modelVersion, 'v2');
+        const frequency = m.notation.annotations.find(a => a.id === 'frequency');
+        assert.deepStrictEqual(frequency.notFor, ['0'], 'dry 0 takes no frequency (practitioner Q1, 2026-11-26)');
+        const { notFor, ...rest } = frequency;
+        const expected = { ...old, modelVersion: 'v2' };
+        expected.notation = { ...old.notation, annotations: old.notation.annotations.map(a => a.id === 'frequency' ? rest : a) };
+        assert.deepStrictEqual({ ...m, notation: { ...m.notation, annotations: m.notation.annotations.map(a => a.id === 'frequency' ? rest : a) } }, expected);
+      }
+      // Its translations are those of v1, keyed by the published file name (a new pack has none until copied)
+      for (const locale of ['es', 'it', 'pt-BR']) {
+        const { packs } = read(`cervical-fluid/l10n-${locale}.json`);
+        assert.ok(Object.keys(packs['pack-v2.json'] ?? {}).length > 0, `${locale}: pack-v2 has translations`);
+        assert.deepStrictEqual(packs['pack-v2.json'], packs['pack-v1.json'], locale);
+      }
     });
 
     it('[CNVV3] cervical-fluid v1 differs from v0 only by its version and Creighton', () => {
