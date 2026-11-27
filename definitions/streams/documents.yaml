@@ -3,6 +3,11 @@
 # resolves by walk-up. Keep the tree short: a child is a stream a person grants on its own. See documentation/DOCUMENTS.md.
 id: documents
 name: Medical documents
+# The item `document` names the root alone ("Medical document"); this label names it as the parent of a child on a
+# consent screen ("Medical documents › Clinical documents"), 4.55.1.
+label:
+  en: "Medical documents"
+  fr: "Documents médicaux"
 description:
   en: "Every medical document you keep, filed or not: reports, letters, results, consents, advance directives, donor and emergency cards, images and administrative papers, including sensitive ones."
   fr: "Tous les documents médicaux que vous conservez, classés ou non : rapports, lettres, résultats, consentements, directives anticipées, cartes de donneur et d'urgence, images et papiers administratifs, y compris les plus sensibles."
