@@ -11,6 +11,10 @@
 #                            note these options are 0.25/0.5/1.0 — there is no 0.
 # Both itemDefs share the same streamId (identity is streamId:eventType).
 # Maps to Apple HealthKit HKWorkoutActivityType and SNOMED CT codes.
+# FHIR (plan 133): every item is an Observation|activity. A session is LOINC 73985-4 with the sport as a
+# fixed-coded value; the -intensity item adds a 74008-4 component and names its presence twin
+# (component.absent). The daily totals state one local day (effective.day). See
+# documentation/FHIR-MAPPING.md, "Physical activity".
 
 ## Yoga
 activity-yoga:
