@@ -9,7 +9,7 @@ dispatches on `hds.kind` and on `content.kind`, never on the contact's app code.
 **Normative** (4.22.0; 4.26.0 adds a document's date and kind, her `note`, and the specimen codes; 4.27.0 the notice
 `ready`; 4.33.0 the status `on-hold`; 4.36.0 a dated grid, § A dated grid; 4.39.0 a table read per column; 4.45.0 four
 notice codes, § Notice and error codes; 4.47.0 her other names in the match (§ R3), an anchor per date, the notice
-`pages-not-read`; 4.49.0 a document dated per page). "MUST" and "never" bind writers; readers follow § Writers validate, readers dispatch.
+`pages-not-read`; 4.49.0 a document dated per page; 4.51.0 a written value's box). "MUST" and "never" bind writers; readers follow § Writers validate, readers dispatch.
 
 ## The principle: the conversation is standard, the content travels by reference
 
@@ -177,7 +177,8 @@ looks like an empty day.
   printed column number (from the grid, never from a model). A contact that is not sure of a box's row and column (a grid it
   cannot find, a page cut above its first row) writes nothing from the document, no value, no `not-read`, no question, and sends
   the notice `grid-not-located` (4.45.0: a contact reads a dated-grid document whole or not at all; `no-result-found` before). A box that holds an observation, a bleeding and a mark is three candidates, one per `itemKey`, with the same `grid` and `anchor`. The record of R5 is the attachment, the page, `grid` and the
-  `itemKey`. Her app orders, groups and names boxes from `grid`, never from `bbox`. `printed.label` is the column number too, and
+  `itemKey`. Her app orders, groups and names boxes from `grid`, never from `bbox`. A grid value without `anchor` loses its box on
+  her record (`hdsSourceGrid` needs the anchor, 4.51.0): a contact writes `anchor` on every grid value. `printed.label` is the column number too, and
   `printed.value` the part as written ("10KL x2"); a text longer than `value` allows is never cut: the part is `not-read`.
 - **`not-read`.** Status `unmapped`, reason `not-read`: the contact sees writing in this box and proposes nothing from it, or not
   from all of it (it cannot read it, reads nothing of that kind, or cannot date the row). It carries `printed.label`, `grid` and
@@ -663,7 +664,11 @@ Her app writes each confirmed value as an ordinary event on its item, with her t
   retry finds it (`state: 'all'`; a trashed one is left trashed);
 - the proposal's `clientData` keys (`hdsRefRange`, `hdsFlag`, `hdsInterpretation`, `hdsComparator`,
   `hdsTimePrecision`); `hdsSourceAnchor` = the proposed value's `anchor` when it has one, with `eventId` = `about`
-  (set by her app when the contact left it out); `hdsExtraction` = its `extraction` plus `confirmedBy: 'person'`, and
+  (set by her app when the contact left it out); `hdsSourceGrid` = the proposed value's `grid` when it has one and the
+  anchor is written (4.51.0, [PROVENANCE.md](PROVENANCE.md#clientdatahdssourcegrid--the-box-of-a-dated-grid-4510)), also
+  after her `correct`; only from `grid`: a value from a table read per column (`column`, an index from the left) or
+  dated per page carries none, and `column` is never copied there;
+  `hdsExtraction` = its `extraction` plus `confirmedBy: 'person'`, and
   `corrected: true` after a correction ([PROVENANCE.md](PROVENANCE.md#values-read-from-a-document-by-a-program)).
 
 Order: re-read (R3), write the values (looking each `sourceKey` up first), write the `answer` with `written`, post the

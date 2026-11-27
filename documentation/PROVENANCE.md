@@ -27,6 +27,7 @@ conventions below are contracts between HDS apps, documented here so every write
 | `clientData.hdsGln`, `hdsZsr` | A provider's GLN and ZSR, bare values mirroring its content `identifiers`: the cross-writer lookup keys (GLN, then ZSR, then `sourceKey`) | [ENCOUNTER.md](ENCOUNTER.md#one-provider-one-event-clientdatahdsgln-hdszsr) |
 | `clientData.hdsDocumentUniqueId` | A document's `uniqueId` as `<system>\|<value>`, mirroring its content: the cross-writer key that recognises a document already held | [DOCUMENTS.md](DOCUMENTS.md#filexds-v1) |
 | `clientData.hdsSourceAnchor` | Where a value read from a document is printed in it: a page and a box, nothing of what is printed there | this page, [below](#clientdatahdssourceanchor--where-a-value-is-printed-in-its-document) |
+| `clientData.hdsSourceGrid` (4.51.0) | The box of a dated grid a value was read from: its row and column, nothing of what is written there | this page, [below](#clientdatahdssourcegrid--the-box-of-a-dated-grid-4510) |
 | `clientData.hdsExtraction` | Which program read a value from a document, with which knowledge base and backend, and the role of who confirmed it | this page, [below](#clientdatahdsextraction--which-program-read-a-value-and-who-confirmed-it) |
 | `clientData.hdsDocumentValues` (on a document event, 4.26.0) | Her value events read from the document, by id, with their role (`source`) | this page, [below](#clientdatahdsdocumentvalues--the-values-read-from-a-document) |
 | `clientData.hdsPrintedIn.<eventId>` (on a value event, 4.26.0) | The documents that print a value she already had, not its source | this page, [below](#clientdatahdsprintedineventid--a-document-that-prints-a-value-she-already-had) |
@@ -357,6 +358,56 @@ as `Observation.derivedFrom` (from `related`, which FHIR-MAPPING.md does not ren
 fragment on the file in the style of W3C Media Fragments, `Binary/<eventId>.<fileId>#page=<page>&xywh=percent:<x>,<y>,<width>,<height>`
 (`<fileId>` is `attachmentId`, as FHIR-MAPPING.md names it; `page=` comes from the PDF fragment identifiers of
 RFC 8118, and Media Fragments' `xywh` takes integers, so the percentages are rounded there).
+
+### `clientData.hdsSourceGrid` — the box of a dated grid (4.51.0)
+
+| Field | Type | Required | Meaning |
+|---|---|---|---|
+| `row` | integer 1..99 | yes | The grid's row on its page, from the top, from 1, every printed row counted, the empty ones too. |
+| `column` | integer 1..99 | yes | The box's printed column number. |
+
+The proposed value's `grid`, copied as it is ([CONVERSATION.md § A dated grid](CONVERSATION.md#a-dated-grid-4360));
+closed (schema `json-schemas/hds-source-grid.json`), nothing of what is written in the box.
+
+```json
+{
+  "streamIds": ["fertility-cycles-peak-day"],
+  "type": "activity/plain",
+  "content": null,
+  "time": 1773316800,
+  "clientData": {
+    "related": { "ckq3w8n1x0002": true },
+    "hdsTimePrecision": "day",
+    "sourceKey": "hds-reader:document:ckq3w8n1x0002:c-91be04d7",
+    "hdsSourceAnchor": { "eventId": "ckq3w8n1x0002", "attachmentId": "ckq3w8n1x0002a", "page": 1, "bbox": [40.6, 22.4, 2.5, 12.9] },
+    "hdsSourceGrid": { "row": 2, "column": 14 },
+    "hdsExtraction": { "engine": "hds-reader", "engineVersion": "0.9.0", "kbVersion": "0.4.0", "backend": "bedrock:sonnet", "confirmedBy": "person" }
+  }
+}
+```
+
+**Rules.**
+
+- **With `hdsSourceAnchor`, never without it.** Her app writes it with the anchor (the page is the anchor's) on a value
+  written from a dated-grid proposal. A reader ignores it on an event with no anchor. **Removed with the anchor, and
+  whenever the anchor is rewritten.**
+- **Only from `grid`.** A value from a table read per column (`column`, an index from the left) or dated per page carries
+  none; `column` is never copied here.
+- **The row is identified** by the anchor's `eventId`, `attachmentId` and `page`, and `row`; a reader uses these ids
+  even when it cannot read the document.
+- **Where it was read, not which day it is.** A reader places a value by `row` and `column`, and shows its day from the
+  event's `time`. The two may disagree after a correction of its `time`: the box stays, and a reader never derives a
+  row's days from one value alone. No date is stored here.
+- **Drawing.** A reader draws the values that carry it and lists the others without a box; it never infers a box from
+  `time`.
+- **Readers tolerate.** A reader reads `row` and `column` and ignores a field it does not know; the schema stays closed
+  for writers.
+- **Kept on a correction**, in both cases: her `correct` answer before the value is written (the grid is still copied,
+  with `hdsExtraction.corrected`), and applying a `correction/entry-v1` `change` to the entry (the entry keeps it,
+  [CORRECTIONS.md](CORRECTIONS.md)). **Not retroactive:** a value written before 4.51.0 has none.
+- Not in `hdsSourceAnchor` (a closed shape, one module for any zone of a document) and not in `sourceKey` (an identity).
+
+**Cross-system.** Not rendered.
 
 ### `clientData.hdsExtraction` — which program read a value, and who confirmed it
 
