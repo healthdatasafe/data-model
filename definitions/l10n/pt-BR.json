@@ -556,8 +556,8 @@
       "status": "draft"
     },
     "[id=\"wellbeing\"]/description": {
-      "en": "Your mood, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress.",
-      "text": "Seu humor, sua libido e como você avalia a sua saúde, e o seu sofrimento mental, incluindo ansiedade, depressão e estresse.",
+      "en": "Your mood and mood swings, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress.",
+      "text": "Seu humor e suas oscilações de humor, sua libido e como você avalia a sua saúde, e o seu sofrimento mental, incluindo ansiedade, depressão e estresse.",
       "status": "draft"
     }
   },
@@ -8074,7 +8074,7 @@
     },
     "wellbeing-mood-swings/label": {
       "en": "Mood swings",
-      "text": "Mudanças de humor",
+      "text": "Oscilações de humor",
       "status": "draft"
     },
     "wellbeing-mood-swings/description": {
@@ -8084,7 +8084,7 @@
     },
     "wellbeing-mood-swings-severity/label": {
       "en": "Mood swings",
-      "text": "Mudanças de humor",
+      "text": "Oscilações de humor",
       "status": "draft"
     },
     "wellbeing-mood-swings-severity/description": {

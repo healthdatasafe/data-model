@@ -556,8 +556,8 @@
       "status": "draft"
     },
     "[id=\"wellbeing\"]/description": {
-      "en": "Your mood, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress.",
-      "text": "Il suo umore, il suo desiderio sessuale e come valuta la sua salute, e il suo disagio mentale, compresi ansia, depressione e stress.",
+      "en": "Your mood and mood swings, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress.",
+      "text": "Il suo umore e i suoi sbalzi d'umore, il suo desiderio sessuale e come valuta la sua salute, e il suo disagio mentale, compresi ansia, depressione e stress.",
       "status": "draft"
     }
   },

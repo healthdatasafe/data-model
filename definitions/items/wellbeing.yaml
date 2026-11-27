@@ -376,9 +376,9 @@ wellbeing-mental-distress-stress-presence:
 # variability, so a reported mood swing cannot be written there without claiming a state. Not a validated distress
 # rating either, so it sits beside the mental-distress items, not under them. No new pair existed, so the twins follow
 # the symptom rule (symptom.yaml header): the presence marker at the base key, hidden from pickers but written by
-# presence-only sources, and the graded item at `-severity` on the same 5-level symptom scale. A premenstrual context
-# stays on the event (clientData.context): the item is not PMS-specific. SNOMED 18963009 "Mood swings (finding)",
-# synonyms "Labile mood", "Emotional lability".
+# presence-only sources, and the graded item at `-severity` on the same 5-level symptom scale. The item is not
+# PMS-specific; no key carries the premenstrual context yet. SNOMED 18963009 "Mood swings (finding)", synonyms
+# "Labile mood", "Emotional lability". A "Mood swings" tag from any source, and HealthKit moodChanges, write it.
 
 wellbeing-mood-swings:
   version: v1

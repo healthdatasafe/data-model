@@ -5,28 +5,36 @@
 ### Added: mood swings and oily hair or scalp as symptoms (site-agents#68, #69)
 
 An intake form's premenstrual checklist had two boxes with no item, "Mood swings" and "Greasy Hair", hidden in the form
-since. Additive (minor): two streams, four items, no eventType. Not PMS-specific: a premenstrual context stays on the
-event (`clientData.context`). Fable review pending, before the version bump.
+since. Additive (minor): two streams, four items, no eventType. The items are not PMS-specific; no key carries the
+premenstrual context yet. Fable review: go with changes, applied.
 
 - **Stream `wellbeing-mood-swings`** ("Mood swings") under `wellbeing`, after `wellbeing-mental-distress-stress`: beside
   the mental-distress items, not under them (not a validated distress rating). Items **`wellbeing-mood-swings`**
   (presence, `activity/plain`, checkbox, `deprecated: true` as every symptom presence marker: hidden from pickers,
   written by presence-only sources) and **`wellbeing-mood-swings-severity`** (`ratio/proportion`, the 5-level symptom
   scale None / Slight / Moderate / Severe / Extreme). `wellbeing-mood` (`mood/5d-vectors`) holds a state, not its
-  variability. SNOMED `18963009` "Mood swings (finding)" (synonyms "Labile mood", "Emotional lability").
-  The `wellbeing` consent description ("your mood, …") was re-read: it covers the new child unchanged.
+  variability. SNOMED `18963009` "Mood swings (finding)" (synonyms "Labile mood", "Emotional lability"). A "Mood
+  swings" tag from any source and Apple HealthKit `moodChanges` write it; no mood converter method carries that label.
+  The stream id is string-prefixed by `wellbeing-mood`: no consumer reads a stream's parent from its id outside
+  `documents-…` (hds-lib walks the tree), checked in hds-lib-js, hds-webapp, doctor-dashboard, hds-react-timeline,
+  hds-forms-js and the bridges.
 - **Stream `symptom-dermatological-hair-oily`** ("Oily Hair") under `symptom-dermatological`, after hair growth. Items
   **`symptom-dermatological-hair-oily`** (presence, `activity/plain`, `deprecated: true`) and
   **`symptom-dermatological-hair-oily-severity`** (`ratio/proportion`, `severity5`), the shape of
   `symptom-dermatological-hair-loss` and its severity variant. Not `body-skin-oily` (skin). SNOMED `67295004` "Greasy
-  hair (finding)" (synonym "Oily hair"; no concept names the scalp).
+  hair (finding)" (synonym "Oily hair"; no concept names the scalp). Cross-system match: Clue's Hair "Oily".
 - SNOMED codes verified active in snomed-db (International 20260201), each a `(finding)`. No LOINC, as on the siblings.
+- **Root `wellbeing` `description`** (consent screens) names the new child: "Your mood and mood swings, …" / "Votre
+  humeur et vos sautes d'humeur, …"; es, it, pt-BR updated with it.
 - Translations es, it, pt-BR of the four items (labels, descriptions, options), marked draft like their siblings'.
 - Tests: `tests/moodSwingsOilyHair.test.js` (`[MSOH-1..3]`); `[STRL-3]` lists the new `wellbeing` child.
 
 ### Docs
-- SYMPTOMS.md design decisions 6 (mood swings: a symptom, not a mood state) and 7 (oily hair or scalp); SKIN.md: hair
-  symptoms live under `symptom-dermatological`.
+- SYMPTOMS.md design decisions 6 (mood swings: a symptom, not a mood state; HealthKit `moodChanges` maps to it, no
+  longer to anxiety; femm's `mood_swings` mapping in bridge-cycles-files to be migrated) and 7 (oily hair or scalp);
+  SKIN.md: hair symptoms live under `symptom-dermatological`.
+- AGENTS.md: the presence-marker meaning of `deprecated: true` (hidden from pickers, still written); design decisions 6
+  and 7; item and stream counts.
 
 ## [4.51.0] - 2026-11-27
 

@@ -4,8 +4,8 @@ label:
   en: "Wellbeing"
   fr: "Bien-être"
 description:
-  en: "Your mood, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress."
-  fr: "Votre humeur, votre désir sexuel, votre santé telle que vous l'évaluez, et votre détresse mentale, y compris l'anxiété, la dépression et le stress."
+  en: "Your mood and mood swings, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress."
+  fr: "Votre humeur et vos sautes d'humeur, votre désir sexuel, votre santé telle que vous l'évaluez, et votre détresse mentale, y compris l'anxiété, la dépression et le stress."
 parentId: null
 children:
   - id: wellbeing-mood

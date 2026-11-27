@@ -508,7 +508,7 @@ symptom-dermatological-hair-growth-severity:
     snomed: ["66520009"]
 
 # Oily hair or scalp (site-agents#69). Not body-skin-oily (skin). SNOMED 67295004 "Greasy hair (finding)", synonym
-# "Oily hair"; no concept names the scalp. A premenstrual context stays on the event (clientData.context).
+# "Oily hair"; no concept names the scalp. Not PMS-specific; no key carries the premenstrual context yet.
 symptom-dermatological-hair-oily:
   version: v1
   label:
