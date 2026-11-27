@@ -3,8 +3,9 @@
 What the HDS research relationship stores, where, and what HDS can read. A person who says yes to the research opt-in
 (an optional choice, [`CONSENTS.md`](CONSENTS.md) § Optional choices, document `research`) accepts the `hds-research`
 CMC invite. From then on HDS can send them research invitations and eligibility tests
-([`ELIGIBILITY.md`](ELIGIBILITY.md)), at most 2 a month. **HDS reads none of the person's health records through this
-relationship:** only what the person chose to send (a score range per test) and the topics they chose. Both can say
+([`ELIGIBILITY.md`](ELIGIBILITY.md)). **HDS reads none of the person's health records through this relationship:** only
+the account's email, so that HDS can contact the person, what the person chose to send (a score range per test) and the
+topics they chose. The ranges and the topics can say
 something about health by inference (a topic such as `cancer`, a top band on a named study), which is why the tree is
 consented to on its own and never reached by a `*` grant.
 
@@ -19,6 +20,7 @@ vocabulary, and two `notification/alert-cmc` kinds with a published schema. The 
 | Consent anchor | person | `hds-research` (root) | none, ever | nobody | HDS, through the grant (nothing to read) |
 | Score ranges sent | person | `hds-research-eligibility` | `research/eligibility-band-v1` | the person's app, only when they send | the person's app; HDS through the grant |
 | Topics chosen | person | `hds-research-topics` | `research/topics-v1` | the person's app | the person's app; HDS through the grant |
+| Email | person | `:system:email` | (account system stream) | the account | HDS through the grant, to contact the person |
 | Invitations, eligibility tests | person | the relationship's collectors stream (CMC) | `notification/alert-cmc` | HDS (`hds-research`), delivered by the platform | the person's app |
 
 The counterparty is one `hds-research` account per platform, owned by HDS, as for support ([`SUPPORT.md`](SUPPORT.md)).
@@ -31,9 +33,10 @@ hds-research                   Health Data Safe research
 └── hds-research-topics        Research topics
 ```
 
-**The grant.** The research invite requests one permission, `read` on `hds-research`, which reaches its two children
-and nothing else. No chat (`features.chat: false`); the invite enables system messaging, so HDS can deliver its two
-alert kinds.
+**The grant.** The research invite requests two permissions: `read` on `hds-research`, which reaches its two children
+and nothing else, and `read` on `:system:email`. It sets `requireVerifiedEmail: true`: HDS must be able to contact the
+person, so a yes needs a verified email on the account. No chat (`features.chat: false`); the invite enables system
+messaging, so HDS can deliver its two alert kinds.
 
 **Exactly two children, for good.** A grant on the root covers any child added later, under consents already given. So
 no child is ever added to `hds-research`: another kind of research data is a new root or a scope request.
@@ -65,7 +68,7 @@ One event on `hds-research-topics`, updated in place. Closed object.
 |---|---|---|
 | `topics` | yes | Keys of the `research-topic` vocabulary, each once, at most 32. |
 
-**No event, an empty list: none chosen, and every study may be offered,** still within the cap. Topics narrow, they never
+**No event, an empty list: none chosen, and every study may be offered.** Topics narrow, they never
 gate a yes. Choosing every key is not "all": a study in a topic added later is offered only to those with no topic or
 that topic. The vocabulary (`definitions/vocabularies/research.yaml`) labels each key; topics are broad areas a study
 recruits in, not clinical concepts, so they carry no code. **Keys are append-only:** a new topic is a minor release, a
@@ -109,20 +112,22 @@ collectors stream of the relationship, stamping `content.from`. As for the other
    `research`, and revokes the acceptance when it records `withdrawn` or `declined`. A relationship whose document's
    latest act is not `given` (a `declined`, a `withdrawn`, an unknown action, or no act because the person deleted it)
    is ended at the next sign-in.
-2. **At most 2 messages a month,** calendar month in UTC, both kinds together. The research service enforces it from
-   its own send log; this model does not count.
+2. **No monthly limit for now.** A limit on the number of messages may come later; if it does, the research service
+   enforces it from its own send log, and this model does not count.
 3. **One band event per request.** Sending again updates it (ELIGIBILITY.md).
 4. **One topics event.** A reader takes the most recently `modified` one; a writer updates it rather than adding.
-5. **Never for a managed or delegated account.** The tree is not created and the invite not accepted for an account
-   acting for someone else (a child, an account created for another person), and a delegate never answers.
+5. **A manager may answer for a managed account** (a child, an account created for another person), signed in to that
+   account. The answer is recorded on the managed account, and a yes makes the relationship of that account, as for any
+   other. The email HDS reads is the one registered on that account, which may be the manager's; it must be verified.
+   A delegate (someone acting on another account through a delegated access, without its personal token) never answers.
 6. **The schema is advisory; readers tolerate the unknown.** The cores accept any content for these types. A reader
    that meets an unknown topic ignores that topic; an unknown `hds.kind` shows as a message it cannot open.
 
 ## Retention
 
 - **Bands expire on the device.** The person's app deletes a band at its request's `expiresAt`, so HDS cannot re-read
-  bands of expired requests while the grant stands. The research service deletes its copy at the same time, or at the
-  end of a period set with the DPO.
+  bands of expired requests while the grant stands. The research service deletes its copy 30 days after the request
+  expires.
 - **Opting out** (`withdrawn`): the account app revokes the acceptance, which removes HDS's access, and deletes every
   band. Topics stay, as the person's own choice, and are shown again for confirmation before a later yes is accepted.
 - **Ending from HDS's side** removes the access the same way; the person's app deletes the bands at its next sign-in.
