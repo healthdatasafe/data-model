@@ -33,7 +33,11 @@ const PROCEDURE_TYPE = 'Procedure';
 const LAB_RESULT_CODED = 'lab-result/coded-v1';
 const LAB_RESULT_FIELDS = ['analyte', 'value', 'comparator', 'unit', 'unitText', 'valueText', 'valueCodes', 'notes'];
 const LAB_RESULT_ANALYTE_FIELDS = ['label', 'codes'];
-const LAB_RESULT_LABEL_LANGS = ['en', 'fr', 'es'];
+// `analyte.label`: `en` by name, then a language tag in canonical case (language[-Script][-REGION]), each a non-empty
+// string. Every such key also matches the wider LANGUAGE of hds-fhir-js `localized` (render.ts,
+// `^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$`), which keeps it as a `translation` extension.
+const LAB_RESULT_LABEL_LANGS = ['en'];
+const LAB_RESULT_LABEL_LANGUAGE = '^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$';
 const LAB_RESULT_ANALYTE_CODING_FIELDS = ['system', 'version', 'code', 'display', 'hdsId'];
 const LAB_RESULT_VALUE_CODING_FIELDS = ['system', 'version', 'code', 'display'];
 // FHIR Quantity.comparator, which `comparator` renders as is.
@@ -755,6 +759,13 @@ function checkLabResultContent (item, f, itemEventTypes, fail) {
   const analyte = et.properties.analyte;
   keysOf('analyte', analyte, LAB_RESULT_ANALYTE_FIELDS);
   keysOf('analyte.label', analyte.properties.label, LAB_RESULT_LABEL_LANGS);
+  const labelSchema = analyte.properties.label;
+  const languages = Object.keys(labelSchema.patternProperties || {});
+  const text = labelSchema.patternProperties?.[LAB_RESULT_LABEL_LANGUAGE];
+  const textOk = text != null && Object.keys(text).length === 2 && text.type === 'string' && text.minLength === 1;
+  if (languages.length !== 1 || languages[0] !== LAB_RESULT_LABEL_LANGUAGE || labelSchema.additionalProperties !== false || !textOk) {
+    fail(`value.kind "lab-result" places analyte.label languages matching ${LAB_RESULT_LABEL_LANGUAGE} only, each { type: string, minLength: 1 }; eventType "${itemEventTypes[0]}" declares ${languages.join(', ') || 'no patternProperties'}${languages.length === 1 && languages[0] === LAB_RESULT_LABEL_LANGUAGE && !textOk ? ' with another text schema' : ''}${labelSchema.additionalProperties !== false ? ' and leaves other keys open' : ''}`);
+  }
   keysOf('analyte.codes[]', analyte.properties.codes?.items, LAB_RESULT_ANALYTE_CODING_FIELDS);
   keysOf('valueCodes[]', et.properties.valueCodes?.items, LAB_RESULT_VALUE_CODING_FIELDS);
   const comparators = et.properties.comparator?.enum || [];

@@ -348,7 +348,7 @@ per specimen: `body-blood-coded`, `body-urine-coded`, `body-csf-coded`.
 
 | Field | Meaning |
 |---|---|
-| `analyte.label` | The test name, by language (`en` required, `fr`, `es`). |
+| `analyte.label` | The test name, by language: a BCP 47 language tag in canonical case, language[-Script][-REGION] (`en` required, `fr`, `es`, `it`, `pt-BR`, `de`, `zh-Hant`, `es-419`, …); `en`, `fr`, `es` only in packs before this change. |
 | `analyte.codes[]` | FHIR Codings `{ system, code, display?, version?, hdsId? }`; `system` is a canonical URI. A LOINC code (`http://loinc.org`) whenever one fits, verified as in § Codes; otherwise the lab's or the writer's own code system: a URL it controls, else a fixed `urn:uuid:` (or the lab's `urn:oid:…`), the same value on every event. `hdsId` only when a datasource provides the test (none does yet; a datasource that does emits URI systems). |
 | `value` | The figure as printed. Requires `unit`. |
 | `unit` | The **UCUM code** of the printed unit: case-sensitive, printable ASCII (`umol/L`, not `µmol/L`; `10*9/L`; `{copies}/mL`; `1` when unitless). |
@@ -582,7 +582,7 @@ the overload keeps loading (its immutable fields are identical).
 
 **Cross-system.** FHIR `Observation`, the `fhir:` block of the three items (`code: { from: concept, field: analyte }`,
 `value: { kind: lab-result }`, since 4.31.0; FHIR-MAPPING.md): `code.coding` ← `analyte.codes` (a LOINC coding
-first), `code.text` ← `analyte.label.en`, `fr` / `es` as its `translation` extension; `valueQuantity` ← `value`,
+first), `code.text` ← `analyte.label.en`, every other language as its `translation` extension; `valueQuantity` ← `value`,
 `comparator`, `unit` as `code` with system `http://unitsofmeasure.org`, `unitText` (else the UCUM code itself, so it
 reads back unchanged) as `unit`; else `valueCodeableConcept` ← `valueCodes` with `valueText` as its `text`, else
 `valueString` ← `valueText`. A semi-quantitative result (`value` and `valueText`) exports its `valueQuantity`, and
