@@ -98,6 +98,15 @@ if (drift.length) {
 if (linked.length || drift.length) process.exit(1);
 ')
 
+# Refuse any symlink under node_modules, at any depth: ensure-links.js swaps nested lib copies for
+# links to workspace checkouts, which the direct-dependency check above cannot see (B-2026-11-27-42).
+LINK_GUARD="$scriptsFolder/../../../_local/scripts/deploy/check-no-linked-modules.js"
+if [ ! -f "$LINK_GUARD" ]; then
+  echo "ERROR: $LINK_GUARD not found - deploy from an HDS _macroX workspace checkout."
+  exit 1
+fi
+node "$LINK_GUARD" .
+
 
 # ── Lint + test gate ─────────────────────────────────────────────────────────
 # CI runs the suite on the push, NOT as a gate on the deploy, so a deploy that
