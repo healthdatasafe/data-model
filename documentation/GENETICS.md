@@ -33,9 +33,10 @@ The root carries consent-screen names (`label` / `description`, en and fr, 3.38.
 covers this root only when it names it, or one of its children, explicitly.** A `*` grant, or a grant on another root,
 never reaches it. The pack publishes the streams tree as written, so the marker is in `pack.streams`.
 
-**Four roots carry it:** `genetics` (3.43.0), `questionnaire` (4.12.0, plan 115, perki 2026-11-16),
-`conversation-items` (4.22.0, plan 128) and `hds-research` (the research relationship: chosen topics and score ranges
-say something about health by inference, [RESEARCH.md](RESEARCH.md)). The second is not a special category by itself: its answer stream is a
+**Five roots carry it:** `genetics` (3.43.0), `questionnaire` (4.12.0, plan 115, perki 2026-11-16),
+`conversation-items` (4.22.0, plan 128), `hds-research` (the research relationship: chosen topics and score ranges
+say something about health by inference, [RESEARCH.md](RESEARCH.md)) and `other-names` (4.47.0, plan 128: a birth or
+former name can say a marriage, a divorce or a change of gender, [PROFILE.md](PROFILE.md#other-names-4460)). The second is not a special category by itself: its answer stream is a
 cross-topic sink, where a yes on a question about a genetic test says that such a result exists (QUESTIONNAIRE.md §
 Where the events live). Without the marker there, the promise made for `genetics` would hold for the records and not
 for the fact that they exist. The third holds what documents print, read for one contact only (a name and birth date
@@ -88,6 +89,10 @@ a second row).
 `genetics` are not masked for `questionnaire`. Before any app writes an event into `questionnaire-request` or
 `questionnaire-answer`, the `*` accesses of each production core get `{ streamId: 'questionnaire', level: 'none' }`
 (or are re-minted). Until then the streams stay empty.
+
+**`other-names` (4.47.0): the same sweep, in order** ([PROFILE.md § Other names](PROFILE.md#other-names-4460)): every
+minter of `*` accesses on a pack of 4.47.0 or later, then `mask-star-accesses` on ch1 and us1 (demo unswept), then
+the first write. Not done yet: record it here when it is.
 
 ## `genetic-variant/coded-v1`
 

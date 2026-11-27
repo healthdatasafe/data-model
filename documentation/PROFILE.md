@@ -26,6 +26,7 @@ It is distinct from:
 | `profile-addresscountry` | `contact/country` | text | once |
 | `profile-avatar` | *(varies, see below)* | picture | once |
 | `profile-reproductive-stage` | `attributes/reproductive-stage` | select | **any** |
+| `other-name` (root `other-names`, not under `profile`, 4.47.0) | `contact/other-name-v1` | composite | **unlimited** |
 
 ## Three things that surprise readers
 
@@ -44,6 +45,47 @@ durable-but-changing fact rather than a fixed one: a new dated entry is recorded
 changes, and the history is the value. It selects the reference band for stage-dependent hormones
 (estradiol, FSH, prolactin), which is why the date matters. Hormone therapy is recorded separately as a
 medication and is not encoded here.
+
+## Other names (4.47.0)
+
+A usage name, a name at birth, a former name, her full official name or a nickname: the item `other-name` on
+`contact/other-name-v1`, `type: composite`, `repeatable: unlimited` (several hold at once, unlike the `once` items
+above). Closed object, FHIR HumanName: `given?`, `family?` (at least one), `use?` (`official`, `usual`, `maiden`,
+`old`, `nickname`). A missing part is her profile's: an other name `{ family: 'MARTIN', use: 'maiden' }` reads as her
+profile's given name with MARTIN. `time` is when she recorded it; no period. She changes one by update and removes it
+by delete; a trashed one never matches.
+
+| Stream | Name | Item | eventType |
+|---|---|---|---|
+| `other-names` (root, **`explicitGrantOnly`**) | Other names | `other-name` (`type: composite`) | `contact/other-name-v1` |
+
+**Not under `profile`.** A birth name or a former name can say a marriage, a divorce or a change of gender. Under
+`profile` every grant on the root, and every `*`, would read it; `explicitGrantOnly` is allowed on a root only
+([GENETICS.md](GENETICS.md#explicitgrantonly)), so it has a root of its own, and, once the sweep below is done, an
+access reads it only when it names `other-names`. The root is not named `profile-other-names`: in a list of grants, a
+`profile-` id reads as a child of `profile`.
+
+**What reads it.** Her own app, to recognise her documents: an `is-this-yours` question is answered without a tap when
+the printed name is her profile's or one of her other names, `nickname` (or a `use` her app does not know) apart
+([CONVERSATION.md § R3](CONVERSATION.md#rules)). The contact that asks never reads it and never learns which name matched.
+After she confirms by hand a document whose name matched none, her app may offer to save that name here, never
+automatically.
+
+**No `fhir` block.** `Patient.name` is exported from `profile-name` and `profile-surname`; no SMART scope reaches the
+root.
+
+**Before the first write**, in this order (an access minted with `*` covers a stream created later,
+[GENETICS.md § Before the first write](GENETICS.md#before-the-first-write)):
+
+- **(a)** every minter of `*` accesses loads a pack of 4.47.0 or later, so it masks the new root: app-web-user-account
+  (`maskExplicitGrantOnly`), hds-mcp-js and hds-lib's CMC `*` expansion;
+- **(b)** then the `*` accesses of the production cores ch1 and us1 are swept with `mask-star-accesses`, each getting
+  `{ streamId: 'other-names', level: 'none' }` (or re-minted); demo stays unswept, as for `genetics`. The sweep is
+  recorded in GENETICS.md § Before the first write when it is done;
+- **(c)** only then may hds-webapp ship the screen that writes other names, or "Remember this name".
+
+Until (b) is done, an existing `*` access would read the root, so neither this page nor the root's description says
+otherwise; the description gains its consent-screen promise after the sweep, as `genetics` did (3.43.1).
 
 ## `profile-addresscountry` vs `profile-birthcountry`
 

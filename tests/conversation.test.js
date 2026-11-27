@@ -28,7 +28,9 @@ const ID_RE = '^[a-zA-Z0-9_-]+$';
 const DOC = 'ckq3w8n1x0001';
 const GRID = 'ckq3w8n1x0002';
 const TABLE = 'ckq3w8n1x0003';
+const PICTURE = 'ckq3w8n1x0004';
 const BOX = { eventId: GRID, attachmentId: 'ckq3w8n1x0002a', page: 1, bbox: [40.6, 22.4, 2.5, 12.9] };
+const SHOT = { eventId: PICTURE, attachmentId: 'ckq3w8n1x0004a', page: 1 };
 const ANCHOR = { eventId: 'ckq3w8n1x0001', attachmentId: 'ckq3w8n1x0001a', page: 1, bbox: [8.5, 41.2, 83, 2.1] };
 const EXTRACTION = { engine: 'hds-reader', engineVersion: '0.3.0', kbVersion: '0.4.0', backend: 'text-layer' };
 const HDS_CODES = ['which-specimen', 'which-unit', 'which-analyte', 'which-date', 'is-fasting', 'is-this-yours', 'which-document-kind', 'which-document-date', 'which-row-date', 'which-column-date'];
@@ -78,6 +80,9 @@ const VALID = {
     { kind: 'question', about: DOC, code: 'which-document-kind', candidateId: 'd-1', options: ['laboratory-report', 'other'] },
     { kind: 'question', about: DOC, code: 'which-document-date', candidateId: 'd-1', context: { dates: [{ day: '2026-03-13', text: '13/03/26', label: 'Édité le', role: 'report' }] } },
     { kind: 'question', about: TABLE, code: 'which-column-date', context: { column: { index: 2 }, anchor: { eventId: TABLE, attachmentId: 'ckq3w8n1x0003a', page: 1, bbox: [52.1, 18.3, 11.4, 4.2] } } },
+    // a picture (4.47.0): a date a model read, offered with its box; the identity block's box, no name read
+    { kind: 'question', about: PICTURE, code: 'which-date', context: { dates: [{ day: '2026-03-12', text: '12.03.2026', role: 'sampling', anchor: { ...SHOT, bbox: [60.2, 9.1, 18.5, 2.4] } }] } },
+    { kind: 'question', about: PICTURE, code: 'is-this-yours', context: { anchor: { ...SHOT, bbox: [5.1, 6.3, 42, 7.8] } } },
     { kind: 'question', about: GRID, code: 'which-row-date', context: { grid: { row: 2, column: 1 }, anchor: { ...BOX, bbox: [7.4, 22.4, 2.5, 12.9] } } }
   ],
   'proposed-value': [
@@ -131,6 +136,7 @@ const VALID_ALERTS = [
   { kind: 'notice', code: 'typed-text-not-read' },
   { kind: 'notice', code: 'several-sampling-dates', about: DOC },
   { kind: 'notice', code: 'columns-not-read', about: TABLE },
+  { kind: 'notice', code: 'pages-not-read', about: PICTURE },
   { kind: 'notice', code: 'several-result-columns', about: DOC },
   { kind: 'notice', code: 'lines-may-be-missing', about: TABLE },
   { kind: 'notice', code: 'grid-not-located', about: GRID },
@@ -266,6 +272,13 @@ describe('[CNV] conversation', () => {
         assert.ok(!validate({ ...VALID.question[4], context: { identity: {} } }), 'an empty identity');
         assert.ok(!validate({ ...VALID.question[2], context: { dates: [] } }), 'no dates');
         assert.ok(!validate({ ...VALID.question[2], context: { dates: [{ day: '2026-03-12' }] } }), 'a date without its text');
+        // a date's anchor (4.47.0): the hdsSourceAnchor shape, closed, nothing printed in it
+        const picDate = VALID.question.find((q) => q.about === PICTURE && q.code === 'which-date');
+        const withAnchor = (anchor) => ({ ...picDate, context: { dates: [{ ...picDate.context.dates[0], anchor }] } });
+        assert.ok(validate(withAnchor({ attachmentId: 'ckq3w8n1x0004a', page: 1 })), 'a date anchor without eventId or bbox is still the anchor shape (the MUST asks bbox)');
+        for (const anchor of [{}, { page: 1 }, { attachmentId: 'a' }, { ...SHOT, page: 0 }, { ...SHOT, bbox: [1, 2, 3] }, { ...SHOT, bbox: [1, 2, 3, 101] }, { ...SHOT, text: '12.03.2026' }, { ...SHOT, eventId: 'not an id' }, '12.03.2026']) {
+          assert.ok(!validate(withAnchor(anchor)), 'dates[].anchor ' + JSON.stringify(anchor));
+        }
         assert.ok(!validate({ ...VALID.answer[0], written: [] }), 'an empty written');
         assert.ok(!validate({ ...VALID.answer[0], written: [{ candidateId: 'c-1' }] }), 'written without eventId');
         const pd = VALID['proposed-document'][0];
@@ -445,7 +458,7 @@ describe('[CNV] conversation', () => {
       assert.deepStrictEqual(ctx.properties.grid.required, ['row', 'column']);
       assert.deepStrictEqual(Object.keys(ctx.properties.identity.properties), ['name', 'birthDate', 'birthDay']);
       assert.deepStrictEqual(ctx.properties.dates.items.required, ['day', 'text']);
-      assert.deepStrictEqual(Object.keys(ctx.properties.dates.items.properties), ['day', 'text', 'label', 'role']);
+      assert.deepStrictEqual(Object.keys(ctx.properties.dates.items.properties), ['day', 'text', 'label', 'role', 'anchor']);
       assert.deepStrictEqual(ctx.properties.dates.items.properties.role.enum, ['sampling', 'report', 'received', 'other']);
       const w = branch(schema, 'answer').properties.written.items;
       assert.deepStrictEqual(w.required, ['candidateId', 'eventId']);
@@ -502,6 +515,7 @@ describe('[CNV] conversation', () => {
       assert.deepStrictEqual([samplingTime.type, samplingTime.maxLength, samplingTime.pattern], ['string', 5, '^([01][0-9]|2[0-3]):[0-5][0-9]$']);
       assert.deepStrictEqual(strip(pv.anchor), strip(keys.hdsSourceAnchor));
       assert.deepStrictEqual(strip(branch(schema, 'question').properties.context.properties.anchor), strip(keys.hdsSourceAnchor));
+      assert.deepStrictEqual(strip(branch(schema, 'question').properties.context.properties.dates.items.properties.anchor), strip(keys.hdsSourceAnchor), 'a date\'s anchor (4.47.0)');
       assert.deepStrictEqual(Object.keys(pv.extraction.properties), ['engine', 'engineVersion', 'kbVersion', 'backend']);
       for (const f of Object.keys(pv.extraction.properties)) {
         assert.deepStrictEqual(strip(pv.extraction.properties[f]), strip(keys.hdsExtraction.properties[f]), 'extraction.' + f);
@@ -640,6 +654,19 @@ describe('[CNV] conversation', () => {
         if (m.context?.anchor) assert.ok(['is-this-yours', 'which-row-date', 'which-column-date'].includes(m.code), 'a context anchor on these three only');
         if (m.context?.grid) assert.strictEqual(m.code, 'which-row-date', 'grid on which-row-date only');
         if (m.context?.column) assert.strictEqual(m.code, 'which-column-date', 'column on which-column-date only');
+        // 4.47.0: a date not copied from a text layer is offered with its anchor and its box, else not at all; a picture
+        // gets no name read by a model, only the identity block's box (the PICTURE fixtures are read without a text layer)
+        for (const d of m.context?.dates ?? []) {
+          if (m.about === PICTURE) {
+            assert.ok(d.anchor?.bbox, 'a date read on a picture carries its anchor and its box');
+            assert.strictEqual(d.label, undefined, 'and no label: its role says what it is, the crop shows the printed label');
+          }
+          if (d.anchor) assert.strictEqual(d.anchor.eventId, m.about, 'a date\'s anchor names its document');
+        }
+        if (m.code === 'is-this-yours' && m.about === PICTURE) {
+          assert.strictEqual(m.context?.identity, undefined, 'no identity read by a model');
+          if (m.context?.anchor) assert.ok(m.context.anchor.bbox, 'the identity block\'s box');
+        }
         if (m.code === 'which-column-date') {
           assert.deepStrictEqual(Object.keys(m.context).sort(), ['anchor', 'column'], 'its context is the column and its heading, only: no date a model read');
           assert.ok(m.context.anchor.bbox, 'with the heading\'s box');
@@ -745,7 +772,7 @@ describe('[CNV] conversation', () => {
       // every code row is parsed: the rows starting with a code, less the two header rows
       const rows = section.split('\n').filter((l) => l.startsWith('| `')).length - 2;
       assert.strictEqual(notices.length + errors.length, rows, 'a table row matched neither pattern');
-      assert.deepStrictEqual(notices, [['no-result-found', 'the document'], ['several-sampling-dates', 'the document'], ['several-result-columns', 'the document'], ['columns-not-read', 'the document'], ['lines-may-be-missing', 'the document'], ['grid-not-located', 'the document'], ['kind-not-read', 'the document'], ['typed-text-not-read', 'none'], ['note-not-read', 'the document'], ['ready', 'none']]);
+      assert.deepStrictEqual(notices, [['no-result-found', 'the document'], ['several-sampling-dates', 'the document'], ['several-result-columns', 'the document'], ['columns-not-read', 'the document'], ['pages-not-read', 'the document'], ['lines-may-be-missing', 'the document'], ['grid-not-located', 'the document'], ['kind-not-read', 'the document'], ['typed-text-not-read', 'none'], ['note-not-read', 'the document'], ['ready', 'none']]);
       // the notices that end the work are the ones § The flow names, and each says so in its row (4.45.0). An ending
       // notice row MUST say "the work ends `done` with zero counts": a row that proposes and asks nothing and omits it fails here.
       const codeRows = section.split('\n').filter((l) => /^\| `[a-z0-9-]+` \| (the document|none) \|/.test(l));
@@ -867,6 +894,31 @@ describe('[CNV] conversation', () => {
       const pd = branch(schema, 'proposed-document');
       assert.strictEqual(pd.properties.printed, undefined, 'nothing printed');
       assert.strictEqual(pd.properties.proposal.properties.content, undefined, 'no content: a key and a date');
+    });
+
+    it('[CNV-DOC-13] 4.47.0: an anchor per date, her other names in the match, the notice pages-not-read', () => {
+      const text = fs.readFileSync(path.join(__dirname, '../documentation/CONVERSATION.md'), 'utf-8');
+      const flat = text.replace(/\s+/g, ' ');
+      assert.doesNotMatch(flat, /copied from a text layer only/, 'a date may come with its anchor');
+      assert.doesNotMatch(flat, /reserved for later/, 'the anchor per date is no longer reserved');
+      const notIn = text.slice(text.indexOf('## Not in this version'));
+      assert.doesNotMatch(notIn, /dates\[\]\.anchor/);
+      assert.ok(flat.includes('`context.dates` is copied from a text layer, or with its anchor'));
+      assert.ok(flat.includes('| `question` with `context.dates` (4.47.0) | list a date not copied from the document\'s text layer only with its `anchor`, and that anchor\'s `bbox`'), 'the MUST row');
+      assert.ok(flat.includes('| `context.dates[].anchor` (a field, 4.47.0) |'), 'the R8 row');
+      assert.doesNotMatch(flat, /`is-this-yours` is asked only on doubt/, 'the contact has no profile: her app answers on a match');
+      const r3 = text.slice(text.indexOf('**R3.'), text.indexOf('**R4.'));
+      assert.match(r3, /one of her other names/);
+      assert.ok(r3.indexOf('An unknown `basis` is never a confirmation.') < r3.indexOf('**Her other names (4.47.0).**'), 'the profile-match sentences stay on the parent bullet');
+      assert.match(r3, /nothing of it reaches the contact\.\n/, 'the Remember sub-bullet ends there');
+      assert.match(r3, /`nickname`, or a `use` her app does not know, never\s+matches/);
+      assert.match(r3, /A part that is empty after\s+normalisation never matches/);
+      assert.match(r3, /never learns\s+which name matched/);
+      assert.match(r3, /Never automatically/);
+      const notices = text.slice(text.indexOf('### Notice and error codes'), text.indexOf('## Rules'));
+      const row = notices.split('\n').find((l) => l.startsWith('| `pages-not-read` |'));
+      assert.match(row, /It does not end the work/);
+      assert.match(row, /names no page and no date \(R6\)/);
     });
 
     it('[CNV-DOC-4] reader-v1 is marked superseded, and its schema is unchanged in shape', () => {

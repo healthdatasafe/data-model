@@ -8,7 +8,8 @@ dispatches on `hds.kind` and on `content.kind`, never on the contact's app code.
 
 **Normative** (4.22.0; 4.26.0 adds a document's date and kind, her `note`, and the specimen codes; 4.27.0 the notice
 `ready`; 4.33.0 the status `on-hold`; 4.36.0 a dated grid, § A dated grid; 4.39.0 a table read per column; 4.45.0 four
-notice codes, § Notice and error codes). "MUST" and "never" bind writers; readers follow § Writers validate, readers dispatch.
+notice codes, § Notice and error codes; 4.47.0 her other names in the match (§ R3), an anchor per date, the notice
+`pages-not-read`). "MUST" and "never" bind writers; readers follow § Writers validate, readers dispatch.
 
 ## The principle: the conversation is standard, the content travels by reference
 
@@ -214,8 +215,9 @@ misread a column's date the same way twice, and nothing on the page tells it; so
 
 - **One question per column, `which-column-date`,** with `context.column` (`index`: the result column, from the left, from 1, the
   empty ones counted) and `context.anchor` with its `bbox`: the box of everything printed above that column, its heading. A
-  column the contact has no heading box for is not asked, and not proposed. The question carries no date: a date a model read is
-  never offered (`context.dates` is copied from a text layer only), she reads the day from the heading. She answers the day, with
+  column the contact has no heading box for is not asked, and not proposed. The question carries no date, and a date a model
+  read is never offered without its box (`context.dates` is copied from a text layer, or with its anchor): she reads the day
+  from the heading. She answers the day, with
   its year: `confirm` (+ `time` at 12:00 UTC, `timePrecision: day`), or `skip`. Two columns may have the same day.
 - **Nothing of the column is proposed before her answer, and her day must be the day read.** Her answer and the model's reading
   are two readings of one heading. When her day is the day the contact read, it proposes the column's values, each with
@@ -260,9 +262,17 @@ shown, not answerable.
   only, `context.grid` on `which-row-date` only (4.36.0), `context.column` on `which-column-date` only (4.39.0), `context.dates` on
   `which-date` and `which-document-date` only. The
   anchor of `is-this-yours` points at where the identity block is printed, for her app's anchored view of her own copy of the document;
-  one anchor cannot point at several dates, so an anchor per date is reserved for later.
+  a date points at where it is printed with its own `context.dates[].anchor` (4.47.0).
+- **A date not copied from a text layer** (read by a model, on a picture) carries `anchor`, with its `bbox` and
+  `eventId` = `about` (4.47.0): her app shows it with the crop of her own copy, so she checks the date against the page
+  before she picks it. A date without one is not offered: the contact leaves it out of `context.dates`. A date copied
+  from a text layer may carry one. An app that does not know `dates[].anchor` shows the date as before (R8).
 - `which-date` is asked only when no sampling date is certain and at least one proposed value waits for a date.
-  `is-this-yours` is asked only on doubt (the printed identity does not match her profile, or none is printed).
+- **`is-this-yours` is answered by her app on a match.** The contact holds no profile of hers, so it cannot tell a
+  match: a contact that reads values typically asks `is-this-yours` for each document it reads; her app answers it without a tap when the printed identity matches her
+  profile or one of her other names (§ R3, `basis: profile-match`), so she is asked only on doubt (no match, or no
+  identity printed). On a picture, the contact reads no name (§ R7): the question carries the identity block's box in
+  `context.anchor` and no `identity`, and she answers it by tap.
 - A picked `day` from `context.dates` becomes `time` at 12:00 UTC with `timePrecision: day`
   ([PARTIAL-DATES.md](PARTIAL-DATES.md)).
 - **An answer to a question writes no value.** The contact answers a `choose` on `which-specimen`, `which-unit` or
@@ -357,6 +367,8 @@ The schema cannot express conditions between fields, so writers check them befor
 | `question` | follow its row of § Question codes (`candidateId`, `options`, `context`) |
 | `question` or `answer` with a `candidateId` | name a `proposed-value` (or, for the two document codes and an answer to a proposed document, a `proposed-document`) of the same document on the same relationship's `received` child |
 | `question` with `context.identity` | be `is-this-yours`; with `context.anchor`, be `is-this-yours`, `which-row-date` or `which-column-date`; with `context.dates`, be `which-date` or `which-document-date` |
+| `question` with `context.dates` (4.47.0) | list a date not copied from the document's text layer only with its `anchor`, and that anchor's `bbox`; leave a date with no box out; such a date carries no `label` (its `role` says what it is, the crop shows the printed label) and a `text` holding only the date as read |
+| `question` `is-this-yours` (4.47.0) | carry `context.identity` only when copied verbatim from the document's text layer; otherwise none, and `context.anchor` with its `bbox` (the identity block) when the contact located it |
 | `question` `which-row-date` (4.36.0) | carry `context.grid`, and `context.anchor` with its `bbox`; be the only one of its document for that attachment, page and `grid.row`; be on a document with no `which-date` question |
 | `question` `which-column-date` (4.39.0) | carry `context.column`, and `context.anchor` with its `bbox`; be the only one of its document for that attachment, page and `column.index`; be on a document with no `which-date` question |
 | `proposed-value` on a document with a `which-row-date` question, `not-read` apart | carry `grid` and `proposal.time`, at 12:00 UTC with `hdsTimePrecision: day` |
@@ -365,7 +377,7 @@ The schema cannot express conditions between fields, so writers check them befor
 | `proposed-value` with reason `not-read` (4.36.0) | have `status: unmapped`, carry `grid` and `anchor` with its `bbox`, and no `printed.value`, `proposal` or `requestKey` |
 | `proposed-value` with any other reason, or none | carry `printed.value` |
 | `proposed-value` or `proposed-document` with `replaces` | name an item of the same kind and the same document on the same child, not written (no `written` entry, no answer with `applied`); for a proposed value, one the person answered a question about |
-| `proposed-value` or `proposed-document` with `anchor`, `question` with `context.anchor` (from 4.25.0) | carry `anchor.eventId` = `about` (PROVENANCE.md, a self-contained anchor) |
+| `proposed-value` or `proposed-document` with `anchor`, `question` with `context.anchor` (from 4.25.0) or a `context.dates[].anchor` (4.47.0) | carry `anchor.eventId` = `about` (PROVENANCE.md, a self-contained anchor) |
 | `proposed-document` | carry a `proposal.documentKind` that is a `documentKinds` key of the pack, not deprecated; `proposal.time` at 12:00 UTC at the start of its period; be the only unanswered one of its contact for the document; be written only while the document's `hdsDocumentPending` holds at least one proposed field |
 | `which-document-kind`, `which-document-date` question | be asked only while the document's `hdsDocumentPending` holds `kind`, `time` respectively |
 | `answer` with `note` | carry nothing of the note anywhere else (an alert, another field) |
@@ -399,6 +411,7 @@ unknown code is shown with a generic text.
 | `several-sampling-dates` | the document | The document prints its results for several sampling days, one value column per day (a cumulative report), and the contact proposes no value from it: it does not tell which value was taken which day. Nothing is proposed, no question is asked, the work ends `done` with zero counts. Sent instead of `no-result-found`, never both for one read. A contact that reads each column under its own day sends neither. Not `which-date`, which asks for the one day all the waiting values share. The notice names no date (R6). Before 4.45.0 also sent for `several-result-columns`. |
 | `several-result-columns` | the document | The document prints its results in several value columns, and the contact tells fewer than two sampling days apart (two samples of one day with no time or sample number that differs, or columns with no heading), so it proposes no value from them (4.45.0). Nothing is proposed, no question is asked, the work ends `done` with zero counts. Sent instead of `no-result-found` and `several-sampling-dates`: one of the three per read, `several-sampling-dates` when two days or more are told apart. On a document with a `which-column-date` question, or read per column, `columns-not-read` is sent instead, also when no column is proposed. The notice names no date and no time (R6). |
 | `columns-not-read` | the document | A table read column by column on a picture (4.39.0): at least one result column is not proposed (she skipped its `which-column-date`, her day is not the day read, or the contact could not read that column on its own). The other columns' values stand. Once per document. The notice names no date and no column (R6). |
+| `pages-not-read` | the document | A document read page by page (4.47.0): at least one page of the document was not read (the contact could not read it, or could not date it), and its values are not proposed. The other pages' values stand. Also sent when no page's value is proposed; `no-result-found` is then not sent. Once per document. It does not end the work. The notice names no page and no date (R6). `columns-not-read` stays for the columns of a table read per column. |
 | `lines-may-be-missing` | the document | Values read from a picture (4.45.0), a dated grid apart: the contact has evidence that the page prints more result lines than it read (proposed, kept aside and dropped lines alike), so a line may be missing from what is proposed. The proposed values stand, each with its own status; she compares them with her document. Sent once per document, with or after its first `proposed-values` alert; never on a read that writes no proposed value. A dated grid says this box by box with `not-read`, never with this notice. The notice names no line and no count (R6). |
 | `grid-not-located` | the document | The document is, or may be, a dated grid (a paper cycle chart), and the contact cannot locate its grid with certainty (cut above its first row or beside a column, folded, partly hidden, or its kind in doubt), so it reads nothing of the document (4.45.0; `no-result-found` before). Nothing is proposed, no question is asked, the work ends `done` with zero counts. Sent instead of `no-result-found`. Her app's text never says the document is a chart; when it is one, a clearer picture of the whole grid, shared again, may be read. |
 | `kind-not-read` | the document | The contact recognises the kind of the document and does not read that kind (4.45.0): nothing is proposed, no question is asked, the work ends `done` with zero counts. The kind is what the document is, not its file type (`no-attachment`). It may still propose the document's kind (§ A document's date and kind). It promises nothing about when or whether it will. Not `on-hold` (the contact reads that kind and cannot work now), not `no-result-found` (it read the document and found no result line). A contact that does not read dated grids sends this or `no-result-found`, never `grid-not-located`. The notice names no kind (R6). |
@@ -451,12 +464,23 @@ this type outside the relationship's two children.
   included.
 - **`basis: profile-match`** (an answer her app gave without a tap): only with `confirm` on `is-this-yours`, and only
   when all hold after normalisation (case, accents, hyphens, commas and spaces, order of given and family name): the
-  full given name and the full family name both equal her profile's (an initial or a missing given name never
-  matches), and `context.identity.birthDay` is present and equal to her profile's birth date. A profile without a
-  birth date is never matched. At most one `profile-match` answer per document; the card says "matched to your
-  profile" and offers `not-mine` until the work is `done`; the latest `is-this-yours` answer wins. A `not-mine` after
-  values were written: her app deletes them, from the `written` entries of the document's answers. An unknown
-  `basis` is never a confirmation.
+  full given name and the full family name both equal her profile's, or those of one of her other names (4.47.0, below)
+  (an initial or a missing given name never matches), and `context.identity.birthDay` is present and equal to her
+  profile's birth date. A profile without a birth date is never matched. At most one `profile-match` answer per
+  document; the card says "matched to your profile" and offers `not-mine` until the work is `done`; the latest
+  `is-this-yours` answer wins. A `not-mine` after values were written: her app deletes them, from the `written` entries
+  of the document's answers. An unknown `basis` is never a confirmation.
+  - **Her other names (4.47.0).** Each `other-name` event of hers (`contact/other-name-v1`, on the `other-names` root,
+    [PROFILE.md](PROFILE.md#other-names-4460)) gives one more pair to compare, normalised the same way: its `given`, else
+    her profile's given name, with its `family`, else her profile's family name. A part that is empty after
+    normalisation never matches. An other name whose `use` is `nickname`, or a `use` her app does not know, never
+    matches; one without `use` does. The birth date condition is unchanged. The contact never reads her other names
+    (the match needs no grant on that root; once the production `*` accesses are masked for it, PROFILE.md § Other
+    names, no grant on `profile` or `*` reaches it either) and never learns which name matched: the answer is the same
+    `confirm` with `basis: profile-match`.
+  - **"Remember this name".** After her own `confirm` (a tap, no `basis`) on an `is-this-yours` whose printed name
+    matched none of her names, her app may offer to save that name as an other name, for her to accept or change.
+    Never automatically, and nothing of it reaches the contact.
 - **`basis: existing-value`** (also without a tap): only with `duplicate`, on proposed values her app would offer to
   confirm (an open candidate, a confirmable `status`, a proposal R9 accepts from a vouched engine), each already in
   her record (§ A value she already has), and only while no `is-this-yours` of the document is open or answered
@@ -503,8 +527,11 @@ about another person are dropped before anything is written, and only counted in
 split by reason (a count per category would say that a genetic result exists). The printed name and birth date appear
 only in `context.identity` of an `is-this-yours` question, copied verbatim from the document's text layer, never
 produced or completed by a model; no other identity field (address, insurance or patient number, sex, age,
-practitioner) is carried anywhere. `context.dates` carries dates and their labels only, never the birth date or a
-person's name. Apps render both as plain text.
+practitioner) is carried anywhere. On a document read without a text layer (a picture), no model reads the name or the
+birth date: the contact's `is-this-yours` carries no `identity`, only the identity block's box in `context.anchor`
+(4.47.0), and her app shows her the crop. `context.dates` carries dates, their labels and, for a date not copied from
+a text layer, its anchor (4.47.0), never the birth date or a person's name; a date not copied from a text layer carries
+no `label`, and its `text` holds only the date as read. Apps render both as plain text.
 
 **R8. Writers validate, readers dispatch.** A writer validates every event against this type, and every alert's `hds`
 against `hds-conversation-alert.json`, before writing. A reader never validates on read: it dispatches on `kind`,
@@ -520,6 +547,7 @@ additive (a minor release); a breaking change is a `-v2` type. A value a reader 
 | `answer.action` | ignored by the contact, never a confirmation |
 | `answer.basis` | never a confirmation; the answer does not count. On a `duplicate` with `existing-value`, a contact that does not know it sees the value still open and never reaches `done`, and an older app shows it open: a contact reads `existing-value` before any app sends it. `not-pending` comes only from a 4.26.0 app, on a proposed document only a 4.26.0 contact writes, and `done` never waits for it |
 | `context.dates[].role` | `other` |
+| `context.dates[].anchor` (a field, 4.47.0) | ignored: an app before 4.47.0 shows the date as before, without its crop; her app shows the crop before any contact lists such a date (release order: forms and the webapp, then the engine) |
 | `proposal.clientData.hdsComparator` | the proposal is not confirmable |
 | `timePrecision`, `proposal.clientData.hdsTimePrecision` | absent |
 | `proposal.clientData.hdsInterpretation` | absent |
@@ -577,7 +605,7 @@ document. Deleted means deleted (twice), not only trashed.
 relationship's `received` child, an `answer` alert's only on its `sent` child, and every `about` only among the
 documents shared in that relationship (its `document-shares` `shared` child) or covered by its grant. A pointer that
 resolves elsewhere is ignored: an alert never makes her app show any other event of her account. The same holds for
-an item's anchor: her app shows the anchored view from `about` only, and ignores an `anchor` whose `eventId` is not
+an item's anchor, and a date's: her app shows the anchored view from `about` only, and ignores an `anchor` whose `eventId` is not
 `about` (it drops it, never rewrites it, when it writes the value).
 
 **R12. The alert's words are fixed and not rendered.** Every conversation alert carries the fixed `title` and `body`
@@ -966,7 +994,6 @@ written before 4.22.0 still validate, and no new writer uses it. No migration: t
 - Several pages or attachments bearing the same grid: a contact reads one.
 - `text` and `optionLabels` on a question with an `x-` code (a third party's own question), reserved: plain text,
   `en` required, an option without a label not selectable.
-- An anchor per candidate date (`context.dates[].anchor`), reserved.
 - Corrected values to the contact (learning from corrections): a later opt-in.
 - A contact answering typed text with a model.
 - A per-relationship list of the items a contact may propose (R9 binds the engine only).

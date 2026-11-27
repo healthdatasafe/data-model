@@ -1,5 +1,65 @@
 # Changelog
 
+## [4.47.0] - 2026-11-27
+
+### Added: her other names, and the match against them (PROFILE.md, CONVERSATION.md R3, plan 128 SUB-F L6)
+
+Additive: one root, one item, one eventType. Fable review: ship with edits, applied.
+
+- **Root `other-names`** ("Other names" / "Autres noms" / "Otros nombres"), **`explicitGrantOnly`**, no child. A birth
+  or former name can say a marriage, a divorce or a change of gender, so no grant on `profile` reads it, nor one on `*`
+  once the sweep below is done; the marker is root-only, hence a root. Not named `profile-…`: in a list of grants, a
+  `profile-` id reads as a child of `profile`. Its description makes no consent-screen promise until the sweep.
+- **Item `other-name`**, `type: composite` (given, family, use), `repeatable: unlimited` (several hold at once), en / fr
+  / es labels, no `fhir` block (`Patient.name` stays `profile-name` and `profile-surname`). `time` is when she recorded
+  it; changed by update, removed by delete; a trashed one never matches.
+- **eventType `contact/other-name-v1`**, closed: `given?`, `family?` (at least one, not blank), `use?` (`official`,
+  `usual`, `maiden`, `old`, `nickname`: FHIR HumanName.use). A missing part is her profile's.
+- **R3 `basis: profile-match`:** her app also confirms without a tap when the printed name equals one of her other
+  names, its `given` else her profile's, with its `family` else her profile's. A part empty after normalisation,
+  `nickname`, or a `use` her app does not know never matches; birth date condition unchanged. The contact never reads
+  her other names nor learns which one matched. After her own manual `confirm` on a name that matched none, her app may
+  offer to save it ("Remember this name"), never automatically.
+- **Before the first write, in this order** (PROFILE.md): (a) every minter of `*` accesses loads pack ≥ 4.47.0
+  (app-web-user-account `maskExplicitGrantOnly`, hds-mcp-js, hds-lib CMC); (b) then the production cores ch1 and us1
+  are swept with `mask-star-accesses` (`{ streamId: 'other-names', level: 'none' }`), recorded in GENETICS.md § Before
+  the first write; demo stays unswept; (c) only then may hds-webapp ship the profile screen or "Remember this name".
+  GENETICS.md lists five marked roots.
+
+### Added: a date's anchor, and no name read on a picture (CONVERSATION.md)
+
+- **`question.context.dates[].anchor`** (the `hdsSourceAnchor` shape; reserved until now): a date not copied from a
+  text layer MUST carry it, with its `bbox` and `eventId` = `about`, and is not offered without one; such a date
+  carries no `label` (its `role` says what it is, the crop shows the printed label) and a `text` holding only the date
+  as read. Her app shows the crop of her own copy beside the date. An older app ignores it and shows the date as before
+  (R8); her app shows the crop before any contact lists such a date (release order: forms and the webapp, then the
+  engine). § A table read per
+  column now reads "copied from a text layer, or with its anchor"; § Not in this version and the reserved note in §
+  Question codes are removed.
+- **Identity on a picture:** R7 unchanged (identity copied verbatim from a text layer only). MUST row: `is-this-yours`
+  carries `context.identity` only when copied verbatim from the text layer; otherwise none, and `context.anchor` with
+  its `bbox` (the identity block) when the contact located it; she answers by tap.
+- **"`is-this-yours` is asked only on doubt"** reworded, descriptively: the contact has no profile, so a contact that
+  reads values typically asks it; her app answers it without a tap on a match (R3), so she is asked only on doubt.
+- R3's `profile-match` sentences (at most one per document, the card, `not-mine`, an unknown `basis`) stay on the parent
+  bullet, before the two new sub-bullets.
+
+### Added: notice `pages-not-read`
+
+- A document read page by page: at least one page was not read (not readable, or not dated), and its values are not
+  proposed; the other pages' values stand. Also sent when no page's value is proposed, and `no-result-found` is then
+  not sent. Once per document, does not end the work, names no page and no date (R6).
+  `columns-not-read` stays for a table read per column. A notice code is a free code (pattern): an older app shows the
+  generic text.
+
+### Tests
+
+- `tests/otherNames.test.js` (`[ONM-*]`): the root and its marker, the item, the eventType's valid and invalid shapes
+  under draft-04 and draft-07, the docs. `[GEN-STR-2]` lists `other-names`. `tests/conversation.test.js`: picture
+  fixtures (a date with its anchor, an `is-this-yours` with the identity box), invalid date anchors (`[CNV-ET-4]`), the
+  date anchor pinned to `hdsSourceAnchor` (`[CNV-SHAPE-4]`), the MUST rows (`[CNV-DOC-2]`), `pages-not-read`
+  (`[CNV-DOC-9]`, `VALID_ALERTS`), the reworded texts (`[CNV-DOC-13]`).
+
 ## [4.46.0] - 2026-11-27
 
 ### Added: cervical-fluid converter v3, Creighton model v3 (plan 136)

@@ -1,0 +1,47 @@
+other-name:
+  version: v1
+  label:
+    en: Other name
+    fr: Autre nom
+    es: Otro nombre
+  description:
+    en: Another name you have or had, such as a usage name or your name at birth.
+    fr: Un autre nom que vous portez ou avez porté, comme un nom d'usage ou votre nom de naissance.
+    es: Otro nombre que tiene o tuvo, como un nombre de uso o su nombre de nacimiento.
+  streamId: other-names
+  eventType: contact/other-name-v1
+  type: composite
+  composite:
+    given:
+      label: { en: Given name, fr: Prénom, es: Nombre }
+      type: text
+      canBeNull: true
+    family:
+      label: { en: Family name, fr: Nom de famille, es: Apellido }
+      type: text
+      canBeNull: true
+    use:
+      label: { en: Kind of name, fr: Type de nom, es: Tipo de nombre }
+      type: select
+      canBeNull: true
+      options:
+        - value: official
+          label: { en: Full official name, fr: Nom officiel complet, es: Nombre oficial completo }
+        - value: usual
+          label: { en: Usage name, fr: Nom d'usage, es: Nombre de uso }
+        - value: maiden
+          label: { en: Name at birth, fr: Nom de naissance, es: Nombre de nacimiento }
+        - value: old
+          label: { en: Former name, fr: Ancien nom, es: Nombre anterior }
+        - value: nickname
+          label: { en: Nickname, fr: Surnom, es: Apodo }
+  repeatable: unlimited
+  devNotes: >-
+    FHIR HumanName with its use; at least one of given and family (the eventType enforces it), the other taken from
+    her profile when she matches a document. Several hold at once (a usage name and a name at birth), so unlimited,
+    not once. On the explicitGrantOnly root other-names, not under profile: a grant on profile never reads it, nor one
+    on * once the production * accesses are masked for it (PROFILE.md, before the first write). time is when she
+    recorded it; she changes one by update, removes it by delete; a trashed one never matches.
+    Her app compares a printed identity with it (CONVERSATION.md R3); a nickname, or a use her app does not know,
+    never matches. No fhir block: Patient.name is exported from profile-name and profile-surname only, so no SMART
+    scope reaches this root. See documentation/PROFILE.md § Other names.
