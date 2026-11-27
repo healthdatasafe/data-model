@@ -33,7 +33,9 @@ const BOX = { eventId: GRID, attachmentId: 'ckq3w8n1x0002a', page: 1, bbox: [40.
 const SHOT = { eventId: PICTURE, attachmentId: 'ckq3w8n1x0004a', page: 1 };
 const ANCHOR = { eventId: 'ckq3w8n1x0001', attachmentId: 'ckq3w8n1x0001a', page: 1, bbox: [8.5, 41.2, 83, 2.1] };
 const EXTRACTION = { engine: 'hds-reader', engineVersion: '0.3.0', kbVersion: '0.4.0', backend: 'text-layer' };
-const HDS_CODES = ['which-specimen', 'which-unit', 'which-analyte', 'which-date', 'is-fasting', 'is-this-yours', 'which-document-kind', 'which-document-date', 'which-row-date', 'which-column-date'];
+const PAGES = 'ckq3w8n1x0005';
+const PAGE2 = { eventId: PAGES, attachmentId: 'ckq3w8n1x0005a', page: 2 };
+const HDS_CODES = ['which-specimen', 'which-unit', 'which-analyte', 'which-date', 'is-fasting', 'is-this-yours', 'which-document-kind', 'which-document-date', 'which-row-date', 'which-column-date', 'which-page-date'];
 const SPECIMENS = ['serum-plasma', 'whole-blood', 'citrated-plasma', 'rbc', 'urine', 'urine-24h', 'semen', 'csf', 'stool', 'saliva'];
 const KIND = require('../src/documentKinds').documentKinds.kinds;
 
@@ -83,6 +85,9 @@ const VALID = {
     // a picture (4.47.0): a date a model read, offered with its box; the identity block's box, no name read
     { kind: 'question', about: PICTURE, code: 'which-date', context: { dates: [{ day: '2026-03-12', text: '12.03.2026', role: 'sampling', anchor: { ...SHOT, bbox: [60.2, 9.1, 18.5, 2.4] } }] } },
     { kind: 'question', about: PICTURE, code: 'is-this-yours', context: { anchor: { ...SHOT, bbox: [5.1, 6.3, 42, 7.8] } } },
+    // a document dated per page (4.49.0): the page, with its top band when the contact has it, else the whole page
+    { kind: 'question', about: PAGES, code: 'which-page-date', context: { anchor: { ...PAGE2, bbox: [0, 0, 100, 14.5] } } },
+    { kind: 'question', about: PAGES, code: 'which-page-date', context: { anchor: { ...PAGE2, page: 3 } } },
     { kind: 'question', about: GRID, code: 'which-row-date', context: { grid: { row: 2, column: 1 }, anchor: { ...BOX, bbox: [7.4, 22.4, 2.5, 12.9] } } }
   ],
   'proposed-value': [
@@ -94,6 +99,8 @@ const VALID = {
     { ...proposed, candidateId: 'c-79', printed: { ...proposed.printed, samplingTime: '08:30' }, anchor: { ...proposed.anchor, eventId: DOC } },
     // a table read per column on a picture (4.39.0): a value of column 2, once its day is hers and the one read
     { ...proposed, about: TABLE, candidateId: 'c-t2-1', column: { index: 2 }, anchor: { eventId: TABLE, attachmentId: 'ckq3w8n1x0003a', page: 1, bbox: [8.5, 30.1, 83, 2.1] } },
+    // a document dated per page (4.49.0): a value of page 2, once she gave the page's day
+    { ...proposed, about: PAGES, candidateId: 'c-p2-1', anchor: { ...PAGE2, bbox: [8.5, 30.1, 83, 2.1] } },
     // a dated grid (4.36.0): the parts of one box, a null content, a box not read
     { kind: 'proposed-value', about: GRID, candidateId: 'c-r1c14-a', printed: { label: '14', value: '10KL x2' }, anchor: BOX, grid: { row: 2, column: 14 }, proposal: { itemKey: 'body-vulva-mucus-inspect', type: 'vulva-mucus-inspect/9d-vector', content: { vectors: { stretchability: 1 }, source: { key: 'creighton', sourceData: '10KL', annotations: { frequency: 'X2' } } }, time: 1773316800, clientData: { hdsTimePrecision: 'day' } }, status: 'check', extraction: EXTRACTION },
     { kind: 'proposed-value', about: GRID, candidateId: 'c-r1c14-b', printed: { label: '14', value: 'P' }, anchor: BOX, grid: { row: 2, column: 14 }, proposal: { itemKey: 'fertility-cycles-peak-day', type: 'activity/plain', content: null, time: 1773316800, clientData: { hdsTimePrecision: 'day' } }, status: 'check', extraction: EXTRACTION },
@@ -121,7 +128,9 @@ const VALID = {
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0026', about: DOC, action: 'confirm', candidateIds: ['d-1'], time: 1773316800, timePrecision: 'day' },
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0027', about: DOC, action: 'skip', candidateIds: ['d-2'], basis: 'not-pending' },
     { kind: 'answer', inReplyTo: 'ckq3w8n1x0028', about: GRID, action: 'confirm', time: 1773316800, timePrecision: 'day' },
-    { kind: 'answer', inReplyTo: 'ckq3w8n1x0040', about: TABLE, action: 'confirm', time: 1773316800, timePrecision: 'day' }
+    { kind: 'answer', inReplyTo: 'ckq3w8n1x0040', about: TABLE, action: 'confirm', time: 1773316800, timePrecision: 'day' },
+    { kind: 'answer', inReplyTo: 'ckq3w8n1x0050', about: PAGES, action: 'confirm', time: 1773316800, timePrecision: 'day' },
+    { kind: 'answer', inReplyTo: 'ckq3w8n1x0051', about: PAGES, action: 'skip' }
   ]
 };
 const KINDS = Object.keys(VALID);
@@ -628,7 +637,8 @@ describe('[CNV] conversation', () => {
         'which-document-kind': ['choose', 'skip'],
         'which-document-date': ['confirm', 'skip'],
         'which-row-date': ['confirm', 'skip'],
-        'which-column-date': ['confirm', 'skip']
+        'which-column-date': ['confirm', 'skip'],
+        'which-page-date': ['confirm', 'skip']
       };
       assert.deepStrictEqual(Object.keys(ALLOWED).sort(), [...HDS_CODES].sort());
       const messages = [...docs.map((e) => e.content), ...Object.values(VALID).flat()];
@@ -651,7 +661,24 @@ describe('[CNV] conversation', () => {
         if (m.code === 'is-this-yours') assert.strictEqual(m.candidateId, undefined);
         if (m.context?.identity) assert.strictEqual(m.code, 'is-this-yours', 'identity on is-this-yours only');
         if (m.context?.dates) assert.ok(['which-date', 'which-document-date'].includes(m.code), 'dates on the two date codes only');
-        if (m.context?.anchor) assert.ok(['is-this-yours', 'which-row-date', 'which-column-date'].includes(m.code), 'a context anchor on these three only');
+        if (m.context?.anchor) assert.ok(['is-this-yours', 'which-row-date', 'which-column-date', 'which-page-date'].includes(m.code), 'a context anchor on these four only');
+        if (m.code === 'which-page-date') {
+          assert.deepStrictEqual(Object.keys(m.context), ['anchor'], 'its context is the page, only: no date a model read, no other page\'s date');
+          assert.ok(m.context.anchor.attachmentId && m.context.anchor.page, 'names the page');
+          assert.strictEqual(m.candidateId ?? m.options, undefined, 'no candidate, no options');
+          const about = messages.filter((x) => x.about === m.about);
+          assert.ok(!about.some((x) => x.kind === 'question' && ['which-date', 'which-row-date', 'which-column-date'].includes(x.code)), 'no which-date, which-row-date or which-column-date on a document dated per page');
+          assert.strictEqual(about.filter((x) => x.kind === 'question' && x.code === 'which-page-date' && x.context.anchor.attachmentId === m.context.anchor.attachmentId && x.context.anchor.page === m.context.anchor.page).length, 1, 'one per page');
+          const values = about.filter((x) => x.kind === 'proposed-value');
+          const answers = messages.filter((x) => x.kind === 'answer' && x.about === m.about && x.action === 'confirm' && !x.candidateIds && typeof x.time === 'number');
+          assert.ok(values.length > 0 && answers.length > 0, 'the fixtures hold a value and an answer of the document');
+          for (const p of values) {
+            assert.ok(p.anchor?.attachmentId && p.anchor.page, 'every value names its page');
+            assert.ok(!p.grid && !p.column, 'never a grid or a column');
+            if (p.proposal) assert.deepStrictEqual([p.proposal.time % 86400, p.proposal.clientData?.hdsTimePrecision], [43200, 'day'], 'its day at 12:00 UTC');
+          }
+          for (const a of answers) assert.deepStrictEqual([a.time % 86400, a.timePrecision], [43200, 'day'], 'a full day at 12:00 UTC');
+        }
         if (m.context?.grid) assert.strictEqual(m.code, 'which-row-date', 'grid on which-row-date only');
         if (m.context?.column) assert.strictEqual(m.code, 'which-column-date', 'column on which-column-date only');
         // 4.47.0: a date not copied from a text layer is offered with its anchor and its box, else not at all; a picture
@@ -919,6 +946,29 @@ describe('[CNV] conversation', () => {
       const row = notices.split('\n').find((l) => l.startsWith('| `pages-not-read` |'));
       assert.match(row, /It does not end the work/);
       assert.match(row, /names no page and no date \(R6\)/);
+    });
+
+    it('[CNV-DOC-14] 4.49.0: a document dated per page, which-page-date in every table that lists the date codes', () => {
+      const text = fs.readFileSync(path.join(__dirname, '../documentation/CONVERSATION.md'), 'utf-8');
+      const flat = text.replace(/\s+/g, ' ');
+      const at = text.indexOf('### A document dated per page (4.49.0)');
+      assert.ok(at > text.indexOf('### A table read per column (4.39.0)') && at < text.indexOf('### Question codes'), 'after § A table read per column');
+      assert.ok(flat.includes('| `which-page-date` (4.49.0) | none | none | MUST: `anchor`, only | `confirm` (+ `time`, `timePrecision: day`), `skip` |'));
+      assert.ok(flat.includes('| a `which-page-date` question (4.49.0) | `confirm` | `time` (12:00 UTC of the day she gives for the question\'s page) and `timePrecision: day` |'));
+      assert.ok(flat.includes('| `question` `which-page-date` (4.49.0) | carry `context.anchor` with `attachmentId` and `page`, and no other context;'));
+      assert.ok(flat.includes('| `proposed-value` on a document with a `which-page-date` question (4.49.0) | carry `anchor` (`attachmentId`, `page`), never `grid` or `column`;'));
+      assert.ok(flat.includes('A page whose day the contact holds certain (printed on it in its text layer, or a page it holds to continue such a page) has its values proposed with that day in `proposal.time`; any other page that holds result lines is asked.'));
+      assert.ok(flat.includes('for each page that holds result lines and has no day the contact holds certain'));
+      assert.ok(flat.includes('**One candidate per record.** The record of R5 is the attachment, the page, the printed line (`section` and `label`) and the `itemKey`, never the day'));
+      assert.ok(flat.includes('her app refuses a day later than today'));
+      assert.ok(flat.includes('`counts.questions` counts each `which-page-date`'));
+      assert.ok(flat.includes('`which-row-date`, `which-column-date` or `which-page-date` answered or skipped'), 'R10');
+      assert.ok(flat.includes('or `which-page-date` (4.49.0) question, the day comes from `proposal.time` only'), '§ Writing a value');
+      assert.ok(flat.includes('she skipped its `which-page-date`'), 'pages-not-read');
+      assert.ok(flat.includes('one to `which-page-date`, that page\'s'));
+      assert.match(branch(schema, 'question').properties.code.description, /which-page-date/);
+      assert.match(branch(schema, 'question').properties.context.description, /which-page-date/);
+      assert.deepStrictEqual(branch(schema, 'question').properties.context.properties.anchor.required, ['attachmentId', 'page'], 'bbox optional: the whole page');
     });
 
     it('[CNV-DOC-4] reader-v1 is marked superseded, and its schema is unchanged in shape', () => {
