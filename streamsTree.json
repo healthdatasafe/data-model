@@ -1273,6 +1273,13 @@
   {
     "id": "documents",
     "name": "Medical documents",
+    "label": {
+      "en": "Medical documents",
+      "fr": "Documents médicaux",
+      "es": "Documentos médicos",
+      "it": "Documenti medici",
+      "pt-BR": "Documentos médicos"
+    },
     "description": {
       "en": "Every medical document you keep, filed or not: reports, letters, results, consents, advance directives, donor and emergency cards, images and administrative papers, including sensitive ones.",
       "fr": "Tous les documents médicaux que vous conservez, classés ou non : rapports, lettres, résultats, consentements, directives anticipées, cartes de donneur et d'urgence, images et papiers administratifs, y compris les plus sensibles.",
