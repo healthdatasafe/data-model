@@ -1,6 +1,99 @@
 {
   "formatVersion": 2,
   "streams": {
+    "activity-cycling": {
+      "pair": "Observation|activity",
+      "parent": "activity",
+      "items": [
+        "activity-cycling",
+        "activity-cycling-intensity"
+      ]
+    },
+    "activity-distance-walking-running": {
+      "pair": "Observation|activity",
+      "parent": "activity",
+      "items": [
+        "activity-distance-walking-running"
+      ]
+    },
+    "activity-duration-active": {
+      "pair": "Observation|activity",
+      "parent": "activity",
+      "items": [
+        "activity-duration-active"
+      ]
+    },
+    "activity-hiit": {
+      "pair": "Observation|activity",
+      "parent": "activity",
+      "items": [
+        "activity-hiit",
+        "activity-hiit-intensity"
+      ]
+    },
+    "activity-hiking": {
+      "pair": "Observation|activity",
+      "parent": "activity",
+      "items": [
+        "activity-hiking",
+        "activity-hiking-intensity"
+      ]
+    },
+    "activity-jogging": {
+      "pair": "Observation|activity",
+      "parent": "activity",
+      "items": [
+        "activity-jogging",
+        "activity-jogging-intensity"
+      ]
+    },
+    "activity-pilates": {
+      "pair": "Observation|activity",
+      "parent": "activity",
+      "items": [
+        "activity-pilates",
+        "activity-pilates-intensity"
+      ]
+    },
+    "activity-steps": {
+      "pair": "Observation|activity",
+      "parent": "activity",
+      "items": [
+        "activity-steps"
+      ]
+    },
+    "activity-stretching": {
+      "pair": "Observation|activity",
+      "parent": "activity",
+      "items": [
+        "activity-stretching",
+        "activity-stretching-intensity"
+      ]
+    },
+    "activity-swimming": {
+      "pair": "Observation|activity",
+      "parent": "activity",
+      "items": [
+        "activity-swimming",
+        "activity-swimming-intensity"
+      ]
+    },
+    "activity-weights": {
+      "pair": "Observation|activity",
+      "parent": "activity",
+      "items": [
+        "activity-weights",
+        "activity-weights-intensity"
+      ]
+    },
+    "activity-yoga": {
+      "pair": "Observation|activity",
+      "parent": "activity",
+      "items": [
+        "activity-yoga",
+        "activity-yoga-intensity"
+      ]
+    },
     "allergy": {
       "pair": "AllergyIntolerance",
       "parent": null,

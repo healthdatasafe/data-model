@@ -230,6 +230,65 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.strictEqual(find(pack.streams, 'body-temperature-basal').consentOptIn, undefined);
     });
 
+    it('[FHIR-ITEM-18] physical activity (plan 133): a session is 73985-4 with the sport as a fixed-coded value, the intensity as a 74008-4 component naming its presence twin; the daily totals are a day (effective.day); 21 blocks under Observation|activity', () => {
+      const SCT = 'http://snomed.info/sct';
+      const LOINC = 'http://loinc.org';
+      const ACT = 'https://hds.ngo/fhir/CodeSystem/activity';
+      const c = (system, code) => [system, code];
+      // design § 2 (V1): LA where LL734-5 has it, SNOMED where a fitting concept exists, the HDS activity system otherwise
+      const sports = {
+        yoga: [[c(SCT, '229224000')], []],
+        stretching: [[c(SCT, '53061000087100')], [c(SCT, '229070002')]],
+        pilates: [[c(SCT, '404928000')], []],
+        hiit: [[c(ACT, 'hiit')], []],
+        weights: [[c(LOINC, 'LA11839-0'), c(SCT, '6397004')], [c(SCT, '1386230000')]],
+        swimming: [[c(LOINC, 'LA11838-2'), c(SCT, '20461001')], []],
+        cycling: [[c(LOINC, 'LA11837-4'), c(SCT, '54391000087108')], []],
+        jogging: [[c(LOINC, 'LA11835-8'), c(SCT, '1968006')], [c(LOINC, 'LA11836-6')]],
+        hiking: [[c(ACT, 'hiking')], []]
+      };
+      const pairs = (list) => (list ?? []).map((x) => [x.system, x.code]);
+      const blocks = Object.entries(itemsById).filter(([, i]) => i.streamId?.startsWith('activity-') && i.fhir != null);
+      assert.strictEqual(blocks.length, 21);
+      for (const [sport, [codings, also]] of Object.entries(sports)) {
+        const presence = itemsById[`activity-${sport}`];
+        const intensity = itemsById[`activity-${sport}-intensity`];
+        for (const i of [presence, intensity]) {
+          assert.deepStrictEqual([i.fhir.resourceType, i.fhir.category], ['Observation', 'activity'], sport);
+          assert.deepStrictEqual(i.fhir.code, { system: LOINC, code: '73985-4', display: 'Exercise activity' }, sport);
+          assert.strictEqual(i.fhir.value.kind, 'fixed-coded');
+          assert.deepStrictEqual(pairs(i.fhir.value.codings), codings, sport);
+          assert.deepStrictEqual(pairs(i.fhir.value.alsoMatch), also, sport);
+          assert.deepStrictEqual(i.fhir.effective, { from: 'span' });
+          assert.deepStrictEqual(i.fhir.profiles, {});
+        }
+        assert.strictEqual(presence.deprecated, true);
+        assert.strictEqual(presence.fhir.value.component, undefined, `${sport}: the presence item has no component`);
+        assert.deepStrictEqual(intensity.fhir.value.component, {
+          absent: `activity-${sport}`,
+          code: { system: LOINC, code: '74008-4', display: 'Exercise intensity' },
+          options: {
+            0.25: { system: LOINC, code: 'LA20164-2', display: 'Light exercise intensity' },
+            0.5: { system: LOINC, code: 'LA20165-9', display: 'Moderate exercise intensity' },
+            1: { system: LOINC, code: 'LA20166-7', display: 'Vigorous exercise intensity' }
+          }
+        }, sport);
+      }
+      const day = { from: 'span', day: true };
+      const steps = itemsById['activity-steps'].fhir;
+      assert.deepStrictEqual(steps.code, { system: LOINC, code: '41950-7', display: 'Number of steps in 24 hour Measured' });
+      assert.deepStrictEqual([steps.value, steps.effective, steps.category], [{ kind: 'quantity', units: { 'count/steps': '/d' } }, day, 'activity']);
+      const dist = itemsById['activity-distance-walking-running'].fhir;
+      assert.deepStrictEqual(dist.code, { system: LOINC, code: '41953-1', display: 'Walking distance 24 hour Calculated' });
+      assert.deepStrictEqual(dist.alsoMatch, [{ system: LOINC, code: '93849-8', display: 'Exercise distance in 24 hour' }]);
+      assert.deepStrictEqual([dist.value, dist.effective], [{ kind: 'quantity', units: { 'length/m': 'm' } }, day]);
+      const active = itemsById['activity-duration-active'].fhir;
+      assert.deepStrictEqual(active.code, { system: 'https://hds.ngo/fhir/CodeSystem/item', code: 'activity-duration-active', display: 'Daily active time' });
+      assert.deepStrictEqual([active.value, active.effective], [{ kind: 'quantity', units: { 'time/s': 's' } }, day]);
+      // the 12 streams are the grant roots; the activity root holds no item and is never one
+      assert.deepStrictEqual(fhirScopes['Observation|activity'], [...Object.keys(sports).map((s) => `activity-${s}`), 'activity-steps', 'activity-distance-walking-running', 'activity-duration-active'].sort());
+    });
+
     it('[FHIR-ITEM-2] wellbeing-general-health: 5 levels, higher is better, LOINC answers on every option', () => {
       const gh = itemsById['wellbeing-general-health'];
       assert.strictEqual(gh.eventType, 'ratio/proportion');
@@ -445,6 +504,46 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => checkItem(g, 'o'), /fewer than 1 items/);
       g.fhir.alsoEmit = [{ system: 'http://loinc.org', code: '2708-6' }];
       assert.throws(() => checkItem(g, 'o'), /display/);
+    });
+
+    it('[FHIR-SCH-9] fixed-coded: codings (a non-empty list), an optional alsoMatch list and an optional component { absent, code, options }, nothing else; effective is { from: span } with an optional day: true (plan 133)', () => {
+      const s = () => item('activity-yoga-intensity');
+      checkItem(s(), 'y');
+      checkItem(item('activity-yoga'), 'y');
+      const a = s();
+      a.fhir.value.codings = [];
+      assert.throws(() => checkItem(a, 'y'), /fewer than 1 items/);
+      const b = s();
+      delete b.fhir.value.codings;
+      assert.throws(() => checkItem(b, 'y'), /must have required property 'codings'/);
+      const c = s();
+      c.fhir.value.alsoMatch = [];
+      assert.throws(() => checkItem(c, 'y'), /fewer than 1 items/);
+      const d = s();
+      delete d.fhir.value.component.absent;
+      assert.throws(() => checkItem(d, 'y'), /must have required property 'absent'/);
+      const e = s();
+      e.fhir.value.component.unit = '1';
+      assert.throws(() => checkItem(e, 'y'), /additional properties/);
+      const f = s();
+      f.fhir.value.options = {};
+      assert.throws(() => checkItem(f, 'y'), /additional properties/);
+      const g = s();
+      g.fhir.value.component.options = {};
+      assert.throws(() => checkItem(g, 'y'), /fewer than 1 properties/);
+      const h = s();
+      h.fhir.effective = { from: 'period' };
+      assert.throws(() => checkItem(h, 'y'), /allowed values/);
+      const i = s();
+      i.fhir.effective = { from: 'span', day: false };
+      assert.throws(() => checkItem(i, 'y'), /must be equal to constant/);
+      const j = s();
+      j.fhir.effective = { from: 'span', required: true };
+      assert.throws(() => checkItem(j, 'y'), /additional properties/);
+      const k = s();
+      k.fhir.effective = {};
+      assert.throws(() => checkItem(k, 'y'), /must have required property 'from'/);
+      checkItem(item('activity-steps'), 's');
     });
 
     it('[FHIR-SCH-4] a code source is `{ from: datasource, field }`, `{ from: eventType, codings }`, `{ from: content, field, translate, unknown }` or `{ from: text, field }` and nothing else', () => {
@@ -1112,6 +1211,94 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => checkFhirImportKeys({ a: { fhir: item('procedure-coded').fhir }, c: { fhir: { ...treat('treatment-coded').fhir, status: undefined } } }), /fhir import key Procedure from datasource is claimed by both/);
     });
 
+    it('[FHIR-MAP-29] fixed-coded (plan 133): a static code with no code alsoMatch, no HDS item coding as a value; without a component, an item with no content; with one, a select whose options are exactly the component\'s; every coding once in the item', () => {
+      const s = () => item('activity-weights-intensity');
+      const p = () => item('activity-weights');
+      check(s(), 'activity-weights-intensity');
+      check(p(), 'activity-weights');
+      // a value alsoMatch is now allowed on fixed-coded too, still refused on a quantity
+      const q = item('body-weight');
+      q.fhir.value.alsoMatch = [coding('9')];
+      assert.throws(() => check(q), /value.alsoMatch applies to value.kind "coded" or "fixed-coded" only/);
+      // the code is the family's question: no import-only code
+      const a = s();
+      a.fhir.alsoMatch = [coding('9')];
+      assert.throws(() => check(a), /the code is no import key, so the block takes no "alsoMatch"/);
+      // a resource with no value[x] refuses it before the kind is read
+      const b = s();
+      Object.assign(b.fhir, { resourceType: 'Condition', category: 'problem-list-item' });
+      delete b.fhir.effective;
+      assert.throws(() => check(b), /a Condition has no value\[x\]/);
+      // the HDS item coding names the item that carries it, never a value or a component option
+      const c = s();
+      c.fhir.value.codings = [coding('activity-hiit', 'https://hds.ngo/fhir/CodeSystem/item')];
+      assert.throws(() => check(c), /is the HDS item coding, which names the item that carries it, never a value/);
+      const c2 = s();
+      c2.fhir.value.component.options['1'] = coding('activity-weights-intensity', 'https://hds.ngo/fhir/CodeSystem/item');
+      assert.throws(() => check(c2), /is the HDS item coding/);
+      // no component: the item holds no content
+      const d = s();
+      delete d.fhir.value.component;
+      assert.throws(() => check(d), /without a component needs an item whose eventType holds no content \(activity\/plain\); "ratio\/proportion" does/);
+      // a component: a select item, its options exactly
+      const e = p();
+      e.fhir.value.component = structuredClone(s().fhir.value.component);
+      assert.throws(() => check(e), /with a component applies to "select" items only/);
+      const f = s();
+      delete f.fhir.value.component.options['1'];
+      assert.throws(() => check(f), /value.component.options keys vs the item options must match exactly; missing \[1\]/);
+      const g = s();
+      g.fhir.value.component.options['0'] = coding('LA0');
+      assert.throws(() => check(g), /unknown \[0\]/);
+      // every coding once: the code, the value codings, their alsoMatch, the component code and options
+      const h = s();
+      h.fhir.value.component.code = structuredClone(h.fhir.code);
+      assert.throws(() => check(h), /the coding http:\/\/loinc.org\|73985-4 appears more than once/);
+      const i = s();
+      i.fhir.value.alsoMatch.push(structuredClone(i.fhir.value.codings[0]));
+      assert.throws(() => check(i), /http:\/\/loinc.org\|LA11839-0 appears more than once/);
+      const j = s();
+      j.fhir.value.component.options['0.5'] = structuredClone(j.fhir.value.component.options['1']);
+      assert.throws(() => check(j), /LA20166-7 appears more than once/);
+    });
+
+    it('[FHIR-MAP-30] effective (plan 133): on an Observation only, never beside a split or a concept code; day: true exactly on an item whose duration is one day (mandatory, never null, maxSeconds <= 90000)', () => {
+      const a = item('condition-coded');
+      a.fhir.effective = { from: 'span' };
+      assert.throws(() => check(a), /"effective" applies to an Observation only/);
+      const bp = item('body-blood-pressure');
+      bp.fhir.effective = { from: 'span' };
+      assert.throws(() => check(bp), /"effective" and "split" do not go together/);
+      const lab = item('body-blood-coded');
+      check(lab);
+      lab.fhir.effective = { from: 'span' };
+      assert.throws(() => check(lab), /"effective" does not apply to a concept code \(lab-result\) block/);
+      const b = item('activity-steps');
+      check(b);
+      delete b.fhir.effective.day;
+      assert.throws(() => check(b), /an item whose duration is one day \(mandatory, never null, maxSeconds <= 90000\) needs "effective: \{ from: span, day: true \}"/);
+      delete b.fhir.effective;
+      assert.throws(() => check(b), /needs "effective: \{ from: span, day: true \}"/);
+      const c = item('activity-yoga-intensity');
+      c.fhir.effective.day = true;
+      assert.throws(() => check(c), /"effective.day" applies to an item whose duration is one day only/);
+      // a mandatory duration that is no day: a fertile window (up to 6 days), a pregnancy (null while running)
+      for (const k of ['fertility-cycles-fertile-window', 'fertility-pregnancy']) {
+        const steps = item('activity-steps');
+        const x = { ...steps, duration: itemsById[k].duration };
+        assert.strictEqual(x.duration.mandatory, true, k);
+        delete x.fhir.effective.day;
+        check(x);
+        x.fhir.effective.day = true;
+        assert.throws(() => check(x), /"effective.day" applies to an item whose duration is one day only/, k);
+      }
+      // an Observation without effective keeps its point date; with { from: span } it may state a period
+      const d = item('body-weight');
+      check(d);
+      d.fhir.effective = { from: 'span' };
+      check(d);
+    });
+
     it('[FHIR-MAP-26] a QuestionnaireResponse block: resourceType and profiles only (no code, no category, no value), on a system item whose one eventType holds requestEventId and answers; one item maps the resourceType (plan 115)', () => {
       const qr = () => item('questionnaire-answer');
       checkItem(qr(), 'questionnaire-answer');
@@ -1646,6 +1833,50 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       checkFhirImportKeys(itemsById);
     });
 
+    it('[FHIR-SCOPE-26] fixed-coded families (plan 133): the named presence twin, one component per stream, one category per shared code, the shared code never an import key, the value codings the keys', () => {
+      const { checkFhirImportKeys } = require('../src/fhir');
+      const fixed = (codings, value = {}, block = {}) => ({ resourceType: 'Observation', category: 'activity', code: coding('Q'), value: { kind: 'fixed-coded', codings, ...value }, profiles: {}, ...block });
+      const component = (absent) => ({ absent, code: coding('I'), options: { 0.5: coding('LA1'), 1: coding('LA2') } });
+      const presence = (streamId, codings, value, block, extra = {}) => it_(streamId, fixed(codings, value, block), { eventType: 'activity/plain', deprecated: true, ...extra });
+      const intensity = (streamId, codings, absent, value = {}) => it_(streamId, fixed(codings, { ...value, component: component(absent) }), { eventType: 'ratio/proportion' });
+      const family = { ia: intensity('body-a', [coding('A')], 'pa'), pa: presence('body-a', [coding('A')]), ib: intensity('body-b', [coding('B')], 'pb', { alsoMatch: [coding('B2')] }), pb: presence('body-b', [coding('B')], { alsoMatch: [coding('B2')] }) };
+      // two sports, two grant roots; the deprecated twins are counted with their mapping
+      assert.deepStrictEqual(run(family), { 'Observation|activity': ['body-a', 'body-b'] });
+      // the twin: an item, not the item itself, on the same stream, activity/plain, a fixed-coded block without a component, same code, category, codings, alsoMatch
+      assert.throws(() => run({ ...family, ia: intensity('body-a', [coding('A')], 'nope') }), /item "ia" fhir: value.component.absent "nope": no such item/);
+      assert.throws(() => run({ ...family, ia: intensity('body-a', [coding('A')], 'ia') }), /value.component.absent "ia" is the item itself/);
+      assert.throws(() => run({ ...family, ia: intensity('body-a', [coding('A')], 'pb') }), /value.component.absent "pb" is on stream "body-b", not on "body-a"/);
+      assert.throws(() => run({ ...family, pa: presence('body-a', [coding('A')], {}, {}, { eventType: 'ratio/proportion' }) }), /value.component.absent "pa" has eventType "ratio\/proportion": the presence twin is "activity\/plain"/);
+      assert.throws(() => run({ ...family, pa: presence('body-a', [coding('A')], { component: component('ia') }) }), /value.component.absent "pa" must carry a fixed-coded block without a component/);
+      assert.throws(() => run({ ...family, pa: it_('body-a', obs('activity', 'P'), { eventType: 'activity/plain', deprecated: true }) }), /value.component.absent "pa" must carry a fixed-coded block without a component/);
+      assert.throws(() => run({ ...family, pa: presence('body-a', [coding('A')], {}, { code: coding('Q2') }) }), /value.component.absent "pa" must carry the same code and category/);
+      assert.throws(() => run({ ...family, pa: presence('body-a', [coding('A'), coding('A3')]) }), /value.component.absent "pa" must carry the same value.codings and value.alsoMatch/);
+      assert.throws(() => run({ ...family, pb: presence('body-b', [coding('B')]) }), /value.component.absent "pb" must carry the same value.codings and value.alsoMatch/);
+      assert.throws(() => run({ ...family, pa: presence('body-a', [coding('A')], {}, { effective: { from: 'span' } }) }), /value.component.absent "pa" must carry the same "effective"/);
+      run({ ...family, ia: it_('body-a', fixed([coding('A')], { component: component('pa') }, { effective: { from: 'span' } }), { eventType: 'ratio/proportion' }), pa: presence('body-a', [coding('A')], {}, { effective: { from: 'span' } }) });
+      // one item with a component per stream
+      assert.throws(() => run({ ...family, ia2: intensity('body-a', [coding('A4')], 'pa') }), /stream "body-a" already holds "ia", a fixed-coded block with a component: one per stream/);
+      // every block sharing the code has one category
+      assert.throws(() => run({ ...family, m: presence('mood', [coding('M')], {}, { category: 'survey' }) }), /item "m" fhir: the fixed-coded code http:\/\/loinc.org\|Q is "ia"'s under category "activity": every block sharing it has one category/);
+      // the shared code is never an import key: a static code, an alsoMatch, an active item only
+      assert.throws(() => checkFhirImportKeys({ ...family, o: { fhir: obs('activity', 'Q') } }, tree), /fhir import key Observation http:\/\/loinc.org\|Q of "o" is the fixed-coded code of "(ia|pa|ib|pb)"/);
+      assert.throws(() => checkFhirImportKeys({ ...family, o: { fhir: { ...obs('activity', 'O'), alsoMatch: [coding('Q')] } } }, tree), /fhir import key Observation http:\/\/loinc.org\|Q of "o" is the fixed-coded code/);
+      checkFhirImportKeys({ ...family, o: { fhir: obs('activity', 'Q'), deprecated: true } }, tree);
+      // the value codings are the keys: unique across the family, alsoMatch included
+      assert.throws(() => checkFhirImportKeys({ ...family, ib: intensity('body-b', [coding('A')], 'pb'), pb: presence('body-b', [coding('A')]) }, tree), /fhir import key Observation http:\/\/loinc.org\|Q value http:\/\/loinc.org\|A is claimed by both "ia" and "ib"/);
+      assert.throws(() => checkFhirImportKeys({ ...family, ib: intensity('body-b', [coding('B')], 'pb', { alsoMatch: [coding('A')] }), pb: presence('body-b', [coding('B')], { alsoMatch: [coding('A')] }) }, tree), /value http:\/\/loinc.org\|A is claimed by both "ia" and "ib"/);
+      // the named twin claims nothing, deprecated or not (the item with the component claims for both); any other
+      // component-less block claims its own value keys when active, nothing when deprecated
+      checkFhirImportKeys({ ...family, pa: presence('body-a', [coding('A')], {}, {}, { deprecated: false }) }, tree);
+      assert.throws(() => checkFhirImportKeys({ ...family, s: { fhir: fixed([coding('A')]) } }, tree), /value http:\/\/loinc.org\|A is claimed by both "ia" and "s"/);
+      checkFhirImportKeys({ ...family, s: { fhir: fixed([coding('A')]), deprecated: true } }, tree);
+      // the same value under another shared code is another key
+      checkFhirImportKeys({ ...family, r: { fhir: fixed([coding('A')], {}, { code: coding('R') }) } }, tree);
+      // the model: 73985-4 is no import key, each sport's codings are
+      checkFhirImportKeys(itemsById);
+      assert.ok(Object.values(itemsById).every((i) => i.fhir?.value?.kind === 'fixed-coded' || i.fhir?.code?.code !== '73985-4'));
+    });
+
     it('[FHIR-SCOPE-11] the model\'s table; the committed lock is up to date (run npm run fhir:lock)', () => {
       const labBlocks = Object.entries(itemsById).filter(([, i]) => i.fhir?.category === 'laboratory');
       // 135 active items, plus the two legacy urine-hormone items (LH, PdG) whose stream is their replacement's. The
@@ -1660,6 +1891,7 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         'DocumentReference|clinical-note': ['documents'],
         MedicationRequest: ['medication-prescription'],
         MedicationStatement: ['medication-intake'],
+        'Observation|activity': ['activity-cycling', 'activity-distance-walking-running', 'activity-duration-active', 'activity-hiit', 'activity-hiking', 'activity-jogging', 'activity-pilates', 'activity-steps', 'activity-stretching', 'activity-swimming', 'activity-weights', 'activity-yoga'],
         'Observation|laboratory': lab,
         'Observation|social-history': ['lifestyle-tobacco-smoking'],
         'Observation|survey': ['wellbeing-general-health'],
@@ -1669,6 +1901,10 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         Questionnaire: ['questionnaire-request'],
         QuestionnaireResponse: ['questionnaire-answer']
       });
+      // physical activity (plan 133): the 12 streams are grant roots, each with its items; the root holds none and is not locked
+      assert.deepStrictEqual(readLock().streams['activity-yoga'], { pair: 'Observation|activity', parent: 'activity', items: ['activity-yoga', 'activity-yoga-intensity'] });
+      assert.deepStrictEqual(readLock().streams['activity-steps'], { pair: 'Observation|activity', parent: 'activity', items: ['activity-steps'] });
+      assert.strictEqual(readLock().streams.activity, undefined);
       // each of the two streams is a grant of its own, under its own pair; the root above them is in no grant
       assert.deepStrictEqual(readLock().streams['questionnaire-answer'], { pair: 'QuestionnaireResponse', parent: 'questionnaire', items: ['questionnaire-answer'] });
       assert.deepStrictEqual(readLock().streams['questionnaire-request'], { pair: 'Questionnaire', parent: 'questionnaire', items: ['questionnaire-request'] });

@@ -1,5 +1,52 @@
 # Changelog
 
+## [4.42.0] - 2026-11-27
+
+### Added: physical activity in FHIR (plan 133, DESIGN-ACTIVITY.md v2)
+
+Additive in the pack. **Release order: renderer first.** The hds-fhir-js release that knows `fixed-coded` and
+`effective` goes out before this pack, then the facade pin, then each core's extension options: the blocks add 12
+streams to `Observation|activity`, so a facade `category=activity` search under an older library would scan their
+events and drop them. Until this pack is published, that release's `check:pack` against the published pack is red.
+
+- **21 FHIR blocks** (`definitions/items/activity.yaml`), all `Observation|activity`, no profile claimed:
+  - **A session** (yoga, stretching, pilates, HIIT, weights, swimming, cycling, jogging, hiking; the deprecated
+    presence item and the `-intensity` item of each) is LOINC `73985-4` "Exercise activity" with the sport as the
+    value (S2). Sport codings (V1): the LL734-5 answer where there is one, then SNOMED CT: yoga `229224000`,
+    stretching `53061000087100` (`229070002` import only), pilates `404928000`, weights `LA11839-0` + `6397004`
+    (`1386230000` Weightlifting import only), swimming `LA11838-2` + `20461001`, cycling `LA11837-4` +
+    `54391000087108`, jogging `LA11835-8` + `1968006` (`LA11836-6` Running import only); HIIT and hiking take the new
+    HDS code system `https://hds.ngo/fhir/CodeSystem/activity` (`hiit`, `hiking`), permanent once shipped. The
+    intensity item adds a `74008-4` "Exercise intensity" component, its options `LA20164-2` / `LA20165-9` /
+    `LA20166-7`.
+  - **The daily totals:** `activity-steps` `41950-7` in `/d`, `activity-distance-walking-running` `41953-1` in `m`
+    (`93849-8` "Exercise distance in 24 hour" import only), `activity-duration-active` the HDS item coding in `s`.
+- **New value kind `fixed-coded`** (`codings`, value `alsoMatch`, optional `component { absent, code, options }`):
+  the item is the answer to a question its family shares. **New block field `effective`** (`{ from: span }`,
+  optional `day: true`): an Observation's date from the event's span, `day: true` for an event that is one local day
+  (23 to 25 h, exact start and end), required exactly on an item whose duration is one day (mandatory, never null,
+  `maxSeconds` at most 90000).
+- **Build checks** (`src/fhir.js`): `fixed-coded` on an Observation with a static code and no code `alsoMatch`, no HDS
+  item coding as a value, a component only on a `select` item with exactly its options; without a component, an item
+  whose eventType holds no content; the named presence twin on the same stream, `activity/plain`, with the same code,
+  category, codings, `alsoMatch` and `effective`; one component per stream; one category per shared code; the shared
+  code never an import key of any item; import keys by value (`<resourceType> <code> value <coding>`), claimed by the
+  intensity item for itself and its twin. `effective` on an Observation only, never beside a `split` or a `concept`
+  code; `day` exactly when the duration is one day.
+- **Import (P1):** a session without the 74008-4 component imports into the presence item, the one deprecated import
+  target, named by `component.absent` (FHIR-MAPPING.md § Import states the exception). The PA IG never states
+  intensity, so every IG-shaped session imports into the presence item.
+- **Now refused, no longer served:** an intensity event whose value is not 0.25, 0.5 or 1, and a daily total whose span
+  is outside 23 to 25 h (a partial "today", for example), used to render as a generic Observation; with the blocks
+  they are refused, not served.
+- **`pack.fhirScopes['Observation|activity']`**: the 12 `activity-*` streams, each its own grant root (the `activity`
+  root holds no item). Not opt-in. `definitions/fhir/scopes.lock.json` locks them with their 21 items, for good.
+- FHIR-MAPPING.md (Physical activity, the block table, the activity code system, Value kinds, Import, Forward
+  compatibility, Build checks); PHYSICAL-ACTIVITY.md (the SNOMED table corrected against the International Edition
+  20260201: `229033006` was a radioisotope scan, five codes were not in it; the PA IG paragraph rewritten; HDS
+  rendering; Design Decisions for the `-intensity` items). The `activity-distance-walking-running` devNotes now name
+  `112427-0` (point in time) and `93849-8`.
+
 ## [4.41.0] - 2026-11-26
 
 ### Added: body temperature as an opt-in vital sign (plan 133, DESIGN-BODY-TEMP.md v2)
