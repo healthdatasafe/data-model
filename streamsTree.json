@@ -897,7 +897,7 @@
                   "fr": "Observation de la glaire cervicale",
                   "es": "Observación del moco cervical",
                   "it": "Osservazione del muco cervicale",
-                  "pt-BR": "Inspeção do muco vulvar"
+                  "pt-BR": "Observação do muco cervical"
                 },
                 "parentId": "body-vulva-mucus"
               },
@@ -909,7 +909,7 @@
                   "fr": "Filance de la glaire cervicale",
                   "es": "Extensibilidad del moco cervical",
                   "it": "Elasticità del muco cervicale",
-                  "pt-BR": "Elasticidade do muco vulvar"
+                  "pt-BR": "Elasticidade do muco cervical"
                 },
                 "parentId": "body-vulva-mucus"
               }

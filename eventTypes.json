@@ -6346,6 +6346,58 @@
         "imperial"
       ]
     },
+    "settings/preferred-display": {
+      "description": "One display preference of the user, written by hds-lib HDSSettings for the dynamic setting key 'preferred-display-<itemKey>': one event per itemKey on the application's baseStream, updated in place and deleted when the preference is cleared. The value's shape is owned by the app that sets it (a converter method id, a flag, an object of view preferences), so it is not enforced here. The envelope is closed on purpose, since it is hds-lib's own and hds-lib writes exactly these two keys, unlike the app-owned settings types (settings/hds-react-timeline, settings/hds-webapp-diary) kept open.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "itemKey",
+        "value"
+      ],
+      "properties": {
+        "itemKey": {
+          "description": "The setting key after the 'preferred-display-' prefix: an item key (body-vulva-mucus-inspect) or an app-defined view key (cervical-cycle, timeline).",
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "description": "The preference, any JSON value but null (a null clears the setting, which deletes the event).",
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array"
+          ]
+        }
+      }
+    },
+    "settings/preferred-input": {
+      "description": "One input preference of the user, written by hds-lib HDSSettings for the dynamic setting key 'preferred-input-<itemKey>': one event per itemKey on the application's baseStream, updated in place and deleted when the preference is cleared. The value's shape is owned by the app that sets it (an input method, a unit, an object of input choices), so it is not enforced here. The envelope is closed on purpose, since it is hds-lib's own and hds-lib writes exactly these two keys, unlike the app-owned settings types (settings/hds-react-timeline, settings/hds-webapp-diary) kept open.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "itemKey",
+        "value"
+      ],
+      "properties": {
+        "itemKey": {
+          "description": "The setting key after the 'preferred-input-' prefix: an item key (wellbeing-mood, body-weight) or a converter model key.",
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "description": "The preference, any JSON value but null (a null clears the setting, which deletes the event).",
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array"
+          ]
+        }
+      }
+    },
     "settings/hds-react-timeline": {
       "description": "Per-user timeline view settings for the hds-react-timeline component, held as a single recurring event on the webapp-settings app stream and updated in place. The shape is owned by hds-react-timeline (its TimelineSettings interface), not by this model, so the known keys below are documented rather than enforced: no 'required', and additional properties are permitted on purpose. Tightening this would make every new setting the component adds unwritable until the model is republished.",
       "type": "object",
@@ -9436,7 +9488,7 @@
           ],
           "properties": {
             "label": {
-              "description": "The test name, by language; 'en' is required.",
+              "description": "The test name, by language: keys are BCP 47 language tags in canonical case, language[-Script][-REGION] (en, fr, es, it, pt-BR, de, zh-Hant, es-419); 'en' is required. Packs before this one accept en, fr and es only.",
               "type": "object",
               "additionalProperties": false,
               "required": [
@@ -9446,12 +9498,10 @@
                 "en": {
                   "type": "string",
                   "minLength": 1
-                },
-                "fr": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "es": {
+                }
+              },
+              "patternProperties": {
+                "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$": {
                   "type": "string",
                   "minLength": 1
                 }
