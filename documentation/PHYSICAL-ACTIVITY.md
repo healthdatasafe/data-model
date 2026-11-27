@@ -60,7 +60,7 @@ LL734-5 has no yoga, pilates, stretching, HIIT or hiking: SNOMED CT stands besid
 
 Every activity item maps to `Observation|activity` (FHIR-MAPPING.md, "Physical activity"). A session, presence or
 intensity, is one Observation coded 73985-4 whose `valueCodeableConcept` is the sport (`fixed-coded`): the LA code
-first where LL734-5 has one, then SNOMED CT, and for HIIT and hiking, which no terminology has, the HDS code system
+first where LL734-5 has one, then SNOMED CT, and for HIIT and hiking, which have no LL734-5 answer and no SNOMED CT concept, the HDS code system
 `https://hds.ngo/fhir/CodeSystem/activity` (`hiit`, `hiking`). The intensity item adds one component, 74008-4 with
 its LL2553-7 answer (Light `LA20164-2`, Moderate `LA20165-9`, Vigorous `LA20166-7`), HDS's choice, so no PA profile is
 claimed. A session with a duration states it as `effectivePeriod`. Import only: Running into `activity-jogging`,

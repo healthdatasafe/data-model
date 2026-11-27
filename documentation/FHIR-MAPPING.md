@@ -295,7 +295,7 @@ A block is a **mapping** (below), a **companion**, `{ companionOf: <item key> }`
 | `ignore` | no | Composite fields deliberately left out of the FHIR rendering. |
 | `dosage` | on a medication | `{ field, doseUnits, routes }`: the regimen as a FHIR `Dosage` ([medications](#medications-medicationstatement-and-medicationrequest)). Required on a `MedicationStatement` or `MedicationRequest`, refused elsewhere. |
 | `status` | on a treatment | `{ from: span }`: a Procedure's status from the event's span ([treatments](#treatments-procedure-over-a-period)). Required on a Procedure item whose `duration` may be null, refused elsewhere. |
-| `effective` | on a daily total | `{ from: span }`, optional `day: true` (plan 133, physical activity): an Observation's date from the event's span. A positive `duration` renders `effectivePeriod` (`start` at `time`, `end` at `time + duration`, each in the event's zone and precision), no duration or 0 `effectiveDateTime` as without the field; a `duration: null` (still running) is refused, and so is an `unknown` date with a duration. `day: true`: the event is one local day, so a period of 82800 to 90000 s (23 to 25 h, the DST days) with an exact start and end, and nothing else, on render and on import. On an Observation only; `day: true` is required exactly on an item whose duration is mandatory. On import, `effectivePeriod.end` becomes the `duration`, on such a block only. A renderer that knows the field refuses an `effective` shape it does not know. |
+| `effective` | no; on an Observation (the 18 session blocks), `day: true` on a daily total | `{ from: span }`, optional `day: true` (plan 133, physical activity): an Observation's date from the event's span. A positive `duration` renders `effectivePeriod` (`start` at `time`, `end` at `time + duration`, each in the event's zone and precision), no duration or 0 `effectiveDateTime` as without the field; a `duration: null` (still running) is refused, and so is an `unknown` date with a duration. `day: true`: the event is one local day, so a period of 82800 to 90000 s (23 to 25 h, the DST days) with an exact start and end, and nothing else, on render and on import. On an Observation only, never beside a `split` or a `concept` code; `day: true` is required exactly on an item whose duration is one day (`mandatory`, `canBeNull: false`, `maxSeconds` at most 90000), and refused elsewhere (a fertile window of up to 6 days, a pregnancy still running). On import, `effectivePeriod.end` becomes the `duration`, on such a block only. A renderer that knows the field refuses an `effective` shape it does not know. |
 | `profiles` | yes | Profile per flavour; `{}` claims none (below). |
 
 **Codings** always have a canonical system URI (`http://loinc.org`, `http://snomed.info/sct`), never a label, a
@@ -404,8 +404,8 @@ content (`from: concept`, a lab result with no item of its own).
   (Observation, laboratory), one per specimen, and nothing in a resource states the specimen for sure, so the
   importer is told the item (§ Import). Since 4.31.0.
 
-**The HDS activity code system** (plan 133): `https://hds.ngo/fhir/CodeSystem/activity`, for a sport no terminology
-codes, as a `fixed-coded` value ([Value kinds](#value-kinds)): `hiit` "High-intensity interval training" and `hiking`
+**The HDS activity code system** (plan 133): `https://hds.ngo/fhir/CodeSystem/activity`, for a sport with no LL734-5
+answer and no SNOMED CT concept, as a `fixed-coded` value ([Value kinds](#value-kinds)): `hiit` "High-intensity interval training" and `hiking`
 "Hiking". Not the item system: the item coding names the item that carries it (the generic rendering's code and the
 `meta.tag` the importer routes by), and a sport is shared by a presence item and its intensity item. *Permanent:* a
 code once shipped is a wire value, never renamed; codes are added when a sport needs one.
@@ -549,7 +549,7 @@ The rules (`src/fhir.js`, `checkFixedCoded`, `checkFixedCodedFamilies`, `checkFh
   eventType holds no content. No coding is the HDS item coding, and every coding (the code, the value codings, their
   `alsoMatch`, the component code and options) appears once in the item.
 - `component.absent` names the **presence twin**: another item on the same stream, eventType `activity/plain`, whose
-  block is `fixed-coded` without a component, with the same code, category, `codings` and `alsoMatch`. Per stream, at
+  block is `fixed-coded` without a component, with the same code, category, `codings`, `alsoMatch` and `effective`. Per stream, at
   most one item carries a component (so one twin). The item with the component claims the value keys for both; a
   resource without the component, or with it stated absent, imports into the twin ([Import](#import)).
 
@@ -1785,7 +1785,9 @@ plan 133):** a `fixed-coded` block is matched by its code **and** its value: an 
 component holding one of the item's option codings it imports into the intensity item, content the option value; with
 no such component, or one stated absent (`dataAbsentReason`), it imports into the item that component's `absent`
 names, the deprecated presence item, content `null`. Presence-only sources (Mira) keep writing the presence item, so
-its export must come back as presence, never as an intensity: the component decides. The twin is named by the block
+its export must come back as presence, never as an intensity: the component decides. The PA IG never states
+intensity, so every IG-shaped session imports into the presence item, for good; "deprecated" here means hidden from
+pickers only. The twin is named by the block
 (hds-fhir-js `importMappings` includes it), never inferred, and the build allows it only on the stream of its intensity
 item, with the same code and value codings. Refused: a 74008-4 coding that is not an option, a value naming two
 sports or none (Walking, Mixed), any other component (55411-3, calories), a category other than `activity`. The PA IG's
@@ -2041,11 +2043,12 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
   content; with one, a `select` whose options are exactly the component's keys; every coding once in the item. With
   every item loaded: one category per shared code; per stream at most one item with a component; `component.absent`
   names the presence twin (same stream, `activity/plain`, a component-less `fixed-coded` block, same code, category,
-  `codings` and `alsoMatch`). Import keys: each value and value `alsoMatch` coding, under the code, claimed by the item
+  `codings`, `alsoMatch` and `effective`). Import keys: each value and value `alsoMatch` coding, under the code, claimed by the item
   with the component for itself and its twin (the twin claims nothing); the shared code is never an import key of any
   item.
-- **effective (`[FHIR-MAP-30]`):** on an Observation only; `day: true` exactly on an Observation item whose duration is
-  mandatory.
+- **effective (`[FHIR-MAP-30]`):** on an Observation only, never beside a `split` or a `concept` code; `day: true`
+  exactly on an Observation item whose duration is one day (`mandatory`, `canBeNull: false`, `maxSeconds` at most
+  90000).
 - **eventType codings (`[FHIR-MAP-23]`):** at least two distinct codings; two eventTypes may share one, with one
   display, on an item that asserts `references.loinc` only; a shared coding is still never an `alsoMatch` of the
   block. **An HDS item coding** (static or per eventType) is the item's own key, a deprecated alias aside.

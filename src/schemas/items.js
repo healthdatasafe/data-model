@@ -396,8 +396,8 @@ const defsSchema = {
         },
         // Where an Observation's date comes from: the event's span, `effectivePeriod` when it has a positive duration,
         // else `effectiveDateTime`. `day: true`: the event is one local day (a daily total), so a period of 23 to 25 h
-        // with exact start and end, and nothing else. Required with `day` exactly on an item whose duration is
-        // mandatory. FHIR-MAPPING.md § The block, field by field.
+        // with exact start and end, and nothing else. Required with `day` exactly on an item whose duration is one
+        // day (mandatory, never null, maxSeconds <= 90000). FHIR-MAPPING.md § The block, field by field.
         effective: {
           type: 'object',
           properties: {

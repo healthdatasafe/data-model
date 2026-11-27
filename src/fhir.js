@@ -534,16 +534,23 @@ function checkFixedCoded (item, f, itemEventTypes, fail, sameSet) {
 
 /**
  * `effective: { from: span }` (plan 133 activity): an Observation's date from the event's span, `effectivePeriod` for a
- * positive duration. On an Observation only. `day: true` marks an event that is one local day (a daily total): it is
- * required exactly on an Observation item whose duration is mandatory, so a renderer never states a 1 h or a 7 d event
- * under a "24 hour" code.
+ * positive duration. On an Observation only, never beside a `split` or a concept code (hds-fhir-js skips such a block).
+ * `day: true` marks an event that is one local day (a daily total): it is required exactly on an Observation item
+ * whose duration is one day (mandatory, never null, `maxSeconds` at most 90000), so a renderer never states a 1 h or a
+ * 7 d event under a "24 hour" code; a mandatory duration of another kind (a fertile window of up to 6 days, a
+ * pregnancy still running) is no day.
  */
 function checkEffective (item, f, fail) {
   if (f.effective != null && f.resourceType !== 'Observation') fail('"effective" applies to an Observation only (effectiveDateTime or effectivePeriod)');
   if (f.resourceType !== 'Observation') return;
-  const mandatory = item.duration?.mandatory === true;
-  if (mandatory && f.effective?.day !== true) fail('an item whose duration is mandatory (one event per day) needs "effective: { from: span, day: true }"');
-  if (!mandatory && f.effective?.day === true) fail('"effective.day" applies to an item whose duration is mandatory (one event per day) only');
+  // hds-fhir-js `isSupported` refuses `effective` beside these two, so a block carrying both would never render.
+  if (f.effective != null && f.split != null) fail('"effective" and "split" do not go together (a renderer skips such a block)');
+  if (f.effective != null && f.code.from === 'concept') fail('"effective" does not apply to a concept code (lab-result) block (a renderer skips such a block)');
+  // A daily total: a mandatory, never-null duration of at most one day plus the DST hour.
+  const d = item.duration;
+  const isDay = d?.mandatory === true && d.canBeNull === false && typeof d.maxSeconds === 'number' && d.maxSeconds <= 90000;
+  if (isDay && f.effective?.day !== true) fail('an item whose duration is one day (mandatory, never null, maxSeconds <= 90000) needs "effective: { from: span, day: true }"');
+  if (!isDay && f.effective?.day === true) fail('"effective.day" applies to an item whose duration is one day only (mandatory, never null, maxSeconds <= 90000)');
 }
 
 /**
@@ -1071,7 +1078,7 @@ function checkFhirScopes (items, { roots = streams.roots, lock = readLock() } = 
  *   (checkFhirImportKeys), and the value names the item;
  * - per stream, at most one item carries a component;
  * - the component's `absent` names the presence twin: another item on the same stream, eventType `activity/plain`,
- *   whose block is `fixed-coded` without a component, with the same code, category, codings and alsoMatch. A resource
+ *   whose block is `fixed-coded` without a component, with the same code, category, codings, alsoMatch and effective. A resource
  *   without the component imports into it, deprecated or not: the one deprecated import target.
  */
 function checkFixedCodedFamilies (items) {
@@ -1100,6 +1107,7 @@ function checkFixedCodedFamilies (items) {
     if (t?.value?.kind !== 'fixed-coded' || t.value.component != null) fail(`${at} must carry a fixed-coded block without a component`);
     if (!isDeepStrictEqual(t.code, f.code) || t.category !== f.category) fail(`${at} must carry the same code and category`);
     if (!isDeepStrictEqual(t.value.codings, f.value.codings) || !isDeepStrictEqual(t.value.alsoMatch ?? [], f.value.alsoMatch ?? [])) fail(`${at} must carry the same value.codings and value.alsoMatch`);
+    if (!isDeepStrictEqual(t.effective, f.effective)) fail(`${at} must carry the same "effective"`);
   }
 }
 

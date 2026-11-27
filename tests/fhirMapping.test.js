@@ -1262,19 +1262,36 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => check(j), /LA20166-7 appears more than once/);
     });
 
-    it('[FHIR-MAP-30] effective (plan 133): on an Observation only; day: true exactly on an item whose duration is mandatory (a daily total)', () => {
+    it('[FHIR-MAP-30] effective (plan 133): on an Observation only, never beside a split or a concept code; day: true exactly on an item whose duration is one day (mandatory, never null, maxSeconds <= 90000)', () => {
       const a = item('condition-coded');
       a.fhir.effective = { from: 'span' };
       assert.throws(() => check(a), /"effective" applies to an Observation only/);
+      const bp = item('body-blood-pressure');
+      bp.fhir.effective = { from: 'span' };
+      assert.throws(() => check(bp), /"effective" and "split" do not go together/);
+      const lab = item('body-blood-coded');
+      check(lab);
+      lab.fhir.effective = { from: 'span' };
+      assert.throws(() => check(lab), /"effective" does not apply to a concept code \(lab-result\) block/);
       const b = item('activity-steps');
       check(b);
       delete b.fhir.effective.day;
-      assert.throws(() => check(b), /an item whose duration is mandatory \(one event per day\) needs "effective: \{ from: span, day: true \}"/);
+      assert.throws(() => check(b), /an item whose duration is one day \(mandatory, never null, maxSeconds <= 90000\) needs "effective: \{ from: span, day: true \}"/);
       delete b.fhir.effective;
       assert.throws(() => check(b), /needs "effective: \{ from: span, day: true \}"/);
       const c = item('activity-yoga-intensity');
       c.fhir.effective.day = true;
-      assert.throws(() => check(c), /"effective.day" applies to an item whose duration is mandatory/);
+      assert.throws(() => check(c), /"effective.day" applies to an item whose duration is one day only/);
+      // a mandatory duration that is no day: a fertile window (up to 6 days), a pregnancy (null while running)
+      for (const k of ['fertility-cycles-fertile-window', 'fertility-pregnancy']) {
+        const steps = item('activity-steps');
+        const x = { ...steps, duration: itemsById[k].duration };
+        assert.strictEqual(x.duration.mandatory, true, k);
+        delete x.fhir.effective.day;
+        check(x);
+        x.fhir.effective.day = true;
+        assert.throws(() => check(x), /"effective.day" applies to an item whose duration is one day only/, k);
+      }
       // an Observation without effective keeps its point date; with { from: span } it may state a period
       const d = item('body-weight');
       check(d);
@@ -1835,6 +1852,8 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => run({ ...family, pa: presence('body-a', [coding('A')], {}, { code: coding('Q2') }) }), /value.component.absent "pa" must carry the same code and category/);
       assert.throws(() => run({ ...family, pa: presence('body-a', [coding('A'), coding('A3')]) }), /value.component.absent "pa" must carry the same value.codings and value.alsoMatch/);
       assert.throws(() => run({ ...family, pb: presence('body-b', [coding('B')]) }), /value.component.absent "pb" must carry the same value.codings and value.alsoMatch/);
+      assert.throws(() => run({ ...family, pa: presence('body-a', [coding('A')], {}, { effective: { from: 'span' } }) }), /value.component.absent "pa" must carry the same "effective"/);
+      run({ ...family, ia: it_('body-a', fixed([coding('A')], { component: component('pa') }, { effective: { from: 'span' } }), { eventType: 'ratio/proportion' }), pa: presence('body-a', [coding('A')], {}, { effective: { from: 'span' } }) });
       // one item with a component per stream
       assert.throws(() => run({ ...family, ia2: intensity('body-a', [coding('A4')], 'pa') }), /stream "body-a" already holds "ia", a fixed-coded block with a component: one per stream/);
       // every block sharing the code has one category

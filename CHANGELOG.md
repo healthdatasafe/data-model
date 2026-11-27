@@ -24,15 +24,21 @@ events and drop them. Until this pack is published, that release's `check:pack` 
 - **New value kind `fixed-coded`** (`codings`, value `alsoMatch`, optional `component { absent, code, options }`):
   the item is the answer to a question its family shares. **New block field `effective`** (`{ from: span }`,
   optional `day: true`): an Observation's date from the event's span, `day: true` for an event that is one local day
-  (23 to 25 h, exact start and end), required exactly on an item whose duration is mandatory.
+  (23 to 25 h, exact start and end), required exactly on an item whose duration is one day (mandatory, never null,
+  `maxSeconds` at most 90000).
 - **Build checks** (`src/fhir.js`): `fixed-coded` on an Observation with a static code and no code `alsoMatch`, no HDS
-  item coding as a value, a component only on a `select` item with exactly its options, none on an item with content;
-  the named presence twin on the same stream, `activity/plain`, with the same code, category, codings and
-  `alsoMatch`; one component per stream; one category per shared code; the shared code never an import key of any
-  item; import keys by value (`<resourceType> <code> value <coding>`), claimed by the intensity item for itself and its
-  twin. `effective` on an Observation only, `day` exactly when the duration is mandatory.
+  item coding as a value, a component only on a `select` item with exactly its options; without a component, an item
+  whose eventType holds no content; the named presence twin on the same stream, `activity/plain`, with the same code,
+  category, codings, `alsoMatch` and `effective`; one component per stream; one category per shared code; the shared
+  code never an import key of any item; import keys by value (`<resourceType> <code> value <coding>`), claimed by the
+  intensity item for itself and its twin. `effective` on an Observation only, never beside a `split` or a `concept`
+  code; `day` exactly when the duration is one day.
 - **Import (P1):** a session without the 74008-4 component imports into the presence item, the one deprecated import
-  target, named by `component.absent` (FHIR-MAPPING.md § Import states the exception).
+  target, named by `component.absent` (FHIR-MAPPING.md § Import states the exception). The PA IG never states
+  intensity, so every IG-shaped session imports into the presence item.
+- **Now refused, no longer served:** an intensity event whose value is not 0.25, 0.5 or 1, and a daily total whose span
+  is outside 23 to 25 h (a partial "today", for example), used to render as a generic Observation; with the blocks
+  they are refused, not served.
 - **`pack.fhirScopes['Observation|activity']`**: the 12 `activity-*` streams, each its own grant root (the `activity`
   root holds no item). Not opt-in. `definitions/fhir/scopes.lock.json` locks them with their 21 items, for good.
 - FHIR-MAPPING.md (Physical activity, the block table, the activity code system, Value kinds, Import, Forward
