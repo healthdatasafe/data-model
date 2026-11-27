@@ -1,5 +1,37 @@
 # Changelog
 
+## [4.50.0] - 2026-11-27
+
+### Added: curated codes of a qualitative lab result, vocabulary `lab-result` (BLOOD-CHEMISTRY.md, plan 128 SUB-E L7 § A)
+
+Additive: one vocabulary in `pack.vocabularies`, two optional properties in the vocabulary schema. No eventType, item or
+`hdsInterpretation` change. Fable review: ship with edits, applied (label wording kept).
+
+- **Vocabulary `lab-result`** (`definitions/vocabularies/lab-result.yaml`): `negative`, `trace`, `plus-1` to `plus-4`
+  (labelled 1+ to 4+), `positive`, `detected`, `not-detected`, `absent`, `present`, each with en / fr / es labels and one SNOMED CT qualifier
+  value (260385009, 260405006, 260347006 to 260350009, 10828004, 260373001, 260415000, 2667000, 52101004; all verified
+  active in snomed-db, International 20260201). `absent` ≠ `negative` and `detected` ≠ `positive` stay distinct keys.
+  Keys are permanent: append-only.
+- **Scales:** `presence` (negative, positive), `detection` (not-detected, detected), `crosses` (negative, trace, 1+ to
+  4+, `ranked`), `occurrence` (absent, present). The rank is the position in a ranked scale, lowest first, in the pack
+  being read; it lives in the scale only, never on a value, and is never stored or exported. A ranked scale may gain a
+  value at any position; a scale is never renamed, never loses a value, and `ranked` never changes.
+- **Vocabulary schema (`json-schemas/vocabulary.json`):** a vocabulary now labels an enum (`binds`) or the codes of a
+  Coding field (`codings`: eventType, path, `system`), exactly one of the two; optional `scales` (`values`, `ranked`);
+  value keys and scale values are lowercase, a letter first (`propertyNames`, every existing vocabulary passes). The
+  loader checks that a `codings` field is an array of Codings, that every value carries its own distinct code, that no
+  two vocabularies claim one field and system, and that every scale lists values only and every value is on a scale.
+  `lab-result` codes `lab-result/coded-v1` `valueCodes` (SNOMED CT). A reader that iterates `binds` finds none on it
+  (hds-lib's `binds?.some` is safe). hds-lib types lag: `VocabularyDef.binds` is typed required (follow-up).
+- **BLOOD-CHEMISTRY.md:** § Qualitative results: curated result codes (the keys, `valueText` stays as printed, crosses
+  in the value cell only and only on a four-cross field, when each scale applies, no polarity grouping, the printed
+  spellings are the writer's table, the rank, `normal` not coded yet, the FHIR export and import, a vocabulary and not a
+  content field); under § Verified codes, the urine test-strip LOINC codes (LOINC 2.83, verified
+  ACTIVE in loinc-db, owned by no item): leukocyte esterase 5799-2, nitrite 5802-4, protein 20454-5, glucose 25428-4,
+  ketones 2514-8, hemoglobin 5794-3, bilirubin 5770-3, urobilinogen 5818-0; pH 5803-2, specific gravity 5811-5.
+  MEDICATION.md § Vocabularies describes a vocabulary of codes.
+- Tests: `tests/labResultVocabulary.test.js` (`[LABV-*]`).
+
 ## [4.49.0] - 2026-11-27
 
 ### Added: a document dated per page, question code `which-page-date` (CONVERSATION.md, plan 128 SUB-F)

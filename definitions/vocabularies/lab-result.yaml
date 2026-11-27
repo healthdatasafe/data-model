@@ -1,0 +1,29 @@
+# Curated codes of a qualitative lab result (4.50.0, documentation/BLOOD-CHEMISTRY.md § Qualitative results: curated
+# result codes). Not an enum: `lab-result/coded-v1` stores the printed cell in `valueText` and, when a writer recognises
+# it, the matching SNOMED CT qualifier value in `valueCodes`. This vocabulary is the closed table such a writer codes
+# from, and the labels a reader shows for those codes. `codings` names the Coding field and its system (not `binds`,
+# which is for enums); `snomed` is the SCTID, verified active on the International 20260201 release (reference/snomed-db).
+# `scales` are the closed answer sets a result is read on; in a `ranked` scale the order is the rank, lowest first, so
+# the rank lives in one place. `absent` is not `negative`, nor `detected` `positive`: each is what the lab printed.
+# Append-only: a new key or scale value is a minor release; a key or scale is never renamed, a scale never loses a value.
+
+lab-result:
+  codings:
+    - { eventType: lab-result/coded-v1, path: valueCodes, system: 'http://snomed.info/sct' }
+  scales:
+    presence: { values: [negative, positive] }
+    detection: { values: [not-detected, detected] }
+    crosses: { ranked: true, values: [negative, trace, plus-1, plus-2, plus-3, plus-4] }
+    occurrence: { values: [absent, present] }
+  values:
+    negative: { label: { en: Negative, fr: Négatif, es: Negativo }, snomed: '260385009' } # Negative (qualifier value)
+    trace: { label: { en: Trace, fr: Traces, es: Indicios }, snomed: '260405006' } # Trace (qualifier value)
+    plus-1: { label: { en: '1+', fr: '1+', es: '1+' }, snomed: '260347006' } # Present + out of ++++ (qualifier value)
+    plus-2: { label: { en: '2+', fr: '2+', es: '2+' }, snomed: '260348001' } # Present ++ out of ++++ (qualifier value)
+    plus-3: { label: { en: '3+', fr: '3+', es: '3+' }, snomed: '260349009' } # Present +++ out of ++++ (qualifier value)
+    plus-4: { label: { en: '4+', fr: '4+', es: '4+' }, snomed: '260350009' } # Present ++++ out of ++++ (qualifier value)
+    positive: { label: { en: Positive, fr: Positif, es: Positivo }, snomed: '10828004' } # Positive (qualifier value)
+    detected: { label: { en: Detected, fr: Détecté, es: Detectado }, snomed: '260373001' } # Detected (qualifier value)
+    not-detected: { label: { en: Not detected, fr: Non détecté, es: No detectado }, snomed: '260415000' } # Not detected (qualifier value)
+    absent: { label: { en: Absent, fr: Absent, es: Ausente }, snomed: '2667000' } # Absent (qualifier value)
+    present: { label: { en: Present, fr: Présent, es: Presente }, snomed: '52101004' } # Present (qualifier value)

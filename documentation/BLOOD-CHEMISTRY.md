@@ -355,7 +355,7 @@ per specimen: `body-blood-coded`, `body-urine-coded`, `body-csf-coded`.
 | `unitText` | Optional: the unit exactly as printed (`µmol/l`, `mUI/mL`), for display. Readers show it when present, else a readable form of `unit` (hds-lib `labUnitText`). |
 | `comparator` | `<`, `<=`, `>`, `>=`: `value` is a limit (§ A censored value). |
 | `valueText` | The result exactly as printed when it is not only a number (`negative`, `détecté`, `1:160`, `< LOQ`). |
-| `valueCodes[]` | Optional, with `valueText`: the qualitative result as FHIR Codings, a SNOMED CT qualifier value (positive, negative, detected, not detected, …) and the lab's own result code when it printed one. |
+| `valueCodes[]` | Optional, with `valueText`: the qualitative result as FHIR Codings, a SNOMED CT qualifier value (positive, negative, detected, not detected, …: the curated table of § Qualitative results, 4.50.0) and the lab's own result code when it printed one. |
 | `notes` | The comment printed with the result (`haemolysed sample`). |
 
 At least one of `value` and `valueText`. Both together are a semi-quantitative result (an index `3.2` read as
@@ -471,6 +471,26 @@ Lymphocyte subsets by flow cytometry (*immunophénotypage lymphocytaire*):
 - A code missing from this table and from the items is coded only after the same check (§ Codes); until then the
   result stays in the source document and the importer reports the gap.
 
+Urine test strip (*bandelette urinaire*), 4.50.0, checked the same way in loinc-db (LOINC 2.83, 2026-11-27): ACTIVE,
+not replaced, owned by no item (`[LABV-LOINC-1]`). The qualitative fields store `valueText` (and `valueCodes` from §
+Qualitative results); the two numeric ones store `value`:
+
+| Field (as printed in French) | Result | LOINC |
+|---|---|---|
+| Leukocytes, leukocyte esterase (*leucocytes*) | qualitative | `5799-2` |
+| Nitrite (*nitrites*) | qualitative | `5802-4` |
+| Protein (*protéines*) | qualitative | `20454-5` |
+| Glucose (*glucose*) | qualitative | `25428-4` |
+| Ketones (*corps cétoniques*, *cétones*) | qualitative | `2514-8` |
+| Hemoglobin, blood (*hématies*, *sang*, *hémoglobine*) | qualitative | `5794-3` |
+| Bilirubin (*bilirubine*) | qualitative | `5770-3` |
+| Urobilinogen (*urobilinogène*) | qualitative | `5818-0` |
+| pH | numeric, `unit` `[pH]` | `5803-2` |
+| Specific gravity (*densité*) | numeric, `unit` `1` | `5811-5` |
+
+All ten are "by Test strip" codes in Urine, on `body-urine-coded`: a strip result read by another method (a microscopy
+count of leukocytes or red cells, a quantitative protein) is not one of them.
+
 **Consent.** The coded streams sit under their specimen, so a grant on `body-blood` (or `body-urine`, or `body`)
 covers every result of that specimen, including infectious serology, viral loads and drug levels. Consent screens name
 such a grant "Blood and everything under it" (hds-lib `permissionLabels`); an app that needs fewer results requests
@@ -478,6 +498,58 @@ the item streams it needs, never the specimen. **Under SMART** (since 4.31.0, pl
 streams are in `Observation|laboratory`, so a laboratory grant covers them too; their stream `description` says what
 they hold (infectious disease tests, viral loads, drug levels and screening), and the consent screen shows it under
 their row.
+
+### Qualitative results: curated result codes (4.50.0)
+
+A qualitative result (a strip field, a serology, a PCR) is stored on `lab-result/coded-v1` with **`valueText` = the cell
+exactly as printed**, always, and, when the writer recognises it, **`valueCodes`** with one SNOMED CT qualifier value
+from the vocabulary **`lab-result`** (`definitions/vocabularies/lab-result.yaml`, `pack.vocabularies`). It is a
+vocabulary, not a content field: the eventType is unchanged, and `valueCodes` stays a list of Codings `{ system:
+'http://snomed.info/sct', code }`. A writer codes a result from this table only, never from a code it made up or a word
+it did not recognise; a cell it does not recognise keeps `valueText` alone (or stays in the source document). No `value`,
+`unit` or `hdsInterpretation` is written for a qualitative result.
+
+| Key | en / fr | SNOMED CT | Scales |
+|---|---|---|---|
+| `negative` | Negative / Négatif | `260385009` Negative (qualifier value) | presence, crosses |
+| `trace` | Trace / Traces | `260405006` Trace | crosses |
+| `plus-1` | 1+ | `260347006` Present + out of ++++ | crosses |
+| `plus-2` | 2+ | `260348001` Present ++ out of ++++ | crosses |
+| `plus-3` | 3+ | `260349009` Present +++ out of ++++ | crosses |
+| `plus-4` | 4+ | `260350009` Present ++++ out of ++++ | crosses |
+| `positive` | Positive / Positif | `10828004` Positive | presence |
+| `detected` | Detected / Détecté | `260373001` Detected | detection |
+| `not-detected` | Not detected / Non détecté | `260415000` Not detected | detection |
+| `absent` | Absent / Absent | `2667000` Absent | occurrence |
+| `present` | Present / Présent | `52101004` Present | occurrence |
+
+- **The keys say what the lab printed, not a verdict.** `absent` is not `negative`, and `detected` is not `positive`:
+  a reader never merges them, and a writer codes the word printed. A cell with neither a word nor crosses of the table
+  (`+/-`, *positif faible*, *douteux*, a titre) is not coded. `normal` (printed on strips for urobilinogen, glucose) is
+  not coded yet; a later append.
+- **Crosses.** In the value cell of a field read on `crosses`, `+` is one cross, `++` two, and so on (`plus-1`, `plus-2`, …, as are `1+`, `2+`). A cross in a flag
+  column follows § Mapping a printed flag. A lone `+` on a field not read on `crosses`, and `-`, `–` or an empty cell,
+  are not coded. The crosses codes assert a four-cross scale; a writer codes them only on a field whose scale it knows
+  to be four, else `valueText` alone.
+- **Scales** (`scales` in the vocabulary) are the closed answer sets, and a writer declares which scales a field is read
+  on, coding a cell only with a key of those scales: `presence` (negative, positive: a strip field, a serology),
+  `detection` (not-detected, detected: a PCR, an antigen test), `crosses` (negative, trace, 1+ to 4+: a strip field read
+  in crosses) and `occurrence` (absent, present: a microscopy or a culture, e.g. *absence de germes*). No polarity
+  grouping exists yet (`negative`, `not-detected` and `absent` on one side); a reader must not derive one.
+- **Printed spellings.** The printed spellings (`neg`, `nég.`, `NEG`) are the writer's per-language table (the Reader's
+  KB), not this vocabulary; the vocabulary fixes only the target keys.
+- **Rank.** Only `crosses` is `ranked`: the order of its `values` is the rank, lowest first (negative, trace, 1+, 2+,
+  3+, 4+). A reader compares two results of one analyte, or draws them on an ordinal axis, by that position, never by
+  the SNOMED code or the printed text. A key on no ranked scale has no rank. The rank lives in the scale only, so it
+  cannot disagree with a per-value copy. A rank is the position in the pack being read: it orders two results and is
+  never stored or exported. A ranked scale may gain a value at any position. A scale is never renamed, never loses a
+  value, and `ranked` never changes.
+- **Display.** A reader shows `valueText` as printed; it may add the key's label in her language, or use it to sort and
+  group. **FHIR export:** `valueCodeableConcept = { coding: [each valueCodes entry], text: valueText }`, no
+  `interpretation`, no `valueQuantity`. **FHIR import:** a SNOMED CT coding in the table goes to `valueCodes`, with
+  `valueText` = the CodeableConcept's `text`, else the coding's `display`, else the key's `en` label; a coding outside
+  the table is kept as received, and not labelled.
+- **Append-only.** A key is never renamed or removed; a new key, or a new value on a scale, is a minor release.
 
 ### Moving a result to its item
 

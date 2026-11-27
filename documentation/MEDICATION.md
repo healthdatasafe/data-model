@@ -141,6 +141,14 @@ an array of objects steps into its items, with no bracket, as `reactions.severit
 refuses a vocabulary whose values differ from any bound enum (same values, same order). Each value has `label { en, fr
 }`, and `fhir` (the FHIR code of the bound element) and/or `snomed` (an SCTID verified active) when coded.
 
+**A vocabulary of codes (4.50.0)** labels a Coding field instead of an enum: it carries `codings` (eventType, dotted path
+to an array of Codings, and the `system`, today `http://snomed.info/sct`) in place of `binds`, exactly one of the two;
+the loader checks that the field is an array of Codings, that every value carries its own distinct code, and that no
+other vocabulary claims the same field and system. Value keys (and scale values) are lowercase, a letter first. It may
+carry `scales`, closed answer sets of its values, where `ranked: true` makes the order the rank, lowest first. The
+first is `lab-result` (BLOOD-CHEMISTRY.md § Qualitative results: curated result codes). A reader that iterates
+`binds` reads it as absent on such a vocabulary.
+
 | Vocabulary | Binds | Codes |
 |---|---|---|
 | `medication-when` | `intake.when`, `posology.when` | FHIR EventTiming (above) |
