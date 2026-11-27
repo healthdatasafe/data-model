@@ -507,6 +507,40 @@ symptom-dermatological-hair-growth-severity:
   references:
     snomed: ["66520009"]
 
+# Oily hair or scalp (site-agents#69). Not body-skin-oily (skin). SNOMED 67295004 "Greasy hair (finding)", synonym
+# "Oily hair"; no concept names the scalp. Not PMS-specific; no key carries the premenstrual context yet.
+symptom-dermatological-hair-oily:
+  version: v1
+  label:
+    en: Oily Hair
+    fr: Cheveux gras
+  description:
+    en: "Oily hair or scalp. Presence marker for sources that record occurrence only (no grade); use symptom-dermatological-hair-oily-severity when a severity is known."
+    fr: "Cheveux ou cuir chevelu gras. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-dermatological-hair-oily-severity lorsqu'une sévérité est connue."
+  deprecated: true
+  streamId: symptom-dermatological-hair-oily
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+  references:
+    snomed: ["67295004"]
+
+symptom-dermatological-hair-oily-severity:
+  version: v1
+  label:
+    en: Oily Hair
+    fr: Cheveux gras
+  description:
+    en: Oily hair or scalp.
+    fr: Cheveux ou cuir chevelu gras.
+  streamId: symptom-dermatological-hair-oily
+  eventType: ratio/proportion
+  type: select
+  options: *severity5
+  repeatable: unlimited
+  references:
+    snomed: ["67295004"]
+
 ## Cognitive
 symptom-cognitive-focus-difficulty:
   version: v1

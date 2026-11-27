@@ -556,8 +556,8 @@
       "status": "draft"
     },
     "[id=\"wellbeing\"]/description": {
-      "en": "Your mood, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress.",
-      "text": "Il suo umore, il suo desiderio sessuale e come valuta la sua salute, e il suo disagio mentale, compresi ansia, depressione e stress.",
+      "en": "Your mood and mood swings, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress.",
+      "text": "Il suo umore e i suoi sbalzi d'umore, il suo desiderio sessuale e come valuta la sua salute, e il suo disagio mentale, compresi ansia, depressione e stress.",
       "status": "draft"
     }
   },
@@ -7512,6 +7512,51 @@
       "text": "Estrema",
       "status": "draft"
     },
+    "symptom-dermatological-hair-oily/label": {
+      "en": "Oily Hair",
+      "text": "Capelli grassi",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily/description": {
+      "en": "Oily hair or scalp. Presence marker for sources that record occurrence only (no grade); use symptom-dermatological-hair-oily-severity when a severity is known.",
+      "text": "Capelli o cuoio capelluto grassi. Indicatore di presenza per le fonti che registrano solo l'occorrenza (senza grado); utilizzare symptom-dermatological-hair-oily-severity quando è nota una gravità.",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/label": {
+      "en": "Oily Hair",
+      "text": "Capelli grassi",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/description": {
+      "en": "Oily hair or scalp.",
+      "text": "Capelli o cuoio capelluto grassi.",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/options[value=0]/label": {
+      "en": "None",
+      "text": "Assente",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/options[value=0.25]/label": {
+      "en": "Slight",
+      "text": "Lieve",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/options[value=0.5]/label": {
+      "en": "Moderate",
+      "text": "Moderato",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/options[value=0.75]/label": {
+      "en": "Severe",
+      "text": "Grave",
+      "status": "draft"
+    },
+    "symptom-dermatological-hair-oily-severity/options[value=1]/label": {
+      "en": "Extreme",
+      "text": "Estrema",
+      "status": "draft"
+    },
     "symptom-cognitive-focus-difficulty-severity/label": {
       "en": "Difficulty Concentrating",
       "text": "Difficoltà di concentrazione",
@@ -8025,6 +8070,51 @@
     "wellbeing-mental-distress-stress-presence/description": {
       "en": "Stress symptoms. Presence marker for sources that record occurrence only (no grade); use wellbeing-mental-distress-stress when a severity is known.",
       "text": "Sintomi di stress. Indicatore di presenza per le fonti che registrano solo l'occorrenza (senza grado); utilizzare wellbeing-mental-distress-stress quando è nota una gravità.",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings/label": {
+      "en": "Mood swings",
+      "text": "Sbalzi d'umore",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings/description": {
+      "en": "Mood that changes a lot over a short time. Presence marker for sources that record occurrence only (no grade); use wellbeing-mood-swings-severity when a severity is known.",
+      "text": "Umore che cambia molto in poco tempo. Indicatore di presenza per le fonti che registrano solo l'occorrenza (senza grado); utilizzare wellbeing-mood-swings-severity quando è nota una gravità.",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/label": {
+      "en": "Mood swings",
+      "text": "Sbalzi d'umore",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/description": {
+      "en": "Mood that changes a lot over a short time.",
+      "text": "Umore che cambia molto in poco tempo.",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/options[value=0]/label": {
+      "en": "None",
+      "text": "Assente",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/options[value=0.25]/label": {
+      "en": "Slight",
+      "text": "Lieve",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/options[value=0.5]/label": {
+      "en": "Moderate",
+      "text": "Moderato",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/options[value=0.75]/label": {
+      "en": "Severe",
+      "text": "Grave",
+      "status": "draft"
+    },
+    "wellbeing-mood-swings-severity/options[value=1]/label": {
+      "en": "Extreme",
+      "text": "Estrema",
       "status": "draft"
     }
   },

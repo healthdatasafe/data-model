@@ -371,6 +371,67 @@ wellbeing-mental-distress-stress-presence:
   references:
     snomed: ["73595000", "224974006"]
 
+# ── Mood swings (labile mood), site-agents#68 ────────────────────────────────
+# A symptom: the mood changes a lot over a short time. wellbeing-mood (mood/5d-vectors) records a mood state, not its
+# variability, so a reported mood swing cannot be written there without claiming a state. Not a validated distress
+# rating either, so it sits beside the mental-distress items, not under them. No new pair existed, so the twins follow
+# the symptom rule (symptom.yaml header): the presence marker at the base key, hidden from pickers but written by
+# presence-only sources, and the graded item at `-severity` on the same 5-level symptom scale. The item is not
+# PMS-specific; no key carries the premenstrual context yet. SNOMED 18963009 "Mood swings (finding)", synonyms
+# "Labile mood", "Emotional lability". A "Mood swings" tag from any source, and HealthKit moodChanges, write it.
+
+wellbeing-mood-swings:
+  version: v1
+  label:
+    en: Mood swings
+    fr: Sautes d'humeur
+  description:
+    en: "Mood that changes a lot over a short time. Presence marker for sources that record occurrence only (no grade); use wellbeing-mood-swings-severity when a severity is known."
+    fr: "Humeur qui change beaucoup en peu de temps. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser wellbeing-mood-swings-severity lorsqu'une sévérité est connue."
+  deprecated: true
+  streamId: wellbeing-mood-swings
+  eventType: activity/plain
+  type: checkbox
+  repeatable: unlimited
+  references:
+    snomed: ["18963009"]
+
+wellbeing-mood-swings-severity:
+  version: v1
+  label:
+    en: Mood swings
+    fr: Sautes d'humeur
+  description:
+    en: Mood that changes a lot over a short time.
+    fr: Humeur qui change beaucoup en peu de temps.
+  streamId: wellbeing-mood-swings
+  eventType: ratio/proportion
+  type: select
+  options:
+    - value: 0.0
+      label:
+        en: None
+        fr: Aucun
+    - value: 0.25
+      label:
+        en: Slight
+        fr: Léger
+    - value: 0.5
+      label:
+        en: Moderate
+        fr: Modéré
+    - value: 0.75
+      label:
+        en: Severe
+        fr: Sévère
+    - value: 1.0
+      label:
+        en: Extreme
+        fr: Extrême
+  repeatable: unlimited
+  references:
+    snomed: ["18963009"]
+
 # Self-rated health ("SRH") — the most validated single-item PRO in epidemiology.
 # Two capture formats, two items: this continuous 0..100 VAS (stored 0..1 at step
 # 0.01), and the 5-level categorical question (SF-1 / RAND-36 item 1 / PROMIS

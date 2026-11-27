@@ -95,7 +95,7 @@ Apple uses a **flat list** of symptom identifiers under `HKCategoryTypeIdentifie
 | HealthKit Identifier | Value Type |
 |---|---|
 | appetiteChanges | AppetiteChanges (special) |
-| moodChanges | Presence |
+| moodChanges | Presence (→ `wellbeing-mood-swings`, decision 6) |
 | sleepChanges | Presence |
 
 **Notes:**
@@ -185,7 +185,7 @@ Source: PMC8631160 — "The real-world applications of the symptom tracking func
 | Insomnia | `sleepChanges` (Presence) | 193462001 |
 | Low energy | `fatigue` (Severity) | 84229001 |
 | Sickness | — (no HealthKit type) | 367391008 (malaise: Mira does not document the value; it also sends Nausea, so read as feeling unwell) |
-| Anxiety | `moodChanges` (Presence) | 48694002 |
+| Anxiety | — (`moodChanges` is mood swings, decision 6) | 48694002 |
 | Stress | — | 73595000 |
 | Increased appetite | `appetiteChanges` (AppetiteChanges) | 72405004 |
 | Weight fluctuations | — (quantitative: `bodyMass`) | — (derived) |
@@ -230,7 +230,7 @@ Some concepts tracked as "symptoms" in consumer apps are clinically classified d
 | Acne | **disorder** (11381005) | symptom (`acne`) | Self-reported = symptom; diagnosed = condition |
 | Hirsutism | **disorder** (66520009) | — | Endocrine disorder; self-reported = symptom |
 | Insomnia | **disorder** (193462001) | symptom (`sleepChanges`) | Sleep disorder (ICD-10: G47.0); "difficulty sleeping" is a symptom |
-| Anxiety | **finding** (48694002) | symptom (`moodChanges`) | Transient = symptom; persistent = condition (anxiety disorder 197480006) |
+| Anxiety | **finding** (48694002) | — (`moodChanges` is mood swings) | Transient = symptom; persistent = condition (anxiety disorder 197480006) |
 | Weight fluctuations | — (derived measurement) | quantity (`bodyMass`) | Not a symptom — computed from weight tracking |
 
 **HDS approach:** Model these as self-reported symptom observations (FHIR `Observation` category `symptom`), not conditions. The same concept can exist as both a symptom item (self-reported presence) and a condition in a clinical context — the FHIR resource type determines the interpretation.
@@ -292,3 +292,5 @@ Some Mira concepts appear in multiple fields:
 3. **Increased appetite**: Modeled as `nutrition-appetite` under new top-level `nutrition/` stream with `ratio/proportion` (0.25=decreased, 0.50=normal, 0.75=increased). Matches Apple HealthKit's 3-value `appetiteChanges` enum.
 4. **Weight fluctuations**: Skipped — derived from body-weight measurements, not a symptom.
 5. **Stream hierarchy**: Full clinical sub-categories under `symptom/` (gastrointestinal, pain, neurological, dermatological, sleep, metabolic, general) — ready for future items from HealthKit and other integrations.
+6. **Mood swings** *(site-agents#68)*: a report that the mood changes a lot over a short time is a symptom, not a mood state. `wellbeing-mood` (5D vectors) holds a state at a point in time, and none of its dimensions says the mood varies, so a ticked "Mood swings" box written there would claim a state the person never reported. Recorded on `wellbeing-mood-swings` (stream beside the mental-distress items, not under them: it is not a validated distress rating): the presence marker at the base key (`activity/plain`, hidden from pickers, written by presence-only sources such as a checklist) and `wellbeing-mood-swings-severity` (`ratio/proportion`, the 5-level symptom scale). SNOMED `18963009` "Mood swings (finding)", synonyms "Labile mood", "Emotional lability". The item is not PMS-specific; no key carries the premenstrual context yet. A "Mood swings" tag from any source writes `wellbeing-mood-swings`, and no mood converter method carries that label. Apple HealthKit `moodChanges` (Presence) writes `wellbeing-mood-swings`, not anxiety. To be migrated: the femm adapter of bridge-cycles-files (`src/adapters/femm/mapping.ts:105`) still maps femm's `mood_swings` to a mood vector.
+7. **Oily hair or scalp** *(site-agents#69)*: `body-skin-oily` is skin. Recorded on `symptom-dermatological-hair-oily`, beside hair loss and hair growth, with the same twin shape (presence `activity/plain`, `-severity` `ratio/proportion`). SNOMED `67295004` "Greasy hair (finding)", synonym "Oily hair"; no concept names the scalp, so the label says hair and the description says hair or scalp. Cross-system match: Clue's Hair category (Good, Bad, Oily, Dry; SKIN.md), its "Oily" value. The item is not PMS-specific; no key carries the premenstrual context yet.

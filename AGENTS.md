@@ -365,8 +365,8 @@ data-model/
 ├── package.json, eslint.config.mjs, etc.
 │
 ├── definitions/                           # THE SOURCE OF TRUTH
-│   ├── items/*.yaml                       # Health data point definitions (363 items, 296 active, 25 YAML files)
-│   ├── streams/*.yaml                     # Clinical-domain tree (26 top-level roots, 352 streams in all)
+│   ├── items/*.yaml                       # Health data point definitions (369 items, 300 active, 27 YAML files)
+│   ├── streams/*.yaml                     # Clinical-domain tree (28 top-level roots, 356 streams in all)
 │   ├── eventTypes/
 │   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (93)
 │   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
@@ -599,6 +599,13 @@ An item may carry `deprecated: true` (boolean, optional) to signal that it is **
 
 **Schema:** the `deprecated` field is recognised in `src/schemas/items.js` and round-trips through `pack.json`.
 
+**Symptom presence markers are a second meaning: hidden from pickers, still written.** The presence twin of a symptom
+(`activity/plain` checkbox at the base key, beside its `-severity` item; header of `definitions/items/symptom.yaml`)
+ships `deprecated: true` so pickers offer the graded item, yet presence-only sources (a bridge relaying an ungraded
+flag, a checklist form listing the key) are expected to keep writing it. Its published `description` says so ("Presence
+marker for sources that record occurrence only…"), because consumers read `pack.json`, not YAML comments. A new pair
+ships its presence marker this way from the start (`wellbeing-mood-swings`, `symptom-dermatological-hair-oily`).
+
 ### Renaming an item key — keep the old key as a deprecated alias
 
 **Renaming an item key never touches stored data** (events carry `streamId` + `type`; `forEvent` resolves on that pair). It breaks **consumer code** that references the key — and it does so at *runtime*, not compile time, wherever a key is built by concatenation. `forKey` throws by default.
@@ -639,6 +646,8 @@ From `documentation/SYMPTOMS.md` (2026-03-17):
 3. **Increased appetite** — modeled as `nutrition-appetite` (`ratio/proportion`, 3 hooks).
 4. **Weight fluctuations** — not a symptom; derived from body-weight.
 5. **Stream hierarchy** — full clinical sub-categories under `symptom/`.
+6. **Mood swings** (site-agents#68) — a symptom, not a mood state: `wellbeing-mood-swings` (presence) / `-severity`, beside the mental-distress items. Any source's "Mood swings" tag and HealthKit `moodChanges` write it; no mood converter method carries that label.
+7. **Oily hair or scalp** (site-agents#69) — `symptom-dermatological-hair-oily` (presence) / `-severity`, beside hair loss and growth; never `body-skin-oily`.
 
 From `documentation/MOOD.md` (Plan 24, 2026-03-23):
 
