@@ -2282,6 +2282,11 @@
             "parentId": "symptom-dermatological"
           },
           {
+            "id": "symptom-dermatological-hair-oily",
+            "name": "Oily Hair",
+            "parentId": "symptom-dermatological"
+          },
+          {
             "id": "symptom-dermatological-rash",
             "name": "Rash",
             "parentId": "symptom-dermatological"
@@ -2675,11 +2680,11 @@
       "pt-BR": "Bem-estar"
     },
     "description": {
-      "en": "Your mood, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress.",
-      "fr": "Votre humeur, votre désir sexuel, votre santé telle que vous l'évaluez, et votre détresse mentale, y compris l'anxiété, la dépression et le stress.",
-      "es": "Su estado de ánimo, su deseo sexual y cómo valora su salud, y su malestar psicológico, incluidos ansiedad, depresión y estrés.",
-      "it": "Il suo umore, il suo desiderio sessuale e come valuta la sua salute, e il suo disagio mentale, compresi ansia, depressione e stress.",
-      "pt-BR": "Seu humor, sua libido e como você avalia a sua saúde, e o seu sofrimento mental, incluindo ansiedade, depressão e estresse."
+      "en": "Your mood and mood swings, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress.",
+      "fr": "Votre humeur et vos sautes d'humeur, votre désir sexuel, votre santé telle que vous l'évaluez, et votre détresse mentale, y compris l'anxiété, la dépression et le stress.",
+      "es": "Su estado de ánimo y sus cambios de humor, su deseo sexual y cómo valora su salud, y su malestar psicológico, incluidos ansiedad, depresión y estrés.",
+      "it": "Il suo umore e i suoi sbalzi d'umore, il suo desiderio sessuale e come valuta la sua salute, e il suo disagio mentale, compresi ansia, depressione e stress.",
+      "pt-BR": "Seu humor e suas oscilações de humor, sua libido e como você avalia a sua saúde, e o seu sofrimento mental, incluindo ansiedade, depressão e estresse."
     },
     "parentId": null,
     "children": [
@@ -2711,6 +2716,11 @@
       {
         "id": "wellbeing-mental-distress-stress",
         "name": "Stress severity",
+        "parentId": "wellbeing"
+      },
+      {
+        "id": "wellbeing-mood-swings",
+        "name": "Mood swings",
         "parentId": "wellbeing"
       },
       {

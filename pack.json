@@ -1,6 +1,6 @@
 {
-  "version": "4.51.0",
-  "publicationDate": "2026-11-27T17:13:24.783Z",
+  "version": "4.52.0",
+  "publicationDate": "2026-11-27T17:24:45.422Z",
   "streams": [
     {
       "id": "activity",
@@ -2285,6 +2285,11 @@
               "parentId": "symptom-dermatological"
             },
             {
+              "id": "symptom-dermatological-hair-oily",
+              "name": "Oily Hair",
+              "parentId": "symptom-dermatological"
+            },
+            {
               "id": "symptom-dermatological-rash",
               "name": "Rash",
               "parentId": "symptom-dermatological"
@@ -2678,11 +2683,11 @@
         "pt-BR": "Bem-estar"
       },
       "description": {
-        "en": "Your mood, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress.",
-        "fr": "Votre humeur, votre désir sexuel, votre santé telle que vous l'évaluez, et votre détresse mentale, y compris l'anxiété, la dépression et le stress.",
-        "es": "Su estado de ánimo, su deseo sexual y cómo valora su salud, y su malestar psicológico, incluidos ansiedad, depresión y estrés.",
-        "it": "Il suo umore, il suo desiderio sessuale e come valuta la sua salute, e il suo disagio mentale, compresi ansia, depressione e stress.",
-        "pt-BR": "Seu humor, sua libido e como você avalia a sua saúde, e o seu sofrimento mental, incluindo ansiedade, depressão e estresse."
+        "en": "Your mood and mood swings, your sex drive and how you rate your health, and your mental distress, including anxiety, depression and stress.",
+        "fr": "Votre humeur et vos sautes d'humeur, votre désir sexuel, votre santé telle que vous l'évaluez, et votre détresse mentale, y compris l'anxiété, la dépression et le stress.",
+        "es": "Su estado de ánimo y sus cambios de humor, su deseo sexual y cómo valora su salud, y su malestar psicológico, incluidos ansiedad, depresión y estrés.",
+        "it": "Il suo umore e i suoi sbalzi d'umore, il suo desiderio sessuale e come valuta la sua salute, e il suo disagio mentale, compresi ansia, depressione e stress.",
+        "pt-BR": "Seu humor e suas oscilações de humor, sua libido e como você avalia a sua saúde, e o seu sofrimento mental, incluindo ansiedade, depressão e estresse."
       },
       "parentId": null,
       "children": [
@@ -2714,6 +2719,11 @@
         {
           "id": "wellbeing-mental-distress-stress",
           "name": "Stress severity",
+          "parentId": "wellbeing"
+        },
+        {
+          "id": "wellbeing-mood-swings",
+          "name": "Mood swings",
           "parentId": "wellbeing"
         },
         {
@@ -26160,6 +26170,111 @@
         ]
       }
     },
+    "symptom-dermatological-hair-oily": {
+      "version": "v1",
+      "label": {
+        "en": "Oily Hair",
+        "fr": "Cheveux gras",
+        "es": "Cabello graso",
+        "it": "Capelli grassi",
+        "pt-BR": "Cabelo oleoso"
+      },
+      "description": {
+        "en": "Oily hair or scalp. Presence marker for sources that record occurrence only (no grade); use symptom-dermatological-hair-oily-severity when a severity is known.",
+        "fr": "Cheveux ou cuir chevelu gras. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser symptom-dermatological-hair-oily-severity lorsqu'une sévérité est connue.",
+        "es": "Cabello o cuero cabelludo graso. Marcador de presencia para las fuentes que registran solo la aparición (sin grado); use symptom-dermatological-hair-oily-severity cuando se conozca la gravedad.",
+        "it": "Capelli o cuoio capelluto grassi. Indicatore di presenza per le fonti che registrano solo l'occorrenza (senza grado); utilizzare symptom-dermatological-hair-oily-severity quando è nota una gravità.",
+        "pt-BR": "Cabelo ou couro cabeludo oleoso. Marcador de presença para fontes que registram apenas a ocorrência (sem grau); use symptom-dermatological-hair-oily-severity quando a gravidade for conhecida."
+      },
+      "deprecated": true,
+      "streamId": "symptom-dermatological-hair-oily",
+      "eventType": "activity/plain",
+      "type": "checkbox",
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "67295004"
+        ]
+      }
+    },
+    "symptom-dermatological-hair-oily-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Oily Hair",
+        "fr": "Cheveux gras",
+        "es": "Cabello graso",
+        "it": "Capelli grassi",
+        "pt-BR": "Cabelo oleoso"
+      },
+      "description": {
+        "en": "Oily hair or scalp.",
+        "fr": "Cheveux ou cuir chevelu gras.",
+        "es": "Cabello o cuero cabelludo graso.",
+        "it": "Capelli o cuoio capelluto grassi.",
+        "pt-BR": "Cabelo ou couro cabeludo oleoso."
+      },
+      "streamId": "symptom-dermatological-hair-oily",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun",
+            "es": "Ninguna",
+            "it": "Assente",
+            "pt-BR": "Nenhum"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger",
+            "es": "Leve",
+            "it": "Lieve",
+            "pt-BR": "Leve"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré",
+            "es": "Moderado",
+            "it": "Moderato",
+            "pt-BR": "Moderado"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère",
+            "es": "Grave",
+            "it": "Grave",
+            "pt-BR": "Grave"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême",
+            "es": "Extrema",
+            "it": "Estrema",
+            "pt-BR": "Extremo"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "67295004"
+        ]
+      }
+    },
     "symptom-cognitive-focus-difficulty": {
       "version": "v1",
       "label": {
@@ -27464,6 +27579,111 @@
         "snomed": [
           "73595000",
           "224974006"
+        ]
+      }
+    },
+    "wellbeing-mood-swings": {
+      "version": "v1",
+      "label": {
+        "en": "Mood swings",
+        "fr": "Sautes d'humeur",
+        "es": "Cambios de humor",
+        "it": "Sbalzi d'umore",
+        "pt-BR": "Oscilações de humor"
+      },
+      "description": {
+        "en": "Mood that changes a lot over a short time. Presence marker for sources that record occurrence only (no grade); use wellbeing-mood-swings-severity when a severity is known.",
+        "fr": "Humeur qui change beaucoup en peu de temps. Marqueur de présence pour les sources qui n'enregistrent que l'occurrence (sans échelle) ; utiliser wellbeing-mood-swings-severity lorsqu'une sévérité est connue.",
+        "es": "Estado de ánimo que cambia mucho en poco tiempo. Marcador de presencia para las fuentes que registran solo la aparición (sin grado); use wellbeing-mood-swings-severity cuando se conozca la gravedad.",
+        "it": "Umore che cambia molto in poco tempo. Indicatore di presenza per le fonti che registrano solo l'occorrenza (senza grado); utilizzare wellbeing-mood-swings-severity quando è nota una gravità.",
+        "pt-BR": "Humor que muda muito em pouco tempo. Marcador de presença para fontes que registram apenas a ocorrência (sem grau); use wellbeing-mood-swings-severity quando a gravidade for conhecida."
+      },
+      "deprecated": true,
+      "streamId": "wellbeing-mood-swings",
+      "eventType": "activity/plain",
+      "type": "checkbox",
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "18963009"
+        ]
+      }
+    },
+    "wellbeing-mood-swings-severity": {
+      "version": "v1",
+      "label": {
+        "en": "Mood swings",
+        "fr": "Sautes d'humeur",
+        "es": "Cambios de humor",
+        "it": "Sbalzi d'umore",
+        "pt-BR": "Oscilações de humor"
+      },
+      "description": {
+        "en": "Mood that changes a lot over a short time.",
+        "fr": "Humeur qui change beaucoup en peu de temps.",
+        "es": "Estado de ánimo que cambia mucho en poco tiempo.",
+        "it": "Umore che cambia molto in poco tempo.",
+        "pt-BR": "Humor que muda muito em pouco tempo."
+      },
+      "streamId": "wellbeing-mood-swings",
+      "eventType": "ratio/proportion",
+      "type": "select",
+      "options": [
+        {
+          "value": 0,
+          "label": {
+            "en": "None",
+            "fr": "Aucun",
+            "es": "Ninguna",
+            "it": "Assente",
+            "pt-BR": "Nenhum"
+          }
+        },
+        {
+          "value": 0.25,
+          "label": {
+            "en": "Slight",
+            "fr": "Léger",
+            "es": "Leve",
+            "it": "Lieve",
+            "pt-BR": "Leve"
+          }
+        },
+        {
+          "value": 0.5,
+          "label": {
+            "en": "Moderate",
+            "fr": "Modéré",
+            "es": "Moderado",
+            "it": "Moderato",
+            "pt-BR": "Moderado"
+          }
+        },
+        {
+          "value": 0.75,
+          "label": {
+            "en": "Severe",
+            "fr": "Sévère",
+            "es": "Grave",
+            "it": "Grave",
+            "pt-BR": "Grave"
+          }
+        },
+        {
+          "value": 1,
+          "label": {
+            "en": "Extreme",
+            "fr": "Extrême",
+            "es": "Extrema",
+            "it": "Estrema",
+            "pt-BR": "Extremo"
+          }
+        }
+      ],
+      "repeatable": "unlimited",
+      "references": {
+        "snomed": [
+          "18963009"
         ]
       }
     },
