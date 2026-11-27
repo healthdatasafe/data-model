@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.42.0] - 2026-11-27
 
 ### Added: physical activity in FHIR (plan 133, DESIGN-ACTIVITY.md v2)
 
