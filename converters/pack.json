@@ -1,12 +1,13 @@
 {
   "cervical-fluid": {
-    "latestVersion": "v2",
+    "latestVersion": "v3",
     "versions": [
       "v0",
       "v1",
-      "v2"
+      "v2",
+      "v3"
     ],
-    "updatedAt": "2026-11-27T12:47:20.000Z"
+    "updatedAt": "2026-11-27T15:42:23.000Z"
   },
   "mood": {
     "latestVersion": "v0",
