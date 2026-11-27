@@ -1,0 +1,5 @@
+{
+  "DocumentReference|filed-administrative": "documents-admin",
+  "DocumentReference|filed-clinical": "documents-clinical",
+  "DocumentReference|filed-insurance": "documents-admin-insurance"
+}

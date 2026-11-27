@@ -1,9 +1,9 @@
 {
-  "commit": "86aea0b3bfccefa20bfde55698281fb92831c79a",
-  "commitShort": "86aea0b",
+  "commit": "31022135aab4c5a43c4c5c3b8842b5f0eab83b1e",
+  "commitShort": "3102213",
   "branch": "main",
-  "buildDate": "2026-11-27T15:54:43Z",
-  "publicationDate": "2026-11-27T15:52:18.148Z",
+  "buildDate": "2026-11-27T16:00:35Z",
+  "publicationDate": "2026-11-27T15:59:27.054Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -72,6 +72,10 @@
     {
       "title": "FHIR SMART scope grants",
       "file": "fhir/scopes.json"
+    },
+    {
+      "title": "FHIR SMART scope classes",
+      "file": "fhir/scope-classes.json"
     },
     {
       "title": "FHIR mapping tables",
@@ -170,7 +174,7 @@
       "file": "converters/mood/l10n-pt-BR.json"
     }
   ],
-  "version": "4.47.0",
+  "version": "4.48.0",
   "license": "CC-BY-4.0",
-  "attribution": "HDS Data Model 4.47.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
+  "attribution": "HDS Data Model 4.48.0, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
 }

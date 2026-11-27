@@ -76,6 +76,21 @@
         "system": "http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category",
         "code": "clinical-note",
         "display": "Clinical Note"
+      },
+      "filed-clinical": {
+        "system": "https://hds.ngo/fhir/CodeSystem/document-filing",
+        "code": "filed-clinical",
+        "display": "Filed as clinical"
+      },
+      "filed-administrative": {
+        "system": "https://hds.ngo/fhir/CodeSystem/document-filing",
+        "code": "filed-administrative",
+        "display": "Filed as administrative"
+      },
+      "filed-insurance": {
+        "system": "https://hds.ngo/fhir/CodeSystem/document-filing",
+        "code": "filed-insurance",
+        "display": "Filed as insurance"
       }
     }
   },

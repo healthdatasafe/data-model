@@ -1,6 +1,6 @@
 {
-  "version": "4.47.0",
-  "publicationDate": "2026-11-27T15:52:18.148Z",
+  "version": "4.48.0",
+  "publicationDate": "2026-11-27T15:59:27.054Z",
   "streams": [
     {
       "id": "activity",
@@ -27840,6 +27840,11 @@
       "questionnaire-answer"
     ]
   },
+  "fhirScopeClasses": {
+    "DocumentReference|filed-administrative": "documents-admin",
+    "DocumentReference|filed-clinical": "documents-clinical",
+    "DocumentReference|filed-insurance": "documents-admin-insurance"
+  },
   "fhirMapping": {
     "formatVersion": 1,
     "fhirVersion": "4.0.1",
@@ -27918,6 +27923,21 @@
           "system": "http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category",
           "code": "clinical-note",
           "display": "Clinical Note"
+        },
+        "filed-clinical": {
+          "system": "https://hds.ngo/fhir/CodeSystem/document-filing",
+          "code": "filed-clinical",
+          "display": "Filed as clinical"
+        },
+        "filed-administrative": {
+          "system": "https://hds.ngo/fhir/CodeSystem/document-filing",
+          "code": "filed-administrative",
+          "display": "Filed as administrative"
+        },
+        "filed-insurance": {
+          "system": "https://hds.ngo/fhir/CodeSystem/document-filing",
+          "code": "filed-insurance",
+          "display": "Filed as insurance"
         }
       }
     },
