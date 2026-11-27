@@ -3,14 +3,83 @@
   "title": "HDS vocabulary",
   "type": "object",
   "required": [
-    "binds",
     "values"
+  ],
+  "oneOf": [
+    {
+      "required": [
+        "binds"
+      ]
+    },
+    {
+      "required": [
+        "codings"
+      ]
+    }
   ],
   "additionalProperties": false,
   "properties": {
     "fhirElement": {
       "type": "string",
       "minLength": 1
+    },
+    "codings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "eventType",
+          "path",
+          "system"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "eventType": {
+            "type": "string",
+            "minLength": 1
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9]*(\\.[a-zA-Z][a-zA-Z0-9]*)*$"
+          },
+          "system": {
+            "type": "string",
+            "enum": [
+              "http://snomed.info/sct"
+            ]
+          }
+        }
+      }
+    },
+    "scales": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "values"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "ranked": {
+            "type": "boolean"
+          },
+          "values": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            }
+          }
+        }
+      }
     },
     "binds": {
       "type": "array",
@@ -37,6 +106,10 @@
     "values": {
       "type": "object",
       "minProperties": 1,
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
       "additionalProperties": {
         "type": "object",
         "required": [

@@ -44,6 +44,136 @@
       }
     }
   },
+  "lab-result": {
+    "codings": [
+      {
+        "eventType": "lab-result/coded-v1",
+        "path": "valueCodes",
+        "system": "http://snomed.info/sct"
+      }
+    ],
+    "scales": {
+      "presence": {
+        "values": [
+          "negative",
+          "positive"
+        ]
+      },
+      "detection": {
+        "values": [
+          "not-detected",
+          "detected"
+        ]
+      },
+      "crosses": {
+        "ranked": true,
+        "values": [
+          "negative",
+          "trace",
+          "plus-1",
+          "plus-2",
+          "plus-3",
+          "plus-4"
+        ]
+      },
+      "occurrence": {
+        "values": [
+          "absent",
+          "present"
+        ]
+      }
+    },
+    "values": {
+      "negative": {
+        "label": {
+          "en": "Negative",
+          "fr": "Négatif",
+          "es": "Negativo"
+        },
+        "snomed": "260385009"
+      },
+      "trace": {
+        "label": {
+          "en": "Trace",
+          "fr": "Traces",
+          "es": "Indicios"
+        },
+        "snomed": "260405006"
+      },
+      "plus-1": {
+        "label": {
+          "en": "1+",
+          "fr": "1+",
+          "es": "1+"
+        },
+        "snomed": "260347006"
+      },
+      "plus-2": {
+        "label": {
+          "en": "2+",
+          "fr": "2+",
+          "es": "2+"
+        },
+        "snomed": "260348001"
+      },
+      "plus-3": {
+        "label": {
+          "en": "3+",
+          "fr": "3+",
+          "es": "3+"
+        },
+        "snomed": "260349009"
+      },
+      "plus-4": {
+        "label": {
+          "en": "4+",
+          "fr": "4+",
+          "es": "4+"
+        },
+        "snomed": "260350009"
+      },
+      "positive": {
+        "label": {
+          "en": "Positive",
+          "fr": "Positif",
+          "es": "Positivo"
+        },
+        "snomed": "10828004"
+      },
+      "detected": {
+        "label": {
+          "en": "Detected",
+          "fr": "Détecté",
+          "es": "Detectado"
+        },
+        "snomed": "260373001"
+      },
+      "not-detected": {
+        "label": {
+          "en": "Not detected",
+          "fr": "Non détecté",
+          "es": "No detectado"
+        },
+        "snomed": "260415000"
+      },
+      "absent": {
+        "label": {
+          "en": "Absent",
+          "fr": "Absent",
+          "es": "Ausente"
+        },
+        "snomed": "2667000"
+      },
+      "present": {
+        "label": {
+          "en": "Present",
+          "fr": "Présent",
+          "es": "Presente"
+        },
+        "snomed": "52101004"
+      }
+    }
+  },
   "medication-when": {
     "fhirElement": "Timing.repeat.when",
     "binds": [
