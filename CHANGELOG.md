@@ -1,5 +1,36 @@
 # Changelog
 
+## [4.43.0] - 2026-11-27
+
+### Added: a professional's correction of an entry (plan 143, documentation/CORRECTIONS.md)
+
+Additive in the pack. A contact holding a CMC relationship (a fertility-awareness method instructor, a clinician) says
+that one of her entries should have been different, should exist or should not exist, and why. The entry itself is
+never changed by the contact; she applies a correction with her own app.
+
+- **Root `entry-corrections`** ("Corrections from your contacts"), not `explicitGrantOnly`, with **one `corr-` child
+  per relationship** (12 lowercase base36, not in the model), granted to that contact at `contribute`. A child is minted
+  by her app (the contact asks with the item at `contribute`; her app grants a child by scope update instead) or named by
+  the contact on a single-use invite only. Stream key `clientData.hdsEntryCorrections = { relationship }`.
+- **Item `entry-correction`** on the root, `type: system`: a grant on it reads every contact's corrections. A `corr-`
+  child resolves to it (`src/items.js` `findItemForEvent`; hds-lib 2.76.0 `forEvent` does the same).
+- **eventType `correction/entry-v1`**, closed: `kind` (`change`, `add`, `remove`), `authorRole`, `itemKey`, `entryId`,
+  `entryModified`, `corrected` (`{ type?, content?, time?, clientData? }`, the shape of a conversation proposal; a wrong
+  day is a `change` of `time`), `comment` (1 to 4000), `about`, `replaces`. Event `time` is the corrected entry's.
+  Readers join by `entryId`, never by time. Immutable: superseded by a new correction naming it in `replaces`, withdrawn
+  by trashing it.
+- **Vocabulary `professional-role`** (`definitions/vocabularies/professional.yaml`): `physician`, `midwife`, `nurse`,
+  `pharmacist`, `psychologist`, `dietitian`, `physiotherapist`, `health-educator`, `other`, labels en/fr/es, each with
+  its SNOMED CT occupation (verified active, International 20260201). A role a reader does not know reads as `other`.
+- **`clientData.hdsTextFormat: 'text/markdown'`** (PROVENANCE.md): the text of a `note/txt` (`content`) or of a
+  correction (`comment`) is CommonMark; readers render no raw HTML, load no remote image, link `http`, `https` and
+  `mailto` only with the destination visible.
+- Rules the schema cannot say (which fields go with which kind, published-pack items only, nothing under an
+  `explicitGrantOnly` root, where a correction counts, the state against the live entry) are in CORRECTIONS.md.
+- **Release order:** the person's apps move to hds-lib 2.76.0 before any contact writes corrections (an older
+  `forEvent` throws on a `corr-` child unless told not to).
+- Tests `[COR-*]`.
+
 ## [4.42.0] - 2026-11-27
 
 ### Added: physical activity in FHIR (plan 133, DESIGN-ACTIVITY.md v2)

@@ -31,6 +31,8 @@ conventions below are contracts between HDS apps, documented here so every write
 | `clientData.hdsDocumentValues` (on a document event, 4.26.0) | Her value events read from the document, by id, with their role (`source`) | this page, [below](#clientdatahdsdocumentvalues--the-values-read-from-a-document) |
 | `clientData.hdsPrintedIn.<eventId>` (on a value event, 4.26.0) | The documents that print a value she already had, not its source | this page, [below](#clientdatahdsprintedineventid--a-document-that-prints-a-value-she-already-had) |
 | `clientData.hdsDocumentPending` (on a document event, 4.26.0) | The fields of a document she has not confirmed yet (`time`, `kind`): a placeholder waiting for its date and kind | [DOCUMENTS.md](DOCUMENTS.md#a-document-waiting-for-its-date-and-kind-4260) |
+| `clientData.hdsEntryCorrections` (stream clientData, 4.43.0) | A corrections child's relationship; visible to every reader of the `entry-corrections` root | [CORRECTIONS.md](CORRECTIONS.md#where-it-lives-the-entry-corrections-root) |
+| `clientData.hdsTextFormat` (4.43.0) | The event's text is markdown (`text/markdown`), else plain | this page, [below](#clientdatahdstextformat--markdown-text) |
 
 A reader ignores any `clientData` key it does not know. A new key is `hds`-prefixed and documented here (or in
 its domain document, and indexed here) before an app ships it. `related` and `sourceKey` predate the prefix
@@ -134,7 +136,8 @@ was read from.
   (`file/xds-v1` `supersedes[]`, `authors[].eventId`, `encounterId`; `encounter/visit-v1` `participants[].eventId`,
   `serviceProvider.eventId`; `provider/practitioner-v1` `organizations[].eventId`; `genetic-variant/coded-v1`
   `laboratory.eventId`; `message/hds-reader-v1` `inReplyTo` and `eventId`, [HDS-READER.md](HDS-READER.md);
-  `message/hds-conversation-v1` `about`, `inReplyTo` and `written[].eventId`, [CONVERSATION.md](CONVERSATION.md)), the writer sets
+  `message/hds-conversation-v1` `about`, `inReplyTo` and `written[].eventId`, [CONVERSATION.md](CONVERSATION.md);
+  `correction/entry-v1` `entryId`, `about` and `replaces`, [CORRECTIONS.md](CORRECTIONS.md)), the writer sets
   `clientData.related.<eventId>: true` for each one, in the same create or update, so a cohort query finds the link
   without reading content. On an update, the key of an id that left the content is removed in the same call (write
   the whole `related` object). The content is the typed link (which field, which role); `related` is its index. If
@@ -179,6 +182,47 @@ her everyday logging.
   accept events and reminders (ids in the person's account, not the connection's own copies), or with `events.get`
   `clientData: [{ "path": "related.<eventId>", "eq": true }]`, one call per id. The accept event keeps its id when the
   person accepts an updated data set (its copy of the data set is updated in place), so the link holds.
+
+---
+
+## `clientData.hdsTextFormat` — markdown text
+
+4.43.0. The free text an event holds is markdown, not plain text.
+
+```json
+{
+  "streamIds": ["my-app-notes"],
+  "type": "note/txt",
+  "content": "Next review: **day 12** of your cycle.",
+  "clientData": { "hdsTextFormat": "text/markdown" }
+}
+```
+
+| Value | The text is |
+|---|---|
+| `text/markdown` | CommonMark (the media type of RFC 7763) |
+| absent, or any other value | plain text |
+
+**Which text it formats** is set per eventType, and only these:
+
+| eventType | The text |
+|---|---|
+| `note/txt` | `content` |
+| `correction/entry-v1` | `content.comment` ([CORRECTIONS.md](CORRECTIONS.md)) |
+
+**Rules.**
+
+- **Written by the app that writes the text,** when the text is markdown, and removed (`null`) when an edit makes it
+  plain.
+- **Rendering stays safe.** A reader that renders it renders no raw HTML, loads no remote image (a remote image tells
+  its host that she opened the text), allows links to `http`, `https` and `mailto` only, always with their destination
+  visible, and shows no link preview.
+- **A reader that does not render markdown shows the text as it is**: markdown reads as text.
+- **Not everywhere.** A conversation answer's `note` and the chat stay plain text ([CONVERSATION.md](CONVERSATION.md)):
+  the key is ignored on any eventType not listed above. A new one is added to this table, in a minor release.
+
+**Cross-system.** FHIR `Annotation.text` is markdown already; a plain text rendered there needs no change. HealthKit has
+no text field for it.
 
 ---
 

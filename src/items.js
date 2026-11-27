@@ -12,6 +12,11 @@ const fhir = require('./fhir');
 const itemsById = {};
 const itemsByStreamIdTypeId = {};
 
+// Children the model does not hold, one per relationship, resolved to their root (4.43.0, documentation/CORRECTIONS.md).
+const CHILD_ROOTS = [
+  { pattern: /^corr-[a-z0-9]{12}$/, root: 'entry-corrections' }
+];
+
 module.exports = {
   itemsById,
   itemsByStreamIdTypeId,
@@ -40,9 +45,12 @@ module.exports = {
  */
 function findItemForEvent (eventType, streamId) {
   if (eventType == null || streamId == null) return null;
+  // A per-relationship child the model does not hold resolves to its root (documentation/CORRECTIONS.md); hds-lib
+  // `forEvent` applies the same rule.
+  const childRoot = streams.streamsById[streamId] ? null : CHILD_ROOTS.find(({ pattern }) => pattern.test(streamId));
   const chain = streams.streamsById[streamId]
     ? streams.getAncestorsById(streamId)
-    : [streamId];
+    : [streamId, ...(childRoot ? streams.getAncestorsById(childRoot.root) : [])];
   for (const ancestorId of chain) {
     const item = itemsByStreamIdTypeId[ancestorId + ':' + eventType];
     if (item) return item;

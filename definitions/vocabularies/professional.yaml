@@ -1,0 +1,20 @@
+# Labels and codes of a professional's role (4.43.0, documentation/CORRECTIONS.md § The author's role). A role, never an
+# identity: the writer declares it. `snomed` is the SCTID of the occupation, verified active on the International
+# 20260201 release (reference/snomed-db); `other` is uncoded and its label neutral, since a reader also shows it for a
+# role it does not know. The eventType enum is the contract (src/vocabularies.js checks that these values equal it, in
+# order). `binds` is a list so that a later eventType (an appointment) can reuse it. Append-only: a new role is a minor
+# release; a key is never renamed or removed.
+
+professional-role:
+  binds:
+    - { eventType: correction/entry-v1, path: authorRole }
+  values:
+    physician: { label: { en: Physician, fr: Médecin, es: Médico }, snomed: '309343006' }
+    midwife: { label: { en: Midwife, fr: Sage-femme, es: Matrona }, snomed: '309453006' }
+    nurse: { label: { en: Nurse, fr: Infirmier ou infirmière, es: Enfermero o enfermera }, snomed: '106292003' }
+    pharmacist: { label: { en: Pharmacist, fr: Pharmacien ou pharmacienne, es: Farmacéutico o farmacéutica }, snomed: '46255001' }
+    psychologist: { label: { en: Psychologist, fr: Psychologue, es: Psicólogo o psicóloga }, snomed: '59944000' }
+    dietitian: { label: { en: Dietitian, fr: Diététicien ou diététicienne, es: Dietista }, snomed: '159033005' }
+    physiotherapist: { label: { en: Physiotherapist, fr: Physiothérapeute, es: Fisioterapeuta }, snomed: '36682004' }
+    health-educator: { label: { en: Health educator, fr: Éducateur ou éducatrice en santé, es: Educador o educadora en salud }, snomed: '409974004' }
+    other: { label: { en: Other, fr: Autre, es: Otro } }

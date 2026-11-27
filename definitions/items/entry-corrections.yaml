@@ -1,0 +1,20 @@
+entry-correction:
+  version: v1
+  type: system
+  label:
+    en: Correction of an entry
+    fr: Correction d'une saisie
+    es: Corrección de un registro
+  description:
+    en: A professional says one of your entries should have been different, should exist or should not exist, and why.
+    fr: Un professionnel indique qu'une de vos saisies aurait dû être différente, devrait exister ou ne devrait pas exister, et pourquoi.
+    es: Un profesional indica que uno de sus registros debería haber sido diferente, debería existir o no debería existir, y por qué.
+  streamId: entry-corrections
+  eventType: correction/entry-v1
+  repeatable: unlimited
+  devNotes: >-
+    Written by a contact on its own corr- child of entry-corrections (one per relationship, not in the model), never on
+    the root and never on the corrected entry's stream. Never updated: superseded by a new correction naming it in
+    replaces, withdrawn by trashing it. A grant on this item is a grant on the root and reads every contact's
+    corrections. The entry itself is never changed by the contact; she applies a correction with her own app. Readers
+    resolve a corr- child to this item. See documentation/CORRECTIONS.md.
