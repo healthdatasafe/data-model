@@ -526,7 +526,7 @@ is. The platform does not check it (open points).
 **A received document at `contribute`: add, then freeze (4.35.0).** The received id stays on the document beside its
 documents stream, so the sender goes on correcting it: **open**. Her app **freezes** it by replacing the received id by
 the relationship's `shared` one (`read`): the sender still reads it and can no longer change or remove it, and a correction
-is then a new document listing it in `supersedes`. An app that grants `contribute` freezes in both cases below.
+is then a new document listing it in `supersedes`. An app that grants `contribute` applies both rules below.
 
 - **Frozen before it is shared with someone else.** When a share adds a share id, hds-lib `shareDocument` refuses a
   document another contact can still change (`open-document`, naming those relationships) and writes nothing; it refuses
