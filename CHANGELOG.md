@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.55.0] - 2026-11-27
 
 Minor. Plan 133 (DESIGN-SYMPTOMS.md v2, DESIGN-FERTILITY.md v2 phase 1, perki's decisions of 2026-11-27). **Renderer
 first:** the hds-fhir-js release that knows the two categories, the two component fields and `event-date` is released
