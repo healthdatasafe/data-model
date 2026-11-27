@@ -28,6 +28,29 @@ event (`clientData.context`). Fable review pending, before the version bump.
 - SYMPTOMS.md design decisions 6 (mood swings: a symptom, not a mood state) and 7 (oily hair or scalp); SKIN.md: hair
   symptoms live under `symptom-dermatological`.
 
+## [4.51.0] - 2026-11-27
+
+### Added: `clientData.hdsSourceGrid`, the box of a dated grid a written value was read from (PROVENANCE.md, plan 128 SUB-F)
+
+Design by Fable (D64); Fable review: ship with edits, applied. Additive: one documented `clientData` key with a
+published schema; no eventType or item change.
+
+- **`clientData.hdsSourceGrid` = `{ row, column }`**, integers 1 to 99, both required, closed for writers (readers
+  ignore a field they do not know): the proposed value's `grid`, copied as it is, only from `grid` (never a per-column
+  `column`, never on a page-dated value). Written by her app with `hdsSourceAnchor` (the page is the anchor's), never
+  without it, removed with the anchor and whenever it is rewritten; a reader ignores it on an event with no anchor. The
+  row is identified by the anchor's ids and `row`, even when the document cannot be read. Where it was read, not which
+  day it is: a reader places a value by its box and shows its day from `time`, never derives a row's days from one
+  value, and never infers a box from `time`. Kept on her `correct` and on an applied `correction/entry-v1` `change`;
+  not retroactive; not rendered in FHIR. Not in `hdsSourceAnchor` nor in `sourceKey`.
+- Schema `json-schemas/hds-source-grid.json` (`src/schemas/clientDataKeys.js`), draft-04 and draft-07.
+- PROVENANCE.md: index row, § `clientData.hdsSourceGrid` with an example. CONVERSATION.md § Writing a value writes it;
+  § A dated grid: a contact writes `anchor` on every grid value; header "4.51.0 a written value's box". CORRECTIONS.md:
+  applying a `change` keeps it.
+- Tests (`tests/hdsReader.test.js`): `[RDR-GRID-1..4]` (valid; missing field, 0, extra field refused; both flavours;
+  pinned to the proposed value's `grid`, nested descriptions included; every rule's text), `[RDR-KEY-5]` and
+  `[RDR-KEY-6]` cover it, `[RDR-KEY-7]` lists the published file.
+
 ## [4.50.0] - 2026-11-27
 
 ### Added: curated codes of a qualitative lab result, vocabulary `lab-result` (BLOOD-CHEMISTRY.md, plan 128 SUB-E L7 § A)

@@ -1,7 +1,8 @@
 // JSON Schemas of the documented `clientData` keys that have a closed shape (documentation/PROVENANCE.md).
 // Most keys are conventions defined in prose; these have a closed shape, so it is pinned here, tested
 // (tests/hdsReader.test.js, tests/conversation.test.js) and published as json-schemas/hds-source-anchor.json,
-// hds-extraction.json, hds-document-pending.json, hds-document-values.json and hds-printed-in.json (4.26.0).
+// hds-extraction.json, hds-document-pending.json, hds-document-values.json and hds-printed-in.json (4.26.0), and
+// hds-source-grid.json (4.51.0).
 // The eventType `message/hds-reader-v1` inlines the same shapes (no `$ref` in event type schemas, AGENTS.md), and a
 // test pins each copy to the schema below.
 // Portable subset: compiles under draft-04 (the cores) and draft-07, so no const, not, if/then/else or $ref. Compile
@@ -16,6 +17,7 @@ const enums = {
 };
 
 const hdsSourceAnchor = sourceAnchorSchema();
+const hdsSourceGrid = sourceGridSchema();
 const hdsExtraction = extractionSchema();
 const hdsDocumentPending = documentPendingSchema();
 const hdsDocumentValues = documentValuesSchema();
@@ -23,6 +25,7 @@ const hdsPrintedIn = printedInSchema();
 
 module.exports = {
   hdsSourceAnchor,
+  hdsSourceGrid,
   hdsExtraction,
   hdsDocumentPending,
   hdsDocumentValues,
@@ -65,6 +68,33 @@ function sourceAnchorSchema () {
         additionalItems: false,
         minItems: 4,
         maxItems: 4
+      }
+    }
+  };
+}
+
+// On a value written from a dated-grid proposal, 4.51.0: the box it was read from, the proposed value's `grid`
+// (message/hds-conversation-v1, same bounds; a test pins them). Beside hdsSourceAnchor, never without it.
+function sourceGridSchema () {
+  return {
+    $id: 'https://model.datasafe.dev/json-schemas/hds-source-grid.json',
+    title: 'HDS clientData.hdsSourceGrid',
+    description: 'The box of a dated grid a value was read from: its row and column, nothing of what is written there. Written with hdsSourceAnchor, whose page it is on, never without it; no date is stored here (the day is the event time). See documentation/PROVENANCE.md.',
+    type: 'object',
+    additionalProperties: false,
+    required: ['row', 'column'],
+    properties: {
+      row: {
+        description: 'The grid\'s row on its page, from the top, from 1, every row of the printed grid counted, the empty ones too.',
+        type: 'integer',
+        minimum: 1,
+        maximum: 99
+      },
+      column: {
+        description: 'The box\'s printed column number.',
+        type: 'integer',
+        minimum: 1,
+        maximum: 99
       }
     }
   };
@@ -168,6 +198,7 @@ function toBePublished () {
     { title: 'Json Schema clientData.hdsExtraction', path: './json-schemas/', filename: 'hds-extraction.json', type: 'json', content: hdsExtraction },
     { title: 'Json Schema clientData.hdsDocumentPending', path: './json-schemas/', filename: 'hds-document-pending.json', type: 'json', content: hdsDocumentPending },
     { title: 'Json Schema clientData.hdsDocumentValues', path: './json-schemas/', filename: 'hds-document-values.json', type: 'json', content: hdsDocumentValues },
-    { title: 'Json Schema clientData.hdsPrintedIn', path: './json-schemas/', filename: 'hds-printed-in.json', type: 'json', content: hdsPrintedIn }
+    { title: 'Json Schema clientData.hdsPrintedIn', path: './json-schemas/', filename: 'hds-printed-in.json', type: 'json', content: hdsPrintedIn },
+    { title: 'Json Schema clientData.hdsSourceGrid', path: './json-schemas/', filename: 'hds-source-grid.json', type: 'json', content: hdsSourceGrid }
   ];
 }
