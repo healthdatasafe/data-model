@@ -1413,8 +1413,8 @@
       "status": "draft"
     },
     "body-blood-pressure/description": {
-      "en": "Blood pressure measurement — systolic / diastolic in mmHg, optional pulse in bpm.",
-      "text": "Misurazione della pressione arteriosa — sistolica / diastolica in mmHg, polso facoltativo in bpm.",
+      "en": "Blood pressure measurement — systolic and diastolic, with an optional pulse.",
+      "text": "Misurazione della pressione arteriosa — sistolica e diastolica, con il polso facoltativo.",
       "status": "draft"
     },
     "body-blood-pressure/composite/systolic/label": {
@@ -1493,8 +1493,8 @@
       "status": "draft"
     },
     "body-heart-rate/description": {
-      "en": "Your measured heart rate, in beats per minute.",
-      "text": "La sua frequenza cardiaca misurata, in battiti al minuto.",
+      "en": "Your measured heart rate.",
+      "text": "La sua frequenza cardiaca misurata.",
       "status": "draft"
     },
     "body-oxygen-saturation/label": {
@@ -1503,8 +1503,8 @@
       "status": "draft"
     },
     "body-oxygen-saturation/description": {
-      "en": "How much oxygen your blood carries, as a percentage.",
-      "text": "Quanto ossigeno trasporta il suo sangue, in percentuale.",
+      "en": "How much oxygen your blood carries.",
+      "text": "Quanto ossigeno trasporta il suo sangue.",
       "status": "draft"
     },
     "body-oxygen-saturation/number/display/suffix": {
@@ -1598,8 +1598,8 @@
       "status": "draft"
     },
     "body-semen-volume/description": {
-      "en": "Volume of semen in a single ejaculate, in millilitres.",
-      "text": "Volume del liquido seminale in una singola eiaculazione, in millilitri.",
+      "en": "Volume of semen in a single ejaculate.",
+      "text": "Volume del liquido seminale in una singola eiaculazione.",
       "status": "draft"
     },
     "body-semen-tmc/label": {
@@ -1658,13 +1658,13 @@
       "status": "draft"
     },
     "body-blood-serum-glucose-random/label": {
-      "en": "Glucose (random)",
-      "text": "Glicemia (casuale)",
+      "en": "Glucose (untimed)",
+      "text": "Glicemia (digiuno non precisato)",
       "status": "draft"
     },
     "body-blood-serum-glucose-random/description": {
-      "en": "Blood sugar, measured at any time of day.",
-      "text": "Zucchero nel sangue, misurato in qualsiasi momento della giornata.",
+      "en": "Blood sugar, when the report does not say whether you were fasting.",
+      "text": "Zucchero nel sangue, quando il referto non indica se era a digiuno.",
       "status": "draft"
     },
     "body-blood-serum-glucose-random/variations/eventType/label": {
@@ -1709,12 +1709,12 @@
     },
     "body-blood-serum-insulin/label": {
       "en": "Insulin (untimed)",
-      "text": "Insulina (momento non precisato)",
+      "text": "Insulina (digiuno non precisato)",
       "status": "draft"
     },
     "body-blood-serum-insulin/description": {
-      "en": "The hormone that moves sugar into your cells, measured at any time of day.",
-      "text": "L'ormone che fa entrare lo zucchero nelle sue cellule, misurato in qualsiasi momento della giornata.",
+      "en": "The hormone that moves sugar into your cells, when the report does not say whether you were fasting.",
+      "text": "L'ormone che fa entrare lo zucchero nelle sue cellule, quando il referto non indica se era a digiuno.",
       "status": "draft"
     },
     "body-blood-serum-insulin/variations/eventType/label": {

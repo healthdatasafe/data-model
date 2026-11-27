@@ -22,13 +22,13 @@ it.
 
 | Category | Count | Description |
 |----------|-------|-------------|
-| Items | **310** (245 active, 65 deprecated) | Health data point definitions (body, fertility, lifestyle, treatment, procedure, …) |
-| Streams | **18** top-level, **296** at all levels | Hierarchical data categories |
-| Event types (HDS) | **77** | Custom Pryv event type schemas |
-| Event types (legacy) | **358** | Standard Pryv measurement types |
+| Items | **369** (300 active, 69 deprecated) | Health data point definitions (body, fertility, lifestyle, treatment, procedure, …) |
+| Streams | **28** top-level, **356** at all levels | Hierarchical data categories |
+| Event types (HDS) | **96** | Custom Pryv event type schemas |
+| Event types (legacy) | **365** | Standard Pryv measurement types (mirror of pryv/data-types) |
 | Converters | 2 | Cross-method conversion engines (cervical-fluid, mood) |
 
-> Counts are as of 2026-10-28. A **deprecated** item stays in the pack as a resolvable alias
+> Counts are as of 2026-11-27 (4.53.0). A **deprecated** item stays in the pack as a resolvable alias
 > so consumers pinned to the old key keep working — see `AGENTS.md` on item-key renames — so "active" is
 > the number that matters when reading the vocabulary, and the total is what a consumer can still
 > resolve.
@@ -38,27 +38,33 @@ it.
 ```
 definitions/
   items/           YAML item definitions by category (active / total)
-    activity.yaml          9 / 18   physical activity items
-    body.yaml             99 / 99   weight, height, vitals, blood chemistry, semen
+    activity.yaml         12 / 21   physical activity items
+    allergy.yaml           3 / 3    allergies and intolerances
+    body.yaml            141 / 141  weight, height, vitals, blood chemistry, semen
     body-skin.yaml         4 / 4    skin condition items
     body-vulva.yaml        9 / 12   bleeding, mucus, cervix, wetness items
     condition.yaml         1 / 1    coded diagnosis
     consents.yaml          1 / 1    account-level consent record (`type: system`, not user input)
+    documents.yaml         1 / 1    medical documents (`type: attachments`)
     encounter.yaml         3 / 3    care visits, practitioners, organizations
+    entry-corrections.yaml 1 / 1    a professional's correction of one entry (`type: system`)
     family.yaml            1 / 1    children count
-    fertility.yaml        22 / 25   cycles, hormones, tests, sexual activity
+    fertility.yaml        27 / 31   cycles, hormones, tests, sexual activity
     finding.yaml           1 / 1    coded clinical finding
     function.yaml          3 / 3    mobility, self-care, usual activities (ICF/EQ-5D)
+    genetics.yaml          1 / 1    genetic test results (`type: imported`)
     lifestyle.yaml         8 / 8    tobacco, alcohol, diet
     medication.yaml        4 / 4    intake basic and coded, prescription coded and basic
     nutrition.yaml         1 / 1    appetite
+    other-names.yaml       1 / 1    other names the person is known by
     procedure.yaml         2 / 2    basic (free-text), coded (SNOMED-CT search)
     profile.yaml          10 / 10   display name, DOB, sex, address, reproductive stage
-    symptom.yaml          21 / 41   symptom items
+    questionnaire.yaml     2 / 2    questionnaire responses
+    symptom.yaml          23 / 45   symptom items
     symptom-domains.yaml  28 / 56   symptom items by body-system domain
     sync-status.yaml       1 / 1    connector status (`type: system`, not user input)
     treatment.yaml         2 / 2    basic (free-text), coded (SNOMED-CT search) — duration-bearing
-    wellbeing.yaml         7 / 9    mood (5D vectors), sex drive, mental distress, self-rated health
+    wellbeing.yaml         9 / 12   mood (5D vectors), mood swings, sex drive, mental distress, self-rated health
   streams/         YAML stream hierarchy definitions
   eventTypes/      JSON event type schemas (HDS + legacy Pryv types)
   converters/      Cross-method converter configurations
@@ -113,9 +119,9 @@ body-weight:
     eventType:
       options:
         - value: mass/kg
-          label: { en: Kg }
+          label: { en: kg }
         - value: mass/lb
-          label: { en: Lbs }
+          label: { en: lb }
 ```
 
 ## Build

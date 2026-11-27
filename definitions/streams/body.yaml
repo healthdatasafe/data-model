@@ -35,7 +35,7 @@ children:
           - id: body-blood-serum-glucose-fasting
             name: Fasting glucose
           - id: body-blood-serum-glucose-random
-            name: Glucose (random)
+            name: Glucose (untimed)
           - id: body-blood-serum-insulin-fasting
             name: Fasting insulin
           - id: body-blood-serum-insulin

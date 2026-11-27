@@ -10,7 +10,7 @@ const HDS_PATH = path.join(__dirname, '../definitions/eventTypes/eventTypes-hds.
 
 // The CMC event types are owned by pryv/data-types and hardcoded as ET_* constants in @pryv/cmc.
 // The ten below are the ones HDS code writes today (hds-lib-js, doctor-dashboard, hds-webapp,
-// bridge-mira, bridge-redcap), so the mirror must keep carrying them. Dictionary 1.3.4 carries 13
+// bridge-mira, bridge-redcap), so the mirror must keep carrying them. Dictionary 1.4.0 carries 13
 // `*-cmc` types; `notification/ack-cmc`, `consent/member-access-cmc` and `consent/member-revoke-cmc`
 // are platform-written and left out. No `*-cmc` type may ever be copied into eventTypes-hds.json
 // ([ETLM-CMC-2]): src/eventTypes.js throws on a duplicate key across the two files.
@@ -243,7 +243,7 @@ describe('[ETLM] eventTypes-legacy.json upstream mirror', () => {
     // (jsonValidator.ts createValidator builds a fresh ajv per schema), so a "#/types/..." pointer
     // cannot resolve and the compile throws. medication/prescription-v1 shipped that way in
     // be77036; it went unnoticed because nothing compiles the HDS schemas yet (see [ETLM-AJV-2]).
-    // Upstream's 358 types contain no $ref at all. Inline the shape instead.
+    // Upstream's 365 types contain no $ref at all. Inline the shape instead.
     // Walks the schema looking for an actual `$ref` KEY, rather than matching the serialised text.
     // A substring search over JSON.stringify cannot tell a key from a value, so it also fires on a
     // string that merely equals `$ref`: a data field named `$ref` listed in `required`, or such a

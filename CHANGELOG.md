@@ -1,5 +1,44 @@
 # Changelog
 
+## [4.53.0] - 2026-11-27
+
+### Changed: legacy mirror refreshed to pryv/data-types 1.4.0; untimed glucose label; docs (B-2026-11-19-4 DM-1, B-2026-11-19-6)
+
+Minor: seven event types added by the mirror; everything else is labels, descriptions and docs. No key, stream id or
+eventType changes.
+
+- **`eventTypes-legacy.json` mirrors pryv/data-types 1.4.0** (358 → 365 types): `audit-log/access`, `audit-log/account`,
+  `audit-log/account-auto-deletion`, `audit-log/external-id`, `audit-log/mfa`, `audit-log/oauth`, `audit-log/sso`
+  (server-written audit records; no HDS writer), and a reworded `consent/member-revoke-cmc` (`state` description, a new
+  `reason` property description; platform-written, not in the HDS CMC list). No removal. Still 13 `*-cmc` types, no
+  `$ref`. **Source:** the published document (`pryv.github.io/event-types/flat.json`, byte-identical to
+  `api.pryv.com/event-types/flat.json`), fetched and re-fetched 2026-11-27: sha256
+  `bc3041fd820cf24998893afdc64f038a1f48a42c7e935849d37ee1025d802702`, 177,566 bytes, `last-modified` 27 Nov 2026
+  14:04:27–28 GMT (etag `"6b098deb-2b59e"` / `"6b098dec-2b59e"`, the CDN edges differ by a second). It matches **no** `dist/flat.json` on pryv/data-types `master`: `master` (`6d3a2bb`, 2026-11-26)
+  already carries further changes its commits call "the unpublished 1.4.0" (account transfer fields on
+  `audit-log/account-auto-deletion`). The mirror follows what the cores validate against, the published URL; expect a
+  second 1.4.0 content, which the version-string upstream check will not flag.
+- **DM-1: `body-blood-serum-glucose-random` is labelled "Glucose (untimed)" / "Glycémie (jeûne non précisé)"** (was
+  "Glucose (random)" / "Glycémie (non à jeun)", which asserted *not fasting* on every result whose report simply did not
+  say). Now the same wording as its insulin twin `body-blood-serum-insulin`; stream name, es, it, pt-BR aligned, and es /
+  it say "fasting not specified" for both twins ("ayuno no especificado", "digiuno non precisato"; was "moment not
+  specified"). Both twins' descriptions now state the real criterion, "when the report does not say whether you were
+  fasting" (was "measured at any time of day"), in all five languages; BLOOD-CHEMISTRY.md and the yaml comment say
+  untimed. The key and SNOMED 167086002 ("random") reference stay (keys are permanent). Plan 128 D25: fasting only when
+  printed, otherwise untimed. Existing accounts keep the old stream name until a consumer syncs names.
+- **DM-17: no unit in item descriptions:** `body-blood-pressure`, `body-heart-rate`, `body-oxygen-saturation`,
+  `body-semen-volume` (en, fr, es, it, pt-BR). The unit is the eventType's.
+- **DM-18: README and AGENTS counts** refreshed (369 items, 300 active; 28 roots, 356 streams; 96 HDS and 365 legacy
+  types; the per-file table gains the six files added since 2026-10-28); README example `Kg` / `Lbs` → `kg` / `lb`.
+  AGENTS: 12 cervical-fluid methods, not "15+" (D-29).
+- **C-44: a composite field's `canBeNull: true` means "may be omitted"**, never JSON `null`: true of all 41 such fields,
+  none required by its schema nor typed `null` (hds-forms-js deletes the key; no writer sends null). Stated in AGENTS
+  after § `type: system` items and pinned by `[ITCN-1]`; `delivery/composite-v1` `neonatalDeathDays` description no
+  longer says "Absent / null". AGENTS § mirror refresh step 3: record sha256, size, etag and last-modified when the
+  published document matches no upstream commit.
+- Fable review: go with changes, all applied (test fixed to call `eventTypesById()`, null check added, stale counts in
+  `eventTypesLegacyMirror.test.js`, "random" leftovers, descriptions and es/it parity).
+
 ## [4.52.0] - 2026-11-27
 
 ### Added: mood swings and oily hair or scalp as symptoms (site-agents#68, #69)

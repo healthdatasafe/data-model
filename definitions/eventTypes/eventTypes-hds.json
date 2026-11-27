@@ -2920,7 +2920,7 @@
           "minimum": 0
         },
         "neonatalDeathDays": {
-          "description": "Days from delivery to neonatal death (within 28 days post-livebirth). Absent / null = alive at last follow-up.",
+          "description": "Days from delivery to neonatal death (within 28 days post-livebirth). Absent = alive at last follow-up.",
           "type": "number",
           "minimum": 0,
           "maximum": 28

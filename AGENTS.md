@@ -368,10 +368,10 @@ data-model/
 │   ├── items/*.yaml                       # Health data point definitions (369 items, 300 active, 27 YAML files)
 │   ├── streams/*.yaml                     # Clinical-domain tree (28 top-level roots, 356 streams in all)
 │   ├── eventTypes/
-│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (93)
-│   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (358) — see below
+│   │   ├── eventTypes-hds.json            # Custom HDS event type JSON Schemas (96)
+│   │   └── eventTypes-legacy.json         # Pryv's dictionary, MIRRORED (365) — see below
 │   ├── converters/
-│   │   ├── cervical-fluid/                # 9D vector converter (15+ charting methods)
+│   │   ├── cervical-fluid/                # 9D vector converter (12 charting methods)
 │   │   └── mood/                          # 5D vector converter (5 methods)
 │   ├── appStreams.yaml                    # App-contextual sub-streams (notes, chat)
 │   ├── datasources/                       # External data source references
@@ -463,7 +463,9 @@ hand-edited and must not be. HDS additions go in `eventTypes-hds.json`, always.
    separately. Removals and changes are what need judgement; additions are usually free.
 3. **Record the upstream commit SHA and fetch date in the CHANGELOG entry.** Do not rely on the
    `version` field: 1.1.2 was untagged upstream and two different byte-contents shipped under that
-   same label on a single day (2026-09-17). The SHA is the only honest identifier.
+   same label on a single day (2026-09-17). The SHA is the only honest identifier. If the published
+   document matches no commit's `dist/flat.json` (4.53.0: published 1.4.0 while `master` moved on),
+   record its sha256, byte size, `etag` and `last-modified` instead.
 4. Run `npm test`. `tests/eventTypesLegacyMirror.test.js` is the tripwire suite for this file.
    The "portable subset" rule (schemas compile under both draft-07 and draft-04) binds
    `eventTypes-hds.json`. An upstream construct outside it cannot be repaired in the mirror: pin it
@@ -481,7 +483,7 @@ hand-edited and must not be. HDS additions go in `eventTypes-hds.json`, always.
 - **Never use `$ref` in any event type schema.** Schemas are compiled one at a time with no
   dictionary root, so a `#/types/...` pointer cannot resolve and the compile throws. Inline the
   shape instead, even when it duplicates a standalone type, and add a test pinning the copy to its
-  original. Upstream's 358 types contain no `$ref` at all. See the `medication/prescription-v1`
+  original. Upstream's 365 types contain no `$ref` at all. See the `medication/prescription-v1`
   entry in CHANGELOG 3.7.0.
 
 **What the cores actually enforce.** A core validates content only for types in *Pryv's* dictionary;
@@ -567,6 +569,9 @@ person's record sends no names to a third-party service (`documentation/TERMINOL
 An item of `type: system` (3.13.0) is **written by a machine and never entered by a person** — today
 `sync-status` (a connector's status) and `consent-record` (the account-level consent record). Its eventType must be an object (`src/items.js`, tests `[SYNC]`), and
 `system` is an item type only: it is not in `entryType`, so a composite field can never be `system`.
+
+**A composite field's `canBeNull: true` means the field may be omitted, not that it may be JSON `null`.** Writers leave
+it out; no eventType schema accepts `null` for it, and none lists it in `required` (tests `[ITCN]`, 4.53.0).
 
 **Consumers skip it wherever a person picks or enters data** (pickers, form builders, forms, diaries) and
 still resolve it everywhere else (`forKey`, `forEvent`, authorization requests, consent labels). hds-lib

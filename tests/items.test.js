@@ -6,6 +6,32 @@ describe('[ITMX] Items', () => {
   });
 });
 
+describe('[ITCN] composite canBeNull means "may be omitted"', () => {
+  // A composite field's `canBeNull: true` lets a writer leave the field out; no writer sends JSON null, and no
+  // eventType schema accepts null for such a field (audit C-44, 4.53.0). So the field must not be required, and its
+  // top-level property must not be typed `null`. Fields nested deeper (wellbeing-mood under `vectors`,
+  // cervix-position/3d-vectors) have no top-level property and are only checked for `required`.
+  it('[ITCN-1] no canBeNull composite field is required by, or typed null in, its eventType', () => {
+    const { itemsById } = require('../src/items');
+    const { eventTypesById } = require('../src/eventTypes');
+    const bad = [];
+    let checked = 0;
+    for (const [key, item] of Object.entries(itemsById)) {
+      if (!item.composite) continue;
+      const schema = eventTypesById(item.eventType);
+      assert.ok(schema, `${key}: eventType ${item.eventType} not found`);
+      for (const [field, def] of Object.entries(item.composite)) {
+        if (def.canBeNull !== true) continue;
+        checked++;
+        if ((schema.required || []).includes(field)) bad.push(`${key}.${field} required`);
+        if ([].concat(schema.properties?.[field]?.type || []).includes('null')) bad.push(`${key}.${field} typed null`);
+      }
+    }
+    assert.ok(checked > 0, 'no canBeNull composite field found');
+    assert.deepStrictEqual(bad, []);
+  });
+});
+
 describe('[ITMP] repeatable value validation', () => {
   const { checkItem } = require('../src/schemas/items');
 

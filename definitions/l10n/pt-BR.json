@@ -1413,8 +1413,8 @@
       "status": "draft"
     },
     "body-blood-pressure/description": {
-      "en": "Blood pressure measurement — systolic / diastolic in mmHg, optional pulse in bpm.",
-      "text": "Medida da pressão arterial — sistólica / diastólica em mmHg, pulsação opcional em bpm.",
+      "en": "Blood pressure measurement — systolic and diastolic, with an optional pulse.",
+      "text": "Medida da pressão arterial — sistólica e diastólica, com a pulsação opcional.",
       "status": "draft"
     },
     "body-blood-pressure/composite/systolic/label": {
@@ -1493,8 +1493,8 @@
       "status": "draft"
     },
     "body-heart-rate/description": {
-      "en": "Your measured heart rate, in beats per minute.",
-      "text": "Sua frequência cardíaca medida, em batimentos por minuto.",
+      "en": "Your measured heart rate.",
+      "text": "Sua frequência cardíaca medida.",
       "status": "draft"
     },
     "body-oxygen-saturation/label": {
@@ -1503,8 +1503,8 @@
       "status": "draft"
     },
     "body-oxygen-saturation/description": {
-      "en": "How much oxygen your blood carries, as a percentage.",
-      "text": "A quantidade de oxigênio que seu sangue transporta, em porcentagem.",
+      "en": "How much oxygen your blood carries.",
+      "text": "A quantidade de oxigênio que seu sangue transporta.",
       "status": "draft"
     },
     "body-oxygen-saturation/number/display/suffix": {
@@ -1598,8 +1598,8 @@
       "status": "draft"
     },
     "body-semen-volume/description": {
-      "en": "Volume of semen in a single ejaculate, in millilitres.",
-      "text": "Volume de sêmen em um único ejaculado, em mililitros.",
+      "en": "Volume of semen in a single ejaculate.",
+      "text": "Volume de sêmen em um único ejaculado.",
       "status": "draft"
     },
     "body-semen-tmc/label": {
@@ -1658,13 +1658,13 @@
       "status": "draft"
     },
     "body-blood-serum-glucose-random/label": {
-      "en": "Glucose (random)",
-      "text": "Glicemia ao acaso",
+      "en": "Glucose (untimed)",
+      "text": "Glicemia (jejum não especificado)",
       "status": "draft"
     },
     "body-blood-serum-glucose-random/description": {
-      "en": "Blood sugar, measured at any time of day.",
-      "text": "Açúcar no sangue, medido a qualquer hora do dia.",
+      "en": "Blood sugar, when the report does not say whether you were fasting.",
+      "text": "Açúcar no sangue, quando o laudo não informa se você estava em jejum.",
       "status": "draft"
     },
     "body-blood-serum-glucose-random/variations/eventType/label": {
@@ -1713,8 +1713,8 @@
       "status": "draft"
     },
     "body-blood-serum-insulin/description": {
-      "en": "The hormone that moves sugar into your cells, measured at any time of day.",
-      "text": "O hormônio que leva o açúcar para dentro das suas células, medido a qualquer hora do dia.",
+      "en": "The hormone that moves sugar into your cells, when the report does not say whether you were fasting.",
+      "text": "O hormônio que leva o açúcar para dentro das suas células, quando o laudo não informa se você estava em jejum.",
       "status": "draft"
     },
     "body-blood-serum-insulin/variations/eventType/label": {
