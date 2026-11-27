@@ -1,0 +1,16 @@
+# Corrections from a person's contacts (4.43.0): one child per relationship (`corr-` + 12 lowercase base36, name = id),
+# not in the model: named by the contact in a single-use offer, or minted by the person's app, created by her app under
+# this root, granted to that contact at `contribute`. The item `entry-correction` sits on the root, so a grant on it reads
+# every contact's corrections; readers (src/items.js findItemForEvent, hds-lib forEvent) resolve a `corr-` child to this
+# root. Not `explicitGrantOnly`: a correction never concerns an item under such a root. See documentation/CORRECTIONS.md.
+id: entry-corrections
+name: Corrections from your contacts
+parentId: null
+label:
+  en: Corrections from your contacts
+  fr: Corrections de vos contacts
+  es: Correcciones de sus contactos
+description:
+  en: "What a professional you share data with says one of your entries should have been, and why. Your entries are never changed: you decide whether to apply a correction."
+  fr: "Ce qu'un professionnel avec qui vous partagez des données dit qu'une de vos saisies aurait dû être, et pourquoi. Vos saisies ne sont jamais modifiées : vous décidez d'appliquer ou non une correction."
+  es: "Lo que un profesional con quien comparte datos dice que uno de sus registros debería haber sido, y por qué. Sus registros nunca se modifican: usted decide si aplica una corrección."

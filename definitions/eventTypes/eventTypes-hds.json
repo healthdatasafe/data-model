@@ -6204,6 +6204,159 @@
           }
         }
       }
+    },
+    "correction/entry-v1": {
+      "description": "A professional's correction of one entry of the person's record: a contact holding a CMC relationship (an instructor, a clinician) says that an entry should have been different (change), should exist (add) or should not exist (remove), with an optional comment. The entry itself is never changed by the contact: she applies a correction with her own app if she wants. Written by the contact on its own corr- child of entry-corrections, never updated (superseded by a new one naming it in replaces, withdrawn by trashing it). event.time is the corrected entry's time (for add, the moment the missing entry is about), so a timeline places it next to the entry; readers join it to the entry by entryId, never by time. Every event id in content is mirrored in clientData.related.<eventId> (documentation/PROVENANCE.md). Conditions the schema cannot express (which fields go with which kind, the item checks) are in documentation/CORRECTIONS.md.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "authorRole",
+        "itemKey"
+      ],
+      "properties": {
+        "kind": {
+          "description": "change: the entry entryId should have been corrected. add: there is no entry, one should exist (corrected). remove: the entry entryId should not exist.",
+          "type": "string",
+          "enum": [
+            "change",
+            "add",
+            "remove"
+          ]
+        },
+        "authorRole": {
+          "description": "The author's role, declared by the writer: a role, never an identity. Labels and SNOMED CT occupations in the vocabulary professional-role (definitions/vocabularies/professional.yaml). A reader reads a role it does not know as other.",
+          "type": "string",
+          "enum": [
+            "physician",
+            "midwife",
+            "nurse",
+            "pharmacist",
+            "psychologist",
+            "dietitian",
+            "physiotherapist",
+            "health-educator",
+            "other"
+          ]
+        },
+        "itemKey": {
+          "description": "The item of the published pack the entry is, or should be, on (not an app's overload item): not a system or attachments item, not under an explicitGrantOnly root.",
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "entryId": {
+          "description": "With change and remove: the id of the corrected event. Mirrored in clientData.related.<entryId>.",
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "entryModified": {
+          "description": "With change and remove: the entry's modified (Unix seconds) as the writer saw it, so a reader tells that the entry changed since.",
+          "type": "number"
+        },
+        "corrected": {
+          "description": "What the entry should have been, the shape of a conversation proposal (documentation/CONVERSATION.md): type and content together (content valid against type, type an eventType of itemKey), time when the entry belongs on another moment (change only). At least one of type and time; with add, type and content.",
+          "type": "object",
+          "additionalProperties": false,
+          "anyOf": [
+            {
+              "required": [
+                "type"
+              ]
+            },
+            {
+              "required": [
+                "time"
+              ]
+            }
+          ],
+          "dependencies": {
+            "type": [
+              "content"
+            ],
+            "content": [
+              "type"
+            ]
+          },
+          "properties": {
+            "type": {
+              "description": "The eventType id.",
+              "type": "string",
+              "maxLength": 128,
+              "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"
+            },
+            "content": {
+              "description": "The content as it would be stored, valid against type.",
+              "type": [
+                "number",
+                "string",
+                "boolean",
+                "object",
+                "array",
+                "null"
+              ]
+            },
+            "time": {
+              "description": "The time the entry should have, Unix seconds (a day: 12:00 UTC with clientData.hdsTimePrecision day, PARTIAL-DATES.md).",
+              "type": "number"
+            },
+            "clientData": {
+              "description": "The clientData keys of the corrected entry that the model defines and a correction may set (PARTIAL-DATES.md, MENSTRUAL-CYCLE.md, BLOOD-CHEMISTRY.md).",
+              "type": "object",
+              "additionalProperties": false,
+              "minProperties": 1,
+              "properties": {
+                "hdsTimePrecision": {
+                  "type": "string",
+                  "enum": [
+                    "minute",
+                    "day",
+                    "month",
+                    "year"
+                  ]
+                },
+                "hdsBasis": {
+                  "type": "string",
+                  "enum": [
+                    "predicted",
+                    "confirmed",
+                    "auto",
+                    "manual"
+                  ]
+                },
+                "hdsComparator": {
+                  "type": "string",
+                  "enum": [
+                    "<",
+                    "<=",
+                    ">",
+                    ">="
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "comment": {
+          "description": "The author's explanation, shown to every reader of the correction. Markdown when the event's clientData.hdsTextFormat is text/markdown (PROVENANCE.md), else plain text.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "about": {
+          "description": "The file/xds-v1 document the correction was read from (a chart photo). Mirrored in clientData.related.<about>; with it, clientData.hdsSourceAnchor may point at the box, its eventId = about.",
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "replaces": {
+          "description": "The id of an earlier correction that this one replaces: on the same corr- child, with the same entryId (for add, the same itemKey). Mirrored in clientData.related.<replaces>.",
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        }
+      }
     }
   },
   "extras": {
