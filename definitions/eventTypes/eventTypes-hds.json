@@ -3791,7 +3791,7 @@
               "pattern": "^[a-zA-Z0-9_-]+$"
             },
             "code": {
-              "description": "What is asked, a code the app renders. Bare codes are HDS's and listed in documentation/CONVERSATION.md (which-specimen, which-unit, which-analyte, which-date, is-fasting, is-this-yours, which-document-kind, which-document-date, which-row-date, which-column-date); a third party's own codes start with x-<vendor>-. An unknown code is shown, not answerable.",
+              "description": "What is asked, a code the app renders. Bare codes are HDS's and listed in documentation/CONVERSATION.md (which-specimen, which-unit, which-analyte, which-date, is-fasting, is-this-yours, which-document-kind, which-document-date, which-row-date, which-column-date, which-page-date); a third party's own codes start with x-<vendor>-. An unknown code is shown, not answerable.",
               "type": "string",
               "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
             },
@@ -3802,7 +3802,7 @@
               "pattern": "^[a-zA-Z0-9_-]+$"
             },
             "options": {
-              "description": "The choices offered, as codes the app labels (a specimen code, a UCUM code, an item key, a document kind key, yes, no). Absent for which-date, which-document-date, which-row-date and which-column-date (the person enters a date) and is-this-yours (answered with confirm or not-mine).",
+              "description": "The choices offered, as codes the app labels (a specimen code, a UCUM code, an item key, a document kind key, yes, no). Absent for which-date, which-document-date, which-row-date, which-column-date and which-page-date (the person enters a date) and is-this-yours (answered with confirm or not-mine).",
               "type": "array",
               "maxItems": 16,
               "uniqueItems": true,
@@ -3813,7 +3813,7 @@
               }
             },
             "context": {
-              "description": "What the document prints that the person needs to answer: identity (is-this-yours only), dates (which-date and which-document-date only), anchor (is-this-yours: where the identity is printed; which-row-date: the box asked about; which-column-date: the column's heading), grid (which-row-date only: that box), column (which-column-date only: that column). Identity is copied verbatim from the document's text layer, never produced or completed by a model; a date is copied from a text layer, or carries its anchor (4.47.0).",
+              "description": "What the document prints that the person needs to answer: identity (is-this-yours only), dates (which-date and which-document-date only), anchor (is-this-yours: where the identity is printed; which-row-date: the box asked about; which-column-date: the column's heading; which-page-date, 4.49.0: the page, its bbox the page's top band when the contact has it), grid (which-row-date only: that box), column (which-column-date only: that column). Identity is copied verbatim from the document's text layer, never produced or completed by a model; a date is copied from a text layer, or carries its anchor (4.47.0).",
               "type": "object",
               "additionalProperties": false,
               "minProperties": 1,

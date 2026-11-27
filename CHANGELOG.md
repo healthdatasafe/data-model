@@ -1,5 +1,32 @@
 # Changelog
 
+## [4.49.0] - 2026-11-27
+
+### Added: a document dated per page, question code `which-page-date` (CONVERSATION.md, plan 128 SUB-F)
+
+Design by Fable (D64); Fable review: ship with edits, applied. A question code is a free code (pattern) and `context.anchor` already exists: no
+structural schema change; descriptions, documentation and tests. An app that does not know the code shows it, not
+answerable (R8).
+
+- **§ A document dated per page:** one `which-page-date` per page that holds result lines and has no day the contact
+  holds certain, with `context.anchor` naming the page (`attachmentId`, `page`; `bbox` = the page's top band when the contact has
+  it, else her app shows the whole page). No date is shown or offered: no date a model read, no other page's date. She
+  gives a full day with its year (`confirm` + `time` at 12:00 UTC, `timePrecision: day`) or `skip`. Nothing of the page
+  is proposed before her answer; then its values, each anchored on the page, with `proposal.time` = her day. Her answer
+  dates that page only. No `which-date` on such a document; a page whose day the contact holds certain (printed on it in
+  its text layer, or continuing such a page) is proposed with that day; a page skipped sends `pages-not-read`; a later
+  `confirm` replaces the day until a value of the page is written. Her app refuses a day later than today, and answers
+  the code before any contact asks it (release order: hds-lib, forms and the webapp, then the engine). The record of R5
+  is the attachment, the page, the printed line and the `itemKey`, never the day. `counts.proposed` counts values
+  proposed once their page is dated, `counts.questions` each `which-page-date`. Never on a dated grid or a table read
+  per column; `not-mine` stays the whole document's.
+- § Question codes row and context bullet, § Answers row, the "writes no value" paragraph, two MUST rows (the question;
+  a value on such a document: `anchor`, never `grid` or `column`), the `context.anchor` and confirm-answer MUST rows, R10, § Writing a value, and the
+  `pages-not-read` causes name `which-page-date`.
+- `message/hds-conversation-v1`: the `code`, `options` and `context` descriptions name `which-page-date`.
+- Tests (`tests/conversation.test.js`): `HDS_CODES`, the allowed answers, the anchor codes, page fixtures (two
+  questions, a value, a `confirm` and a `skip`), a `which-page-date` block in `[CNV-DOC-2]`, `[CNV-DOC-14]`.
+
 ## [4.48.0] - 2026-11-27
 
 ### Added: SMART scope classes for filed documents, `pack.fhirScopeClasses` (plan 133)
