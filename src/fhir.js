@@ -248,15 +248,19 @@ function checkMappingTable (t) {
 /**
  * The scope class table (definitions/fhir/scope-classes.yaml) on its own: each key is `ResourceType|code` where the
  * resourceType has a category table and the code is a key of it (so the key's code is the table's code), and each
- * value is one stream id. Where each stream sits is checked with the items loaded (checkScopeClasses).
+ * value is one stream id, read by that key alone. A class code is lowercase letters and dashes (hds-fhir-js refuses a
+ * digit in a scope key's category). Where each stream sits is checked with the items loaded (checkScopeClasses).
  */
 function checkScopeClassTable (classes, t = fhirMapping) {
   const fail = (msg) => { throw new Error(`definitions/fhir/scope-classes.yaml: ${msg}`); };
   if (classes == null || typeof classes !== 'object' || Array.isArray(classes)) fail('the table is class key → stream id');
+  const keyOf = new Map();
   for (const [key, stream] of Object.entries(classes)) {
-    const m = /^([A-Z][A-Za-z]*)\|([a-z][a-z0-9-]*)$/.exec(key);
-    if (m == null) fail(`"${key}" is not a class key "ResourceType|category"`);
+    const m = /^([A-Z][A-Za-z]*)\|([a-z][a-z-]*)$/.exec(key);
+    if (m == null) fail(`"${key}" is not a class key "ResourceType|category" (a category of lowercase letters and dashes)`);
     if (typeof stream !== 'string' || stream === '') fail(`"${key}" must name one stream id`);
+    if (keyOf.has(stream)) fail(`"${key}" reads stream "${stream}", already read by "${keyOf.get(stream)}": one class key per stream`);
+    keyOf.set(stream, key);
     const [, resourceType, code] = m;
     const table = t.categories?.[resourceType];
     if (table == null) fail(`"${key}": ${resourceType} has no category table in definitions/fhir/mapping.yaml`);
@@ -1201,6 +1205,8 @@ function checkConsentOptInPlacement (grants, roots) {
  *   acknowledged in `reviewed`): `npm run fhir:lock` locks the stream under the root's pair and the class with it, and
  *   the test suite fails until it has run;
  * - holds, on itself and under it, no item of another pair;
+ * - is not, holds no and sits under no `explicitGrantOnly` or `consentOptIn` stream: those are offered apart, and a
+ *   published class can never be taken back from them;
  * and the class category is never an item block's category (so `fhirScopes` never holds a class key).
  *
  * @param {object} classes class key → stream id
@@ -1211,7 +1217,10 @@ function checkConsentOptInPlacement (grants, roots) {
  */
 function checkScopeClasses (classes, items, grants, lock, roots = streams.roots) {
   checkScopeClassTable(classes);
-  const { parentOf } = streamIndex(roots);
+  const { parentOf, descendantsOf } = streamIndex(roots);
+  const nodeOf = new Map();
+  const index = (node) => { nodeOf.set(node.id, node); for (const c of node.children ?? []) index(c); };
+  for (const r of roots) index(r);
   const rootPair = new Map();
   for (const [pair, grantRoots] of Object.entries(grants)) for (const r of grantRoots) rootPair.set(r, pair);
   for (const [key, stream] of Object.entries(classes)) {
@@ -1223,6 +1232,14 @@ function checkScopeClasses (classes, items, grants, lock, roots = streams.roots)
     const pair = rootPair.get(root);
     if (root == null || pair.split('|')[0] !== resourceType) {
       throw new Error(`${at}: the stream is not below a grant root of a ${resourceType} key of fhirScopes${root != null ? ` (it is below "${root}", granted for ${pair})` : ''}`);
+    }
+    const above = ancestorsIn(parentOf, stream);
+    for (const id of [...above, ...descendantsOf(stream)]) {
+      const s = nodeOf.get(id);
+      const mark = ['explicitGrantOnly', 'consentOptIn'].find((m) => s[m] === true);
+      if (mark == null) continue;
+      const where = id === stream ? 'the stream is' : `the stream ${above.includes(id) ? 'sits under' : 'holds'} "${id}", which is`;
+      throw new Error(`${at}: ${where} ${mark}; a published class is never taken back, so it never reads a stream offered apart`);
     }
     const locked = lock.streams[stream];
     if (locked != null && locked.pair !== pair) throw new Error(`${at}: the stream is locked under ${locked.pair}, not under ${pair}, the pair of its grant root "${root}"`);

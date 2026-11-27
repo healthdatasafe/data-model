@@ -19,7 +19,9 @@ document (perki, 2026-11-27). Design: B′ of plan 133 DESIGN-DOC-CLASSES (Fable
   tree, disjoint.
 - **Build checks:** a category key is its code, and one code has one system per resourceType (both hold for every
   existing category); a class key is `ResourceType|code` of the table; each class stream exists, is strictly below a
-  grant root of the same resourceType, is locked under that root's pair, and holds no item of another pair.
+  grant root of the same resourceType, is locked under that root's pair, and holds no item of another pair; it is not,
+  holds no and sits under no `explicitGrantOnly` or `consentOptIn` stream; one class key per stream; a class code is
+  lowercase letters and dashes only (hds-fhir-js refuses a digit in a scope key's category).
 - **Lock** (`definitions/fhir/scopes.lock.json`, `formatVersion` 3): a new append-only `classes` section,
   `{ "<key>": { "stream", "since" } }`. The build fails when a locked class key disappears or reads another stream. A
   new stream or item under a class stream names the class keys that would read it. A build that reads format 2

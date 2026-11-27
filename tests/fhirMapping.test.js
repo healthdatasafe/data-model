@@ -1949,16 +1949,24 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.ok(!JSON.stringify(fhirScopes).includes(UNMAPPED));
     });
 
-    it('[FHIR-SCOPE-18] CI: the published fhirScopes is contained in the lock, each root under its pair', () => {
+    it('[FHIR-SCOPE-18] CI: the published fhirScopes and fhirScopeClasses are contained in the lock, each root under its pair, each class with its stream', () => {
       const lock = readLock();
-      const contained = (table) => {
+      const contained = (l, table, classes) => {
         for (const [pair, roots] of Object.entries(table)) {
-          for (const root of roots) assert.strictEqual(lock.streams[root]?.pair, pair, `grant root "${root}" of ${pair} is not in the lock under that pair`);
+          for (const root of roots) assert.strictEqual(l.streams[root]?.pair, pair, `grant root "${root}" of ${pair} is not in the lock under that pair`);
         }
+        for (const [key, stream] of Object.entries(classes)) assert.strictEqual(l.classes[key]?.stream, stream, `class "${key}" on stream "${stream}" is not in the lock with that stream`);
       };
-      contained(fhirScopes);
+      contained(lock, fhirScopes, fhirScopeClasses);
       const p = path.join(__dirname, '../dist/pack.json');
-      if (fs.existsSync(p)) contained(JSON.parse(fs.readFileSync(p, 'utf-8')).fhirScopes ?? {});
+      if (fs.existsSync(p)) {
+        const pack = JSON.parse(fs.readFileSync(p, 'utf-8'));
+        contained(lock, pack.fhirScopes ?? {}, pack.fhirScopeClasses ?? {});
+      }
+      // a class entry deleted from the lock by hand fails
+      const cut = structuredClone(lock);
+      delete cut.classes['DocumentReference|filed-clinical'];
+      assert.throws(() => contained(cut, fhirScopes, fhirScopeClasses), /class "DocumentReference\|filed-clinical" on stream "documents-clinical" is not in the lock with that stream/);
     });
   });
 
@@ -2023,7 +2031,8 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
     it('[FHIR-CLASS-3] the table: a key is ResourceType|code of the category table, its value one stream id', () => {
       checkScopeClassTable(classes);
       checkScopeClassTable({});
-      for (const bad of ['DocumentReference', 'documentReference|filed-clinical', 'DocumentReference|Filed', 'DocumentReference|filed|x']) {
+      // a digit in the code too: hds-fhir-js's SCOPE_KEY_RE refuses it, so such a class could never be asked for
+      for (const bad of ['DocumentReference', 'documentReference|filed-clinical', 'DocumentReference|Filed', 'DocumentReference|filed|x', 'DocumentReference|filed-2', 'DocumentReference|filed2']) {
         assert.throws(() => checkScopeClassTable({ [bad]: 'docs-c' }), /is not a class key "ResourceType\|category"/, bad);
       }
       assert.throws(() => checkScopeClassTable({ 'Patient|x': 'docs-c' }), /Patient has no category table/);
@@ -2031,6 +2040,8 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => checkScopeClassTable({ 'DocumentReference|filed-clinical': '' }), /must name one stream id/);
       assert.throws(() => checkScopeClassTable({ 'DocumentReference|filed-clinical': ['docs-c'] }), /must name one stream id/);
       assert.throws(() => checkScopeClassTable([]), /the table is class key → stream id/);
+      // one class key per stream: a class reads exactly one stream, and one stream is read by one class
+      assert.throws(() => checkScopeClassTable({ 'DocumentReference|filed-clinical': 'docs-c', 'DocumentReference|filed-insurance': 'docs-c' }), /"DocumentReference\|filed-insurance" reads stream "docs-c", already read by "DocumentReference\|filed-clinical": one class key per stream/);
       // a key whose code is not the table's code (the table check refuses such a table first: belt and braces)
       const t = structuredClone(fhirMapping);
       t.categories.DocumentReference['filed-clinical'].code = 'clinical';
@@ -2097,6 +2108,30 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const beside = [{ id: 'docs', children: [{ id: 'docs-c' }, { id: 'docs-new' }, { id: 'docs-a', children: [{ id: 'docs-a-i' }] }] }, tree[1], tree[2]];
       assert.throws(() => run(items, lock, classes, beside), /stream "docs-new" is new under the published stream "docs": every grant already issued for DocumentReference\|clinical-note would read it\. If a reader of DocumentReference\|clinical-note may see it/);
       assert.throws(() => run({ ...items, n: it_('docs-c', doc(), { deprecated: true }) }, lock), /item "n" is new under the published stream "docs-c": every grant already issued for DocumentReference\|clinical-note and for the class DocumentReference\|filed-clinical would read it/);
+    });
+
+    it('[FHIR-CLASS-9] a class stream is not, holds no and sits under no explicitGrantOnly or consentOptIn stream', () => {
+      /** The test tree with `marks` ({ streamId: { consentOptIn, explicitGrantOnly } }) set on its streams. */
+      const marked = (marks) => {
+        const t = structuredClone(tree);
+        const visit = (n) => { Object.assign(n, marks[n.id] ?? {}); for (const c of n.children ?? []) visit(c); };
+        for (const r of t) visit(r);
+        return t;
+      };
+      const checkMarked = (marks, cls = classes) => checkScopeClasses(cls, items, grants, emptyLock(), marked(marks));
+      checkMarked({});
+      checkMarked({ 'body-a': { consentOptIn: true }, other: { explicitGrantOnly: true } });
+      checkMarked({ 'docs-c': { consentOptIn: false, explicitGrantOnly: false } });
+      // is
+      assert.throws(() => checkMarked({ 'docs-c': { explicitGrantOnly: true } }), /class "DocumentReference\|filed-clinical" \(stream "docs-c"\): the stream is explicitGrantOnly; a published class is never taken back/);
+      assert.throws(() => checkMarked({ 'docs-c': { consentOptIn: true } }), /\(stream "docs-c"\): the stream is consentOptIn/);
+      // sits under
+      assert.throws(() => checkMarked({ docs: { explicitGrantOnly: true } }), /class "DocumentReference\|filed-administrative" \(stream "docs-a"\): the stream sits under "docs", which is explicitGrantOnly/);
+      assert.throws(() => checkMarked({ 'docs-a': { consentOptIn: true } }, { 'DocumentReference|filed-insurance': 'docs-a-i' }), /\(stream "docs-a-i"\): the stream sits under "docs-a", which is consentOptIn/);
+      // holds
+      assert.throws(() => checkMarked({ 'docs-a-i': { consentOptIn: true } }), /class "DocumentReference\|filed-administrative" \(stream "docs-a"\): the stream holds "docs-a-i", which is consentOptIn/);
+      // and in a build
+      assert.throws(() => run(items, lockOf(), classes, marked({ docs: { explicitGrantOnly: true } })), /the stream sits under "docs", which is explicitGrantOnly/);
     });
   });
 

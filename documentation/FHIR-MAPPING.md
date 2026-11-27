@@ -613,7 +613,7 @@ document:
 | Content, event | DocumentReference (hds-fhir-js `toFhir`) |
 |---|---|
 | `type[]` | `type.coding`: the translated LOINC document type (else `UNK`) first, then the content codings as written |
-| `class` | `category[1]`; `category[0]` is the block's `clinical-note` |
+| `class` | the last `category` entry, found by its system (neither the US Core category system nor `https://hds.ngo/fhir/CodeSystem/document-filing`), never by its index: `category[0]` is the block's `clinical-note`, and a filed document carries its filing codings before the class |
 | the event's filing streams (`streamIds`) | one more `category` coding per scope class whose stream holds the event or is above it (plan 133, [Scope classes](#scope-classes-packfhirscopeclasses)): `filed-insurance` with `filed-administrative`. Read from `pack.fhirScopeClasses`, not from the block |
 | `status` | `status`: `superseded` as stored, else `current`. Whether another document supersedes this one is not looked up |
 | `supersedes[]` | `relatesTo[]` `{ code: replaces, target: DocumentReference/<id> }` |
@@ -878,6 +878,10 @@ plain union of its keys' roots. A **scope class** is a narrower key published ap
   `?category=clinical-note` never see a class key, so they read what they read before, and their stored echoes stay as
   they were. A scope `patient/DocumentReference.rs?category=filed-clinical` (or with the system,
   `?category=https://hds.ngo/fhir/CodeSystem/document-filing|filed-clinical`) derives `documents-clinical`.
+- **Client registration:** a SMART client registry entry must list the class scopes the client may ask for. A client
+  registered only with `patient/DocumentReference.rs` or `patient/*.rs` cannot ask for a class scope: the core checks
+  the streams a request derives against the client's registered maximum by exact stream id, and `documents-clinical`
+  is not `documents`.
 - **What a class reads:** its stream's documents, filed there by her (DOCUMENTS.md § Filing). Never a document on the
   root, not filed yet. The US Core `clinical-note` scope keeps reading every document, every class included (perki,
   2026-11-27): the classes narrow nothing that exists.
@@ -885,7 +889,10 @@ plain union of its keys' roots. A **scope class** is a narrower key published ap
   `clinical-note` and its XDS class, so a category search finds what the class grant reads.
 - **Build checks** (`checkScopeClasses`): each class stream exists, sits strictly below a grant root of a `fhirScopes`
   key of the same resourceType (never on a grant root), is locked under that root's pair, and holds no item of another
-  pair on itself or under it. A class not published yet may sit on a stream not locked yet (a new grant root, or a new
+  pair on itself or under it. A class stream never is, holds or sits under an `explicitGrantOnly` or `consentOptIn`
+  stream: a published class can never be taken back, and those streams are offered apart. One class key per stream,
+  and a class code is lowercase letters and dashes only (no digit: hds-fhir-js refuses digits in a scope key's
+  category). A class not published yet may sit on a stream not locked yet (a new grant root, or a new
   stream acknowledged in `reviewed`): `npm run fhir:lock` locks both.
 - **Lock:** `classes` in `scopes.lock.json`, append-only (above).
 
@@ -898,7 +905,8 @@ added on it or under it must belong to its pair, and is acknowledged in `reviewe
 
 **A published scope class is permanent too**, like a pair: its key is never removed and never reads another stream
 (the lock's `classes`). Moving a class to another stream would hand its grants other documents, or take theirs away.
-Its category code and display in `mapping.yaml` are never renamed, as for every category. A new class is additive.
+One class reads exactly one stream and its subtree: the pack value is a single string, so a class over two streams would
+need a new member of `pack.fhirScopeClasses`, not a list in the value. Its category code and display in `mapping.yaml` are never renamed, as for every category. A new class is additive.
 
 **Renaming a mapped item's key.** The usual pattern (the old key stays as a deprecated alias on the same `streamId`
 and eventType) needs one more thing here: the alias must still count as the stream's pair, or the stream's subtree
@@ -2137,8 +2145,9 @@ Cross-system: `sourceKey` corresponds to FHIR `Resource.identifier` (system nami
 - **Scope classes** (`[FHIR-CLASS]`, [§ Scope classes](#scope-classes-packfhirscopeclasses)): a key is
   `ResourceType|code`, its code a key of that type's category table; each class stream exists, sits strictly below a
   grant root of a `fhirScopes` key of the same resourceType, is locked under that root's pair (or, for a class not
-  published yet, waits for `npm run fhir:lock`) and holds, on itself and under it, no item of another pair; no item block
-  carries a class category, as `category` or in `alsoMatchCategories`.
+  published yet, waits for `npm run fhir:lock`) and holds, on itself and under it, no item of another pair; it is not,
+  holds no and sits under no `explicitGrantOnly` or `consentOptIn` stream; one class key per stream; a class code is
+  lowercase letters and dashes; no item block carries a class category, as `category` or in `alsoMatchCategories`.
 - **Category table:** category keys are lowercase letters, digits and dashes (a scope key is split on `|`); one
   `{system, code}` names one category per resourceType; the key is the code, and one code has one system per
   resourceType (a scope names a category by its code alone).

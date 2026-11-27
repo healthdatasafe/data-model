@@ -114,7 +114,8 @@ makes a document readable by a SMART on FHIR app as one `DocumentReference` whos
 
   **A class scope reads filed documents only:** a document on the root (not filed yet, nearly all of them before she
   files) is read by `clinical-note` and the type scope, never by a class. An app asking for `filed-clinical` sees only
-  what she filed there; its consent text says so. A class is not a key of `pack.fhirScopes`: that table keeps one key
+  what she filed there. This README and FHIR-MAPPING.md say so; the consent row shows the stream's label
+  ("Clinical documents"), not this rule. A class is not a key of `pack.fhirScopes`: that table keeps one key
   for the whole tree, and the classes are published beside it ([FHIR-MAPPING.md § Scope classes](FHIR-MAPPING.md#scope-classes-packfhirscopeclasses)).
   A filed document carries the coding of its filing stream beside `clinical-note`, an insurance paper
   `filed-administrative` as well, so a category search agrees with the streams a grant reads. The native stream scope
@@ -328,7 +329,8 @@ document-shares                  one document shared with one contact (below)
 
 A SMART app reads the same subtrees through the scope classes (`filed-clinical`, `filed-administrative`,
 `filed-insurance`, [§ FHIR](#fhir-documentreference-and-binary-420)). So filing a document is also a disclosure to the
-SMART apps granted a class, and her app counts their grants among who newly reads it.
+SMART apps granted a class. Her app must count their grants among who newly reads it (a requirement on the app;
+hds-webapp has not been checked to do so).
 
 - **Words.** A document is **received** when it is on a documents stream, the root included; **filed** when that stream is
   below the root.
