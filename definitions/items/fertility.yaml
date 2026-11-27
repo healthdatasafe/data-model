@@ -116,6 +116,18 @@ fertility-cycles-ovulation:
     `clientData.hdsBasis: 'predicted'` and updates the same event in place to `'confirmed'` once
     known; absent = not stated. Phases are derived from this item (hds-lib `cyclePhaseAt`); it is
     never a phase itself (see documentation/MENSTRUAL-CYCLE.md).
+  # FHIR (plan 133): LOINC 11976-8 "Ovulation date" with the event's own date as valueDateTime (event-date). An
+  # imported 11976-8 is an OB dating term, a recalled date: it lands as the ovulation it states. A predicted
+  # ovulation (hdsBasis 'predicted') is never rendered.
+  references:
+    loinc: ["11976-8"]
+  fhir:
+    resourceType: Observation
+    category: fertility
+    alsoMatchCategories: [social-history, exam]
+    code: { system: http://loinc.org, code: 11976-8, display: Ovulation date }
+    value: { kind: event-date }
+    profiles: {}
 fertility-cycles-start:
   version: v1
   label:
@@ -143,6 +155,19 @@ fertility-cycles-start:
     `fertility-cycles-period-end` records the last day of the bleeding.
     On the open (current) cycle, `duration` is always a prediction: only the next start ends a cycle.
     Same `clientData.hdsBasis` convention as `fertility-cycles-ovulation`, qualifying `time` (the day).
+  # FHIR (plan 133): LOINC 8665-2 "Last menstrual period start date" with the event's own date as valueDateTime
+  # (event-date). The duration (the cycle length, a prediction on the open cycle) is not exported. An EHR's last
+  # menstrual period (filed under social-history, exam or no category) imports as the cycle start it states, a
+  # recalled date.
+  references:
+    loinc: ["8665-2"]
+  fhir:
+    resourceType: Observation
+    category: fertility
+    alsoMatchCategories: [social-history, exam]
+    code: { system: http://loinc.org, code: 8665-2, display: Last menstrual period start date }
+    value: { kind: event-date }
+    profiles: {}
 fertility-cycles-period-end:
   version: v1
   label:
@@ -162,6 +187,12 @@ fertility-cycles-period-end:
     The stream is `fertility-cycles-period`, not the key: kept, a stream rename moves data.
     `time` is on the last bleeding day; the period is the `-start` day through this day inclusive.
     Same `clientData.hdsBasis` convention as `fertility-cycles-ovulation`.
+  # FHIR (plan 133): a finding stated by its code alone, the HDS item coding (no LOINC or SNOMED CT concept), no value.
+  fhir:
+    resourceType: Observation
+    category: fertility
+    code: { system: https://hds.ngo/fhir/CodeSystem/item, code: fertility-cycles-period-end, display: End of period }
+    profiles: {}
 fertility-cycles-fertile-window:
   version: v1
   label:
@@ -183,6 +214,13 @@ fertility-cycles-fertile-window:
     `time` is on the first fertile day and `time + duration` on the last (both inclusive by calendar
     day): Mira's 7-day window is `duration` 6 d, the maximum. Same `clientData.hdsBasis` convention
     as `fertility-cycles-ovulation`.
+  # FHIR (plan 133): the HDS item coding, no value; effectivePeriod from the first to the last fertile day.
+  fhir:
+    resourceType: Observation
+    category: fertility
+    code: { system: https://hds.ngo/fhir/CodeSystem/item, code: fertility-cycles-fertile-window, display: Fertile Window }
+    effective: { from: span }
+    profiles: {}
 fertility-cycles-peak-day:
   version: v2
   label:
@@ -204,6 +242,12 @@ fertility-cycles-peak-day:
     (`fertility-cycles-ovulation`). v2 since 3.24.0: events written before 3.24.0 by Cycle
     Intelligence (demo accounts only) may be LH peaks. Chart notation recorded by the person or a
     charting app, not a statement of fertility. See documentation/MENSTRUAL-CYCLE.md "Peak days".
+  # FHIR (plan 133): the HDS item coding, no value.
+  fhir:
+    resourceType: Observation
+    category: fertility
+    code: { system: https://hds.ngo/fhir/CodeSystem/item, code: fertility-cycles-peak-day, display: Mucus peak day }
+    profiles: {}
 fertility-cycles-lh-peak-day:
   version: v1
   label:
@@ -225,7 +269,12 @@ fertility-cycles-lh-peak-day:
     `fertility-cycles-peak-day`, so a permission on one never grants the other. No LOINC or SNOMED
     CT concept found for it (2026-10-28). HealthKit has no peak-day sample:
     `HKCategoryValueOvulationTestResult.luteinizingHormoneSurge` is a per-test result and maps to
-    `fertility-test-opk`. FHIR: a locally coded Observation, or omitted.
+    `fertility-test-opk`. FHIR: a locally coded Observation (plan 133: the HDS item coding, no value).
+  fhir:
+    resourceType: Observation
+    category: fertility
+    code: { system: https://hds.ngo/fhir/CodeSystem/item, code: fertility-cycles-lh-peak-day, display: LH peak day }
+    profiles: {}
 fertility-cycles-coverline:
   version: v1
   label:
@@ -423,6 +472,25 @@ fertility-sexual-activity:
       label:
         en: "Protected intercourse (unspecified method)"
         fr: "Rapport protégé (méthode non précisée)"
+  # FHIR (plan 133): SNOMED CT 364316005 "Sexual intercourse observable"; one coding per option. The SNOMED CT concepts
+  # that once named withdrawal, condom use and incomplete intercourse are inactive, so those answers are codes of the
+  # HDS fertility system (documentation/FHIR-MAPPING.md, Fertility charting).
+  references:
+    snomed: ["364316005"]
+  fhir:
+    resourceType: Observation
+    category: fertility
+    code: { system: http://snomed.info/sct, code: "364316005", display: Sexual intercourse observable }
+    value:
+      kind: coded
+      options:
+        fertile: { system: http://snomed.info/sct, code: "2314005", display: Unprotected sexual intercourse }
+        protected: { system: http://snomed.info/sct, code: "63537005", display: Protected sexual intercourse }
+        incomplete: { system: https://hds.ngo/fhir/CodeSystem/fertility, code: intercourse-without-ejaculation, display: Intercourse without ejaculation }
+        withdrawal: { system: https://hds.ngo/fhir/CodeSystem/fertility, code: intercourse-withdrawal, display: Intercourse with withdrawal before ejaculation }
+        condom: { system: https://hds.ngo/fhir/CodeSystem/fertility, code: intercourse-condom, display: Intercourse with a condom }
+        cervical-barrier: { system: https://hds.ngo/fhir/CodeSystem/fertility, code: intercourse-cervical-barrier, display: Intercourse with a cervical barrier }
+    profiles: {}
 fertility-genital-contact:
   version: v1
   label:
@@ -440,6 +508,12 @@ fertility-genital-contact:
     awareness charting because residual sperm exposure can still result in pregnancy. Distinct
     from `fertility-sexual-activity`, which records intercourse variants; both can co-exist on
     the same day.
+  # FHIR (plan 133): the HDS item coding, no value.
+  fhir:
+    resourceType: Observation
+    category: fertility
+    code: { system: https://hds.ngo/fhir/CodeSystem/item, code: fertility-genital-contact, display: Non-intercourse genital contact }
+    profiles: {}
 fertility-tracking-method:
   version: v1
   label:
@@ -874,15 +948,39 @@ fertility-test-opk:
       label: { en: Negative, fr: Négatif }
     - value: 0
       label: { en: Indeterminate, fr: Indéterminé }
+    - value: 0.5
+      label: { en: High (approaching peak), fr: Élevé (approche du pic) }
     - value: 1
       label: { en: Positive, fr: Positif }
   repeatable: any
   devNotes: >-
-    Stored on `test-result/scale`: -1 negative, 0 indeterminate, 1 positive. The three options are
-    the human-entry surface; the eventType still admits the intermediate values in between, so a
-    device bridge may write e.g. 0.5 for a weak positive and a reader must expect it. Was a bare
-    `type: number` until 3.12.0, which left nothing user-facing saying what to enter once the scale
-    was moved out of the description. (B-2026-09-23-3.)
+    Stored on `test-result/scale`: -1 negative, 0 indeterminate, 0.5 high (approaching the LH
+    peak: a "high fertility" reading, HealthKit `estrogenSurge`), 1 positive. The eventType still
+    admits other intermediate values, but the FHIR rendering (plan 133) maps the four options only:
+    an event with another value is refused on render, listed, never shown. Was a bare `type:
+    number` until 3.12.0, which left nothing user-facing saying what to enter once the scale was
+    moved out of the description. (B-2026-09-23-3.) Option 0.5 added in plan 133 (fertility F2).
+  # FHIR (plan 133): a urine immunoassay, so Observation|laboratory beside the urine LH quantity. No LOINC exists for a
+  # qualitative urine LH test, so the code is the HDS item coding (the E3G and PdG precedent); 0.5 is a code of the HDS
+  # fertility system. Offered unticked in a SMART consent (stream consentOptIn).
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: https://hds.ngo/fhir/CodeSystem/item, code: fertility-test-opk, display: Ovulation test (OPK) }
+    value:
+      kind: coded
+      options:
+        "-1": { system: http://snomed.info/sct, code: "260385009", display: Negative }
+        "0": { system: http://snomed.info/sct, code: "82334004", display: Indeterminate }
+        "0.5": { system: https://hds.ngo/fhir/CodeSystem/fertility, code: ovulation-test-high, display: High (approaching peak) }
+        "1": { system: http://snomed.info/sct, code: "10828004", display: Positive }
+      alsoMatch:
+        "-1": [{ system: http://snomed.info/sct, code: "260415000", display: Not detected }]
+        "0": [{ system: http://snomed.info/sct, code: "42425007", display: Equivocal }]
+        "1": [{ system: http://snomed.info/sct, code: "260373001", display: Detected }]
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 fertility-test-pregnancy:
   version: v1
   label:
@@ -906,4 +1004,27 @@ fertility-test-pregnancy:
     Stored on `test-result/scale`: -1 negative, 0 indeterminate, 1 positive. A home pregnancy test
     is read qualitatively, so unlike the OPK there is no meaningful intermediate value to offer.
     Was a bare `type: number` until 3.12.0. (B-2026-09-23-3.)
+  # FHIR (plan 133): the method-neutral 2106-3, the rapid immunoassay 80384-1 import only. Observation|laboratory,
+  # offered unticked in a SMART consent (stream consentOptIn). An intermediate value is refused on render.
+  references:
+    loinc: ["2106-3"]
+    loincMethod: ["80384-1"]
+  fhir:
+    resourceType: Observation
+    category: laboratory
+    code: { system: http://loinc.org, code: 2106-3, display: "Choriogonadotropin [Presence] in Urine" }
+    alsoMatch: [{ system: http://loinc.org, code: 80384-1, display: "Choriogonadotropin [Presence] in Urine by Rapid immunoassay" }]
+    value:
+      kind: coded
+      options:
+        "-1": { system: http://snomed.info/sct, code: "260385009", display: Negative }
+        "0": { system: http://snomed.info/sct, code: "82334004", display: Indeterminate }
+        "1": { system: http://snomed.info/sct, code: "10828004", display: Positive }
+      alsoMatch:
+        "-1": [{ system: http://snomed.info/sct, code: "260415000", display: Not detected }]
+        "0": [{ system: http://snomed.info/sct, code: "42425007", display: Equivocal }]
+        "1": [{ system: http://snomed.info/sct, code: "260373001", display: Detected }]
+    profiles:
+      us: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab
+      ips: http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips
 

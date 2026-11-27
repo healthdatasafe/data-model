@@ -130,6 +130,11 @@
       "text": "Extensibilidad del moco cervical",
       "status": "draft"
     },
+    "[id=\"body\"]/children[id=\"body-vulva\"]/children[id=\"body-vulva-bleeding\"]/description": {
+      "en": "Includes brown or dark bleeding, blood clots, bleeding after childbirth and bleeding from a pregnancy loss.",
+      "text": "Incluye el sangrado marrón u oscuro, los coágulos, el sangrado después del parto y el sangrado asociado a una pérdida de embarazo.",
+      "status": "draft"
+    },
     "[id=\"body\"]/children[id=\"body-skin\"]/label": {
       "en": "Skin",
       "text": "Piel",
@@ -4650,6 +4655,11 @@
     "fertility-test-opk/options[value=0]/label": {
       "en": "Indeterminate",
       "text": "Indeterminado",
+      "status": "draft"
+    },
+    "fertility-test-opk/options[value=0.5]/label": {
+      "en": "High (approaching peak)",
+      "text": "Alto (cerca del pico)",
       "status": "draft"
     },
     "fertility-test-opk/options[value=1]/label": {

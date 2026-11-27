@@ -1072,6 +1072,48 @@
         "fertility-hormone-pdg"
       ]
     },
+    "body-vulva-bleeding": {
+      "pair": "Observation|fertility",
+      "parent": "body-vulva",
+      "items": [
+        "body-vulva-bleeding"
+      ]
+    },
+    "body-vulva-bleeding-browndark": {
+      "pair": "Observation|fertility",
+      "parent": "body-vulva-bleeding",
+      "items": [
+        "body-vulva-bleeding-browndark"
+      ]
+    },
+    "body-vulva-bleeding-clots": {
+      "pair": "Observation|fertility",
+      "parent": "body-vulva-bleeding",
+      "items": [
+        "body-vulva-bleeding-clots"
+      ]
+    },
+    "body-vulva-bleeding-miscarriage": {
+      "pair": "Observation|fertility",
+      "parent": "body-vulva-bleeding",
+      "items": [
+        "body-vulva-bleeding-miscarriage"
+      ]
+    },
+    "body-vulva-bleeding-postpartum": {
+      "pair": "Observation|fertility",
+      "parent": "body-vulva-bleeding",
+      "items": [
+        "body-vulva-bleeding-postpartum"
+      ]
+    },
+    "body-vulva-menstrual-cup": {
+      "pair": "Observation|fertility",
+      "parent": "body-vulva",
+      "items": [
+        "body-vulva-menstrual-cup"
+      ]
+    },
     "body-weight": {
       "pair": "Observation|vital-signs",
       "parent": "body",
@@ -1107,6 +1149,76 @@
       "pair": "DocumentReference|clinical-note",
       "parent": "documents",
       "items": []
+    },
+    "fertility-cycles-fertile-window": {
+      "pair": "Observation|fertility",
+      "parent": "fertility-cycles",
+      "items": [
+        "fertility-cycles-fertile-window"
+      ]
+    },
+    "fertility-cycles-lh-peak-day": {
+      "pair": "Observation|fertility",
+      "parent": "fertility-cycles",
+      "items": [
+        "fertility-cycles-lh-peak-day"
+      ]
+    },
+    "fertility-cycles-ovulation": {
+      "pair": "Observation|fertility",
+      "parent": "fertility-cycles",
+      "items": [
+        "fertility-cycles-ovulation"
+      ]
+    },
+    "fertility-cycles-peak-day": {
+      "pair": "Observation|fertility",
+      "parent": "fertility-cycles",
+      "items": [
+        "fertility-cycles-peak-day"
+      ]
+    },
+    "fertility-cycles-period": {
+      "pair": "Observation|fertility",
+      "parent": "fertility-cycles",
+      "items": [
+        "fertility-cycles-period-end"
+      ]
+    },
+    "fertility-cycles-start": {
+      "pair": "Observation|fertility",
+      "parent": "fertility-cycles",
+      "items": [
+        "fertility-cycles-start"
+      ]
+    },
+    "fertility-genital-contact": {
+      "pair": "Observation|fertility",
+      "parent": "fertility",
+      "items": [
+        "fertility-genital-contact"
+      ]
+    },
+    "fertility-sexual-activity": {
+      "pair": "Observation|fertility",
+      "parent": "fertility",
+      "items": [
+        "fertility-sexual-activity"
+      ]
+    },
+    "fertility-test-opk": {
+      "pair": "Observation|laboratory",
+      "parent": "fertility",
+      "items": [
+        "fertility-test-opk"
+      ]
+    },
+    "fertility-test-pregnancy": {
+      "pair": "Observation|laboratory",
+      "parent": "fertility",
+      "items": [
+        "fertility-test-pregnancy"
+      ]
     },
     "lifestyle-tobacco-smoking": {
       "pair": "Observation|social-history",
@@ -1185,6 +1297,413 @@
       "parent": "questionnaire",
       "items": [
         "questionnaire-request"
+      ]
+    },
+    "symptom-bleeding-bleeding-gums": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-bleeding",
+      "items": [
+        "symptom-bleeding-bleeding-gums",
+        "symptom-bleeding-bleeding-gums-severity"
+      ]
+    },
+    "symptom-bleeding-easy-bruising": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-bleeding",
+      "items": [
+        "symptom-bleeding-easy-bruising",
+        "symptom-bleeding-easy-bruising-severity"
+      ]
+    },
+    "symptom-bleeding-nosebleed": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-bleeding",
+      "items": [
+        "symptom-bleeding-nosebleed",
+        "symptom-bleeding-nosebleed-severity"
+      ]
+    },
+    "symptom-cardiac-palpitations": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-cardiac",
+      "items": [
+        "symptom-cardiac-palpitations",
+        "symptom-cardiac-palpitations-severity"
+      ]
+    },
+    "symptom-cardiac-skipped-beat": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-cardiac",
+      "items": [
+        "symptom-cardiac-skipped-beat",
+        "symptom-cardiac-skipped-beat-severity"
+      ]
+    },
+    "symptom-cognitive-focus-difficulty": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-cognitive",
+      "items": [
+        "symptom-cognitive-focus-difficulty",
+        "symptom-cognitive-focus-difficulty-severity"
+      ]
+    },
+    "symptom-dermatological-hair-growth": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-dermatological",
+      "items": [
+        "symptom-dermatological-hair-growth",
+        "symptom-dermatological-hair-growth-severity"
+      ]
+    },
+    "symptom-dermatological-hair-loss": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-dermatological",
+      "items": [
+        "symptom-dermatological-hair-loss",
+        "symptom-dermatological-hair-loss-severity"
+      ]
+    },
+    "symptom-dermatological-hair-oily": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-dermatological",
+      "items": [
+        "symptom-dermatological-hair-oily",
+        "symptom-dermatological-hair-oily-severity"
+      ]
+    },
+    "symptom-dermatological-hives": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-dermatological",
+      "items": [
+        "symptom-dermatological-hives",
+        "symptom-dermatological-hives-severity"
+      ]
+    },
+    "symptom-dermatological-itching": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-dermatological",
+      "items": [
+        "symptom-dermatological-itching",
+        "symptom-dermatological-itching-severity"
+      ]
+    },
+    "symptom-dermatological-rash": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-dermatological",
+      "items": [
+        "symptom-dermatological-rash",
+        "symptom-dermatological-rash-severity"
+      ]
+    },
+    "symptom-gastrointestinal-bloating": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-gastrointestinal",
+      "items": [
+        "symptom-gastrointestinal-bloating",
+        "symptom-gastrointestinal-bloating-severity"
+      ]
+    },
+    "symptom-gastrointestinal-constipation": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-gastrointestinal",
+      "items": [
+        "symptom-gastrointestinal-constipation",
+        "symptom-gastrointestinal-constipation-severity"
+      ]
+    },
+    "symptom-gastrointestinal-cramps": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-gastrointestinal",
+      "items": [
+        "symptom-gastrointestinal-cramps",
+        "symptom-gastrointestinal-cramps-severity"
+      ]
+    },
+    "symptom-gastrointestinal-cravings": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-gastrointestinal",
+      "items": [
+        "symptom-gastrointestinal-cravings",
+        "symptom-gastrointestinal-cravings-severity"
+      ]
+    },
+    "symptom-gastrointestinal-diarrhea": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-gastrointestinal",
+      "items": [
+        "symptom-gastrointestinal-diarrhea",
+        "symptom-gastrointestinal-diarrhea-severity"
+      ]
+    },
+    "symptom-gastrointestinal-gas": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-gastrointestinal",
+      "items": [
+        "symptom-gastrointestinal-gas",
+        "symptom-gastrointestinal-gas-severity"
+      ]
+    },
+    "symptom-gastrointestinal-nausea": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-gastrointestinal",
+      "items": [
+        "symptom-gastrointestinal-nausea",
+        "symptom-gastrointestinal-nausea-severity"
+      ]
+    },
+    "symptom-general-fatigue": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-general",
+      "items": [
+        "symptom-general-fatigue",
+        "symptom-general-fatigue-severity"
+      ]
+    },
+    "symptom-general-malaise": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-general",
+      "items": [
+        "symptom-general-malaise",
+        "symptom-general-malaise-severity"
+      ]
+    },
+    "symptom-hydration-excessive-thirst": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-hydration",
+      "items": [
+        "symptom-hydration-excessive-thirst",
+        "symptom-hydration-excessive-thirst-severity"
+      ]
+    },
+    "symptom-hydration-frequent-urination": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-hydration",
+      "items": [
+        "symptom-hydration-frequent-urination",
+        "symptom-hydration-frequent-urination-severity"
+      ]
+    },
+    "symptom-metabolic-water-retention": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-metabolic",
+      "items": [
+        "symptom-metabolic-water-retention",
+        "symptom-metabolic-water-retention-severity"
+      ]
+    },
+    "symptom-neurological-dizziness": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-neurological",
+      "items": [
+        "symptom-neurological-dizziness",
+        "symptom-neurological-dizziness-severity"
+      ]
+    },
+    "symptom-neurological-paresthesia": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-neurological",
+      "items": [
+        "symptom-neurological-paresthesia",
+        "symptom-neurological-paresthesia-severity"
+      ]
+    },
+    "symptom-neurological-restless-legs": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-neurological",
+      "items": [
+        "symptom-neurological-restless-legs",
+        "symptom-neurological-restless-legs-severity"
+      ]
+    },
+    "symptom-neurological-tremor": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-neurological",
+      "items": [
+        "symptom-neurological-tremor",
+        "symptom-neurological-tremor-severity"
+      ]
+    },
+    "symptom-neurological-twitching": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-neurological",
+      "items": [
+        "symptom-neurological-twitching",
+        "symptom-neurological-twitching-severity"
+      ]
+    },
+    "symptom-pain-backache": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-pain",
+      "items": [
+        "symptom-pain-backache",
+        "symptom-pain-backache-severity"
+      ]
+    },
+    "symptom-pain-headache": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-pain",
+      "items": [
+        "symptom-pain-headache",
+        "symptom-pain-headache-severity"
+      ]
+    },
+    "symptom-pain-migraine": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-pain",
+      "items": [
+        "symptom-pain-migraine",
+        "symptom-pain-migraine-severity"
+      ]
+    },
+    "symptom-pain-muscle": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-pain",
+      "items": [
+        "symptom-pain-muscle",
+        "symptom-pain-muscle-severity"
+      ]
+    },
+    "symptom-pain-pelvic": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-pain",
+      "items": [
+        "symptom-pain-pelvic",
+        "symptom-pain-pelvic-severity"
+      ]
+    },
+    "symptom-pain-severity": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-pain",
+      "items": [
+        "symptom-pain-severity"
+      ]
+    },
+    "symptom-pain-sore-breasts": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-pain",
+      "items": [
+        "symptom-pain-sore-breasts",
+        "symptom-pain-sore-breasts-severity"
+      ]
+    },
+    "symptom-respiratory-cough": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-respiratory",
+      "items": [
+        "symptom-respiratory-cough",
+        "symptom-respiratory-cough-severity"
+      ]
+    },
+    "symptom-respiratory-dyspnea": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-respiratory",
+      "items": [
+        "symptom-respiratory-dyspnea",
+        "symptom-respiratory-dyspnea-severity"
+      ]
+    },
+    "symptom-respiratory-nasal-congestion": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-respiratory",
+      "items": [
+        "symptom-respiratory-nasal-congestion",
+        "symptom-respiratory-nasal-congestion-severity"
+      ]
+    },
+    "symptom-respiratory-rhinorrhea": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-respiratory",
+      "items": [
+        "symptom-respiratory-rhinorrhea",
+        "symptom-respiratory-rhinorrhea-severity"
+      ]
+    },
+    "symptom-respiratory-sore-throat": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-respiratory",
+      "items": [
+        "symptom-respiratory-sore-throat",
+        "symptom-respiratory-sore-throat-severity"
+      ]
+    },
+    "symptom-respiratory-wheezing": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-respiratory",
+      "items": [
+        "symptom-respiratory-wheezing",
+        "symptom-respiratory-wheezing-severity"
+      ]
+    },
+    "symptom-sleep-insomnia": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-sleep",
+      "items": [
+        "symptom-sleep-insomnia",
+        "symptom-sleep-insomnia-severity"
+      ]
+    },
+    "symptom-thermoregulation-chills": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-thermoregulation",
+      "items": [
+        "symptom-thermoregulation-chills",
+        "symptom-thermoregulation-chills-severity"
+      ]
+    },
+    "symptom-thermoregulation-cold-extremities": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-thermoregulation",
+      "items": [
+        "symptom-thermoregulation-cold-extremities",
+        "symptom-thermoregulation-cold-extremities-severity"
+      ]
+    },
+    "symptom-thermoregulation-excessive-sweating": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-thermoregulation",
+      "items": [
+        "symptom-thermoregulation-excessive-sweating",
+        "symptom-thermoregulation-excessive-sweating-severity"
+      ]
+    },
+    "symptom-thermoregulation-hot-flashes": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-thermoregulation",
+      "items": [
+        "symptom-thermoregulation-hot-flashes",
+        "symptom-thermoregulation-hot-flashes-severity"
+      ]
+    },
+    "symptom-thermoregulation-night-sweats": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-thermoregulation",
+      "items": [
+        "symptom-thermoregulation-night-sweats",
+        "symptom-thermoregulation-night-sweats-severity"
+      ]
+    },
+    "symptom-vision-blurred-vision": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-vision",
+      "items": [
+        "symptom-vision-blurred-vision",
+        "symptom-vision-blurred-vision-severity"
+      ]
+    },
+    "symptom-vision-hearing-difficulty": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-vision",
+      "items": [
+        "symptom-vision-hearing-difficulty",
+        "symptom-vision-hearing-difficulty-severity"
+      ]
+    },
+    "symptom-vision-visual-disturbance": {
+      "pair": "Observation|symptom",
+      "parent": "symptom-vision",
+      "items": [
+        "symptom-vision-visual-disturbance",
+        "symptom-vision-visual-disturbance-severity"
       ]
     },
     "treatment": {

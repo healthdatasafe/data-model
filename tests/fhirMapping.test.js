@@ -13,6 +13,11 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
   const eventTypesOf = (it) => it.variations?.eventType ? it.variations.eventType.options.map((o) => o.value) : [it.eventType];
   const check = (it, key = 'x') => checkFhirMapping(key, it, eventTypesOf(it));
   const coding = (code, system = 'http://loinc.org') => ({ system, code, display: `display ${code}` });
+  // plan 133 fertility: the 10 grant roots of Observation|fertility, all offered unticked, with the two home tests and the
+  // five quantitative urine hormones of Observation|laboratory (hCG; LH, E3G, PdG, FSH: perki 2026-11-27, F5)
+  const FERTILITY_ROOTS = ['body-vulva-bleeding', 'body-vulva-menstrual-cup', 'fertility-cycles-fertile-window', 'fertility-cycles-lh-peak-day', 'fertility-cycles-ovulation', 'fertility-cycles-peak-day', 'fertility-cycles-period', 'fertility-cycles-start', 'fertility-genital-contact', 'fertility-sexual-activity'];
+  const URINE_HORMONES = ['body-urine-hormones-lh', 'body-urine-hormones-e3g', 'body-urine-hormones-pdg', 'body-urine-hormones-fsh', 'body-urine-hormones-hcg'];
+  const FERTILITY_OPT_IN = [...FERTILITY_ROOTS, 'fertility-test-opk', 'fertility-test-pregnancy', ...URINE_HORMONES];
 
   describe('[FHIR-ITEM] the shipped blocks', () => {
     it('[FHIR-ITEM-1] the mapped items load and keep their blocks; the VAS slider is unmapped', () => {
@@ -203,7 +208,8 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.deepStrictEqual(itemsById['body-temperature-basal-disturbance'].fhir, { companionOf: 'body-temperature-basal' });
       const { streamsById } = require('../src/streams');
       assert.strictEqual(streamsById['body-temperature'].consentOptIn, true);
-      assert.deepStrictEqual(Object.values(streamsById).filter((s) => s.consentOptIn !== undefined).map((s) => s.id), ['body-temperature']);
+      // with the fertility rows, the two home tests and the urine hCG (plan 133 fertility, FHIR-ITEM-20)
+      assert.deepStrictEqual(Object.values(streamsById).filter((s) => s.consentOptIn !== undefined).map((s) => s.id).sort(), ['body-temperature', ...FERTILITY_OPT_IN].sort());
       // the consent row is "Body temperature"; its description says what else ticking it discloses
       assert.match(streamsById['body-temperature'].description.en, /basal.*fertility.*disturbed/);
       assert.match(streamsById['body-temperature'].description.fr, /basales.*fertilité.*perturbée/);
@@ -287,6 +293,148 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.deepStrictEqual([active.value, active.effective], [{ kind: 'quantity', units: { 'time/s': 's' } }, day]);
       // the 12 streams are the grant roots; the activity root holds no item and is never one
       assert.deepStrictEqual(fhirScopes['Observation|activity'], [...Object.keys(sports).map((s) => `activity-${s}`), 'activity-steps', 'activity-distance-walking-running', 'activity-duration-active'].sort());
+    });
+
+    it('[FHIR-ITEM-19] symptoms (plan 133): 75325-1 with the finding as a fixed-coded value, the grade as a 64750-3 component (LL4051-0) whose "0" renders as 111551-8; pain severity coded under 38208-5; every symptom leaf a grant root of Observation|symptom', () => {
+      const SCT = 'http://snomed.info/sct';
+      const LOINC = 'http://loinc.org';
+      const { streamsById } = require('../src/streams');
+      const leaves = Object.values(streamsById).filter((s) => s.id.startsWith('symptom-') && (s.children ?? []).length === 0).map((s) => s.id).sort();
+      assert.strictEqual(leaves.length, 51);
+      assert.deepStrictEqual(fhirScopes['Observation|symptom'], leaves, 'every leaf, never the root or a body-system group');
+      const items = Object.entries(itemsById).filter(([, i]) => i.streamId?.startsWith('symptom-'));
+      assert.strictEqual(items.length, 101);
+      for (const [k, i] of items) {
+        assert.deepStrictEqual([i.fhir?.resourceType, i.fhir?.category, i.fhir?.alsoMatchCategories, i.fhir?.effective, i.fhir?.profiles], ['Observation', 'symptom', ['survey', 'exam'], { from: 'span' }, {}], k);
+      }
+      const symptom = { system: LOINC, code: '75325-1', display: 'Symptom' };
+      const options = {
+        0: { system: LOINC, code: 'LA137-2', display: 'None' },
+        0.25: { system: LOINC, code: 'LA6752-5', display: 'Mild' },
+        0.5: { system: LOINC, code: 'LA6751-7', display: 'Moderate' },
+        0.75: { system: LOINC, code: 'LA6750-9', display: 'Severe' },
+        1: { system: LOINC, code: 'LA11912-5', display: 'Extreme' }
+      };
+      const answers = (list) => list.map((c) => `${c.system === SCT ? 'SCT' : 'LOINC'} ${c.code}`);
+      const severe = itemsById['symptom-gastrointestinal-nausea-severity'].fhir.value.component;
+      assert.deepStrictEqual(Object.fromEntries(Object.entries(severe.alsoMatch).map(([k, l]) => [k, answers(l)])), {
+        0: ['SCT 260413007'],
+        0.25: ['LOINC LA11910-9', 'SCT 255604002', 'SCT 255510006', 'SCT 162468002'],
+        0.5: ['SCT 6736007', 'SCT 162469005'],
+        0.75: ['SCT 24484000', 'SCT 162470006'],
+        1: ['LOINC LA13958-6', 'SCT 12565001', 'SCT 162471005']
+      }, 'by label: an incoming Severe is 0.75, Trivial and the ranges have no level');
+      const pairs = items.filter(([k]) => k.endsWith('-severity') && k !== 'symptom-pain-severity').map(([k]) => k.replace(/-severity$/, ''));
+      assert.strictEqual(pairs.length, 50);
+      for (const presenceKey of pairs) {
+        const presence = itemsById[presenceKey];
+        const severity = itemsById[`${presenceKey}-severity`];
+        assert.strictEqual(presence.deprecated, true, presenceKey);
+        for (const i of [presence, severity]) {
+          assert.deepStrictEqual(i.fhir.code, symptom, presenceKey);
+          assert.strictEqual(i.fhir.value.kind, 'fixed-coded');
+        }
+        assert.deepStrictEqual(presence.fhir.value, { kind: 'fixed-coded', codings: severity.fhir.value.codings, ...(severity.fhir.value.alsoMatch ? { alsoMatch: severity.fhir.value.alsoMatch } : {}) }, presenceKey);
+        assert.deepStrictEqual(severity.fhir.value.component, {
+          absent: presenceKey,
+          code: { system: LOINC, code: '64750-3', display: 'Severity of symptoms' },
+          options,
+          alsoMatch: severe.alsoMatch,
+          negation: { option: '0', code: { system: LOINC, code: '111551-8', display: 'Symptom absent' } }
+        }, presenceKey);
+        // references.snomed states the rendered concept, on the severity item and on its presence twin alike (F11)
+        const rendered = severity.fhir.value.codings[0];
+        if (rendered.system === SCT) {
+          assert.deepStrictEqual(severity.references.snomed, [rendered.code], presenceKey);
+          assert.deepStrictEqual(presence.references, severity.references, presenceKey);
+        } else {
+          assert.strictEqual(presence.references, undefined, presenceKey);
+        }
+      }
+      const value = (k) => [answers(itemsById[k].fhir.value.codings), answers(itemsById[k].fhir.value.alsoMatch ?? [])];
+      // perki 2026-11-27: cramps renders the common parent 55300003; Fable F9: sore throat renders 267102003
+      assert.deepStrictEqual(value('symptom-gastrointestinal-cramps-severity'), [['SCT 55300003'], ['SCT 51197009', 'SCT 431416001']]);
+      assert.deepStrictEqual(value('symptom-respiratory-sore-throat-severity'), [['SCT 267102003'], ['SCT 162397003']]);
+      assert.deepStrictEqual(value('symptom-gastrointestinal-gas-severity'), [['SCT 308698004'], ['SCT 249504006', 'SCT 80301007']]);
+      // hot flashes: no active SNOMED CT concept, the HDS symptom system; the qualified disorders import only
+      const hot = itemsById['symptom-thermoregulation-hot-flashes-severity'].fhir.value;
+      assert.deepStrictEqual(hot.codings, [{ system: 'https://hds.ngo/fhir/CodeSystem/symptom', code: 'hot-flashes', display: 'Hot flashes' }]);
+      assert.deepStrictEqual(answers(hot.alsoMatch), ['SCT 198436008', 'SCT 143661000119109', 'SCT 141631000119100']);
+      assert.strictEqual(itemsById['symptom-thermoregulation-hot-flashes-severity'].references, undefined);
+      // pain severity: no twin, so a coded block under its own LOINC; the question names it, so no negation
+      const pain = itemsById['symptom-pain-severity'].fhir;
+      assert.deepStrictEqual(pain.code, { system: LOINC, code: '38208-5', display: 'Pain severity - Reported' });
+      assert.deepStrictEqual(pain.value, { kind: 'coded', options, alsoMatch: severe.alsoMatch });
+    });
+
+    it('[FHIR-ITEM-20] fertility charting (plan 133, phase 1): 16 blocks; cycle start and ovulation as event-date under 8665-2 and 11976-8; value-less markers on the HDS item coding; the HDS fertility answers; the home tests under laboratory; every row opt-in', () => {
+      const SCT = 'http://snomed.info/sct';
+      const LOINC = 'http://loinc.org';
+      const FERT = 'https://hds.ngo/fhir/CodeSystem/fertility';
+      const hds = (key) => ({ system: 'https://hds.ngo/fhir/CodeSystem/item', code: key, display: itemsById[key].label.en });
+      const block = (k) => itemsById[k].fhir;
+      for (const [k, code] of [['fertility-cycles-start', { system: LOINC, code: '8665-2', display: 'Last menstrual period start date' }], ['fertility-cycles-ovulation', { system: LOINC, code: '11976-8', display: 'Ovulation date' }]]) {
+        assert.deepStrictEqual(block(k), { resourceType: 'Observation', category: 'fertility', alsoMatchCategories: ['social-history', 'exam'], code, value: { kind: 'event-date' }, profiles: {} }, k);
+        assert.deepStrictEqual(itemsById[k].references.loinc, [code.code]);
+      }
+      for (const k of ['fertility-cycles-period-end', 'fertility-cycles-peak-day', 'fertility-cycles-lh-peak-day', 'fertility-genital-contact', 'body-vulva-bleeding-miscarriage']) {
+        assert.deepStrictEqual(block(k), { resourceType: 'Observation', category: 'fertility', code: hds(k), profiles: {} }, k);
+      }
+      assert.deepStrictEqual(block('fertility-cycles-fertile-window'), { resourceType: 'Observation', category: 'fertility', code: hds('fertility-cycles-fertile-window'), effective: { from: 'span' }, profiles: {} });
+      assert.deepStrictEqual(block('body-vulva-bleeding-browndark'), { resourceType: 'Observation', category: 'fertility', code: hds('body-vulva-bleeding-browndark'), alsoMatch: [{ system: SCT, code: '289537009', display: 'Passing altered blood from vagina' }], profiles: {} });
+      assert.deepStrictEqual(block('body-vulva-bleeding-clots').code, { system: SCT, code: '289532003', display: 'Passing clots vaginally' });
+      assert.deepStrictEqual(block('body-vulva-bleeding-postpartum').code, { system: SCT, code: '289576005', display: 'Lochia present' });
+      const codes = (options) => Object.fromEntries(Object.entries(options).map(([k, c]) => [k, `${c.system === FERT ? 'FERT' : c.system === SCT ? 'SCT' : c.system} ${c.code}`]));
+      const bleeding = block('body-vulva-bleeding');
+      assert.deepStrictEqual(bleeding.code, hds('body-vulva-bleeding'));
+      assert.deepStrictEqual(codes(bleeding.value.options), { 0: 'FERT bleeding-none', 0.08: 'FERT bleeding-spotting', 0.2: 'FERT bleeding-very-light', 0.35: 'FERT bleeding-light', 0.55: 'FERT bleeding-moderate', 0.75: 'FERT bleeding-heavy', 0.95: 'FERT bleeding-very-heavy' });
+      assert.deepStrictEqual(Object.fromEntries(Object.entries(bleeding.value.alsoMatch).map(([k, l]) => [k, l.map((c) => c.code)])), { 0.08: ['9126005'], 0.55: ['289539007'] });
+      assert.deepStrictEqual(codes(block('body-vulva-menstrual-cup').value.options), { 0.35: 'FERT cup-fill-light', 0.55: 'FERT cup-fill-moderate', 0.75: 'FERT cup-fill-heavy' });
+      const sex = block('fertility-sexual-activity');
+      assert.deepStrictEqual(sex.code, { system: SCT, code: '364316005', display: 'Sexual intercourse observable' });
+      assert.deepStrictEqual(codes(sex.value.options), { fertile: 'SCT 2314005', protected: 'SCT 63537005', incomplete: 'FERT intercourse-without-ejaculation', withdrawal: 'FERT intercourse-withdrawal', condom: 'FERT intercourse-condom', 'cervical-barrier': 'FERT intercourse-cervical-barrier' });
+      const lab = { us: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab', ips: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-results-laboratory-pathology-uv-ips' };
+      const preg = block('fertility-test-pregnancy');
+      assert.deepStrictEqual([preg.category, preg.code.code, preg.alsoMatch.map((c) => c.code), preg.profiles], ['laboratory', '2106-3', ['80384-1'], lab]);
+      assert.deepStrictEqual(codes(preg.value.options), { '-1': 'SCT 260385009', 0: 'SCT 82334004', 1: 'SCT 10828004' });
+      const opk = block('fertility-test-opk');
+      assert.deepStrictEqual([opk.category, opk.code, opk.profiles], ['laboratory', hds('fertility-test-opk'), lab]);
+      assert.deepStrictEqual(codes(opk.value.options), { '-1': 'SCT 260385009', 0: 'SCT 82334004', 0.5: 'FERT ovulation-test-high', 1: 'SCT 10828004' });
+      assert.deepStrictEqual(itemsById['fertility-test-opk'].options.find((o) => o.value === 0.5).label, { en: 'High (approaching peak)', fr: 'Élevé (approche du pic)' });
+      // 16 blocks; 10 grant roots of Observation|fertility; the two tests join the laboratory key
+      const fertility = Object.entries(itemsById).filter(([, i]) => i.fhir?.category === 'fertility').map(([k]) => k);
+      assert.strictEqual(fertility.length, 14);
+      assert.deepStrictEqual(fhirScopes['Observation|fertility'], FERTILITY_ROOTS);
+      for (const k of ['fertility-test-opk', 'fertility-test-pregnancy']) assert.ok(fhirScopes['Observation|laboratory'].includes(k), k);
+      // every new row is offered unticked; the bleeding row says what else it grants
+      const { streamsById } = require('../src/streams');
+      for (const s of FERTILITY_OPT_IN) assert.strictEqual(streamsById[s].consentOptIn, true, s);
+      // the five quantitative urine hormones (F5): each its own laboratory row, unticked; their group is no row
+      for (const s of URINE_HORMONES) assert.ok(fhirScopes['Observation|laboratory'].includes(s), s);
+      assert.strictEqual(streamsById['body-urine-hormones'].consentOptIn, undefined);
+      assert.match(streamsById['body-vulva-bleeding'].description.en, /brown or dark.*clots.*childbirth.*pregnancy loss/);
+      assert.match(streamsById['body-vulva-bleeding'].description.fr, /bruns ou foncés.*caillots.*accouchement.*perte de grossesse/);
+    });
+
+    it('[FHIR-ITEM-21] the built pack: body-vulva-bleeding carries consentOptIn and its description in every locale of the pack; the OPK 0.5 label too', function () {
+      const packPath = path.join(__dirname, '../dist/pack.json');
+      if (!fs.existsSync(packPath)) return this.skip(); // npm run build has not run yet
+      const pack = JSON.parse(fs.readFileSync(packPath, 'utf-8'));
+      const find = (list, id) => {
+        for (const s of list) {
+          if (s.id === id) return s;
+          const r = find(s.children ?? [], id);
+          if (r) return r;
+        }
+      };
+      const b = find(pack.streams, 'body-vulva-bleeding');
+      if (b.consentOptIn == null) return this.skip(); // dist/pack.json predates this release
+      assert.strictEqual(b.consentOptIn, true);
+      assert.deepStrictEqual(Object.keys(b.description).sort(), ['en', 'es', 'fr', 'it', 'pt-BR']);
+      for (const [lang, text] of Object.entries(b.description)) assert.ok(text.length > 0, lang);
+      assert.deepStrictEqual(Object.keys(pack.items['fertility-test-opk'].options.find((o) => o.value === 0.5).label).sort(), ['en', 'es', 'fr', 'it', 'pt-BR']);
+      assert.strictEqual(pack.fhirScopes['Observation|symptom'].length, 51);
+      assert.strictEqual(pack.fhirScopes['Observation|fertility'].length, 10);
     });
 
     it('[FHIR-ITEM-2] wellbeing-general-health: 5 levels, higher is better, LOINC answers on every option', () => {
@@ -544,6 +692,37 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       k.fhir.effective = {};
       assert.throws(() => checkItem(k, 'y'), /must have required property 'from'/);
       checkItem(item('activity-steps'), 's');
+    });
+
+    it('[FHIR-SCH-10] fixed-coded component.alsoMatch (option → codings) and component.negation { option, code }; value kind event-date holds kind only (plan 133 symptoms, fertility)', () => {
+      const s = () => item('symptom-gastrointestinal-nausea-severity');
+      checkItem(s(), 'n');
+      const a = s();
+      a.fhir.value.component.alsoMatch = {};
+      assert.throws(() => checkItem(a, 'n'), /fewer than 1 properties/);
+      const b = s();
+      b.fhir.value.component.alsoMatch = { 0: [] };
+      assert.throws(() => checkItem(b, 'n'), /fewer than 1 items/);
+      const b2 = s();
+      b2.fhir.value.component.alsoMatch = { 0: coding('X') };
+      assert.throws(() => checkItem(b2, 'n'), /must be array/);
+      const c = s();
+      delete c.fhir.value.component.negation.code;
+      assert.throws(() => checkItem(c, 'n'), /must have required property 'code'/);
+      const d = s();
+      delete d.fhir.value.component.negation.option;
+      assert.throws(() => checkItem(d, 'n'), /must have required property 'option'/);
+      const e = s();
+      e.fhir.value.component.negation.alsoMatch = [coding('X')];
+      assert.throws(() => checkItem(e, 'n'), /additional properties/);
+      const f = s();
+      f.fhir.value.component.negation.option = 0;
+      assert.throws(() => checkItem(f, 'n'), /must be string/);
+      // event-date: the kind alone
+      const g = item('fertility-cycles-start');
+      checkItem(g, 'g');
+      g.fhir.value.units = { 'activity/plain': 'd' };
+      assert.throws(() => checkItem(g, 'g'), /additional properties/);
     });
 
     it('[FHIR-SCH-4] a code source is `{ from: datasource, field }`, `{ from: eventType, codings }`, `{ from: content, field, translate, unknown }` or `{ from: text, field }` and nothing else', () => {
@@ -1262,6 +1441,86 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.throws(() => check(j), /LA20166-7 appears more than once/);
     });
 
+    it('[FHIR-MAP-31] fixed-coded component.alsoMatch and component.negation (plan 133 symptoms): alsoMatch keyed by component options, its codings unique across options and every other coding of the item; negation names an option and a code that is not the block\'s', () => {
+      const s = () => item('symptom-gastrointestinal-cramps-severity');
+      check(s(), 'symptom-gastrointestinal-cramps-severity');
+      // alsoMatch: keys are options
+      const a = s();
+      a.fhir.value.component.alsoMatch = { ...a.fhir.value.component.alsoMatch, 0.1: [coding('X')] };
+      assert.throws(() => check(a), /value.component.alsoMatch "0.1" is not an option of the component/);
+      // unique across options, and against an option coding, the value codings and the codes
+      const b = s();
+      b.fhir.value.component.alsoMatch = { ...b.fhir.value.component.alsoMatch, 1: [...b.fhir.value.component.alsoMatch['0.75']] };
+      assert.throws(() => check(b), /the coding http:\/\/snomed.info\/sct\|24484000 appears more than once/);
+      const c = s();
+      c.fhir.value.component.alsoMatch = { 0.25: [structuredClone(c.fhir.value.component.options['0.5'])] };
+      assert.throws(() => check(c), /LA6751-7 appears more than once/);
+      const d = s();
+      d.fhir.value.component.alsoMatch = { 0.25: [structuredClone(d.fhir.value.codings[0])] };
+      assert.throws(() => check(d), /55300003 appears more than once/);
+      // the HDS item coding is never an answer
+      const e = s();
+      e.fhir.value.component.alsoMatch = { 0.25: [coding('symptom-gastrointestinal-cramps-severity', 'https://hds.ngo/fhir/CodeSystem/item')] };
+      assert.throws(() => check(e), /is the HDS item coding/);
+      // negation: an option of the component, a code that is not the block's, and once in the item
+      const f = s();
+      f.fhir.value.component.negation.option = '0.1';
+      assert.throws(() => check(f), /value.component.negation.option "0.1" is not an option of the component/);
+      const g = s();
+      g.fhir.value.component.negation.code = structuredClone(g.fhir.code);
+      assert.throws(() => check(g), /value.component.negation.code http:\/\/loinc.org\|75325-1 is the block's own code/);
+      const h = s();
+      h.fhir.value.component.negation.code = structuredClone(h.fhir.value.component.code);
+      assert.throws(() => check(h), /64750-3 appears more than once/);
+      // a component without the two still passes (the activity shape)
+      const i = s();
+      delete i.fhir.value.component.alsoMatch;
+      delete i.fhir.value.component.negation;
+      check(i);
+    });
+
+    it('[FHIR-MAP-32] event-date (plan 133 fertility): an Observation with a static code, on an item whose one eventType holds no content; no alsoEmit, split or effective', () => {
+      const s = () => item('fertility-cycles-start');
+      check(s(), 'fertility-cycles-start');
+      const a = s();
+      Object.assign(a.fhir, { resourceType: 'Condition', category: 'problem-list-item' });
+      delete a.fhir.alsoMatchCategories;
+      assert.throws(() => check(a), /a Condition has no value\[x\]/);
+      const b = s();
+      b.fhir.alsoEmit = [coding('X')];
+      assert.throws(() => check(b), /value.kind "event-date" takes no "alsoEmit"/);
+      const c = s();
+      c.fhir.effective = { from: 'span' };
+      assert.throws(() => check(c), /value.kind "event-date" takes no "effective"/);
+      // the event is the date: an item that holds content is refused
+      const d = item('body-vulva-bleeding');
+      d.fhir.value = { kind: 'event-date' };
+      assert.throws(() => check(d, 'body-vulva-bleeding'), /value.kind "event-date" needs an item whose one eventType holds no content \(activity\/plain\)/);
+      // the item asserts 8665-2, so the block's static code is that code (checkLoincAgreement)
+      const e = s();
+      e.fhir.code = coding('fertility-cycles-start', 'https://hds.ngo/fhir/CodeSystem/item');
+      assert.throws(() => check(e, 'fertility-cycles-start'), /the item asserts LOINC/);
+    });
+
+    it('[FHIR-MAP-33] an Observation block without a value sits on an item whose eventType holds no content (plan 133 fertility, F1): the renderer would drop the content', () => {
+      check(item('fertility-cycles-peak-day'), 'fertility-cycles-peak-day');
+      check(item('body-vulva-bleeding-clots'), 'body-vulva-bleeding-clots');
+      const a = item('body-vulva-bleeding');
+      delete a.fhir.value;
+      assert.throws(() => check(a, 'body-vulva-bleeding'), /an Observation block without "value" renders no content, but eventType ratio\/proportion holds content/);
+      const b = item('body-weight');
+      delete b.fhir.value;
+      assert.throws(() => check(b, 'body-weight'), /without "value" renders no content/);
+      // other resourceTypes have no value at all: untouched
+      check(item('condition-coded'), 'condition-coded');
+      // the model: every value-less Observation block is on a no-content item
+      const { eventTypesById } = require('../src/eventTypes');
+      for (const [k, i] of Object.entries(itemsById)) {
+        if (i.fhir?.resourceType !== 'Observation' || i.fhir.value != null) continue;
+        for (const t of eventTypesOf(i)) assert.strictEqual(eventTypesById(t).type, 'null', k);
+      }
+    });
+
     it('[FHIR-MAP-30] effective (plan 133): on an Observation only, never beside a split or a concept code; day: true exactly on an item whose duration is one day (mandatory, never null, maxSeconds <= 90000)', () => {
       const a = item('condition-coded');
       a.fhir.effective = { from: 'span' };
@@ -1909,14 +2168,76 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.ok(Object.values(itemsById).every((i) => i.fhir?.value?.kind === 'fixed-coded' || i.fhir?.code?.code !== '73985-4'));
     });
 
+    it('[FHIR-SCOPE-27] a fixed-coded negation code (plan 133 symptoms): reserved like the shared code, one category across every block using it, the value codings keys under it too', () => {
+      const { checkFhirImportKeys } = require('../src/fhir');
+      const negation = { option: '0', code: coding('N') };
+      const fixed = (codings, value = {}, block = {}) => ({ resourceType: 'Observation', category: 'survey', code: coding('Q'), value: { kind: 'fixed-coded', codings, ...value }, profiles: {}, ...block });
+      const component = (absent, extra = {}) => ({ absent, code: coding('S'), options: { 0: coding('LA0'), 1: coding('LA1') }, alsoMatch: { 1: [coding('SEV')] }, negation, ...extra });
+      const presence = (streamId, codings, block) => it_(streamId, fixed(codings, {}, block), { eventType: 'activity/plain', deprecated: true });
+      const severity = (streamId, codings, absent, extra, block) => it_(streamId, fixed(codings, { component: component(absent, extra) }, block), { eventType: 'ratio/proportion' });
+      const family = { sa: severity('body-a', [coding('A')], 'pa'), pa: presence('body-a', [coding('A')]), sb: severity('body-b', [coding('B')], 'pb'), pb: presence('body-b', [coding('B')]) };
+      assert.deepStrictEqual(run(family), { 'Observation|survey': ['body-a', 'body-b'] });
+      // the negation code keeps one category, even under another shared code
+      assert.throws(() => run({ ...family, m: severity('mood', [coding('M')], 'mp', {}, { category: 'exam', code: coding('Q2') }), mp: presence('mood', [coding('M')], { category: 'exam', code: coding('Q2') }) }), /item "m" fhir: the fixed-coded code http:\/\/loinc.org\|N is "sa"'s under category "survey"/);
+      // ... and a shared code of one family is never another family's negation code under another category
+      assert.throws(() => run({ ...family, m: severity('mood', [coding('M')], 'mp', { negation: { option: '0', code: coding('Q') } }, { category: 'exam', code: coding('Q2') }), mp: presence('mood', [coding('M')], { category: 'exam', code: coding('Q2') }) }), /item "m" fhir: the fixed-coded code http:\/\/loinc.org\|Q is "sa"'s under category "survey"/);
+      // every block with a component sharing a code carries the same negation, or all none (F10): one zero shape per
+      // shared code; the presence twins carry no component and are not compared
+      assert.throws(() => run({ ...family, sb: severity('body-b', [coding('B')], 'pb', { negation: undefined }) }), /item "sb" fhir: value.component.negation is absent but "sa", sharing the code http:\/\/loinc.org\|Q, has \{"option":"0","code":\{"system":"http:\/\/loinc.org","code":"N","display":"display N"\}\}: every block with a component sharing a code carries the same negation, or all none/);
+      assert.throws(() => run({ ...family, sb: severity('body-b', [coding('B')], 'pb', { negation: { option: '0', code: coding('N2') } }) }), /item "sb" fhir: value.component.negation \{"option":"0","code":\{"system":"http:\/\/loinc.org","code":"N2","display":"display N2"\}\} but "sa", sharing the code http:\/\/loinc.org\|Q, has/);
+      assert.throws(() => run({ ...family, sb: severity('body-b', [coding('B')], 'pb', { negation: { option: '1', code: coding('N') } }) }), /item "sb" fhir: value.component.negation .* but "sa", sharing the code http:\/\/loinc.org\|Q/);
+      // all none under one shared code passes; another shared code may hold its own (or none)
+      run({ ...family, sa: severity('body-a', [coding('A')], 'pa', { negation: undefined }), sb: severity('body-b', [coding('B')], 'pb', { negation: undefined }) });
+      run({ ...family, m: severity('mood', [coding('M')], 'mp', { negation: undefined }, { code: coding('Q2') }), mp: presence('mood', [coding('M')], { code: coding('Q2') }) });
+      // the model: every 75325-1 block with a component carries the 111551-8 negation
+      const withComponent = Object.values(itemsById).filter((i) => i.fhir?.value?.kind === 'fixed-coded' && i.fhir.code.code === '75325-1' && i.fhir.value.component != null);
+      assert.strictEqual(withComponent.length, 50);
+      for (const i of withComponent) assert.strictEqual(i.fhir.value.component.negation?.code.code, '111551-8');
+      // never an import key: a static code or an alsoMatch of any active item
+      assert.throws(() => checkFhirImportKeys({ ...family, o: { fhir: obs('survey', 'N') } }, tree), /fhir import key Observation http:\/\/loinc.org\|N of "o" is the fixed-coded code of "(sa|sb)" \(its shared code or its negation code\)/);
+      assert.throws(() => checkFhirImportKeys({ ...family, o: { fhir: { ...obs('survey', 'O'), alsoMatch: [coding('N')] } } }, tree), /fhir import key Observation http:\/\/loinc.org\|N of "o" is the fixed-coded code/);
+      // the value codings are keys under the negation code too: another family using N with the same value collides
+      assert.throws(() => checkFhirImportKeys({ ...family, m: severity('mood', [coding('A')], 'mp', {}, { code: coding('Q2') }), mp: presence('mood', [coding('A')], { code: coding('Q2') }) }, tree), /fhir import key Observation http:\/\/loinc.org\|N value http:\/\/loinc.org\|A is claimed by both "sa" and "m"/);
+      checkFhirImportKeys({ ...family, m: severity('mood', [coding('M')], 'mp', {}, { code: coding('Q2') }), mp: presence('mood', [coding('M')], { code: coding('Q2') }) }, tree);
+      // the model: 75325-1 and 111551-8 are no import key; 38208-5 is (pain severity, coded)
+      const keys = Object.values(itemsById).filter((i) => !i.deprecated && i.fhir?.value?.kind !== 'fixed-coded').flatMap((i) => [i.fhir?.code, ...(Array.isArray(i.fhir?.alsoMatch) ? i.fhir.alsoMatch : [])]).filter(Boolean).map((c) => c.code);
+      for (const c of ['75325-1', '111551-8']) assert.ok(!keys.includes(c), c);
+      assert.ok(keys.includes('38208-5'));
+    });
+
+    it('[FHIR-SCOPE-28] an opt-in grant root whose subtree holds other mapped streams carries a description in every language of the pack (plan 133 fertility, F8)', () => {
+      const { checkConsentOptInDescriptions } = require('../src/fhir');
+      const items = { a: it_('body-a', obs('vital-signs', 'a')), f: it_('body-a-flag', obs('vital-signs', 'f')), b: it_('body-b', obs('vital-signs', 'b')) };
+      const t = (marks) => {
+        const out = structuredClone(tree);
+        const visit = (n) => { Object.assign(n, marks[n.id] ?? {}); for (const c of n.children ?? []) visit(c); };
+        for (const r of out) visit(r);
+        return out;
+      };
+      const langs = ['en', 'fr', 'es'];
+      // body-a also grants body-a-flag: a description in every language
+      assert.throws(() => checkConsentOptInDescriptions(t({ 'body-a': { consentOptIn: true } }), items, langs), /stream "body-a" is consentOptIn and its row also grants body-a-flag: it needs a description saying so in every language of the pack, missing en, fr, es/);
+      assert.throws(() => checkConsentOptInDescriptions(t({ 'body-a': { consentOptIn: true, description: { en: 'x', fr: 'y', es: ' ' } } }), items, langs), /missing es/);
+      checkConsentOptInDescriptions(t({ 'body-a': { consentOptIn: true, description: { en: 'x', fr: 'y', es: 'z' } } }), items, langs);
+      // a row with nothing mapped below needs none; nor does a stream that is not opt-in
+      checkConsentOptInDescriptions(t({ 'body-b': { consentOptIn: true } }), items, langs);
+      checkConsentOptInDescriptions(t({ 'body-a': { consentOptIn: true } }), { a: items.a }, langs);
+      checkConsentOptInDescriptions(t({}), items, langs);
+      // the model, in its source languages (the build checks the pack's, FHIR-ITEM-21)
+      const streams = require('../src/streams');
+      checkConsentOptInDescriptions(streams.roots, itemsById, ['en', 'fr']);
+    });
+
     it('[FHIR-SCOPE-11] the model\'s table; the committed lock is up to date (run npm run fhir:lock)', () => {
       const labBlocks = Object.entries(itemsById).filter(([, i]) => i.fhir?.category === 'laboratory');
       // 135 active items, plus the two legacy urine-hormone items (LH, PdG) whose stream is their replacement's. The
       // eight differential streams hold two items each (the percentage and the absolute count). 4.29.0 adds PSA total
       // and urine creatinine. The three lab-result/coded-v1 items (blood, urine, cerebrospinal fluid), one stream each.
-      assert.strictEqual(labBlocks.length, 140);
+      // Plan 133 fertility adds the two home tests (OPK, pregnancy), one stream each.
+      assert.strictEqual(labBlocks.length, 142);
       const lab = [...new Set(labBlocks.map(([, i]) => i.streamId))].sort();
-      assert.strictEqual(lab.length, 130);
+      assert.strictEqual(lab.length, 132);
+      const symptomRoots = Object.entries(itemsById).filter(([, i]) => i.fhir?.category === 'symptom').map(([, i]) => i.streamId);
       assert.deepStrictEqual(fhirScopes, {
         AllergyIntolerance: ['allergy'],
         'Condition|problem-list-item': ['condition'],
@@ -1924,7 +2245,9 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
         MedicationRequest: ['medication-prescription'],
         MedicationStatement: ['medication-intake'],
         'Observation|activity': ['activity-cycling', 'activity-distance-walking-running', 'activity-duration-active', 'activity-hiit', 'activity-hiking', 'activity-jogging', 'activity-pilates', 'activity-steps', 'activity-stretching', 'activity-swimming', 'activity-weights', 'activity-yoga'],
+        'Observation|fertility': FERTILITY_ROOTS,
         'Observation|laboratory': lab,
+        'Observation|symptom': [...new Set(symptomRoots)].sort(),
         'Observation|social-history': ['lifestyle-tobacco-smoking'],
         'Observation|survey': ['wellbeing-general-health'],
         'Observation|vital-signs': ['body-blood-pressure', 'body-heart-rate', 'body-height', 'body-oxygen-saturation', 'body-temperature', 'body-weight'],
@@ -1950,6 +2273,15 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.deepStrictEqual(readLock().streams['body-temperature'], { pair: 'Observation|vital-signs', parent: 'body', items: ['body-temperature'] });
       assert.deepStrictEqual(readLock().streams['body-temperature-basal'], { pair: 'Observation|vital-signs', parent: 'body-temperature', items: ['body-temperature-basal'] });
       assert.deepStrictEqual(readLock().streams['body-temperature-basal-disturbance'], { pair: 'Observation|vital-signs', parent: 'body-temperature-basal', items: ['body-temperature-basal-disturbance'] });
+      // symptoms (plan 133): each leaf a grant root with its pair; the root and the body-system groups are never locked
+      assert.deepStrictEqual(readLock().streams['symptom-gastrointestinal-nausea'], { pair: 'Observation|symptom', parent: 'symptom-gastrointestinal', items: ['symptom-gastrointestinal-nausea', 'symptom-gastrointestinal-nausea-severity'] });
+      assert.deepStrictEqual(readLock().streams['symptom-pain-severity'], { pair: 'Observation|symptom', parent: 'symptom-pain', items: ['symptom-pain-severity'] });
+      for (const s of ['symptom', 'symptom-gastrointestinal', 'symptom-pain']) assert.strictEqual(readLock().streams[s], undefined, s);
+      // fertility (plan 133): the bleeding root and its four qualifier streams under Observation|fertility; the tests under laboratory
+      assert.deepStrictEqual(readLock().streams['body-vulva-bleeding-miscarriage'], { pair: 'Observation|fertility', parent: 'body-vulva-bleeding', items: ['body-vulva-bleeding-miscarriage'] });
+      assert.deepStrictEqual(readLock().streams['fertility-cycles-period'], { pair: 'Observation|fertility', parent: 'fertility-cycles', items: ['fertility-cycles-period-end'] });
+      assert.deepStrictEqual(readLock().streams['fertility-test-opk'], { pair: 'Observation|laboratory', parent: 'fertility', items: ['fertility-test-opk'] });
+      for (const s of ['fertility', 'fertility-cycles', 'body-vulva']) assert.strictEqual(readLock().streams[s], undefined, s);
       assert.deepStrictEqual(mergeLock(readLock(), lockEntries(itemsById, fhirScopes)), readLock(), 'definitions/fhir/scopes.lock.json is not up to date');
       assert.ok(!JSON.stringify(fhirScopes).includes(UNMAPPED));
     });
@@ -2148,7 +2480,12 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       assert.strictEqual(m.formatVersion, 1);
       assert.strictEqual(m.fhirVersion, '4.0.1');
       assert.deepStrictEqual(m.flavours, { us: 'hl7.fhir.us.core#6.1.0', ips: 'hl7.fhir.uv.ips#2.0.1', ch: 'ch.fhir.ig.ch-core#6.0.0' });
-      assert.deepStrictEqual(Object.keys(m.categories.Observation), ['vital-signs', 'social-history', 'survey', 'laboratory', 'exam', 'imaging', 'procedure', 'therapy', 'activity']);
+      assert.deepStrictEqual(Object.keys(m.categories.Observation), ['vital-signs', 'social-history', 'survey', 'laboratory', 'exam', 'imaging', 'procedure', 'therapy', 'activity', 'symptom', 'fertility']);
+      // plan 133: the two HDS categories share one HDS system, which also names the generic rendering's hds-item
+      for (const k of ['symptom', 'fertility']) assert.deepStrictEqual(m.categories.Observation[k].system, 'https://hds.ngo/fhir/CodeSystem/observation-category');
+      const withHdsItem = structuredClone(m);
+      withHdsItem.categories.Observation['hds-item'] = { system: 'https://hds.ngo/fhir/CodeSystem/observation-category', code: 'hds-item', display: 'HDS item' };
+      assert.throws(() => checkMappingTable(withHdsItem), /Observation\/hds-item: https:\/\/hds.ngo\/fhir\/CodeSystem\/observation-category\|hds-item is the category of the generic rendering, never a key/);
       assert.deepStrictEqual(Object.keys(m.categories.Condition), ['problem-list-item', 'encounter-diagnosis', 'health-concern']);
       assert.strictEqual(m.systems['SNOMED-CT'], 'http://snomed.info/sct');
       assert.strictEqual(m.systems['ICD-10'], 'http://hl7.org/fhir/sid/icd-10');

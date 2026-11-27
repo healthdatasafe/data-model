@@ -370,8 +370,15 @@ children:
               fr: "Filance de la glaire cervicale"
       - id: body-vulva-cervix-position
         name: Cervical Position
+      # `consentOptIn` (plan 133, FHIR-MAPPING.md § SMART scopes): the grant root of Observation|fertility for the
+      # bleeding and its four qualifiers, offered unticked. Its row is labelled "Vaginal bleeding intensity"; the
+      # description, shown under the row in every language of the pack, says what else ticking it discloses.
       - id: body-vulva-bleeding
         name: Vulva Bleeding
+        description:
+          en: "Includes brown or dark bleeding, blood clots, bleeding after childbirth and bleeding from a pregnancy loss."
+          fr: "Comprend les saignements bruns ou foncés, les caillots, les saignements après un accouchement et ceux d'une perte de grossesse."
+        consentOptIn: true
         children:
           - id: body-vulva-bleeding-browndark
             name: Presence of brown/dark coloration
@@ -383,6 +390,7 @@ children:
             name: Miscarriage Bleeding
       - id: body-vulva-menstrual-cup
         name: Menstrual Cup
+        consentOptIn: true
   - id: body-skin
     name: Skin
     label:
@@ -426,17 +434,25 @@ children:
         label:
           en: "Urine Hormones"
           fr: "Hormones urinaires"
+        # `consentOptIn` (plan 133): the quantitative urine hormones are fertility tracking readings (LH, E3G, PdG and
+        # FSH chart the cycle, hCG says what a pregnancy test says), so each is offered unticked like the two home tests
+        # (else those opt-ins would be defeated). Each is a grant root of Observation|laboratory.
         children:
           - id: body-urine-hormones-lh
             name: LH
+            consentOptIn: true
           - id: body-urine-hormones-e3g
             name: E3G
+            consentOptIn: true
           - id: body-urine-hormones-pdg
             name: PdG
+            consentOptIn: true
           - id: body-urine-hormones-fsh
             name: FSH
+            consentOptIn: true
           - id: body-urine-hormones-hcg
             name: hCG
+            consentOptIn: true
       - id: body-urine-chemistry
         name: Urine chemistry
         label:

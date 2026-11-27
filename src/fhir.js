@@ -75,6 +75,13 @@ const ALLERGY_NONE_KNOWN_NO_ALLERGEN = ['allergen', 'name'];
 const SNOMED_SYSTEM = 'http://snomed.info/sct';
 
 /**
+ * The HDS Observation category system (plan 133): the `symptom` and `fertility` keys of the category table, and
+ * `hds-item`, the category hds-fhir-js gives the generic rendering of an item with no block, which is never a key.
+ */
+const HDS_OBSERVATION_CATEGORY_SYSTEM = 'https://hds.ngo/fhir/CodeSystem/observation-category';
+const GENERIC_CATEGORY_CODE = 'hds-item';
+
+/**
  * The resourceType whose block maps the questionnaire answer item (QUESTIONNAIRE.md § FHIR): no code, no category, no
  * value. The renderer reads the content by name (`requestEventId`, `answers`), so the block holds `resourceType` and
  * `profiles` only.
@@ -166,6 +173,7 @@ module.exports = {
   checkFhirScopes,
   checkScopeClasses,
   checkFhirImportKeys,
+  checkConsentOptInDescriptions,
   readLock,
   emptyLock,
   lockEntries,
@@ -237,6 +245,8 @@ function checkMappingTable (t) {
       codes.set(c.code, key);
       // The key is the code: a scope's `?category=<code>` is compared to the key (plan 133, F11).
       if (c.code !== key) fail(`category ${resourceType}/${key}: the key must be the code ("${c.code}"), as a scope names the category by its code`);
+      // The generic rendering of an item with no block carries this coding (hds-fhir-js): it must match no block.
+      if (c.system === HDS_OBSERVATION_CATEGORY_SYSTEM && c.code === GENERIC_CATEGORY_CODE) fail(`category ${resourceType}/${key}: ${c.system}|${c.code} is the category of the generic rendering, never a key`);
     }
   }
   const uris = Object.values(t.systems || {});
@@ -516,6 +526,9 @@ function checkFhirMapping (key, item, itemEventTypes) {
         // One coding, one place in the item: the code, the value codings, their alsoMatch and the component.
         ownCodings.push(...fixedCodedCodings(v));
         break;
+      case 'event-date':
+        checkEventDate(item, f, itemEventTypes, fail);
+        break;
       case 'components':
         if (composite == null) fail('value.kind "components" needs a composite item');
         for (const k of Object.keys(v.components)) {
@@ -525,6 +538,11 @@ function checkFhirMapping (key, item, itemEventTypes) {
         ownCodings.push(...Object.values(v.components).map((c) => c.code));
         break;
     }
+  } else if (f.resourceType === 'Observation') {
+    // An Observation without a value states a finding by its code alone (a cycle marker): the renderer drops any
+    // content, so the item must have none to drop (plan 133 fertility, F1). A content item takes a value kind.
+    const held = itemEventTypes.filter((t) => eventTypesById(t)?.type !== 'null');
+    if (held.length > 0) fail(`an Observation block without "value" renders no content, but eventType ${held.join(', ')} holds content: give the block a value kind, or map an item whose eventType holds none (${PRESENCE_EVENT_TYPE})`);
   }
 
   for (const k of Object.keys(f.split || {})) {
@@ -564,9 +582,14 @@ function distinctUnits (pairs, fail) {
 /** The eventType of a presence event (no content): the one a `fixed-coded` presence twin sits on. */
 const PRESENCE_EVENT_TYPE = 'activity/plain';
 
-/** Every coding of a `fixed-coded` value: its codings, its alsoMatch, the component code and its option codings. */
+/**
+ * Every coding of a `fixed-coded` value: its codings, its alsoMatch, the component code, its option codings, their
+ * import-only `component.alsoMatch` codings and the `component.negation` code.
+ */
 function fixedCodedCodings (v) {
-  return [...v.codings, ...(v.alsoMatch || []), ...(v.component != null ? [v.component.code, ...Object.values(v.component.options)] : [])];
+  const c = v.component;
+  if (c == null) return [...v.codings, ...(v.alsoMatch || [])];
+  return [...v.codings, ...(v.alsoMatch || []), c.code, ...Object.values(c.options), ...Object.values(c.alsoMatch || {}).flat(), ...(c.negation != null ? [c.negation.code] : [])];
 }
 
 /**
@@ -575,9 +598,10 @@ function fixedCodedCodings (v) {
  * a component, the item's one eventType has no content (`activity/plain`, a presence); with one, the item is a `select`
  * whose options are exactly the component's. Its code is never an import key, so the block takes no code `alsoMatch`
  * (an import-only value coding goes in `value.alsoMatch`). No coding is the HDS item coding: the item system names the
- * item that carries a coding, and a value is an answer, not an item. The twin a component names, the family's one
- * category and the import keys by value are checked with every item loaded (checkFixedCodedFamilies,
- * checkFhirImportKeys).
+ * item that carries a coding, and a value is an answer, not an item. A component may carry import-only answer codings
+ * (`alsoMatch`, keyed by option) and a `negation` (plan 133 symptoms: the option "0" rendered as 111551-8 "Symptom
+ * absent" with the value and no component). The twin a component names, the family's one category and the import keys
+ * by value are checked with every item loaded (checkFixedCodedFamilies, checkFhirImportKeys).
  */
 function checkFixedCoded (item, f, itemEventTypes, fail, sameSet) {
   const v = f.value;
@@ -594,6 +618,35 @@ function checkFixedCoded (item, f, itemEventTypes, fail, sameSet) {
   }
   if (item.type !== 'select') fail('value.kind "fixed-coded" with a component applies to "select" items only (the component renders the option)');
   sameSet('value.component.options keys vs the item options', Object.keys(v.component.options), item.options.map((o) => String(o.value)));
+  // Import-only answer codings, keyed by option like a `coded` value's alsoMatch; their uniqueness across options is
+  // held with every other coding of the item (fixedCodedCodings).
+  for (const k of Object.keys(v.component.alsoMatch || {})) {
+    if (v.component.options[k] == null) fail(`value.component.alsoMatch "${k}" is not an option of the component`);
+  }
+  // The "none" grade rendered as its own code (111551-8 "Symptom absent"), the value and no component: the option is
+  // one of the component's, and the code is never the block's (the two would read back alike). That it is reserved,
+  // never an import key, and keeps one category is held with every item loaded (checkFixedCodedFamilies,
+  // checkFhirImportKeys).
+  const n = v.component.negation;
+  if (n != null) {
+    if (v.component.options[n.option] == null) fail(`value.component.negation.option "${n.option}" is not an option of the component`);
+    if (n.code.system === f.code.system && n.code.code === f.code.code) fail(`value.component.negation.code ${n.code.system}|${n.code.code} is the block's own code: a negated resource must read apart from a graded one`);
+  }
+}
+
+/**
+ * An `event-date` value (FHIR-MAPPING.md § Value kinds, plan 133 fertility): the event's own date, at day precision, as
+ * `valueDateTime` under a static code that asks for a date (8665-2 "Last menstrual period start date"). On an
+ * Observation only, with a static code, on an item whose one eventType holds no content (the event is the date); no
+ * `alsoEmit`, no `split`, no `effective` (the value and `effectiveDateTime` are one date, and a span is not a date).
+ */
+function checkEventDate (item, f, itemEventTypes, fail) {
+  if (f.resourceType !== 'Observation') fail('value.kind "event-date" applies to an Observation only');
+  if (f.code.from != null) fail('value.kind "event-date" needs a static code: the question whose answer is the date');
+  if (f.alsoEmit != null) fail('value.kind "event-date" takes no "alsoEmit"');
+  if (f.split != null) fail('value.kind "event-date" takes no "split"');
+  if (f.effective != null) fail('value.kind "event-date" takes no "effective": the value is the event\'s date, never a span');
+  if (itemEventTypes.length !== 1 || eventTypesById(itemEventTypes[0])?.type !== 'null') fail(`value.kind "event-date" needs an item whose one eventType holds no content (${PRESENCE_EVENT_TYPE}): the event is the date`);
 }
 
 /**
@@ -1149,7 +1202,9 @@ function checkFhirScopes (items, { roots = streams.roots, lock = readLock(), cla
 /**
  * The `fixed-coded` blocks, with every item loaded (FHIR-MAPPING.md § Value kinds, § Import; plan 133 activity):
  * - every block sharing a code has one category: the code is the family's question, never an import key
- *   (checkFhirImportKeys), and the value names the item;
+ *   (checkFhirImportKeys), and the value names the item; a `component.negation` code is held the same way;
+ * - every block with a component sharing a code carries the same `component.negation`, or all none: a reader of the
+ *   shared code reads one zero shape for the whole family (the presence twins carry no component, so no negation);
  * - per stream, at most one item carries a component;
  * - the component's `absent` names the presence twin: another item on the same stream, eventType `activity/plain`,
  *   whose block is `fixed-coded` without a component, with the same code, category, codings, alsoMatch and effective. A resource
@@ -1157,17 +1212,25 @@ function checkFhirScopes (items, { roots = streams.roots, lock = readLock(), cla
  */
 function checkFixedCodedFamilies (items) {
   const categoryOf = new Map();
+  const negationOf = new Map();
   const withComponent = new Map();
   for (const [key, item] of Object.entries(items)) {
     const f = item.fhir;
     if (f?.value?.kind !== 'fixed-coded') continue;
     const fail = (msg) => { throw new Error(`item "${key}" fhir: ${msg}`); };
-    const code = `${f.code.system}|${f.code.code}`;
-    const other = categoryOf.get(code);
-    if (other != null && other.category !== f.category) fail(`the fixed-coded code ${code} is "${other.key}"'s under category "${other.category}": every block sharing it has one category`);
-    if (other == null) categoryOf.set(code, { category: f.category, key });
+    // The shared code and a negation code are questions alike: each keeps one category across every block using it.
+    const negation = f.value.component?.negation;
+    for (const code of [`${f.code.system}|${f.code.code}`, ...(negation != null ? [`${negation.code.system}|${negation.code.code}`] : [])]) {
+      const other = categoryOf.get(code);
+      if (other != null && other.category !== f.category) fail(`the fixed-coded code ${code} is "${other.key}"'s under category "${other.category}": every block sharing it has one category`);
+      if (other == null) categoryOf.set(code, { category: f.category, key });
+    }
     const c = f.value.component;
     if (c == null) continue;
+    const shared = `${f.code.system}|${f.code.code}`;
+    const zero = negationOf.get(shared);
+    if (zero != null && !isDeepStrictEqual(zero.negation, c.negation)) fail(`value.component.negation ${c.negation == null ? 'is absent' : JSON.stringify(c.negation)} but "${zero.key}", sharing the code ${shared}, has ${zero.negation == null ? 'none' : JSON.stringify(zero.negation)}: every block with a component sharing a code carries the same negation, or all none`);
+    if (zero == null) negationOf.set(shared, { negation: c.negation, key });
     const sibling = withComponent.get(item.streamId);
     if (sibling != null) fail(`stream "${item.streamId}" already holds "${sibling}", a fixed-coded block with a component: one per stream`);
     withComponent.set(item.streamId, key);
@@ -1204,6 +1267,29 @@ function checkConsentOptInPlacement (grants, roots) {
     for (const c of node.children ?? []) visit(c, [node, ...ancestors]);
   };
   for (const r of roots) visit(r, []);
+}
+
+/**
+ * A `consentOptIn` stream whose subtree holds other streams carrying mapped items grants more than its row's label says
+ * (the bleeding row also grants clots, postpartum and miscarriage bleeding): its `description`, shown under the row,
+ * says the rest, in every language of the pack (plan 133 fertility, F8). Run by the build on the localised streams.
+ *
+ * @param {Array} roots the stream tree, localised
+ * @param {object} items item key → item
+ * @param {string[]} languages every language of the pack
+ */
+function checkConsentOptInDescriptions (roots, items, languages) {
+  const mapped = new Set(Object.values(items).filter((i) => i.fhir != null).map((i) => i.streamId));
+  const below = (node) => (node.children ?? []).flatMap((c) => [c.id, ...below(c)]);
+  const visit = (node) => {
+    if (node.consentOptIn === true) {
+      const more = below(node).filter((id) => mapped.has(id));
+      const missing = more.length === 0 ? [] : languages.filter((l) => typeof node.description?.[l] !== 'string' || node.description[l].trim() === '');
+      if (missing.length > 0) throw new Error(`stream "${node.id}" is consentOptIn and its row also grants ${more.join(', ')}: it needs a description saying so in every language of the pack, missing ${missing.join(', ')}`);
+    }
+    for (const c of node.children ?? []) visit(c);
+  };
+  for (const r of roots) visit(r);
 }
 
 /**
@@ -1353,7 +1439,8 @@ function ancestorsIn (parentOf, id) {
  * no category can still fit two datasource-coded items of different categories; the importer reports that as
  * ambiguous rather than guess. A `fixed-coded` block is matched by (resourceType, code, value coding): its code is
  * reserved, never an import key of any item, and its value codings are the keys, claimed by the item with a component
- * for itself and the presence twin it names (the one deprecated import target, FHIR-MAPPING.md § Import).
+ * for itself and the presence twin it names (the one deprecated import target, FHIR-MAPPING.md § Import). A
+ * `component.negation` code is reserved too, and the value codings are keys under it as well.
  */
 function checkFhirImportKeys (items, roots = streams.roots) {
   const seen = new Map();
@@ -1382,17 +1469,24 @@ function checkFhirImportKeys (items, roots = streams.roots) {
   for (const [key, item] of Object.entries(items)) {
     const f = item.fhir;
     if (f?.value?.kind !== 'fixed-coded') continue;
-    const k = `${f.resourceType} ${f.code.system}|${f.code.code}`;
-    if (!reserved.has(k)) reserved.set(k, key);
+    const negation = f.value.component?.negation;
+    for (const code of [f.code, ...(negation != null ? [negation.code] : [])]) {
+      const k = `${f.resourceType} ${code.system}|${code.code}`;
+      if (!reserved.has(k)) reserved.set(k, key);
+    }
     if (f.value.component != null) twinned.add(f.value.component.absent);
   }
   for (const [key, item] of Object.entries(items)) {
     const f = item.fhir;
     if (item.deprecated || f == null || f.companionOf != null) continue;
     if (f.value?.kind === 'fixed-coded') {
-      // Matched by (resourceType, code, value coding): each value coding and value alsoMatch coding is a key.
+      // Matched by (resourceType, code, value coding): each value coding and value alsoMatch coding is a key, under
+      // the shared code and under the negation code (a "none" grade, 111551-8 with the value) alike.
       if (f.value.component == null && twinned.has(key)) continue;
-      for (const c of [...f.value.codings, ...(f.value.alsoMatch || [])]) claim(`${f.resourceType} ${f.code.system}|${f.code.code} value ${c.system}|${c.code}`, key);
+      const negation = f.value.component?.negation;
+      for (const code of [f.code, ...(negation != null ? [negation.code] : [])]) {
+        for (const c of [...f.value.codings, ...(f.value.alsoMatch || [])]) claim(`${f.resourceType} ${code.system}|${code.code} value ${c.system}|${c.code}`, key);
+      }
     } else if (f.element != null) {
       claim(`${f.resourceType}.${f.element}`, key);
     } else if (f.resourceType === QUESTIONNAIRE_RESPONSE_TYPE || f.resourceType === QUESTIONNAIRE_TYPE) {
@@ -1422,7 +1516,7 @@ function checkFhirImportKeys (items, roots = streams.roots) {
     }
   }
   for (const [k, key] of reserved) {
-    if (seen.has(k)) throw new Error(`fhir import key ${k} of "${seen.get(k)}" is the fixed-coded code of "${key}": that code is the question a family shares, never an import key`);
+    if (seen.has(k)) throw new Error(`fhir import key ${k} of "${seen.get(k)}" is the fixed-coded code of "${key}" (its shared code or its negation code): that code is the question a family shares, never an import key`);
   }
   // An emitted-only coding (`alsoEmit`) is never an import key, and never a code that would make the rendered resource
   // match another item on its way back: no item's import key, no LOINC code another item owns. One exception (plan

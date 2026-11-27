@@ -194,10 +194,16 @@ const defsSchema = {
     fhirValue: {
       type: 'object',
       properties: {
-        kind: { enum: ['quantity', 'scaled-quantity', 'ratio-quantity', 'coded', 'components', 'lab-result', 'fixed-coded'] }
+        kind: { enum: ['quantity', 'scaled-quantity', 'ratio-quantity', 'coded', 'components', 'lab-result', 'fixed-coded', 'event-date'] }
       },
       required: ['kind'],
       allOf: [
+        { // event-date: no fields; the event's own date (`time`, at day precision) is the value, `valueDateTime`
+          // (8665-2 "Last menstrual period start date"). Its own kind: a renderer that does not know it skips the block
+          // instead of emitting a resource without its value.
+          if: { properties: { kind: { const: 'event-date' } } },
+          then: { properties: { kind: {} }, additionalProperties: false }
+        },
         { // lab-result: no fields; the value is read from a `lab-result/coded-v1` content (value, comparator, unit,
           // unitText, valueText, valueCodes), with a `concept` code. Its own kind: a renderer that does not know it
           // skips the block instead of reading the content object as a value.
@@ -272,8 +278,11 @@ const defsSchema = {
         { // fixed-coded: one concept, fixed per item, rendered as valueCodeableConcept (the sport of a session, every
           // coding a translation of it); `alsoMatch`: value codings accepted on import only, never emitted; `component`:
           // the item's select options as one component (`code`, option value → coding), `absent` naming the item an
-          // import without that component goes to (the presence twin). Its own kind, not a field of `coded`: a renderer
-          // that does not know it skips the block instead of emitting a resource without its value.
+          // import without that component goes to (the presence twin); `component.alsoMatch`: option value → extra
+          // answer codings accepted on import only; `component.negation`: the option (a "none" grade) rendered as a
+          // resource coded `negation.code` with the value and no component. Its own kind, not a field of `coded`: a
+          // renderer that does not know it skips the block instead of emitting a resource without its value, and one
+          // that predates a component field refuses the block (generic Observation).
           if: { properties: { kind: { const: 'fixed-coded' } } },
           then: {
             properties: {
@@ -285,7 +294,21 @@ const defsSchema = {
                 properties: {
                   absent: { type: 'string', minLength: 1 },
                   code: { $ref: 'defs.json#/definitions/fhirCoding' },
-                  options: { type: 'object', minProperties: 1, additionalProperties: { $ref: 'defs.json#/definitions/fhirCoding' } }
+                  options: { type: 'object', minProperties: 1, additionalProperties: { $ref: 'defs.json#/definitions/fhirCoding' } },
+                  alsoMatch: {
+                    type: 'object',
+                    minProperties: 1,
+                    additionalProperties: { type: 'array', minItems: 1, items: { $ref: 'defs.json#/definitions/fhirCoding' } }
+                  },
+                  negation: {
+                    type: 'object',
+                    properties: {
+                      option: { type: 'string', minLength: 1 },
+                      code: { $ref: 'defs.json#/definitions/fhirCoding' }
+                    },
+                    required: ['option', 'code'],
+                    additionalProperties: false
+                  }
                 },
                 required: ['absent', 'code', 'options'],
                 additionalProperties: false

@@ -11,6 +11,8 @@
 # NOT "do not write": presence-only sources keep writing them. Nothing referenced
 # these keys when the flag was added, so no writer or reader was affected.
 # 5-level hooks 0.0/0.25/0.5/0.75/1.0 (semantic anchors; see DESIGN-NOTES.md).
+# FHIR (plan 133): the blocks of symptom.yaml's header; YAML anchors are per file, so the shared component parts
+# (&symptomSeverity*) are defined again in the first -severity block here.
 
 ## Respiratory
 symptom-respiratory-cough:
@@ -26,6 +28,19 @@ symptom-respiratory-cough:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["49727002"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "49727002", display: Cough }
+    effective: { from: span }
+    profiles: {}
 
 symptom-respiratory-cough-severity:
   version: v1
@@ -62,6 +77,45 @@ symptom-respiratory-cough-severity:
   repeatable: unlimited
   references:
     snomed: ["49727002"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "49727002", display: Cough }
+      component:
+        absent: symptom-respiratory-cough
+        code: &symptomSeverityCode { system: http://loinc.org, code: 64750-3, display: Severity of symptoms }
+        options: &symptomSeverityOptions
+          "0": { system: http://loinc.org, code: LA137-2, display: None }
+          "0.25": { system: http://loinc.org, code: LA6752-5, display: Mild }
+          "0.5": { system: http://loinc.org, code: LA6751-7, display: Moderate }
+          "0.75": { system: http://loinc.org, code: LA6750-9, display: Severe }
+          "1": { system: http://loinc.org, code: LA11912-5, display: Extreme }
+        alsoMatch: &symptomSeverityAlsoMatch
+          "0":
+            - { system: http://snomed.info/sct, code: "260413007", display: None }
+          "0.25":
+            - { system: http://loinc.org, code: LA11910-9, display: Slight }
+            - { system: http://snomed.info/sct, code: "255604002", display: Mild }
+            - { system: http://snomed.info/sct, code: "255510006", display: Slight }
+            - { system: http://snomed.info/sct, code: "162468002", display: Symptom mild }
+          "0.5":
+            - { system: http://snomed.info/sct, code: "6736007", display: Moderate severity }
+            - { system: http://snomed.info/sct, code: "162469005", display: Symptom moderate }
+          "0.75":
+            - { system: http://snomed.info/sct, code: "24484000", display: Severe }
+            - { system: http://snomed.info/sct, code: "162470006", display: Symptom severe }
+          "1":
+            - { system: http://loinc.org, code: LA13958-6, display: Very severe }
+            - { system: http://snomed.info/sct, code: "12565001", display: Extreme }
+            - { system: http://snomed.info/sct, code: "162471005", display: Symptom very severe }
+        negation: &symptomSeverityNegation { option: "0", code: { system: http://loinc.org, code: 111551-8, display: Symptom absent } }
+    effective: { from: span }
+    profiles: {}
 
 symptom-respiratory-dyspnea:
   version: v1
@@ -76,6 +130,19 @@ symptom-respiratory-dyspnea:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["267036007"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "267036007", display: Dyspnea }
+    effective: { from: span }
+    profiles: {}
 
 symptom-respiratory-dyspnea-severity:
   version: v1
@@ -92,6 +159,23 @@ symptom-respiratory-dyspnea-severity:
   repeatable: unlimited
   references:
     snomed: ["267036007"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "267036007", display: Dyspnea }
+      component:
+        absent: symptom-respiratory-dyspnea
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-respiratory-wheezing:
   version: v1
@@ -106,6 +190,19 @@ symptom-respiratory-wheezing:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["56018004"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "56018004", display: Wheezing }
+    effective: { from: span }
+    profiles: {}
 
 symptom-respiratory-wheezing-severity:
   version: v1
@@ -122,6 +219,23 @@ symptom-respiratory-wheezing-severity:
   repeatable: unlimited
   references:
     snomed: ["56018004"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "56018004", display: Wheezing }
+      component:
+        absent: symptom-respiratory-wheezing
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-respiratory-nasal-congestion:
   version: v1
@@ -136,6 +250,19 @@ symptom-respiratory-nasal-congestion:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["68235000"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "68235000", display: Nasal congestion }
+    effective: { from: span }
+    profiles: {}
 
 symptom-respiratory-nasal-congestion-severity:
   version: v1
@@ -152,6 +279,23 @@ symptom-respiratory-nasal-congestion-severity:
   repeatable: unlimited
   references:
     snomed: ["68235000"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "68235000", display: Nasal congestion }
+      component:
+        absent: symptom-respiratory-nasal-congestion
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-respiratory-sore-throat:
   version: v1
@@ -166,6 +310,21 @@ symptom-respiratory-sore-throat:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["267102003"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "267102003", display: Sore throat }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "162397003", display: Pain in throat }
+    effective: { from: span }
+    profiles: {}
 
 symptom-respiratory-sore-throat-severity:
   version: v1
@@ -181,7 +340,26 @@ symptom-respiratory-sore-throat-severity:
   options: *sev5
   repeatable: unlimited
   references:
-    snomed: ["162397003"]
+    snomed: ["267102003"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "267102003", display: Sore throat }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "162397003", display: Pain in throat }
+      component:
+        absent: symptom-respiratory-sore-throat
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-respiratory-rhinorrhea:
   version: v1
@@ -196,6 +374,19 @@ symptom-respiratory-rhinorrhea:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["64531003"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "64531003", display: Nasal discharge }
+    effective: { from: span }
+    profiles: {}
 
 symptom-respiratory-rhinorrhea-severity:
   version: v1
@@ -212,6 +403,23 @@ symptom-respiratory-rhinorrhea-severity:
   repeatable: unlimited
   references:
     snomed: ["64531003"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "64531003", display: Nasal discharge }
+      component:
+        absent: symptom-respiratory-rhinorrhea
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 
 ## Cardiac
@@ -228,6 +436,19 @@ symptom-cardiac-palpitations:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["80313002"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "80313002", display: Palpitations }
+    effective: { from: span }
+    profiles: {}
 
 symptom-cardiac-palpitations-severity:
   version: v1
@@ -244,6 +465,23 @@ symptom-cardiac-palpitations-severity:
   repeatable: unlimited
   references:
     snomed: ["80313002"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "80313002", display: Palpitations }
+      component:
+        absent: symptom-cardiac-palpitations
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-cardiac-skipped-beat:
   version: v1
@@ -258,6 +496,19 @@ symptom-cardiac-skipped-beat:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["248629002"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "248629002", display: Pulse missed beats }
+    effective: { from: span }
+    profiles: {}
 
 symptom-cardiac-skipped-beat-severity:
   version: v1
@@ -274,6 +525,23 @@ symptom-cardiac-skipped-beat-severity:
   repeatable: unlimited
   references:
     snomed: ["248629002"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "248629002", display: Pulse missed beats }
+      component:
+        absent: symptom-cardiac-skipped-beat
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 
 ## Thermoregulation
@@ -290,6 +558,19 @@ symptom-thermoregulation-chills:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["43724002"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "43724002", display: Chill }
+    effective: { from: span }
+    profiles: {}
 
 symptom-thermoregulation-chills-severity:
   version: v1
@@ -306,6 +587,23 @@ symptom-thermoregulation-chills-severity:
   repeatable: unlimited
   references:
     snomed: ["43724002"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "43724002", display: Chill }
+      component:
+        absent: symptom-thermoregulation-chills
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-thermoregulation-hot-flashes:
   version: v1
@@ -320,6 +618,21 @@ symptom-thermoregulation-hot-flashes:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: https://hds.ngo/fhir/CodeSystem/symptom, code: hot-flashes, display: Hot flashes }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "198436008", display: Menopausal flushing }
+        - { system: http://snomed.info/sct, code: "143661000119109", display: Non-menopausal hot flash }
+        - { system: http://snomed.info/sct, code: "141631000119100", display: Male hot flash }
+    effective: { from: span }
+    profiles: {}
 
 symptom-thermoregulation-hot-flashes-severity:
   version: v1
@@ -334,6 +647,27 @@ symptom-thermoregulation-hot-flashes-severity:
   type: select
   options: *sev5
   repeatable: unlimited
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: https://hds.ngo/fhir/CodeSystem/symptom, code: hot-flashes, display: Hot flashes }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "198436008", display: Menopausal flushing }
+        - { system: http://snomed.info/sct, code: "143661000119109", display: Non-menopausal hot flash }
+        - { system: http://snomed.info/sct, code: "141631000119100", display: Male hot flash }
+      component:
+        absent: symptom-thermoregulation-hot-flashes
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-thermoregulation-night-sweats:
   version: v1
@@ -348,6 +682,19 @@ symptom-thermoregulation-night-sweats:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["42984000"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "42984000", display: Night sweats }
+    effective: { from: span }
+    profiles: {}
 
 symptom-thermoregulation-night-sweats-severity:
   version: v1
@@ -364,6 +711,23 @@ symptom-thermoregulation-night-sweats-severity:
   repeatable: unlimited
   references:
     snomed: ["42984000"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "42984000", display: Night sweats }
+      component:
+        absent: symptom-thermoregulation-night-sweats
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-thermoregulation-excessive-sweating:
   version: v1
@@ -378,6 +742,19 @@ symptom-thermoregulation-excessive-sweating:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["52613005"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "52613005", display: Excessive sweating }
+    effective: { from: span }
+    profiles: {}
 
 symptom-thermoregulation-excessive-sweating-severity:
   version: v1
@@ -394,6 +771,23 @@ symptom-thermoregulation-excessive-sweating-severity:
   repeatable: unlimited
   references:
     snomed: ["52613005"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "52613005", display: Excessive sweating }
+      component:
+        absent: symptom-thermoregulation-excessive-sweating
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-thermoregulation-cold-extremities:
   version: v1
@@ -408,6 +802,22 @@ symptom-thermoregulation-cold-extremities:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["771542000"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "771542000", display: Cold extremity }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "271584002", display: Cold hands }
+        - { system: http://snomed.info/sct, code: "271585001", display: Cold feet }
+    effective: { from: span }
+    profiles: {}
 
 symptom-thermoregulation-cold-extremities-severity:
   version: v1
@@ -423,7 +833,27 @@ symptom-thermoregulation-cold-extremities-severity:
   options: *sev5
   repeatable: unlimited
   references:
-    snomed: ["271584002", "271585001"]
+    snomed: ["771542000"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "771542000", display: Cold extremity }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "271584002", display: Cold hands }
+        - { system: http://snomed.info/sct, code: "271585001", display: Cold feet }
+      component:
+        absent: symptom-thermoregulation-cold-extremities
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 
 ## Vision & Sensory
@@ -440,6 +870,21 @@ symptom-vision-blurred-vision:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["111516008"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "111516008", display: Blurring of visual image }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "246636008", display: Hazy vision }
+    effective: { from: span }
+    profiles: {}
 
 symptom-vision-blurred-vision-severity:
   version: v1
@@ -455,7 +900,26 @@ symptom-vision-blurred-vision-severity:
   options: *sev5
   repeatable: unlimited
   references:
-    snomed: ["246636008"]
+    snomed: ["111516008"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "111516008", display: Blurring of visual image }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "246636008", display: Hazy vision }
+      component:
+        absent: symptom-vision-blurred-vision
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-vision-visual-disturbance:
   version: v1
@@ -470,6 +934,19 @@ symptom-vision-visual-disturbance:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["63102001"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "63102001", display: Visual disturbance }
+    effective: { from: span }
+    profiles: {}
 
 symptom-vision-visual-disturbance-severity:
   version: v1
@@ -486,6 +963,23 @@ symptom-vision-visual-disturbance-severity:
   repeatable: unlimited
   references:
     snomed: ["63102001"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "63102001", display: Visual disturbance }
+      component:
+        absent: symptom-vision-visual-disturbance
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-vision-hearing-difficulty:
   version: v1
@@ -500,6 +994,19 @@ symptom-vision-hearing-difficulty:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["162340000"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "162340000", display: Hearing difficulty }
+    effective: { from: span }
+    profiles: {}
 
 symptom-vision-hearing-difficulty-severity:
   version: v1
@@ -516,6 +1023,23 @@ symptom-vision-hearing-difficulty-severity:
   repeatable: unlimited
   references:
     snomed: ["162340000"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "162340000", display: Hearing difficulty }
+      component:
+        absent: symptom-vision-hearing-difficulty
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 
 ## Hydration & Urinary
@@ -532,6 +1056,19 @@ symptom-hydration-excessive-thirst:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["17173007"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "17173007", display: Excessive thirst }
+    effective: { from: span }
+    profiles: {}
 
 symptom-hydration-excessive-thirst-severity:
   version: v1
@@ -548,6 +1085,23 @@ symptom-hydration-excessive-thirst-severity:
   repeatable: unlimited
   references:
     snomed: ["17173007"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "17173007", display: Excessive thirst }
+      component:
+        absent: symptom-hydration-excessive-thirst
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-hydration-frequent-urination:
   version: v1
@@ -562,6 +1116,19 @@ symptom-hydration-frequent-urination:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["162116003"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "162116003", display: Increased frequency of urination }
+    effective: { from: span }
+    profiles: {}
 
 symptom-hydration-frequent-urination-severity:
   version: v1
@@ -578,6 +1145,23 @@ symptom-hydration-frequent-urination-severity:
   repeatable: unlimited
   references:
     snomed: ["162116003"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "162116003", display: Increased frequency of urination }
+      component:
+        absent: symptom-hydration-frequent-urination
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 
 ## Bleeding
@@ -594,6 +1178,19 @@ symptom-bleeding-nosebleed:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["249366005"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "249366005", display: Bleeding from nose }
+    effective: { from: span }
+    profiles: {}
 
 symptom-bleeding-nosebleed-severity:
   version: v1
@@ -610,6 +1207,23 @@ symptom-bleeding-nosebleed-severity:
   repeatable: unlimited
   references:
     snomed: ["249366005"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "249366005", display: Bleeding from nose }
+      component:
+        absent: symptom-bleeding-nosebleed
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-bleeding-bleeding-gums:
   version: v1
@@ -624,6 +1238,19 @@ symptom-bleeding-bleeding-gums:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["86276007"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "86276007", display: Bleeding gums }
+    effective: { from: span }
+    profiles: {}
 
 symptom-bleeding-bleeding-gums-severity:
   version: v1
@@ -640,6 +1267,23 @@ symptom-bleeding-bleeding-gums-severity:
   repeatable: unlimited
   references:
     snomed: ["86276007"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "86276007", display: Bleeding gums }
+      component:
+        absent: symptom-bleeding-bleeding-gums
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-bleeding-easy-bruising:
   version: v1
@@ -654,6 +1298,19 @@ symptom-bleeding-easy-bruising:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["424131007"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "424131007", display: Easy bruising }
+    effective: { from: span }
+    profiles: {}
 
 symptom-bleeding-easy-bruising-severity:
   version: v1
@@ -670,6 +1327,23 @@ symptom-bleeding-easy-bruising-severity:
   repeatable: unlimited
   references:
     snomed: ["424131007"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "424131007", display: Easy bruising }
+      component:
+        absent: symptom-bleeding-easy-bruising
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 
 ## Neurological
@@ -686,6 +1360,21 @@ symptom-neurological-paresthesia:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["62507009"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "62507009", display: Pins and needles }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "44077006", display: Numbness }
+    effective: { from: span }
+    profiles: {}
 
 symptom-neurological-paresthesia-severity:
   version: v1
@@ -702,6 +1391,25 @@ symptom-neurological-paresthesia-severity:
   repeatable: unlimited
   references:
     snomed: ["62507009"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "62507009", display: Pins and needles }
+      alsoMatch:
+        - { system: http://snomed.info/sct, code: "44077006", display: Numbness }
+      component:
+        absent: symptom-neurological-paresthesia
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-neurological-tremor:
   version: v1
@@ -716,6 +1424,19 @@ symptom-neurological-tremor:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["26079004"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "26079004", display: Tremor }
+    effective: { from: span }
+    profiles: {}
 
 symptom-neurological-tremor-severity:
   version: v1
@@ -732,6 +1453,23 @@ symptom-neurological-tremor-severity:
   repeatable: unlimited
   references:
     snomed: ["26079004"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "26079004", display: Tremor }
+      component:
+        absent: symptom-neurological-tremor
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-neurological-restless-legs:
   version: v1
@@ -746,6 +1484,19 @@ symptom-neurological-restless-legs:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["32914008"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "32914008", display: Restless legs syndrome }
+    effective: { from: span }
+    profiles: {}
 
 symptom-neurological-restless-legs-severity:
   version: v1
@@ -762,6 +1513,23 @@ symptom-neurological-restless-legs-severity:
   repeatable: unlimited
   references:
     snomed: ["32914008"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "32914008", display: Restless legs syndrome }
+      component:
+        absent: symptom-neurological-restless-legs
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-neurological-twitching:
   version: v1
@@ -776,6 +1544,19 @@ symptom-neurological-twitching:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["82470000"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "82470000", display: Muscle fasciculation }
+    effective: { from: span }
+    profiles: {}
 
 symptom-neurological-twitching-severity:
   version: v1
@@ -792,6 +1573,23 @@ symptom-neurological-twitching-severity:
   repeatable: unlimited
   references:
     snomed: ["82470000"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "82470000", display: Muscle fasciculation }
+      component:
+        absent: symptom-neurological-twitching
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 
 ## Dermatological
@@ -808,6 +1606,19 @@ symptom-dermatological-rash:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["271807003"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "271807003", display: Eruption }
+    effective: { from: span }
+    profiles: {}
 
 symptom-dermatological-rash-severity:
   version: v1
@@ -824,6 +1635,23 @@ symptom-dermatological-rash-severity:
   repeatable: unlimited
   references:
     snomed: ["271807003"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "271807003", display: Eruption }
+      component:
+        absent: symptom-dermatological-rash
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-dermatological-hives:
   version: v1
@@ -838,6 +1666,19 @@ symptom-dermatological-hives:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["126485001"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "126485001", display: Urticaria }
+    effective: { from: span }
+    profiles: {}
 
 symptom-dermatological-hives-severity:
   version: v1
@@ -854,6 +1695,23 @@ symptom-dermatological-hives-severity:
   repeatable: unlimited
   references:
     snomed: ["126485001"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "126485001", display: Urticaria }
+      component:
+        absent: symptom-dermatological-hives
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 
 symptom-dermatological-itching:
   version: v1
@@ -868,6 +1726,19 @@ symptom-dermatological-itching:
   eventType: activity/plain
   type: checkbox
   repeatable: unlimited
+  references:
+    snomed: ["418290006"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "418290006", display: Itching }
+    effective: { from: span }
+    profiles: {}
 
 symptom-dermatological-itching-severity:
   version: v1
@@ -884,4 +1755,21 @@ symptom-dermatological-itching-severity:
   repeatable: unlimited
   references:
     snomed: ["418290006"]
+  fhir:
+    resourceType: Observation
+    category: symptom
+    alsoMatchCategories: [survey, exam]
+    code: { system: http://loinc.org, code: 75325-1, display: Symptom }
+    value:
+      kind: fixed-coded
+      codings:
+        - { system: http://snomed.info/sct, code: "418290006", display: Itching }
+      component:
+        absent: symptom-dermatological-itching
+        code: *symptomSeverityCode
+        options: *symptomSeverityOptions
+        alsoMatch: *symptomSeverityAlsoMatch
+        negation: *symptomSeverityNegation
+    effective: { from: span }
+    profiles: {}
 

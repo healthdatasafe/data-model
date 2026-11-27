@@ -130,6 +130,11 @@
       "text": "Elasticità del muco cervicale",
       "status": "draft"
     },
+    "[id=\"body\"]/children[id=\"body-vulva\"]/children[id=\"body-vulva-bleeding\"]/description": {
+      "en": "Includes brown or dark bleeding, blood clots, bleeding after childbirth and bleeding from a pregnancy loss.",
+      "text": "Comprende il sanguinamento marrone o scuro, i coaguli, il sanguinamento dopo il parto e quello legato a una perdita di gravidanza.",
+      "status": "draft"
+    },
     "[id=\"body\"]/children[id=\"body-skin\"]/label": {
       "en": "Skin",
       "text": "Pelle",
@@ -4700,6 +4705,11 @@
     "fertility-test-opk/options[value=0]/label": {
       "en": "Indeterminate",
       "text": "Indeterminato",
+      "status": "draft"
+    },
+    "fertility-test-opk/options[value=0.5]/label": {
+      "en": "High (approaching peak)",
+      "text": "Alto (vicino al picco)",
       "status": "draft"
     },
     "fertility-test-opk/options[value=1]/label": {

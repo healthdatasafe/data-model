@@ -38,13 +38,16 @@ describe('[MSOH] Mood swings and oily hair (site-agents#68, #69)', () => {
       assert.ok(severity.label.fr && severity.description.fr);
     });
 
-    it(`[MSOH-3] ${key}: each twin resolves from its event, one SNOMED finding on both, no fhir block`, () => {
+    // Oily hair is a symptom stream, so it maps with the symptom family (plan 133): its one SNOMED finding is the value.
+    const mapped = parent.startsWith('symptom');
+    it(`[MSOH-3] ${key}: each twin resolves from its event, one SNOMED finding on both, ${mapped ? 'the symptom fhir block' : 'no fhir block'}`, () => {
       assert.strictEqual(findItemForEvent('activity/plain', key), presence);
       assert.strictEqual(findItemForEvent('ratio/proportion', key), severity);
       for (const i of [presence, severity]) {
         assert.deepStrictEqual(i.references.snomed, [snomed]);
         assert.strictEqual(i.repeatable, 'unlimited');
-        assert.strictEqual(i.fhir, undefined);
+        if (!mapped) assert.strictEqual(i.fhir, undefined);
+        else assert.deepStrictEqual(i.fhir.value.codings, [{ system: 'http://snomed.info/sct', code: snomed, display: 'Greasy hair' }]);
       }
     });
   }
