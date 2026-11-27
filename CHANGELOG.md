@@ -1,5 +1,35 @@
 # Changelog
 
+## [4.45.0] - 2026-11-27
+
+### Added: four notice codes of the HDS Reader (CONVERSATION.md, plan 128 SUB-F)
+
+Fable review: ship with edits, all applied. Notice codes are free codes (pattern): additive, documentation and tests
+only. An older app shows the generic notice text (R8). Release order: hds-lib `NOTICE_CODES`, hds-forms-js texts and
+the webapp before a contact sends `grid-not-located`, which replaces a code older apps know.
+
+- **`several-result-columns`** (ends the work): several value columns and fewer than two sampling days told apart (two
+  samples of one day, or no heading); nothing proposed. Said `several-sampling-dates` before, which stays for two days or
+  more. A document read per column sends `columns-not-read` instead, also when no column is proposed.
+- **`lines-may-be-missing`**: values read from a picture, a dated grid apart; the contact has evidence that the page
+  prints more result lines than it read (the engine's `rowsSeen`, PICTURE-COMPLETENESS item 2). Once per document, with
+  or after its first `proposed-values` alert; no count; changes no status.
+- **`grid-not-located`** (ends the work): a dated grid, or a document that may be one, whose grid cannot be located with
+  certainty (cut, folded, hidden, kind in doubt). § A dated grid sent `no-result-found` for it before; a dated-grid
+  document is now read whole or not at all.
+- **`kind-not-read`** (ends the work): the contact recognises the document's kind and does not read that kind. Not
+  `on-hold`, not `no-result-found`, not `no-attachment`.
+- **A notice speaks of one read:** her app shows a notice about a document only when it is later than the contact's
+  latest `received` about it, so a document shared again keeps none of the earlier read's notices.
+
+### Fixed: the 4.39.0 tables
+
+- § Answers, by what they answer gains the `which-column-date` row; § What a writer MUST include gains the
+  `which-column-date` question and value rows (`column`, never `grid`; `proposal.time` when there is a `proposal`), and
+  its `context.anchor` row names `which-column-date`; the kinds table lists `context.column` and `proposed-value.column`;
+  R10 and § Writing a value name `which-column-date` beside `which-row-date` (the prose of § A table read per column
+  already said so).
+
 ## [4.44.0] - 2026-11-27
 
 ### Added: cervical-fluid converter v2, Creighton model v2 (plan 136)
