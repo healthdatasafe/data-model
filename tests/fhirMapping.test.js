@@ -228,11 +228,12 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       };
       const t = find(pack.streams, 'body-temperature');
       assert.strictEqual(t.consentOptIn, true);
-      assert.deepStrictEqual(Object.keys(t.description).sort(), ['en', 'es', 'fr', 'it', 'pt-BR']);
+      assert.deepStrictEqual(Object.keys(t.description).sort(), ['de', 'en', 'es', 'fr', 'it', 'pt-BR']);
       for (const [lang, text] of Object.entries(t.description)) assert.ok(text.length > 0, lang);
       assert.match(t.description.es, /basales/);
       assert.match(t.description.it, /basali/);
       assert.match(t.description['pt-BR'], /basais/);
+      assert.match(t.description.de, /Basal/);
       assert.strictEqual(find(pack.streams, 'body-temperature-basal').consentOptIn, undefined);
     });
 
@@ -430,9 +431,9 @@ describe('[FHIR] item fhir blocks (plan 115)', () => {
       const b = find(pack.streams, 'body-vulva-bleeding');
       if (b.consentOptIn == null) return this.skip(); // dist/pack.json predates this release
       assert.strictEqual(b.consentOptIn, true);
-      assert.deepStrictEqual(Object.keys(b.description).sort(), ['en', 'es', 'fr', 'it', 'pt-BR']);
+      assert.deepStrictEqual(Object.keys(b.description).sort(), ['de', 'en', 'es', 'fr', 'it', 'pt-BR']);
       for (const [lang, text] of Object.entries(b.description)) assert.ok(text.length > 0, lang);
-      assert.deepStrictEqual(Object.keys(pack.items['fertility-test-opk'].options.find((o) => o.value === 0.5).label).sort(), ['en', 'es', 'fr', 'it', 'pt-BR']);
+      assert.deepStrictEqual(Object.keys(pack.items['fertility-test-opk'].options.find((o) => o.value === 0.5).label).sort(), ['de', 'en', 'es', 'fr', 'it', 'pt-BR']);
       assert.strictEqual(pack.fhirScopes['Observation|symptom'].length, 51);
       assert.strictEqual(pack.fhirScopes['Observation|fertility'].length, 10);
     });
