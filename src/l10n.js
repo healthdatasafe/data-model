@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Translations added to the published files at build time (documentation/L10N.md). The definitions keep `en` and `fr`
-// (and the few `es`, `de`, `it` written there); every other text of a locale is in `definitions/l10n/{locale}.json`.
+// only (`checkInlineLocales`); every text of another locale is in `definitions/l10n/{locale}.json`, with its review mark.
 //
 //   { "<published file>": { "<path>": { "en": "the English it translates", "text": "...", "reviewedBy": "...", "reviewedOn": "YYYY-MM-DD" } } }
 //
@@ -23,7 +23,30 @@ const DRAFT_KEYS = ['en', 'text', 'status'];
 
 const isObject = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
 
-module.exports = { LOCALES, CONVERTER_PACK, checkLocales, forEachText, loadLocales, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels, checkConsentLabelLocales };
+/** The locales written in the definitions. */
+const SOURCE_LOCALES = ['en', 'fr'];
+/** A key of a text map that names a locale (`de`, `es`, `pt-BR`, `zh-Hant`, `es-419`, `gsw`, …), known here or not. */
+const LOCALE_KEY = /^[a-z]{2,3}([-_][A-Za-z0-9]{2,8})*$/;
+
+module.exports = { LOCALES, CONVERTER_PACK, checkLocales, checkInlineLocales, forEachText, loadLocales, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels, checkConsentLabelLocales };
+
+/**
+ * A text of a locale other than `en` and `fr` in the definitions (B-2026-11-28-9): it would ship with no draft or
+ * reviewed mark, so the build refuses it and names each one by published file and path, the key its entry takes in
+ * `definitions/l10n/{locale}.json`. `content`: a published file's content before `localise`.
+ */
+function checkInlineLocales (fileName, content) {
+  const found = [];
+  forEachText(content, (node, at) => {
+    for (const key of Object.keys(node)) {
+      if (!SOURCE_LOCALES.includes(key) && LOCALE_KEY.test(key)) found.push(`${key} ${fileName} ${at}`);
+    }
+  });
+  if (found.length > 0) {
+    throw new Error('l10n: the definitions carry en and fr only; move each of these texts to definitions/l10n/{locale}.json as an entry ' +
+      `under its file and path (or rename the key if it is not a locale): ${found.join('; ')}`);
+  }
+}
 
 function loadLocales (dir = l10nDir) {
   const locales = {};

@@ -9,11 +9,9 @@ genetics-variant:
   label:
     en: Tested gene variant
     fr: Variant génétique testé
-    es: Variante genética analizada
   description:
     en: The result of a genetic test for one gene variant, as the laboratory reported it.
     fr: Le résultat d'un test génétique pour un variant d'un gène, tel que le laboratoire l'a rapporté.
-    es: El resultado de una prueba genética para una variante de un gen, tal como lo informó el laboratorio.
   streamId: genetics-variant
   eventType: genetic-variant/coded-v1
   repeatable: unlimited

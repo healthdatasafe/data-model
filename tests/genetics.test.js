@@ -90,7 +90,8 @@ describe('[GEN] genetic test results', () => {
       assert.strictEqual(item.eventType, ET);
       assert.strictEqual(item.streamId, KEY);
       assert.strictEqual(item.repeatable, 'unlimited');
-      assert.ok(item.label.fr && item.label.es && item.description.fr && item.description.es, 'localised');
+      const es = require('../src/l10n').loadLocales().locales.es['items.json'];
+      assert.ok(item.label.fr && item.description.fr && es[`${KEY}/label`] && es[`${KEY}/description`], 'localised');
       assert.ok(item.devNotes, 'devNotes');
       assert.strictEqual(item.references, undefined);
       assert.strictEqual(item.fhir, undefined);

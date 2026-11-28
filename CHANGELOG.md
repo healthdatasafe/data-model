@@ -1,5 +1,26 @@
 # Changelog
 
+## [4.56.2] - 2026-11-28
+
+Patch. The definitions carry `en` and `fr` only (B-2026-11-28-9). The published texts are the same in every locale: no
+key, type, option value, schema or text change; only the key order inside some text maps differs.
+
+### Changed
+
+- **Texts of other locales moved out of the definitions** into `definitions/l10n`, as drafts (`"status": "draft"`) with
+  their English source, so that each one carries its review mark like every other locale text. Until now they shipped
+  with none, and a reader of the pack could not tell them from a reviewed text:
+  - `es.json`: items `body-blood-coded`, `body-urine-coded`, `body-csf-coded`, `consent-record`, `document`,
+    `entry-correction`, `genetics-variant` (label, description), `other-name` (label, description, composite labels and
+    its five `use` options); streams `entry-corrections`, `other-names` (label, description); vocabularies `lab-result`
+    (11 values) and `professional-role` (9);
+  - `de.json` and `it.json`: the 46 document-kind labels (45 kinds, 1 detail kind).
+- **The build refuses a text of a locale other than `en` and `fr` in the definitions** (`checkInlineLocales`,
+  `src/l10n.js`), naming each one by locale, published file and path (the key its entry takes in the locale file).
+  Tests L10N16, L10N17.
+- L10N.md: the rule and the move (it said the inline `es` stays); DOCUMENTS.md: the planned `document` item without
+  `es`, and where the document-kind de and it labels live.
+
 ## [4.56.1] - 2026-11-28
 
 Patch. Texts no locale file translated (B-2026-11-28-6), and a build check that keeps them translated. No key, type,

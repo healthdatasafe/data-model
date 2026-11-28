@@ -117,7 +117,8 @@ describe('[LABC] Coded lab results', () => {
         assert.strictEqual(item.streamId, key);
         assert.ok(streams.streamsById[item.streamId], `${key} stream exists`);
         assert.strictEqual(item.eventType, 'lab-result/coded-v1');
-        assert.ok(item.label.fr && item.label.es && item.description.fr && item.description.es, `${key} is localised`);
+        const es = require('../src/l10n').loadLocales().locales.es['items.json'];
+        assert.ok(item.label.fr && item.description.fr && es[`${key}/label`] && es[`${key}/description`], `${key} is localised`);
         assert.strictEqual(checkItemVsEvenType(key, item, eventTypesById('lab-result/coded-v1')), true);
       }
     });

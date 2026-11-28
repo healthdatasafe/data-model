@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { LOCALES, checkLocales, forEachText, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels, checkConsentLabelLocales } = require('../src/l10n');
+const { LOCALES, checkLocales, checkInlineLocales, forEachText, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels, checkConsentLabelLocales } = require('../src/l10n');
 
 const entry = (en, text) => ({ en, text, reviewedBy: 'reviewer', reviewedOn: '2026-11-24' });
 const paths = (content) => { const out = []; forEachText(content, (node, at) => out.push(at)); return out; };
@@ -144,6 +144,37 @@ describe('[L10N] Translations added at build', () => {
     assert.doesNotThrow(() => checkPublished(published, { it: { 'items.json': {} } }, [{ file: 'items.json', path: 'a/label' }]));
     assert.throws(() => checkPublished(published, { it: { 'itms.json': {} } }, []), /no published file itms.json/);
     assert.throws(() => checkPublished(published, {}, [{ file: 'items.json', path: 'b/label' }]), /has no text b\/label/);
+  });
+
+  it('[L10N16] a text of a locale other than en and fr in the definitions fails the build, named by file and path (B-2026-11-28-9)', () => {
+    const ok = { a: { label: { en: 'A', fr: 'A' } }, b: { label: { en: 'B' } } };
+    assert.doesNotThrow(() => checkInlineLocales('items.json', ok));
+    const src = { a: { label: { en: 'A', fr: 'A', es: 'A' }, options: [{ value: 'x', label: { en: 'X', 'pt-BR': 'X', nl: 'X' } }] } };
+    assert.throws(() => checkInlineLocales('items.json', src),
+      /^Error: l10n: the definitions carry en and fr only; .*: es items\.json a\/label; pt-BR items\.json a\/options\[value="x"\]\/label; nl items\.json a\/options\[value="x"\]\/label$/);
+    assert.throws(() => checkInlineLocales('streamsTree.json', [{ id: 's', label: { en: 'S', de: 'S' } }]), /: de streamsTree\.json \[id="s"\]\/label$/);
+    for (const tag of ['zh-Hant', 'es-419', 'pt_BR', 'pt-br', 'gsw']) assert.throws(() => checkInlineLocales('f', { a: { en: 'A', [tag]: 'A' } }), new RegExp(`: ${tag} f a$`), tag);
+    // not a text map (no string en), or a key that names no locale: not a text of a locale
+    assert.doesNotThrow(() => checkInlineLocales('eventTypes.json', { label: { properties: { de: { type: 'string' }, en: { type: 'string' } } } }));
+    assert.doesNotThrow(() => checkInlineLocales('f', { a: { en: 'A', note: 'n' } }));
+  });
+
+  it('[L10N17] the texts moved out of the definitions (4.56.2) are drafts of the locale files and still reach the pack', () => {
+    require('../src/build');
+    const pack = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, '../dist/pack.json'), 'utf8'));
+    const { locales } = require('../src/l10n').loadLocales();
+    const moved = [
+      ['es', 'items.json', 'other-name/label', pack.items['other-name'].label.es, 'Otro nombre'],
+      ['es', 'items.json', 'body-csf-coded/description', pack.items['body-csf-coded'].description.es, 'Resultados de un análisis del líquido cefalorraquídeo.'],
+      ['es', 'streamsTree.json', '[id="entry-corrections"]/label', pack.streams.find((s) => s.id === 'entry-corrections').label.es, 'Correcciones de sus contactos'],
+      ['es', 'vocabularies.json', 'professional-role/values/midwife/label', pack.vocabularies['professional-role'].values.midwife.label.es, 'Matrona'],
+      ['de', 'documentKinds.json', 'kinds/consultation-report/label', pack.documentKinds.kinds['consultation-report'].label.de, 'Konsultationsbericht'],
+      ['it', 'documentKinds.json', 'kinds/consultation-report/label', pack.documentKinds.kinds['consultation-report'].label.it, 'Rapporto di consultazione']
+    ];
+    for (const [locale, file, at, published, text] of moved) {
+      assert.deepEqual(locales[locale][file][at], { en: locales[locale][file][at].en, text, status: 'draft' }, `${locale} ${file} ${at}`);
+      assert.equal(published, text, `${locale} ${file} ${at} in the pack`);
+    }
   });
 
   it('[L10N7] every locale code is a locale code', () => {

@@ -10,6 +10,8 @@ const AjvDraft04 = require('ajv-draft-04');
 const { eventTypesById } = require('../src/eventTypes');
 const streams = require('../src/streams');
 const { itemsById } = require('../src/items');
+// the es texts are in definitions/l10n/es.json, each with its review mark (B-2026-11-28-9)
+const es = (file, at) => require('../src/l10n').loadLocales().locales.es[file]?.[at]?.text;
 
 const ROOT = 'other-names';
 const KEY = 'other-name';
@@ -34,7 +36,8 @@ describe('[ONM] other names', () => {
       assert.strictEqual(root.label.en, root.name);
       assert.ok(root.label.fr && root.description.en && root.description.fr);
       // the consent-screen promise waits for the sweep of the production * accesses (PROFILE.md § Other names), as genetics did (3.43.1)
-      for (const lang of ['en', 'fr', 'es']) assert.doesNotMatch(root.description[lang], /Never|Jamais|Nunca/, lang + ': no promise before the sweep');
+      const description = { ...root.description, es: es('streamsTree.json', `[id="${ROOT}"]/description`) };
+      for (const lang of ['en', 'fr', 'es']) assert.doesNotMatch(description[lang], /Never|Jamais|Nunca/, lang + ': no promise before the sweep');
     });
 
     it('[ONM-STR-2] the profile root keeps its children: no other name sits under profile', () => {
@@ -48,10 +51,12 @@ describe('[ONM] other names', () => {
       const item = itemsById[KEY];
       assert.ok(item);
       assert.deepStrictEqual([item.streamId, item.eventType, item.type, item.repeatable], [ROOT, ET, 'composite', 'unlimited']);
-      for (const t of [item.label, item.description]) assert.ok(t.en && t.fr && t.es);
+      for (const t of ['label', 'description']) assert.ok(item[t].en && item[t].fr && es('items.json', `${KEY}/${t}`), t);
       assert.deepStrictEqual(Object.keys(item.composite), ['given', 'family', 'use']);
       assert.deepStrictEqual(item.composite.use.options.map((o) => o.value), USES);
-      for (const o of item.composite.use.options) assert.ok(o.label.en && o.label.fr && o.label.es, o.value);
+      for (const o of item.composite.use.options) {
+        assert.ok(o.label.en && o.label.fr && es('items.json', `${KEY}/composite/use/options[value="${o.value}"]/label`), o.value);
+      }
       assert.strictEqual(item.fhir, undefined, 'Patient.name stays profile-name and profile-surname');
     });
   });

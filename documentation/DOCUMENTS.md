@@ -61,11 +61,9 @@ document:
   label:
     en: Medical document
     fr: Document médical
-    es: Documento médico
   description:
     en: A medical document you keep, such as a lab report, a letter, a prescription or an imaging report.
     fr: Un document médical que vous conservez, comme un résultat de laboratoire, une lettre, une ordonnance ou un compte rendu d'imagerie.
-    es: Un documento médico que conserva, como un informe de laboratorio, una carta, una receta o un informe de imagen.
   streamId: documents
   eventType: file/xds-v1
   repeatable: any
@@ -297,9 +295,9 @@ the wrong classes.
   artifact"), or as `other`.
 - **Labels** are based on the CH Term designations (en-US, fr-CH, de-CH, it-CH), edited: typos fixed, a few
   renamed so that no two kinds share a label in one language (the build refuses that), and the "Other …" labels
-  added. de and it are there because Swiss documents are written in them, and an agent classifying a document matches
-  their words. hds-lib's `localizeText` reads en, fr and es only, so an app gets the de and it labels from the pack
-  directly; the rest of the pack has no German or Italian yet.
+  added. de and it were the first because Swiss documents are written in them, and an agent classifying a document
+  matches their words. Since 4.56.2 they are in `definitions/l10n/de.json` and `it.json`, as drafts, like every text
+  of a locale other than en and fr (L10N.md); the published table carries them as before.
 - **Order.** The kinds are grouped by class in the file; JSON key order is no contract, so a picker groups by
   `class.code` itself.
 - **Not in the table:** practice setting, facility type and format codes (chosen at publication, above), and the LOINC

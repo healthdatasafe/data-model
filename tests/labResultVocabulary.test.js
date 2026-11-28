@@ -56,12 +56,15 @@ describe('[LABV] lab-result vocabulary (4.50.0)', () => {
   });
 
   it('[LABV-2] labels en, fr and es on every key; absent ≠ negative and detected ≠ positive stay distinct', () => {
-    for (const [k, v] of Object.entries(voc.values)) {
-      for (const l of ['en', 'fr', 'es']) assert.ok(typeof v.label[l] === 'string' && v.label[l].length > 0, `${k}.${l}`);
+    // es is in definitions/l10n/es.json, with its review mark (B-2026-11-28-9)
+    const es = require('../src/l10n').loadLocales().locales.es['vocabularies.json'];
+    const label = (k) => ({ ...voc.values[k].label, es: es[`${KEY}/values/${k}/label`]?.text });
+    for (const k of Object.keys(voc.values)) {
+      for (const l of ['en', 'fr', 'es']) assert.ok(typeof label(k)[l] === 'string' && label(k)[l].length > 0, `${k}.${l}`);
     }
     assert.notStrictEqual(voc.values.absent.snomed, voc.values.negative.snomed);
     assert.notStrictEqual(voc.values.detected.snomed, voc.values.positive.snomed);
-    for (const n of [1, 2, 3, 4]) assert.deepStrictEqual(voc.values[`plus-${n}`].label, { en: `${n}+`, fr: `${n}+`, es: `${n}+` });
+    for (const n of [1, 2, 3, 4]) assert.deepStrictEqual(label(`plus-${n}`), { en: `${n}+`, fr: `${n}+`, es: `${n}+` });
   });
 
   it('[LABV-3] a vocabulary of codes: lab-result/coded-v1 valueCodes, SNOMED CT, no binds', () => {
