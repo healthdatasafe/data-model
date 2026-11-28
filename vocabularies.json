@@ -16,6 +16,7 @@
         "label": {
           "en": "Mild",
           "fr": "Légère",
+          "de": "Leicht",
           "es": "Leve",
           "it": "Lieve",
           "pt-BR": "Leve"
@@ -26,6 +27,7 @@
         "label": {
           "en": "Moderate",
           "fr": "Modérée",
+          "de": "Mittel",
           "es": "Moderada",
           "it": "Moderata",
           "pt-BR": "Moderada"
@@ -36,6 +38,7 @@
         "label": {
           "en": "Severe",
           "fr": "Sévère",
+          "de": "Stark",
           "es": "Grave",
           "it": "Grave",
           "pt-BR": "Grave"
@@ -199,6 +202,7 @@
         "label": {
           "en": "On waking",
           "fr": "Au réveil",
+          "de": "Beim Aufwachen",
           "es": "Al despertar",
           "it": "Al risveglio",
           "pt-BR": "Ao acordar"
@@ -209,6 +213,7 @@
         "label": {
           "en": "In the morning",
           "fr": "Le matin",
+          "de": "Am Morgen",
           "es": "Por la mañana",
           "it": "La mattina",
           "pt-BR": "De manhã"
@@ -219,6 +224,7 @@
         "label": {
           "en": "At noon",
           "fr": "À midi",
+          "de": "Am Mittag",
           "es": "Al mediodía",
           "it": "A mezzogiorno",
           "pt-BR": "Ao meio-dia"
@@ -229,6 +235,7 @@
         "label": {
           "en": "In the afternoon",
           "fr": "L'après-midi",
+          "de": "Am Nachmittag",
           "es": "Por la tarde",
           "it": "Nel pomeriggio",
           "pt-BR": "À tarde"
@@ -239,6 +246,7 @@
         "label": {
           "en": "In the evening",
           "fr": "Le soir",
+          "de": "Am Abend",
           "es": "Al anochecer",
           "it": "La sera",
           "pt-BR": "No início da noite"
@@ -249,6 +257,7 @@
         "label": {
           "en": "At night",
           "fr": "La nuit",
+          "de": "In der Nacht",
           "es": "Durante la noche",
           "it": "Di notte",
           "pt-BR": "Durante a noite"
@@ -259,6 +268,7 @@
         "label": {
           "en": "At bedtime",
           "fr": "Au coucher",
+          "de": "Vor dem Schlafengehen",
           "es": "Al acostarse",
           "it": "Prima di coricarsi",
           "pt-BR": "Ao deitar"
@@ -269,6 +279,7 @@
         "label": {
           "en": "With a meal",
           "fr": "Pendant un repas",
+          "de": "Zu einer Mahlzeit",
           "es": "Con una comida",
           "it": "Durante un pasto",
           "pt-BR": "Com uma refeição"
@@ -279,6 +290,7 @@
         "label": {
           "en": "Before a meal",
           "fr": "Avant un repas",
+          "de": "Vor einer Mahlzeit",
           "es": "Antes de una comida",
           "it": "Prima di un pasto",
           "pt-BR": "Antes de uma refeição"
@@ -289,6 +301,7 @@
         "label": {
           "en": "After a meal",
           "fr": "Après un repas",
+          "de": "Nach einer Mahlzeit",
           "es": "Después de una comida",
           "it": "Dopo un pasto",
           "pt-BR": "Depois de uma refeição"
@@ -299,6 +312,7 @@
         "label": {
           "en": "With breakfast",
           "fr": "Au petit-déjeuner",
+          "de": "Zum Frühstück",
           "es": "Con el desayuno",
           "it": "Con la colazione",
           "pt-BR": "No café da manhã"
@@ -309,6 +323,7 @@
         "label": {
           "en": "Before breakfast",
           "fr": "Avant le petit-déjeuner",
+          "de": "Vor dem Frühstück",
           "es": "Antes del desayuno",
           "it": "Prima della colazione",
           "pt-BR": "Antes do café da manhã"
@@ -319,6 +334,7 @@
         "label": {
           "en": "After breakfast",
           "fr": "Après le petit-déjeuner",
+          "de": "Nach dem Frühstück",
           "es": "Después del desayuno",
           "it": "Dopo la colazione",
           "pt-BR": "Depois do café da manhã"
@@ -329,6 +345,7 @@
         "label": {
           "en": "With lunch",
           "fr": "Au repas de midi",
+          "de": "Zum Mittagessen",
           "es": "Con el almuerzo",
           "it": "Con il pranzo",
           "pt-BR": "No almoço"
@@ -339,6 +356,7 @@
         "label": {
           "en": "Before lunch",
           "fr": "Avant le repas de midi",
+          "de": "Vor dem Mittagessen",
           "es": "Antes del almuerzo",
           "it": "Prima del pranzo",
           "pt-BR": "Antes do almoço"
@@ -349,6 +367,7 @@
         "label": {
           "en": "After lunch",
           "fr": "Après le repas de midi",
+          "de": "Nach dem Mittagessen",
           "es": "Después del almuerzo",
           "it": "Dopo il pranzo",
           "pt-BR": "Depois do almoço"
@@ -359,6 +378,7 @@
         "label": {
           "en": "With dinner",
           "fr": "Au repas du soir",
+          "de": "Zum Abendessen",
           "es": "Con la cena",
           "it": "Con la cena",
           "pt-BR": "No jantar"
@@ -369,6 +389,7 @@
         "label": {
           "en": "Before dinner",
           "fr": "Avant le repas du soir",
+          "de": "Vor dem Abendessen",
           "es": "Antes de la cena",
           "it": "Prima della cena",
           "pt-BR": "Antes do jantar"
@@ -379,6 +400,7 @@
         "label": {
           "en": "After dinner",
           "fr": "Après le repas du soir",
+          "de": "Nach dem Abendessen",
           "es": "Después de la cena",
           "it": "Dopo la cena",
           "pt-BR": "Depois do jantar"
@@ -404,6 +426,7 @@
         "label": {
           "en": "Taken",
           "fr": "Pris",
+          "de": "Eingenommen",
           "es": "Tomado",
           "it": "Assunto",
           "pt-BR": "Tomado"
@@ -414,6 +437,7 @@
         "label": {
           "en": "Skipped",
           "fr": "Non pris",
+          "de": "Ausgelassen",
           "es": "Omitido",
           "it": "Saltato",
           "pt-BR": "Não tomado"
@@ -440,6 +464,7 @@
         "label": {
           "en": "Forgot",
           "fr": "Oubli",
+          "de": "Vergessen",
           "es": "Olvido",
           "it": "Dimenticanza",
           "pt-BR": "Esquecimento"
@@ -450,6 +475,7 @@
         "label": {
           "en": "Side effects",
           "fr": "Effets indésirables",
+          "de": "Nebenwirkungen",
           "es": "Efectos secundarios",
           "it": "Effetti collaterali",
           "pt-BR": "Efeitos colaterais"
@@ -460,6 +486,7 @@
         "label": {
           "en": "Not needed",
           "fr": "Pas nécessaire",
+          "de": "Nicht nötig",
           "es": "No era necesario",
           "it": "Non necessario",
           "pt-BR": "Desnecessário"
@@ -469,6 +496,7 @@
         "label": {
           "en": "Ran out",
           "fr": "Plus de médicament",
+          "de": "Vorrat aufgebraucht",
           "es": "Se acabó el medicamento",
           "it": "Medicinale esaurito",
           "pt-BR": "Acabou o medicamento"
@@ -479,6 +507,7 @@
         "label": {
           "en": "Chose not to",
           "fr": "Choix de ne pas le prendre",
+          "de": "Bewusst darauf verzichtet",
           "es": "Prefirió no tomarlo",
           "it": "Scelta di non assumerlo",
           "pt-BR": "Optou por não tomar"
@@ -489,6 +518,7 @@
         "label": {
           "en": "Told to skip it by a carer",
           "fr": "Sur avis d'un soignant",
+          "de": "Auf Anweisung einer Betreuungsperson ausgelassen",
           "es": "Por indicación de un profesional de la salud",
           "it": "Su indicazione di un operatore sanitario",
           "pt-BR": "Por orientação de um profissional de saúde"
@@ -498,6 +528,7 @@
         "label": {
           "en": "Other",
           "fr": "Autre",
+          "de": "Anderes",
           "es": "Otro",
           "it": "Altro",
           "pt-BR": "Outro"
@@ -530,6 +561,7 @@
         "label": {
           "en": "On medical advice",
           "fr": "Sur avis médical",
+          "de": "Auf ärztlichen Rat",
           "es": "Por consejo médico",
           "it": "Su parere medico",
           "pt-BR": "Por orientação médica"
@@ -540,6 +572,7 @@
         "label": {
           "en": "Side effects",
           "fr": "Effets indésirables",
+          "de": "Nebenwirkungen",
           "es": "Efectos secundarios",
           "it": "Effetti collaterali",
           "pt-BR": "Efeitos colaterais"
@@ -550,6 +583,7 @@
         "label": {
           "en": "Not working",
           "fr": "Inefficace",
+          "de": "Wirkt nicht",
           "es": "No funciona",
           "it": "Inefficace",
           "pt-BR": "Sem efeito"
@@ -560,6 +594,7 @@
         "label": {
           "en": "Own choice",
           "fr": "Choix personnel",
+          "de": "Eigener Entscheid",
           "es": "Decisión propia",
           "it": "Scelta personale",
           "pt-BR": "Escolha própria"
@@ -569,6 +604,7 @@
         "label": {
           "en": "Other",
           "fr": "Autre",
+          "de": "Anderes",
           "es": "Otro",
           "it": "Altro",
           "pt-BR": "Outro"
@@ -593,6 +629,7 @@
         "label": {
           "en": "Active",
           "fr": "En cours",
+          "de": "Aktiv",
           "es": "Activa",
           "it": "Attiva",
           "pt-BR": "Ativa"
@@ -603,6 +640,7 @@
         "label": {
           "en": "Stopped",
           "fr": "Arrêtée",
+          "de": "Abgesetzt",
           "es": "Interrumpida",
           "it": "Interrotta",
           "pt-BR": "Interrompida"
@@ -613,6 +651,7 @@
         "label": {
           "en": "Completed",
           "fr": "Terminée",
+          "de": "Abgeschlossen",
           "es": "Completada",
           "it": "Completata",
           "pt-BR": "Concluída"
