@@ -67,8 +67,8 @@ Apple's most sophisticated mood model. Dedicated type `HKStateOfMind` (not a cat
 
 **38 emotion labels:**
 - Positive (16): amazed, amused, brave, calm, content, excited, grateful, happy, joyful, passionate, peaceful, proud, relieved, confident, hopeful, satisfied
-- Negative (19): angry, anxious, ashamed, disappointed, discouraged, disgusted, embarrassed, frustrated, guilty, hopeless, irritated, jealous, lonely, sad, scared, stressed, worried, annoyed, drained, overwhelmed
-- Neutral (3): surprised, indifferent
+- Negative (20): angry, anxious, ashamed, disappointed, discouraged, disgusted, embarrassed, frustrated, guilty, hopeless, irritated, jealous, lonely, sad, scared, stressed, worried, annoyed, drained, overwhelmed
+- Neutral (2): surprised, indifferent
 
 **18 association tags:** community, currentEvents, dating, education, family, fitness, friends, health, hobbies, identity, money, partner, selfCare, spirituality, tasks, travel, work, weather
 
@@ -175,6 +175,8 @@ Gold standard for emotion tracking. Based on the circumplex model (RULER framewo
 **All 15 confirmed values (from real Mira prod API, 2026-03-17):**
 Excited, Happy, Tired, Sad, Irritable, Angry, Exhausted, Hopeless, Poor sleep, Trouble focusing, Anxiety or panic attacks, Loss of motivation, Unhappy or depressed, Tense or nervous, Emotional
 
+The converter's `mira` method holds these 15 and "Normal" (16 labels; "Normal" maps to the neutral vector, § Design decisions below).
+
 Values are human-readable labels with spaces (not coded enums). No severity/intensity. Single string when one value, comma-separated when multiple (e.g. `"Excited,Happy,Tired"`).
 
 ---
@@ -215,7 +217,12 @@ The `model-cervical-fluid` library solves the exact same class of problem for ce
 
 This pattern applies directly to mood.
 
-### Proposed: `model-mood` library
+### Proposed: `model-mood` library (historical)
+
+> **Historical: the Plan 24 proposal, kept as it was written.** What shipped differs: the converter lives in this repo
+> (`definitions/converters/mood/`), not in a standalone library; the weights are 0.30 / 0.25 / 0.20 / 0.15 / 0.10; the
+> methods are `appleHealth`, `daylio`, `howWeFeel`, `mira` and the generated `_raw`, with no `bearable`, `clue` or
+> `flo`. The current state is § Status below, and the converter files are the reference.
 
 A standalone library (like `model-cervical-fluid`) that maps mood vocabularies across systems via a shared dimensional vector space.
 

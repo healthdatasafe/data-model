@@ -24,6 +24,9 @@ Two namespaces inside `tags/`:
 - **`tags/hds/*`** — controlled vocabulary published in `data-model`. Stable across accounts; consumable by tools that need to filter by canonical clinical-domain or operational concept.
 - **`tags/user/*`** — per-account, user-defined. Free-form. Persists in the user's stream tree.
 
+A tag is named by its stream id (`hds-fertility`, `user-private`), flat like every model stream id; `tags/hds/*` and
+`tags/user/*` name the two namespaces, never one tag.
+
 ## Constraints
 
 - An event's `streamIds[0]` is the D3 context home (or canonical itemDef streamId). Tags never appear there. Resolution and timeline grouping ignore the tag entries.
@@ -32,10 +35,10 @@ Two namespaces inside `tags/`:
 
 ## Use cases
 
-- **Cross-cutting filtering.** "Show me all events tagged `tags/hds/fertility`" finds treatments + procedures + medications + notes in one query, regardless of which canonical root each lives under.
-- **Contextualisation.** Annotate a `medication-intake-coded` event with `tags/hds/fertility` to mark "this medication was for fertility purposes" without inventing a `medication-fertility-*` itemDef.
-- **Granular permission scopes.** "Share this account with Dr. X but exclude `tags/user/private` events" — a permission rule keyed off tag membership.
-- **Workflow signalling.** `tags/user/triage`, `tags/user/follow-up` for personal organisation.
+- **Cross-cutting filtering.** "Show me all events tagged `hds-fertility`" finds treatments + procedures + medications + notes in one query, regardless of which canonical root each lives under.
+- **Contextualisation.** Annotate a `medication-intake-coded` event with `hds-fertility` to mark "this medication was for fertility purposes" without inventing a `medication-fertility-*` itemDef.
+- **Granular permission scopes.** "Share this account with Dr. X but exclude `user-private` events" — a permission rule keyed off tag membership.
+- **Workflow signalling.** `user-triage`, `user-follow-up` for personal organisation.
 
 ## Why deferred
 
@@ -62,7 +65,7 @@ Attaching a note to a *specific* `treatment-coded` event (vs. tagging the broad 
 ## When to revive this design
 
 - A consumer (form, bridge, webapp filter, permission policy) explicitly needs a cross-cutting axis that `streamIds[0]`-as-context can't express.
-- Multiple contexts apply to a single event (e.g. a chemotherapy treatment that's both `tags/hds/oncology` and `tags/hds/fertility-impact`). D3's length-1 streamIds rule rejects this; tags would express it.
+- Multiple contexts apply to a single event (e.g. a chemotherapy treatment that's both `hds-oncology` and `hds-fertility-impact`). D3's length-1 streamIds rule rejects this; tags would express it.
 - Granular permission scopes become a concrete demand (sharing accounts with selective opt-outs).
 
 Until then, single-context-via-substream (D3) is sufficient and keeps the model surface small.

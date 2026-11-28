@@ -10,7 +10,7 @@ The runtime mechanics — questionnaire renderer, scope-aware prefill via Pryv c
 
 HDS forms commonly mix three answer shapes:
 
-- **Value-collection** ("body weight in the past week") — captured into existing typed events (`body-weight/kg`).
+- **Value-collection** ("body weight in the past week") — captured into existing typed events (`body-weight`, on `mass/kg` or `mass/lb`).
 - **Observation-recall** ("your last cycle, ≤60 days") — surfaces existing typed events (`fertility-cycles-start`) for confirmation.
 - **Assertion / exposure** ("did you take Progesterone in your life?") — yes / no / I-don't-know / I-don't-want-to-answer, optionally with a sub-qualifier (trimester, severity, etc.).
 
@@ -19,7 +19,7 @@ A clinical questionnaire is the natural container for all three. The data-model 
 1. **What the doctor asked** — a stable, time-stamped record of the questions, their scopes, and the items they're about.
 2. **What the patient answered** — per-question status, references to whichever existing typed events satisfy "yes" answers, and an explicit slot for "no" / "unknown" / "declined" (FHIR `data-absent-reason` analogue) that today's typed records don't carry.
 
-The questionnaire layer is a **storage shape for the asking/answering act**. The canonical clinical records remain in the typed eventTypes (`medication/coded-v1`, `body-weight/kg`, `fertility-cycles-start`, …) — the answer event just references them. This preserves the HDS promise *"you'll never fill twice the same question"* because the underlying clinical events are shared across questionnaires.
+The questionnaire layer is a **storage shape for the asking/answering act**. The canonical clinical records remain in their typed items (`medication-intake-coded` on `medication/coded-v1`, `body-weight` on `mass/kg` or `mass/lb`, `fertility-cycles-start`, …) — the answer event just references them. This preserves the HDS promise *"you'll never fill twice the same question"* because the underlying clinical events are shared across questionnaires.
 
 ---
 

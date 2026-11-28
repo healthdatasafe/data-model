@@ -38,13 +38,13 @@ body-vulva-mucus-stretch:
   version: v1
   deprecated: true
   label: Cervical Fluid Stretch
-  description: Manual strech test of cervical fluid. Short can be streched less than 2 cm, long greater than 2cm. 
+  description: Deprecated. Record cervical-fluid observations with Cervical fluid observation instead.
   streamId: body-vulva-mucus-stretch
   eventType: ratio/generic
   type: select
   options:
     - value: 0
-      label: No Strech
+      label: No stretch
     - value: 1
       label: Short
     - value: 2
@@ -57,7 +57,7 @@ body-vulva-wetness-feeling:
   version: v1
   deprecated: true
   label: Vulva Wetness feeling
-  description: Vulva wetness feeling 
+  description: Deprecated. Record cervical-fluid observations with Cervical fluid observation instead.
   streamId: body-vulva-wetness-feeling
   eventType: ratio/generic
   type: select

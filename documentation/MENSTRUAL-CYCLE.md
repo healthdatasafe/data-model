@@ -104,7 +104,8 @@ Notes:
 | `"Postpartum bleeding"` | Post-delivery bleeding |
 | `"Miscarriage bleeding"` | Bleeding from pregnancy loss |
 
-These are categorical events, not intensity levels. Need separate HDS items (TBD — see Plan 13 Phase D).
+These are categorical events, not intensity levels: they write `body-vulva-bleeding-postpartum` and
+`body-vulva-bleeding-miscarriage` (`activity/plain`).
 
 **Mira app UI also shows:** Menstrual flow (Light, Medium, Heavy, Blood clots) as a separate section from Spotting.
 
@@ -115,8 +116,9 @@ Notes:
 - Pink spotting triggers a bleeding event but NOT browndark.
 - Mira's cycle summary (`cycle_length`, `period_end`, `ovulation`, `fertile_window_start` / `_end`) maps to
   `fertility-cycles-start` (with duration), `-period-end`, `-ovulation` and `-fertile-window`. Its current-cycle
-  fields `current_phase`, `current_cycle_day` and `phase_start_date` are **not** mapped: they stay in the raw
-  `fertility-cycle/mira-current-v1` event as provenance (see "Why no cycle-day or cycle-phase item?" below).
+  fields `current_phase`, `current_cycle_day` and `phase_start_date` are **not** mapped: they stay in bridge-mira's
+  raw `fertility-cycle/mira-current-v1` event as provenance (a type of the bridge's own raw stream, not a model
+  eventType; see "Why no cycle-day or cycle-phase item?" below).
 
 ### FHIR / HL7
 
@@ -163,6 +165,11 @@ HDS category `fertility` (`https://hds.ngo/fhir/CodeSystem/observation-category`
 
 **Why ratio/proportion (0-1)?**
 A continuous [0, 1] scale with defined reference points allows systems with different granularities to map cleanly. The gaps between reference values (e.g. 0.08, 0.20, 0.35) leave room for future systems with intermediate levels without breaking existing data. It also enables meaningful averaging and charting.
+
+**An exception to the hook placement rule.** The severity placements of AGENTS.md (`0.5` for Moderate, `1.0` for the
+ceiling) do not apply here: the hooks approximate flow volume ([`DESIGN-NOTES.md`](./DESIGN-NOTES.md) § Exceptions), so
+Moderate is `0.55` and Very heavy, the top grade, is `0.95`. `body-vulva-menstrual-cup` (Light `0.35`, Moderate `0.55`,
+Heavy `0.75`) reuses the same hooks for the same labels. Option values are permanent, so both stay as they are.
 
 **Why include Spotting (0.08) in the flow scale?**
 Spotting is bleeding. Apps that separate it do so because spotting can occur between periods (intermenstrual), but the observation itself is about intensity. The timing context (during vs. between periods) is already captured by cycle event data (`fertility-cycles-start`, `fertility-cycles-period-end`).

@@ -2467,19 +2467,19 @@
       "type": "number"
     },
     "dose/drop": {
-      "description": "Drops (ophthalmic, otic, nasal, oral)",
+      "description": "Drops",
       "type": "number"
     },
     "dose/puff": {
-      "description": "Puffs or actuations (inhalers, nasal sprays)",
+      "description": "Puffs or actuations",
       "type": "number"
     },
     "dose/application": {
-      "description": "Applications (topical creams, ointments, gels, patches)",
+      "description": "Applications",
       "type": "number"
     },
     "dose/suppository": {
-      "description": "Suppositories (rectal, vaginal)",
+      "description": "Suppositories",
       "type": "number"
     },
     "dose/unit": {
@@ -3055,7 +3055,7 @@
           "properties": {
             "key": {
               "type": "string",
-              "description": "Source method identifier (e.g. mira, hds, descriptive)"
+              "description": "Source method identifier, a mood converter method (e.g. mira, appleHealth)"
             },
             "sourceData": {
               "description": "Raw observation from the source method"

@@ -18,6 +18,7 @@ body/
     body-blood-coagulation/    ← citrated plasma — PT, Quick %, aPTT, fibrinogen (3.32.0), INR (3.33.0)
     body-blood-rbc/            ← erythrocyte specimen (RBC magnesium)
     body-blood-hba1c           ← whole blood, not serum — hence the direct placement
+    body-blood-esr             ← whole blood, erythrocyte sedimentation rate (first hour) — placed like HbA1c
     body-blood-coded           ← results with no item of their own (lab-result/coded-v1)
   body-urine/
     body-urine-hormones/       ← urine hormone assays

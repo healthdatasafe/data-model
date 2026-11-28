@@ -4,8 +4,8 @@ finding-coded:
     en: Finding (coded)
     fr: Constatation clinique (codée)
   description:
-    en: Search and select a coded clinical or imaging finding.
-    fr: Recherchez et sélectionnez une constatation clinique ou d'imagerie codée.
+    en: Something found during surgery or on imaging.
+    fr: Ce qui a été constaté lors d'une opération ou à l'imagerie.
   streamId: finding
   eventType: finding/coded-v1
   type: datasource-search

@@ -833,8 +833,8 @@
       "status": "draft"
     },
     "allergy-coded/description": {
-      "en": "Search and select what you are allergic or intolerant to.",
-      "text": "Cerchi e selezioni ciò a cui ha un'allergia o un'intolleranza.",
+      "en": "Something you are allergic or intolerant to.",
+      "text": "Ciò a cui ha un'allergia o un'intolleranza.",
       "status": "draft"
     },
     "allergy-coded/composite/allergen/label": {
@@ -3993,8 +3993,8 @@
       "status": "draft"
     },
     "condition-coded/description": {
-      "en": "Search and select a coded clinical diagnosis.",
-      "text": "Cerchi e selezioni una diagnosi clinica codificata.",
+      "en": "A diagnosis a clinician gave you.",
+      "text": "Una diagnosi che le ha dato un professionista sanitario.",
       "status": "draft"
     },
     "consent-record/label": {
@@ -4123,8 +4123,8 @@
       "status": "draft"
     },
     "fertility-cycles-average-length/description": {
-      "en": "Your average menstrual cycle length, in days.",
-      "text": "La durata media del suo ciclo mestruale, in giorni.",
+      "en": "Your average menstrual cycle length.",
+      "text": "La durata media del suo ciclo mestruale.",
       "status": "draft"
     },
     "fertility-cycles-average-period/label": {
@@ -4133,8 +4133,8 @@
       "status": "draft"
     },
     "fertility-cycles-average-period/description": {
-      "en": "Your average period length, in days.",
-      "text": "La durata media delle sue mestruazioni, in giorni.",
+      "en": "Your average period length.",
+      "text": "La durata media delle sue mestruazioni.",
       "status": "draft"
     },
     "fertility-cycles-average-peak-day/label": {
@@ -4153,8 +4153,8 @@
       "status": "draft"
     },
     "fertility-cycles-average-luteal-phase/description": {
-      "en": "Your typical luteal-phase length, in days (recalled average).",
-      "text": "La durata tipica della sua fase luteale, in giorni (media ricordata).",
+      "en": "Your typical luteal-phase length, as you recall it on average.",
+      "text": "La durata tipica della sua fase luteale (media ricordata).",
       "status": "draft"
     },
     "fertility-cycles-regularity/label": {
@@ -4753,8 +4753,8 @@
       "status": "draft"
     },
     "finding-coded/description": {
-      "en": "Search and select a coded clinical or imaging finding.",
-      "text": "Cerchi e selezioni un reperto clinico o di diagnostica per immagini codificato.",
+      "en": "Something found during surgery or on imaging.",
+      "text": "Ciò che è stato riscontrato durante un intervento chirurgico o con la diagnostica per immagini.",
       "status": "draft"
     },
     "genetics-variant/label": {
@@ -5158,8 +5158,8 @@
       "status": "draft"
     },
     "medication-intake-coded/description": {
-      "en": "Search and select a coded medication.",
-      "text": "Cerchi e selezioni un medicinale codificato.",
+      "en": "A medication you take or took.",
+      "text": "Un medicinale che assume o ha assunto.",
       "status": "draft"
     },
     "medication-prescription-coded/label": {
@@ -5443,8 +5443,8 @@
       "status": "draft"
     },
     "procedure-coded/description": {
-      "en": "Search and select a coded clinical procedure.",
-      "text": "Cerchi e selezioni una procedura clinica codificata.",
+      "en": "A clinical procedure you had.",
+      "text": "Una procedura clinica che le è stata eseguita.",
       "status": "draft"
     },
     "profile-addresscountry/label": {
@@ -7783,8 +7783,8 @@
       "status": "draft"
     },
     "treatment-coded/description": {
-      "en": "Search and select a coded clinical treatment.",
-      "text": "Cerchi e selezioni un trattamento clinico codificato.",
+      "en": "A clinical treatment you receive or received.",
+      "text": "Un trattamento clinico che riceve o ha ricevuto.",
       "status": "draft"
     },
     "wellbeing-mood/label": {

@@ -1,5 +1,28 @@
 # Changelog
 
+## [4.55.2] - 2026-11-28
+
+Patch. Texts only, no key, type, option value or schema changes (audit pass 2, rows of B-2026-11-19-6).
+
+### Changed
+
+- **Descriptions that described the search widget** (B-33): `condition-coded`, `finding-coded`, `procedure-coded`,
+  `treatment-coded`, `allergy-coded`, `medication-intake-coded` now say what the entry is ("A diagnosis a clinician
+  gave you.", "Something found during surgery or on imaging."), en and fr; es, it, pt-BR drafts updated.
+- **Units out of descriptions** (C-36, the DM-17 rule): `fertility-cycles-average-length`, `-average-period`,
+  `-average-luteal-phase` no longer say "in days"; locale drafts updated.
+- **Deprecated vulva items** (B-34): `body-vulva-mucus-stretch` and `body-vulva-wetness-feeling` descriptions say they
+  are deprecated and point to the cervical-fluid observation; the option label "No Strech" is now "No stretch".
+- **`dose/*` eventType descriptions** (D-24): drops, puffs, applications and suppositories name the unit only. The
+  mood vector's `source.key` example names existing methods (`mira`, `appleHealth`), not the removed `hds`.
+
+### Documentation
+
+- BLOOD-CHEMISTRY.md stream tree lists `body-blood-esr` (A-22). AGENTS.md: key qualifier as a suffix for new keys
+  (A-21), the bleeding and menstrual-cup anchor exception (B-36), the read-list and tree name every domain doc (B-38).
+  L10N.md: where locale texts go (A-23). ENCOUNTER, CONDITION, SKIN, SYMPTOMS, PHYSICAL-ACTIVITY, MOOD, QUESTIONNAIRE,
+  MENSTRUAL-CYCLE and TAGS docs now agree with the definitions (B-38, C-45 to C-48).
+
 ## [4.55.1] - 2026-11-27
 
 Patch. A label only (plan 144, Bug C).

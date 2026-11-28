@@ -4,8 +4,8 @@ condition-coded:
     en: Condition (coded)
     fr: Affection (codée)
   description:
-    en: Search and select a coded clinical diagnosis.
-    fr: Recherchez et sélectionnez un diagnostic clinique codé.
+    en: A diagnosis a clinician gave you.
+    fr: Un diagnostic qu'un professionnel de santé vous a posé.
   streamId: condition
   eventType: condition/coded-v1
   duration:

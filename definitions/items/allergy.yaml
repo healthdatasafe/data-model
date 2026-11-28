@@ -4,8 +4,8 @@ allergy-coded:
     en: Allergy or intolerance (coded)
     fr: Allergie ou intolérance (codée)
   description:
-    en: Search and select what you are allergic or intolerant to.
-    fr: Recherchez et sélectionnez ce à quoi vous êtes allergique ou intolérant.
+    en: Something you are allergic or intolerant to.
+    fr: Ce à quoi vous êtes allergique ou intolérant.
   streamId: allergy
   eventType: allergy/coded-v1
   type: composite

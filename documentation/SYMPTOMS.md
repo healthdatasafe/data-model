@@ -248,6 +248,10 @@ Some concepts tracked as "symptoms" in consumer apps are clinically classified d
 | `ratio/proportion` (0-1 scale) | Captures severity. Maps to Apple HealthKit Mild/Moderate/Severe. | More complex. Not all sources provide severity. |
 | Both: `activity/plain` as base, extend to `ratio/proportion` later | Start simple, add severity when needed per symptom. | Item version management. |
 
+**Decided (plan 77): both, on one stream.** Each symptom has a presence marker at the base key (`activity/plain`,
+`deprecated: true`: hidden from pickers, still written by presence-only sources) and a `-severity` item
+(`ratio/proportion`, the 5-level scale below). `symptom-pain-severity` alone has no presence marker.
+
 ### Severity mapping (if ratio/proportion is used)
 
 HDS uses a canonical **5-level** severity scale on `ratio/proportion`. See `DESIGN-NOTES.md` → "Scale hook placement" for the governing rule — hooks are placed at semantic anchors, not by even distribution.
@@ -258,7 +262,7 @@ HDS uses a canonical **5-level** severity scale on `ratio/proportion`. See `DESI
 | Slight (or Mild) | 0.25 | Mild |
 | Moderate | 0.5 | Moderate |
 | Severe | 0.75 | Severe |
-| Extreme (or Very severe) | 1.0 | *(no Apple equivalent)* |
+| Extreme | 1.0 | *(no Apple equivalent)* |
 
 Apple HealthKit's 4-level `HKCategoryValueSeverity` is a **subset** of the HDS 5-level scale, **mapped by label**: it shares the hooks 0.0, 0.25, 0.5 and 0.75, and has no equivalent at 1.0 (Extreme).
 
@@ -277,12 +281,13 @@ Sources that use a 3-level or 4-level subset (Mira's `level` field, etc.) land o
 Symptoms use long descriptive IDs for clarity:
 - `symptom-gastrointestinal-nausea` (verbose, self-documenting)
 - `sym-gi-nausea` (compact, needs legend)
-- Decision: TBD based on existing HDS naming conventions
+- Decision: the long form, `symptom-<group>-<concept>`, with `-severity` for the graded item
+  (`symptom-gastrointestinal-nausea`, `symptom-gastrointestinal-nausea-severity`). No compact key exists.
 
 ### Cross-boundary items
 
 Some Mira concepts appear in multiple fields:
-- **Acne**: appears in both `skin` field (as "Breaking out") and `symptoms` field (as "Acne"). In HDS, `body-skin-acne` exists under body/skin stream. When acne comes from the symptom field, should it map to the same item or a separate symptom item? See open questions below.
+- **Acne**: appears in both `skin` field (as "Breaking out") and `symptoms` field (as "Acne"). In HDS, `body-skin-acne` exists under body/skin stream. When acne comes from the symptom field, it maps to the same item (decision 1 below).
 - **Anxiety/Stress**: appear in `symptoms` field AND overlap with `mood` field (5D mood vectors capture anxiety/stress as emotional states). These are complementary: symptom = "I have anxiety today", mood = "I feel anxious right now (valence=0.15, arousal=0.80)".
 
 ### Design decisions (settled 2026-03-17)
@@ -294,9 +299,14 @@ Some Mira concepts appear in multiple fields:
    - **Hybrid sources** that expose a symptom-array entry with an *optional `level`* field (e.g. Mira's `symptoms.Anxiety` with `level: "Mild"`) sit between the two: the presence of a validated level makes this a severity rating, not a transient tag. Map it to `wellbeing-mental-distress-anxiety` / `…-depression` with the hook corresponding to the level; the Mira conversion specifics live with the bridge.
 3. **Increased appetite**: Modeled as `nutrition-appetite` under new top-level `nutrition/` stream with `ratio/proportion` (0.25=decreased, 0.50=normal, 0.75=increased). Matches Apple HealthKit's 3-value `appetiteChanges` enum.
 4. **Weight fluctuations**: Skipped — derived from body-weight measurements, not a symptom.
-5. **Stream hierarchy**: Full clinical sub-categories under `symptom/` (gastrointestinal, pain, neurological, dermatological, sleep, metabolic, general) — ready for future items from HealthKit and other integrations.
+5. **Stream hierarchy**: Full clinical sub-categories under `symptom/`. The first seven (gastrointestinal, pain, neurological, dermatological, sleep, metabolic, general) have grown to fourteen: those, plus cognitive, respiratory, cardiac, thermoregulation, vision, hydration and bleeding (51 leaf streams in all).
 6. **Mood swings** *(site-agents#68)*: a report that the mood changes a lot over a short time is a symptom, not a mood state. `wellbeing-mood` (5D vectors) holds a state at a point in time, and none of its dimensions says the mood varies, so a ticked "Mood swings" box written there would claim a state the person never reported. Recorded on `wellbeing-mood-swings` (stream beside the mental-distress items, not under them: it is not a validated distress rating): the presence marker at the base key (`activity/plain`, hidden from pickers, written by presence-only sources such as a checklist) and `wellbeing-mood-swings-severity` (`ratio/proportion`, the 5-level symptom scale). SNOMED `18963009` "Mood swings (finding)", synonyms "Labile mood", "Emotional lability". The item is not PMS-specific; no key carries the premenstrual context yet. A "Mood swings" tag from any source writes `wellbeing-mood-swings`, and no mood converter method carries that label. Apple HealthKit `moodChanges` (Presence) writes `wellbeing-mood-swings`, not anxiety. To be migrated: the femm adapter of bridge-cycles-files (`src/adapters/femm/mapping.ts:105`) still maps femm's `mood_swings` to a mood vector.
 7. **Oily hair or scalp** *(site-agents#69)*: `body-skin-oily` is skin. Recorded on `symptom-dermatological-hair-oily`, beside hair loss and hair growth, with the same twin shape (presence `activity/plain`, `-severity` `ratio/proportion`). SNOMED `67295004` "Greasy hair (finding)", synonym "Oily hair"; no concept names the scalp, so the label says hair and the description says hair or scalp. Cross-system match: Clue's Hair category (Good, Bad, Oily, Dry; SKIN.md), its "Oily" value. The item is not PMS-specific; no key carries the premenstrual context yet.
+
+**Hearing under a vision key.** `symptom-vision-hearing-difficulty` (and its `-severity`) records difficulty hearing,
+on a stream of the `symptom-vision` group, whose label is "Vision & Sensory". The key and the stream id say vision
+although the item is about hearing, and a grant on `symptom-vision` covers it. Keys and published streams are permanent,
+so it stays as it is.
 
 ---
 

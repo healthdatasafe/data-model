@@ -20,6 +20,9 @@ HealthKit models exercise as `HKWorkout` objects with an `HKWorkoutActivityType`
 | `activity-jogging` | `.running` | HealthKit uses "running" (no separate jogging) |
 | `activity-hiking` | `.hiking` | Direct match |
 
+Each row names the sport's presence item; its `-intensity` item (Light, Moderate, Vigorous) is on the same stream and
+maps to the same workout type (§ Design Decisions). A session's duration is the event's own `duration`, on either.
+
 ### SNOMED CT
 
 International Edition 20260201, every code verified active in the local snomed-db (plan 133, 2026-11-27).

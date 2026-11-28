@@ -47,8 +47,8 @@ treatment-coded:
     en: Treatment (coded)
     fr: Traitement (codé)
   description:
-    en: Search and select a coded clinical treatment.
-    fr: Recherchez et sélectionnez un traitement clinique codé.
+    en: A clinical treatment you receive or received.
+    fr: Un traitement clinique que vous recevez ou avez reçu.
   streamId: treatment
   eventType: treatment/coded-v1
   duration:
