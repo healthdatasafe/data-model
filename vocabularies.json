@@ -91,7 +91,10 @@
         "label": {
           "en": "Negative",
           "fr": "Négatif",
-          "es": "Negativo"
+          "es": "Negativo",
+          "de": "Negativ",
+          "it": "Negativo",
+          "pt-BR": "Negativo"
         },
         "snomed": "260385009"
       },
@@ -99,7 +102,10 @@
         "label": {
           "en": "Trace",
           "fr": "Traces",
-          "es": "Indicios"
+          "es": "Indicios",
+          "de": "Spuren",
+          "it": "Tracce",
+          "pt-BR": "Traços"
         },
         "snomed": "260405006"
       },
@@ -107,7 +113,10 @@
         "label": {
           "en": "1+",
           "fr": "1+",
-          "es": "1+"
+          "es": "1+",
+          "de": "1+",
+          "it": "1+",
+          "pt-BR": "1+"
         },
         "snomed": "260347006"
       },
@@ -115,7 +124,10 @@
         "label": {
           "en": "2+",
           "fr": "2+",
-          "es": "2+"
+          "es": "2+",
+          "de": "2+",
+          "it": "2+",
+          "pt-BR": "2+"
         },
         "snomed": "260348001"
       },
@@ -123,7 +135,10 @@
         "label": {
           "en": "3+",
           "fr": "3+",
-          "es": "3+"
+          "es": "3+",
+          "de": "3+",
+          "it": "3+",
+          "pt-BR": "3+"
         },
         "snomed": "260349009"
       },
@@ -131,7 +146,10 @@
         "label": {
           "en": "4+",
           "fr": "4+",
-          "es": "4+"
+          "es": "4+",
+          "de": "4+",
+          "it": "4+",
+          "pt-BR": "4+"
         },
         "snomed": "260350009"
       },
@@ -139,7 +157,10 @@
         "label": {
           "en": "Positive",
           "fr": "Positif",
-          "es": "Positivo"
+          "es": "Positivo",
+          "de": "Positiv",
+          "it": "Positivo",
+          "pt-BR": "Positivo"
         },
         "snomed": "10828004"
       },
@@ -147,7 +168,10 @@
         "label": {
           "en": "Detected",
           "fr": "Détecté",
-          "es": "Detectado"
+          "es": "Detectado",
+          "de": "Nachgewiesen",
+          "it": "Rilevato",
+          "pt-BR": "Detectado"
         },
         "snomed": "260373001"
       },
@@ -155,7 +179,10 @@
         "label": {
           "en": "Not detected",
           "fr": "Non détecté",
-          "es": "No detectado"
+          "es": "No detectado",
+          "de": "Nicht nachgewiesen",
+          "it": "Non rilevato",
+          "pt-BR": "Não detectado"
         },
         "snomed": "260415000"
       },
@@ -163,7 +190,10 @@
         "label": {
           "en": "Absent",
           "fr": "Absent",
-          "es": "Ausente"
+          "es": "Ausente",
+          "de": "Nicht vorhanden",
+          "it": "Assente",
+          "pt-BR": "Ausente"
         },
         "snomed": "2667000"
       },
@@ -171,7 +201,10 @@
         "label": {
           "en": "Present",
           "fr": "Présent",
-          "es": "Presente"
+          "es": "Presente",
+          "de": "Vorhanden",
+          "it": "Presente",
+          "pt-BR": "Presente"
         },
         "snomed": "52101004"
       }
@@ -672,7 +705,10 @@
         "label": {
           "en": "Physician",
           "fr": "Médecin",
-          "es": "Médico"
+          "es": "Médico",
+          "de": "Arzt oder Ärztin",
+          "it": "Medico",
+          "pt-BR": "Médico ou médica"
         },
         "snomed": "309343006"
       },
@@ -680,7 +716,10 @@
         "label": {
           "en": "Midwife",
           "fr": "Sage-femme",
-          "es": "Matrona"
+          "es": "Matrona",
+          "de": "Hebamme",
+          "it": "Ostetrica o ostetrico",
+          "pt-BR": "Obstetriz"
         },
         "snomed": "309453006"
       },
@@ -688,7 +727,10 @@
         "label": {
           "en": "Nurse",
           "fr": "Infirmier ou infirmière",
-          "es": "Enfermero o enfermera"
+          "es": "Enfermero o enfermera",
+          "de": "Pflegefachperson",
+          "it": "Infermiere o infermiera",
+          "pt-BR": "Enfermeiro ou enfermeira"
         },
         "snomed": "106292003"
       },
@@ -696,7 +738,10 @@
         "label": {
           "en": "Pharmacist",
           "fr": "Pharmacien ou pharmacienne",
-          "es": "Farmacéutico o farmacéutica"
+          "es": "Farmacéutico o farmacéutica",
+          "de": "Apotheker oder Apothekerin",
+          "it": "Farmacista",
+          "pt-BR": "Farmacêutico ou farmacêutica"
         },
         "snomed": "46255001"
       },
@@ -704,7 +749,10 @@
         "label": {
           "en": "Psychologist",
           "fr": "Psychologue",
-          "es": "Psicólogo o psicóloga"
+          "es": "Psicólogo o psicóloga",
+          "de": "Psychologe oder Psychologin",
+          "it": "Psicologo o psicologa",
+          "pt-BR": "Psicólogo ou psicóloga"
         },
         "snomed": "59944000"
       },
@@ -712,7 +760,10 @@
         "label": {
           "en": "Dietitian",
           "fr": "Diététicien ou diététicienne",
-          "es": "Dietista"
+          "es": "Dietista",
+          "de": "Ernährungsberater oder Ernährungsberaterin",
+          "it": "Dietista",
+          "pt-BR": "Nutricionista"
         },
         "snomed": "159033005"
       },
@@ -720,7 +771,10 @@
         "label": {
           "en": "Physiotherapist",
           "fr": "Physiothérapeute",
-          "es": "Fisioterapeuta"
+          "es": "Fisioterapeuta",
+          "de": "Physiotherapeut oder Physiotherapeutin",
+          "it": "Fisioterapista",
+          "pt-BR": "Fisioterapeuta"
         },
         "snomed": "36682004"
       },
@@ -728,7 +782,10 @@
         "label": {
           "en": "Health educator",
           "fr": "Éducateur ou éducatrice en santé",
-          "es": "Educador o educadora en salud"
+          "es": "Educador o educadora en salud",
+          "de": "Gesundheitsberater oder Gesundheitsberaterin",
+          "it": "Educatore o educatrice alla salute",
+          "pt-BR": "Educador ou educadora em saúde"
         },
         "snomed": "409974004"
       },
@@ -736,7 +793,10 @@
         "label": {
           "en": "Other",
           "fr": "Autre",
-          "es": "Otro"
+          "es": "Otro",
+          "de": "Anderes",
+          "it": "Altro",
+          "pt-BR": "Outro"
         }
       }
     }
@@ -752,91 +812,151 @@
       "cardiovascular": {
         "label": {
           "en": "Heart and blood vessels",
-          "fr": "Cœur et vaisseaux"
+          "fr": "Cœur et vaisseaux",
+          "de": "Herz und Blutgefässe",
+          "es": "Corazón y vasos sanguíneos",
+          "it": "Cuore e vasi sanguigni",
+          "pt-BR": "Coração e vasos sanguíneos"
         }
       },
       "metabolic": {
         "label": {
           "en": "Diabetes and metabolism",
-          "fr": "Diabète et métabolisme"
+          "fr": "Diabète et métabolisme",
+          "de": "Diabetes und Stoffwechsel",
+          "es": "Diabetes y metabolismo",
+          "it": "Diabete e metabolismo",
+          "pt-BR": "Diabetes e metabolismo"
         }
       },
       "mental-health": {
         "label": {
           "en": "Mental health",
-          "fr": "Santé mentale"
+          "fr": "Santé mentale",
+          "de": "Psychische Gesundheit",
+          "es": "Salud mental",
+          "it": "Salute mentale",
+          "pt-BR": "Saúde mental"
         }
       },
       "neurology": {
         "label": {
           "en": "Brain and nervous system",
-          "fr": "Cerveau et système nerveux"
+          "fr": "Cerveau et système nerveux",
+          "de": "Gehirn und Nervensystem",
+          "es": "Cerebro y sistema nervioso",
+          "it": "Cervello e sistema nervoso",
+          "pt-BR": "Cérebro e sistema nervoso"
         }
       },
       "cancer": {
         "label": {
           "en": "Cancer",
-          "fr": "Cancer"
+          "fr": "Cancer",
+          "de": "Krebs",
+          "es": "Cáncer",
+          "it": "Cancro",
+          "pt-BR": "Câncer"
         }
       },
       "respiratory": {
         "label": {
           "en": "Lungs and breathing",
-          "fr": "Poumons et respiration"
+          "fr": "Poumons et respiration",
+          "de": "Lunge und Atmung",
+          "es": "Pulmones y respiración",
+          "it": "Polmoni e respirazione",
+          "pt-BR": "Pulmões e respiração"
         }
       },
       "reproductive-health": {
         "label": {
           "en": "Fertility and reproductive health",
-          "fr": "Fertilité et santé reproductive"
+          "fr": "Fertilité et santé reproductive",
+          "de": "Fruchtbarkeit und reproduktive Gesundheit",
+          "es": "Fertilidad y salud reproductiva",
+          "it": "Fertilità e salute riproduttiva",
+          "pt-BR": "Fertilidade e saúde reprodutiva"
         }
       },
       "womens-health": {
         "label": {
           "en": "Women's health",
-          "fr": "Santé des femmes"
+          "fr": "Santé des femmes",
+          "de": "Frauengesundheit",
+          "es": "Salud de la mujer",
+          "it": "Salute della donna",
+          "pt-BR": "Saúde da mulher"
         }
       },
       "pregnancy": {
         "label": {
           "en": "Pregnancy",
-          "fr": "Grossesse"
+          "fr": "Grossesse",
+          "de": "Schwangerschaft",
+          "es": "Embarazo",
+          "it": "Gravidanza",
+          "pt-BR": "Gravidez"
         }
       },
       "sleep": {
         "label": {
           "en": "Sleep",
-          "fr": "Sommeil"
+          "fr": "Sommeil",
+          "de": "Schlaf",
+          "es": "Sueño",
+          "it": "Sonno",
+          "pt-BR": "Sono"
         }
       },
       "nutrition": {
         "label": {
           "en": "Nutrition",
-          "fr": "Nutrition"
+          "fr": "Nutrition",
+          "de": "Ernährung",
+          "es": "Nutrición",
+          "it": "Nutrizione",
+          "pt-BR": "Nutrição"
         }
       },
       "physical-activity": {
         "label": {
           "en": "Physical activity",
-          "fr": "Activité physique"
+          "fr": "Activité physique",
+          "de": "Körperliche Aktivität",
+          "es": "Actividad física",
+          "it": "Attività fisica",
+          "pt-BR": "Atividade física"
         }
       },
       "musculoskeletal": {
         "label": {
           "en": "Bones, joints and muscles",
-          "fr": "Os, articulations et muscles"
+          "fr": "Os, articulations et muscles",
+          "de": "Knochen, Gelenke und Muskeln",
+          "es": "Huesos, articulaciones y músculos",
+          "it": "Ossa, articolazioni e muscoli",
+          "pt-BR": "Ossos, articulações e músculos"
         }
       },
       "infectious-diseases": {
         "label": {
           "en": "Infections and vaccines",
-          "fr": "Infections et vaccins"
+          "fr": "Infections et vaccins",
+          "de": "Infektionen und Impfungen",
+          "es": "Infecciones y vacunas",
+          "it": "Infezioni e vaccini",
+          "pt-BR": "Infecções e vacinas"
         }
       },
       "rare-diseases": {
         "label": {
           "en": "Rare diseases",
-          "fr": "Maladies rares"
+          "fr": "Maladies rares",
+          "de": "Seltene Krankheiten",
+          "es": "Enfermedades raras",
+          "it": "Malattie rare",
+          "pt-BR": "Doenças raras"
         }
       }
     }

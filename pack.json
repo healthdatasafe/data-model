@@ -1,6 +1,6 @@
 {
-  "version": "4.56.0",
-  "publicationDate": "2026-11-28T08:48:20.217Z",
+  "version": "4.56.1",
+  "publicationDate": "2026-11-28T09:03:03.078Z",
   "streams": [
     {
       "id": "activity",
@@ -1463,12 +1463,18 @@
       "label": {
         "en": "Corrections from your contacts",
         "fr": "Corrections de vos contacts",
-        "es": "Correcciones de sus contactos"
+        "es": "Correcciones de sus contactos",
+        "de": "Korrekturen von Ihren Kontakten",
+        "it": "Correzioni dai suoi contatti",
+        "pt-BR": "Correções feitas pelos seus contatos"
       },
       "description": {
         "en": "What a professional you share data with says one of your entries should have been, and why. Your entries are never changed: you decide whether to apply a correction.",
         "fr": "Ce qu'un professionnel avec qui vous partagez des données dit qu'une de vos saisies aurait dû être, et pourquoi. Vos saisies ne sont jamais modifiées : vous décidez d'appliquer ou non une correction.",
-        "es": "Lo que un profesional con quien comparte datos dice que uno de sus registros debería haber sido, y por qué. Sus registros nunca se modifican: usted decide si aplica una corrección."
+        "es": "Lo que un profesional con quien comparte datos dice que uno de sus registros debería haber sido, y por qué. Sus registros nunca se modifican: usted decide si aplica una corrección.",
+        "de": "Was eine Fachperson, mit der Sie Daten teilen, zu einem Ihrer Einträge sagt: wie er hätte lauten sollen, und warum. Ihre Einträge werden nie geändert: Sie entscheiden, ob Sie eine Korrektur übernehmen.",
+        "it": "Ciò che un professionista con cui condivide dati dice che una delle sue registrazioni avrebbe dovuto essere, e perché. Le sue registrazioni non vengono mai modificate: è lei a decidere se applicare una correzione.",
+        "pt-BR": "O que um profissional com quem você compartilha dados diz que um dos seus registros deveria ter sido, e por quê. Seus registros nunca são alterados: você decide se aplica ou não uma correção."
       }
     },
     {
@@ -1777,11 +1783,19 @@
       "explicitGrantOnly": true,
       "label": {
         "en": "Health Data Safe research",
-        "fr": "Recherche Health Data Safe"
+        "fr": "Recherche Health Data Safe",
+        "de": "Forschung von Health Data Safe",
+        "es": "Investigación de Health Data Safe",
+        "it": "Ricerca Health Data Safe",
+        "pt-BR": "Pesquisa do Health Data Safe"
       },
       "description": {
         "en": "Lets Health Data Safe send you research invitations and eligibility tests. Holds none of your health records: only the score ranges you choose to send and the topics you choose. Never included when you share all your data: shared only when you name it.",
-        "fr": "Permet à Health Data Safe de vous envoyer des invitations à la recherche et des tests d'éligibilité. Ne contient aucun de vos dossiers de santé : seulement les fourchettes de score que vous choisissez d'envoyer et les sujets que vous choisissez. Jamais inclus quand vous partagez toutes vos données : partagé seulement si vous le nommez."
+        "fr": "Permet à Health Data Safe de vous envoyer des invitations à la recherche et des tests d'éligibilité. Ne contient aucun de vos dossiers de santé : seulement les fourchettes de score que vous choisissez d'envoyer et les sujets que vous choisissez. Jamais inclus quand vous partagez toutes vos données : partagé seulement si vous le nommez.",
+        "de": "Ermöglicht Health Data Safe, Ihnen Einladungen zur Teilnahme an Forschungsprojekten sowie Eignungstests zu senden. Enthält keine Ihrer Gesundheitsunterlagen: nur die Punktespannen, die Sie zum Senden auswählen, und die Themen, die Sie wählen. Nie enthalten, wenn Sie alle Ihre Daten teilen: nur geteilt, wenn Sie diesen Bereich ausdrücklich nennen.",
+        "es": "Permite que Health Data Safe le envíe invitaciones a participar en investigaciones y pruebas de elegibilidad. No contiene ninguno de sus registros de salud: solo los rangos de puntuación que usted elige enviar y los temas que elige. Nunca se incluye cuando comparte todos sus datos: solo se comparte cuando usted lo nombra.",
+        "it": "Permette a Health Data Safe di inviarle inviti a partecipare a ricerche e test di idoneità. Non contiene nulla della sua documentazione sanitaria: solo le fasce di punteggio che sceglie di inviare e i temi che sceglie. Mai incluso quando condivide tutti i suoi dati: condiviso solo quando lo nomina.",
+        "pt-BR": "Permite que o Health Data Safe envie a você convites para pesquisas e testes de elegibilidade. Não contém nenhum dos seus registros de saúde: apenas as faixas de pontuação que você escolhe enviar e os temas que você escolhe. Nunca incluído quando você compartilha todos os seus dados: compartilhado apenas quando você o indica pelo nome."
       },
       "children": [
         {
@@ -1789,11 +1803,19 @@
           "name": "Eligibility test results sent",
           "label": {
             "en": "Eligibility test results sent",
-            "fr": "Résultats de tests d'éligibilité envoyés"
+            "fr": "Résultats de tests d'éligibilité envoyés",
+            "de": "Gesendete Ergebnisse von Eignungstests",
+            "es": "Resultados de pruebas de elegibilidad enviados",
+            "it": "Risultati dei test di idoneità inviati",
+            "pt-BR": "Resultados de testes de elegibilidade enviados"
           },
           "description": {
             "en": "The score range of each eligibility test you chose to send (below 50%, or 50% and more). Never the exact result or your answers.",
-            "fr": "La fourchette de score de chaque test d'éligibilité que vous avez choisi d'envoyer (moins de 50 %, ou 50 % et plus). Jamais le résultat exact ni vos réponses."
+            "fr": "La fourchette de score de chaque test d'éligibilité que vous avez choisi d'envoyer (moins de 50 %, ou 50 % et plus). Jamais le résultat exact ni vos réponses.",
+            "de": "Die Punktespanne jedes Eignungstests, den Sie zum Senden ausgewählt haben (unter 50 % oder 50 % und mehr). Nie das genaue Ergebnis oder Ihre Antworten.",
+            "es": "El rango de puntuación de cada prueba de elegibilidad que eligió enviar (menos del 50 %, o 50 % o más). Nunca el resultado exacto ni sus respuestas.",
+            "it": "La fascia di punteggio di ogni test di idoneità che ha scelto di inviare (meno del 50%, oppure 50% e oltre). Mai il risultato esatto né le sue risposte.",
+            "pt-BR": "A faixa de pontuação de cada teste de elegibilidade que você escolheu enviar (abaixo de 50%, ou 50% ou mais). Nunca o resultado exato nem as suas respostas."
           },
           "parentId": "hds-research"
         },
@@ -1802,11 +1824,19 @@
           "name": "Research topics",
           "label": {
             "en": "Research topics",
-            "fr": "Sujets de recherche"
+            "fr": "Sujets de recherche",
+            "de": "Forschungsthemen",
+            "es": "Temas de investigación",
+            "it": "Temi di ricerca",
+            "pt-BR": "Temas de pesquisa"
           },
           "description": {
             "en": "The research topics you chose, to receive the invitations that concern you.",
-            "fr": "Les sujets de recherche que vous avez choisis, pour recevoir les invitations qui vous concernent."
+            "fr": "Les sujets de recherche que vous avez choisis, pour recevoir les invitations qui vous concernent.",
+            "de": "Die Forschungsthemen, die Sie gewählt haben, um die Einladungen zu erhalten, die Sie betreffen.",
+            "es": "Los temas de investigación que eligió, para recibir las invitaciones que le conciernen.",
+            "it": "I temi di ricerca che ha scelto, per ricevere gli inviti che la riguardano.",
+            "pt-BR": "Os temas de pesquisa que você escolheu, para receber os convites que dizem respeito a você."
           },
           "parentId": "hds-research"
         }
@@ -2010,12 +2040,18 @@
       "label": {
         "en": "Other names",
         "fr": "Autres noms",
-        "es": "Otros nombres"
+        "es": "Otros nombres",
+        "de": "Weitere Namen",
+        "it": "Altri nomi",
+        "pt-BR": "Outros nomes"
       },
       "description": {
         "en": "Your other names, such as a usage name, your name at birth or a former name, so that your app recognises your documents.",
         "fr": "Vos autres noms, comme un nom d'usage, votre nom de naissance ou un ancien nom, pour que votre app reconnaisse vos documents.",
-        "es": "Sus otros nombres, como un nombre de uso, su nombre de nacimiento o un nombre anterior, para que su app reconozca sus documentos."
+        "es": "Sus otros nombres, como un nombre de uso, su nombre de nacimiento o un nombre anterior, para que su app reconozca sus documentos.",
+        "de": "Ihre weiteren Namen, etwa ein gebräuchlicher Name, Ihr Geburtsname oder ein früherer Name, damit Ihre App Ihre Dokumente erkennt.",
+        "it": "I suoi altri nomi, come un nome d'uso, il suo nome alla nascita o un nome precedente, perché la sua app riconosca i suoi documenti.",
+        "pt-BR": "Seus outros nomes, como um nome usual, seu nome de nascimento ou um nome anterior, para que o seu aplicativo reconheça os seus documentos."
       }
     },
     {
@@ -18298,12 +18334,18 @@
       "label": {
         "en": "Correction of an entry",
         "fr": "Correction d'une saisie",
-        "es": "Corrección de un registro"
+        "es": "Corrección de un registro",
+        "de": "Korrektur eines Eintrags",
+        "it": "Correzione di una registrazione",
+        "pt-BR": "Correção de um registro"
       },
       "description": {
         "en": "A professional says one of your entries should have been different, should exist or should not exist, and why.",
         "fr": "Un professionnel indique qu'une de vos saisies aurait dû être différente, devrait exister ou ne devrait pas exister, et pourquoi.",
-        "es": "Un profesional indica que uno de sus registros debería haber sido diferente, debería existir o no debería existir, y por qué."
+        "es": "Un profesional indica que uno de sus registros debería haber sido diferente, debería existir o no debería existir, y por qué.",
+        "de": "Eine Fachperson gibt an, dass einer Ihrer Einträge anders hätte lauten sollen, dass ein Eintrag fehlt oder dass einer nicht existieren sollte, und warum.",
+        "it": "Un professionista indica che una delle sue registrazioni avrebbe dovuto essere diversa, dovrebbe esistere o non dovrebbe esistere, e perché.",
+        "pt-BR": "Um profissional indica que um dos seus registros deveria ter sido diferente, deveria existir ou não deveria existir, e por quê."
       },
       "streamId": "entry-corrections",
       "eventType": "correction/entry-v1",
@@ -22629,12 +22671,18 @@
       "label": {
         "en": "Other name",
         "fr": "Autre nom",
-        "es": "Otro nombre"
+        "es": "Otro nombre",
+        "de": "Weiterer Name",
+        "it": "Altro nome",
+        "pt-BR": "Outro nome"
       },
       "description": {
         "en": "Another name you have or had, such as a usage name or your name at birth.",
         "fr": "Un autre nom que vous portez ou avez porté, comme un nom d'usage ou votre nom de naissance.",
-        "es": "Otro nombre que tiene o tuvo, como un nombre de uso o su nombre de nacimiento."
+        "es": "Otro nombre que tiene o tuvo, como un nombre de uso o su nombre de nacimiento.",
+        "de": "Ein weiterer Name, den Sie tragen oder getragen haben, etwa ein gebräuchlicher Name oder Ihr Geburtsname.",
+        "it": "Un altro nome che porta o ha portato, come un nome d'uso o il suo nome alla nascita.",
+        "pt-BR": "Outro nome que você tem ou teve, como um nome usual ou seu nome de nascimento."
       },
       "streamId": "other-names",
       "eventType": "contact/other-name-v1",
@@ -22644,7 +22692,10 @@
           "label": {
             "en": "Given name",
             "fr": "Prénom",
-            "es": "Nombre"
+            "es": "Nombre",
+            "de": "Vorname",
+            "it": "Nome",
+            "pt-BR": "Nome"
           },
           "type": "text",
           "canBeNull": true
@@ -22653,7 +22704,10 @@
           "label": {
             "en": "Family name",
             "fr": "Nom de famille",
-            "es": "Apellido"
+            "es": "Apellido",
+            "de": "Nachname",
+            "it": "Cognome",
+            "pt-BR": "Sobrenome"
           },
           "type": "text",
           "canBeNull": true
@@ -22662,7 +22716,10 @@
           "label": {
             "en": "Kind of name",
             "fr": "Type de nom",
-            "es": "Tipo de nombre"
+            "es": "Tipo de nombre",
+            "de": "Art des Namens",
+            "it": "Tipo di nome",
+            "pt-BR": "Tipo de nome"
           },
           "type": "select",
           "canBeNull": true,
@@ -22672,7 +22729,10 @@
               "label": {
                 "en": "Full official name",
                 "fr": "Nom officiel complet",
-                "es": "Nombre oficial completo"
+                "es": "Nombre oficial completo",
+                "de": "Vollständiger amtlicher Name",
+                "it": "Nome ufficiale completo",
+                "pt-BR": "Nome oficial completo"
               }
             },
             {
@@ -22680,7 +22740,10 @@
               "label": {
                 "en": "Usage name",
                 "fr": "Nom d'usage",
-                "es": "Nombre de uso"
+                "es": "Nombre de uso",
+                "de": "Gebräuchlicher Name",
+                "it": "Nome d'uso",
+                "pt-BR": "Nome usual"
               }
             },
             {
@@ -22688,7 +22751,10 @@
               "label": {
                 "en": "Name at birth",
                 "fr": "Nom de naissance",
-                "es": "Nombre de nacimiento"
+                "es": "Nombre de nacimiento",
+                "de": "Geburtsname",
+                "it": "Nome alla nascita",
+                "pt-BR": "Nome de nascimento"
               }
             },
             {
@@ -22696,7 +22762,10 @@
               "label": {
                 "en": "Former name",
                 "fr": "Ancien nom",
-                "es": "Nombre anterior"
+                "es": "Nombre anterior",
+                "de": "Früherer Name",
+                "it": "Nome precedente",
+                "pt-BR": "Nome anterior"
               }
             },
             {
@@ -22704,7 +22773,10 @@
               "label": {
                 "en": "Nickname",
                 "fr": "Surnom",
-                "es": "Apodo"
+                "es": "Apodo",
+                "de": "Spitzname",
+                "it": "Soprannome",
+                "pt-BR": "Apelido"
               }
             }
           ]
@@ -37902,20 +37974,35 @@
       "composite": {
         "name": {
           "label": {
-            "en": "Treatment name"
+            "en": "Treatment name",
+            "fr": "Nom du traitement",
+            "de": "Name der Behandlung",
+            "es": "Nombre del tratamiento",
+            "it": "Nome del trattamento",
+            "pt-BR": "Nome do tratamento"
           },
           "type": "text"
         },
         "count": {
           "label": {
-            "en": "Number of times (lifetime)"
+            "en": "Number of times (lifetime)",
+            "fr": "Nombre de fois (au cours de la vie)",
+            "de": "Wie oft (im Laufe des Lebens)",
+            "es": "Número de veces (a lo largo de la vida)",
+            "it": "Numero di volte (nel corso della vita)",
+            "pt-BR": "Número de vezes (ao longo da vida)"
           },
           "type": "number",
           "canBeNull": true
         },
         "notes": {
           "label": {
-            "en": "Notes"
+            "en": "Notes",
+            "fr": "Notes",
+            "de": "Notizen",
+            "es": "Notas",
+            "it": "Note",
+            "pt-BR": "Notas"
           },
           "type": "text",
           "canBeNull": true
@@ -51896,7 +51983,10 @@
           "label": {
             "en": "Negative",
             "fr": "Négatif",
-            "es": "Negativo"
+            "es": "Negativo",
+            "de": "Negativ",
+            "it": "Negativo",
+            "pt-BR": "Negativo"
           },
           "snomed": "260385009"
         },
@@ -51904,7 +51994,10 @@
           "label": {
             "en": "Trace",
             "fr": "Traces",
-            "es": "Indicios"
+            "es": "Indicios",
+            "de": "Spuren",
+            "it": "Tracce",
+            "pt-BR": "Traços"
           },
           "snomed": "260405006"
         },
@@ -51912,7 +52005,10 @@
           "label": {
             "en": "1+",
             "fr": "1+",
-            "es": "1+"
+            "es": "1+",
+            "de": "1+",
+            "it": "1+",
+            "pt-BR": "1+"
           },
           "snomed": "260347006"
         },
@@ -51920,7 +52016,10 @@
           "label": {
             "en": "2+",
             "fr": "2+",
-            "es": "2+"
+            "es": "2+",
+            "de": "2+",
+            "it": "2+",
+            "pt-BR": "2+"
           },
           "snomed": "260348001"
         },
@@ -51928,7 +52027,10 @@
           "label": {
             "en": "3+",
             "fr": "3+",
-            "es": "3+"
+            "es": "3+",
+            "de": "3+",
+            "it": "3+",
+            "pt-BR": "3+"
           },
           "snomed": "260349009"
         },
@@ -51936,7 +52038,10 @@
           "label": {
             "en": "4+",
             "fr": "4+",
-            "es": "4+"
+            "es": "4+",
+            "de": "4+",
+            "it": "4+",
+            "pt-BR": "4+"
           },
           "snomed": "260350009"
         },
@@ -51944,7 +52049,10 @@
           "label": {
             "en": "Positive",
             "fr": "Positif",
-            "es": "Positivo"
+            "es": "Positivo",
+            "de": "Positiv",
+            "it": "Positivo",
+            "pt-BR": "Positivo"
           },
           "snomed": "10828004"
         },
@@ -51952,7 +52060,10 @@
           "label": {
             "en": "Detected",
             "fr": "Détecté",
-            "es": "Detectado"
+            "es": "Detectado",
+            "de": "Nachgewiesen",
+            "it": "Rilevato",
+            "pt-BR": "Detectado"
           },
           "snomed": "260373001"
         },
@@ -51960,7 +52071,10 @@
           "label": {
             "en": "Not detected",
             "fr": "Non détecté",
-            "es": "No detectado"
+            "es": "No detectado",
+            "de": "Nicht nachgewiesen",
+            "it": "Non rilevato",
+            "pt-BR": "Não detectado"
           },
           "snomed": "260415000"
         },
@@ -51968,7 +52082,10 @@
           "label": {
             "en": "Absent",
             "fr": "Absent",
-            "es": "Ausente"
+            "es": "Ausente",
+            "de": "Nicht vorhanden",
+            "it": "Assente",
+            "pt-BR": "Ausente"
           },
           "snomed": "2667000"
         },
@@ -51976,7 +52093,10 @@
           "label": {
             "en": "Present",
             "fr": "Présent",
-            "es": "Presente"
+            "es": "Presente",
+            "de": "Vorhanden",
+            "it": "Presente",
+            "pt-BR": "Presente"
           },
           "snomed": "52101004"
         }
@@ -52477,7 +52597,10 @@
           "label": {
             "en": "Physician",
             "fr": "Médecin",
-            "es": "Médico"
+            "es": "Médico",
+            "de": "Arzt oder Ärztin",
+            "it": "Medico",
+            "pt-BR": "Médico ou médica"
           },
           "snomed": "309343006"
         },
@@ -52485,7 +52608,10 @@
           "label": {
             "en": "Midwife",
             "fr": "Sage-femme",
-            "es": "Matrona"
+            "es": "Matrona",
+            "de": "Hebamme",
+            "it": "Ostetrica o ostetrico",
+            "pt-BR": "Obstetriz"
           },
           "snomed": "309453006"
         },
@@ -52493,7 +52619,10 @@
           "label": {
             "en": "Nurse",
             "fr": "Infirmier ou infirmière",
-            "es": "Enfermero o enfermera"
+            "es": "Enfermero o enfermera",
+            "de": "Pflegefachperson",
+            "it": "Infermiere o infermiera",
+            "pt-BR": "Enfermeiro ou enfermeira"
           },
           "snomed": "106292003"
         },
@@ -52501,7 +52630,10 @@
           "label": {
             "en": "Pharmacist",
             "fr": "Pharmacien ou pharmacienne",
-            "es": "Farmacéutico o farmacéutica"
+            "es": "Farmacéutico o farmacéutica",
+            "de": "Apotheker oder Apothekerin",
+            "it": "Farmacista",
+            "pt-BR": "Farmacêutico ou farmacêutica"
           },
           "snomed": "46255001"
         },
@@ -52509,7 +52641,10 @@
           "label": {
             "en": "Psychologist",
             "fr": "Psychologue",
-            "es": "Psicólogo o psicóloga"
+            "es": "Psicólogo o psicóloga",
+            "de": "Psychologe oder Psychologin",
+            "it": "Psicologo o psicologa",
+            "pt-BR": "Psicólogo ou psicóloga"
           },
           "snomed": "59944000"
         },
@@ -52517,7 +52652,10 @@
           "label": {
             "en": "Dietitian",
             "fr": "Diététicien ou diététicienne",
-            "es": "Dietista"
+            "es": "Dietista",
+            "de": "Ernährungsberater oder Ernährungsberaterin",
+            "it": "Dietista",
+            "pt-BR": "Nutricionista"
           },
           "snomed": "159033005"
         },
@@ -52525,7 +52663,10 @@
           "label": {
             "en": "Physiotherapist",
             "fr": "Physiothérapeute",
-            "es": "Fisioterapeuta"
+            "es": "Fisioterapeuta",
+            "de": "Physiotherapeut oder Physiotherapeutin",
+            "it": "Fisioterapista",
+            "pt-BR": "Fisioterapeuta"
           },
           "snomed": "36682004"
         },
@@ -52533,7 +52674,10 @@
           "label": {
             "en": "Health educator",
             "fr": "Éducateur ou éducatrice en santé",
-            "es": "Educador o educadora en salud"
+            "es": "Educador o educadora en salud",
+            "de": "Gesundheitsberater oder Gesundheitsberaterin",
+            "it": "Educatore o educatrice alla salute",
+            "pt-BR": "Educador ou educadora em saúde"
           },
           "snomed": "409974004"
         },
@@ -52541,7 +52685,10 @@
           "label": {
             "en": "Other",
             "fr": "Autre",
-            "es": "Otro"
+            "es": "Otro",
+            "de": "Anderes",
+            "it": "Altro",
+            "pt-BR": "Outro"
           }
         }
       }
@@ -52557,91 +52704,151 @@
         "cardiovascular": {
           "label": {
             "en": "Heart and blood vessels",
-            "fr": "Cœur et vaisseaux"
+            "fr": "Cœur et vaisseaux",
+            "de": "Herz und Blutgefässe",
+            "es": "Corazón y vasos sanguíneos",
+            "it": "Cuore e vasi sanguigni",
+            "pt-BR": "Coração e vasos sanguíneos"
           }
         },
         "metabolic": {
           "label": {
             "en": "Diabetes and metabolism",
-            "fr": "Diabète et métabolisme"
+            "fr": "Diabète et métabolisme",
+            "de": "Diabetes und Stoffwechsel",
+            "es": "Diabetes y metabolismo",
+            "it": "Diabete e metabolismo",
+            "pt-BR": "Diabetes e metabolismo"
           }
         },
         "mental-health": {
           "label": {
             "en": "Mental health",
-            "fr": "Santé mentale"
+            "fr": "Santé mentale",
+            "de": "Psychische Gesundheit",
+            "es": "Salud mental",
+            "it": "Salute mentale",
+            "pt-BR": "Saúde mental"
           }
         },
         "neurology": {
           "label": {
             "en": "Brain and nervous system",
-            "fr": "Cerveau et système nerveux"
+            "fr": "Cerveau et système nerveux",
+            "de": "Gehirn und Nervensystem",
+            "es": "Cerebro y sistema nervioso",
+            "it": "Cervello e sistema nervoso",
+            "pt-BR": "Cérebro e sistema nervoso"
           }
         },
         "cancer": {
           "label": {
             "en": "Cancer",
-            "fr": "Cancer"
+            "fr": "Cancer",
+            "de": "Krebs",
+            "es": "Cáncer",
+            "it": "Cancro",
+            "pt-BR": "Câncer"
           }
         },
         "respiratory": {
           "label": {
             "en": "Lungs and breathing",
-            "fr": "Poumons et respiration"
+            "fr": "Poumons et respiration",
+            "de": "Lunge und Atmung",
+            "es": "Pulmones y respiración",
+            "it": "Polmoni e respirazione",
+            "pt-BR": "Pulmões e respiração"
           }
         },
         "reproductive-health": {
           "label": {
             "en": "Fertility and reproductive health",
-            "fr": "Fertilité et santé reproductive"
+            "fr": "Fertilité et santé reproductive",
+            "de": "Fruchtbarkeit und reproduktive Gesundheit",
+            "es": "Fertilidad y salud reproductiva",
+            "it": "Fertilità e salute riproduttiva",
+            "pt-BR": "Fertilidade e saúde reprodutiva"
           }
         },
         "womens-health": {
           "label": {
             "en": "Women's health",
-            "fr": "Santé des femmes"
+            "fr": "Santé des femmes",
+            "de": "Frauengesundheit",
+            "es": "Salud de la mujer",
+            "it": "Salute della donna",
+            "pt-BR": "Saúde da mulher"
           }
         },
         "pregnancy": {
           "label": {
             "en": "Pregnancy",
-            "fr": "Grossesse"
+            "fr": "Grossesse",
+            "de": "Schwangerschaft",
+            "es": "Embarazo",
+            "it": "Gravidanza",
+            "pt-BR": "Gravidez"
           }
         },
         "sleep": {
           "label": {
             "en": "Sleep",
-            "fr": "Sommeil"
+            "fr": "Sommeil",
+            "de": "Schlaf",
+            "es": "Sueño",
+            "it": "Sonno",
+            "pt-BR": "Sono"
           }
         },
         "nutrition": {
           "label": {
             "en": "Nutrition",
-            "fr": "Nutrition"
+            "fr": "Nutrition",
+            "de": "Ernährung",
+            "es": "Nutrición",
+            "it": "Nutrizione",
+            "pt-BR": "Nutrição"
           }
         },
         "physical-activity": {
           "label": {
             "en": "Physical activity",
-            "fr": "Activité physique"
+            "fr": "Activité physique",
+            "de": "Körperliche Aktivität",
+            "es": "Actividad física",
+            "it": "Attività fisica",
+            "pt-BR": "Atividade física"
           }
         },
         "musculoskeletal": {
           "label": {
             "en": "Bones, joints and muscles",
-            "fr": "Os, articulations et muscles"
+            "fr": "Os, articulations et muscles",
+            "de": "Knochen, Gelenke und Muskeln",
+            "es": "Huesos, articulaciones y músculos",
+            "it": "Ossa, articolazioni e muscoli",
+            "pt-BR": "Ossos, articulações e músculos"
           }
         },
         "infectious-diseases": {
           "label": {
             "en": "Infections and vaccines",
-            "fr": "Infections et vaccins"
+            "fr": "Infections et vaccins",
+            "de": "Infektionen und Impfungen",
+            "es": "Infecciones y vacunas",
+            "it": "Infezioni e vaccini",
+            "pt-BR": "Infecções e vacinas"
           }
         },
         "rare-diseases": {
           "label": {
             "en": "Rare diseases",
-            "fr": "Maladies rares"
+            "fr": "Maladies rares",
+            "de": "Seltene Krankheiten",
+            "es": "Enfermedades raras",
+            "it": "Malattie rare",
+            "pt-BR": "Doenças raras"
           }
         }
       }

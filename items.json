@@ -15412,12 +15412,18 @@
     "label": {
       "en": "Correction of an entry",
       "fr": "Correction d'une saisie",
-      "es": "Corrección de un registro"
+      "es": "Corrección de un registro",
+      "de": "Korrektur eines Eintrags",
+      "it": "Correzione di una registrazione",
+      "pt-BR": "Correção de um registro"
     },
     "description": {
       "en": "A professional says one of your entries should have been different, should exist or should not exist, and why.",
       "fr": "Un professionnel indique qu'une de vos saisies aurait dû être différente, devrait exister ou ne devrait pas exister, et pourquoi.",
-      "es": "Un profesional indica que uno de sus registros debería haber sido diferente, debería existir o no debería existir, y por qué."
+      "es": "Un profesional indica que uno de sus registros debería haber sido diferente, debería existir o no debería existir, y por qué.",
+      "de": "Eine Fachperson gibt an, dass einer Ihrer Einträge anders hätte lauten sollen, dass ein Eintrag fehlt oder dass einer nicht existieren sollte, und warum.",
+      "it": "Un professionista indica che una delle sue registrazioni avrebbe dovuto essere diversa, dovrebbe esistere o non dovrebbe esistere, e perché.",
+      "pt-BR": "Um profissional indica que um dos seus registros deveria ter sido diferente, deveria existir ou não deveria existir, e por quê."
     },
     "streamId": "entry-corrections",
     "eventType": "correction/entry-v1",
@@ -19743,12 +19749,18 @@
     "label": {
       "en": "Other name",
       "fr": "Autre nom",
-      "es": "Otro nombre"
+      "es": "Otro nombre",
+      "de": "Weiterer Name",
+      "it": "Altro nome",
+      "pt-BR": "Outro nome"
     },
     "description": {
       "en": "Another name you have or had, such as a usage name or your name at birth.",
       "fr": "Un autre nom que vous portez ou avez porté, comme un nom d'usage ou votre nom de naissance.",
-      "es": "Otro nombre que tiene o tuvo, como un nombre de uso o su nombre de nacimiento."
+      "es": "Otro nombre que tiene o tuvo, como un nombre de uso o su nombre de nacimiento.",
+      "de": "Ein weiterer Name, den Sie tragen oder getragen haben, etwa ein gebräuchlicher Name oder Ihr Geburtsname.",
+      "it": "Un altro nome che porta o ha portato, come un nome d'uso o il suo nome alla nascita.",
+      "pt-BR": "Outro nome que você tem ou teve, como um nome usual ou seu nome de nascimento."
     },
     "streamId": "other-names",
     "eventType": "contact/other-name-v1",
@@ -19758,7 +19770,10 @@
         "label": {
           "en": "Given name",
           "fr": "Prénom",
-          "es": "Nombre"
+          "es": "Nombre",
+          "de": "Vorname",
+          "it": "Nome",
+          "pt-BR": "Nome"
         },
         "type": "text",
         "canBeNull": true
@@ -19767,7 +19782,10 @@
         "label": {
           "en": "Family name",
           "fr": "Nom de famille",
-          "es": "Apellido"
+          "es": "Apellido",
+          "de": "Nachname",
+          "it": "Cognome",
+          "pt-BR": "Sobrenome"
         },
         "type": "text",
         "canBeNull": true
@@ -19776,7 +19794,10 @@
         "label": {
           "en": "Kind of name",
           "fr": "Type de nom",
-          "es": "Tipo de nombre"
+          "es": "Tipo de nombre",
+          "de": "Art des Namens",
+          "it": "Tipo di nome",
+          "pt-BR": "Tipo de nome"
         },
         "type": "select",
         "canBeNull": true,
@@ -19786,7 +19807,10 @@
             "label": {
               "en": "Full official name",
               "fr": "Nom officiel complet",
-              "es": "Nombre oficial completo"
+              "es": "Nombre oficial completo",
+              "de": "Vollständiger amtlicher Name",
+              "it": "Nome ufficiale completo",
+              "pt-BR": "Nome oficial completo"
             }
           },
           {
@@ -19794,7 +19818,10 @@
             "label": {
               "en": "Usage name",
               "fr": "Nom d'usage",
-              "es": "Nombre de uso"
+              "es": "Nombre de uso",
+              "de": "Gebräuchlicher Name",
+              "it": "Nome d'uso",
+              "pt-BR": "Nome usual"
             }
           },
           {
@@ -19802,7 +19829,10 @@
             "label": {
               "en": "Name at birth",
               "fr": "Nom de naissance",
-              "es": "Nombre de nacimiento"
+              "es": "Nombre de nacimiento",
+              "de": "Geburtsname",
+              "it": "Nome alla nascita",
+              "pt-BR": "Nome de nascimento"
             }
           },
           {
@@ -19810,7 +19840,10 @@
             "label": {
               "en": "Former name",
               "fr": "Ancien nom",
-              "es": "Nombre anterior"
+              "es": "Nombre anterior",
+              "de": "Früherer Name",
+              "it": "Nome precedente",
+              "pt-BR": "Nome anterior"
             }
           },
           {
@@ -19818,7 +19851,10 @@
             "label": {
               "en": "Nickname",
               "fr": "Surnom",
-              "es": "Apodo"
+              "es": "Apodo",
+              "de": "Spitzname",
+              "it": "Soprannome",
+              "pt-BR": "Apelido"
             }
           }
         ]
@@ -35016,20 +35052,35 @@
     "composite": {
       "name": {
         "label": {
-          "en": "Treatment name"
+          "en": "Treatment name",
+          "fr": "Nom du traitement",
+          "de": "Name der Behandlung",
+          "es": "Nombre del tratamiento",
+          "it": "Nome del trattamento",
+          "pt-BR": "Nome do tratamento"
         },
         "type": "text"
       },
       "count": {
         "label": {
-          "en": "Number of times (lifetime)"
+          "en": "Number of times (lifetime)",
+          "fr": "Nombre de fois (au cours de la vie)",
+          "de": "Wie oft (im Laufe des Lebens)",
+          "es": "Número de veces (a lo largo de la vida)",
+          "it": "Numero di volte (nel corso della vita)",
+          "pt-BR": "Número de vezes (ao longo da vida)"
         },
         "type": "number",
         "canBeNull": true
       },
       "notes": {
         "label": {
-          "en": "Notes"
+          "en": "Notes",
+          "fr": "Notes",
+          "de": "Notizen",
+          "es": "Notas",
+          "it": "Note",
+          "pt-BR": "Notas"
         },
         "type": "text",
         "canBeNull": true

@@ -1460,12 +1460,18 @@
     "label": {
       "en": "Corrections from your contacts",
       "fr": "Corrections de vos contacts",
-      "es": "Correcciones de sus contactos"
+      "es": "Correcciones de sus contactos",
+      "de": "Korrekturen von Ihren Kontakten",
+      "it": "Correzioni dai suoi contatti",
+      "pt-BR": "Correções feitas pelos seus contatos"
     },
     "description": {
       "en": "What a professional you share data with says one of your entries should have been, and why. Your entries are never changed: you decide whether to apply a correction.",
       "fr": "Ce qu'un professionnel avec qui vous partagez des données dit qu'une de vos saisies aurait dû être, et pourquoi. Vos saisies ne sont jamais modifiées : vous décidez d'appliquer ou non une correction.",
-      "es": "Lo que un profesional con quien comparte datos dice que uno de sus registros debería haber sido, y por qué. Sus registros nunca se modifican: usted decide si aplica una corrección."
+      "es": "Lo que un profesional con quien comparte datos dice que uno de sus registros debería haber sido, y por qué. Sus registros nunca se modifican: usted decide si aplica una corrección.",
+      "de": "Was eine Fachperson, mit der Sie Daten teilen, zu einem Ihrer Einträge sagt: wie er hätte lauten sollen, und warum. Ihre Einträge werden nie geändert: Sie entscheiden, ob Sie eine Korrektur übernehmen.",
+      "it": "Ciò che un professionista con cui condivide dati dice che una delle sue registrazioni avrebbe dovuto essere, e perché. Le sue registrazioni non vengono mai modificate: è lei a decidere se applicare una correzione.",
+      "pt-BR": "O que um profissional com quem você compartilha dados diz que um dos seus registros deveria ter sido, e por quê. Seus registros nunca são alterados: você decide se aplica ou não uma correção."
     }
   },
   {
@@ -1774,11 +1780,19 @@
     "explicitGrantOnly": true,
     "label": {
       "en": "Health Data Safe research",
-      "fr": "Recherche Health Data Safe"
+      "fr": "Recherche Health Data Safe",
+      "de": "Forschung von Health Data Safe",
+      "es": "Investigación de Health Data Safe",
+      "it": "Ricerca Health Data Safe",
+      "pt-BR": "Pesquisa do Health Data Safe"
     },
     "description": {
       "en": "Lets Health Data Safe send you research invitations and eligibility tests. Holds none of your health records: only the score ranges you choose to send and the topics you choose. Never included when you share all your data: shared only when you name it.",
-      "fr": "Permet à Health Data Safe de vous envoyer des invitations à la recherche et des tests d'éligibilité. Ne contient aucun de vos dossiers de santé : seulement les fourchettes de score que vous choisissez d'envoyer et les sujets que vous choisissez. Jamais inclus quand vous partagez toutes vos données : partagé seulement si vous le nommez."
+      "fr": "Permet à Health Data Safe de vous envoyer des invitations à la recherche et des tests d'éligibilité. Ne contient aucun de vos dossiers de santé : seulement les fourchettes de score que vous choisissez d'envoyer et les sujets que vous choisissez. Jamais inclus quand vous partagez toutes vos données : partagé seulement si vous le nommez.",
+      "de": "Ermöglicht Health Data Safe, Ihnen Einladungen zur Teilnahme an Forschungsprojekten sowie Eignungstests zu senden. Enthält keine Ihrer Gesundheitsunterlagen: nur die Punktespannen, die Sie zum Senden auswählen, und die Themen, die Sie wählen. Nie enthalten, wenn Sie alle Ihre Daten teilen: nur geteilt, wenn Sie diesen Bereich ausdrücklich nennen.",
+      "es": "Permite que Health Data Safe le envíe invitaciones a participar en investigaciones y pruebas de elegibilidad. No contiene ninguno de sus registros de salud: solo los rangos de puntuación que usted elige enviar y los temas que elige. Nunca se incluye cuando comparte todos sus datos: solo se comparte cuando usted lo nombra.",
+      "it": "Permette a Health Data Safe di inviarle inviti a partecipare a ricerche e test di idoneità. Non contiene nulla della sua documentazione sanitaria: solo le fasce di punteggio che sceglie di inviare e i temi che sceglie. Mai incluso quando condivide tutti i suoi dati: condiviso solo quando lo nomina.",
+      "pt-BR": "Permite que o Health Data Safe envie a você convites para pesquisas e testes de elegibilidade. Não contém nenhum dos seus registros de saúde: apenas as faixas de pontuação que você escolhe enviar e os temas que você escolhe. Nunca incluído quando você compartilha todos os seus dados: compartilhado apenas quando você o indica pelo nome."
     },
     "children": [
       {
@@ -1786,11 +1800,19 @@
         "name": "Eligibility test results sent",
         "label": {
           "en": "Eligibility test results sent",
-          "fr": "Résultats de tests d'éligibilité envoyés"
+          "fr": "Résultats de tests d'éligibilité envoyés",
+          "de": "Gesendete Ergebnisse von Eignungstests",
+          "es": "Resultados de pruebas de elegibilidad enviados",
+          "it": "Risultati dei test di idoneità inviati",
+          "pt-BR": "Resultados de testes de elegibilidade enviados"
         },
         "description": {
           "en": "The score range of each eligibility test you chose to send (below 50%, or 50% and more). Never the exact result or your answers.",
-          "fr": "La fourchette de score de chaque test d'éligibilité que vous avez choisi d'envoyer (moins de 50 %, ou 50 % et plus). Jamais le résultat exact ni vos réponses."
+          "fr": "La fourchette de score de chaque test d'éligibilité que vous avez choisi d'envoyer (moins de 50 %, ou 50 % et plus). Jamais le résultat exact ni vos réponses.",
+          "de": "Die Punktespanne jedes Eignungstests, den Sie zum Senden ausgewählt haben (unter 50 % oder 50 % und mehr). Nie das genaue Ergebnis oder Ihre Antworten.",
+          "es": "El rango de puntuación de cada prueba de elegibilidad que eligió enviar (menos del 50 %, o 50 % o más). Nunca el resultado exacto ni sus respuestas.",
+          "it": "La fascia di punteggio di ogni test di idoneità che ha scelto di inviare (meno del 50%, oppure 50% e oltre). Mai il risultato esatto né le sue risposte.",
+          "pt-BR": "A faixa de pontuação de cada teste de elegibilidade que você escolheu enviar (abaixo de 50%, ou 50% ou mais). Nunca o resultado exato nem as suas respostas."
         },
         "parentId": "hds-research"
       },
@@ -1799,11 +1821,19 @@
         "name": "Research topics",
         "label": {
           "en": "Research topics",
-          "fr": "Sujets de recherche"
+          "fr": "Sujets de recherche",
+          "de": "Forschungsthemen",
+          "es": "Temas de investigación",
+          "it": "Temi di ricerca",
+          "pt-BR": "Temas de pesquisa"
         },
         "description": {
           "en": "The research topics you chose, to receive the invitations that concern you.",
-          "fr": "Les sujets de recherche que vous avez choisis, pour recevoir les invitations qui vous concernent."
+          "fr": "Les sujets de recherche que vous avez choisis, pour recevoir les invitations qui vous concernent.",
+          "de": "Die Forschungsthemen, die Sie gewählt haben, um die Einladungen zu erhalten, die Sie betreffen.",
+          "es": "Los temas de investigación que eligió, para recibir las invitaciones que le conciernen.",
+          "it": "I temi di ricerca che ha scelto, per ricevere gli inviti che la riguardano.",
+          "pt-BR": "Os temas de pesquisa que você escolheu, para receber os convites que dizem respeito a você."
         },
         "parentId": "hds-research"
       }
@@ -2007,12 +2037,18 @@
     "label": {
       "en": "Other names",
       "fr": "Autres noms",
-      "es": "Otros nombres"
+      "es": "Otros nombres",
+      "de": "Weitere Namen",
+      "it": "Altri nomi",
+      "pt-BR": "Outros nomes"
     },
     "description": {
       "en": "Your other names, such as a usage name, your name at birth or a former name, so that your app recognises your documents.",
       "fr": "Vos autres noms, comme un nom d'usage, votre nom de naissance ou un ancien nom, pour que votre app reconnaisse vos documents.",
-      "es": "Sus otros nombres, como un nombre de uso, su nombre de nacimiento o un nombre anterior, para que su app reconozca sus documentos."
+      "es": "Sus otros nombres, como un nombre de uso, su nombre de nacimiento o un nombre anterior, para que su app reconozca sus documentos.",
+      "de": "Ihre weiteren Namen, etwa ein gebräuchlicher Name, Ihr Geburtsname oder ein früherer Name, damit Ihre App Ihre Dokumente erkennt.",
+      "it": "I suoi altri nomi, come un nome d'uso, il suo nome alla nascita o un nome precedente, perché la sua app riconosca i suoi documenti.",
+      "pt-BR": "Seus outros nomes, como um nome usual, seu nome de nascimento ou um nome anterior, para que o seu aplicativo reconheça os seus documentos."
     }
   },
   {
