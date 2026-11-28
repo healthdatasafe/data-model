@@ -13,8 +13,8 @@ fertility-cycles-average-length:
     en: Average Cycle Length
     fr: Durée moyenne du cycle
   description:
-    en: Your average menstrual cycle length, in days.
-    fr: Votre durée moyenne de cycle menstruel, en jours.
+    en: Your average menstrual cycle length.
+    fr: Votre durée moyenne de cycle menstruel.
   streamId: fertility-cycles-average-length
   eventType: time/d
   type: number
@@ -25,8 +25,8 @@ fertility-cycles-average-period:
     en: Average Period Length
     fr: Durée moyenne des règles
   description:
-    en: Your average period length, in days.
-    fr: Votre durée moyenne des règles, en jours.
+    en: Your average period length.
+    fr: Votre durée moyenne des règles.
   streamId: fertility-cycles-average-period
   eventType: time/d
   type: number
@@ -58,8 +58,8 @@ fertility-cycles-average-luteal-phase:
     en: Average Luteal Phase Length
     fr: Durée moyenne de la phase lutéale
   description:
-    en: Your typical luteal-phase length, in days (recalled average).
-    fr: La durée type de votre phase lutéale, en jours (moyenne rappelée).
+    en: Your typical luteal-phase length, as you recall it on average.
+    fr: La durée type de votre phase lutéale, en moyenne selon votre souvenir.
   streamId: fertility-cycles-average-luteal-phase
   eventType: time/d
   type: number

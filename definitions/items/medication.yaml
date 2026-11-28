@@ -177,8 +177,8 @@ medication-intake-coded:
     en: Medication Intake (coded)
     fr: Prise de médicament (codée)
   description:
-    en: Search and select a coded medication.
-    fr: Recherchez et sélectionnez un médicament codé.
+    en: A medication you take or took.
+    fr: Un médicament que vous prenez ou avez pris.
   streamId: medication-intake
   eventType: medication/coded-v1
   duration:

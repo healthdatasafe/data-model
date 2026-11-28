@@ -330,7 +330,7 @@ wellbeing-mental-distress-stress:
 # option "Slightly anxious", so an ungraded report was stored indistinguishably
 # from a real one.
 #
-# Keyed `<streamId>-presence`, NOT at the base key as the other 57 twin pairs
+# Keyed `<streamId>-presence`, NOT at the base key as the other twin pairs
 # are. That pattern is an artefact of order: in 3.2.0 the presence items already
 # existed and the graded twins were added with a suffix. Here the graded item
 # came first and keeps its key, so the same rule — the pre-existing item keeps

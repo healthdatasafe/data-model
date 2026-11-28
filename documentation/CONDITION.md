@@ -10,8 +10,8 @@ One item, on the root stream itself:
 |---|---|---|---|---|
 | `condition-coded` | `condition/coded-v1` | datasource-search | unlimited | `condition` |
 
-`condition` is one of two top-level streams with **no children** (`finding` is the other); the item sits
-directly on the root. This is deliberate: a diagnosis is identified by its **code**, not by its position
+`condition` is a top-level stream with **no children**, like the other coded roots `finding` and `allergy`; the item
+sits directly on the root. This is deliberate: a diagnosis is identified by its **code**, not by its position
 in the stream tree, so there is no clinical sub-tree to build. A study granted the `condition` stream
 gets the person's diagnoses; a code filter, not a stream filter, narrows it further.
 

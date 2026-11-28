@@ -13,7 +13,7 @@ One item, on the root stream itself:
 |---|---|---|---|---|
 | `finding-coded` | `finding/coded-v1` | datasource-search | unlimited | `finding` |
 
-`finding` is one of two top-level streams with **no children**; the item sits directly on the root. The
+`finding` is a top-level stream with **no children**, like `condition` and `allergy`; the item sits directly on the root. The
 coded identity is populated from datasets-service, the same pattern `condition-coded`, `procedure-coded`
 and `treatment-coded` use.
 

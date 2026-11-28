@@ -52,8 +52,8 @@ procedure-coded:
     en: Procedure (coded)
     fr: Acte médical (codé)
   description:
-    en: Search and select a coded clinical procedure.
-    fr: Recherchez et sélectionnez un acte clinique codé.
+    en: A clinical procedure you had.
+    fr: Un acte médical que vous avez subi.
   streamId: procedure
   eventType: procedure/coded-v1
   type: datasource-search

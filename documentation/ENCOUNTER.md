@@ -28,11 +28,12 @@ reaches the new root. Within it, each leaf carries **one FHIR resourceType**. A 
 organizations, could therefore never be mapped without over-granting, and a published stream is never moved. The
 roots that hold no item keep that door open; tests `[ENC-FHIR-2]` and `[ENC-FHIR-3]` prove both directions.
 
-**Consent wording** (for the consent screens; stream `name` is a single English string): "Your consultations, hospital
+**Consent wording** (the root's `description`, en / fr): "Your consultations, hospital
 stays and other care visits, with the doctors and places involved and the reason given, including sensitive visits." /
 "Vos consultations, séjours hospitaliers et autres soins, avec les médecins et les lieux concernés et le motif indiqué,
-y compris les visites sensibles." Stream names in French: "Soins et prestataires", "Consultations et séjours",
-"Prestataires de soins", "Médecins et thérapeutes", "Cliniques, hôpitaux et cabinets".
+y compris les visites sensibles." `name` is a single English string; the two streams no item speaks for carry a
+`label` en / fr (`encounter` "Soins et prestataires", `encounter-provider` "Prestataires de soins"), and a consent
+screen names each leaf by its item's label ("Visite de soins", "Médecin ou thérapeute", "Clinique, hôpital ou cabinet").
 
 ## `encounter/visit-v1`
 
@@ -225,8 +226,9 @@ sub-fields drop a cleared key: a cleared required `name` still writes `''`, and 
 
 ## FHIR mapping
 
-No `fhir` block yet: the block's `resourceType` is Observation, Condition or Patient, and Encounter, Practitioner and
-Organization need a renderer first (hds-fhir-js, then blocks; FHIR-MAPPING.md). `pack.fhirScopes` and the scope lock
+No `fhir` block yet: a block's `resourceType` is one of Observation, Condition, DocumentReference,
+MedicationStatement, MedicationRequest, Procedure, AllergyIntolerance, Questionnaire, QuestionnaireResponse, or Patient
+for an element block (`src/schemas/items.js`), and Encounter, Practitioner and Organization need a renderer first (hds-fhir-js, then blocks; FHIR-MAPPING.md). `pack.fhirScopes` and the scope lock
 are unchanged (`[ENC-FHIR-1]`). The future SMART keys are `Encounter` on `encounter-visit`, `Practitioner` (and
 `PractitionerRole`, rendered from the same item) on `encounter-provider-person`, `Organization` on
 `encounter-provider-organization`.

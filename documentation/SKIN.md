@@ -102,7 +102,7 @@ Acne confirmed. Full skin vocabulary not publicly documented. Presence flags.
 | **SNOMED CT** | Acne, Oily skin, Dry skin, Pruritus, Rash | No intrinsic severity | N/A (codes) |
 | **Clue** | Good, Oily, Dry, Acne | No (present/absent) | Yes |
 | **Natural Cycles** | Oily, Dry, Glowing | No (present/absent) | Yes |
-| **Mira** | Dry, Glowing (+ likely Oily, Acne) | No | Yes (comma-separated) |
+| **Mira** | Dry, Oily, Breaking out, Glowing, Normal | No | Yes (comma-separated) |
 | **Flo** | Acne (+ likely oily, dry) | No (present/absent) | Yes |
 
 ### Key observations
@@ -119,11 +119,12 @@ Acne confirmed. Full skin vocabulary not publicly documented. Presence flags.
 
 ---
 
-## Proposed HDS Mapping
+## HDS Mapping
 
 ### Approach: `activity/plain` items under `body-skin/`
 
-Skin observations are simple presence flags (like symptoms). Use `activity/plain` event type — same pattern as the existing symptom items.
+Implemented as below: four `activity/plain` items under `body-skin`, written by bridge-mira. Skin observations are
+simple presence flags, the same shape as the symptom presence markers.
 
 ### Stream structure
 
@@ -167,7 +168,8 @@ All Mira values confirmed from real prod API (2026-03-17). "Normal" = no event.
     "Dry"     → body-skin-dry      (activity/plain)
     "Glowing" → body-skin-glowing  (activity/plain)
     "Oily"    → body-skin-oily     (activity/plain)
-    "Acne"    → body-skin-acne     (activity/plain)
+    "Breaking out" → body-skin-acne (activity/plain; the item's label is "Acne")
+    "Normal"  → no event
     unknown   → log warning, skip
 ```
 

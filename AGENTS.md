@@ -4,7 +4,8 @@ This file orients future agents (Claude or others) working on the `data-model` r
 
 Always also read:
 - `documentation/DESIGN-NOTES.md` — item design principles (now includes scale hook placement).
-- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `ALLERGY.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md`, `DOCUMENTS.md`, `ENCOUNTER.md`, `MEDICATION.md`, `SUPPORT.md`, `RESEARCH.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
+- `documentation/SYMPTOMS.md`, `MOOD.md`, `CERVICAL-POSITION.md`, `MENSTRUAL-CYCLE.md`, `PHYSICAL-ACTIVITY.md`, `SKIN.md`, `BLOOD-CHEMISTRY.md`, `LIFESTYLE.md`, `PROFILE.md`, `CONDITION.md`, `ALLERGY.md`, `FINDING.md`, `NUTRITION.md`, `FAMILY.md`, `SYNC-STATUS.md`, `CONSENTS.md`, `DOCUMENTS.md`, `ENCOUNTER.md`, `MEDICATION.md`, `SUPPORT.md`, `RESEARCH.md`, `GENETICS.md`, `FUNCTION.md`, `TREATMENT-PROCEDURE.md`, `QUESTIONNAIRE.md` — per-domain design decisions and cross-system mappings. **Every active domain now has one.**
+- The cross-cutting references: `documentation/FHIR-MAPPING.md` (the `fhir:` block on items, SMART scopes, import), `L10N.md` (where each locale's texts live), `TERMINOLOGY.md` (which code lookups may leave the machine), `CORRECTIONS.md` (a professional's correction of an entry, `entry-corrections` root), `CUSTOM-FIELDS-AND-SYSTEM.md` (template-scoped custom fields, the system stream, `*-cmc` sub-envelopes) and `TAGS.md` (the `tags` root, a deferred design, not implemented).
 - `documentation/PROVENANCE.md` — the index of HDS `clientData` keys (`hdsInstrument`, `related.<eventId>`, `sourceKey`, `hdsBasis`, `hdsSourceAnchor`, `hdsExtraction`, …): read it before adding one. New keys are `hds`-prefixed. A key with a closed object shape gets its JSON Schema in `src/schemas/clientDataKeys.js`, tested under both flavours and published as `json-schemas/<key>.json`.
 - `documentation/HDS-READER.md` — the HDS Reader's dialogue type `message/hds-reader-v1` (on the Reader's own app tree, not a model stream) and the provenance keys on each value it writes. It is the first eventType whose schema has a root `oneOf` (one closed branch per `content.kind`) and no root `properties`: a tool that reads `schema.properties` to list an eventType's fields finds none there and must walk the branches. Superseded (4.22.0) by `documentation/CONVERSATION.md`: `message/hds-conversation-v1` (same root `oneOf` pattern) in the `explicitGrantOnly` root `conversation-items`, and the conversation alerts, whose `hds` block is a published schema (`src/schemas/conversationAlert.js`) because the cores do not validate it.
 - `documentation/APP-DESCRIPTION.md` — how HDS apps name the app holding an access: the `hdsApp` pointer, the `hds-app-manifest` (schema `json-schemas/hds-app-manifest.json`), the catalogue's vouching and the trust rule.
@@ -62,7 +63,7 @@ consent row while its item still names it alone (`documents`: "Medical documents
 
 **Do not create questionnaire-branded streams** (e.g. `questionnaire-eq5d5l`). The `questionnaire` root (4.12.0) is not one: it holds the asking and answering act (`questionnaire/request-v1`, `questionnaire/answer-v1`), never a data point. Each data point lands in its clinical-domain stream; the questionnaire's identity lives in the *form template* (a `CollectorRequest` constructed via [hds-lib-js](https://github.com/healthdatasafe/hds-lib-js)'s `appTemplates.CollectorRequest` / `CollectorSection`), not in `data-model`.
 
-**Plan 71 (v1.10.0) — questionnaire request/answer event pair.** Plan 71 adds two eventTypes to support explicit yes / no / unknown / declined patient answers without forking the canonical clinical-domain vocabulary: `questionnaire/request-v1` (what was asked; written into the patient's account by the patient's own app, no event travels between accounts: a questions map keyed by stable [a-zA-Z0-9_-]+ keys, each referencing an existing HDS item via `itemRef` with a temporal `scope` and optional `subField` qualifier) and `questionnaire/answer-v1` (what was answered; it stays in the patient's account, nothing sends it to the requester: a per-question `status` enum with `oneOf` discriminator). Canonical clinical records remain in the typed eventTypes (`medication/coded-v1`, `body-weight/kg`, `fertility-cycles-start`, …) — the answer event references them. Documented at [`documentation/QUESTIONNAIRE.md`](documentation/QUESTIONNAIRE.md); cross-reference convention `clientData.related.<eventId>: true` (Pryv §7 keyed-object) makes cohort queries direct. **No per-domain assertion eventTypes** (`medication/exposure-assertion-v1` was rejected) — the explicit-no / unknown / declined semantics live entirely on the answer event; FHIR `MedicationStatement.status=not-taken` exports are derived at the consumer. Do not invent new per-domain assertion eventTypes; if the rare case calls for it (a clinical record needing standalone existence outside any questionnaire), bring the design back to a plan first.
+**Plan 71 (v1.10.0) — questionnaire request/answer event pair.** Plan 71 adds two eventTypes to support explicit yes / no / unknown / declined patient answers without forking the canonical clinical-domain vocabulary: `questionnaire/request-v1` (what was asked; written into the patient's account by the patient's own app, no event travels between accounts: a questions map keyed by stable [a-zA-Z0-9_-]+ keys, each referencing an existing HDS item via `itemRef` with a temporal `scope` and optional `subField` qualifier) and `questionnaire/answer-v1` (what was answered; it stays in the patient's account, nothing sends it to the requester: a per-question `status` enum with `oneOf` discriminator). Canonical clinical records remain in their typed items (`medication-intake-coded` on `medication/coded-v1`, `body-weight` on `mass/kg` or `mass/lb`, `fertility-cycles-start`, …) — the answer event references them. Documented at [`documentation/QUESTIONNAIRE.md`](documentation/QUESTIONNAIRE.md); cross-reference convention `clientData.related.<eventId>: true` (Pryv §7 keyed-object) makes cohort queries direct. **No per-domain assertion eventTypes** (`medication/exposure-assertion-v1` was rejected) — the explicit-no / unknown / declined semantics live entirely on the answer event; FHIR `MedicationStatement.status=not-taken` exports are derived at the consumer. Do not invent new per-domain assertion eventTypes; if the rare case calls for it (a clinical record needing standalone existence outside any questionnaire), bring the design back to a plan first.
 
 ### 5. Apps and health data live in different dimensions
 
@@ -140,6 +141,12 @@ See `documentation/DESIGN-NOTES.md` → "Scale hook placement" for the full rule
 | 11-level NRS | `0.0 / 0.1 / 0.2 / … / 1.0` | Pain NRS — every other hook aligns with 5-level |
 
 **Anti-pattern: never use `0.0 / 0.33 / 0.66 / 1.0` for a 4-level scale.** "Moderate" belongs at `0.5`, not `0.66`.
+
+**Documented exception: the bleeding scale.** `body-vulva-bleeding` (`0.0 / 0.08 / 0.20 / 0.35 / 0.55 / 0.75 / 0.95`:
+Moderate at `0.55`, nothing at `1.0`) and `body-vulva-menstrual-cup` (`0.35 / 0.55 / 0.75`, the same hooks for Light,
+Moderate, Heavy) do not follow the severity placements above. The hooks approximate flow volume, not a severity
+family (`DESIGN-NOTES.md` § Exceptions; `MENSTRUAL-CYCLE.md` § Design Rationale), and every flow source maps onto them by
+label. Option values are permanent, so they stay; do not copy this placement to a severity item.
 
 ---
 
@@ -233,6 +240,11 @@ needs to publish its own scale denominator alongside the value.
 1. Does the clinical concept already exist somewhere in `definitions/items/`? If yes, extend or reuse — do not duplicate.
 2. Survey competing scales for the construct (PROMIS, ICF, SNOMED, LOINC, Apple HealthKit, FHIR questionnaires). Place your hooks at semantic anchors.
 3. Pick the kebab-case domain key (`<stream>-<concept>`). No app / source / questionnaire prefixes.
+   **A qualifier of the concept goes after it, as a suffix:** `body-blood-serum-cholesterol-total`, `-bilirubin-direct`,
+   `-testosterone-free`, `-glucose-fasting`, `-vitamin-d-25oh`. That is the dominant pattern in
+   `definitions/items/body.yaml` (15 such keys, against 5 with the qualifier first: `-free-t4`, `-free-t3`, `-total-t3`,
+   `-reverse-t3`, `-17-oh-progesterone`). Keys are permanent, so those five keep their spelling; the rule binds new
+   keys only.
 4. Localise `label`, `description`, option `label`s with at minimum `{ en, fr }`.
 5. Add SNOMED CT / LOINC / ICF / FHIR references — per the cross-system compatibility principle. FHIR rendering goes in the item's `fhir:` block (see `documentation/FHIR-MAPPING.md`); the older `hl7fhir:` sketch in `documentation/DESIGN-NOTES.md` was never implemented and is superseded.
 6. Place the item in the correct clinical-domain stream. Create a new child stream under an existing parent before creating a new top-level domain.
@@ -428,7 +440,20 @@ data-model/
 │   ├── MEDICATION.md                      # Intake vs period, regimen timing, skipped / stopped, typed prescription, vocabularies, coding (Swiss brand label, ATC hdsId)
 │   ├── GENETICS.md                        # Genetic test results: genetics root, explicitGrantOnly, genetic-variant/coded-v1
 │   ├── SUPPORT.md                         # HDS support channel: hds-support anchor root, support/conversation-v1, retention
-│   └── RESEARCH.md                        # HDS research relationship: hds-research tree, research/topics-v1, research alert kinds
+│   ├── RESEARCH.md                        # HDS research relationship: hds-research tree, research/topics-v1, research alert kinds
+│   ├── BLOOD-CHEMISTRY.md                 # Lab analytes: body-blood tree, units and conversions, LOINC codes, lab-result/coded-v1
+│   ├── FUNCTION.md                        # Functional status: function-* items, ICF, EQ-5D-5L dimensions
+│   ├── TREATMENT-PROCEDURE.md             # Treatment regimens and procedures; context via substream (D3)
+│   ├── QUESTIONNAIRE.md                   # questionnaire/request-v1 and /answer-v1, the questionnaire root
+│   ├── CONVERSATION.md                    # message/hds-conversation-v1, conversation-items root, conversation alerts
+│   ├── CORRECTIONS.md                     # A professional's correction of an entry: entry-corrections root
+│   ├── APP-DESCRIPTION.md                 # hdsApp pointer, hds-app-manifest, the app-naming rule
+│   ├── ELIGIBILITY.md                     # Eligibility test of a study: request schema, research/eligibility-band-v1
+│   ├── FHIR-MAPPING.md                    # The fhir: block on items, SMART scopes, import
+│   ├── L10N.md                            # Translations: definitions/l10n, draft or reviewed, converter sidecars
+│   ├── TERMINOLOGY.md                     # Which code lookups may leave the machine when coding a person's record
+│   ├── CUSTOM-FIELDS-AND-SYSTEM.md        # Template-scoped custom fields, system stream, content.hds on *-cmc types
+│   └── TAGS.md                            # tags root: deferred design, not implemented
 │
 ├── scripts/                               # setup / deploy shell scripts
 ├── tests/                                 # Mocha test suite
