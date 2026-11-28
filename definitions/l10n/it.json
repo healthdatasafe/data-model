@@ -265,6 +265,16 @@
       "text": "Prestatori di cure",
       "status": "draft"
     },
+    "[id=\"entry-corrections\"]/label": {
+      "en": "Corrections from your contacts",
+      "text": "Correzioni dai suoi contatti",
+      "status": "draft"
+    },
+    "[id=\"entry-corrections\"]/description": {
+      "en": "What a professional you share data with says one of your entries should have been, and why. Your entries are never changed: you decide whether to apply a correction.",
+      "text": "Ciò che un professionista con cui condivide dati dice che una delle sue registrazioni avrebbe dovuto essere, e perché. Le sue registrazioni non vengono mai modificate: è lei a decidere se applicare una correzione.",
+      "status": "draft"
+    },
     "[id=\"family\"]/label": {
       "en": "Family",
       "text": "Famiglia",
@@ -325,6 +335,36 @@
       "text": "Risultati di test genetici, come le varianti di geni testate da un laboratorio. Mai inclusi quando condivide tutti i suoi dati: condivisi solo quando li nomina.",
       "status": "draft"
     },
+    "[id=\"hds-research\"]/label": {
+      "en": "Health Data Safe research",
+      "text": "Ricerca Health Data Safe",
+      "status": "draft"
+    },
+    "[id=\"hds-research\"]/description": {
+      "en": "Lets Health Data Safe send you research invitations and eligibility tests. Holds none of your health records: only the score ranges you choose to send and the topics you choose. Never included when you share all your data: shared only when you name it.",
+      "text": "Permette a Health Data Safe di inviarle inviti a partecipare a ricerche e test di idoneità. Non contiene nulla della sua documentazione sanitaria: solo le fasce di punteggio che sceglie di inviare e i temi che sceglie. Mai incluso quando condivide tutti i suoi dati: condiviso solo quando lo nomina.",
+      "status": "draft"
+    },
+    "[id=\"hds-research\"]/children[id=\"hds-research-eligibility\"]/label": {
+      "en": "Eligibility test results sent",
+      "text": "Risultati dei test di idoneità inviati",
+      "status": "draft"
+    },
+    "[id=\"hds-research\"]/children[id=\"hds-research-eligibility\"]/description": {
+      "en": "The score range of each eligibility test you chose to send (below 50%, or 50% and more). Never the exact result or your answers.",
+      "text": "La fascia di punteggio di ogni test di idoneità che ha scelto di inviare (meno del 50%, oppure 50% e oltre). Mai il risultato esatto né le sue risposte.",
+      "status": "draft"
+    },
+    "[id=\"hds-research\"]/children[id=\"hds-research-topics\"]/label": {
+      "en": "Research topics",
+      "text": "Temi di ricerca",
+      "status": "draft"
+    },
+    "[id=\"hds-research\"]/children[id=\"hds-research-topics\"]/description": {
+      "en": "The research topics you chose, to receive the invitations that concern you.",
+      "text": "I temi di ricerca che ha scelto, per ricevere gli inviti che la riguardano.",
+      "status": "draft"
+    },
     "[id=\"hds-support\"]/label": {
       "en": "Health Data Safe support (holds no data)",
       "text": "Assistenza Health Data Safe (non contiene dati)",
@@ -378,6 +418,16 @@
     "[id=\"nutrition\"]/label": {
       "en": "Nutrition",
       "text": "Nutrizione",
+      "status": "draft"
+    },
+    "[id=\"other-names\"]/label": {
+      "en": "Other names",
+      "text": "Altri nomi",
+      "status": "draft"
+    },
+    "[id=\"other-names\"]/description": {
+      "en": "Your other names, such as a usage name, your name at birth or a former name, so that your app recognises your documents.",
+      "text": "I suoi altri nomi, come un nome d'uso, il suo nome alla nascita o un nome precedente, perché la sua app riconosca i suoi documenti.",
       "status": "draft"
     },
     "[id=\"procedure\"]/label": {
@@ -4107,6 +4157,16 @@
       "text": "Nome",
       "status": "draft"
     },
+    "entry-correction/label": {
+      "en": "Correction of an entry",
+      "text": "Correzione di una registrazione",
+      "status": "draft"
+    },
+    "entry-correction/description": {
+      "en": "A professional says one of your entries should have been different, should exist or should not exist, and why.",
+      "text": "Un professionista indica che una delle sue registrazioni avrebbe dovuto essere diversa, dovrebbe esistere o non dovrebbe esistere, e perché.",
+      "status": "draft"
+    },
     "family-children-count/label": {
       "en": "Nb of children",
       "text": "N. di figli",
@@ -5405,6 +5465,56 @@
     "nutrition-appetite/options[value=0.75]/label": {
       "en": "Increased",
       "text": "Aumentato",
+      "status": "draft"
+    },
+    "other-name/label": {
+      "en": "Other name",
+      "text": "Altro nome",
+      "status": "draft"
+    },
+    "other-name/description": {
+      "en": "Another name you have or had, such as a usage name or your name at birth.",
+      "text": "Un altro nome che porta o ha portato, come un nome d'uso o il suo nome alla nascita.",
+      "status": "draft"
+    },
+    "other-name/composite/given/label": {
+      "en": "Given name",
+      "text": "Nome",
+      "status": "draft"
+    },
+    "other-name/composite/family/label": {
+      "en": "Family name",
+      "text": "Cognome",
+      "status": "draft"
+    },
+    "other-name/composite/use/label": {
+      "en": "Kind of name",
+      "text": "Tipo di nome",
+      "status": "draft"
+    },
+    "other-name/composite/use/options[value=\"official\"]/label": {
+      "en": "Full official name",
+      "text": "Nome ufficiale completo",
+      "status": "draft"
+    },
+    "other-name/composite/use/options[value=\"usual\"]/label": {
+      "en": "Usage name",
+      "text": "Nome d'uso",
+      "status": "draft"
+    },
+    "other-name/composite/use/options[value=\"maiden\"]/label": {
+      "en": "Name at birth",
+      "text": "Nome alla nascita",
+      "status": "draft"
+    },
+    "other-name/composite/use/options[value=\"old\"]/label": {
+      "en": "Former name",
+      "text": "Nome precedente",
+      "status": "draft"
+    },
+    "other-name/composite/use/options[value=\"nickname\"]/label": {
+      "en": "Nickname",
+      "text": "Soprannome",
       "status": "draft"
     },
     "procedure-basic/label": {
@@ -7777,6 +7887,21 @@
       "text": "Un trattamento clinico, inserito come testo libero.",
       "status": "draft"
     },
+    "treatment-basic/composite/name/label": {
+      "en": "Treatment name",
+      "text": "Nome del trattamento",
+      "status": "draft"
+    },
+    "treatment-basic/composite/count/label": {
+      "en": "Number of times (lifetime)",
+      "text": "Numero di volte (nel corso della vita)",
+      "status": "draft"
+    },
+    "treatment-basic/composite/notes/label": {
+      "en": "Notes",
+      "text": "Note",
+      "status": "draft"
+    },
     "treatment-coded/label": {
       "en": "Treatment (coded)",
       "text": "Trattamento (codificato)",
@@ -8331,6 +8456,61 @@
       "text": "Grave",
       "status": "draft"
     },
+    "lab-result/values/negative/label": {
+      "en": "Negative",
+      "text": "Negativo",
+      "status": "draft"
+    },
+    "lab-result/values/trace/label": {
+      "en": "Trace",
+      "text": "Tracce",
+      "status": "draft"
+    },
+    "lab-result/values/plus-1/label": {
+      "en": "1+",
+      "text": "1+",
+      "status": "draft"
+    },
+    "lab-result/values/plus-2/label": {
+      "en": "2+",
+      "text": "2+",
+      "status": "draft"
+    },
+    "lab-result/values/plus-3/label": {
+      "en": "3+",
+      "text": "3+",
+      "status": "draft"
+    },
+    "lab-result/values/plus-4/label": {
+      "en": "4+",
+      "text": "4+",
+      "status": "draft"
+    },
+    "lab-result/values/positive/label": {
+      "en": "Positive",
+      "text": "Positivo",
+      "status": "draft"
+    },
+    "lab-result/values/detected/label": {
+      "en": "Detected",
+      "text": "Rilevato",
+      "status": "draft"
+    },
+    "lab-result/values/not-detected/label": {
+      "en": "Not detected",
+      "text": "Non rilevato",
+      "status": "draft"
+    },
+    "lab-result/values/absent/label": {
+      "en": "Absent",
+      "text": "Assente",
+      "status": "draft"
+    },
+    "lab-result/values/present/label": {
+      "en": "Present",
+      "text": "Presente",
+      "status": "draft"
+    },
     "medication-when/values/waking/label": {
       "en": "On waking",
       "text": "Al risveglio",
@@ -8509,6 +8689,126 @@
     "medication-prescription-status/values/completed/label": {
       "en": "Completed",
       "text": "Completata",
+      "status": "draft"
+    },
+    "professional-role/values/physician/label": {
+      "en": "Physician",
+      "text": "Medico",
+      "status": "draft"
+    },
+    "professional-role/values/midwife/label": {
+      "en": "Midwife",
+      "text": "Ostetrica o ostetrico",
+      "status": "draft"
+    },
+    "professional-role/values/nurse/label": {
+      "en": "Nurse",
+      "text": "Infermiere o infermiera",
+      "status": "draft"
+    },
+    "professional-role/values/pharmacist/label": {
+      "en": "Pharmacist",
+      "text": "Farmacista",
+      "status": "draft"
+    },
+    "professional-role/values/psychologist/label": {
+      "en": "Psychologist",
+      "text": "Psicologo o psicologa",
+      "status": "draft"
+    },
+    "professional-role/values/dietitian/label": {
+      "en": "Dietitian",
+      "text": "Dietista",
+      "status": "draft"
+    },
+    "professional-role/values/physiotherapist/label": {
+      "en": "Physiotherapist",
+      "text": "Fisioterapista",
+      "status": "draft"
+    },
+    "professional-role/values/health-educator/label": {
+      "en": "Health educator",
+      "text": "Educatore o educatrice alla salute",
+      "status": "draft"
+    },
+    "professional-role/values/other/label": {
+      "en": "Other",
+      "text": "Altro",
+      "status": "draft"
+    },
+    "research-topic/values/cardiovascular/label": {
+      "en": "Heart and blood vessels",
+      "text": "Cuore e vasi sanguigni",
+      "status": "draft"
+    },
+    "research-topic/values/metabolic/label": {
+      "en": "Diabetes and metabolism",
+      "text": "Diabete e metabolismo",
+      "status": "draft"
+    },
+    "research-topic/values/mental-health/label": {
+      "en": "Mental health",
+      "text": "Salute mentale",
+      "status": "draft"
+    },
+    "research-topic/values/neurology/label": {
+      "en": "Brain and nervous system",
+      "text": "Cervello e sistema nervoso",
+      "status": "draft"
+    },
+    "research-topic/values/cancer/label": {
+      "en": "Cancer",
+      "text": "Cancro",
+      "status": "draft"
+    },
+    "research-topic/values/respiratory/label": {
+      "en": "Lungs and breathing",
+      "text": "Polmoni e respirazione",
+      "status": "draft"
+    },
+    "research-topic/values/reproductive-health/label": {
+      "en": "Fertility and reproductive health",
+      "text": "Fertilità e salute riproduttiva",
+      "status": "draft"
+    },
+    "research-topic/values/womens-health/label": {
+      "en": "Women's health",
+      "text": "Salute della donna",
+      "status": "draft"
+    },
+    "research-topic/values/pregnancy/label": {
+      "en": "Pregnancy",
+      "text": "Gravidanza",
+      "status": "draft"
+    },
+    "research-topic/values/sleep/label": {
+      "en": "Sleep",
+      "text": "Sonno",
+      "status": "draft"
+    },
+    "research-topic/values/nutrition/label": {
+      "en": "Nutrition",
+      "text": "Nutrizione",
+      "status": "draft"
+    },
+    "research-topic/values/physical-activity/label": {
+      "en": "Physical activity",
+      "text": "Attività fisica",
+      "status": "draft"
+    },
+    "research-topic/values/musculoskeletal/label": {
+      "en": "Bones, joints and muscles",
+      "text": "Ossa, articolazioni e muscoli",
+      "status": "draft"
+    },
+    "research-topic/values/infectious-diseases/label": {
+      "en": "Infections and vaccines",
+      "text": "Infezioni e vaccini",
+      "status": "draft"
+    },
+    "research-topic/values/rare-diseases/label": {
+      "en": "Rare diseases",
+      "text": "Malattie rare",
       "status": "draft"
     }
   },

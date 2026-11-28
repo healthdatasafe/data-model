@@ -171,7 +171,9 @@ describe('[LABV] lab-result vocabulary (4.50.0)', () => {
 
     it('[LABV-PACK-1] the pack carries the vocabulary with its codes and scales, and the published schema accepts it', function () {
       if (!pack || !pack.vocabularies?.[KEY]) return this.skip(); // pack built before this change
-      assert.deepStrictEqual(pack.vocabularies[KEY], voc);
+      // the pack's labels carry the locale texts of definitions/l10n too (B-2026-11-28-6)
+      const { loadLocales, localise } = require('../src/l10n');
+      assert.deepStrictEqual(pack.vocabularies[KEY], localise('vocabularies.json', vocabulariesById, loadLocales().locales)[KEY]);
       const schemaPath = path.join(__dirname, '../dist/json-schemas/vocabulary.json');
       if (fs.existsSync(schemaPath)) {
         const validate = new Ajv({ strict: false }).compile(JSON.parse(fs.readFileSync(schemaPath, 'utf-8')));

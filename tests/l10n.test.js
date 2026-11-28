@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { LOCALES, checkLocales, forEachText, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels } = require('../src/l10n');
+const { LOCALES, checkLocales, forEachText, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels, checkConsentLabelLocales } = require('../src/l10n');
 
 const entry = (en, text) => ({ en, text, reviewedBy: 'reviewer', reviewedOn: '2026-11-24' });
 const paths = (content) => { const out = []; forEachText(content, (node, at) => out.push(at)); return out; };
@@ -110,6 +110,33 @@ describe('[L10N] Translations added at build', () => {
     const streams = [{ id: 'a', name: 'A', label: { en: 'Blood', it: 'Sangue' }, children: [{ id: 'c', name: 'C', label: { en: 'Other' } }] },
       { id: 'b', name: 'B', label: { en: 'x', it: 'Blood › Other' } }];
     assert.throws(() => checkConsentLabels(streams, {}, { it: {} }), /streams c and b/);
+  });
+
+  it('[L10N14] a stream whose consent label has no text in a locale of definitions/l10n fails the build (B-2026-11-28-6)', () => {
+    const streams = [{ id: 'a', name: 'A', label: { en: 'Blood', it: 'Sangue', de: 'Blut' }, children: [{ id: 'c', name: 'C', label: { en: 'Other', de: 'Andere' } }] },
+      { id: 'b', name: 'B' }];
+    assert.throws(() => checkConsentLabelLocales(streams, {}, { it: {}, de: {} }), /streams with no consent label .*: c → streamsTree\.json \[id="a"\]\/children\[id="c"\]\/label \(it\); b → streamsTree\.json \[id="b"\]\/label \(it, de\)$/);
+    const items = { x: { streamId: 'c', label: { en: 'X', it: 'X', de: 'X' } }, y: { streamId: 'b', label: { en: 'Y', it: 'Y', de: 'Y' } } };
+    assert.doesNotThrow(() => checkConsentLabelLocales(streams, items, { it: {}, de: {} }));
+    const two = { ...items, z: { streamId: 'b', label: { en: 'Z' } } };
+    assert.throws(() => checkConsentLabelLocales(streams, two, { it: {} }), /: b → streamsTree\.json \[id="b"\]\/label \(it\)$/);
+    assert.doesNotThrow(() => checkConsentLabelLocales(streams, { ...two, z: { ...two.z, deprecated: true } }, { it: {} }));
+    assert.doesNotThrow(() => checkConsentLabelLocales(streams, {}, {}));
+    // a licensed instrument's label stays English until its official wording: held, not listed
+    const licensed = { x: items.x, y: { streamId: 'b', label: { en: 'Y' } } };
+    assert.throws(() => checkConsentLabelLocales(streams, licensed, { it: {} }), /: b → items\.json y\/label \(it\)$/);
+    assert.doesNotThrow(() => checkConsentLabelLocales(streams, licensed, { it: {} }, [{ file: 'items.json', path: 'y/label' }]));
+    assert.throws(() => checkConsentLabelLocales(streams, {}, { de: {} }), /: b → streamsTree\.json \[id="b"\]\/label \(de\)$/);
+    assert.doesNotThrow(() => checkConsentLabelLocales(streams, {}, { de: {} }, [{ file: 'streamsTree.json', path: '[id="b"]/label' }]));
+  });
+
+  it('[L10N15] the built pack: every stream has a consent label in every locale of definitions/l10n', () => {
+    require('../src/build');
+    const pack = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, '../dist/pack.json'), 'utf8'));
+    const { locales, doNotTranslate } = require('../src/l10n').loadLocales();
+    assert.ok(Object.keys(locales).length >= 4);
+    assert.doesNotThrow(() => checkConsentLabelLocales(pack.streams, pack.items, locales, doNotTranslate));
+    assert.equal(pack.streams.find((s) => s.id === 'hds-research').label.de, 'Forschung von Health Data Safe');
   });
 
   it('[L10N10] a file or a held text that is not published fails the build', () => {

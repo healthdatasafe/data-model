@@ -23,7 +23,7 @@ const DRAFT_KEYS = ['en', 'text', 'status'];
 
 const isObject = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
 
-module.exports = { LOCALES, CONVERTER_PACK, checkLocales, forEachText, loadLocales, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels };
+module.exports = { LOCALES, CONVERTER_PACK, checkLocales, forEachText, loadLocales, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels, checkConsentLabelLocales };
 
 function loadLocales (dir = l10nDir) {
   const locales = {};
@@ -207,4 +207,31 @@ function checkConsentLabels (streams, items, locales) {
       }
     })(streams, undefined);
   }
+}
+
+/**
+ * A stream whose consent-screen label (that of its only active item, else its own, else its name) has no text in a locale
+ * of `definitions/l10n`: that row would read English on a consent screen in that locale (B-2026-11-28-6). Every stream is
+ * a row a consent can name, so every stream is checked; the build fails and lists them all. A label held in
+ * `doNotTranslate` (a licensed instrument's item) stays English until its official wording is added, so it is not listed.
+ */
+function checkConsentLabelLocales (streams, items, locales, doNotTranslate = []) {
+  const held = new Set(doNotTranslate.map(({ file, path: at }) => `${file} ${at}`));
+  const keyOf = new Map();
+  for (const [key, item] of Object.entries(items)) {
+    if (!item.deprecated) keyOf.set(item.streamId, keyOf.has(item.streamId) ? null : key);
+  }
+  const missing = [];
+  (function visit (list, at) {
+    for (const stream of list) {
+      const here = `${at}[id=${JSON.stringify(stream.id)}]`;
+      const key = keyOf.get(stream.id);
+      const texts = (key != null ? items[key].label : stream.label) ?? { en: stream.name };
+      const where = key != null ? `items.json ${escape(key)}/label` : `streamsTree.json ${here}/label`;
+      const lacking = Object.keys(locales).filter((l) => typeof texts[l] !== 'string' || texts[l].trim() === '');
+      if (lacking.length > 0 && !held.has(where)) missing.push(`${stream.id} → ${where} (${lacking.join(', ')})`);
+      visit(stream.children ?? [], `${here}/children`);
+    }
+  })(streams, '');
+  if (missing.length > 0) throw new Error(`l10n: streams with no consent label in a locale of definitions/l10n: ${missing.join('; ')}`);
 }
