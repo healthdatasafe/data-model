@@ -1491,11 +1491,11 @@
       "pt-BR": "Alergia ou intolerância (codificada)"
     },
     "description": {
-      "en": "Search and select what you are allergic or intolerant to.",
-      "fr": "Recherchez et sélectionnez ce à quoi vous êtes allergique ou intolérant.",
-      "es": "Busque y seleccione aquello a lo que tiene alergia o intolerancia.",
-      "it": "Cerchi e selezioni ciò a cui ha un'allergia o un'intolleranza.",
-      "pt-BR": "Pesquise e selecione aquilo a que você tem alergia ou intolerância."
+      "en": "Something you are allergic or intolerant to.",
+      "fr": "Ce à quoi vous êtes allergique ou intolérant.",
+      "es": "Aquello a lo que tiene alergia o intolerancia.",
+      "it": "Ciò a cui ha un'allergia o un'intolleranza.",
+      "pt-BR": "Algo a que você tem alergia ou intolerância."
     },
     "streamId": "allergy",
     "eventType": "allergy/coded-v1",
@@ -2337,7 +2337,7 @@
       "en": "Cervical Fluid Stretch"
     },
     "description": {
-      "en": "Manual strech test of cervical fluid. Short can be streched less than 2 cm, long greater than 2cm."
+      "en": "Deprecated. Record cervical-fluid observations with Cervical fluid observation instead."
     },
     "streamId": "body-vulva-mucus-stretch",
     "eventType": "ratio/generic",
@@ -2346,7 +2346,7 @@
       {
         "value": 0,
         "label": {
-          "en": "No Strech"
+          "en": "No stretch"
         }
       },
       {
@@ -2372,7 +2372,7 @@
       "en": "Vulva Wetness feeling"
     },
     "description": {
-      "en": "Vulva wetness feeling"
+      "en": "Deprecated. Record cervical-fluid observations with Cervical fluid observation instead."
     },
     "streamId": "body-vulva-wetness-feeling",
     "eventType": "ratio/generic",
@@ -14383,11 +14383,11 @@
       "pt-BR": "Condição (codificada)"
     },
     "description": {
-      "en": "Search and select a coded clinical diagnosis.",
-      "fr": "Recherchez et sélectionnez un diagnostic clinique codé.",
-      "es": "Busque y seleccione un diagnóstico clínico codificado.",
-      "it": "Cerchi e selezioni una diagnosi clinica codificata.",
-      "pt-BR": "Pesquise e selecione um diagnóstico clínico codificado."
+      "en": "A diagnosis a clinician gave you.",
+      "fr": "Un diagnostic qu'un professionnel de santé vous a posé.",
+      "es": "Un diagnóstico que le dio un profesional de la salud.",
+      "it": "Una diagnosi che le ha dato un professionista sanitario.",
+      "pt-BR": "Um diagnóstico dado a você por um profissional de saúde."
     },
     "streamId": "condition",
     "eventType": "condition/coded-v1",
@@ -14762,11 +14762,11 @@
       "pt-BR": "Duração média do ciclo"
     },
     "description": {
-      "en": "Your average menstrual cycle length, in days.",
-      "fr": "Votre durée moyenne de cycle menstruel, en jours.",
-      "es": "La duración media de su ciclo menstrual, en días.",
-      "it": "La durata media del suo ciclo mestruale, in giorni.",
-      "pt-BR": "A duração média do seu ciclo menstrual, em dias."
+      "en": "Your average menstrual cycle length.",
+      "fr": "Votre durée moyenne de cycle menstruel.",
+      "es": "La duración media de su ciclo menstrual.",
+      "it": "La durata media del suo ciclo mestruale.",
+      "pt-BR": "A duração média do seu ciclo menstrual."
     },
     "streamId": "fertility-cycles-average-length",
     "eventType": "time/d",
@@ -14783,11 +14783,11 @@
       "pt-BR": "Duração média da menstruação"
     },
     "description": {
-      "en": "Your average period length, in days.",
-      "fr": "Votre durée moyenne des règles, en jours.",
-      "es": "La duración media de su regla, en días.",
-      "it": "La durata media delle sue mestruazioni, in giorni.",
-      "pt-BR": "A duração média da sua menstruação, em dias."
+      "en": "Your average period length.",
+      "fr": "Votre durée moyenne des règles.",
+      "es": "La duración media de su regla.",
+      "it": "La durata media delle sue mestruazioni.",
+      "pt-BR": "A duração média da sua menstruação."
     },
     "streamId": "fertility-cycles-average-period",
     "eventType": "time/d",
@@ -14826,11 +14826,11 @@
       "pt-BR": "Duração média da fase lútea"
     },
     "description": {
-      "en": "Your typical luteal-phase length, in days (recalled average).",
-      "fr": "La durée type de votre phase lutéale, en jours (moyenne rappelée).",
-      "es": "La duración habitual de su fase lútea, en días (media recordada).",
-      "it": "La durata tipica della sua fase luteale, in giorni (media ricordata).",
-      "pt-BR": "A duração típica da sua fase lútea, em dias (média lembrada)."
+      "en": "Your typical luteal-phase length, as you recall it on average.",
+      "fr": "La durée type de votre phase lutéale, en moyenne selon votre souvenir.",
+      "es": "La duración habitual de su fase lútea (media recordada).",
+      "it": "La durata tipica della sua fase luteale (media ricordata).",
+      "pt-BR": "A duração típica da sua fase lútea (média lembrada)."
     },
     "streamId": "fertility-cycles-average-luteal-phase",
     "eventType": "time/d",
@@ -16600,11 +16600,11 @@
       "pt-BR": "Achado (codificado)"
     },
     "description": {
-      "en": "Search and select a coded clinical or imaging finding.",
-      "fr": "Recherchez et sélectionnez une constatation clinique ou d'imagerie codée.",
-      "es": "Busque y seleccione un hallazgo clínico o de imagen codificado.",
-      "it": "Cerchi e selezioni un reperto clinico o di diagnostica per immagini codificato.",
-      "pt-BR": "Pesquise e selecione um achado clínico ou de imagem codificado."
+      "en": "Something found during surgery or on imaging.",
+      "fr": "Ce qui a été constaté lors d'une opération ou à l'imagerie.",
+      "es": "Algo que se encontró en una cirugía o en una prueba de imagen.",
+      "it": "Ciò che è stato riscontrato durante un intervento chirurgico o con la diagnostica per immagini.",
+      "pt-BR": "Algo encontrado em uma cirurgia ou em um exame de imagem."
     },
     "streamId": "finding",
     "eventType": "finding/coded-v1",
@@ -17946,11 +17946,11 @@
       "pt-BR": "Tomada de medicamento (codificada)"
     },
     "description": {
-      "en": "Search and select a coded medication.",
-      "fr": "Recherchez et sélectionnez un médicament codé.",
-      "es": "Busque y seleccione un medicamento codificado.",
-      "it": "Cerchi e selezioni un medicinale codificato.",
-      "pt-BR": "Pesquise e selecione um medicamento codificado."
+      "en": "A medication you take or took.",
+      "fr": "Un médicament que vous prenez ou avez pris.",
+      "es": "Un medicamento que toma o tomó.",
+      "it": "Un medicinale che assume o ha assunto.",
+      "pt-BR": "Um medicamento que você toma ou tomou."
     },
     "streamId": "medication-intake",
     "eventType": "medication/coded-v1",
@@ -18952,11 +18952,11 @@
       "pt-BR": "Procedimento (codificado)"
     },
     "description": {
-      "en": "Search and select a coded clinical procedure.",
-      "fr": "Recherchez et sélectionnez un acte clinique codé.",
-      "es": "Busque y seleccione un procedimiento clínico codificado.",
-      "it": "Cerchi e selezioni una procedura clinica codificata.",
-      "pt-BR": "Pesquise e selecione um procedimento clínico codificado."
+      "en": "A clinical procedure you had.",
+      "fr": "Un acte médical que vous avez subi.",
+      "es": "Un procedimiento clínico que le realizaron.",
+      "it": "Una procedura clinica che le è stata eseguita.",
+      "pt-BR": "Um procedimento clínico pelo qual você passou."
     },
     "streamId": "procedure",
     "eventType": "procedure/coded-v1",
@@ -33624,11 +33624,11 @@
       "pt-BR": "Tratamento (codificado)"
     },
     "description": {
-      "en": "Search and select a coded clinical treatment.",
-      "fr": "Recherchez et sélectionnez un traitement clinique codé.",
-      "es": "Busque y seleccione un tratamiento clínico codificado.",
-      "it": "Cerchi e selezioni un trattamento clinico codificato.",
-      "pt-BR": "Pesquise e selecione um tratamento clínico codificado."
+      "en": "A clinical treatment you receive or received.",
+      "fr": "Un traitement clinique que vous recevez ou avez reçu.",
+      "es": "Un tratamiento clínico que recibe o recibió.",
+      "it": "Un trattamento clinico che riceve o ha ricevuto.",
+      "pt-BR": "Um tratamento clínico que você recebe ou recebeu."
     },
     "streamId": "treatment",
     "eventType": "treatment/coded-v1",
