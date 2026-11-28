@@ -135,8 +135,8 @@ See `documentation/DESIGN-NOTES.md` → "Scale hook placement" for the full rule
 | Scale levels | Hooks | Covers |
 |--------------|-------|--------|
 | 5-level severity | `0.0 / 0.25 / 0.5 / 0.75 / 1.0` | EQ-5D-5L, PROMIS 5-level, VRS-5, ICF, WHODAS |
-| 4-level severity | `0.0 / 0.25 / 0.5 / 1.0` *(subset of 5-level, no `0.75`)* | Apple HealthKit `HKCategoryValueSeverity` |
-| 3-level absolute | `0.25 / 0.5 / 1.0` | Mild/Moderate/Severe intake screeners |
+| 4-level severity | `0.0 / 0.25 / 0.5 / 0.75` *(subset of 5-level by label, no `1.0`)* | Apple HealthKit `HKCategoryValueSeverity` |
+| 3-level severity | `0.25 / 0.5 / 0.75` | Mild/Moderate/Severe intake screeners, Mira `level` (a "Severe" is `0.75` from any source) |
 | 3-level relative | `0.25 / 0.5 / 0.75` | `wellbeing-sex-drive` (deviation from baseline, not absolute severity) |
 | 11-level NRS | `0.0 / 0.1 / 0.2 / … / 1.0` | Pain NRS — every other hook aligns with 5-level |
 
@@ -342,17 +342,18 @@ The bridge owns only its **app streams** (notes, chat, service messages) under i
 
 ### Existing 5-level / 4-level scale interop
 
-Apple HealthKit's 4-level `HKCategoryValueSeverity` maps as a **subset** of HDS 5-level:
+Apple HealthKit's 4-level `HKCategoryValueSeverity` maps as a **subset** of HDS 5-level, **by label**:
 
 ```
 HDS 5-level:   0.0 ─── 0.25 ─── 0.5 ─── 0.75 ─── 1.0
                None    Slight   Moderate  Severe   Very severe
-Apple 4-level: 0.0 ─── 0.25 ─── 0.5 ─────────── 1.0
-               NotPresent Mild   Moderate         Severe
-                                                  (= Apple's ceiling)
+Apple 4-level: 0.0 ─── 0.25 ─── 0.5 ─── 0.75
+               NotPresent Mild   Moderate  Severe
 ```
 
-Closest-value matching is correct for all 4 Apple values and 4 of 5 HDS values. Only HDS "Severe" (`0.75`) has no Apple equivalent — pick a tie-break direction (recommend upward to Apple Severe `1.0`) and document it in the bridge.
+Apple → HDS lands every value on the hook its label names; Apple `Severe` is `0.75`, never stretched to `1.0`. HDS → Apple
+maps Extreme (`1.0`) to Apple `Severe`, its ceiling. The same rule holds for Mira's `level` and FHIR answers
+(B-2026-11-27-47); the per-label table is in `documentation/SYMPTOMS.md` § Severity mapping.
 
 ---
 
