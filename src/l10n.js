@@ -13,8 +13,8 @@ const path = require('path');
 // or `[id=<JSON>]` when it has one, else `[index]`: an option moved in its list keeps its translation.
 
 const l10nDir = path.join(__dirname, '../definitions/l10n');
-/** The locales hds-lib supports beside the source ones (`localizeText.ts` `supportedLocales`). */
-const LOCALES = ['es', 'it', 'pt', 'pt-BR'];
+/** The locales hds-lib supports beside the source ones (`localizeText.ts` `supportedLocales`), and `de`. */
+const LOCALES = ['de', 'es', 'it', 'pt', 'pt-BR'];
 /** Published converter packs are frozen (tests/fixtures/converter-packs.sha256.json): their texts go to a sidecar. */
 const CONVERTER_PACK = /^converters\/([^/]+)\/pack-(latest|v\d+)\.json$/;
 /** The two shapes of an entry (`official` aside): a reviewed text, a draft. */

@@ -90,7 +90,7 @@ newest `models/<method>/vM.json` with M ≤ N, each tagged `modelVersion`. The i
   refuses a model version with no converter version. Model versions are sparse: a method's next version may be v3.
 - **A new pack starts with no translations**: they are keyed by the published file name, and the build skips a pack
   without a block silently. Copy the previous pack's block in `definitions/l10n/{locale}.json` to
-  `converters/<key>/pack-vN.json` (then translate what the new version adds), or es / it / pt-BR readers get English.
+  `converters/<key>/pack-vN.json` (then translate what the new version adds), or es / it / pt-BR / de readers get English.
 - A new converter version keeps the dimensions and weights of the previous ones unless it says otherwise, so vectors
   stored under `engineVersion` v0 and v1 are comparable. `source.modelVersion` names the method file that produced the
   code (`models/<source.key>/<modelVersion>.json`).

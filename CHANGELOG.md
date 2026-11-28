@@ -1,5 +1,26 @@
 # Changelog
 
+## [4.56.0] - 2026-11-28
+
+Minor. A new locale: German (B-2026-11-27-46).
+
+### Added
+
+- **`de`, a sixth full locale**: `definitions/l10n/de.json`, the same paths es / it / pt-BR translate (streams, items
+  with their descriptions and option labels, eventTypes, vocabularies, document-kind descriptions, the cervical-fluid
+  and mood converter sidecars `converters/{key}/l10n-de.json`, app streams). The document-kind labels keep their `de`
+  in the definitions. Swiss Standard German (`ss`, formal *Sie*, Swiss clinical terms: Austritt, Zuweisung, Spital,
+  ALAT / ASAT, Quick-Wert). **All drafts** (`pack.json` `l10n.de.status: "draft"`, machine translation, Fable-reviewed,
+  not yet reviewed by a German-speaking clinician): a reader that shows texts to a third party reads that mark.
+  Licensed questionnaires (`do-not-translate.json`) stay English, as in the other locales.
+- `src/l10n.js` `LOCALES` accepts `de`. hds-lib `supportedLocales` does not offer `de` yet; the SMART consent screen of
+  the cores does (hds-fhir-js extension options carry every language of a label), at the next re-pin.
+
+### Changed
+
+- L10N.md: six full locales; the German orthography rule; pack size with `de` (1.84 MB raw, 241 KB gzip); a seventh
+  locale, not a sixth, now goes to files loaded on demand.
+
 ## [4.55.2] - 2026-11-28
 
 Patch. Texts only, no key, type, option value or schema changes (audit pass 2, rows of B-2026-11-19-6).
