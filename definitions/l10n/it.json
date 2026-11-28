@@ -8813,9 +8813,19 @@
     }
   },
   "documentKinds.json": {
+    "kinds/consultation-report/label": {
+      "en": "Consultation report",
+      "text": "Rapporto di consultazione",
+      "status": "draft"
+    },
     "kinds/consultation-report/description": {
       "en": "A doctor's report or letter on a consultation, including a specialist's reply to the referring doctor.",
       "text": "Il referto o la lettera di un medico su una consultazione, compresa la risposta di uno specialista al medico che ha inviato la persona.",
+      "status": "draft"
+    },
+    "kinds/history-and-physical/label": {
+      "en": "History and physical examination",
+      "text": "Anamnesi ed esame obiettivo",
       "status": "draft"
     },
     "kinds/history-and-physical/description": {
@@ -8823,9 +8833,19 @@
       "text": "L'anamnesi e i reperti dell'esame, raccolti alla prima visita o a un ricovero.",
       "status": "draft"
     },
+    "kinds/progress-report/label": {
+      "en": "Progress report",
+      "text": "Referto sul decorso",
+      "status": "draft"
+    },
     "kinds/progress-report/description": {
       "en": "How a condition or a treatment has evolved over a period of follow-up.",
       "text": "L'evoluzione di una condizione o di un trattamento durante un periodo di controllo.",
+      "status": "draft"
+    },
+    "kinds/other-encounter-report/label": {
+      "en": "Other encounter report",
+      "text": "Altro rapporto di visita medica",
       "status": "draft"
     },
     "kinds/other-encounter-report/description": {
@@ -8833,9 +8853,19 @@
       "text": "Un referto su una visita che non è né un referto di consultazione, né un'anamnesi con esame obiettivo, né un referto di controllo.",
       "status": "draft"
     },
+    "kinds/referral-letter/label": {
+      "en": "Referral letter",
+      "text": "Lettera d'invio",
+      "status": "draft"
+    },
     "kinds/referral-letter/description": {
       "en": "A doctor's letter sending the person to another doctor or a hospital.",
       "text": "La lettera di un medico che invia la persona a un altro medico o a un ospedale.",
+      "status": "draft"
+    },
+    "kinds/laboratory-order/label": {
+      "en": "Laboratory order",
+      "text": "Richiesta di laboratorio",
       "status": "draft"
     },
     "kinds/laboratory-order/description": {
@@ -8843,9 +8873,19 @@
       "text": "Una richiesta di esami di laboratorio.",
       "status": "draft"
     },
+    "kinds/pathology-order/label": {
+      "en": "Pathology order",
+      "text": "Richiesta di patologia",
+      "status": "draft"
+    },
     "kinds/pathology-order/description": {
       "en": "A request for a pathology examination of tissue or cells.",
       "text": "Una richiesta di esame anatomopatologico di tessuti o cellule.",
+      "status": "draft"
+    },
+    "kinds/imaging-order/label": {
+      "en": "Imaging order",
+      "text": "Richiesta di immaginografia",
       "status": "draft"
     },
     "kinds/imaging-order/description": {
@@ -8853,9 +8893,19 @@
       "text": "Una richiesta di esame di diagnostica per immagini (radiografia, ecografia, TC, RM).",
       "status": "draft"
     },
+    "kinds/other-order/label": {
+      "en": "Other order",
+      "text": "Altra richiesta di esami",
+      "status": "draft"
+    },
     "kinds/other-order/description": {
       "en": "A request for an examination that is not a laboratory, pathology or imaging order.",
       "text": "Una richiesta di esame che non è una richiesta di laboratorio, di anatomia patologica o di diagnostica per immagini.",
+      "status": "draft"
+    },
+    "kinds/discharge-summary/label": {
+      "en": "Discharge summary",
+      "text": "Rapporto di dimissione",
       "status": "draft"
     },
     "kinds/discharge-summary/description": {
@@ -8863,9 +8913,19 @@
       "text": "Il riassunto di un ricovero ospedaliero, redatto al momento delle dimissioni della persona.",
       "status": "draft"
     },
+    "kinds/transfer-summary/label": {
+      "en": "Transfer summary",
+      "text": "Rapporto di trasferimento",
+      "status": "draft"
+    },
     "kinds/transfer-summary/description": {
       "en": "The summary sent with the person when moved from one hospital or ward to another; a letter to another doctor is a referral letter.",
       "text": "Il riassunto che accompagna la persona trasferita da un ospedale o da un reparto a un altro; la lettera a un altro medico è una lettera di invio.",
+      "status": "draft"
+    },
+    "kinds/medication-list/label": {
+      "en": "Medication list",
+      "text": "Elenco dei medicamenti",
       "status": "draft"
     },
     "kinds/medication-list/description": {
@@ -8873,9 +8933,19 @@
       "text": "Un elenco dei medicinali che la persona assume, senza orari di assunzione.",
       "status": "draft"
     },
+    "kinds/medication-plan/label": {
+      "en": "Medication plan",
+      "text": "Piano dei medicamenti",
+      "status": "draft"
+    },
     "kinds/medication-plan/description": {
       "en": "The medicines the person takes with when and how much, as given to the person (for example the Swiss eMediplan).",
       "text": "I medicinali che la persona assume con quando e quanto, come consegnati alla persona (ad esempio l'eMediplan svizzero).",
+      "status": "draft"
+    },
+    "kinds/other-summary/label": {
+      "en": "Other summary",
+      "text": "Altro riepilogo",
       "status": "draft"
     },
     "kinds/other-summary/description": {
@@ -8883,9 +8953,19 @@
       "text": "Un riassunto della salute o delle cure della persona che non è un riassunto di dimissione o di trasferimento, un elenco dei medicinali o un piano dei medicinali.",
       "status": "draft"
     },
+    "kinds/operative-report/label": {
+      "en": "Operative report",
+      "text": "Rapporto operatorio",
+      "status": "draft"
+    },
     "kinds/operative-report/description": {
       "en": "The surgeon's report of an operation.",
       "text": "Il referto del chirurgo su un intervento.",
+      "status": "draft"
+    },
+    "kinds/laboratory-report/label": {
+      "en": "Laboratory report",
+      "text": "Referto di laboratorio",
       "status": "draft"
     },
     "kinds/laboratory-report/description": {
@@ -8893,9 +8973,19 @@
       "text": "I risultati degli esami di laboratorio (sangue, urine e altri campioni).",
       "status": "draft"
     },
+    "kinds/pathology-report/label": {
+      "en": "Pathology report",
+      "text": "Rapporto di patologia",
+      "status": "draft"
+    },
     "kinds/pathology-report/description": {
       "en": "The result of a pathology examination (biopsy, cytology, smear).",
       "text": "Il risultato di un esame anatomopatologico (biopsia, citologia, striscio).",
+      "status": "draft"
+    },
+    "kinds/imaging-report/label": {
+      "en": "Imaging report",
+      "text": "Referto di immaginografia",
       "status": "draft"
     },
     "kinds/imaging-report/description": {
@@ -8903,9 +8993,19 @@
       "text": "Il referto scritto del radiologo su un esame di diagnostica per immagini.",
       "status": "draft"
     },
+    "kinds/image-reference/label": {
+      "en": "Image",
+      "text": "Immagine",
+      "status": "draft"
+    },
     "kinds/image-reference/description": {
       "en": "An image filed as a document of its own, without a written report, such as an X-ray, ultrasound or MRI image (DICOM included) or a photo of a wound or of the skin (CH:EPR \"Image\"). HDS writers file every picture here, except a picture of a specimen.",
       "text": "Un'immagine archiviata come documento a sé, senza referto scritto, come un'immagine di radiografia, ecografia o RM (DICOM compreso) o la foto di una ferita o della pelle (CH:EPR «Image»). I writer HDS archiviano qui ogni immagine, tranne quella di un campione.",
+      "status": "draft"
+    },
+    "kinds/media-recording/label": {
+      "en": "Picture, video or audio",
+      "text": "Immagine, video o audio",
       "status": "draft"
     },
     "kinds/media-recording/description": {
@@ -8913,9 +9013,19 @@
       "text": "Un video o una registrazione audio, oppure l'immagine di un campione (un vetrino di biopsia, uno striscio) (CH:EPR «Picture/Video/Audio»; SNOMED CT digital representation of a specimen). I writer HDS archiviano ogni altra immagine come «Image»; un documento di un'altra fonte può usare questo tipo per una foto.",
       "status": "draft"
     },
+    "kinds/other-procedure-report/label": {
+      "en": "Other procedure report",
+      "text": "Altro rapporto di intervento",
+      "status": "draft"
+    },
     "kinds/other-procedure-report/description": {
       "en": "The report of an examination or procedure that is none of the above, such as an endoscopy, an ECG or a lung function test.",
       "text": "Il referto di un esame o di una procedura che non rientra in nessuno dei precedenti, come una endoscopia, un ECG o un test di funzionalità polmonare.",
+      "status": "draft"
+    },
+    "kinds/medical-care-plan/label": {
+      "en": "Medical care plan",
+      "text": "Piano di cure mediche",
       "status": "draft"
     },
     "kinds/medical-care-plan/description": {
@@ -8923,9 +9033,19 @@
       "text": "Il piano di un medico per il trattamento della persona.",
       "status": "draft"
     },
+    "kinds/nursing-care-plan/label": {
+      "en": "Nursing care plan",
+      "text": "Piano di cure infermieristiche",
+      "status": "draft"
+    },
     "kinds/nursing-care-plan/description": {
       "en": "A nursing team's plan of care.",
       "text": "Il piano di assistenza di un'équipe infermieristica.",
+      "status": "draft"
+    },
+    "kinds/rehabilitation-plan/label": {
+      "en": "Rehabilitation plan",
+      "text": "Piano di riabilitazione",
       "status": "draft"
     },
     "kinds/rehabilitation-plan/description": {
@@ -8933,9 +9053,19 @@
       "text": "Un piano di riabilitazione, come la fisioterapia dopo un intervento.",
       "status": "draft"
     },
+    "kinds/medication-treatment-plan/label": {
+      "en": "Medication treatment decision",
+      "text": "Decisione di terapia medicamentosa",
+      "status": "draft"
+    },
     "kinds/medication-treatment-plan/description": {
       "en": "A doctor's decision to prescribe a medicine, with its reasons.",
       "text": "La decisione di un medico di prescrivere un medicinale, con le sue motivazioni.",
+      "status": "draft"
+    },
+    "kinds/other-care-plan/label": {
+      "en": "Other care plan",
+      "text": "Altro piano di cura",
       "status": "draft"
     },
     "kinds/other-care-plan/description": {
@@ -8943,9 +9073,19 @@
       "text": "Un piano di cura che non rientra in nessuno dei precedenti.",
       "status": "draft"
     },
+    "kinds/medication-prescription/label": {
+      "en": "Medication prescription",
+      "text": "Prescrizione di medicamenti",
+      "status": "draft"
+    },
     "kinds/medication-prescription/description": {
       "en": "A prescription for medicines.",
       "text": "Una prescrizione di medicinali.",
+      "status": "draft"
+    },
+    "kinds/non-drug-prescription/label": {
+      "en": "Non-drug prescription",
+      "text": "Prescrizione non di medicamenti",
       "status": "draft"
     },
     "kinds/non-drug-prescription/description": {
@@ -8953,9 +9093,19 @@
       "text": "Una prescrizione di qualcosa che non è un medicinale, come fisioterapia, ausili o dispositivi.",
       "status": "draft"
     },
+    "kinds/other-prescription/label": {
+      "en": "Other prescription",
+      "text": "Altra prescrizione medica",
+      "status": "draft"
+    },
     "kinds/other-prescription/description": {
       "en": "A prescription that cannot be told to be for medicines or for something else.",
       "text": "Una prescrizione di cui non si può dire se riguardi medicinali o altro.",
+      "status": "draft"
+    },
+    "kinds/allergy-record/label": {
+      "en": "Allergy record",
+      "text": "Passaporto delle allergie",
       "status": "draft"
     },
     "kinds/allergy-record/description": {
@@ -8963,9 +9113,19 @@
       "text": "Un passaporto o libretto delle allergie che elenca le allergie della persona.",
       "status": "draft"
     },
+    "kinds/immunization-record/label": {
+      "en": "Vaccination record",
+      "text": "Documento di vaccinazione",
+      "status": "draft"
+    },
     "kinds/immunization-record/description": {
       "en": "A vaccination booklet or certificate.",
       "text": "Un libretto o un certificato di vaccinazione.",
+      "status": "draft"
+    },
+    "kinds/other-patient-record/label": {
+      "en": "Other patient record",
+      "text": "Altra documentazione del paziente",
       "status": "draft"
     },
     "kinds/other-patient-record/description": {
@@ -8973,9 +9133,19 @@
       "text": "Un documento tenuto nel tempo sulla persona, come un estratto della cartella clinica o un libretto sanitario, che non è un libretto delle allergie né un documento di vaccinazione.",
       "status": "draft"
     },
+    "kinds/consent/label": {
+      "en": "Consent",
+      "text": "Consenso",
+      "status": "draft"
+    },
     "kinds/consent/description": {
       "en": "A consent the person signed, for example to an operation or to a study.",
       "text": "Un consenso firmato dalla persona, ad esempio a un intervento o a uno studio.",
+      "status": "draft"
+    },
+    "kinds/advance-directive/label": {
+      "en": "Advance directive",
+      "text": "Direttive anticipate",
       "status": "draft"
     },
     "kinds/advance-directive/description": {
@@ -8983,9 +9153,19 @@
       "text": "Le istruzioni della persona per le cure nel caso in cui non possa più decidere.",
       "status": "draft"
     },
+    "kinds/access-log/label": {
+      "en": "Record access log",
+      "text": "Cronologia degli accessi alla CIP",
+      "status": "draft"
+    },
     "kinds/access-log/description": {
       "en": "A log of who accessed the person's health record, such as an EPR access report.",
       "text": "Un registro di chi ha avuto accesso alla cartella sanitaria della persona, come un rapporto degli accessi alla CIP.",
+      "status": "draft"
+    },
+    "kinds/emergency-card/label": {
+      "en": "Emergency card",
+      "text": "Tessera di emergenza",
       "status": "draft"
     },
     "kinds/emergency-card/description": {
@@ -8993,9 +9173,19 @@
       "text": "Una tessera con le informazioni necessarie in caso di emergenza.",
       "status": "draft"
     },
+    "kinds/organ-donor-card/label": {
+      "en": "Organ donor card",
+      "text": "Tessera di donatore di organi",
+      "status": "draft"
+    },
     "kinds/organ-donor-card/description": {
       "en": "The person's organ donation card.",
       "text": "La tessera di donatore di organi della persona.",
+      "status": "draft"
+    },
+    "kinds/obstetrical-record/label": {
+      "en": "Pregnancy or birth report",
+      "text": "Rapporto di gravidanza o del parto",
       "status": "draft"
     },
     "kinds/obstetrical-record/description": {
@@ -9003,9 +9193,19 @@
       "text": "Un referto su una gravidanza o un parto.",
       "status": "draft"
     },
+    "kinds/medical-certificate/label": {
+      "en": "Medical certificate",
+      "text": "Certificato medico",
+      "status": "draft"
+    },
     "kinds/medical-certificate/description": {
       "en": "A doctor's certificate, such as a sick note or a fitness certificate.",
       "text": "Un certificato di un medico, come un certificato di malattia o un certificato di idoneità.",
+      "status": "draft"
+    },
+    "kinds/administrative-document/label": {
+      "en": "Administrative document",
+      "text": "Documento amministrativo",
       "status": "draft"
     },
     "kinds/administrative-document/description": {
@@ -9013,9 +9213,19 @@
       "text": "Un documento amministrativo sulle cure della persona, come una lettera dell'assicurazione, una fattura o un appuntamento.",
       "status": "draft"
     },
+    "kinds/emergency-report/label": {
+      "en": "Emergency report",
+      "text": "Rapporto d'urgenza",
+      "status": "draft"
+    },
     "kinds/emergency-report/description": {
       "en": "The report of a visit to an emergency department.",
       "text": "Il referto di una visita al pronto soccorso.",
+      "status": "draft"
+    },
+    "kinds/allied-health-report/label": {
+      "en": "Non-medical report",
+      "text": "Rapporto non medico",
       "status": "draft"
     },
     "kinds/allied-health-report/description": {
@@ -9023,9 +9233,19 @@
       "text": "Un referto di un professionista sanitario che non è un medico, come un fisioterapista, un'ostetrica o un dietista.",
       "status": "draft"
     },
+    "kinds/medication-dispense/label": {
+      "en": "Medication dispense",
+      "text": "Dispensazione di medicamenti",
+      "status": "draft"
+    },
     "kinds/medication-dispense/description": {
       "en": "A pharmacy's record of the medicines it handed out.",
       "text": "Il registro di una farmacia dei medicinali che ha consegnato.",
+      "status": "draft"
+    },
+    "kinds/other-health-event-record/label": {
+      "en": "Other health event report",
+      "text": "Altro documento su un evento sanitario",
       "status": "draft"
     },
     "kinds/other-health-event-record/description": {
@@ -9033,9 +9253,19 @@
       "text": "Un documento su un evento sanitario che non è un'emergenza, un referto non medico o una dispensazione di medicinali.",
       "status": "draft"
     },
+    "kinds/other/label": {
+      "en": "Other document",
+      "text": "Altra documentazione",
+      "status": "draft"
+    },
     "kinds/other/description": {
       "en": "A medical document of no other kind, or whose kind cannot be told.",
       "text": "Un documento medico di nessun altro tipo, o il cui tipo non si può determinare.",
+      "status": "draft"
+    },
+    "detailKinds/menstrual-cycle-chart/label": {
+      "en": "Menstrual cycle chart",
+      "text": "Scheda del ciclo mestruale",
       "status": "draft"
     },
     "detailKinds/menstrual-cycle-chart/description": {

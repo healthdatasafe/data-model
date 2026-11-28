@@ -7,7 +7,8 @@
 # International Edition (checked in reference/snomed-db, 2026-02-01 release, 2026-11-18). Displays are the
 # International Edition's preferred terms (en-US); for a Swiss-extension concept, its fully specified name without
 # the semantic tag. Labels are based on the CH Term designations (en-US, fr-CH, de-CH, it-CH), edited so that no two
-# kinds share one; `description` says when to pick the kind.
+# kinds share one (de and it in definitions/l10n/de.json and it.json, documentation/L10N.md); `description` says when
+# to pick the kind.
 #
 # `timeBasis` is the writer's default for which date printed on the document becomes the event time
 # (DOCUMENTS.md § Which date):
@@ -32,7 +33,7 @@ source:
 kinds:
   # Report of clinical encounter
   consultation-report:
-    label: { en: Consultation report, fr: Rapport de consultation, de: Konsultationsbericht, it: Rapporto di consultazione }
+    label: { en: Consultation report, fr: Rapport de consultation }
     description:
       en: A doctor's report or letter on a consultation, including a specialist's reply to the referring doctor.
       fr: Le rapport ou la lettre d'un médecin sur une consultation, y compris la réponse d'un spécialiste au médecin qui l'a adressé.
@@ -41,7 +42,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   history-and-physical:
-    label: { en: History and physical examination, fr: Anamnèse et examen clinique, de: Anamnese und Untersuchungsbefund, it: Anamnesi ed esame obiettivo }
+    label: { en: History and physical examination, fr: Anamnèse et examen clinique }
     description:
       en: The medical history and examination findings taken at a first visit or an admission.
       fr: L'anamnèse et les constatations de l'examen, relevées lors d'une première visite ou d'une admission.
@@ -50,7 +51,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   progress-report:
-    label: { en: Progress report, fr: Rapport de suivi, de: Verlaufsbericht, it: Referto sul decorso }
+    label: { en: Progress report, fr: Rapport de suivi }
     description:
       en: How a condition or a treatment has evolved over a period of follow-up.
       fr: L'évolution d'une affection ou d'un traitement sur une période de suivi.
@@ -59,7 +60,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   other-encounter-report:
-    label: { en: Other encounter report, fr: Autre rapport de consultation, de: Anderer Konsultationsbericht, it: Altro rapporto di visita medica }
+    label: { en: Other encounter report, fr: Autre rapport de consultation }
     description:
       en: A report on a visit that is neither a consultation report, a history and physical nor a progress report.
       fr: Un rapport sur une visite qui n'est ni un rapport de consultation, ni une anamnèse, ni un rapport de suivi.
@@ -70,7 +71,7 @@ kinds:
 
   # Referral note
   referral-letter:
-    label: { en: Referral letter, fr: Lettre de référence, de: Zuweisungsschreiben, it: Lettera d'invio }
+    label: { en: Referral letter, fr: Lettre de référence }
     description:
       en: A doctor's letter sending the person to another doctor or a hospital.
       fr: La lettre d'un médecin qui adresse la personne à un autre médecin ou à un hôpital.
@@ -81,7 +82,7 @@ kinds:
 
   # Order
   laboratory-order:
-    label: { en: Laboratory order, fr: Demande de laboratoire, de: Laborauftrag, it: Richiesta di laboratorio }
+    label: { en: Laboratory order, fr: Demande de laboratoire }
     description:
       en: A request for laboratory tests.
       fr: Une demande d'analyses de laboratoire.
@@ -90,7 +91,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   pathology-order:
-    label: { en: Pathology order, fr: Demande de pathologie, de: Pathologieauftrag, it: Richiesta di patologia }
+    label: { en: Pathology order, fr: Demande de pathologie }
     description:
       en: A request for a pathology examination of tissue or cells.
       fr: Une demande d'examen pathologique de tissus ou de cellules.
@@ -99,7 +100,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   imaging-order:
-    label: { en: Imaging order, fr: Demande d'imagerie, de: Bildgebungsauftrag, it: Richiesta di immaginografia }
+    label: { en: Imaging order, fr: Demande d'imagerie }
     description:
       en: A request for an imaging examination (X-ray, ultrasound, CT, MRI).
       fr: Une demande d'examen d'imagerie (radiographie, échographie, scanner, IRM).
@@ -108,7 +109,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   other-order:
-    label: { en: Other order, fr: Autre demande d'examen, de: Anderer Untersuchungsauftrag, it: Altra richiesta di esami }
+    label: { en: Other order, fr: Autre demande d'examen }
     description:
       en: A request for an examination that is not a laboratory, pathology or imaging order.
       fr: Une demande d'examen qui n'est pas une demande de laboratoire, de pathologie ou d'imagerie.
@@ -119,7 +120,7 @@ kinds:
 
   # Summary clinical document
   discharge-summary:
-    label: { en: Discharge summary, fr: Rapport de sortie, de: Austrittsbericht, it: Rapporto di dimissione }
+    label: { en: Discharge summary, fr: Rapport de sortie }
     description:
       en: The summary of a hospital stay, written when the person leaves.
       fr: Le résumé d'un séjour hospitalier, rédigé à la sortie de la personne.
@@ -128,7 +129,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   transfer-summary:
-    label: { en: Transfer summary, fr: Rapport de transfert, de: Verlegungsbericht, it: Rapporto di trasferimento }
+    label: { en: Transfer summary, fr: Rapport de transfert }
     description:
       en: The summary sent with the person when moved from one hospital or ward to another; a letter to another doctor is a referral letter.
       fr: Le résumé qui accompagne la personne transférée d'un hôpital ou d'un service à un autre ; une lettre à un autre médecin est une lettre de référence.
@@ -137,7 +138,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   medication-list:
-    label: { en: Medication list, fr: Liste des médicaments, de: Medikationsliste, it: Elenco dei medicamenti }
+    label: { en: Medication list, fr: Liste des médicaments }
     description:
       en: A list of the medicines the person takes, without a schedule.
       fr: Une liste des médicaments que la personne prend, sans horaire de prise.
@@ -146,7 +147,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   medication-plan:
-    label: { en: Medication plan, fr: Plan de médication, de: Medikationsplan, it: Piano dei medicamenti }
+    label: { en: Medication plan, fr: Plan de médication }
     description:
       en: The medicines the person takes with when and how much, as given to the person (for example the Swiss eMediplan).
       fr: Les médicaments que la personne prend, avec quand et combien, tels que remis à la personne (par exemple l'eMediplan suisse).
@@ -155,7 +156,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   other-summary:
-    label: { en: Other summary, fr: Autre résumé, de: Andere Zusammenfassung, it: Altro riepilogo }
+    label: { en: Other summary, fr: Autre résumé }
     description:
       en: A summary of the person's health or care that is not a discharge or transfer summary, a medication list or a medication plan.
       fr: Un résumé de la santé ou des soins de la personne qui n'est ni un rapport de sortie ou de transfert, ni une liste ou un plan de médication.
@@ -166,7 +167,7 @@ kinds:
 
   # Clinical procedure report
   operative-report:
-    label: { en: Operative report, fr: Rapport d'opération, de: Operationsbericht, it: Rapporto operatorio }
+    label: { en: Operative report, fr: Rapport d'opération }
     description:
       en: The surgeon's report of an operation.
       fr: Le rapport du chirurgien sur une opération.
@@ -175,7 +176,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   laboratory-report:
-    label: { en: Laboratory report, fr: Rapport de laboratoire, de: Laborbericht, it: Referto di laboratorio }
+    label: { en: Laboratory report, fr: Rapport de laboratoire }
     description:
       en: The results of laboratory tests (blood, urine and other samples).
       fr: Les résultats d'analyses de laboratoire (sang, urine et autres échantillons).
@@ -184,7 +185,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   pathology-report:
-    label: { en: Pathology report, fr: Rapport de pathologie, de: Pathologiebericht, it: Rapporto di patologia }
+    label: { en: Pathology report, fr: Rapport de pathologie }
     description:
       en: The result of a pathology examination (biopsy, cytology, smear).
       fr: Le résultat d'un examen pathologique (biopsie, cytologie, frottis).
@@ -193,7 +194,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   imaging-report:
-    label: { en: Imaging report, fr: Rapport d'imagerie, de: Bericht zur Bildgebung, it: Referto di immaginografia }
+    label: { en: Imaging report, fr: Rapport d'imagerie }
     description:
       en: The radiologist's written report on an imaging examination.
       fr: Le compte rendu écrit du radiologue sur un examen d'imagerie.
@@ -202,7 +203,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   image-reference:
-    label: { en: Image, fr: Image, de: Bild, it: Immagine }
+    label: { en: Image, fr: Image }
     description:
       en: An image filed as a document of its own, without a written report, such as an X-ray, ultrasound or MRI image (DICOM included) or a photo of a wound or of the skin (CH:EPR "Image"). HDS writers file every picture here, except a picture of a specimen.
       fr: Une image classée comme document à part entière, sans compte rendu écrit, comme une image de radiographie, d'échographie ou d'IRM (DICOM compris) ou la photo d'une plaie ou de la peau (DEP « Image »). Les writers HDS classent ici toute image, sauf celle d'un prélèvement.
@@ -211,7 +212,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   media-recording:
-    label: { en: 'Picture, video or audio', fr: 'Image, vidéo ou audio', de: 'Bild, Video oder Audio', it: 'Immagine, video o audio' }
+    label: { en: 'Picture, video or audio', fr: 'Image, vidéo ou audio' }
     description:
       en: A video or a sound recording, or a picture of a specimen (a biopsy slide, a smear) (CH:EPR "Picture/Video/Audio"; SNOMED CT digital representation of a specimen). HDS writers file any other picture as an "Image"; a document from another source may use this kind for a photo.
       fr: Une vidéo ou un enregistrement sonore, ou l'image d'un prélèvement (lame de biopsie, frottis) (DEP « Image/vidéo/audio » ; SNOMED CT représentation numérique d'un spécimen). Les writers HDS classent toute autre image comme « Image » ; un document d'une autre source peut utiliser ce type pour une photo.
@@ -220,7 +221,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   other-procedure-report:
-    label: { en: Other procedure report, fr: Autre rapport d'intervention, de: Anderer Interventionsbericht, it: Altro rapporto di intervento }
+    label: { en: Other procedure report, fr: Autre rapport d'intervention }
     description:
       en: The report of an examination or procedure that is none of the above, such as an endoscopy, an ECG or a lung function test.
       fr: Le rapport d'un examen ou d'une intervention qui n'est aucun des précédents, comme une endoscopie, un ECG ou un test de fonction pulmonaire.
@@ -231,7 +232,7 @@ kinds:
 
   # Care plan
   medical-care-plan:
-    label: { en: Medical care plan, fr: Plan de traitement médical, de: Ärztlicher Behandlungsplan, it: Piano di cure mediche }
+    label: { en: Medical care plan, fr: Plan de traitement médical }
     description:
       en: A doctor's plan for the person's treatment.
       fr: Le plan d'un médecin pour le traitement de la personne.
@@ -240,7 +241,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   nursing-care-plan:
-    label: { en: Nursing care plan, fr: Plan de soins infirmiers, de: Pflegeplan, it: Piano di cure infermieristiche }
+    label: { en: Nursing care plan, fr: Plan de soins infirmiers }
     description:
       en: A nursing team's plan of care.
       fr: Le plan de soins d'une équipe infirmière.
@@ -249,7 +250,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   rehabilitation-plan:
-    label: { en: Rehabilitation plan, fr: Plan de réhabilitation, de: Rehabilitationsplan, it: Piano di riabilitazione }
+    label: { en: Rehabilitation plan, fr: Plan de réhabilitation }
     description:
       en: A plan of rehabilitation, such as physiotherapy after an operation.
       fr: Un plan de réhabilitation, comme la physiothérapie après une opération.
@@ -258,7 +259,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   medication-treatment-plan:
-    label: { en: Medication treatment decision, fr: Décision de traitement médicamenteux, de: Therapieentscheid Medikation, it: Decisione di terapia medicamentosa }
+    label: { en: Medication treatment decision, fr: Décision de traitement médicamenteux }
     description:
       en: A doctor's decision to prescribe a medicine, with its reasons.
       fr: La décision d'un médecin de prescrire un médicament, avec ses raisons.
@@ -267,7 +268,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   other-care-plan:
-    label: { en: Other care plan, fr: Autre plan de soins, de: Anderer Behandlungsplan, it: Altro piano di cura }
+    label: { en: Other care plan, fr: Autre plan de soins }
     description:
       en: A plan of care that is none of the above.
       fr: Un plan de soins qui n'est aucun des précédents.
@@ -278,7 +279,7 @@ kinds:
 
   # Prescription record
   medication-prescription:
-    label: { en: Medication prescription, fr: Ordonnance de médicaments, de: Arzneimittelrezept, it: Prescrizione di medicamenti }
+    label: { en: Medication prescription, fr: Ordonnance de médicaments }
     description:
       en: A prescription for medicines.
       fr: Une ordonnance de médicaments.
@@ -287,7 +288,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   non-drug-prescription:
-    label: { en: Non-drug prescription, fr: Prescription non médicamenteuse, de: Nicht-Arzneimittel-Verschreibung, it: Prescrizione non di medicamenti }
+    label: { en: Non-drug prescription, fr: Prescription non médicamenteuse }
     description:
       en: A prescription for something other than a medicine, such as physiotherapy, aids or devices.
       fr: Une prescription d'autre chose qu'un médicament, comme de la physiothérapie, des moyens auxiliaires ou des appareils.
@@ -296,7 +297,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   other-prescription:
-    label: { en: Other prescription, fr: Autre prescription, de: Andere Verschreibung, it: Altra prescrizione medica }
+    label: { en: Other prescription, fr: Autre prescription }
     description:
       en: A prescription that cannot be told to be for medicines or for something else.
       fr: Une prescription dont on ne peut pas dire si elle porte sur des médicaments ou sur autre chose.
@@ -307,7 +308,7 @@ kinds:
 
   # Patient record type
   allergy-record:
-    label: { en: Allergy record, fr: Carnet des allergies, de: Allergieausweis, it: Passaporto delle allergie }
+    label: { en: Allergy record, fr: Carnet des allergies }
     description:
       en: An allergy pass or record listing the person's allergies.
       fr: Un passeport ou carnet des allergies de la personne.
@@ -316,7 +317,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   immunization-record:
-    label: { en: Vaccination record, fr: Document de vaccination, de: Impfdokument, it: Documento di vaccinazione }
+    label: { en: Vaccination record, fr: Document de vaccination }
     description:
       en: A vaccination booklet or certificate.
       fr: Un carnet ou un certificat de vaccination.
@@ -325,7 +326,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   other-patient-record:
-    label: { en: Other patient record, fr: Autre documentation du patient, de: Andere Patientendokumentation, it: Altra documentazione del paziente }
+    label: { en: Other patient record, fr: Autre documentation du patient }
     description:
       en: A long-running record about the person, such as an extract of the medical file or a health booklet, that is not an allergy or vaccination record.
       fr: Un document tenu dans la durée sur la personne, comme un extrait du dossier médical ou un carnet de santé, qui n'est ni un carnet des allergies ni un document de vaccination.
@@ -336,7 +337,7 @@ kinds:
 
   # Classes whose only type is Record artifact
   consent:
-    label: { en: Consent, fr: Consentement, de: Einverständniserklärung, it: Consenso }
+    label: { en: Consent, fr: Consentement }
     description:
       en: A consent the person signed, for example to an operation or to a study.
       fr: Un consentement que la personne a signé, par exemple à une opération ou à une étude.
@@ -345,7 +346,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   advance-directive:
-    label: { en: Advance directive, fr: Directives anticipées, de: Patientenverfügung, it: Direttive anticipate }
+    label: { en: Advance directive, fr: Directives anticipées }
     description:
       en: The person's instructions for care if they can no longer decide.
       fr: Les instructions de la personne pour ses soins si elle ne peut plus décider.
@@ -354,7 +355,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   access-log:
-    label: { en: Record access log, fr: Traçabilité des accès au DEP, de: Rückverfolgung der EPD-Zugriffe, it: Cronologia degli accessi alla CIP }
+    label: { en: Record access log, fr: Traçabilité des accès au DEP }
     description:
       en: A log of who accessed the person's health record, such as an EPR access report.
       fr: Un journal de qui a accédé au dossier de santé de la personne, comme un rapport des accès au DEP.
@@ -362,7 +363,7 @@ kinds:
     type: *other
     timeBasis: creation
   emergency-card:
-    label: { en: Emergency card, fr: Carte d'urgence, de: Notfallkarte, it: Tessera di emergenza }
+    label: { en: Emergency card, fr: Carte d'urgence }
     description:
       en: A card with the information needed in an emergency.
       fr: Une carte avec les informations utiles en cas d'urgence.
@@ -371,7 +372,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   organ-donor-card:
-    label: { en: Organ donor card, fr: Carte de donneur d'organes, de: Organspendeausweis, it: Tessera di donatore di organi }
+    label: { en: Organ donor card, fr: Carte de donneur d'organes }
     description:
       en: The person's organ donation card.
       fr: La carte de don d'organes de la personne.
@@ -380,7 +381,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   obstetrical-record:
-    label: { en: Pregnancy or birth report, fr: Rapport de grossesse ou de naissance, de: Schwangerschafts- oder Geburtsbericht, it: Rapporto di gravidanza o del parto }
+    label: { en: Pregnancy or birth report, fr: Rapport de grossesse ou de naissance }
     description:
       en: A report on a pregnancy or a birth.
       fr: Un rapport sur une grossesse ou une naissance.
@@ -391,7 +392,7 @@ kinds:
 
   # Administrative documentation
   medical-certificate:
-    label: { en: Medical certificate, fr: Certificat médical, de: Ärztliches Attest, it: Certificato medico }
+    label: { en: Medical certificate, fr: Certificat médical }
     description:
       en: A doctor's certificate, such as a sick note or a fitness certificate.
       fr: Un certificat d'un médecin, comme un arrêt de travail ou un certificat d'aptitude.
@@ -400,7 +401,7 @@ kinds:
     timeBasis: creation
     stream: documents-clinical
   administrative-document:
-    label: { en: Administrative document, fr: Document administratif, de: Administratives Dokument, it: Documento amministrativo }
+    label: { en: Administrative document, fr: Document administratif }
     description:
       en: An administrative document about the person's care, such as an insurance letter, an invoice or an appointment.
       fr: Un document administratif sur les soins de la personne, comme une lettre d'assurance, une facture ou un rendez-vous.
@@ -411,7 +412,7 @@ kinds:
 
   # Record of health event
   emergency-report:
-    label: { en: Emergency report, fr: Rapport d'urgence, de: Notfallbericht, it: Rapporto d'urgenza }
+    label: { en: Emergency report, fr: Rapport d'urgence }
     description:
       en: The report of a visit to an emergency department.
       fr: Le rapport d'un passage aux urgences.
@@ -420,7 +421,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   allied-health-report:
-    label: { en: Non-medical report, fr: Rapport non médical, de: Nichtmedizinischer Bericht, it: Rapporto non medico }
+    label: { en: Non-medical report, fr: Rapport non médical }
     description:
       en: A report by a health professional who is not a doctor, such as a physiotherapist, a midwife or a dietitian.
       fr: Le rapport d'un professionnel de santé qui n'est pas médecin, comme un physiothérapeute, une sage-femme ou un diététicien.
@@ -429,7 +430,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   medication-dispense:
-    label: { en: Medication dispense, fr: Dispensation de médicaments, de: Medikamentenabgabe, it: Dispensazione di medicamenti }
+    label: { en: Medication dispense, fr: Dispensation de médicaments }
     description:
       en: A pharmacy's record of the medicines it handed out.
       fr: Le relevé d'une pharmacie des médicaments qu'elle a remis.
@@ -438,7 +439,7 @@ kinds:
     timeBasis: service
     stream: documents-clinical
   other-health-event-record:
-    label: { en: Other health event report, fr: Autre document sur un événement sanitaire, de: Anderes Dokument zu einem Gesundheitsereignis, it: Altro documento su un evento sanitario }
+    label: { en: Other health event report, fr: Autre document sur un événement sanitaire }
     description:
       en: A document about a health event that is not an emergency, a non-medical report or a medication dispense.
       fr: Un document sur un événement de santé qui n'est ni un passage aux urgences, ni un rapport non médical, ni une dispensation de médicaments.
@@ -449,7 +450,7 @@ kinds:
 
   # Record artifact: the value sets' own "other documentation"
   other:
-    label: { en: Other document, fr: Autre document, de: Sonstige Dokumentation, it: Altra documentazione }
+    label: { en: Other document, fr: Autre document }
     description:
       en: A medical document of no other kind, or whose kind cannot be told.
       fr: Un document médical d'aucun autre type, ou dont le type ne peut pas être déterminé.
@@ -462,7 +463,7 @@ kinds:
 # A section of their own, so that a reader older than it never offers one: it would store the other kind.
 detailKinds:
   menstrual-cycle-chart:
-    label: { en: Menstrual cycle chart, fr: Tableau de cycle menstruel, de: Zyklusblatt, it: Scheda del ciclo mestruale }
+    label: { en: Menstrual cycle chart, fr: Tableau de cycle menstruel }
     description:
       en: A day-by-day chart of menstrual cycles kept by the person, on paper or exported from an app, whatever the charting method.
       fr: Un tableau (ou cyclogramme) des cycles menstruels tenu jour par jour par la personne, sur papier ou exporté d'une application, quelle que soit la méthode.

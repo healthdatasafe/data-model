@@ -20,7 +20,8 @@ describe('[CONS] Consent record — consents (plan 91)', () => {
       assert.strictEqual(item.streamId, 'consents');
       assert.strictEqual(item.eventType, 'consent/record-v1');
       assert.strictEqual(item.repeatable, 'unlimited');
-      assert.ok(item.label.fr && item.label.es && item.description.fr && item.description.es, 'label and description are localised');
+      const es = require('../src/l10n').loadLocales().locales.es['items.json'];
+      assert.ok(item.label.fr && item.description.fr && es['consent-record/label'] && es['consent-record/description'], 'label and description are localised');
       assert.strictEqual(checkItemVsEvenType('consent-record', item, eventTypesById('consent/record-v1')), true);
     });
 

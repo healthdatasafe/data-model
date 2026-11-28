@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { loadLocales, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels, checkConsentLabelLocales } = require('./l10n');
+const { loadLocales, checkInlineLocales, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels, checkConsentLabelLocales } = require('./l10n');
 const { checkDocumentKindsTable } = require('./documentKinds');
 const { checkItem } = require('./schemas/items');
 const { checkVocabulary } = require('./schemas/vocabularies');
@@ -51,6 +51,8 @@ const publishedFiles = [];
 for (const source of sources) {
   for (const published of source()) {
     const fileName = published.path.replace(/^\.\//, '').replace(/([^/])$/, '$1/') + published.filename;
+    // en and fr only in the definitions: every other locale's text carries its review mark in definitions/l10n
+    checkInlineLocales(fileName, published.content);
     const file = { ...published, content: localise(fileName, published.content, locales) };
     // what the definitions were checked for must hold in every language of the pack
     if (file.includeInPack === 'documentKinds') checkDocumentKindsTable(file.content);

@@ -14,6 +14,8 @@ describe('[COR] corrections of an entry', () => {
   const streams = require('../src/streams');
   const { eventTypesById } = require('../src/eventTypes');
   const { vocabulariesById, resolveEnum } = require('../src/vocabularies');
+  // the es texts are in definitions/l10n/es.json, each with its review mark (B-2026-11-28-9)
+  const es = (file, at) => require('../src/l10n').loadLocales().locales.es[file]?.[at]?.text;
 
   const TYPE = 'correction/entry-v1';
   const ROOT = 'entry-corrections';
@@ -39,8 +41,8 @@ describe('[COR] corrections of an entry', () => {
       assert.strictEqual(root.parentId, null);
       assert.strictEqual(root.explicitGrantOnly, undefined);
       assert.ok(!root.children || root.children.length === 0);
-      assert.ok(root.label.en && root.label.fr && root.label.es);
-      assert.ok(root.description.en && root.description.fr && root.description.es);
+      assert.ok(root.label.en && root.label.fr && es('streamsTree.json', `[id="${ROOT}"]/label`));
+      assert.ok(root.description.en && root.description.fr && es('streamsTree.json', `[id="${ROOT}"]/description`));
     });
 
     it('[COR-STR-2] no model stream is named like a child', () => {
@@ -56,7 +58,7 @@ describe('[COR] corrections of an entry', () => {
       assert.strictEqual(item.streamId, ROOT);
       assert.strictEqual(item.eventType, TYPE);
       assert.strictEqual(item.repeatable, 'unlimited');
-      assert.ok(item.label.fr && item.label.es && item.description.fr && item.description.es);
+      assert.ok(item.label.fr && item.description.fr && es('items.json', `${ITEM}/label`) && es('items.json', `${ITEM}/description`));
       assert.strictEqual(checkItemVsEvenType(ITEM, item, eventTypesById(TYPE)), true);
       assert.strictEqual(item.fhir, undefined, 'not exported');
     });
@@ -99,7 +101,7 @@ describe('[COR] corrections of an entry', () => {
       assert.deepStrictEqual(resolveEnum(TYPE, 'authorRole'), ROLES);
       for (const role of ROLES) {
         const v = voc.values[role];
-        assert.ok(v.label.en && v.label.fr && v.label.es, role);
+        assert.ok(v.label.en && v.label.fr && es('vocabularies.json', `professional-role/values/${role}/label`), role);
         assert.strictEqual(v.snomed, SNOMED[role], role);
       }
       assert.strictEqual(voc.values.other.label.en, 'Other', 'neutral: also the label of an unknown role');

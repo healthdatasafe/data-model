@@ -4,11 +4,9 @@ consent-record:
   label:
     en: Consent record
     fr: Historique des consentements
-    es: Registro de consentimientos
   description:
     en: Your consents, your choices and the notices you acknowledged, and when.
     fr: Vos consentements, vos choix et les notices prises en compte, et quand.
-    es: Sus consentimientos, sus elecciones y los avisos reconocidos, y cuándo.
   streamId: consents
   eventType: consent/record-v1
   repeatable: unlimited

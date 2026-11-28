@@ -265,6 +265,16 @@
       "text": "Profesionales y centros de atención",
       "status": "draft"
     },
+    "[id=\"entry-corrections\"]/label": {
+      "en": "Corrections from your contacts",
+      "text": "Correcciones de sus contactos",
+      "status": "draft"
+    },
+    "[id=\"entry-corrections\"]/description": {
+      "en": "What a professional you share data with says one of your entries should have been, and why. Your entries are never changed: you decide whether to apply a correction.",
+      "text": "Lo que un profesional con quien comparte datos dice que uno de sus registros debería haber sido, y por qué. Sus registros nunca se modifican: usted decide si aplica una corrección.",
+      "status": "draft"
+    },
     "[id=\"family\"]/label": {
       "en": "Family",
       "text": "Familia",
@@ -408,6 +418,16 @@
     "[id=\"nutrition\"]/label": {
       "en": "Nutrition",
       "text": "Nutrición",
+      "status": "draft"
+    },
+    "[id=\"other-names\"]/label": {
+      "en": "Other names",
+      "text": "Otros nombres",
+      "status": "draft"
+    },
+    "[id=\"other-names\"]/description": {
+      "en": "Your other names, such as a usage name, your name at birth or a former name, so that your app recognises your documents.",
+      "text": "Sus otros nombres, como un nombre de uso, su nombre de nacimiento o un nombre anterior, para que su app reconozca sus documentos.",
       "status": "draft"
     },
     "[id=\"procedure\"]/label": {
@@ -3962,6 +3982,16 @@
       "text": "Una hormona que controla su equilibrio de sal y agua.",
       "status": "draft"
     },
+    "body-blood-coded/label": {
+      "en": "Other blood results",
+      "text": "Otros resultados de sangre",
+      "status": "draft"
+    },
+    "body-blood-coded/description": {
+      "en": "Blood test results that have no field of their own.",
+      "text": "Resultados de análisis de sangre que no tienen un campo propio.",
+      "status": "draft"
+    },
     "body-urine-chemistry-creatinine/label": {
       "en": "Creatinine (urine)",
       "text": "Creatinina (orina)",
@@ -3987,6 +4017,26 @@
       "text": "mmol/L",
       "status": "draft"
     },
+    "body-urine-coded/label": {
+      "en": "Other urine results",
+      "text": "Otros resultados de orina",
+      "status": "draft"
+    },
+    "body-urine-coded/description": {
+      "en": "Urine test results that have no field of their own.",
+      "text": "Resultados de análisis de orina que no tienen un campo propio.",
+      "status": "draft"
+    },
+    "body-csf-coded/label": {
+      "en": "Cerebrospinal fluid results",
+      "text": "Resultados del líquido cefalorraquídeo",
+      "status": "draft"
+    },
+    "body-csf-coded/description": {
+      "en": "Results of a cerebrospinal fluid test.",
+      "text": "Resultados de un análisis del líquido cefalorraquídeo.",
+      "status": "draft"
+    },
     "condition-coded/label": {
       "en": "Condition (coded)",
       "text": "Afección (codificada)",
@@ -3995,6 +4045,26 @@
     "condition-coded/description": {
       "en": "A diagnosis a clinician gave you.",
       "text": "Un diagnóstico que le dio un profesional de la salud.",
+      "status": "draft"
+    },
+    "consent-record/label": {
+      "en": "Consent record",
+      "text": "Registro de consentimientos",
+      "status": "draft"
+    },
+    "consent-record/description": {
+      "en": "Your consents, your choices and the notices you acknowledged, and when.",
+      "text": "Sus consentimientos, sus elecciones y los avisos reconocidos, y cuándo.",
+      "status": "draft"
+    },
+    "document/label": {
+      "en": "Medical document",
+      "text": "Documento médico",
+      "status": "draft"
+    },
+    "document/description": {
+      "en": "A medical document you keep, such as a lab report, a letter, a prescription or an imaging report.",
+      "text": "Un documento médico que conserva, como un informe de laboratorio, una carta, una receta o un informe de imagen.",
       "status": "draft"
     },
     "encounter-visit/label": {
@@ -4085,6 +4155,16 @@
     "encounter-provider-organization/composite/name/label": {
       "en": "Name",
       "text": "Nombre",
+      "status": "draft"
+    },
+    "entry-correction/label": {
+      "en": "Correction of an entry",
+      "text": "Corrección de un registro",
+      "status": "draft"
+    },
+    "entry-correction/description": {
+      "en": "A professional says one of your entries should have been different, should exist or should not exist, and why.",
+      "text": "Un profesional indica que uno de sus registros debería haber sido diferente, debería existir o no debería existir, y por qué.",
       "status": "draft"
     },
     "family-children-count/label": {
@@ -4737,6 +4817,16 @@
       "text": "Algo que se encontró en una cirugía o en una prueba de imagen.",
       "status": "draft"
     },
+    "genetics-variant/label": {
+      "en": "Tested gene variant",
+      "text": "Variante genética analizada",
+      "status": "draft"
+    },
+    "genetics-variant/description": {
+      "en": "The result of a genetic test for one gene variant, as the laboratory reported it.",
+      "text": "El resultado de una prueba genética para una variante de un gen, tal como lo informó el laboratorio.",
+      "status": "draft"
+    },
     "lifestyle-tobacco-smoking/label": {
       "en": "Smoking status",
       "text": "Hábito de fumar",
@@ -5375,6 +5465,56 @@
     "nutrition-appetite/options[value=0.75]/label": {
       "en": "Increased",
       "text": "Aumentado",
+      "status": "draft"
+    },
+    "other-name/label": {
+      "en": "Other name",
+      "text": "Otro nombre",
+      "status": "draft"
+    },
+    "other-name/description": {
+      "en": "Another name you have or had, such as a usage name or your name at birth.",
+      "text": "Otro nombre que tiene o tuvo, como un nombre de uso o su nombre de nacimiento.",
+      "status": "draft"
+    },
+    "other-name/composite/given/label": {
+      "en": "Given name",
+      "text": "Nombre",
+      "status": "draft"
+    },
+    "other-name/composite/family/label": {
+      "en": "Family name",
+      "text": "Apellido",
+      "status": "draft"
+    },
+    "other-name/composite/use/label": {
+      "en": "Kind of name",
+      "text": "Tipo de nombre",
+      "status": "draft"
+    },
+    "other-name/composite/use/options[value=\"official\"]/label": {
+      "en": "Full official name",
+      "text": "Nombre oficial completo",
+      "status": "draft"
+    },
+    "other-name/composite/use/options[value=\"usual\"]/label": {
+      "en": "Usage name",
+      "text": "Nombre de uso",
+      "status": "draft"
+    },
+    "other-name/composite/use/options[value=\"maiden\"]/label": {
+      "en": "Name at birth",
+      "text": "Nombre de nacimiento",
+      "status": "draft"
+    },
+    "other-name/composite/use/options[value=\"old\"]/label": {
+      "en": "Former name",
+      "text": "Nombre anterior",
+      "status": "draft"
+    },
+    "other-name/composite/use/options[value=\"nickname\"]/label": {
+      "en": "Nickname",
+      "text": "Apodo",
       "status": "draft"
     },
     "procedure-basic/label": {
@@ -8316,6 +8456,61 @@
       "text": "Grave",
       "status": "draft"
     },
+    "lab-result/values/negative/label": {
+      "en": "Negative",
+      "text": "Negativo",
+      "status": "draft"
+    },
+    "lab-result/values/trace/label": {
+      "en": "Trace",
+      "text": "Indicios",
+      "status": "draft"
+    },
+    "lab-result/values/plus-1/label": {
+      "en": "1+",
+      "text": "1+",
+      "status": "draft"
+    },
+    "lab-result/values/plus-2/label": {
+      "en": "2+",
+      "text": "2+",
+      "status": "draft"
+    },
+    "lab-result/values/plus-3/label": {
+      "en": "3+",
+      "text": "3+",
+      "status": "draft"
+    },
+    "lab-result/values/plus-4/label": {
+      "en": "4+",
+      "text": "4+",
+      "status": "draft"
+    },
+    "lab-result/values/positive/label": {
+      "en": "Positive",
+      "text": "Positivo",
+      "status": "draft"
+    },
+    "lab-result/values/detected/label": {
+      "en": "Detected",
+      "text": "Detectado",
+      "status": "draft"
+    },
+    "lab-result/values/not-detected/label": {
+      "en": "Not detected",
+      "text": "No detectado",
+      "status": "draft"
+    },
+    "lab-result/values/absent/label": {
+      "en": "Absent",
+      "text": "Ausente",
+      "status": "draft"
+    },
+    "lab-result/values/present/label": {
+      "en": "Present",
+      "text": "Presente",
+      "status": "draft"
+    },
     "medication-when/values/waking/label": {
       "en": "On waking",
       "text": "Al despertar",
@@ -8494,6 +8689,51 @@
     "medication-prescription-status/values/completed/label": {
       "en": "Completed",
       "text": "Completada",
+      "status": "draft"
+    },
+    "professional-role/values/physician/label": {
+      "en": "Physician",
+      "text": "Médico",
+      "status": "draft"
+    },
+    "professional-role/values/midwife/label": {
+      "en": "Midwife",
+      "text": "Matrona",
+      "status": "draft"
+    },
+    "professional-role/values/nurse/label": {
+      "en": "Nurse",
+      "text": "Enfermero o enfermera",
+      "status": "draft"
+    },
+    "professional-role/values/pharmacist/label": {
+      "en": "Pharmacist",
+      "text": "Farmacéutico o farmacéutica",
+      "status": "draft"
+    },
+    "professional-role/values/psychologist/label": {
+      "en": "Psychologist",
+      "text": "Psicólogo o psicóloga",
+      "status": "draft"
+    },
+    "professional-role/values/dietitian/label": {
+      "en": "Dietitian",
+      "text": "Dietista",
+      "status": "draft"
+    },
+    "professional-role/values/physiotherapist/label": {
+      "en": "Physiotherapist",
+      "text": "Fisioterapeuta",
+      "status": "draft"
+    },
+    "professional-role/values/health-educator/label": {
+      "en": "Health educator",
+      "text": "Educador o educadora en salud",
+      "status": "draft"
+    },
+    "professional-role/values/other/label": {
+      "en": "Other",
+      "text": "Otro",
       "status": "draft"
     },
     "research-topic/values/cardiovascular/label": {

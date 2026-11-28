@@ -4,11 +4,9 @@ entry-correction:
   label:
     en: Correction of an entry
     fr: Correction d'une saisie
-    es: Corrección de un registro
   description:
     en: A professional says one of your entries should have been different, should exist or should not exist, and why.
     fr: Un professionnel indique qu'une de vos saisies aurait dû être différente, devrait exister ou ne devrait pas exister, et pourquoi.
-    es: Un profesional indica que uno de sus registros debería haber sido diferente, debería existir o no debería existir, y por qué.
   streamId: entry-corrections
   eventType: correction/entry-v1
   repeatable: unlimited

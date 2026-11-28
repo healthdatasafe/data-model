@@ -11,8 +11,6 @@ explicitGrantOnly: true
 label:
   en: Other names
   fr: Autres noms
-  es: Otros nombres
 description:
   en: "Your other names, such as a usage name, your name at birth or a former name, so that your app recognises your documents."
   fr: "Vos autres noms, comme un nom d'usage, votre nom de naissance ou un ancien nom, pour que votre app reconnaisse vos documents."
-  es: "Sus otros nombres, como un nombre de uso, su nombre de nacimiento o un nombre anterior, para que su app reconozca sus documentos."

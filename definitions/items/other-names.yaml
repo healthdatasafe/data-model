@@ -3,38 +3,36 @@ other-name:
   label:
     en: Other name
     fr: Autre nom
-    es: Otro nombre
   description:
     en: Another name you have or had, such as a usage name or your name at birth.
     fr: Un autre nom que vous portez ou avez porté, comme un nom d'usage ou votre nom de naissance.
-    es: Otro nombre que tiene o tuvo, como un nombre de uso o su nombre de nacimiento.
   streamId: other-names
   eventType: contact/other-name-v1
   type: composite
   composite:
     given:
-      label: { en: Given name, fr: Prénom, es: Nombre }
+      label: { en: Given name, fr: Prénom }
       type: text
       canBeNull: true
     family:
-      label: { en: Family name, fr: Nom de famille, es: Apellido }
+      label: { en: Family name, fr: Nom de famille }
       type: text
       canBeNull: true
     use:
-      label: { en: Kind of name, fr: Type de nom, es: Tipo de nombre }
+      label: { en: Kind of name, fr: Type de nom }
       type: select
       canBeNull: true
       options:
         - value: official
-          label: { en: Full official name, fr: Nom officiel complet, es: Nombre oficial completo }
+          label: { en: Full official name, fr: Nom officiel complet }
         - value: usual
-          label: { en: Usage name, fr: Nom d'usage, es: Nombre de uso }
+          label: { en: Usage name, fr: Nom d'usage }
         - value: maiden
-          label: { en: Name at birth, fr: Nom de naissance, es: Nombre de nacimiento }
+          label: { en: Name at birth, fr: Nom de naissance }
         - value: old
-          label: { en: Former name, fr: Ancien nom, es: Nombre anterior }
+          label: { en: Former name, fr: Ancien nom }
         - value: nickname
-          label: { en: Nickname, fr: Surnom, es: Apodo }
+          label: { en: Nickname, fr: Surnom }
   repeatable: unlimited
   devNotes: >-
     FHIR HumanName with its use; at least one of given and family (the eventType enforces it), the other taken from

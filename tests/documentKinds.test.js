@@ -96,6 +96,8 @@ describe('[DKND] Document kinds', () => {
     drift.kinds['pathology-report'].class.display = 'Procedure report';
     assert.throws(() => checkDocumentKindsTable(drift), /another Coding/);
     const twinLabel = copy();
+    // the de labels are in definitions/l10n/de.json (B-2026-11-28-9): the table is checked again after the merge
+    twinLabel.kinds['consultation-report'].label.de = 'Konsultationsbericht';
     twinLabel.kinds['progress-report'].label.de = 'konsultationsbericht';
     assert.throws(() => checkDocumentKindsTable(twinLabel), /share the de label/);
     const otherSystem = copy();

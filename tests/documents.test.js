@@ -43,7 +43,8 @@ describe('[DOCS] Medical documents and read markers', () => {
       assert.strictEqual(item.streamId, 'documents');
       assert.strictEqual(item.eventType, 'file/xds-v1');
       assert.strictEqual(item.repeatable, 'any');
-      assert.ok(item.label.fr && item.label.es && item.description.fr && item.description.es, 'label and description are localised');
+      const es = require('../src/l10n').loadLocales().locales.es['items.json'];
+      assert.ok(item.label.fr && item.description.fr && es['document/label'] && es['document/description'], 'label and description are localised');
       assert.strictEqual(checkItemVsEvenType('document', item, eventTypesById('file/xds-v1')), true);
     });
 

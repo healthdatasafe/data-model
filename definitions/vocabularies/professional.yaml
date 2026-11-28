@@ -9,12 +9,12 @@ professional-role:
   binds:
     - { eventType: correction/entry-v1, path: authorRole }
   values:
-    physician: { label: { en: Physician, fr: Médecin, es: Médico }, snomed: '309343006' }
-    midwife: { label: { en: Midwife, fr: Sage-femme, es: Matrona }, snomed: '309453006' }
-    nurse: { label: { en: Nurse, fr: Infirmier ou infirmière, es: Enfermero o enfermera }, snomed: '106292003' }
-    pharmacist: { label: { en: Pharmacist, fr: Pharmacien ou pharmacienne, es: Farmacéutico o farmacéutica }, snomed: '46255001' }
-    psychologist: { label: { en: Psychologist, fr: Psychologue, es: Psicólogo o psicóloga }, snomed: '59944000' }
-    dietitian: { label: { en: Dietitian, fr: Diététicien ou diététicienne, es: Dietista }, snomed: '159033005' }
-    physiotherapist: { label: { en: Physiotherapist, fr: Physiothérapeute, es: Fisioterapeuta }, snomed: '36682004' }
-    health-educator: { label: { en: Health educator, fr: Éducateur ou éducatrice en santé, es: Educador o educadora en salud }, snomed: '409974004' }
-    other: { label: { en: Other, fr: Autre, es: Otro } }
+    physician: { label: { en: Physician, fr: Médecin }, snomed: '309343006' }
+    midwife: { label: { en: Midwife, fr: Sage-femme }, snomed: '309453006' }
+    nurse: { label: { en: Nurse, fr: Infirmier ou infirmière }, snomed: '106292003' }
+    pharmacist: { label: { en: Pharmacist, fr: Pharmacien ou pharmacienne }, snomed: '46255001' }
+    psychologist: { label: { en: Psychologist, fr: Psychologue }, snomed: '59944000' }
+    dietitian: { label: { en: Dietitian, fr: Diététicien ou diététicienne }, snomed: '159033005' }
+    physiotherapist: { label: { en: Physiotherapist, fr: Physiothérapeute }, snomed: '36682004' }
+    health-educator: { label: { en: Health educator, fr: Éducateur ou éducatrice en santé }, snomed: '409974004' }
+    other: { label: { en: Other, fr: Autre } }
