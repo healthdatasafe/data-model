@@ -1,5 +1,32 @@
 # Changelog
 
+## [4.56.1] - 2026-11-28
+
+Patch. Texts no locale file translated (B-2026-11-28-6), and a build check that keeps them translated. No key, type,
+option value or schema change.
+
+### Added
+
+- **Locale drafts** (`"status": "draft"`, machine translation, Fable-reviewed) for texts that read English (or only
+  inline `es`) in it, pt-BR and de:
+  - streams `hds-research`, `hds-research-eligibility`, `hds-research-topics` (label and description; es too: they had
+    en / fr only), `entry-corrections`, `other-names` (label and description; their inline `es` stays in the
+    definitions);
+  - items `entry-correction` and `other-name` (label, description, `other-name` composite labels and its five `use`
+    options);
+  - `treatment-basic` composite labels `name`, `count`, `notes` (es too);
+  - vocabularies `lab-result` (11 values), `professional-role` (9) and `research-topic` (15; es too).
+- **`checkConsentLabelLocales`** (`src/l10n.js`, run by the build): a stream whose consent-screen label (its only active
+  item's, else its own) has no text in a locale of `definitions/l10n` fails the build, listing every such stream. A
+  label held in `do-not-translate.json` (the licensed questionnaires) is exempt. Tests L10N14, L10N15.
+
+### Changed
+
+- `treatment-basic` composite labels carry `fr` (they were English only): "Nom du traitement", "Nombre de fois (au cours
+  de la vie)", "Notes" (part of B-2026-11-19-6 B-32).
+- L10N.md: the new build check; `datasources.json` and the eventType `extras` unit names stay untranslated for now
+  (technical texts), an open decision.
+
 ## [4.56.0] - 2026-11-28
 
 Minor. A new locale: German (B-2026-11-27-46).

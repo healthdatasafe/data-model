@@ -325,6 +325,36 @@
       "text": "Resultados de pruebas genéticas, como las variantes de genes analizadas por un laboratorio. Nunca se incluyen cuando comparte todos sus datos: solo se comparten cuando usted los nombra.",
       "status": "draft"
     },
+    "[id=\"hds-research\"]/label": {
+      "en": "Health Data Safe research",
+      "text": "Investigación de Health Data Safe",
+      "status": "draft"
+    },
+    "[id=\"hds-research\"]/description": {
+      "en": "Lets Health Data Safe send you research invitations and eligibility tests. Holds none of your health records: only the score ranges you choose to send and the topics you choose. Never included when you share all your data: shared only when you name it.",
+      "text": "Permite que Health Data Safe le envíe invitaciones a participar en investigaciones y pruebas de elegibilidad. No contiene ninguno de sus registros de salud: solo los rangos de puntuación que usted elige enviar y los temas que elige. Nunca se incluye cuando comparte todos sus datos: solo se comparte cuando usted lo nombra.",
+      "status": "draft"
+    },
+    "[id=\"hds-research\"]/children[id=\"hds-research-eligibility\"]/label": {
+      "en": "Eligibility test results sent",
+      "text": "Resultados de pruebas de elegibilidad enviados",
+      "status": "draft"
+    },
+    "[id=\"hds-research\"]/children[id=\"hds-research-eligibility\"]/description": {
+      "en": "The score range of each eligibility test you chose to send (below 50%, or 50% and more). Never the exact result or your answers.",
+      "text": "El rango de puntuación de cada prueba de elegibilidad que eligió enviar (menos del 50 %, o 50 % o más). Nunca el resultado exacto ni sus respuestas.",
+      "status": "draft"
+    },
+    "[id=\"hds-research\"]/children[id=\"hds-research-topics\"]/label": {
+      "en": "Research topics",
+      "text": "Temas de investigación",
+      "status": "draft"
+    },
+    "[id=\"hds-research\"]/children[id=\"hds-research-topics\"]/description": {
+      "en": "The research topics you chose, to receive the invitations that concern you.",
+      "text": "Los temas de investigación que eligió, para recibir las invitaciones que le conciernen.",
+      "status": "draft"
+    },
     "[id=\"hds-support\"]/label": {
       "en": "Health Data Safe support (holds no data)",
       "text": "Soporte de Health Data Safe (no contiene datos)",
@@ -7717,6 +7747,21 @@
       "text": "Un tratamiento clínico, introducido como texto libre.",
       "status": "draft"
     },
+    "treatment-basic/composite/name/label": {
+      "en": "Treatment name",
+      "text": "Nombre del tratamiento",
+      "status": "draft"
+    },
+    "treatment-basic/composite/count/label": {
+      "en": "Number of times (lifetime)",
+      "text": "Número de veces (a lo largo de la vida)",
+      "status": "draft"
+    },
+    "treatment-basic/composite/notes/label": {
+      "en": "Notes",
+      "text": "Notas",
+      "status": "draft"
+    },
     "treatment-coded/label": {
       "en": "Treatment (coded)",
       "text": "Tratamiento (codificado)",
@@ -8449,6 +8494,81 @@
     "medication-prescription-status/values/completed/label": {
       "en": "Completed",
       "text": "Completada",
+      "status": "draft"
+    },
+    "research-topic/values/cardiovascular/label": {
+      "en": "Heart and blood vessels",
+      "text": "Corazón y vasos sanguíneos",
+      "status": "draft"
+    },
+    "research-topic/values/metabolic/label": {
+      "en": "Diabetes and metabolism",
+      "text": "Diabetes y metabolismo",
+      "status": "draft"
+    },
+    "research-topic/values/mental-health/label": {
+      "en": "Mental health",
+      "text": "Salud mental",
+      "status": "draft"
+    },
+    "research-topic/values/neurology/label": {
+      "en": "Brain and nervous system",
+      "text": "Cerebro y sistema nervioso",
+      "status": "draft"
+    },
+    "research-topic/values/cancer/label": {
+      "en": "Cancer",
+      "text": "Cáncer",
+      "status": "draft"
+    },
+    "research-topic/values/respiratory/label": {
+      "en": "Lungs and breathing",
+      "text": "Pulmones y respiración",
+      "status": "draft"
+    },
+    "research-topic/values/reproductive-health/label": {
+      "en": "Fertility and reproductive health",
+      "text": "Fertilidad y salud reproductiva",
+      "status": "draft"
+    },
+    "research-topic/values/womens-health/label": {
+      "en": "Women's health",
+      "text": "Salud de la mujer",
+      "status": "draft"
+    },
+    "research-topic/values/pregnancy/label": {
+      "en": "Pregnancy",
+      "text": "Embarazo",
+      "status": "draft"
+    },
+    "research-topic/values/sleep/label": {
+      "en": "Sleep",
+      "text": "Sueño",
+      "status": "draft"
+    },
+    "research-topic/values/nutrition/label": {
+      "en": "Nutrition",
+      "text": "Nutrición",
+      "status": "draft"
+    },
+    "research-topic/values/physical-activity/label": {
+      "en": "Physical activity",
+      "text": "Actividad física",
+      "status": "draft"
+    },
+    "research-topic/values/musculoskeletal/label": {
+      "en": "Bones, joints and muscles",
+      "text": "Huesos, articulaciones y músculos",
+      "status": "draft"
+    },
+    "research-topic/values/infectious-diseases/label": {
+      "en": "Infections and vaccines",
+      "text": "Infecciones y vacunas",
+      "status": "draft"
+    },
+    "research-topic/values/rare-diseases/label": {
+      "en": "Rare diseases",
+      "text": "Enfermedades raras",
       "status": "draft"
     }
   },

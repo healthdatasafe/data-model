@@ -15,14 +15,14 @@ treatment-basic:
   type: composite
   composite:
     name:
-      label: Treatment name
+      label: { en: Treatment name, fr: Nom du traitement }
       type: text
     count:
-      label: Number of times (lifetime)
+      label: { en: Number of times (lifetime), fr: Nombre de fois (au cours de la vie) }
       type: number
       canBeNull: true
     notes:
-      label: Notes
+      label: { en: Notes, fr: Notes }
       type: text
       canBeNull: true
   repeatable: unlimited

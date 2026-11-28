@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { loadLocales, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels } = require('./l10n');
+const { loadLocales, localise, localeStatus, converterSidecars, checkPublished, checkConsentLabels, checkConsentLabelLocales } = require('./l10n');
 const { checkDocumentKindsTable } = require('./documentKinds');
 const { checkItem } = require('./schemas/items');
 const { checkVocabulary } = require('./schemas/vocabularies');
@@ -79,6 +79,7 @@ for (const [name, content] of Object.entries(converterSidecars(publishedFiles, l
 }
 
 checkConsentLabels(pack.streams, pack.items, locales);
+checkConsentLabelLocales(pack.streams, pack.items, locales, doNotTranslate);
 // an opt-in consent row that grants more than its label says it in every language of the pack (FHIR-MAPPING.md § SMART scopes)
 checkConsentOptInDescriptions(pack.streams, pack.items, ['en', 'fr', ...Object.keys(locales)]);
 // the locales added from definitions/l10n, and whether they hold drafts (documentation/L10N.md)
