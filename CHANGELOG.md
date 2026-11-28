@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.56.3] - 2026-11-28
+
+Patch, documentation only. No key, type, option value or schema change.
+
+### Fixed
+
+- `AGENTS.md` and `documentation/DESIGN-NOTES.md` follow the severity label rule SYMPTOMS.md already states
+  (B-2026-11-27-47): an incoming "Severe" is `0.75` whatever its source. Apple HealthKit's 4-level scale is
+  `0.0 / 0.25 / 0.5 / 0.75` (it was `… / 1.0`), a 3-level severity source is `0.25 / 0.5 / 0.75` (it was `… / 1.0`), and
+  AGENTS.md no longer recommends mapping Apple's Severe up to `1.0`. DESIGN-NOTES rule 2 says only the 5-level family's
+  ceiling is `1.0`; the 3-level relative row (`wellbeing-sex-drive`, `nutrition-appetite`) stays its own row, and
+  `<activity>-intensity` (`0.25 / 0.5 / 1.0`) is listed as an exception. Fable-reviewed.
+
 ## [4.56.2] - 2026-11-28
 
 Patch. The definitions carry `en` and `fr` only (B-2026-11-28-9). The published texts are the same in every locale: no

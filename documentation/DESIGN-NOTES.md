@@ -40,13 +40,18 @@ When an item uses `ratio/proportion` (or any `ratio/*` eventType) and defines di
 **Rule.** Pick hook values so that:
 
 1. **"None" / absence / baseline lands at `0.0`** (when the construct admits an absence — severity, intensity, problem level).
-2. **"Ceiling" / maximum lands at `1.0`** (what the scale calls its worst / strongest / most-severe value — even if finer scales have levels above it).
+2. **The ceiling of the 5-level family lands at `1.0`** (Extreme, Very severe, Unable). A coarser severity source is
+   matched **by label**: its top label lands on the hook that label names ("Severe" is `0.75`), never stretched to
+   `1.0` (B-2026-11-27-47).
 3. **"Middle" lands at `0.5`** (the semantic midpoint — "Moderate", "Neutral", etc. — even if it means the remaining hooks are not evenly spaced).
 4. **Intermediate hooks** are placed to align with the hooks of other scales in the same family, not by dividing the remaining space evenly.
 
 **Exceptions / special cases.**
 
 - Scales whose values represent *deviation from baseline* rather than *absolute severity* (e.g. `wellbeing-sex-drive` — low/normal/high) use the middle region (e.g. `0.25 / 0.5 / 0.75`) and legitimately skip `0` and `1`.
+- `<activity>-intensity` (WHO/ACSM Light / Moderate / Vigorous) sits at `0.25 / 0.5 / 1.0`: an intensity scale with its
+  own labels, where Vigorous is its ceiling, not a "Severe". It shipped before the label rule above and its option
+  values cannot change.
 - Scales with domain-specific non-linear anchors (e.g. `body-vulva-bleeding` with hooks approximating physiological volume at `0.0 / 0.08 / 0.20 / 0.35 / 0.55 / 0.75 / 0.95`) override even spacing for a reason — that reason must be documented in the item or a companion doc.
 
 **Canonical severity-family placements** (reference for any severity / intensity item across symptoms, function, distress, etc.):
@@ -54,9 +59,15 @@ When an item uses `ratio/proportion` (or any `ratio/*` eventType) and defines di
 | Levels | Hooks | Labels (typical) | Covers |
 |--------|-------|------------------|--------|
 | 5-level | `0.0 / 0.25 / 0.5 / 0.75 / 1.0` | None / Slight (or Mild) / Moderate / Severe / Very severe (or Extreme) | EQ-5D-5L, PROMIS 5-level, VRS-5, ICF qualifier, WHODAS |
-| 4-level | `0.0 / 0.25 / 0.5 / 1.0` | NotPresent / Mild / Moderate / Severe | Apple HealthKit `HKCategoryValueSeverity` — **subset of 5-level, skipping the `0.75` hook** |
-| 3-level | `0.25 / 0.5 / 1.0` *(absolute)* or `0.25 / 0.5 / 0.75` *(relative-to-baseline)* | Mild / Moderate / Severe *or* Low / Normal / High | Intake screeners; `wellbeing-sex-drive`-style items use the relative form |
+| 4-level | `0.0 / 0.25 / 0.5 / 0.75` | NotPresent / Mild / Moderate / Severe | Apple HealthKit `HKCategoryValueSeverity`: **subset of 5-level by label, no `1.0` (Extreme) hook** |
+| 3-level severity | `0.25 / 0.5 / 0.75` | Mild / Moderate / Severe | Intake screeners, Mira `level`: a subset of 5-level by label (its source has no None or Extreme level) |
+| 3-level relative | `0.25 / 0.5 / 0.75` | Low / Neutral / High, Decreased / Normal / Increased | `wellbeing-sex-drive`, `nutrition-appetite`: deviation from baseline, `0.5` is normal, `0` and `1` skipped by design (Exceptions above) |
 | 11-level | `0.0 / 0.1 / 0.2 / … / 1.0` | NRS 0–10 | Pain NRS, PROMIS 11-level. Every other hook aligns with the 5-level hooks |
+
+A source's "Severe" is `0.75` whatever the number of its levels: scales are matched **by label**, and a source's top
+label is never stretched to the HDS ceiling (`1.0`, Extreme). Decided by perki in plan 133 (B-2026-11-27-47), where
+this table still mapped Apple and 3-level "Severe" to `1.0` while Mira and every FHIR answer used `0.75`; SYMPTOMS.md
+§ Severity mapping has the per-label table.
 
 **Anti-pattern (do not do this).** Placing N levels at `(k−1) / (N−1)` for `k = 1..N` — i.e. dividing [0, 1] into `N−1` equal gaps. This puts "Moderate" at `0.66` on a 4-level scale, above the semantic middle, and breaks closest-value interop with 5-level (Moderate at `0.66` is numerically closer to the 5-level `Severe` hook at `0.75` than to the 5-level `Moderate` hook at `0.5`). Round-tripping a 5-level Moderate through such a 4-level store would escalate it to Severe.
 
