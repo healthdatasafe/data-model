@@ -14834,16 +14834,16 @@
     "label": {
       "en": "Other blood results",
       "fr": "Autres résultats sanguins",
-      "es": "Otros resultados de sangre",
       "de": "Weitere Blutergebnisse",
+      "es": "Otros resultados de sangre",
       "it": "Altri risultati del sangue",
       "pt-BR": "Outros resultados de sangue"
     },
     "description": {
       "en": "Blood test results that have no field of their own.",
       "fr": "Résultats d'analyses de sang qui n'ont pas de champ dédié.",
-      "es": "Resultados de análisis de sangre que no tienen un campo propio.",
       "de": "Ergebnisse von Blutuntersuchungen, für die es kein eigenes Feld gibt.",
+      "es": "Resultados de análisis de sangre que no tienen un campo propio.",
       "it": "Risultati di esami del sangue che non hanno un campo proprio.",
       "pt-BR": "Resultados de exames de sangue que não têm campo próprio."
     },
@@ -14984,16 +14984,16 @@
     "label": {
       "en": "Other urine results",
       "fr": "Autres résultats urinaires",
-      "es": "Otros resultados de orina",
       "de": "Weitere Urinergebnisse",
+      "es": "Otros resultados de orina",
       "it": "Altri risultati delle urine",
       "pt-BR": "Outros resultados de urina"
     },
     "description": {
       "en": "Urine test results that have no field of their own.",
       "fr": "Résultats d'analyses d'urine qui n'ont pas de champ dédié.",
-      "es": "Resultados de análisis de orina que no tienen un campo propio.",
       "de": "Ergebnisse von Urinuntersuchungen, für die es kein eigenes Feld gibt.",
+      "es": "Resultados de análisis de orina que no tienen un campo propio.",
       "it": "Risultati di esami delle urine che non hanno un campo proprio.",
       "pt-BR": "Resultados de exames de urina que não têm campo próprio."
     },
@@ -15023,16 +15023,16 @@
     "label": {
       "en": "Cerebrospinal fluid results",
       "fr": "Résultats du liquide céphalorachidien",
-      "es": "Resultados del líquido cefalorraquídeo",
       "de": "Liquorergebnisse",
+      "es": "Resultados del líquido cefalorraquídeo",
       "it": "Risultati del liquido cerebrospinale",
       "pt-BR": "Resultados do líquido cefalorraquidiano"
     },
     "description": {
       "en": "Results of a cerebrospinal fluid test.",
       "fr": "Résultats d'une analyse du liquide céphalorachidien.",
-      "es": "Resultados de un análisis del líquido cefalorraquídeo.",
       "de": "Ergebnisse einer Untersuchung der Hirn-Rückenmarks-Flüssigkeit (Liquor).",
+      "es": "Resultados de un análisis del líquido cefalorraquídeo.",
       "it": "Risultati di un esame del liquido cerebrospinale.",
       "pt-BR": "Resultados de um exame do líquido cefalorraquidiano."
     },
@@ -15107,16 +15107,16 @@
     "label": {
       "en": "Consent record",
       "fr": "Historique des consentements",
-      "es": "Registro de consentimientos",
       "de": "Einwilligungsprotokoll",
+      "es": "Registro de consentimientos",
       "it": "Registro dei consensi",
       "pt-BR": "Histórico de consentimentos"
     },
     "description": {
       "en": "Your consents, your choices and the notices you acknowledged, and when.",
       "fr": "Vos consentements, vos choix et les notices prises en compte, et quand.",
-      "es": "Sus consentimientos, sus elecciones y los avisos reconocidos, y cuándo.",
       "de": "Ihre Einwilligungen, Ihre Entscheidungen und die von Ihnen zur Kenntnis genommenen Hinweise, jeweils mit Zeitpunkt.",
+      "es": "Sus consentimientos, sus elecciones y los avisos reconocidos, y cuándo.",
       "it": "I suoi consensi, le sue scelte e le informative di cui ha preso atto, e quando.",
       "pt-BR": "Seus consentimentos, suas escolhas e os avisos de que você tomou ciência, e quando."
     },
@@ -15131,16 +15131,16 @@
     "label": {
       "en": "Medical document",
       "fr": "Document médical",
-      "es": "Documento médico",
       "de": "Medizinisches Dokument",
+      "es": "Documento médico",
       "it": "Documento medico",
       "pt-BR": "Documento médico"
     },
     "description": {
       "en": "A medical document you keep, such as a lab report, a letter, a prescription or an imaging report.",
       "fr": "Un document médical que vous conservez, comme un résultat de laboratoire, une lettre, une ordonnance ou un compte rendu d'imagerie.",
-      "es": "Un documento médico que conserva, como un informe de laboratorio, una carta, una receta o un informe de imagen.",
       "de": "Ein medizinisches Dokument, das Sie aufbewahren, etwa ein Laborbericht, ein Brief, ein Rezept oder ein Bericht zur Bildgebung.",
+      "es": "Un documento médico que conserva, como un informe de laboratorio, una carta, una receta o un informe de imagen.",
       "it": "Un documento medico che conserva, come un referto di laboratorio, una lettera, una prescrizione o un referto di diagnostica per immagini.",
       "pt-BR": "Um documento médico que você guarda, como um laudo de exame, uma carta, uma receita ou um laudo de imagem."
     },
@@ -15412,16 +15412,16 @@
     "label": {
       "en": "Correction of an entry",
       "fr": "Correction d'une saisie",
-      "es": "Corrección de un registro",
       "de": "Korrektur eines Eintrags",
+      "es": "Corrección de un registro",
       "it": "Correzione di una registrazione",
       "pt-BR": "Correção de um registro"
     },
     "description": {
       "en": "A professional says one of your entries should have been different, should exist or should not exist, and why.",
       "fr": "Un professionnel indique qu'une de vos saisies aurait dû être différente, devrait exister ou ne devrait pas exister, et pourquoi.",
-      "es": "Un profesional indica que uno de sus registros debería haber sido diferente, debería existir o no debería existir, y por qué.",
       "de": "Eine Fachperson gibt an, dass einer Ihrer Einträge anders hätte lauten sollen, dass ein Eintrag fehlt oder dass einer nicht existieren sollte, und warum.",
+      "es": "Un profesional indica que uno de sus registros debería haber sido diferente, debería existir o no debería existir, y por qué.",
       "it": "Un professionista indica che una delle sue registrazioni avrebbe dovuto essere diversa, dovrebbe esistere o non dovrebbe esistere, e perché.",
       "pt-BR": "Um profissional indica que um dos seus registros deveria ter sido diferente, deveria existir ou não deveria existir, e por quê."
     },
@@ -17646,16 +17646,16 @@
     "label": {
       "en": "Tested gene variant",
       "fr": "Variant génétique testé",
-      "es": "Variante genética analizada",
       "de": "Getestete Genvariante",
+      "es": "Variante genética analizada",
       "it": "Variante genetica testata",
       "pt-BR": "Variante genética testada"
     },
     "description": {
       "en": "The result of a genetic test for one gene variant, as the laboratory reported it.",
       "fr": "Le résultat d'un test génétique pour un variant d'un gène, tel que le laboratoire l'a rapporté.",
-      "es": "El resultado de una prueba genética para una variante de un gen, tal como lo informó el laboratorio.",
       "de": "Das Ergebnis eines Gentests für eine Genvariante, wie es das Labor gemeldet hat.",
+      "es": "El resultado de una prueba genética para una variante de un gen, tal como lo informó el laboratorio.",
       "it": "Il risultato di un test genetico per una variante di un gene, come l'ha riportato il laboratorio.",
       "pt-BR": "O resultado de um teste genético para uma variante de um gene, como o laboratório informou."
     },
@@ -19749,16 +19749,16 @@
     "label": {
       "en": "Other name",
       "fr": "Autre nom",
-      "es": "Otro nombre",
       "de": "Weiterer Name",
+      "es": "Otro nombre",
       "it": "Altro nome",
       "pt-BR": "Outro nome"
     },
     "description": {
       "en": "Another name you have or had, such as a usage name or your name at birth.",
       "fr": "Un autre nom que vous portez ou avez porté, comme un nom d'usage ou votre nom de naissance.",
-      "es": "Otro nombre que tiene o tuvo, como un nombre de uso o su nombre de nacimiento.",
       "de": "Ein weiterer Name, den Sie tragen oder getragen haben, etwa ein gebräuchlicher Name oder Ihr Geburtsname.",
+      "es": "Otro nombre que tiene o tuvo, como un nombre de uso o su nombre de nacimiento.",
       "it": "Un altro nome che porta o ha portato, come un nome d'uso o il suo nome alla nascita.",
       "pt-BR": "Outro nome que você tem ou teve, como um nome usual ou seu nome de nascimento."
     },
@@ -19770,8 +19770,8 @@
         "label": {
           "en": "Given name",
           "fr": "Prénom",
-          "es": "Nombre",
           "de": "Vorname",
+          "es": "Nombre",
           "it": "Nome",
           "pt-BR": "Nome"
         },
@@ -19782,8 +19782,8 @@
         "label": {
           "en": "Family name",
           "fr": "Nom de famille",
-          "es": "Apellido",
           "de": "Nachname",
+          "es": "Apellido",
           "it": "Cognome",
           "pt-BR": "Sobrenome"
         },
@@ -19794,8 +19794,8 @@
         "label": {
           "en": "Kind of name",
           "fr": "Type de nom",
-          "es": "Tipo de nombre",
           "de": "Art des Namens",
+          "es": "Tipo de nombre",
           "it": "Tipo di nome",
           "pt-BR": "Tipo de nome"
         },
@@ -19807,8 +19807,8 @@
             "label": {
               "en": "Full official name",
               "fr": "Nom officiel complet",
-              "es": "Nombre oficial completo",
               "de": "Vollständiger amtlicher Name",
+              "es": "Nombre oficial completo",
               "it": "Nome ufficiale completo",
               "pt-BR": "Nome oficial completo"
             }
@@ -19818,8 +19818,8 @@
             "label": {
               "en": "Usage name",
               "fr": "Nom d'usage",
-              "es": "Nombre de uso",
               "de": "Gebräuchlicher Name",
+              "es": "Nombre de uso",
               "it": "Nome d'uso",
               "pt-BR": "Nome usual"
             }
@@ -19829,8 +19829,8 @@
             "label": {
               "en": "Name at birth",
               "fr": "Nom de naissance",
-              "es": "Nombre de nacimiento",
               "de": "Geburtsname",
+              "es": "Nombre de nacimiento",
               "it": "Nome alla nascita",
               "pt-BR": "Nome de nascimento"
             }
@@ -19840,8 +19840,8 @@
             "label": {
               "en": "Former name",
               "fr": "Ancien nom",
-              "es": "Nombre anterior",
               "de": "Früherer Name",
+              "es": "Nombre anterior",
               "it": "Nome precedente",
               "pt-BR": "Nome anterior"
             }
@@ -19851,8 +19851,8 @@
             "label": {
               "en": "Nickname",
               "fr": "Surnom",
-              "es": "Apodo",
               "de": "Spitzname",
+              "es": "Apodo",
               "it": "Soprannome",
               "pt-BR": "Apelido"
             }

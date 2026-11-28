@@ -1,9 +1,9 @@
 {
-  "commit": "ffb26eafba2c3074e90d24cfb54ad140866f6ba9",
-  "commitShort": "ffb26ea",
+  "commit": "a809467bbe25028d1a12de467a253fa101bca34d",
+  "commitShort": "a809467",
   "branch": "main",
-  "buildDate": "2026-11-28T09:03:12Z",
-  "publicationDate": "2026-11-28T09:03:03.078Z",
+  "buildDate": "2026-11-28T09:45:04Z",
+  "publicationDate": "2026-11-28T09:44:56.532Z",
   "files": [
     {
       "title": "Pack items & streams",
@@ -186,7 +186,7 @@
       "file": "converters/mood/l10n-pt-BR.json"
     }
   ],
-  "version": "4.56.1",
+  "version": "4.56.2",
   "license": "CC-BY-4.0",
-  "attribution": "HDS Data Model 4.56.1, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
+  "attribution": "HDS Data Model 4.56.2, © Health Data Safe, https://model.datasafe.dev, CC BY 4.0. Third-party code systems excluded: see https://model.datasafe.dev/LICENSE.txt"
 }

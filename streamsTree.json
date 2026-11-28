@@ -1460,16 +1460,16 @@
     "label": {
       "en": "Corrections from your contacts",
       "fr": "Corrections de vos contacts",
-      "es": "Correcciones de sus contactos",
       "de": "Korrekturen von Ihren Kontakten",
+      "es": "Correcciones de sus contactos",
       "it": "Correzioni dai suoi contatti",
       "pt-BR": "Correções feitas pelos seus contatos"
     },
     "description": {
       "en": "What a professional you share data with says one of your entries should have been, and why. Your entries are never changed: you decide whether to apply a correction.",
       "fr": "Ce qu'un professionnel avec qui vous partagez des données dit qu'une de vos saisies aurait dû être, et pourquoi. Vos saisies ne sont jamais modifiées : vous décidez d'appliquer ou non une correction.",
-      "es": "Lo que un profesional con quien comparte datos dice que uno de sus registros debería haber sido, y por qué. Sus registros nunca se modifican: usted decide si aplica una corrección.",
       "de": "Was eine Fachperson, mit der Sie Daten teilen, zu einem Ihrer Einträge sagt: wie er hätte lauten sollen, und warum. Ihre Einträge werden nie geändert: Sie entscheiden, ob Sie eine Korrektur übernehmen.",
+      "es": "Lo que un profesional con quien comparte datos dice que uno de sus registros debería haber sido, y por qué. Sus registros nunca se modifican: usted decide si aplica una corrección.",
       "it": "Ciò che un professionista con cui condivide dati dice che una delle sue registrazioni avrebbe dovuto essere, e perché. Le sue registrazioni non vengono mai modificate: è lei a decidere se applicare una correzione.",
       "pt-BR": "O que um profissional com quem você compartilha dados diz que um dos seus registros deveria ter sido, e por quê. Seus registros nunca são alterados: você decide se aplica ou não uma correção."
     }
@@ -2037,16 +2037,16 @@
     "label": {
       "en": "Other names",
       "fr": "Autres noms",
-      "es": "Otros nombres",
       "de": "Weitere Namen",
+      "es": "Otros nombres",
       "it": "Altri nomi",
       "pt-BR": "Outros nomes"
     },
     "description": {
       "en": "Your other names, such as a usage name, your name at birth or a former name, so that your app recognises your documents.",
       "fr": "Vos autres noms, comme un nom d'usage, votre nom de naissance ou un ancien nom, pour que votre app reconnaisse vos documents.",
-      "es": "Sus otros nombres, como un nombre de uso, su nombre de nacimiento o un nombre anterior, para que su app reconozca sus documentos.",
       "de": "Ihre weiteren Namen, etwa ein gebräuchlicher Name, Ihr Geburtsname oder ein früherer Name, damit Ihre App Ihre Dokumente erkennt.",
+      "es": "Sus otros nombres, como un nombre de uso, su nombre de nacimiento o un nombre anterior, para que su app reconozca sus documentos.",
       "it": "I suoi altri nomi, come un nome d'uso, il suo nome alla nascita o un nome precedente, perché la sua app riconosca i suoi documenti.",
       "pt-BR": "Seus outros nomes, como um nome usual, seu nome de nascimento ou um nome anterior, para que o seu aplicativo reconheça os seus documentos."
     }

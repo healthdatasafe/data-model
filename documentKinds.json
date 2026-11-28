@@ -11,8 +11,8 @@
         "en": "Consultation report",
         "fr": "Rapport de consultation",
         "de": "Konsultationsbericht",
-        "it": "Rapporto di consultazione",
         "es": "Informe de consulta",
+        "it": "Rapporto di consultazione",
         "pt-BR": "Relatório de consulta"
       },
       "description": {
@@ -41,8 +41,8 @@
         "en": "History and physical examination",
         "fr": "Anamnèse et examen clinique",
         "de": "Anamnese und Untersuchungsbefund",
-        "it": "Anamnesi ed esame obiettivo",
         "es": "Anamnesis y exploración física",
+        "it": "Anamnesi ed esame obiettivo",
         "pt-BR": "Anamnese e exame físico"
       },
       "description": {
@@ -71,8 +71,8 @@
         "en": "Progress report",
         "fr": "Rapport de suivi",
         "de": "Verlaufsbericht",
-        "it": "Referto sul decorso",
         "es": "Informe de evolución",
+        "it": "Referto sul decorso",
         "pt-BR": "Relatório de evolução"
       },
       "description": {
@@ -101,8 +101,8 @@
         "en": "Other encounter report",
         "fr": "Autre rapport de consultation",
         "de": "Anderer Konsultationsbericht",
-        "it": "Altro rapporto di visita medica",
         "es": "Otro informe de consulta",
+        "it": "Altro rapporto di visita medica",
         "pt-BR": "Outro relatório de atendimento"
       },
       "description": {
@@ -131,8 +131,8 @@
         "en": "Referral letter",
         "fr": "Lettre de référence",
         "de": "Zuweisungsschreiben",
-        "it": "Lettera d'invio",
         "es": "Carta de derivación",
+        "it": "Lettera d'invio",
         "pt-BR": "Carta de encaminhamento"
       },
       "description": {
@@ -161,8 +161,8 @@
         "en": "Laboratory order",
         "fr": "Demande de laboratoire",
         "de": "Laborauftrag",
-        "it": "Richiesta di laboratorio",
         "es": "Solicitud de laboratorio",
+        "it": "Richiesta di laboratorio",
         "pt-BR": "Pedido de exames laboratoriais"
       },
       "description": {
@@ -191,8 +191,8 @@
         "en": "Pathology order",
         "fr": "Demande de pathologie",
         "de": "Pathologieauftrag",
-        "it": "Richiesta di patologia",
         "es": "Solicitud de anatomía patológica",
+        "it": "Richiesta di patologia",
         "pt-BR": "Pedido de anatomia patológica"
       },
       "description": {
@@ -221,8 +221,8 @@
         "en": "Imaging order",
         "fr": "Demande d'imagerie",
         "de": "Bildgebungsauftrag",
-        "it": "Richiesta di immaginografia",
         "es": "Solicitud de diagnóstico por imagen",
+        "it": "Richiesta di immaginografia",
         "pt-BR": "Pedido de exame de imagem"
       },
       "description": {
@@ -252,8 +252,8 @@
         "en": "Other order",
         "fr": "Autre demande d'examen",
         "de": "Anderer Untersuchungsauftrag",
-        "it": "Altra richiesta di esami",
         "es": "Otra solicitud",
+        "it": "Altra richiesta di esami",
         "pt-BR": "Outro pedido de exame"
       },
       "description": {
@@ -282,8 +282,8 @@
         "en": "Discharge summary",
         "fr": "Rapport de sortie",
         "de": "Austrittsbericht",
-        "it": "Rapporto di dimissione",
         "es": "Informe de alta",
+        "it": "Rapporto di dimissione",
         "pt-BR": "Resumo de alta"
       },
       "description": {
@@ -312,8 +312,8 @@
         "en": "Transfer summary",
         "fr": "Rapport de transfert",
         "de": "Verlegungsbericht",
-        "it": "Rapporto di trasferimento",
         "es": "Informe de traslado",
+        "it": "Rapporto di trasferimento",
         "pt-BR": "Resumo de transferência"
       },
       "description": {
@@ -342,8 +342,8 @@
         "en": "Medication list",
         "fr": "Liste des médicaments",
         "de": "Medikationsliste",
-        "it": "Elenco dei medicamenti",
         "es": "Lista de medicamentos",
+        "it": "Elenco dei medicamenti",
         "pt-BR": "Lista de medicamentos"
       },
       "description": {
@@ -372,8 +372,8 @@
         "en": "Medication plan",
         "fr": "Plan de médication",
         "de": "Medikationsplan",
-        "it": "Piano dei medicamenti",
         "es": "Plan de medicación",
+        "it": "Piano dei medicamenti",
         "pt-BR": "Plano de medicação"
       },
       "description": {
@@ -402,8 +402,8 @@
         "en": "Other summary",
         "fr": "Autre résumé",
         "de": "Andere Zusammenfassung",
-        "it": "Altro riepilogo",
         "es": "Otro resumen",
+        "it": "Altro riepilogo",
         "pt-BR": "Outro resumo"
       },
       "description": {
@@ -432,8 +432,8 @@
         "en": "Operative report",
         "fr": "Rapport d'opération",
         "de": "Operationsbericht",
-        "it": "Rapporto operatorio",
         "es": "Informe quirúrgico",
+        "it": "Rapporto operatorio",
         "pt-BR": "Relatório cirúrgico"
       },
       "description": {
@@ -462,8 +462,8 @@
         "en": "Laboratory report",
         "fr": "Rapport de laboratoire",
         "de": "Laborbericht",
-        "it": "Referto di laboratorio",
         "es": "Informe de laboratorio",
+        "it": "Referto di laboratorio",
         "pt-BR": "Laudo laboratorial"
       },
       "description": {
@@ -492,8 +492,8 @@
         "en": "Pathology report",
         "fr": "Rapport de pathologie",
         "de": "Pathologiebericht",
-        "it": "Rapporto di patologia",
         "es": "Informe de anatomía patológica",
+        "it": "Rapporto di patologia",
         "pt-BR": "Laudo anatomopatológico"
       },
       "description": {
@@ -522,8 +522,8 @@
         "en": "Imaging report",
         "fr": "Rapport d'imagerie",
         "de": "Bericht zur Bildgebung",
-        "it": "Referto di immaginografia",
         "es": "Informe de diagnóstico por imagen",
+        "it": "Referto di immaginografia",
         "pt-BR": "Laudo de exame de imagem"
       },
       "description": {
@@ -552,8 +552,8 @@
         "en": "Image",
         "fr": "Image",
         "de": "Bild",
-        "it": "Immagine",
         "es": "Imagen",
+        "it": "Immagine",
         "pt-BR": "Imagem"
       },
       "description": {
@@ -582,8 +582,8 @@
         "en": "Picture, video or audio",
         "fr": "Image, vidéo ou audio",
         "de": "Bild, Video oder Audio",
-        "it": "Immagine, video o audio",
         "es": "Imagen, vídeo o audio",
+        "it": "Immagine, video o audio",
         "pt-BR": "Foto, vídeo ou áudio"
       },
       "description": {
@@ -612,8 +612,8 @@
         "en": "Other procedure report",
         "fr": "Autre rapport d'intervention",
         "de": "Anderer Interventionsbericht",
-        "it": "Altro rapporto di intervento",
         "es": "Otro informe de procedimiento",
+        "it": "Altro rapporto di intervento",
         "pt-BR": "Outro relatório de procedimento"
       },
       "description": {
@@ -642,8 +642,8 @@
         "en": "Medical care plan",
         "fr": "Plan de traitement médical",
         "de": "Ärztlicher Behandlungsplan",
-        "it": "Piano di cure mediche",
         "es": "Plan de tratamiento médico",
+        "it": "Piano di cure mediche",
         "pt-BR": "Plano de cuidados médicos"
       },
       "description": {
@@ -672,8 +672,8 @@
         "en": "Nursing care plan",
         "fr": "Plan de soins infirmiers",
         "de": "Pflegeplan",
-        "it": "Piano di cure infermieristiche",
         "es": "Plan de cuidados de enfermería",
+        "it": "Piano di cure infermieristiche",
         "pt-BR": "Plano de cuidados de enfermagem"
       },
       "description": {
@@ -702,8 +702,8 @@
         "en": "Rehabilitation plan",
         "fr": "Plan de réhabilitation",
         "de": "Rehabilitationsplan",
-        "it": "Piano di riabilitazione",
         "es": "Plan de rehabilitación",
+        "it": "Piano di riabilitazione",
         "pt-BR": "Plano de reabilitação"
       },
       "description": {
@@ -732,8 +732,8 @@
         "en": "Medication treatment decision",
         "fr": "Décision de traitement médicamenteux",
         "de": "Therapieentscheid Medikation",
-        "it": "Decisione di terapia medicamentosa",
         "es": "Decisión de tratamiento farmacológico",
+        "it": "Decisione di terapia medicamentosa",
         "pt-BR": "Decisão de tratamento medicamentoso"
       },
       "description": {
@@ -762,8 +762,8 @@
         "en": "Other care plan",
         "fr": "Autre plan de soins",
         "de": "Anderer Behandlungsplan",
-        "it": "Altro piano di cura",
         "es": "Otro plan de cuidados",
+        "it": "Altro piano di cura",
         "pt-BR": "Outro plano de cuidados"
       },
       "description": {
@@ -792,8 +792,8 @@
         "en": "Medication prescription",
         "fr": "Ordonnance de médicaments",
         "de": "Arzneimittelrezept",
-        "it": "Prescrizione di medicamenti",
         "es": "Prescripción de medicamentos",
+        "it": "Prescrizione di medicamenti",
         "pt-BR": "Prescrição de medicamentos"
       },
       "description": {
@@ -822,8 +822,8 @@
         "en": "Non-drug prescription",
         "fr": "Prescription non médicamenteuse",
         "de": "Nicht-Arzneimittel-Verschreibung",
-        "it": "Prescrizione non di medicamenti",
         "es": "Prescripción no farmacológica",
+        "it": "Prescrizione non di medicamenti",
         "pt-BR": "Prescrição não medicamentosa"
       },
       "description": {
@@ -852,8 +852,8 @@
         "en": "Other prescription",
         "fr": "Autre prescription",
         "de": "Andere Verschreibung",
-        "it": "Altra prescrizione medica",
         "es": "Otra prescripción",
+        "it": "Altra prescrizione medica",
         "pt-BR": "Outra prescrição"
       },
       "description": {
@@ -882,8 +882,8 @@
         "en": "Allergy record",
         "fr": "Carnet des allergies",
         "de": "Allergieausweis",
-        "it": "Passaporto delle allergie",
         "es": "Registro de alergias",
+        "it": "Passaporto delle allergie",
         "pt-BR": "Registro de alergias"
       },
       "description": {
@@ -912,8 +912,8 @@
         "en": "Vaccination record",
         "fr": "Document de vaccination",
         "de": "Impfdokument",
-        "it": "Documento di vaccinazione",
         "es": "Documento de vacunación",
+        "it": "Documento di vaccinazione",
         "pt-BR": "Registro de vacinação"
       },
       "description": {
@@ -942,8 +942,8 @@
         "en": "Other patient record",
         "fr": "Autre documentation du patient",
         "de": "Andere Patientendokumentation",
-        "it": "Altra documentazione del paziente",
         "es": "Otro registro del paciente",
+        "it": "Altra documentazione del paziente",
         "pt-BR": "Outro registro do paciente"
       },
       "description": {
@@ -972,8 +972,8 @@
         "en": "Consent",
         "fr": "Consentement",
         "de": "Einverständniserklärung",
-        "it": "Consenso",
         "es": "Consentimiento",
+        "it": "Consenso",
         "pt-BR": "Consentimento"
       },
       "description": {
@@ -1002,8 +1002,8 @@
         "en": "Advance directive",
         "fr": "Directives anticipées",
         "de": "Patientenverfügung",
-        "it": "Direttive anticipate",
         "es": "Voluntades anticipadas",
+        "it": "Direttive anticipate",
         "pt-BR": "Diretivas antecipadas de vontade"
       },
       "description": {
@@ -1032,8 +1032,8 @@
         "en": "Record access log",
         "fr": "Traçabilité des accès au DEP",
         "de": "Rückverfolgung der EPD-Zugriffe",
-        "it": "Cronologia degli accessi alla CIP",
         "es": "Registro de accesos al historial",
+        "it": "Cronologia degli accessi alla CIP",
         "pt-BR": "Registro de acessos ao prontuário"
       },
       "description": {
@@ -1061,8 +1061,8 @@
         "en": "Emergency card",
         "fr": "Carte d'urgence",
         "de": "Notfallkarte",
-        "it": "Tessera di emergenza",
         "es": "Tarjeta de emergencia",
+        "it": "Tessera di emergenza",
         "pt-BR": "Cartão de emergência"
       },
       "description": {
@@ -1091,8 +1091,8 @@
         "en": "Organ donor card",
         "fr": "Carte de donneur d'organes",
         "de": "Organspendeausweis",
-        "it": "Tessera di donatore di organi",
         "es": "Tarjeta de donante de órganos",
+        "it": "Tessera di donatore di organi",
         "pt-BR": "Cartão de doador de órgãos"
       },
       "description": {
@@ -1121,8 +1121,8 @@
         "en": "Pregnancy or birth report",
         "fr": "Rapport de grossesse ou de naissance",
         "de": "Schwangerschafts- oder Geburtsbericht",
-        "it": "Rapporto di gravidanza o del parto",
         "es": "Informe de embarazo o parto",
+        "it": "Rapporto di gravidanza o del parto",
         "pt-BR": "Relatório de gestação ou parto"
       },
       "description": {
@@ -1152,8 +1152,8 @@
         "en": "Medical certificate",
         "fr": "Certificat médical",
         "de": "Ärztliches Attest",
-        "it": "Certificato medico",
         "es": "Certificado médico",
+        "it": "Certificato medico",
         "pt-BR": "Atestado médico"
       },
       "description": {
@@ -1182,8 +1182,8 @@
         "en": "Administrative document",
         "fr": "Document administratif",
         "de": "Administratives Dokument",
-        "it": "Documento amministrativo",
         "es": "Documento administrativo",
+        "it": "Documento amministrativo",
         "pt-BR": "Documento administrativo"
       },
       "description": {
@@ -1212,8 +1212,8 @@
         "en": "Emergency report",
         "fr": "Rapport d'urgence",
         "de": "Notfallbericht",
-        "it": "Rapporto d'urgenza",
         "es": "Informe de urgencias",
+        "it": "Rapporto d'urgenza",
         "pt-BR": "Relatório de pronto-atendimento"
       },
       "description": {
@@ -1242,8 +1242,8 @@
         "en": "Non-medical report",
         "fr": "Rapport non médical",
         "de": "Nichtmedizinischer Bericht",
-        "it": "Rapporto non medico",
         "es": "Informe no médico",
+        "it": "Rapporto non medico",
         "pt-BR": "Relatório não médico"
       },
       "description": {
@@ -1272,8 +1272,8 @@
         "en": "Medication dispense",
         "fr": "Dispensation de médicaments",
         "de": "Medikamentenabgabe",
-        "it": "Dispensazione di medicamenti",
         "es": "Dispensación de medicamentos",
+        "it": "Dispensazione di medicamenti",
         "pt-BR": "Dispensação de medicamentos"
       },
       "description": {
@@ -1303,8 +1303,8 @@
         "en": "Other health event report",
         "fr": "Autre document sur un événement sanitaire",
         "de": "Anderes Dokument zu einem Gesundheitsereignis",
-        "it": "Altro documento su un evento sanitario",
         "es": "Otro informe de un evento de salud",
+        "it": "Altro documento su un evento sanitario",
         "pt-BR": "Outro relatório de evento de saúde"
       },
       "description": {
@@ -1333,8 +1333,8 @@
         "en": "Other document",
         "fr": "Autre document",
         "de": "Sonstige Dokumentation",
-        "it": "Altra documentazione",
         "es": "Otro documento",
+        "it": "Altra documentazione",
         "pt-BR": "Outro documento"
       },
       "description": {
@@ -1364,8 +1364,8 @@
         "en": "Menstrual cycle chart",
         "fr": "Tableau de cycle menstruel",
         "de": "Zyklusblatt",
-        "it": "Scheda del ciclo mestruale",
         "es": "Gráfico del ciclo menstrual",
+        "it": "Scheda del ciclo mestruale",
         "pt-BR": "Gráfico do ciclo menstrual"
       },
       "description": {

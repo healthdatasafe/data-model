@@ -91,8 +91,8 @@
         "label": {
           "en": "Negative",
           "fr": "Négatif",
-          "es": "Negativo",
           "de": "Negativ",
+          "es": "Negativo",
           "it": "Negativo",
           "pt-BR": "Negativo"
         },
@@ -102,8 +102,8 @@
         "label": {
           "en": "Trace",
           "fr": "Traces",
-          "es": "Indicios",
           "de": "Spuren",
+          "es": "Indicios",
           "it": "Tracce",
           "pt-BR": "Traços"
         },
@@ -113,8 +113,8 @@
         "label": {
           "en": "1+",
           "fr": "1+",
-          "es": "1+",
           "de": "1+",
+          "es": "1+",
           "it": "1+",
           "pt-BR": "1+"
         },
@@ -124,8 +124,8 @@
         "label": {
           "en": "2+",
           "fr": "2+",
-          "es": "2+",
           "de": "2+",
+          "es": "2+",
           "it": "2+",
           "pt-BR": "2+"
         },
@@ -135,8 +135,8 @@
         "label": {
           "en": "3+",
           "fr": "3+",
-          "es": "3+",
           "de": "3+",
+          "es": "3+",
           "it": "3+",
           "pt-BR": "3+"
         },
@@ -146,8 +146,8 @@
         "label": {
           "en": "4+",
           "fr": "4+",
-          "es": "4+",
           "de": "4+",
+          "es": "4+",
           "it": "4+",
           "pt-BR": "4+"
         },
@@ -157,8 +157,8 @@
         "label": {
           "en": "Positive",
           "fr": "Positif",
-          "es": "Positivo",
           "de": "Positiv",
+          "es": "Positivo",
           "it": "Positivo",
           "pt-BR": "Positivo"
         },
@@ -168,8 +168,8 @@
         "label": {
           "en": "Detected",
           "fr": "Détecté",
-          "es": "Detectado",
           "de": "Nachgewiesen",
+          "es": "Detectado",
           "it": "Rilevato",
           "pt-BR": "Detectado"
         },
@@ -179,8 +179,8 @@
         "label": {
           "en": "Not detected",
           "fr": "Non détecté",
-          "es": "No detectado",
           "de": "Nicht nachgewiesen",
+          "es": "No detectado",
           "it": "Non rilevato",
           "pt-BR": "Não detectado"
         },
@@ -190,8 +190,8 @@
         "label": {
           "en": "Absent",
           "fr": "Absent",
-          "es": "Ausente",
           "de": "Nicht vorhanden",
+          "es": "Ausente",
           "it": "Assente",
           "pt-BR": "Ausente"
         },
@@ -201,8 +201,8 @@
         "label": {
           "en": "Present",
           "fr": "Présent",
-          "es": "Presente",
           "de": "Vorhanden",
+          "es": "Presente",
           "it": "Presente",
           "pt-BR": "Presente"
         },
@@ -705,8 +705,8 @@
         "label": {
           "en": "Physician",
           "fr": "Médecin",
-          "es": "Médico",
           "de": "Arzt oder Ärztin",
+          "es": "Médico",
           "it": "Medico",
           "pt-BR": "Médico ou médica"
         },
@@ -716,8 +716,8 @@
         "label": {
           "en": "Midwife",
           "fr": "Sage-femme",
-          "es": "Matrona",
           "de": "Hebamme",
+          "es": "Matrona",
           "it": "Ostetrica o ostetrico",
           "pt-BR": "Obstetriz"
         },
@@ -727,8 +727,8 @@
         "label": {
           "en": "Nurse",
           "fr": "Infirmier ou infirmière",
-          "es": "Enfermero o enfermera",
           "de": "Pflegefachperson",
+          "es": "Enfermero o enfermera",
           "it": "Infermiere o infermiera",
           "pt-BR": "Enfermeiro ou enfermeira"
         },
@@ -738,8 +738,8 @@
         "label": {
           "en": "Pharmacist",
           "fr": "Pharmacien ou pharmacienne",
-          "es": "Farmacéutico o farmacéutica",
           "de": "Apotheker oder Apothekerin",
+          "es": "Farmacéutico o farmacéutica",
           "it": "Farmacista",
           "pt-BR": "Farmacêutico ou farmacêutica"
         },
@@ -749,8 +749,8 @@
         "label": {
           "en": "Psychologist",
           "fr": "Psychologue",
-          "es": "Psicólogo o psicóloga",
           "de": "Psychologe oder Psychologin",
+          "es": "Psicólogo o psicóloga",
           "it": "Psicologo o psicologa",
           "pt-BR": "Psicólogo ou psicóloga"
         },
@@ -760,8 +760,8 @@
         "label": {
           "en": "Dietitian",
           "fr": "Diététicien ou diététicienne",
-          "es": "Dietista",
           "de": "Ernährungsberater oder Ernährungsberaterin",
+          "es": "Dietista",
           "it": "Dietista",
           "pt-BR": "Nutricionista"
         },
@@ -771,8 +771,8 @@
         "label": {
           "en": "Physiotherapist",
           "fr": "Physiothérapeute",
-          "es": "Fisioterapeuta",
           "de": "Physiotherapeut oder Physiotherapeutin",
+          "es": "Fisioterapeuta",
           "it": "Fisioterapista",
           "pt-BR": "Fisioterapeuta"
         },
@@ -782,8 +782,8 @@
         "label": {
           "en": "Health educator",
           "fr": "Éducateur ou éducatrice en santé",
-          "es": "Educador o educadora en salud",
           "de": "Gesundheitsberater oder Gesundheitsberaterin",
+          "es": "Educador o educadora en salud",
           "it": "Educatore o educatrice alla salute",
           "pt-BR": "Educador ou educadora em saúde"
         },
@@ -793,8 +793,8 @@
         "label": {
           "en": "Other",
           "fr": "Autre",
-          "es": "Otro",
           "de": "Anderes",
+          "es": "Otro",
           "it": "Altro",
           "pt-BR": "Outro"
         }
